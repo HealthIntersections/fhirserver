@@ -50,11 +50,11 @@ The content loads and works extremely quickly.
 }
 
 Uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   StringSupport, FileSupport, BytesSupport,
   AdvStringLists, AdvObjectLists, AdvObjects,
   YuStemmer, DateAndTime,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices;
 
 Const
@@ -506,7 +506,7 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
 
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
   End;
@@ -2624,7 +2624,7 @@ begin
   Displays(Code(context), list);
 end;
 
-procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; params: TFHIRParameters);
+procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse);
 var
   Identity : UInt64;
   Flags : Byte;
@@ -2637,73 +2637,94 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  param, p2 : TFhirParametersParameter;
+  d : TFHIRLookupOpDesignation;
+  {$IFDEF FHIR_DSTU3}
+  p : TFHIRLookupOpProperty_;
+  {$ENDIF}
   did : UInt64;
+  function hasProp(name : String; def : boolean) : boolean;
+  begin
+    if (props = nil) or (props.Count = 0) then
+      result := def
+    else
+      result := props.Contains(name);
+  end;
 begin
   SetLength(inbounds, 0);
   Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Inbounds := Refs.GetReferences(InboundIndex);
 
-  // descriptions
-  Descriptions := Refs.GetReferences(DescriptionIndex);
-  for i := Low(Descriptions) To High(Descriptions) Do
-  Begin
-    Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, valueses, Flags);
-    if flags and MASK_DESC_STATUS = Flag_Active Then
+  if hasProp('designation', true) then
+  begin
+    // descriptions
+    Descriptions := Refs.GetReferences(DescriptionIndex);
+    for i := Low(Descriptions) To High(Descriptions) Do
     Begin
-      param := params.parameterList.Append;
-      param.name := 'designation';
-      p2 := param.partList.Append;
-      p2.name := 'id';
-      p2.value := TFhirString.Create(IntToStr(Identity));
-      p2 := param.partList.Append;
-      p2.name := 'value';
-      p2.value := TFhirString.Create(Strings.GetEntry(iWork));
-      p2 := param.partList.Append;
-      p2.name := 'type';
-      if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
-        p2.value := TFhirCode.Create(GetPNForConcept(kind))
-      else
-        p2.value := TFhirCode.Create(GetDescType(Flags));
+      Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, valueses, Flags);
+      if flags and MASK_DESC_STATUS = Flag_Active Then
+      Begin
+        d := TFHIRLookupOpDesignation.create;
+        resp.designationList.Add(d);
+        d.value := Strings.GetEntry(iWork);
+        d.use := TFHIRCoding.Create;
+        d.use.system := 'http://snomed.info/sct';
+        if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
+        begin
+          d.use.code := GetConceptId(kind);
+          d.use.display := GetPNForConcept(kind);
+        end
+        else
+        begin
+          d.use.code := '??';
+          d.use.display := GetDescType(Flags);
+        end;
+      End;
     End;
   End;
 
-
-  // parents:
-  if ParentIndex <> 0 Then
+  if hasProp('parent', true) then
   begin
-    Parents := Refs.GetReferences(ParentIndex);
-    for i := 0 to Length(Parents)-1 do
+    // parents:
+    if ParentIndex <> 0 Then
     begin
-      Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
-      Descriptions := Refs.GetReferences(DescriptionIndex);
-      param := params.parameterList.Append;
-      param.name := 'Parent';
-      p2 := param.partList.Append;
-      p2.name := 'Code';
-      p2.value := TFhirString.Create(IntToStr(Identity));
-      p2 := param.partList.Append;
-      p2.name := 'Display';
-      p2.value := TFhirString.Create(GetPN(Descriptions));
+      Parents := Refs.GetReferences(ParentIndex);
+      for i := 0 to Length(Parents)-1 do
+      begin
+        Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
+        Descriptions := Refs.GetReferences(DescriptionIndex);
+        {$IFDEF FHIR_DSTU3}
+        p := TFHIRLookupOpProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'parent';
+        p.value := IntToStr(Identity);
+        p.description := GetPN(Descriptions);
+        {$ELSE}
+        resp.addExtension('parent', IntToStr(Identity));
+        {$ENDIF}
+      end;
     end;
   end;
 
-  // children: (inbound relationships with type is-a)
-  For i := 0 to High(Inbounds) Do
-  Begin
-    Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-    if iWork3 = FIs_a_Index then
-    begin
-      Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
-      Descriptions := Refs.GetReferences(DescriptionIndex);
-      param := params.parameterList.Append;
-      param.name := 'Child';
-      p2 := param.partList.Append;
-      p2.name := 'Code';
-      p2.value := TFhirString.Create(IntToStr(Identity));
-      p2 := param.partList.Append;
-      p2.name := 'Display';
-      p2.value := TFhirString.Create(GetPN(Descriptions));
+  if hasProp('child', true) then
+  begin
+    // children: (inbound relationships with type is-a)
+    For i := 0 to High(Inbounds) Do
+    Begin
+      Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+      if iWork3 = FIs_a_Index then
+      begin
+        Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+        Descriptions := Refs.GetReferences(DescriptionIndex);
+        {$IFDEF FHIR_DSTU3}
+        p := TFHIRLookupOpProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'child';
+        p.value := IntToStr(Identity);
+        p.description := GetPN(Descriptions);
+        {$ELSE}
+        resp.addExtension('child', IntToStr(Identity));
+        {$ENDIF}
+      End;
     End;
   End;
 end;

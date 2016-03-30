@@ -17,7 +17,7 @@ const
   SEARCH_PARAM_NAME_OFFSET = 'search-offset';
   SEARCH_PARAM_NAME_TEXT = '_text';
   SEARCH_PARAM_NAME_COUNT = '_count';
-  SEARCH_PARAM_NAME_SORT = 'search-sort';
+  SEARCH_PARAM_NAME_SORT = '_sort';
   SEARCH_PARAM_NAME_SUMMARY = '_summary';
   SEARCH_PARAM_NAME_FILTER = '_filter';
   SEARCH_PAGE_DEFAULT = 50;
@@ -46,6 +46,7 @@ type
     FSession : TFhirSession;
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
+    FReverse: boolean;
 
     function processValueSetMembership(vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
@@ -98,6 +99,7 @@ type
     property link_ : String read FLink write FLink;
     property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
+    property reverse : boolean read FReverse write FReverse;
   end;
 
 
@@ -187,7 +189,24 @@ begin
     if (ix = nil) then
       Raise Exception.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
     sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'='+ix.Name;
+    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+  end
+  else if params.VarExists(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
+  begin
+    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
+    if (ix = nil) then
+      Raise Exception.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+    sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+  end
+  else if params.VarExists(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
+  begin
+    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
+    if (ix = nil) then
+      Raise Exception.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+    sort :='(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
+    FReverse := true;
   end
   else
   begin

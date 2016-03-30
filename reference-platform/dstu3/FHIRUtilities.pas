@@ -297,11 +297,6 @@ type
     function hasErrors : boolean;
   end;
 
-  TFhirConceptMapElementHelper = class helper (TFhirElementHelper) for TFhirConceptMapElement
-  public
-    function systemObject : TFhirUri;
-    function system : String;
-  end;
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
   public
@@ -418,6 +413,7 @@ type
     property codeSystem : TFhirCodeSystem read GetCodeSystem;
     property system : String read GetSystem;
     function context : string;
+    function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
   end;
 
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
@@ -808,7 +804,7 @@ begin
   else if (value.repeat_.bounds <> nil) and (value.repeat_.bounds is TFhirPeriod) and (TFhirPeriod(value.repeat_.bounds).end_ <> nil) then
     result := asUTCMax(TFhirPeriod(value.repeat_.bounds).end_Element)
   else if (value.repeat_.count <> '') and (value.eventList.Count > 0) and
-    (value.repeat_.frequency <> '') and (value.repeat_.period <> '') and (value.repeat_.periodunits <> UnitsOfTimeNull) then
+    (value.repeat_.frequency <> '') and (value.repeat_.period <> '') and (value.repeat_.periodunit <> UnitsOfTimeNull) then
   begin
     result := MIN_DATE;
     for i := 0 to value.eventList.count - 1 do
@@ -817,17 +813,18 @@ begin
       result := MAX_DATE
     else
     begin
-      case value.repeat_.periodunits of
-        UnitsOfTimeS : duration := DATETIME_SECOND_ONE;
-        UnitsOfTimeMin : duration := DATETIME_MINUTE_ONE;
-        UnitsOfTimeH : duration := DATETIME_HOUR_ONE;
-        UnitsOfTimeD : duration := 1;
-        UnitsOfTimeWk : duration := 7;
-        UnitsOfTimeMo : duration := 30;
-        UnitsOfTimeA : duration := 365 // todo - how to correct for leap years?;
-      else
-        raise exception.create('unknown duration units "'+value.repeat_.periodunitsElement.value+'"');
-      end;
+      //case value.repeat_.periodunit of
+      // ggtodo
+//        UnitsOfTimeS : duration := DATETIME_SECOND_ONE;
+//        UnitsOfTimeMin : duration := DATETIME_MINUTE_ONE;
+//        UnitsOfTimeH : duration := DATETIME_HOUR_ONE;
+//        UnitsOfTimeD : duration := 1;
+//        UnitsOfTimeWk : duration := 7;
+//        UnitsOfTimeMo : duration := 30;
+//        UnitsOfTimeA : duration := 365 // todo - how to correct for leap years?;
+      //else
+      //  raise exception.create('unknown duration units "'+value.repeat_.periodunitsElement.value+'"');
+      //end;
       result := result + (StrToInt(value.repeat_.count) * duration / StrToInt(value.repeat_.frequency));
     end;
   end
@@ -2046,17 +2043,6 @@ begin
   {$ENDIF}
 end;
 
-{ TFhirConceptMapElementHelper }
-
-function TFhirConceptMapElementHelper.systemObject: TFhirUri;
-begin
-  result := codeSystemElement;
-end;
-
-function TFhirConceptMapElementHelper.system: String;
-begin
-  result := codeSystem;
-end;
 
 { TFhirConceptMapHelper }
 
@@ -2945,7 +2931,7 @@ begin
       found := false;
       for e in profile.Snapshot.ElementList do
       begin
-        if (nameReference = e.Name) then
+        if (nameReference = '#'+e.id) then
         begin
           found := true;
           path := e.Path;
@@ -2960,7 +2946,7 @@ begin
     begin
       p := e.Path;
 
-      if (path <> '') and (e.NameReference <> '') and (path.startsWith(p)) then
+      if (path <> '') and (e.ContentReference <> '') and (path.startsWith(p)) then
       begin
         {* The path we are navigating to is on or below this element, but the element defers its definition to another named part of the
          * structure.
@@ -2969,14 +2955,14 @@ begin
         begin
           // The path navigates further into the referenced element, so go ahead along the path over there
           result.free;
-          result := getChildMap(profile, name, e.NameReference+'.'+path.substring(p.length+1), '');
+          result := getChildMap(profile, name, e.ContentReference+'.'+path.substring(p.length+1), '');
           exit;
         end
         else
         begin
           // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
           result.free;
-          result := getChildMap(profile, name, e.NameReference, '');
+          result := getChildMap(profile, name, e.ContentReference, '');
           exit;
         end;
       end
@@ -3299,10 +3285,10 @@ begin
     TFHIRTiming(element).eventList.Append.value := NowLocal;
     TFHIRTiming(element).repeat_ := TFhirTimingRepeat.create;
     TFHIRTiming(element).repeat_.duration := '1';
-    TFHIRTiming(element).repeat_.durationUnits := UnitsOfTimeH;
+// ggtodo    TFHIRTiming(element).repeat_.durationUnit := UnitsOfTimeH;
     TFHIRTiming(element).repeat_.frequency := '3';
     TFHIRTiming(element).repeat_.period := '21';
-    TFHIRTiming(element).repeat_.periodUnits := UnitsOfTimeD;
+// ggtodo        TFHIRTiming(element).repeat_.periodUnit := UnitsOfTimeD;
   end
   else if element.FhirType = 'Reference' then
   begin
@@ -3553,6 +3539,16 @@ end;
 function TFhirCodeSystemHelper.GetSystem: String;
 begin
   result := url;
+end;
+
+function TFhirCodeSystemHelper.isAbstract(concept: TFhirCodeSystemConcept): boolean;
+var
+  p : TFhirCodeSystemConceptProperty;
+begin
+  result := false;
+  for p in concept.property_List do
+    if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      exit(true);
 end;
 
 {$IFDEF FHIR_DSTU3}

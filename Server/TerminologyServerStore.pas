@@ -1692,7 +1692,7 @@ end;
 function TFhirCodeSystemProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   {$IFDEF FHIR_DSTU3}
-  result := false; // todo ggvscs
+  result := FVs.isAbstract(TFhirCodeSystemProviderContext(context).context);
   {$ELSE}
   result := (TFhirCodeSystemProviderContext(context).context.abstractElement <> nil) and TFhirCodeSystemProviderContext(context).context.abstract;
   {$ENDIF}
@@ -1956,7 +1956,7 @@ begin
   for i := 0 to list.Count - 1 do
   begin
     c := list[i];
-    if (c.codeSystem = system) and (c.code = code) then
+    if (c.system = system) and (c.code = code) then
     begin
       maps := c.targetList.Link;
       result := true;

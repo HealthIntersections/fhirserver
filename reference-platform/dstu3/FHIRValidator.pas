@@ -1608,8 +1608,8 @@ begin
       end;
       if (profile <> nil) then
       begin
-        if profile.ConstrainedType <> DefinedTypesNull then
-          type_ := CODES_TFhirDefinedTypesEnum[profile.ConstrainedType]
+        if profile.BaseType <> DefinedTypesNull then
+          type_ := CODES_TFhirDefinedTypesEnum[profile.baseType]
         else
           type_ := profile.name;
 
@@ -1625,7 +1625,7 @@ begin
           end;
         end;
 
-        result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + CODES_TFhirDefinedTypesEnum[profile.ConstrainedType] +
+        result := rule(errors, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + CODES_TFhirDefinedTypesEnum[profile.baseType] +
           '", but resource type was "' + resourceName + '"');
       end;
 
@@ -1953,7 +1953,7 @@ var
 begin
   result := nil;
   for ed in Snapshot.ElementList do
-    if (name = ed.name) then
+    if (name = '#'+ed.id) then
     begin
       result := ed;
       exit;
@@ -2080,7 +2080,7 @@ begin
 
   // get the list of direct defined children, including slices
   children := TAdvList<TElementInfo>.Create();
-  childDefinitions := getChildMap(profile, definition.name, definition.path, definition.NameReference);
+  childDefinitions := getChildMap(profile, definition.name, definition.path, definition.ContentReference);
   try
 
     // 1. List the children, and remember their exact path (convenience)
@@ -2198,8 +2198,8 @@ begin
             end;
           end;
         end
-        else if (ei.definition.NameReference <> '') then
-          td := resolveNameReference(profile.Snapshot, ei.definition.NameReference);
+        else if (ei.definition.ContentReference <> '') then
+          td := resolveNameReference(profile.Snapshot, ei.definition.ContentReference);
 
         if (t <> '') then
         begin
@@ -2853,10 +2853,6 @@ begin
         ok := true;
     result := rule(errors, IssueTypeSTRUCTURE, element.locStart(), element.locEnd(), stack.literalPath, ok,
       'The extension ' + extUrl + ' is not allowed to be used with the extension "' + extensionParent + '"');
-  end
-  else if (definition.ContextType = ExtensionContextMAPPING) then
-  begin
-    raise Exception.Create('Not handled yet (extensionContext)');
   end
   else if (definition.ContextType = ExtensionContextRESOURCE) then
   begin
@@ -4263,7 +4259,7 @@ var
   pn : String;
 begin
   if childDefinitions = nil then
-    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.NameReference);
+    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.ContentReference);
   if (childDefinitions.Count = 0) then
   begin
     pn := FTypeProfile;
@@ -4379,7 +4375,7 @@ var
   tail : String;
 begin
   if childDefinitions = nil then
-    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.NameReference);
+    childDefinitions := getChildMap(Fprofile, Fdefinition.name, Fdefinition.path, Fdefinition.ContentReference);
   for ed in childDefinitions do
   begin
     tail := ed.path.Substring(ed.path.LastIndexOf('.')+1);

@@ -16,7 +16,7 @@ Type
     fvs : TFHIRValueSet;
     FId: String;
     function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
-    function findCode(code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
+    function findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
 //    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
     function getName: String;
@@ -143,7 +143,7 @@ end;
 //end;
 //
 
-function TValueSetChecker.findCode(code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
+function TValueSetChecker.findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
 var
   i : integer;
 begin
@@ -154,14 +154,14 @@ begin
     begin
       result := true;
       {$IFDEF FHIR_DSTU3}
-      isabstract := false; // todo ggvscs
+      isabstract := cs.isAbstract(list[i]);
       {$ELSE}
       isabstract := list[i].abstract;
       {$ENDIF}
       displays.Add(list[i].display);
       exit;
     end;
-    if findCode(code, list[i].conceptList, displays, isabstract) then
+    if findCode(cs, code, list[i].conceptList, displays, isabstract) then
     begin
       result := true;
       exit;
@@ -227,7 +227,7 @@ begin
     {$IFDEF FHIR_DSTU2}
     if (fvs.codeSystem <> nil) and ((system = fvs.codeSystem.system) or (system = SYSTEM_NOT_APPLICABLE)) then
     begin
-      result := FindCode(code, fvs.codeSystem.conceptList, displays, isabstract);
+      result := FindCode(fvs, code, fvs.codeSystem.conceptList, displays, isabstract);
       if result then
       begin
         result := abstractOk or not isabstract;

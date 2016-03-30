@@ -270,9 +270,21 @@ type
   end;
 
   TFhirConceptMapElementHelper = class helper (TFhirElementHelper) for TFhirConceptMapElement
+  private
+    function getsystem: String;
+    procedure SetSystem(const Value: String);
   public
-    function systemObject : TFhirUri;
-    function system : String;
+    function systemElement : TFhirUri;
+    property system : String read GetSystem write SetSystem;
+  end;
+
+  TFhirConceptMapElementTargetHelper = class helper (TFhirElementHelper) for TFhirConceptMapElementTarget
+  private
+    function getsystem: String;
+    procedure SetSystem(const Value: String);
+  public
+    function systemElement : TFhirUri;
+    property system : String read GetSystem write SetSystem;
   end;
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
@@ -2012,12 +2024,17 @@ end;
 
 { TFhirConceptMapElementHelper }
 
-function TFhirConceptMapElementHelper.systemObject: TFhirUri;
+procedure TFhirConceptMapElementHelper.SetSystem(const Value: String);
+begin
+  codeSystem := value;
+end;
+
+function TFhirConceptMapElementHelper.systemElement: TFhirUri;
 begin
   result := codeSystemElement;
 end;
 
-function TFhirConceptMapElementHelper.system: String;
+function TFhirConceptMapElementHelper.getsystem: String;
 begin
   result := codeSystem;
 end;
@@ -3589,6 +3606,23 @@ begin
     o.field := name;
     o.value := value;
   end;
+end;
+
+{ TFhirConceptMapElementTargetHelper }
+
+function TFhirConceptMapElementTargetHelper.getsystem: String;
+begin
+  result := codeSystem;
+end;
+
+procedure TFhirConceptMapElementTargetHelper.SetSystem(const Value: String);
+begin
+  codeSystem := value;
+end;
+
+function TFhirConceptMapElementTargetHelper.systemElement: TFhirUri;
+begin
+  result := codeSystemElement;
 end;
 
 end.

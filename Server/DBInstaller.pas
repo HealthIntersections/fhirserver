@@ -40,7 +40,8 @@ uses
 const
 //  ServerDBVersion = 3;
 //  ServerDBVersion = 4; // added secure flag in versions table
-  ServerDBVersion = 5; // added scores to search entries table
+//  ServerDBVersion = 5; // added scores to search entries table
+  ServerDBVersion = 6; // added reverse to search entries table
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -432,6 +433,7 @@ Begin
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Count int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Summary int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Reverse int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Date '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Type int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Title '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -869,6 +871,8 @@ begin
     Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score1 int NULL');
     Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score2 int NULL');
   end;
+  if version < 6 then
+    Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse int NULL');
   Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 

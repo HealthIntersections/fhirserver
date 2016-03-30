@@ -743,13 +743,13 @@ begin
     begin
       p := e.path;
 
-      if (e.nameReference <> '') and path.startsWith(p) then
+      if (e.contentReference <> '') and path.startsWith(p) then
       begin
         result.Free;
         if (path.length > p.length) then
-          result := getChildList(profile, e.NameReference+'.'+path.substring(p.length+1))
+          result := getChildList(profile, e.contentReference+'.'+path.substring(p.length+1))
         else
-          result := getChildList(profile, e.NameReference);
+          result := getChildList(profile, e.contentReference);
       end
       else if p.startsWith(path+'.') and (p <> path) then
       begin

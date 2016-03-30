@@ -61,6 +61,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function Link : TMimeMessage; overload;
     property Parts : TAdvList<TMimePart> read FParts;
     function AddPart(id: String) : TMimePart;
     property MainPart : TMimePart read GetMainPart;
@@ -229,6 +230,7 @@ var
   LComp0 : Pointer;
   LComp1 : Pointer;
   LCompLen : Word;
+  offset : cardinal;
   b : TBytes;
 const
   BUF_LEN = 1024;
@@ -252,9 +254,9 @@ begin
       begin
       if LEnd = BUF_LEN-1 then
         begin
-        SetLength(b, LEnd - LCompLen);
-        move(LBuffer^, b[0], LEnd - LCompLen);
-        FContent.AsBytes := b;
+        offset := length(b);
+        SetLength(b, offset + LEnd - LCompLen);
+        move(LBuffer^, b[offset], LEnd - LCompLen);
         move(LBuffer[LEnd - LCompLen], LBuffer[0], LCompLen);
         LEnd := LCompLen;
         FillChar(LBuffer[LEnd], BUF_LEN - LEnd, 0);
@@ -267,8 +269,10 @@ begin
       LComp0 := pointer(NativeUInt(LBuffer)+LEnd-LCompLen);
       if (LEnd >= LCompLen) and CompareMem(LComp0, LComp1, LCompLen) then
         begin
-        SetLength(b, LEnd - (LCompLen + 2 + 2));// -2 for the EOL, +2 for the other EOL
-        move(LBuffer^, b[0], LEnd - (LCompLen + 2 + 2));
+        offset := length(b);
+        SetLength(b, offset + LEnd - (LCompLen + 2 + 2));// -2 for the EOL, +2 for the other EOL
+        if (length(b) > offset) then
+          move(LBuffer^, b[offset], LEnd - (LCompLen + 2 + 2));
         FContent.AsBytes := b;
         break;
         end;
@@ -563,6 +567,11 @@ begin
   result := false;
   for i := 0 to Parts.Count - 1 do
     result := result or (Parts[i].ParamName = name);
+end;
+
+function TMimeMessage.Link: TMimeMessage;
+begin
+  result := TMimeMessage(inherited Link);
 end;
 
 procedure TMimeMessage.ReadFromStream(AStream: TStream; AContentType: String);

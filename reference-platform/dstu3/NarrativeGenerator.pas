@@ -1151,13 +1151,13 @@ begin
   for i := 0  to elements.Count - 1 do
   begin
     e := elements[i];
-    if (e.Path = path) and (e.NameReference <> '') then
+    if (e.Path = path) and (e.ContentReference <> '') then
     begin
-      name := e.NameReference;
+      name := e.ContentReference;
       t := nil;
       // now, resolve the name
       for j := 0 to elements.Count - 1 do
-        if name = elements[j].name then
+        if name = '#'+elements[j].id then
           t := elements[j];
       if (t <> nil) then
         raise Exception.create('Unable to resolve name reference '+name+' trying to resolve '+path);

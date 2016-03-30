@@ -507,9 +507,9 @@ public class ElementDefn {
     summaryItem = ed.getIsSummary();
     xmlAttribute = ed.getRepresentation().size() > 0;
  
-    if (ed.hasNameReference()) {
+    if (ed.hasContentReference()) {
       TypeRef tr = new TypeRef();
-      org.hl7.fhir.dstu3.model.ElementDefinition edr = getElementDefinitionByName(sd, ed.getNameReference());
+      org.hl7.fhir.dstu3.model.ElementDefinition edr = getElementDefinitionByName(sd, ed.getContentReference());
       tr.setName("@"+edr.getPath());
       types.add(tr);
     } else {
@@ -593,7 +593,7 @@ public class ElementDefn {
 
   private ElementDefinition getElementDefinitionByName(StructureDefinition sd, String name) {
     for (ElementDefinition t : sd.getDifferential().getElement()) {
-      if (name.equals(t.getName()))
+      if (name.equals("#"+t.getId()))
         return t;
     }
     return null;
@@ -601,7 +601,7 @@ public class ElementDefn {
 
   private org.hl7.fhir.dstu3.model.ElementDefinition getElementDefinitionByName(org.hl7.fhir.dstu3.model.StructureDefinition sd, String name) {
     for (org.hl7.fhir.dstu3.model.ElementDefinition t : sd.getDifferential().getElement()) {
-      if (name.equals(t.getName()))
+      if (name.equals("#"+t.getId()))
         return t;
     }
     return null;

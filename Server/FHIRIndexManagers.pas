@@ -319,7 +319,11 @@ Type
     procedure BuildIndexesSequence;
     procedure BuildIndexesCompartmentDefinition;
     procedure BuildIndexesMeasureReport;
+    procedure BuildIndexesCareTeam;
+    procedure BuildIndexesTask;
     procedure BuildIndexesStructureMap;
+    procedure BuildIndexesPractitionerRole;
+    procedure BuildIndexesImagingExcerpt;
     {$ENDIF}
 
   public
@@ -529,6 +533,10 @@ Type
     procedure BuildIndexValuesCompartmentDefinition(key : integer; id : string; context : TFhirResource; resource : TFhirCompartmentDefinition);
     procedure BuildIndexValuesStructureMap(key : integer; id : string; context : TFhirResource; resource : TFhirStructureMap);
     procedure BuildIndexValuesMeasureReport(key : integer; id : string; context : TFhirResource; resource : TFhirMeasureReport);
+    procedure BuildIndexValuesCareTeam(key : integer; id : string; context : TFhirResource; resource : TFhirCareTeam);
+    procedure BuildIndexValuesTask(key : integer; id : string; context : TFhirResource; resource : TFhirTask);
+    procedure BuildIndexValuesPractitionerRole(key : integer; id : string; context : TFhirResource; resource : TFhirPractitionerRole);
+    procedure BuildIndexValuesImagingExcerpt(key : integer; id : string; context : TFhirResource; resource : TFhirImagingExcerpt);
     {$ENDIF}
 
     procedure BuildIndexValuesImplementationGuide(key : integer; id : string; context : TFhirResource; resource : TFhirImplementationGuide);
@@ -913,7 +921,11 @@ begin
     frtSequence : buildIndexValuesSequence(key, id, context, TFHIRSequence(resource));
     frtCompartmentDefinition : buildIndexValuesCompartmentDefinition(key, id, context, TFHIRCompartmentDefinition(resource));
     frtMeasureReport : buildIndexValuesMeasureReport(key, id, context, TFHIRMeasureReport(resource));
+    frtCareTeam : buildIndexValuesCareTeam(key, id, context, TFHIRCareTeam(resource));
+    frtTask : buildIndexValuesTask(key, id, context, TFHIRTask(resource));
     frtStructureMap : buildIndexValuesStructureMap(key, id, context, TFHIRStructureMap(resource));
+    frtPractitionerRole : buildIndexValuesPractitionerRole(key, id, context, TFHIRPractitionerRole(resource));
+    frtImagingExcerpt : buildIndexValuesImagingExcerpt(key, id, context, TFHIRImagingExcerpt(resource));
     {$ENDIF}
 
   else
@@ -1900,37 +1912,37 @@ procedure TFhirIndexManager.buildIndexValuesEncounter(key: integer; id : String;
 var
   i : integer;
 begin
-  index(context, frtEncounter, key, 0, resource.patient, 'patient');
-  index(frtEncounter, key, 0, resource.type_List, 'type');
+  index(context, frtEncounter, key, 0, resource.patient, CODES_TSearchParamsEncounter[spEncounter_patient]);
+  index(frtEncounter, key, 0, resource.type_List, CODES_TSearchParamsEncounter[spEncounter_type]);
   for i := 0 to resource.participantList.count - 1 do
   begin
-    index(context, frtEncounter, key, 0, resource.participantList[i].individual, 'participant');
-    index(context, frtEncounter, key, 0, resource.participantList[i].individual, 'practitioner', frtPractitioner);
-    index(frtEncounter, key, 0, resource.participantList[i].type_List, 'participant-type');
+    index(context, frtEncounter, key, 0, resource.participantList[i].individual, CODES_TSearchParamsEncounter[spEncounter_participant]);
+    index(context, frtEncounter, key, 0, resource.participantList[i].individual, CODES_TSearchParamsEncounter[spEncounter_practitioner], frtPractitioner);
+    index(frtEncounter, key, 0, resource.participantList[i].type_List, CODES_TSearchParamsEncounter[spEncounter_participanttype]);
   end;
-  index(context, frtEncounter, key, 0, resource.partOf, 'part-of');
-  index(frtEncounter, key, 0, resource.reasonList, 'reason');
-  index(context, frtEncounter, key, 0, resource.appointment, 'appointment');
-  index(context, frtEncounter, key, 0, resource.incomingReferralList, 'incomingreferral');
-  index(context, frtEncounter, key, 0, resource.episodeOfCareList, 'episodeofcare');
-  index(context, frtEncounter, key, 0, resource.indicationList, 'indication');
-  index(context, frtEncounter, key, 0, resource.indicationList, 'condition', frtCondition);
-  index(context, frtEncounter, key, 0, resource.indicationList, 'procedure', frtProcedure);
+  index(context, frtEncounter, key, 0, resource.partOf, CODES_TSearchParamsEncounter[spEncounter_partof]);
+  index(frtEncounter, key, 0, resource.reasonList, CODES_TSearchParamsEncounter[spEncounter_reason]);
+  index(context, frtEncounter, key, 0, resource.appointment, CODES_TSearchParamsEncounter[spEncounter_appointment]);
+  index(context, frtEncounter, key, 0, resource.incomingReferralList, CODES_TSearchParamsEncounter[spEncounter_incomingreferral]);
+  index(context, frtEncounter, key, 0, resource.episodeOfCareList, CODES_TSearchParamsEncounter[spEncounter_episodeofcare]);
+  index(context, frtEncounter, key, 0, resource.indicationList, CODES_TSearchParamsEncounter[spEncounter_indication]);
+  index(context, frtEncounter, key, 0, resource.indicationList, CODES_TSearchParamsEncounter[spEncounter_condition], frtCondition);
+  index(context, frtEncounter, key, 0, resource.indicationList, CODES_TSearchParamsEncounter[spEncounter_procedure], frtProcedure);
 
   if resource.hospitalization <> nil then
-    index(frtEncounter, key, 0, resource.hospitalization.specialArrangementList, 'special-arrangement');
+    index(frtEncounter, key, 0, resource.hospitalization.specialArrangementList, CODES_TSearchParamsEncounter[spEncounter_specialarrangement]);
   patientCompartment(key, resource.patient);
   for i := 0 to resource.indicationList.count - 1 do
-    index(context, frtEncounter, key, 0, resource.indicationList[i], 'indication');
-  index(frtEncounter, key, 0, resource.statusElement, 'status');
-  index(frtEncounter, key, 0, resource.periodElement, 'date');
-  index(frtEncounter, key, 0, resource.lengthElement, 'length');
+    index(context, frtEncounter, key, 0, resource.indicationList[i], CODES_TSearchParamsEncounter[spEncounter_indication]);
+  index(frtEncounter, key, 0, resource.statusElement, CODES_TSearchParamsEncounter[spEncounter_status]);
+  index(frtEncounter, key, 0, resource.periodElement, CODES_TSearchParamsEncounter[spEncounter_date]);
+  index(frtEncounter, key, 0, resource.lengthElement, CODES_TSearchParamsEncounter[spEncounter_length]);
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtEncounter, key, 0, resource.identifierList[i], 'identifier');
+    index(frtEncounter, key, 0, resource.identifierList[i], CODES_TSearchParamsEncounter[spEncounter_identifier]);
   for i := 0 to resource.locationList.count - 1 do
   begin
-    index(context, frtEncounter, key, 0, resource.locationList[i].locationElement, 'location');
-    index(frtEncounter, key, 0, resource.locationList[i].periodElement, 'location-period');
+    index(context, frtEncounter, key, 0, resource.locationList[i].locationElement, CODES_TSearchParamsEncounter[spEncounter_location]);
+    index(frtEncounter, key, 0, resource.locationList[i].periodElement, CODES_TSearchParamsEncounter[spEncounter_locationperiod]);
   end;
 end;
 
@@ -1957,18 +1969,18 @@ var
   i : integer;
 
 begin
-  index(frtLocation, key, 0, resource.addressElement, 'address');
-  index(frtLocation, key, 0, resource.NameElement, 'name');
-  index(frtLocation, key, 0, resource.statusElement, 'status');
-  index(frtLocation, key, 0, resource.type_Element, 'type');
+  index(frtLocation, key, 0, resource.addressElement, CODES_TSearchParamsLocation[spLocation_address]);
+  index(frtLocation, key, 0, resource.NameElement, CODES_TSearchParamsLocation[spLocation_name]);
+  index(frtLocation, key, 0, resource.statusElement, CODES_TSearchParamsLocation[spLocation_status]);
+  index(frtLocation, key, 0, resource.type_Element, CODES_TSearchParamsLocation[spLocation_type]);
   for i := 0 to resource.identifierList.Count - 1 do
-    index(frtLocation, key, 0, resource.identifierList, 'identifier');
-  index(context, frtLocation, key, 0, resource.managingOrganizationElement, 'organization');
-  index(context, frtLocation, key, 0, resource.partOf, 'partof');
+    index(frtLocation, key, 0, resource.identifierList, CODES_TSearchParamsLocation[spLocation_identifier]);
+  index(context, frtLocation, key, 0, resource.managingOrganizationElement, CODES_TSearchParamsLocation[spLocation_organization]);
+  index(context, frtLocation, key, 0, resource.partOf, CODES_TSearchParamsLocation[spLocation_partof]);
   if resource.position <> nil then
   begin
     if (resource.position.longitude <> '') and (resource.position.latitude <> '') then
-      index(frtLocation, key, 0, resource.position.longitude, resource.position.latitude, 'near');
+      index(frtLocation, key, 0, resource.position.longitude, resource.position.latitude, CODES_TSearchParamsLocation[spLocation_near]);
   end
 //    spLocation_Near_distance, {@enum.value spLocation_Near_distance A distance quantity to limit the near search to locations within a specific distance }
 end;
@@ -2001,53 +2013,53 @@ procedure TFhirIndexManager.BuildIndexValuesDocumentReference(key: integer;id : 
 var
   i, p : integer;
 begin
-  index(context, frtDocumentReference, key, 0, resource.authenticator, 'authenticator');
+  index(context, frtDocumentReference, key, 0, resource.authenticator, CODES_TSearchParamsDocumentReference[spDocumentReference_authenticator]);
   for i := 0 to resource.authorList.count - 1 do
-    index(context, frtDocumentReference, key, 0, resource.authorList[i], 'author');
-  index(frtDocumentReference, key, 0, resource.securityLabelList, 'securitylabel');
-  index(frtDocumentReference, key, 0, resource.createdElement, 'created');
-  index(context, frtDocumentReference, key, 0, resource.custodian, 'custodian');
-  index(frtDocumentReference, key, 0, resource.descriptionElement, 'description');
+    index(context, frtDocumentReference, key, 0, resource.authorList[i], CODES_TSearchParamsDocumentReference[spDocumentReference_author]);
+  index(frtDocumentReference, key, 0, resource.securityLabelList, CODES_TSearchParamsDocumentReference[spDocumentReference_securitylabel]);
+  index(frtDocumentReference, key, 0, resource.createdElement, CODES_TSearchParamsDocumentReference[spDocumentReference_created]);
+  index(context, frtDocumentReference, key, 0, resource.custodian, CODES_TSearchParamsDocumentReference[spDocumentReference_custodian]);
+  index(frtDocumentReference, key, 0, resource.descriptionElement, CODES_TSearchParamsDocumentReference[spDocumentReference_description]);
   if resource.context <> nil then
   begin
     for i := 0 to resource.context.eventList.count - 1 do
-      index(frtDocumentReference, key, 0, resource.context.eventList[i], 'event');
-    index(frtDocumentReference, key, 0, resource.context.facilityType, 'facility');
-    index(frtDocumentReference, key, 0, resource.context.period, 'period');
+      index(frtDocumentReference, key, 0, resource.context.eventList[i], CODES_TSearchParamsDocumentReference[spDocumentReference_event]);
+    index(frtDocumentReference, key, 0, resource.context.facilityType, CODES_TSearchParamsDocumentReference[spDocumentReference_facility]);
+    index(frtDocumentReference, key, 0, resource.context.period, CODES_TSearchParamsDocumentReference[spDocumentReference_period]);
 
-    index(frtDocumentReference, key, 0, resource.context.practiceSetting, 'setting');
+    index(frtDocumentReference, key, 0, resource.context.practiceSetting, CODES_TSearchParamsDocumentReference[spDocumentReference_setting]);
     for i := 0 to resource.context.relatedList.Count - 1 do
     begin
-      index(frtDocumentReference, key, 0, resource.context.relatedList[i].identifier, 'related-id');
-      index(context, frtDocumentReference, key, 0, resource.context.relatedList[i].ref, 'related-ref');
+      index(frtDocumentReference, key, 0, resource.context.relatedList[i].identifier, CODES_TSearchParamsDocumentReference[spDocumentReference_relatedid]);
+      index(context, frtDocumentReference, key, 0, resource.context.relatedList[i].ref, CODES_TSearchParamsDocumentReference[spDocumentReference_relatedref]);
     end;
-  index(context, frtDocumentReference, key, 0, resource.context.encounter, 'encounter');
+  index(context, frtDocumentReference, key, 0, resource.context.encounter, CODES_TSearchParamsDocumentReference[spDocumentReference_encounter]);
   end;
   for i := 0 to resource.contentList.count - 1 do
     for p := 0 to resource.contentList[i].formatList.count - 1 do
-      index(frtDocumentReference, key, 0, resource.contentList[i].formatList[p], 'format');
-  index(frtDocumentReference, key, 0, resource.masterIdentifier, 'identifier');
+      index(frtDocumentReference, key, 0, resource.contentList[i].formatList[p], CODES_TSearchParamsDocumentReference[spDocumentReference_format]);
+  index(frtDocumentReference, key, 0, resource.masterIdentifier, CODES_TSearchParamsDocumentReference[spDocumentReference_identifier]);
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtDocumentReference, key, 0, resource.identifierList[i], 'identifier');
-  index(frtDocumentReference, key, 0, resource.indexedElement, 'indexed');
-  index(frtDocumentReference, key, 0, resource.statusElement, 'status');
-  index(context, frtDocumentReference, key, 0, resource.subject, 'subject');
-  index(context, frtDocumentReference, key, 0, resource.subject, 'patient');
+    index(frtDocumentReference, key, 0, resource.identifierList[i], CODES_TSearchParamsDocumentReference[spDocumentReference_identifier]);
+  index(frtDocumentReference, key, 0, resource.indexedElement, CODES_TSearchParamsDocumentReference[spDocumentReference_indexed]);
+  index(frtDocumentReference, key, 0, resource.statusElement, CODES_TSearchParamsDocumentReference[spDocumentReference_status]);
+  index(context, frtDocumentReference, key, 0, resource.subject, CODES_TSearchParamsDocumentReference[spDocumentReference_subject]);
+  index(context, frtDocumentReference, key, 0, resource.subject, CODES_TSearchParamsDocumentReference[spDocumentReference_patient]);
   patientCompartment(key, resource.subject);
   for i := 0 to resource.relatesToList.Count - 1 do
   begin
-    p := index(frtDocumentReference, key, 0, 'relatesTo');
-    index(context, frtDocumentReference, key, p, resource.relatesToList[i].target, 'relatesTo');
-    index(frtDocumentReference, key, p, resource.relatesToList[i].codeElement, 'relation');
+    p := index(frtDocumentReference, key, 0, CODES_TSearchParamsDocumentReference[spDocumentReference_relatesTo]);
+    index(context, frtDocumentReference, key, p, resource.relatesToList[i].target, CODES_TSearchParamsDocumentReference[spDocumentReference_relatesTo]);
+    index(frtDocumentReference, key, p, resource.relatesToList[i].codeElement, CODES_TSearchParamsDocumentReference[spDocumentReference_relation]);
   end;
-  index(frtDocumentReference, key, 0, resource.type_, 'type');
-  index(frtDocumentReference, key, 0, resource.class_, 'class');
+  index(frtDocumentReference, key, 0, resource.type_, CODES_TSearchParamsDocumentReference[spDocumentReference_type]);
+  index(frtDocumentReference, key, 0, resource.class_, CODES_TSearchParamsDocumentReference[spDocumentReference_class]);
   for i := 0 to resource.contentList.Count - 1 do
   begin
     if (resource.contentList[i].attachment <> nil) then
     begin
-      index(frtDocumentReference, key, 0, resource.contentList[i].attachment.languageElement, 'language');
-      index(frtDocumentReference, key, 0, resource.contentList[i].attachment.urlElement, 'location');
+      index(frtDocumentReference, key, 0, resource.contentList[i].attachment.languageElement, CODES_TSearchParamsDocumentReference[spDocumentReference_language]);
+      index(frtDocumentReference, key, 0, resource.contentList[i].attachment.urlElement, CODES_TSearchParamsDocumentReference[spDocumentReference_location]);
     end;
   end;
 end;
@@ -2072,30 +2084,30 @@ var
   i : integer;
 begin
   for i := 0 to resource.authorList.count - 1 do
-    index(context, frtDocumentManifest, key, 0, resource.authorList[i], 'author');
+    index(context, frtDocumentManifest, key, 0, resource.authorList[i], CODES_TSearchParamsDocumentManifest[spDocumentManifest_author]);
 
-  index(frtDocumentManifest, key, 0, resource.createdElement, 'created');
-  index(frtDocumentManifest, key, 0, resource.descriptionElement, 'description');
-  index(frtDocumentManifest, key, 0, resource.masterIdentifier, 'identifier');
+  index(frtDocumentManifest, key, 0, resource.createdElement, CODES_TSearchParamsDocumentManifest[spDocumentManifest_created]);
+  index(frtDocumentManifest, key, 0, resource.descriptionElement, CODES_TSearchParamsDocumentManifest[spDocumentManifest_description]);
+  index(frtDocumentManifest, key, 0, resource.masterIdentifier, CODES_TSearchParamsDocumentManifest[spDocumentManifest_identifier]);
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtDocumentManifest, key, 0, resource.identifierList[i], 'identifier');
-  index(frtDocumentManifest, key, 0, resource.statusElement, 'status');
-  index(context, frtDocumentManifest, key, 0, resource.subject, 'subject');
-  index(context, frtDocumentManifest, key, 0, resource.subject, 'patient');
-  index(frtDocumentManifest, key, 0, resource.sourceElement, 'source');
+    index(frtDocumentManifest, key, 0, resource.identifierList[i], CODES_TSearchParamsDocumentManifest[spDocumentManifest_identifier]);
+  index(frtDocumentManifest, key, 0, resource.statusElement, CODES_TSearchParamsDocumentManifest[spDocumentManifest_status]);
+  index(context, frtDocumentManifest, key, 0, resource.subject, CODES_TSearchParamsDocumentManifest[spDocumentManifest_subject]);
+  index(context, frtDocumentManifest, key, 0, resource.subject, CODES_TSearchParamsDocumentManifest[spDocumentManifest_patient]);
+  index(frtDocumentManifest, key, 0, resource.sourceElement, CODES_TSearchParamsDocumentManifest[spDocumentManifest_source]);
   for i := 0 to resource.contentList.count - 1 do
     if resource.contentList[i].p is TFhirReference then
-      index(context, frtDocumentManifest, key, 0, resource.contentList[i].p as TFhirReference, 'content-ref');
+      index(context, frtDocumentManifest, key, 0, resource.contentList[i].p as TFhirReference, CODES_TSearchParamsDocumentManifest[spDocumentManifest_contentref]);
 
-  index(frtDocumentManifest, key, 0, resource.type_, 'type');
+  index(frtDocumentManifest, key, 0, resource.type_, CODES_TSearchParamsDocumentManifest[spDocumentManifest_type]);
   for i := 0 to resource.recipientList.count - 1 do
-    index(context, frtDocumentManifest, key, 0, resource.recipientList[i], 'recipient');
+    index(context, frtDocumentManifest, key, 0, resource.recipientList[i], CODES_TSearchParamsDocumentManifest[spDocumentManifest_recipient]);
 
 
   for i := 0 to resource.relatedList.Count - 1 do
   begin
-    index(frtDocumentManifest, key, 0, resource.relatedList[i].identifier, 'related-id');
-    index(context, frtDocumentManifest, key, 0, resource.relatedList[i].ref, 'related-ref');
+    index(frtDocumentManifest, key, 0, resource.relatedList[i].identifier, CODES_TSearchParamsDocumentManifest[spDocumentManifest_relatedid]);
+    index(context, frtDocumentManifest, key, 0, resource.relatedList[i].ref, CODES_TSearchParamsDocumentManifest[spDocumentManifest_relatedref]);
   end;
 end;
 
@@ -2147,7 +2159,7 @@ var
   name : String;
   ndx : TFhirIndex;
 begin
-  index(frtBundle, key, 0, resource.type_Element, 'type');
+  index(frtBundle, key, 0, resource.type_Element, CODES_TSearchParamsBundle[spBundle_type]);
   if (resource.type_ = BundleTypeDocument) then
   begin
     name := 'composition';
@@ -2205,10 +2217,10 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesFlag(key: integer; id : String; context : TFhirResource; resource: TFhirFlag);
 begin
-  index(context, frtFlag, key, 0, resource.subject, 'subject');
-  index(context, frtFlag, key, 0, resource.subject, 'patient', frtPatient);
-  index(context, frtFlag, key, 0, resource.author, 'author');
-  index(frtFlag, key, 0, resource.period, 'date');
+  index(context, frtFlag, key, 0, resource.subject, CODES_TSearchParamsFlag[spFlag_subject]);
+  index(context, frtFlag, key, 0, resource.subject, CODES_TSearchParamsFlag[spFlag_patient], frtPatient);
+  index(context, frtFlag, key, 0, resource.author, CODES_TSearchParamsFlag[spFlag_author]);
+  index(frtFlag, key, 0, resource.period, CODES_TSearchParamsFlag[spFlag_date]);
   patientCompartment(key, resource.subject);
   practitionerCompartment(key, resource.author);
   deviceCompartment(key, resource.subject);
@@ -2235,25 +2247,25 @@ procedure TFhirIndexManager.buildIndexValuesAllergyIntolerance(key: integer; id 
 var
   i : integer;
 begin
-  index(frtAllergyIntolerance, key, 0, resource.categoryElement, 'category');
-  index(frtAllergyIntolerance, key, 0, resource.criticalityElement, 'criticality');
-  index(frtAllergyIntolerance, key, 0, resource.recordedDateElement, 'date');
-  index(frtAllergyIntolerance, key, 0, resource.identifierList, 'identifier');
-  index(context, frtAllergyIntolerance, key, 0, resource.recorderElement, 'recorder');
-  index(context, frtAllergyIntolerance, key, 0, resource.reporterElement, 'reporter');
-  index(frtAllergyIntolerance, key, 0, resource.lastOccurenceElement, 'last-date');
-  index(frtAllergyIntolerance, key, 0, resource.statusElement, 'status');
-  index(frtAllergyIntolerance, key, 0, resource.type_Element, 'type');
-  index(context, frtAllergyIntolerance, key, 0, resource.patient, 'patient');
-  index(frtAllergyIntolerance, key, 0, resource.substanceElement, 'substance');
+  index(frtAllergyIntolerance, key, 0, resource.categoryElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_category]);
+  index(frtAllergyIntolerance, key, 0, resource.criticalityElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_criticality]);
+  index(frtAllergyIntolerance, key, 0, resource.recordedDateElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_date]);
+  index(frtAllergyIntolerance, key, 0, resource.identifierList, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_identifier]);
+  index(context, frtAllergyIntolerance, key, 0, resource.recorderElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_recorder]);
+  index(context, frtAllergyIntolerance, key, 0, resource.reporterElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_reporter]);
+  index(frtAllergyIntolerance, key, 0, resource.lastOccurenceElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_lastdate]);
+  index(frtAllergyIntolerance, key, 0, resource.statusElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_status]);
+  index(frtAllergyIntolerance, key, 0, resource.type_Element, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_type]);
+  index(context, frtAllergyIntolerance, key, 0, resource.patient, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_patient]);
+  index(frtAllergyIntolerance, key, 0, resource.substanceElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_substance]);
 
   for i := 0 to resource.reactionList.Count - 1 do
   begin
-    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].substanceElement, 'substance');
-    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].onsetElement, 'onset');
-    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].exposureRouteElement, 'route');
-    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].manifestationList, 'manifestation');
-    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].severityElement, 'severity');
+    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].substanceElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_substance]);
+    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].onsetElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_onset]);
+    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].exposureRouteElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_route]);
+    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].manifestationList, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_manifestation]);
+    index(frtAllergyIntolerance, key, 0, resource.reactionList[i].severityElement, CODES_TSearchParamsAllergyIntolerance[spAllergyIntolerance_severity]);
   end;
   patientCompartment(key, resource.patient);
   practitionerCompartment(key, resource.recorder);
@@ -2283,15 +2295,15 @@ procedure TFhirIndexManager.buildIndexValuesSubstance(key: integer; id : String;
 var
   i : integer;
 begin
-  index(frtSubstance, key, 0, resource.categoryList, 'category');
-  index(frtSubstance, key, 0, resource.code, 'code');
-  index(frtSubstance, key, 0, resource.identifierList, 'identifier');
+  index(frtSubstance, key, 0, resource.categoryList, CODES_TSearchParamsSubstance[spSubstance_category]);
+  index(frtSubstance, key, 0, resource.code, CODES_TSearchParamsSubstance[spSubstance_code]);
+  index(frtSubstance, key, 0, resource.identifierList, CODES_TSearchParamsSubstance[spSubstance_identifier]);
   for i := 0 to resource.instanceList.Count - 1 do
-    index(frtSubstance, key, 0, resource.instanceList[i].expiryElement, 'expiry');
+    index(frtSubstance, key, 0, resource.instanceList[i].expiryElement, CODES_TSearchParamsSubstance[spSubstance_expiry]);
   for i := 0 to resource.ingredientList.count - 1 do
   begin
-    index(frtSubstance, key, 0, resource.ingredientList[i].quantity, 'quantity');
-    index(context, frtSubstance, key, 0, resource.ingredientList[i].substance, 'substance');
+    index(frtSubstance, key, 0, resource.ingredientList[i].quantity, CODES_TSearchParamsSubstance[spSubstance_quantity]);
+    index(context, frtSubstance, key, 0, resource.ingredientList[i].substance, CODES_TSearchParamsSubstance[spSubstance_substance]);
   end;
 end;
 
@@ -2333,12 +2345,12 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesBasic(key: integer; id : String; context : TFhirResource; resource: TFhirBasic);
 begin
-  index(frtBasic, key, 0, resource.createdElement, 'created');
-  index(frtBasic, key, 0, resource.code, 'code');
-  index(context, frtBasic, key, 0, resource.subject, 'subject');
-  index(context, frtBasic, key, 0, resource.subject, 'patient');
-  index(context, frtBasic, key, 0, resource.author, 'author');
-  index(frtBasic, key, 0, resource.identifierList, 'identifier');
+  index(frtBasic, key, 0, resource.createdElement, CODES_TSearchParamsBasic[spBasic_created]);
+  index(frtBasic, key, 0, resource.code, CODES_TSearchParamsBasic[spBasic_code]);
+  index(context, frtBasic, key, 0, resource.subject, CODES_TSearchParamsBasic[spBasic_subject]);
+  index(context, frtBasic, key, 0, resource.subject, CODES_TSearchParamsBasic[spBasic_patient]);
+  index(context, frtBasic, key, 0, resource.author, CODES_TSearchParamsBasic[spBasic_author]);
+  index(frtBasic, key, 0, resource.identifierList, CODES_TSearchParamsBasic[spBasic_identifier]);
   patientCompartment(key, resource.subject);
   relatedPersonCompartment(key, resource.author);
   practitionerCompartment(key, resource.author);
@@ -2363,11 +2375,11 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesClaim(key: integer; id : String; context : TFhirResource; resource: TFhirClaim);
 begin
-  index(frtClaim, key, 0, resource.identifierList, 'identifier');
-  index(frtClaim, key, 0, resource.priorityElement, 'priority');
-  index(frtClaim, key, 0, resource.useElement, 'use');
-  index(context, frtClaim, key, 0, resource.patientElement, 'patient');
-  index(context, frtClaim, key, 0, resource.provider, 'provider');
+  index(frtClaim, key, 0, resource.identifierList, CODES_TSearchParamsClaim[spClaim_identifier]);
+  index(frtClaim, key, 0, resource.priorityElement, CODES_TSearchParamsClaim[spClaim_priority]);
+  index(frtClaim, key, 0, resource.useElement, CODES_TSearchParamsClaim[spClaim_use]);
+  index(context, frtClaim, key, 0, resource.patientElement, CODES_TSearchParamsClaim[spClaim_patient]);
+  index(context, frtClaim, key, 0, resource.provider, CODES_TSearchParamsClaim[spClaim_provider]);
   patientCompartment(key, resource.patient);
 end;
 
@@ -2389,15 +2401,15 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesCoverage(key: integer; id : String; context : TFhirResource; resource: TFhirCoverage);
 begin
-  index(frtCoverage, key, 0, resource.dependentElement, 'dependent');
-  index(frtCoverage, key, 0, resource.groupElement, 'group');
-  index(frtCoverage, key, 0, resource.identifierList, 'identifier');
-  index(frtCoverage, key, 0, resource.planElement, 'plan');
-  index(frtCoverage, key, 0, resource.sequenceElement, 'sequence');
-  index(frtCoverage, key, 0, resource.subplanElement, 'subplan');
-  index(frtCoverage, key, 0, resource.type_Element, 'type');
-//  index(context, frtCoverage, key, 0, resource.subjectList, 'subject');
-  index(context, frtCoverage, key, 0, resource.issuerElement, 'issuer');
+  index(frtCoverage, key, 0, resource.dependentElement, CODES_TSearchParamsCoverage[spCoverage_dependent]);
+  index(frtCoverage, key, 0, resource.groupElement, CODES_TSearchParamsCoverage[spCoverage_group]);
+  index(frtCoverage, key, 0, resource.identifierList, CODES_TSearchParamsCoverage[spCoverage_identifier]);
+  index(frtCoverage, key, 0, resource.planElement, CODES_TSearchParamsCoverage[spCoverage_plan]);
+  index(frtCoverage, key, 0, resource.sequenceElement, CODES_TSearchParamsCoverage[spCoverage_sequence]);
+  index(frtCoverage, key, 0, resource.subplanElement, CODES_TSearchParamsCoverage[spCoverage_subplan]);
+  index(frtCoverage, key, 0, resource.type_Element, CODES_TSearchParamsCoverage[spCoverage_type]);
+//  index(context, frtCoverage, key, 0, resource.subjectList, CODES_TSearchParamsCoverage[spCoverage_subject]);
+  index(context, frtCoverage, key, 0, resource.issuerElement, CODES_TSearchParamsCoverage[spCoverage_issuer]);
 end;
 Const
   CHECK_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of TSearchParamsClaimResponse = ( spClaimResponse__content, spClaimResponse__id, spClaimResponse__lastUpdated, spClaimResponse__profile, spClaimResponse__query, spClaimResponse__security, spClaimResponse__tag, spClaimResponse__text,
@@ -2417,8 +2429,8 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesClaimResponse(key: integer; id : String; context : TFhirResource; resource: TFhirClaimResponse);
 begin
-  index(frtClaimResponse, key, 0, resource.identifierList, 'identifier');
-  index(context, frtClaimResponse, key, 0, resource.request, 'request');
+  index(frtClaimResponse, key, 0, resource.identifierList, CODES_TSearchParamsClaimResponse[spClaimResponse_identifier]);
+//  index(context, frtClaimResponse, key, 0, resource.request, CODES_TSearchParamsClaimResponse[spClaimResponse_request]);
 end;
 
 const
@@ -2438,7 +2450,7 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEligibilityRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityRequest);
 begin
-  index(frtEligibilityRequest, key, 0, resource.identifierList, 'identifier');
+  index(frtEligibilityRequest, key, 0, resource.identifierList, CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_identifier]);
 end;
 
 const
@@ -2458,7 +2470,7 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEligibilityResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityResponse);
 begin
-  index(frtEligibilityResponse, key, 0, resource.identifierList, 'identifier');
+  index(frtEligibilityResponse, key, 0, resource.identifierList, CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_identifier]);
 end;
 
 const
@@ -2478,9 +2490,9 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEnrollmentRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentRequest);
 begin
-  index(frtEnrollmentRequest, key, 0, resource.identifierList, 'identifier');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'subject');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'patient');
+  index(frtEnrollmentRequest, key, 0, resource.identifierList, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_identifier]);
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_subject]);
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_patient]);
   patientCompartment(key, resource.subject);
 end;
 
@@ -2501,7 +2513,7 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEnrollmentResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentResponse);
 begin
-  index(frtEnrollmentResponse, key, 0, resource.identifierList, 'identifier');
+  index(frtEnrollmentResponse, key, 0, resource.identifierList, CODES_TSearchParamsEnrollmentResponse[spEnrollmentResponse_identifier]);
 end;
 
 
@@ -2525,7 +2537,7 @@ procedure TFhirIndexManager.buildIndexValuesExplanationOfBenefit(key: integer; i
 var
   i : integer;
 begin
-  index(frtExplanationOfBenefit, key, 0, resource.identifierList, 'identifier');
+  index(frtExplanationOfBenefit, key, 0, resource.identifierList, CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_identifier]);
 end;
 
 const
@@ -2547,7 +2559,7 @@ procedure TFhirIndexManager.buildIndexValuesPaymentNotice(key: integer; id : Str
 var
   i : integer;
 begin
-  index(frtPaymentNotice, key, 0, resource.identifierList, 'identifier');
+  index(frtPaymentNotice, key, 0, resource.identifierList, CODES_TSearchParamsPaymentNotice[spPaymentNotice_identifier]);
 end;
 
 
@@ -2571,7 +2583,7 @@ procedure TFhirIndexManager.buildIndexValuesPaymentReconciliation(key: integer; 
 var
   i : integer;
 begin
-  index(frtPaymentReconciliation, key, 0, resource.identifierList, 'identifier');
+  index(frtPaymentReconciliation, key, 0, resource.identifierList, CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_identifier]);
 end;
 
 
@@ -2593,33 +2605,33 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesCoverage(key: integer; id : String; context : TFhirResource; resource: TFhirCoverage);
 begin
-  index(frtCoverage, key, 0, resource.dependentElement, 'dependent');
-  index(frtCoverage, key, 0, resource.groupElement, 'group');
-  index(frtCoverage, key, 0, resource.identifierList, 'identifier');
-  index(frtCoverage, key, 0, resource.planElement, 'plan');
-  index(frtCoverage, key, 0, resource.sequenceElement, 'sequence');
-  index(frtCoverage, key, 0, resource.subplanElement, 'subplan');
-  index(frtCoverage, key, 0, resource.type_Element, 'type');
+  index(frtCoverage, key, 0, resource.dependentElement, CODES_TSearchParamsCoverage[spCoverage_dependent]);
+  index(frtCoverage, key, 0, resource.groupElement, CODES_TSearchParamsCoverage[spCoverage_group]);
+  index(frtCoverage, key, 0, resource.identifierList, CODES_TSearchParamsCoverage[spCoverage_identifier]);
+  index(frtCoverage, key, 0, resource.planElement, CODES_TSearchParamsCoverage[spCoverage_plan]);
+  index(frtCoverage, key, 0, resource.sequenceElement, CODES_TSearchParamsCoverage[spCoverage_sequence]);
+  index(frtCoverage, key, 0, resource.subplanElement, CODES_TSearchParamsCoverage[spCoverage_subplan]);
+  index(frtCoverage, key, 0, resource.type_Element, CODES_TSearchParamsCoverage[spCoverage_type]);
   if resource.issuer is TFhirIdentifier then
-    index(frtCoverage, key, 0, resource.issuer as TFhirIdentifier, 'issueridentifier')
+    index(frtCoverage, key, 0, resource.issuer as TFhirIdentifier, CODES_TSearchParamsCoverage[spCoverage_issueridentifier])
   else if resource.issuer is TFhirReference then
-    index(context, frtCoverage, key, 0, resource.issuer as TFhirReference, 'issuerreference');
+    index(context, frtCoverage, key, 0, resource.issuer as TFhirReference, CODES_TSearchParamsCoverage[spCoverage_issuerreference]);
 
   if resource.beneficiary is TFhirIdentifier then
-    index(frtCoverage, key, 0, resource.beneficiary as TFhirIdentifier, 'beneficiaryidentifier')
+    index(frtCoverage, key, 0, resource.beneficiary as TFhirIdentifier, CODES_TSearchParamsCoverage[spCoverage_beneficiaryidentifier])
   else if resource.beneficiary is TFhirReference then
-    index(context, frtCoverage, key, 0, resource.beneficiary as TFhirReference, 'beneficiaryreference');
+    index(context, frtCoverage, key, 0, resource.beneficiary as TFhirReference, CODES_TSearchParamsCoverage[spCoverage_beneficiaryreference]);
 
   if resource.planholder is TFhirIdentifier then
-    index(frtCoverage, key, 0, resource.planholder as TFhirIdentifier, 'planholderidentifier')
+    index(frtCoverage, key, 0, resource.planholder as TFhirIdentifier, CODES_TSearchParamsCoverage[spCoverage_planholderidentifier])
   else if resource.planholder is TFhirReference then
-    index(context, frtCoverage, key, 0, resource.planholder as TFhirReference, 'planholderreference');
+    index(context, frtCoverage, key, 0, resource.planholder as TFhirReference, CODES_TSearchParamsCoverage[spCoverage_planholderreference]);
 end;
 
 
 Const
   CHECK_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of TSearchParamsClaimResponse = ( spClaimResponse__content, spClaimResponse__id, spClaimResponse__lastUpdated, spClaimResponse__profile, spClaimResponse__query, spClaimResponse__security, spClaimResponse__tag, spClaimResponse__text,
-    spClaimResponse_Created, spClaimResponse_Disposition, spClaimResponse_Identifier, spClaimResponse_Organization, spClaimResponse_Outcome, spClaimResponse_Paymentdate, spClaimResponse_Request);
+    spClaimResponse_Created, spClaimResponse_Disposition, spClaimResponse_Identifier, spClaimResponse_Organizationidentifier, spClaimResponse_Organizationreference, spClaimResponse_Outcome, spClaimResponse_Paymentdate, spClaimResponse_Requestidentifier, spClaimResponse_Requestreference);
 
 procedure TFhirIndexInformation.buildIndexesClaimResponse;
 var
@@ -2634,13 +2646,19 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesClaimResponse(key: integer; id : String; context : TFhirResource; resource: TFhirClaimResponse);
 begin
-  index(frtClaimResponse, key, 0, resource.identifierList, 'identifier');
-  index(frtClaimResponse, key, 0, resource.createdElement, 'created');
-  index(frtClaimResponse, key, 0, resource.dispositionElement, 'disposition');
-  index(context, frtClaimResponse, key, 0, resource.organization, 'organization');
-  index(frtClaimResponse, key, 0, resource.outcomeElement, 'outcome');
-  index(frtClaimResponse, key, 0, resource.paymentDateElement, 'paymentdate');
-  index(context, frtClaimResponse, key, 0, resource.request, 'request');
+  index(frtClaimResponse, key, 0, resource.identifierList, CODES_TSearchParamsClaimResponse[spClaimResponse_identifier]);
+  index(frtClaimResponse, key, 0, resource.createdElement, CODES_TSearchParamsClaimResponse[spClaimResponse_created]);
+  index(frtClaimResponse, key, 0, resource.dispositionElement, CODES_TSearchParamsClaimResponse[spClaimResponse_disposition]);
+  if resource.organization is TFhirReference then
+    index(context, frtClaimResponse, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsClaimResponse[spClaimResponse_Organizationreference])
+  else if resource.organization is TFhirIdentifier then
+    index(frtClaimResponse, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsClaimResponse[spClaimResponse_Organizationidentifier]);
+  index(frtClaimResponse, key, 0, resource.outcomeElement, CODES_TSearchParamsClaimResponse[spClaimResponse_outcome]);
+  index(frtClaimResponse, key, 0, resource.paymentDateElement, CODES_TSearchParamsClaimResponse[spClaimResponse_paymentdate]);
+  if resource.request is TFhirReference then
+    index(context, frtClaimResponse, key, 0, TFhirReference(resource.request), CODES_TSearchParamsClaimResponse[spClaimResponse_Requestreference])
+  else if resource.request is TFhirIdentifier then
+    index(frtClaimResponse, key, 0, TFhirIdentifier(resource.request), CODES_TSearchParamsClaimResponse[spClaimResponse_Requestidentifier]);
 end;
 
 Const
@@ -2661,35 +2679,35 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesClaim(key: integer; id : String; context : TFhirResource; resource: TFhirClaim);
 begin
-  index(frtClaim, key, 0, resource.createdElement, 'created');
+  index(frtClaim, key, 0, resource.createdElement, CODES_TSearchParamsClaim[spClaim_created]);
   if resource.facility is TFhirIdentifier then
-    index(frtClaim, key, 0, resource.facility as TFhirIdentifier, 'facilityidentifier')
+    index(frtClaim, key, 0, resource.facility as TFhirIdentifier, CODES_TSearchParamsClaim[spClaim_facilityidentifier])
   else if resource.facility is TFhirReference then
-    index(context, frtClaim, key, 0, resource.facility as TFhirReference, 'facilityreference');
-  index(frtClaim, key, 0, resource.identifierList, 'identifier');
+    index(context, frtClaim, key, 0, resource.facility as TFhirReference, CODES_TSearchParamsClaim[spClaim_facilityreference]);
+  index(frtClaim, key, 0, resource.identifierList, CODES_TSearchParamsClaim[spClaim_identifier]);
   if resource.organization is TFhirIdentifier then
-    index(frtClaim, key, 0, resource.organization as TFhirIdentifier, 'organizationidentifier')
+    index(frtClaim, key, 0, resource.organization as TFhirIdentifier, CODES_TSearchParamsClaim[spClaim_organizationidentifier])
   else if resource.organization is TFhirReference then
-    index(context, frtClaim, key, 0, resource.organization as TFhirReference, 'organizationreference');
+    index(context, frtClaim, key, 0, resource.organization as TFhirReference, CODES_TSearchParamsClaim[spClaim_organizationreference]);
   if resource.patient is TFhirIdentifier then
-    index(frtClaim, key, 0, resource.patient as TFhirIdentifier, 'patientidentifier')
+    index(frtClaim, key, 0, resource.patient as TFhirIdentifier, CODES_TSearchParamsClaim[spClaim_patientidentifier])
   else if resource.patient is TFhirReference then
-    index(context, frtClaim, key, 0, resource.patient as TFhirReference, 'patientreference');
-  index(frtClaim, key, 0, resource.priorityElement, 'priority');
+    index(context, frtClaim, key, 0, resource.patient as TFhirReference, CODES_TSearchParamsClaim[spClaim_patientreference]);
+  index(frtClaim, key, 0, resource.priorityElement, CODES_TSearchParamsClaim[spClaim_priority]);
   if resource.provider is TFhirIdentifier then
-    index(frtClaim, key, 0, resource.provider as TFhirIdentifier, 'provideridentifier')
+    index(frtClaim, key, 0, resource.provider as TFhirIdentifier, CODES_TSearchParamsClaim[spClaim_provideridentifier])
   else if resource.provider is TFhirReference then
-    index(context, frtClaim, key, 0, resource.provider as TFhirReference, 'providerreference');
+    index(context, frtClaim, key, 0, resource.provider as TFhirReference, CODES_TSearchParamsClaim[spClaim_providerreference]);
   if resource.target is TFhirIdentifier then
-    index(frtClaim, key, 0, resource.target as TFhirIdentifier, 'targetidentifier')
+    index(frtClaim, key, 0, resource.target as TFhirIdentifier, CODES_TSearchParamsClaim[spClaim_targetidentifier])
   else if resource.target is TFhirReference then
-    index(context, frtClaim, key, 0, resource.target as TFhirReference, 'targetreference');
-  index(frtClaim, key, 0, resource.useElement, 'use');
+    index(context, frtClaim, key, 0, resource.target as TFhirReference, CODES_TSearchParamsClaim[spClaim_targetreference]);
+  index(frtClaim, key, 0, resource.useElement, CODES_TSearchParamsClaim[spClaim_use]);
 end;
 
 const
   CHECK_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of TSearchParamsEligibilityRequest = ( spEligibilityRequest__content, spEligibilityRequest__id, spEligibilityRequest__lastUpdated, spEligibilityRequest__profile, spEligibilityRequest__query, spEligibilityRequest__security, spEligibilityRequest__tag, spEligibilityRequest__text,
-    spEligibilityRequest_Created, spEligibilityRequest_Facility, spEligibilityRequest_Identifier, spEligibilityRequest_Organization, spEligibilityRequest_Patient, spEligibilityRequest_Provider);
+    spEligibilityRequest_Created, spEligibilityRequest_Facilityidentifier, spEligibilityRequest_Facilityreference, spEligibilityRequest_Identifier, spEligibilityRequest_Organizationidentifier, spEligibilityRequest_Organizationreference, spEligibilityRequest_Patientidentifier, spEligibilityRequest_Patientreference, spEligibilityRequest_Provideridentifier, spEligibilityRequest_Providerreference);
 
 procedure TFhirIndexInformation.buildIndexesEligibilityRequest;
 var
@@ -2704,17 +2722,29 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEligibilityRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityRequest);
 begin
-  index(frtEligibilityRequest, key, 0, resource.identifierList, 'identifier');
-  index(frtEligibilityRequest, key, 0, resource.createdElement, 'created');
-  index(context, frtEligibilityRequest, key, 0, resource.facility, 'facility');
-  index(context, frtEligibilityRequest, key, 0, resource.organization, 'organization');
-  index(context, frtEligibilityRequest, key, 0, resource.patientElement, 'patient');
-  index(context, frtEligibilityRequest, key, 0, resource.provider, 'provider');
+  index(frtEligibilityRequest, key, 0, resource.identifierList, CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_identifier]);
+  index(frtEligibilityRequest, key, 0, resource.createdElement, CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_created]);
+  if resource.facility is TFhirIdentifier then
+    index(frtEligibilityRequest, key, 0, TFhirIdentifier(resource.facility), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Facilityidentifier])
+  else if resource.facility is TFhirReference then
+    index(context, frtEligibilityRequest, key, 0, TFhirReference(resource.facility), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Facilityreference]);
+  if resource.organization is TFhirIdentifier then
+    index(frtEligibilityRequest, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Organizationidentifier])
+  else if resource.organization is TFhirReference then
+    index(context, frtEligibilityRequest, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Organizationreference]);
+  if resource.patientElement is TFhirIdentifier then
+    index(frtEligibilityRequest, key, 0, TFhirIdentifier(resource.patientElement), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Patientidentifier])
+  else if resource.patientElement is TFhirReference then
+    index(context, frtEligibilityRequest, key, 0, TFhirReference(resource.patientElement), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Patientreference]);
+  if resource.provider is TFhirIdentifier then
+    index(frtEligibilityRequest, key, 0, TFhirIdentifier(resource.provider), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Provideridentifier])
+  else if resource.provider is TFhirReference then
+    index(context, frtEligibilityRequest, key, 0, TFhirReference(resource.provider), CODES_TSearchParamsEligibilityRequest[spEligibilityRequest_Providerreference]);
 end;
 
 const
   CHECK_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of TSearchParamsEligibilityResponse = ( spEligibilityResponse__content, spEligibilityResponse__id, spEligibilityResponse__lastUpdated, spEligibilityResponse__profile, spEligibilityResponse__query, spEligibilityResponse__security, spEligibilityResponse__tag, spEligibilityResponse__text,
-    spEligibilityResponse_Created, spEligibilityResponse_Disposition, spEligibilityResponse_Identifier, spEligibilityResponse_Organization, spEligibilityResponse_Outcome, spEligibilityResponse_Request, spEligibilityResponse_Requestorganization, spEligibilityResponse_Requestprovider);
+    spEligibilityResponse_Created, spEligibilityResponse_Disposition, spEligibilityResponse_Identifier, spEligibilityResponse_Organizationidentifier, spEligibilityResponse_Organizationreference, spEligibilityResponse_Outcome, spEligibilityResponse_Requestidentifier, spEligibilityResponse_Requestorganizationidentifier, spEligibilityResponse_Requestorganizationreference, spEligibilityResponse_Requestprovideridentifier, spEligibilityResponse_Requestproviderreference, spEligibilityResponse_Requestreference);
 
 procedure TFhirIndexInformation.buildIndexesEligibilityResponse;
 var
@@ -2729,13 +2759,27 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEligibilityResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEligibilityResponse);
 begin
-  index(frtEligibilityResponse, key, 0, resource.identifierList, 'identifier');
-  index(frtEligibilityResponse, key, 0, resource.createdElement, 'created');
-  index(context, frtEligibilityResponse, key, 0, resource.organization, 'organization');
-  index(context, frtEligibilityResponse, key, 0, resource.request, 'request');
-  index(context, frtEligibilityResponse, key, 0, resource.requestOrganization, 'requestorganization');
-  index(frtEligibilityResponse, key, 0, resource.dispositionElement, 'disposition');
-  index(frtEligibilityResponse, key, 0, resource.outcomeElement, 'outcome');
+  index(frtEligibilityResponse, key, 0, resource.createdElement, CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_created]);
+  index(frtEligibilityResponse, key, 0, resource.dispositionElement, CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_disposition]);
+  index(frtEligibilityResponse, key, 0, resource.identifierList, CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_identifier]);
+  index(frtEligibilityResponse, key, 0, resource.outcomeElement, CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_outcome]);
+
+  if resource.request is TFhirIdentifier then
+    index(frtEligibilityResponse, key, 0, TFhirIdentifier(resource.request), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestidentifier])
+  else if resource.request is TFhirReference then
+    index(context, frtEligibilityResponse, key, 0, TFhirReference(resource.request), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestreference]);
+  if resource.organization is TFhirIdentifier then
+    index(frtEligibilityResponse, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Organizationidentifier])
+  else if resource.organization is TFhirReference then
+    index(context, frtEligibilityResponse, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Organizationreference]);
+  if resource.requestOrganization is TFhirIdentifier then
+    index(frtEligibilityResponse, key, 0, TFhirIdentifier(resource.requestOrganization), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationidentifier])
+  else if resource.requestOrganization is TFhirReference then
+    index(context, frtEligibilityResponse, key, 0, TFhirReference(resource.requestOrganization), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationreference]);
+  if resource.requestProvider is TFhirIdentifier then
+    index(frtEligibilityResponse, key, 0, TFhirIdentifier(resource.requestProvider), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationidentifier])
+  else if resource.requestProvider is TFhirReference then
+    index(context, frtEligibilityResponse, key, 0, TFhirReference(resource.requestProvider), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationreference]);
 end;
 
 const
@@ -2755,9 +2799,9 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEnrollmentRequest(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentRequest);
 begin
-  index(frtEnrollmentRequest, key, 0, resource.identifierList, 'identifier');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'subject');
-  index(context, frtEnrollmentRequest, key, 0, resource.subject, 'patient');
+  index(frtEnrollmentRequest, key, 0, resource.identifierList, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_identifier]);
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_subject]);
+  index(context, frtEnrollmentRequest, key, 0, resource.subject, CODES_TSearchParamsEnrollmentRequest[spEnrollmentRequest_patient]);
   patientCompartment(key, resource.subject);
 end;
 
@@ -2778,13 +2822,13 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesEnrollmentResponse(key: integer; id : String; context : TFhirResource; resource: TFhirEnrollmentResponse);
 begin
-  index(frtEnrollmentResponse, key, 0, resource.identifierList, 'identifier');
+  index(frtEnrollmentResponse, key, 0, resource.identifierList, CODES_TSearchParamsEnrollmentResponse[spEnrollmentResponse_identifier]);
 end;
 
 const
   CHECK_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of TSearchParamsExplanationOfBenefit = (
     spExplanationOfBenefit__content, spExplanationOfBenefit__id, spExplanationOfBenefit__lastUpdated, spExplanationOfBenefit__profile, spExplanationOfBenefit__query, spExplanationOfBenefit__security, spExplanationOfBenefit__tag, spExplanationOfBenefit__text,
-    spExplanationOfBenefit_Claim, spExplanationOfBenefit_Created, spExplanationOfBenefit_Disposition, spExplanationOfBenefit_Facility, spExplanationOfBenefit_Identifier, spExplanationOfBenefit_Organization, spExplanationOfBenefit_Patient, spExplanationOfBenefit_Provider);
+    spExplanationOfBenefit_Claimindentifier, spExplanationOfBenefit_Claimreference, spExplanationOfBenefit_Created, spExplanationOfBenefit_Disposition, spExplanationOfBenefit_Facilityidentifier, spExplanationOfBenefit_Facilityreference, spExplanationOfBenefit_Identifier, spExplanationOfBenefit_Organizationidentifier, spExplanationOfBenefit_Organizationreference, spExplanationOfBenefit_Patientidentifier, spExplanationOfBenefit_Patientreference, spExplanationOfBenefit_Provideridentifier, spExplanationOfBenefit_Providerreference);
 
 procedure TFhirIndexInformation.buildIndexesExplanationOfBenefit;
 var
@@ -2801,19 +2845,34 @@ procedure TFhirIndexManager.buildIndexValuesExplanationOfBenefit(key: integer; i
 var
   i : integer;
 begin
-  index(frtExplanationOfBenefit, key, 0, resource.identifierList, 'identifier');
-  index(frtExplanationOfBenefit, key, 0, resource.createdElement, 'created');
-  index(frtExplanationOfBenefit, key, 0, resource.dispositionElement, 'disposition');
-  index(context, frtExplanationOfBenefit, key, 0, resource.organization, 'organization');
-  index(context, frtExplanationOfBenefit, key, 0, resource.claim, 'claim');
-  index(context, frtExplanationOfBenefit, key, 0, resource.facility, 'facility');
-  index(context, frtExplanationOfBenefit, key, 0, resource.patient, 'patient');
-  index(context, frtExplanationOfBenefit, key, 0, resource.provider, 'provider');
+  index(frtExplanationOfBenefit, key, 0, resource.createdElement, CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_created]);
+  index(frtExplanationOfBenefit, key, 0, resource.dispositionElement, CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_disposition]);
+  index(frtExplanationOfBenefit, key, 0, resource.identifierList, CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_identifier]);
+  if resource.claim is TFhirIdentifier then
+    index(frtExplanationOfBenefit, key, 0, TFhirIdentifier(resource.claim), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Claimindentifier])
+  else if resource.claim is TFhirReference then
+    index(context, frtExplanationOfBenefit, key, 0, TFhirReference(resource.claim), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Claimreference]);
+  if resource.facility is TFhirIdentifier then
+    index(frtExplanationOfBenefit, key, 0, TFhirIdentifier(resource.facility), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Facilityidentifier])
+  else if resource.facility is TFhirReference then
+    index(context, frtExplanationOfBenefit, key, 0, TFhirReference(resource.facility), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Facilityreference]);
+  if resource.organization is TFhirIdentifier then
+    index(frtExplanationOfBenefit, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Organizationidentifier])
+  else if resource.organization is TFhirReference then
+    index(context, frtExplanationOfBenefit, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Organizationreference]);
+  if resource.patient is TFhirIdentifier then
+    index(frtExplanationOfBenefit, key, 0, TFhirIdentifier(resource.patient), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Patientidentifier])
+  else if resource.patient is TFhirReference then
+    index(context, frtExplanationOfBenefit, key, 0, TFhirReference(resource.patient), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Patientreference]);
+  if resource.provider is TFhirIdentifier then
+    index(frtExplanationOfBenefit, key, 0, TFhirIdentifier(resource.provider), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Provideridentifier])
+  else if resource.provider is TFhirReference then
+    index(context, frtExplanationOfBenefit, key, 0, TFhirReference(resource.provider), CODES_TSearchParamsExplanationOfBenefit[spExplanationOfBenefit_Providerreference]);
 end;
 
 const
   CHECK_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of TSearchParamsPaymentNotice = ( spPaymentNotice__content, spPaymentNotice__id, spPaymentNotice__lastUpdated, spPaymentNotice__profile, spPaymentNotice__query, spPaymentNotice__security, spPaymentNotice__tag, spPaymentNotice__text,
-    spPaymentNotice_Created, spPaymentNotice_Identifier, spPaymentNotice_Organization, spPaymentNotice_Paymentstatus, spPaymentNotice_Provider, spPaymentNotice_Request, spPaymentNotice_Response, spPaymentNotice_Statusdate);
+    spPaymentNotice_Created, spPaymentNotice_Identifier, spPaymentNotice_Organizationidentifier, spPaymentNotice_Organizationreference, spPaymentNotice_Paymentstatus, spPaymentNotice_Provideridentifier, spPaymentNotice_Providerreference, spPaymentNotice_Requestidentifier, spPaymentNotice_Requestreference, spPaymentNotice_Responseidentifier, spPaymentNotice_Responsereference, spPaymentNotice_Statusdate);
 
 procedure TFhirIndexInformation.buildIndexesPaymentNotice;
 var
@@ -2830,20 +2889,39 @@ procedure TFhirIndexManager.buildIndexValuesPaymentNotice(key: integer; id : Str
 var
   i : integer;
 begin
-  index(frtPaymentNotice, key, 0, resource.identifierList, 'identifier');
-  index(frtPaymentNotice, key, 0, resource.createdElement, 'created');
-  index(frtPaymentNotice, key, 0, resource.statusDateElement, 'statusdate');
-  index(frtPaymentNotice, key, 0, resource.paymentStatusElement, 'paymentstatus');
-  index(context, frtPaymentNotice, key, 0, resource.organization, 'organization');
-  index(context, frtPaymentNotice, key, 0, resource.provider, 'provider');
-  index(context, frtPaymentNotice, key, 0, resource.request, 'request');
-  index(context, frtPaymentNotice, key, 0, resource.response, 'response');
+  index(frtPaymentNotice, key, 0, resource.createdElement, CODES_TSearchParamsPaymentNotice[spPaymentNotice_created]);
+  index(frtPaymentNotice, key, 0, resource.identifierList, CODES_TSearchParamsPaymentNotice[spPaymentNotice_identifier]);
+  index(frtPaymentNotice, key, 0, resource.statusDateElement, CODES_TSearchParamsPaymentNotice[spPaymentNotice_statusdate]);
+  index(frtPaymentNotice, key, 0, resource.paymentStatusElement, CODES_TSearchParamsPaymentNotice[spPaymentNotice_paymentstatus]);
+
+{
+  if resource.requestProvider is TFhirIdentifier then
+    index(frtEligibilityResponse, key, 0, TFhirIdentifier(resource.requestProvider), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationidentifier])
+  else if resource.requestProvider is TFhirReference then
+    index(context, frtEligibilityResponse, key, 0, TFhirReference(resource.requestProvider), CODES_TSearchParamsEligibilityResponse[spEligibilityResponse_Requestorganizationreference]);
+}
+  if resource.organization is TFhirIdentifier then
+    index(frtPaymentNotice, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Organizationidentifier])
+  else if resource.organization is TFhirReference then
+    index(context, frtPaymentNotice, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Organizationreference]);
+  if resource.provider is TFhirIdentifier then
+    index(frtPaymentNotice, key, 0, TFhirIdentifier(resource.provider), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Provideridentifier])
+  else if resource.provider is TFhirReference then
+    index(context, frtPaymentNotice, key, 0, TFhirReference(resource.provider), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Providerreference]);
+  if resource.request is TFhirIdentifier then
+    index(frtPaymentNotice, key, 0, TFhirIdentifier(resource.request), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Requestidentifier])
+  else if resource.request is TFhirReference then
+    index(context, frtPaymentNotice, key, 0, TFhirReference(resource.request), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Requestreference]);
+  if resource.response is TFhirIdentifier then
+    index(frtPaymentNotice, key, 0, TFhirIdentifier(resource.response), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Responseidentifier])
+  else if resource.response is TFhirReference then
+    index(context, frtPaymentNotice, key, 0, TFhirReference(resource.response), CODES_TSearchParamsPaymentNotice[spPaymentNotice_Responsereference]);
 end;
 
 const
   CHECK_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of TSearchParamsPaymentReconciliation = (
     spPaymentReconciliation__content, spPaymentReconciliation__id, spPaymentReconciliation__lastUpdated, spPaymentReconciliation__profile, spPaymentReconciliation__query, spPaymentReconciliation__security, spPaymentReconciliation__tag, spPaymentReconciliation__text,
-    spPaymentReconciliation_Created, spPaymentReconciliation_Disposition, spPaymentReconciliation_Identifier, spPaymentReconciliation_Organization, spPaymentReconciliation_Outcome, spPaymentReconciliation_Request, spPaymentReconciliation_Requestorganization, spPaymentReconciliation_Requestprovider);
+    spPaymentReconciliation_Created, spPaymentReconciliation_Disposition, spPaymentReconciliation_Identifier, spPaymentReconciliation_Organizationidentifier, spPaymentReconciliation_Organizationreference, spPaymentReconciliation_Outcome, spPaymentReconciliation_Requestidentifier, spPaymentReconciliation_Requestorganizationidentifier, spPaymentReconciliation_Requestorganizationreference, spPaymentReconciliation_Requestprovideridentifier, spPaymentReconciliation_Requestproviderreference, spPaymentReconciliation_Requestreference);
 
 procedure TFhirIndexInformation.buildIndexesPaymentReconciliation;
 var
@@ -2860,20 +2938,34 @@ procedure TFhirIndexManager.buildIndexValuesPaymentReconciliation(key: integer; 
 var
   i : integer;
 begin
-  index(frtPaymentReconciliation, key, 0, resource.identifierList, 'identifier');
-  index(frtPaymentReconciliation, key, 0, resource.createdElement, 'created');
-  index(frtPaymentReconciliation, key, 0, resource.dispositionElement, 'disposition');
-  index(frtPaymentReconciliation, key, 0, resource.outcomeElement, 'outcome');
-  index(context, frtPaymentReconciliation, key, 0, resource.organization, 'organization');
-  index(context, frtPaymentReconciliation, key, 0, resource.request, 'request');
-  index(context, frtPaymentReconciliation, key, 0, resource.requestOrganization, 'requestorganization');
-  index(context, frtPaymentReconciliation, key, 0, resource.requestProvider, 'requestprovider');
+  index(frtPaymentReconciliation, key, 0, resource.identifierList, CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_identifier]);
+  index(frtPaymentReconciliation, key, 0, resource.createdElement, CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_created]);
+  index(frtPaymentReconciliation, key, 0, resource.dispositionElement, CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_disposition]);
+  index(frtPaymentReconciliation, key, 0, resource.outcomeElement, CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_outcome]);
+
+  if resource.organization is TFhirIdentifier then
+    index(frtPaymentReconciliation, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Organizationidentifier])
+  else if resource.organization is TFhirReference then
+    index(context, frtPaymentReconciliation, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Organizationreference]);
+  if resource.request is TFhirIdentifier then
+    index(frtPaymentReconciliation, key, 0, TFhirIdentifier(resource.request), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestidentifier])
+  else if resource.request is TFhirReference then
+    index(context, frtPaymentReconciliation, key, 0, TFhirReference(resource.request), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestreference]);
+  if resource.requestOrganization is TFhirIdentifier then
+    index(frtPaymentReconciliation, key, 0, TFhirIdentifier(resource.requestOrganization), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestorganizationidentifier])
+  else if resource.requestOrganization is TFhirReference then
+    index(context, frtPaymentReconciliation, key, 0, TFhirReference(resource.requestOrganization), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestorganizationreference]);
+  if resource.requestProvider is TFhirIdentifier then
+    index(frtPaymentReconciliation, key, 0, TFhirIdentifier(resource.requestProvider), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestprovideridentifier])
+  else if resource.requestProvider is TFhirReference then
+    index(context, frtPaymentReconciliation, key, 0, TFhirReference(resource.requestProvider), CODES_TSearchParamsPaymentReconciliation[spPaymentReconciliation_Requestproviderreference]);
 end;
 
 
 const
   CHECK_TSearchParamsDecisionSupportRule : Array[TSearchParamsDecisionSupportRule] of TSearchParamsDecisionSupportRule = (
-    spDecisionSupportRule__content, spDecisionSupportRule__id, spDecisionSupportRule__lastUpdated, spDecisionSupportRule__profile, spDecisionSupportRule__query, spDecisionSupportRule__security, spDecisionSupportRule__tag, spDecisionSupportRule__text);
+    spDecisionSupportRule__content, spDecisionSupportRule__id, spDecisionSupportRule__lastUpdated, spDecisionSupportRule__profile, spDecisionSupportRule__query, spDecisionSupportRule__security, spDecisionSupportRule__tag, spDecisionSupportRule__text,
+    spDecisionSupportRule_Description, spDecisionSupportRule_Identifier, spDecisionSupportRule_Status, spDecisionSupportRule_Title, spDecisionSupportRule_Topic, spDecisionSupportRule_Version);
 
 procedure TFhirIndexInformation.BuildIndexesDecisionSupportRule;
 var
@@ -2888,12 +2980,19 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesDecisionSupportRule(key: integer; id : String; context : TFhirResource; resource: TFhirDecisionSupportRule);
 begin
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.DescriptionElement, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Description]);
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.identifierList, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Identifier]);
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.StatusElement, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Status]);
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.TitleElement, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Title]);
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.topicList, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Topic]);
+  index(frtDecisionSupportRule, key, 0, resource.moduleMetadata.VersionElement, CODES_TSearchParamsDecisionSupportRule[spDecisionSupportRule_Version]);
 end;
 
 
 const
   CHECK_TSearchParamsDecisionSupportServiceModule : Array[TSearchParamsDecisionSupportServiceModule] of TSearchParamsDecisionSupportServiceModule = (
-    spDecisionSupportServiceModule__content, spDecisionSupportServiceModule__id, spDecisionSupportServiceModule__lastUpdated, spDecisionSupportServiceModule__profile, spDecisionSupportServiceModule__query, spDecisionSupportServiceModule__security, spDecisionSupportServiceModule__tag, spDecisionSupportServiceModule__text);
+    spDecisionSupportServiceModule__content, spDecisionSupportServiceModule__id, spDecisionSupportServiceModule__lastUpdated, spDecisionSupportServiceModule__profile, spDecisionSupportServiceModule__query, spDecisionSupportServiceModule__security, spDecisionSupportServiceModule__tag, spDecisionSupportServiceModule__text,
+    spDecisionSupportServiceModule_Description, spDecisionSupportServiceModule_Identifier, spDecisionSupportServiceModule_Status, spDecisionSupportServiceModule_Title, spDecisionSupportServiceModule_Topic, spDecisionSupportServiceModule_Version);
 
 procedure TFhirIndexInformation.BuildIndexesDecisionSupportServiceModule;
 var
@@ -2908,6 +3007,12 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesDecisionSupportServiceModule(key: integer; id : String; context : TFhirResource; resource: TFhirDecisionSupportServiceModule);
 begin
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.DescriptionElement, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Description]);
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.identifierList, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Identifier]);
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.StatusElement, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Status]);
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.TitleElement, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Title]);
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.topicList, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Topic]);
+  index(frtDecisionSupportServiceModule, key, 0, resource.moduleMetadata.VersionElement, CODES_TSearchParamsDecisionSupportServiceModule[spDecisionSupportServiceModule_Version]);
 end;
 
 
@@ -2929,14 +3034,14 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesExpansionProfile(key: integer; id : String; context : TFhirResource; resource: TFhirExpansionProfile);
 begin
-  index(frtExpansionProfile, key, 0, resource.dateElement, 'date');
-  index(frtExpansionProfile, key, 0, resource.descriptionElement, 'description');
-  index(frtExpansionProfile, key, 0, resource.identifierElement, 'identifier');
-  index(frtExpansionProfile, key, 0, resource.nameElement, 'name');
-  index(frtExpansionProfile, key, 0, resource.publisherElement, 'publisher');
-  index(frtExpansionProfile, key, 0, resource.urlElement, 'url');
-  index(frtExpansionProfile, key, 0, resource.versionElement, 'version');
-  index(frtExpansionProfile, key, 0, resource.statusElement, 'status');
+  index(frtExpansionProfile, key, 0, resource.dateElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_date]);
+  index(frtExpansionProfile, key, 0, resource.descriptionElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_description]);
+  index(frtExpansionProfile, key, 0, resource.identifierElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_identifier]);
+  index(frtExpansionProfile, key, 0, resource.nameElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_name]);
+  index(frtExpansionProfile, key, 0, resource.publisherElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_publisher]);
+  index(frtExpansionProfile, key, 0, resource.urlElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_url]);
+  index(frtExpansionProfile, key, 0, resource.versionElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_version]);
+  index(frtExpansionProfile, key, 0, resource.statusElement, CODES_TSearchParamsExpansionProfile[spExpansionProfile_status]);
 end;
 
 
@@ -2962,7 +3067,8 @@ end;
 
 const
   CHECK_TSearchParamsLibrary : Array[TSearchParamsLibrary] of TSearchParamsLibrary = (
-    spLibrary__content, spLibrary__id, spLibrary__lastUpdated, spLibrary__profile, spLibrary__query, spLibrary__security, spLibrary__tag, spLibrary__text);
+    spLibrary__content, spLibrary__id, spLibrary__lastUpdated, spLibrary__profile, spLibrary__query, spLibrary__security, spLibrary__tag, spLibrary__text,
+    spLibrary_Description, spLibrary_Identifier, spLibrary_Status, spLibrary_Title, spLibrary_Topic, spLibrary_Version);
 
 procedure TFhirIndexInformation.BuildIndexesLibrary;
 var
@@ -2977,12 +3083,19 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesLibrary(key: integer; id : String; context : TFhirResource; resource: TFhirLibrary);
 begin
+  index(frtLibrary, key, 0, resource.moduleMetadata.DescriptionElement, CODES_TSearchParamsLibrary[spLibrary_Description]);
+  index(frtLibrary, key, 0, resource.moduleMetadata.identifierList, CODES_TSearchParamsLibrary[spLibrary_Identifier]);
+  index(frtLibrary, key, 0, resource.moduleMetadata.StatusElement, CODES_TSearchParamsLibrary[spLibrary_Status]);
+  index(frtLibrary, key, 0, resource.moduleMetadata.TitleElement, CODES_TSearchParamsLibrary[spLibrary_Title]);
+  index(frtLibrary, key, 0, resource.moduleMetadata.topicList, CODES_TSearchParamsLibrary[spLibrary_Topic]);
+  index(frtLibrary, key, 0, resource.moduleMetadata.VersionElement, CODES_TSearchParamsLibrary[spLibrary_Version]);
 end;
 
 
 const
   CHECK_TSearchParamsMeasure : Array[TSearchParamsMeasure] of TSearchParamsMeasure = (
-    spMeasure__content, spMeasure__id, spMeasure__lastUpdated, spMeasure__profile, spMeasure__query, spMeasure__security, spMeasure__tag, spMeasure__text);
+    spMeasure__content, spMeasure__id, spMeasure__lastUpdated, spMeasure__profile, spMeasure__query, spMeasure__security, spMeasure__tag, spMeasure__text,
+    spMeasure_Description, spMeasure_Identifier, spMeasure_Status, spMeasure_Title, spMeasure_Topic, spMeasure_Version);
 
 procedure TFhirIndexInformation.BuildIndexesMeasure;
 var
@@ -2997,6 +3110,12 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesMeasure(key: integer; id : String; context : TFhirResource; resource: TFhirMeasure);
 begin
+  index(frtMeasure, key, 0, resource.moduleMetadata.DescriptionElement, CODES_TSearchParamsMeasure[spMeasure_Description]);
+  index(frtMeasure, key, 0, resource.moduleMetadata.identifierList, CODES_TSearchParamsMeasure[spMeasure_Identifier]);
+  index(frtMeasure, key, 0, resource.moduleMetadata.StatusElement, CODES_TSearchParamsMeasure[spMeasure_Status]);
+  index(frtMeasure, key, 0, resource.moduleMetadata.TitleElement, CODES_TSearchParamsMeasure[spMeasure_Title]);
+  index(frtMeasure, key, 0, resource.moduleMetadata.topicList, CODES_TSearchParamsMeasure[spMeasure_Topic]);
+  index(frtMeasure, key, 0, resource.moduleMetadata.VersionElement, CODES_TSearchParamsMeasure[spMeasure_Version]);
 end;
 
 
@@ -3022,7 +3141,8 @@ end;
 
 const
   CHECK_TSearchParamsOrderSet : Array[TSearchParamsOrderSet] of TSearchParamsOrderSet = (
-    spOrderSet__content, spOrderSet__id, spOrderSet__lastUpdated, spOrderSet__profile, spOrderSet__query, spOrderSet__security, spOrderSet__tag, spOrderSet__text);
+    spOrderSet__content, spOrderSet__id, spOrderSet__lastUpdated, spOrderSet__profile, spOrderSet__query, spOrderSet__security, spOrderSet__tag, spOrderSet__text,
+    spOrderSet_Description, spOrderSet_Identifier, spOrderSet_Status, spOrderSet_Title, spOrderSet_Topic, spOrderSet_Version);
 
 procedure TFhirIndexInformation.BuildIndexesOrderSet;
 var
@@ -3037,6 +3157,12 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesOrderSet(key: integer; id : String; context : TFhirResource; resource: TFhirOrderSet);
 begin
+  index(frtOrderSet, key, 0, resource.moduleMetadata.DescriptionElement, CODES_TSearchParamsOrderSet[spOrderSet_Description]);
+  index(frtOrderSet, key, 0, resource.moduleMetadata.identifierList, CODES_TSearchParamsOrderSet[spOrderSet_Identifier]);
+  index(frtOrderSet, key, 0, resource.moduleMetadata.StatusElement, CODES_TSearchParamsOrderSet[spOrderSet_Status]);
+  index(frtOrderSet, key, 0, resource.moduleMetadata.TitleElement, CODES_TSearchParamsOrderSet[spOrderSet_Title]);
+  index(frtOrderSet, key, 0, resource.moduleMetadata.topicList, CODES_TSearchParamsOrderSet[spOrderSet_Topic]);
+  index(frtOrderSet, key, 0, resource.moduleMetadata.VersionElement, CODES_TSearchParamsOrderSet[spOrderSet_Version]);
 end;
 
 const
@@ -3063,7 +3189,7 @@ end;
 const
   CHECK_TSearchParamsSequence : Array[TSearchParamsSequence] of TSearchParamsSequence = (
     spSequence__content, spSequence__id, spSequence__lastUpdated, spSequence__profile, spSequence__query, spSequence__security, spSequence__tag, spSequence__text,
-    spSequence_Chromosome, spSequence_Coordinate, spSequence_End, spSequence_Species, spSequence_Start, spSequence_Type, spSequence_Variationid);
+    spSequence_Chromosome, spSequence_Coordinate, spSequence_End, spSequence_Patient, spSequence_Species, spSequence_Start, spSequence_Type);
 
 procedure TFhirIndexInformation.BuildIndexesSequence;
 var
@@ -3078,17 +3204,18 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesSequence(key: integer; id : String; context : TFhirResource; resource: TFhirSequence);
 var
-  c : TFhirSequenceCoordinate;
+  c : TFhirSequenceReferenceSeq;
 begin
-  index(frtSequence, key, 0, resource.species, 'species');
-  index(frtSequence, key, 0, resource.type_Element, 'type');
-  index(frtSequence, key, 0, resource.variationIDList, 'variationid');
-  for c in resource.coordinateList do
+  index(context, frtSequence, key, 0, resource.patient, CODES_TSearchParamsSequence[spSequence_patient]);
+  index(frtSequence, key, 0, resource.species, CODES_TSearchParamsSequence[spSequence_species]);
+  index(frtSequence, key, 0, resource.type_Element, CODES_TSearchParamsSequence[spSequence_type]);
+  for c in resource.referenceSeqList do
+    index(frtSequence, key, 0, c.chromosome, CODES_TSearchParamsSequence[spSequence_chromosome]);
+  if resource.variation <> nil then
   begin
-    index(frtSequence, key, 0, c.chromosome, 'chromosome');
-    index(frtSequence, key, 0, c.startElement, 'start');
-    index(frtSequence, key, 0, c.end_Element, 'end');
-// spSequence_Coordinate, {@enum.value "coordinate" spSequence_Coordinate Genomic coordinate of the sequence. For example, a search for sequence in region 1:123-345 can be represented as `coordinate=1$lt345$gt123` }
+    index(frtSequence, key, 0, resource.variation.startElement, CODES_TSearchParamsSequence[spSequence_start]);
+    index(frtSequence, key, 0, resource.variation.end_Element, CODES_TSearchParamsSequence[spSequence_end]);
+// spSequence_Coordinate, {@enum.value "coordinate" spSequence_Coordinate Genomic coordinate of the sequence. For example, a search for sequence in region 1:123-345 can be represented as _coordinate=1$lt345$gt123_ }
   end;
 end;
 
@@ -3100,7 +3227,7 @@ end;
 {$IFDEF FHIR_DSTU3}
 Const
   CHECK_TSearchParamsContract : Array[TSearchParamsContract] of TSearchParamsContract = ( spContract__content, spContract__id, spContract__lastUpdated, spContract__profile, spContract__query, spContract__security, spContract__tag, spContract__text,
-    spContract_Agent, spContract_Authority, spContract_Domain, spContract_Identifier, spContract_Issued, spContract_Patient, spContract_Signer, spContract_Topic);
+    spContract_Agent, spContract_Authority, spContract_Domain, spContract_Identifier, spContract_Issued, spContract_Patient, spContract_Signer, spContract_Subject, spContract_Topic, spContract_Ttopic);
 
 {$ELSE}
 Const
@@ -3126,13 +3253,13 @@ begin
   {$IFDEF FHIR_DSTU3}
   for i := 0 to resource.topicList.Count - 1 do
   begin
-    index(context, frtContract, key, 0, resource.topicList[i], 'topic');
-    index(context, frtContract, key, 0, resource.topicList[i], 'patient', frtPatient);
+    index(context, frtContract, key, 0, resource.topicList[i], CODES_TSearchParamsContract[spContract_topic]);
+    index(context, frtContract, key, 0, resource.topicList[i], CODES_TSearchParamsContract[spContract_patient], frtPatient);
     patientCompartment(key, resource.topicList[i]);
   end;
   for i := 0 to resource.agentList.Count - 1 do
   begin
-    index(context, frtContract, key, 0, resource.agentList[i].actor, 'agent');
+    index(context, frtContract, key, 0, resource.agentList[i].actor, CODES_TSearchParamsContract[spContract_agent]);
     practitionerCompartment(key, resource.agentList[i].actor);
     relatedPersonCompartment(key, resource.agentList[i].actor);
     deviceCompartment(key, resource.agentList[i].actor);
@@ -3140,13 +3267,13 @@ begin
   {$ELSE}
   for i := 0 to resource.subjectList.Count - 1 do
   begin
-    index(context, frtContract, key, 0, resource.subjectList[i], 'subject');
+    index(context, frtContract, key, 0, resource.subjectList[i], CODES_TSearchParamsContract[spContract_subject]);
     patientCompartment(key, resource.subjectList[i]);
-    index(context, frtContract, key, 0, resource.subjectList[i], 'patient');
+    index(context, frtContract, key, 0, resource.subjectList[i], CODES_TSearchParamsContract[spContract_patient]);
   end;
   for i := 0 to resource.actorList.Count - 1 do
   begin
-    index(context, frtContract, key, 0, resource.actorList[i].entity, 'actor');
+    index(context, frtContract, key, 0, resource.actorList[i].entity, CODES_TSearchParamsContract[spContract_actor]);
     practitionerCompartment(key, resource.actorList[i].entity);
     relatedPersonCompartment(key, resource.actorList[i].entity);
     deviceCompartment(key, resource.actorList[i].entity);
@@ -3154,15 +3281,17 @@ begin
   {$ENDIF}
   for i := 0 to resource.signerList.Count - 1 do
   begin
-    index(context, frtContract, key, 0, resource.signerList[i].party, 'signer');
+    index(context, frtContract, key, 0, resource.signerList[i].party, CODES_TSearchParamsContract[spContract_signer]);
     practitionerCompartment(key, resource.signerList[i].party);
     relatedPersonCompartment(key, resource.signerList[i].party);
     patientCompartment(key, resource.signerList[i].party);
   end;
-  index(frtContract, key, 0, resource.identifier, 'identifier');
-  index(frtContract, key, 0, resource.issuedElement, 'issued');
-  index(context, frtContract, key, 0, resource.authorityList, 'authority');
-  index(context, frtContract, key, 0, resource.domainList, 'domain');
+  index(frtContract, key, 0, resource.identifier, CODES_TSearchParamsContract[spContract_identifier]);
+  {$IFDEF FHIR_DSTU3}
+  index(frtContract, key, 0, resource.issuedElement, CODES_TSearchParamsContract[spContract_issued]);
+  index(context, frtContract, key, 0, resource.authorityList, CODES_TSearchParamsContract[spContract_authority]);
+  index(context, frtContract, key, 0, resource.domainList, CODES_TSearchParamsContract[spContract_domain]);
+  {$ENDIF}
 end;
 
 Const
@@ -3184,12 +3313,12 @@ procedure TFhirIndexManager.buildIndexValuesSupplyDelivery(key: integer; id : St
 var
   i : integer;
 begin
-  index(frtSupplyDelivery, key, 0, resource.identifier, 'identifier');
-  index(context, frtSupplyDelivery, key, 0, resource.patient, 'patient');
+  index(frtSupplyDelivery, key, 0, resource.identifier, CODES_TSearchParamsSupplyDelivery[spSupplyDelivery_identifier]);
+  index(context, frtSupplyDelivery, key, 0, resource.patient, CODES_TSearchParamsSupplyDelivery[spSupplyDelivery_patient]);
   patientCompartment(key, resource.patient);
-  index(context, frtSupplyDelivery, key, 0, resource.receiverList, 'receiver');
-  index(frtSupplyDelivery, key, 0, resource.statusElement, 'status');
-  index(context, frtSupplyDelivery, key, 0, resource.supplier, 'supplier');
+  index(context, frtSupplyDelivery, key, 0, resource.receiverList, CODES_TSearchParamsSupplyDelivery[spSupplyDelivery_receiver]);
+  index(frtSupplyDelivery, key, 0, resource.statusElement, CODES_TSearchParamsSupplyDelivery[spSupplyDelivery_status]);
+  index(context, frtSupplyDelivery, key, 0, resource.supplier, CODES_TSearchParamsSupplyDelivery[spSupplyDelivery_supplier]);
 end;
 
 Const
@@ -3211,13 +3340,13 @@ procedure TFhirIndexManager.buildIndexValuesSupplyRequest(key: integer; id : Str
 var
   i : integer;
 begin
-  index(frtSupplyRequest, key, 0, resource.identifier, 'identifier');
-  index(frtSupplyRequest, key, 0, resource.kind, 'kind');
-  index(frtSupplyRequest, key, 0, resource.dateElement, 'date');
-  index(context, frtSupplyRequest, key, 0, resource.source, 'source');
-  index(context, frtSupplyRequest, key, 0, resource.supplierList, 'supplier');
-  index(frtSupplyRequest, key, 0, resource.statusElement, 'status');
-  index(context, frtSupplyRequest, key, 0, resource.patient, 'patient');
+  index(frtSupplyRequest, key, 0, resource.identifier, CODES_TSearchParamsSupplyRequest[spSupplyRequest_identifier]);
+  index(frtSupplyRequest, key, 0, resource.kind, CODES_TSearchParamsSupplyRequest[spSupplyRequest_kind]);
+  index(frtSupplyRequest, key, 0, resource.dateElement, CODES_TSearchParamsSupplyRequest[spSupplyRequest_date]);
+  index(context, frtSupplyRequest, key, 0, resource.source, CODES_TSearchParamsSupplyRequest[spSupplyRequest_source]);
+  index(context, frtSupplyRequest, key, 0, resource.supplierList, CODES_TSearchParamsSupplyRequest[spSupplyRequest_supplier]);
+  index(frtSupplyRequest, key, 0, resource.statusElement, CODES_TSearchParamsSupplyRequest[spSupplyRequest_status]);
+  index(context, frtSupplyRequest, key, 0, resource.patient, CODES_TSearchParamsSupplyRequest[spSupplyRequest_patient]);
   patientCompartment(key, resource.patient);
 end;
 
@@ -3242,22 +3371,22 @@ var
   i : integer;
 begin
   for i := 0 to resource.addressList.count - 1 do
-    index(frtRelatedPerson, key, 0, resource.addressList[i], 'address');
-  index(frtRelatedPerson, key, 0, resource.genderElement, 'gender');
+    index(frtRelatedPerson, key, 0, resource.addressList[i], CODES_TSearchParamsRelatedPerson[spRelatedPerson_address]);
+  index(frtRelatedPerson, key, 0, resource.genderElement, CODES_TSearchParamsRelatedPerson[spRelatedPerson_gender]);
 
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtRelatedPerson, key, 0, resource.identifierList[i], 'identifier');
-  index(frtRelatedPerson, key, 0, resource.name, 'name', 'phonetic');
-  index(frtRelatedPerson, key, 0, resource.birthDateElement, 'birthdate');
-  index(context, frtRelatedPerson, key, 0, resource.patient, 'patient');
+    index(frtRelatedPerson, key, 0, resource.identifierList[i], CODES_TSearchParamsRelatedPerson[spRelatedPerson_identifier]);
+  index(frtRelatedPerson, key, 0, resource.name, 'name', CODES_TSearchParamsRelatedPerson[spRelatedPerson_phonetic]);
+  index(frtRelatedPerson, key, 0, resource.birthDateElement, CODES_TSearchParamsRelatedPerson[spRelatedPerson_birthdate]);
+  index(context, frtRelatedPerson, key, 0, resource.patient, CODES_TSearchParamsRelatedPerson[spRelatedPerson_patient]);
   patientCompartment(key, resource.patient);
   for i := 0 to resource.telecomList.count - 1 do
   begin
-    index(frtRelatedPerson, key, 0, resource.telecomList[i], 'telecom');
+    index(frtRelatedPerson, key, 0, resource.telecomList[i], CODES_TSearchParamsRelatedPerson[spRelatedPerson_telecom]);
     if (resource.telecomList[i].system = ContactPointSystemEmail) then
-      index(frtRelatedPerson, key, 0, resource.telecomList[i].value, 'email');
+      index(frtRelatedPerson, key, 0, resource.telecomList[i].value, CODES_TSearchParamsRelatedPerson[spRelatedPerson_email]);
     if (resource.telecomList[i].system = ContactPointSystemPhone) then
-      index(frtRelatedPerson, key, 0, resource.telecomList[i].value, 'phone');
+      index(frtRelatedPerson, key, 0, resource.telecomList[i].value, CODES_TSearchParamsRelatedPerson[spRelatedPerson_phone]);
 
   end;
 end;
@@ -3419,8 +3548,7 @@ Const
   {$IFDEF FHIR_DSTU3}
   CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
     spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,
-    spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion, spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Publisher,
-    spConformance_Resource, spConformance_Resourceprofile, spConformance_Securityservice, spConformance_Software, spConformance_Status, spConformance_Supportedprofile, spConformance_Url, spConformance_Version);
+    spConformance_Context, spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion, spConformance_Format, spConformance_Mode, spConformance_Name, spConformance_Publisher, spConformance_Resource, spConformance_Resourceprofile, spConformance_Securityservice, spConformance_Software, spConformance_Status, spConformance_Supportedprofile, spConformance_Url, spConformance_Version);
   {$ELSE}
   CHECK_TSearchParamsConformance : Array[TSearchParamsConformance] of TSearchParamsConformance = (
     spConformance__content, spConformance__id, spConformance__lastUpdated, spConformance__profile, spConformance__query, spConformance__security, spConformance__tag,  spConformance__text,spConformance_Date, spConformance_Description, spConformance_Event, spConformance_Fhirversion,
@@ -3444,27 +3572,30 @@ var
   i : integer;
   j : integer;
 begin
-  index(frtConformance, key, 0, resource.dateElement, 'date');
-  index(frtConformance, key, 0, resource.nameElement, 'name');
-  index(frtConformance, key, 0, resource.statusElement, 'status');
-  index(frtConformance, key, 0, resource.descriptionElement, 'description');
-  index(frtConformance, key, 0, resource.publisherElement, 'publisher');
+  index(frtConformance, key, 0, resource.dateElement, CODES_TSearchParamsConformance[spConformance_date]);
+  index(frtConformance, key, 0, resource.nameElement, CODES_TSearchParamsConformance[spConformance_name]);
+  index(frtConformance, key, 0, resource.statusElement, CODES_TSearchParamsConformance[spConformance_status]);
+  index(frtConformance, key, 0, resource.descriptionElement, CODES_TSearchParamsConformance[spConformance_description]);
+  index(frtConformance, key, 0, resource.publisherElement, CODES_TSearchParamsConformance[spConformance_publisher]);
   if resource.software <> nil then
-    index(frtConformance, key, 0, resource.software.nameElement, 'software');
-  index(frtConformance, key, 0, resource.versionElement, 'version');
-  index(frtConformance, key, 0, resource.fhirversionElement, 'fhirversion');
-  index(frtConformance, key, 0, resource.urlElement, 'url');
+    index(frtConformance, key, 0, resource.software.nameElement, CODES_TSearchParamsConformance[spConformance_software]);
+  index(frtConformance, key, 0, resource.versionElement, CODES_TSearchParamsConformance[spConformance_version]);
+  index(frtConformance, key, 0, resource.fhirversionElement, CODES_TSearchParamsConformance[spConformance_fhirversion]);
+  index(frtConformance, key, 0, resource.urlElement, CODES_TSearchParamsConformance[spConformance_url]);
+  {$IFDEF FHIR_DSTU3}
+  index(frtConformance, key, 0, resource.useContextList, CODES_TSearchParamsConformance[spConformance_Context]);
+  {$ENDIF}
 
 
   for j := 0 to resource.formatList.Count - 1 do
-    index(frtConformance, key, 0, resource.formatList[j], 'format');
+    index(frtConformance, key, 0, resource.formatList[j], CODES_TSearchParamsConformance[spConformance_format]);
 
   for j := 0 to resource.restList.Count - 1 do
   begin
     if resource.restList[j].security <> nil then
     begin
       for i := 0 to resource.restList[j].security.serviceList.count - 1 do
-        index(frtConformance, key, 0, resource.restList[j].security.serviceList[i], {$IFDEF FHIR_DSTU3}'securityservice' {$ELSE}'security'{$ENDIF});
+        index(frtConformance, key, 0, resource.restList[j].security.serviceList[i], CODES_TSearchParamsConformance[{$IFDEF FHIR_DSTU3}spConformance_securityservice{$ELSE}spConformance_security{$ENDIF}]);
     end;
   end;
 
@@ -3473,30 +3604,31 @@ begin
   begin
     for i := 0 to resource.restList[j].resourceList.count - 1 do
     begin
-      index(context, frtConformance, key, 0, resource.restList[j].resourceList[i].profile, {$IFDEF FHIR_DSTU3} 'resourceprofile' {$ELSE} 'profile' {$ENDIF});
-      index(frtConformance, key, 0, resource.restList[j].resourceList[i].type_Element, 'resource');
+      index(context, frtConformance, key, 0, resource.restList[j].resourceList[i].profile, CODES_TSearchParamsConformance[{$IFDEF FHIR_DSTU3} spConformance_resourceprofile{$ELSE} spConformance_profile {$ENDIF}]);
+      index(frtConformance, key, 0, resource.restList[j].resourceList[i].type_Element, CODES_TSearchParamsConformance[spConformance_resource]);
     end;
-    index(frtConformance, key, 0, resource.restList[j].modeElement, 'mode');
+    index(frtConformance, key, 0, resource.restList[j].modeElement, CODES_TSearchParamsConformance[spConformance_mode]);
   end;
 
   for j := 0 to resource.messagingList.Count - 1 Do
   begin
     for i := 0 to resource.messagingList[j].EventList.count - 1 do
     begin
-      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].focusElement, 'resource');
+      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].focusElement, CODES_TSearchParamsConformance[spConformance_resource]);
       {$IFDEF FHIR_DSTU2}
-      index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].request, 'profile');
-      index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].response, 'profile');
+      index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].request, CODES_TSearchParamsConformance[spConformance_profile]);
+      index(context, frtConformance, key, 0, resource.messagingList[j].EventList[i].response, CODES_TSearchParamsConformance[spConformance_profile]);
       {$ENDIF}
-      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].modeElement, 'mode');
-      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].code, 'event');
+      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].modeElement, CODES_TSearchParamsConformance[spConformance_mode]);
+      index(frtConformance, key, 0, resource.messagingList[j].EventList[i].code, CODES_TSearchParamsConformance[spConformance_event]);
     end;
   end;
 
   for i := 0 to resource.DocumentList.count - 1 do
-    index(context, frtConformance, key, 0, resource.DocumentList[i].profile, {$IFDEF FHIR_DSTU3} 'resourceprofile' {$ELSE} 'profile' {$ENDIF});
+    index(context, frtConformance, key, 0, resource.DocumentList[i].profile, CODES_TSearchParamsConformance[{$IFDEF FHIR_DSTU3} spConformance_resourceprofile {$ELSE} spConformance_profile {$ENDIF}]);
   for i := 0 to resource.profileList.count - 1 do
-    index(context, frtConformance, key, 0, resource.ProfileList[i], {$IFDEF FHIR_DSTU3} 'supported-profile' {$ELSE} 'profile' {$ENDIF});
+    index(context, frtConformance, key, 0, resource.ProfileList[i], CODES_TSearchParamsConformance[{$IFDEF FHIR_DSTU3} spConformance_supportedprofile {$ELSE} spConformance_profile {$ENDIF}]);
+
 end;
 
 { TFhirCompositionIndexManager }
@@ -3523,44 +3655,44 @@ procedure TFhirIndexManager.buildIndexValuesComposition(key : integer; id : Stri
     i : integer;
   begin
 
-    index(frtComposition, key, 0, section.code, 'section');
-    index(context, frtComposition, key, 0, section.entryList, 'entry');
+    index(frtComposition, key, 0, section.code, CODES_TSearchParamsComposition[spComposition_section]);
+    index(context, frtComposition, key, 0, section.entryList, CODES_TSearchParamsComposition[spComposition_entry]);
     for i := 0 to section.SectionList.count - 1 do
       indexSection(section.SectionList[i]);
   end;
 var
   i, j : integer;
 begin
-  index(frtComposition, key, 0, resource.dateElement, 'date');
-  index(frtComposition, key, 0, resource.identifier, 'identifier');
-  index(context, frtComposition, key, 0, resource.subject, 'subject');
-  index(context, frtComposition, key, 0, resource.subject, 'patient', frtPatient);
-  index(context, frtComposition, key, 0, resource.encounter, 'encounter');
+  index(frtComposition, key, 0, resource.dateElement, CODES_TSearchParamsComposition[spComposition_date]);
+  index(frtComposition, key, 0, resource.identifier, CODES_TSearchParamsComposition[spComposition_identifier]);
+  index(context, frtComposition, key, 0, resource.subject, CODES_TSearchParamsComposition[spComposition_subject]);
+  index(context, frtComposition, key, 0, resource.subject, CODES_TSearchParamsComposition[spComposition_patient], frtPatient);
+  index(context, frtComposition, key, 0, resource.encounter, CODES_TSearchParamsComposition[spComposition_encounter]);
   patientCompartment(key, resource.subject);
   practitionerCompartment(key, resource.subject);
   deviceCompartment(key, resource.subject);
-  index(frtComposition, key, 0, resource.titleElement, 'title');
-  index(frtComposition, key, 0, resource.type_Element, 'type');
-  index(frtComposition, key, 0, resource.class_Element, 'class');
-  index(frtComposition, key, 0, resource.confidentialityElement, 'confidentiality');
-  index(frtComposition, key, 0, resource.statusElement, 'status');
+  index(frtComposition, key, 0, resource.titleElement, CODES_TSearchParamsComposition[spComposition_title]);
+  index(frtComposition, key, 0, resource.type_Element, CODES_TSearchParamsComposition[spComposition_type]);
+  index(frtComposition, key, 0, resource.class_Element, CODES_TSearchParamsComposition[spComposition_class]);
+  index(frtComposition, key, 0, resource.confidentialityElement, CODES_TSearchParamsComposition[spComposition_confidentiality]);
+  index(frtComposition, key, 0, resource.statusElement, CODES_TSearchParamsComposition[spComposition_status]);
   for j := 0 to resource.eventList.Count - 1 do
     for i := 0 to resource.eventList[j].codeList.Count - 1 do
     begin
-      index(frtComposition, key, 0, resource.eventList[j].period, 'period');
-      index(frtComposition, key, 0, resource.eventList[j].codeList[i], 'context');
+      index(frtComposition, key, 0, resource.eventList[j].period, CODES_TSearchParamsComposition[spComposition_period]);
+      index(frtComposition, key, 0, resource.eventList[j].codeList[i], CODES_TSearchParamsComposition[spComposition_context]);
     end;
 
   for i := 0 to resource.authorList.count - 1 do
   begin
-    index(context, frtComposition, key, 0, resource.authorList[i], 'author');
+    index(context, frtComposition, key, 0, resource.authorList[i], CODES_TSearchParamsComposition[spComposition_author]);
     relatedPersonCompartment(key, resource.authorList[i]);
     practitionerCompartment(key, resource.authorList[i]);
     deviceCompartment(key, resource.authorList[i]);
     patientCompartment(key, resource.authorList[i]);
   end;
   for i := 0 to resource.attesterList.count - 1 do
-    index(context, frtComposition, key, 0, resource.attesterList[i].party, 'attester');
+    index(context, frtComposition, key, 0, resource.attesterList[i].party, CODES_TSearchParamsComposition[spComposition_attester]);
   for i := 0 to resource.SectionList.count - 1 do
     indexSection(resource.SectionList[i]);
 end;
@@ -3590,28 +3722,28 @@ begin
 
   if (resource.response <> nil) then
   begin
-    index(frtMessageHeader, key, 0, resource.response.codeElement, 'code');
-    index(frtMessageHeader, key, 0, resource.response.id, 'response-id');
+    index(frtMessageHeader, key, 0, resource.response.codeElement, CODES_TSearchParamsMessageHeader[spMessageHeader_code]);
+    index(frtMessageHeader, key, 0, resource.response.id, CODES_TSearchParamsMessageHeader[spMessageHeader_responseid]);
   end;
   for i := 0 to resource.dataList.Count - 1 do
-    index(context, frtMessageHeader, key, 0, resource.dataList[i], 'data');
-  index(context, frtMessageHeader, key, 0, resource.receiver, 'receiver');
-  index(context, frtMessageHeader, key, 0, resource.author, 'author');
-  index(context, frtMessageHeader, key, 0, resource.enterer, 'enterer');
-  index(context, frtMessageHeader, key, 0, resource.responsible, 'responsible');
-  index(frtMessageHeader, key, 0, resource.timestampElement, 'timestamp');
+    index(context, frtMessageHeader, key, 0, resource.dataList[i], CODES_TSearchParamsMessageHeader[spMessageHeader_data]);
+  index(context, frtMessageHeader, key, 0, resource.receiver, CODES_TSearchParamsMessageHeader[spMessageHeader_receiver]);
+  index(context, frtMessageHeader, key, 0, resource.author, CODES_TSearchParamsMessageHeader[spMessageHeader_author]);
+  index(context, frtMessageHeader, key, 0, resource.enterer, CODES_TSearchParamsMessageHeader[spMessageHeader_enterer]);
+  index(context, frtMessageHeader, key, 0, resource.responsible, CODES_TSearchParamsMessageHeader[spMessageHeader_responsible]);
+  index(frtMessageHeader, key, 0, resource.timestampElement, CODES_TSearchParamsMessageHeader[spMessageHeader_timestamp]);
   for i := 0 to resource.destinationList.Count - 1 do
   begin
-    index(frtMessageHeader, key, 0, resource.destinationList[i].nameElement, 'destination');
-    index(frtMessageHeader, key, 0, resource.destinationList[i].endpointElement, 'destination-uri');
-    index(context, frtMessageHeader, key, 0, resource.destinationList[i].target, 'target');
+    index(frtMessageHeader, key, 0, resource.destinationList[i].nameElement, CODES_TSearchParamsMessageHeader[spMessageHeader_destination]);
+    index(frtMessageHeader, key, 0, resource.destinationList[i].endpointElement, CODES_TSearchParamsMessageHeader[spMessageHeader_destinationuri]);
+    index(context, frtMessageHeader, key, 0, resource.destinationList[i].target, CODES_TSearchParamsMessageHeader[spMessageHeader_target]);
   end;
   if resource.source <> nil then
   begin
-    index(frtMessageHeader, key, 0, resource.source.nameElement, 'source');
-    index(frtMessageHeader, key, 0, resource.source.endpointElement, 'source-uri');
+    index(frtMessageHeader, key, 0, resource.source.nameElement, CODES_TSearchParamsMessageHeader[spMessageHeader_source]);
+    index(frtMessageHeader, key, 0, resource.source.endpointElement, CODES_TSearchParamsMessageHeader[spMessageHeader_sourceuri]);
   end;
-  index(frtMessageHeader, key, 0, resource.event, 'event');
+  index(frtMessageHeader, key, 0, resource.event, CODES_TSearchParamsMessageHeader[spMessageHeader_event]);
 end;
 
 
@@ -3636,36 +3768,47 @@ var
   i, j : integer;
 begin
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtPractitioner, key, 0, resource.identifierList[i], 'identifier');
-  if resource.name <> nil then
+    index(frtPractitioner, key, 0, resource.identifierList[i], CODES_TSearchParamsPractitioner[spPractitioner_identifier]);
+  {$IFDEF FHIR_DSTU3}
+  for i := 0 to resource.nameList.count - 1 do
   begin
-    index(frtPractitioner, key, 0, resource.name, 'name', 'phonetic');
-    for j := 0 to resource.name.givenList.count - 1 do
-      index(frtPractitioner, key, 0, resource.name.givenList[j], 'given');
-    for j := 0 to resource.name.familyList.count - 1 do
-      index(frtPractitioner, key, 0, resource.name.familyList[j], 'family');
+    index(frtPractitioner, key, 0, resource.nameList[i], 'name', CODES_TSearchParamsPractitioner[spPractitioner_phonetic]);
+    for j := 0 to resource.nameList[i].givenList.count - 1 do
+      index(frtPractitioner, key, 0, resource.nameList[i].givenList[j], CODES_TSearchParamsPractitioner[spPractitioner_given]);
+    for j := 0 to resource.nameList[i].familyList.count - 1 do
+      index(frtPractitioner, key, 0, resource.nameList[i].familyList[j], CODES_TSearchParamsPractitioner[spPractitioner_family]);
   end;
+  {$ELSE}
+  if (resource.name <> nil) then
+  begin
+    index(frtPractitioner, key, 0, resource.name, 'name', CODES_TSearchParamsPractitioner[spPractitioner_phonetic]);
+    for j := 0 to resource.name.givenList.count - 1 do
+      index(frtPractitioner, key, 0, resource.name.givenList[j], CODES_TSearchParamsPractitioner[spPractitioner_given]);
+    for j := 0 to resource.name.familyList.count - 1 do
+      index(frtPractitioner, key, 0, resource.name.familyList[j], CODES_TSearchParamsPractitioner[spPractitioner_family]);
+  end;
+  {$ENDIF}
   for i := 0 to resource.telecomList.count - 1 do
   begin
-    index(frtPractitioner, key, 0, resource.telecomList[i], 'telecom');
+    index(frtPractitioner, key, 0, resource.telecomList[i], CODES_TSearchParamsPractitioner[spPractitioner_telecom]);
     if (resource.telecomList[i].system = ContactPointSystemPhone) then
-      index(frtPractitioner, key, 0, resource.telecomList[i].value, 'phone');
+      index(frtPractitioner, key, 0, resource.telecomList[i].value, CODES_TSearchParamsPractitioner[spPractitioner_phone]);
     if (resource.telecomList[i].system = ContactPointSystemEmail) then
-      index(frtPractitioner, key, 0, resource.telecomList[i].value, 'email');
+      index(frtPractitioner, key, 0, resource.telecomList[i].value, CODES_TSearchParamsPractitioner[spPractitioner_email]);
 
   end;
-  index(frtPractitioner, key, 0, resource.genderElement, 'gender');
+  index(frtPractitioner, key, 0, resource.genderElement, CODES_TSearchParamsPractitioner[spPractitioner_gender]);
   for i := 0 to resource.addressList.Count - 1 do
-    index(frtPractitioner, key, 0, resource.addressList[i], 'address');
-  index(frtPractitioner, key, 0, resource.communicationList, 'communication');
+    index(frtPractitioner, key, 0, resource.addressList[i], CODES_TSearchParamsPractitioner[spPractitioner_address]);
+  index(frtPractitioner, key, 0, resource.communicationList, CODES_TSearchParamsPractitioner[spPractitioner_communication]);
   for j := 0 to resource.practitionerRoleList.Count -1 do
   begin
     for i := 0 to resource.practitionerRoleList[j].locationList.count - 1 do
-      index(context, frtPractitioner, key, 0, resource.practitionerRoleList[j].locationList[i], 'location');
-    index(context, frtPractitioner, key, 0, resource.practitionerRoleList[j].managingOrganization, 'organization');
-    index(frtPractitioner, key, 0, resource.practitionerRoleList[j].roleElement, 'role');
+      index(context, frtPractitioner, key, 0, resource.practitionerRoleList[j].locationList[i], CODES_TSearchParamsPractitioner[spPractitioner_location]);
+    index(context, frtPractitioner, key, 0, resource.practitionerRoleList[j].{$IFDEF FHIR_DSTU2}managingOrganization{$ELSE}Organization{$ENDIF}, CODES_TSearchParamsPractitioner[spPractitioner_organization]);
+    index(frtPractitioner, key, 0, resource.practitionerRoleList[j].roleElement, CODES_TSearchParamsPractitioner[spPractitioner_role]);
     for i := 0 to resource.practitionerRoleList[j].specialtyList.count - 1 do
-      index(frtPractitioner, key, 0, resource.practitionerRoleList[j].specialtyList[i], 'specialty');
+      index(frtPractitioner, key, 0, resource.practitionerRoleList[j].specialtyList[i], CODES_TSearchParamsPractitioner[spPractitioner_specialty]);
   end;
 end;
 
@@ -3691,16 +3834,16 @@ procedure TFhirIndexManager.buildIndexValuesOrganization(key : integer;  id : St
 var
   i : integer;
 begin
-  index(frtOrganization, key, 0, resource.active, 'active');
-  index(frtOrganization, key, 0, resource.NameElement, 'name');
-  index(frtOrganization, key, 0, EncodeNYSIISValue(resource.nameElement), 'phonetic');
-  index(frtOrganization, key, 0, resource.type_, 'type');
+  index(frtOrganization, key, 0, resource.active, CODES_TSearchParamsOrganization[spOrganization_active]);
+  index(frtOrganization, key, 0, resource.NameElement, CODES_TSearchParamsOrganization[spOrganization_name]);
+  index(frtOrganization, key, 0, EncodeNYSIISValue(resource.nameElement), CODES_TSearchParamsOrganization[spOrganization_phonetic]);
+  index(frtOrganization, key, 0, resource.type_, CODES_TSearchParamsOrganization[spOrganization_type]);
   for i := 0 to resource.addressList.Count - 1 Do
-    index(frtOrganization, key, 0, resource.addressList[i], 'address');
+    index(frtOrganization, key, 0, resource.addressList[i], CODES_TSearchParamsOrganization[spOrganization_address]);
   for i := 0 to resource.IdentifierList.Count - 1 Do
     if resource.IdentifierList[i] <> nil then
-      index(frtOrganization, key, 0, resource.IdentifierList[i], 'identifier');
-  index(context, frtOrganization, key, 0, resource.partOf, 'partOf');
+      index(frtOrganization, key, 0, resource.IdentifierList[i], CODES_TSearchParamsOrganization[spOrganization_identifier]);
+  index(context, frtOrganization, key, 0, resource.partOf, CODES_TSearchParamsOrganization[spOrganization_partOf]);
 
 end;
 
@@ -3726,25 +3869,25 @@ procedure TFhirIndexManager.buildIndexValuesGroup(key : integer;  id : String; c
 var
   i, p : integer;
 begin
-  index(frtGroup, key, 0, resource.actual, 'actual');
-  index(frtGroup, key, 0, resource.code, 'code');
-  index(frtGroup, key, 0, resource.type_Element, 'type');
-  index(frtGroup, key, 0, resource.identifierList, 'identifier');
+  index(frtGroup, key, 0, resource.actual, CODES_TSearchParamsGroup[spGroup_actual]);
+  index(frtGroup, key, 0, resource.code, CODES_TSearchParamsGroup[spGroup_code]);
+  index(frtGroup, key, 0, resource.type_Element, CODES_TSearchParamsGroup[spGroup_type]);
+  index(frtGroup, key, 0, resource.identifierList, CODES_TSearchParamsGroup[spGroup_identifier]);
 
   for i := 0 to resource.memberList.Count - 1 Do
-    index(context, frtGroup, key, 0, resource.memberList[i].entity, 'member');
+    index(context, frtGroup, key, 0, resource.memberList[i].entity, CODES_TSearchParamsGroup[spGroup_member]);
 
   for i := 0 to resource.characteristicList.Count - 1 Do
   begin
-    p := index(frtGroup, key, 0, 'characteristic');
-    index(frtGroup, key, p, resource.characteristicList[i].code, 'characteristic');
-    index(frtGroup, key, 0, resource.characteristicList[i].exclude, 'exclude');
+    p := index(frtGroup, key, 0, CODES_TSearchParamsGroup[spGroup_characteristic]);
+    index(frtGroup, key, p, resource.characteristicList[i].code, CODES_TSearchParamsGroup[spGroup_characteristic]);
+    index(frtGroup, key, 0, resource.characteristicList[i].exclude, CODES_TSearchParamsGroup[spGroup_exclude]);
     if resource.characteristicList[i].value is TFhirBoolean then
-      index(frtGroup, key, p, TFhirBoolean(resource.characteristicList[i].value).value, 'value')
+      index(frtGroup, key, p, TFhirBoolean(resource.characteristicList[i].value).value, CODES_TSearchParamsGroup[spGroup_value])
     else if resource.characteristicList[i].value is TFhirString then
-      index(frtGroup, key, p, TFhirString(resource.characteristicList[i].value), 'value')
+      index(frtGroup, key, p, TFhirString(resource.characteristicList[i].value), CODES_TSearchParamsGroup[spGroup_value])
     else if resource.characteristicList[i].value is TFhirCodeableConcept then
-      index(frtGroup, key, p, TFhirCodeableConcept(resource.characteristicList[i].value), 'value')
+      index(frtGroup, key, p, TFhirCodeableConcept(resource.characteristicList[i].value), CODES_TSearchParamsGroup[spGroup_value])
   end;
 end;
 
@@ -3773,53 +3916,53 @@ var
   procedure indexValue(value : TFhirType; prefix : string);
   begin
     if value is TFhirQuantity then
-      index(frtObservation, key, 0, TFhirQuantity(value), prefix+'value-quantity')
+      index(frtObservation, key, 0, TFhirQuantity(value), prefix+CODES_TSearchParamsObservation[spObservation_Valuequantity])
     else if value is TFhirSampledData then
-      index(frtObservation, key, 0, TFhirSampledData(value), prefix+'value-quantity')
+      index(frtObservation, key, 0, TFhirSampledData(value), prefix+CODES_TSearchParamsObservation[spObservation_valuequantity])
     else if value is TFhirRatio then
-      index(frtObservation, key, 0, TFhirRatio(value), prefix+'value-quantity')
+      index(frtObservation, key, 0, TFhirRatio(value), prefix+CODES_TSearchParamsObservation[spObservation_valuequantity])
     else if value is TFhirCodeableConcept then
-      index(frtObservation, key, 0, TFhirCodeableConcept(value), prefix+'value-concept')
+      index(frtObservation, key, 0, TFhirCodeableConcept(value), prefix+CODES_TSearchParamsObservation[spObservation_valueconcept])
     else if value is TFhirPeriod then
-      index(frtObservation, key, 0, TFhirPeriod(value), prefix+'value-date')
+      index(frtObservation, key, 0, TFhirPeriod(value), prefix+CODES_TSearchParamsObservation[spObservation_valuedate])
     else if value is TFhirString then
-      index(frtObservation, key, 0, TFhirString(value), prefix+'value-string');
+      index(frtObservation, key, 0, TFhirString(value), prefix+CODES_TSearchParamsObservation[spObservation_valuestring]);
   end;
 begin
-  index(frtObservation, key, 0, resource.code, 'code');
-  index(frtObservation, key, 0, resource.category, 'category');
+  index(frtObservation, key, 0, resource.code, CODES_TSearchParamsObservation[spObservation_code]);
+  index(frtObservation, key, 0, resource.category, CODES_TSearchParamsObservation[spObservation_category]);
 
 
-  index(context, frtObservation, key, 0, resource.subject, 'subject');
-  index(context, frtObservation, key, 0, resource.subject, 'patient', frtPatient);
+  index(context, frtObservation, key, 0, resource.subject, CODES_TSearchParamsObservation[spObservation_subject]);
+  index(context, frtObservation, key, 0, resource.subject, CODES_TSearchParamsObservation[spObservation_patient], frtPatient);
   patientCompartment(key, resource.subject);
   if resource.effective is TFhirDateTime then
-    index(frtObservation, key, 0, TFhirDateTime(resource.effective), 'date')
+    index(frtObservation, key, 0, TFhirDateTime(resource.effective), CODES_TSearchParamsObservation[spObservation_date])
   else if resource.effective is TFhirPeriod then
-    index(frtObservation, key, 0, TFhirPeriod(resource.effective), 'date');
-  index(frtObservation, key, 0, resource.statusElement, 'status');
+    index(frtObservation, key, 0, TFhirPeriod(resource.effective), CODES_TSearchParamsObservation[spObservation_date]);
+  index(frtObservation, key, 0, resource.statusElement, CODES_TSearchParamsObservation[spObservation_status]);
   for i := 0 to resource.performerList.Count - 1 Do
-    index(context, frtObservation, key, 0, resource.performerList[i], 'performer');
-  index(context, frtObservation, key, 0, resource.specimen, 'specimen');
+    index(context, frtObservation, key, 0, resource.performerList[i], CODES_TSearchParamsObservation[spObservation_performer]);
+  index(context, frtObservation, key, 0, resource.specimen, CODES_TSearchParamsObservation[spObservation_specimen]);
 
   indexValue(resource.value, '');
-  index(context, frtObservation, key, 0, resource.encounter, 'encounter');
-  index(frtObservation, key, 0, resource.identifierList, 'identifier');
-  index(frtObservation, key, 0, resource.dataAbsentReasonElement, 'data-absent-reason');
-  index(context, frtObservation, key, 0, resource.deviceElement, 'device');
+  index(context, frtObservation, key, 0, resource.encounter, CODES_TSearchParamsObservation[spObservation_encounter]);
+  index(frtObservation, key, 0, resource.identifierList, CODES_TSearchParamsObservation[spObservation_identifier]);
+  index(frtObservation, key, 0, resource.dataAbsentReasonElement, CODES_TSearchParamsObservation[spObservation_dataabsentreason]);
+  index(context, frtObservation, key, 0, resource.deviceElement, CODES_TSearchParamsObservation[spObservation_device]);
 
 
   for i := 0 to resource.relatedList.Count - 1 Do
   begin
-    p := index(frtObservation, key, 0, 'related');
-    index(frtObservation, key, p, resource.relatedList[i].type_Element, 'related-type');
-    index(context, frtObservation, key, p, resource.relatedList[i].target, 'related-target');
+    p := index(frtObservation, key, 0, CODES_TSearchParamsObservation[spObservation_related]);
+    index(frtObservation, key, p, resource.relatedList[i].type_Element, CODES_TSearchParamsObservation[spObservation_relatedtype]);
+    index(context, frtObservation, key, p, resource.relatedList[i].target, CODES_TSearchParamsObservation[spObservation_relatedtarget]);
   end;
   for i := 0 to resource.componentList.Count - 1 Do
   begin
-    p := 0; //todo index(frtObservation, key, 0, 'component');
-    index(frtObservation, key, p, resource.componentList[i].code, 'code');
-    index(frtObservation, key, 0, resource.componentList[i].dataAbsentReasonElement, 'component-data-absent-reason');
+    p := 0; //todo index(frtObservation, key, 0, CODES_TSearchParamsObservation[spObservation_component]);
+    index(frtObservation, key, p, resource.componentList[i].code, CODES_TSearchParamsObservation[spObservation_code]);
+    index(frtObservation, key, 0, resource.componentList[i].dataAbsentReasonElement, CODES_TSearchParamsObservation[spObservation_componentdataabsentreason]);
     indexValue(resource.componentList[i].value, 'component-');
   end;
 
@@ -3831,7 +3974,7 @@ end;
 Const
   CHECK_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of TSearchParamsStructureDefinition = (
     spStructureDefinition__content, spStructureDefinition__id, spStructureDefinition__lastUpdated, spStructureDefinition__profile, spStructureDefinition__query, spStructureDefinition__security, spStructureDefinition__tag, spStructureDefinition__text,
-    spStructureDefinition_Abstract, spStructureDefinition_Base, spStructureDefinition_Basepath, spStructureDefinition_Code, spStructureDefinition_Context, spStructureDefinition_Contexttype, spStructureDefinition_Date, spStructureDefinition_Description, spStructureDefinition_Display, spStructureDefinition_Experimental, spStructureDefinition_Extcontext,
+    spStructureDefinition_Abstract, spStructureDefinition_Base, spStructureDefinition_Basepath, spStructureDefinition_Code, spStructureDefinition_Context, spStructureDefinition_Contexttype, spStructureDefinition_Date, spStructureDefinition_Derivation, spStructureDefinition_Description, spStructureDefinition_Display, spStructureDefinition_Experimental, spStructureDefinition_Extcontext,
     spStructureDefinition_Identifier, spStructureDefinition_Kind, spStructureDefinition_Name, spStructureDefinition_Path, spStructureDefinition_Publisher, spStructureDefinition_Status, spStructureDefinition_Type, spStructureDefinition_Url, spStructureDefinition_Valueset, spStructureDefinition_Version);
 
 procedure TFhirIndexInformation.buildIndexesStructureDefinition;
@@ -3850,44 +3993,50 @@ var
   i, j : integer;
   procedure indexElement(element : TFhirElementDefinition);
   begin
-    index(frtStructureDefinition, key, 0, element.path, 'path');
+    index(frtStructureDefinition, key, 0, element.path, CODES_TSearchParamsStructureDefinition[spStructureDefinition_path]);
     if (element.base <> nil) then
-      index(frtStructureDefinition, key, 0, element.base.path, 'base-path');
+      index(frtStructureDefinition, key, 0, element.base.path, CODES_TSearchParamsStructureDefinition[spStructureDefinition_basepath]);
     if (element.binding <> nil) then
       if element.binding.valueSet is TFhirUri then
-        index(frtStructureDefinition, key, 0, TFhirUri(element.binding.valueset), 'valueset')
+        index(frtStructureDefinition, key, 0, TFhirUri(element.binding.valueset), CODES_TSearchParamsStructureDefinition[spStructureDefinition_Valueset])
       else
-        index(context, frtStructureDefinition, key, 0, TFhirReference(element.binding.valueset), 'valueset');
+        index(context, frtStructureDefinition, key, 0, TFhirReference(element.binding.valueset), CODES_TSearchParamsStructureDefinition[spStructureDefinition_valueset]);
   end;
 begin
-  index(frtStructureDefinition, key, 0, resource.identifierList, 'identifier');
-  index(frtStructureDefinition, key, 0, resource.urlElement, 'url');
-  index(frtStructureDefinition, key, 0, resource.baseElement, 'base');
-  index(frtStructureDefinition, key, 0, resource.constrainedTypeElement, 'type');
-  index(frtStructureDefinition, key, 0, resource.nameElement, 'name');
-  index(frtStructureDefinition, key, 0, resource.useContextList, 'context');
-  index(frtStructureDefinition, key, 0, resource.contextTypeElement, 'context-type');
+  index(frtStructureDefinition, key, 0, resource.identifierList, CODES_TSearchParamsStructureDefinition[spStructureDefinition_identifier]);
+  index(frtStructureDefinition, key, 0, resource.urlElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_url]);
+  {$IFDEF FHIR_DSTU2}
+  index(frtStructureDefinition, key, 0, resource.baseElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_base]);
+  index(frtStructureDefinition, key, 0, resource.constrainedTypeElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_type]);
+  {$ELSE}
+  index(frtStructureDefinition, key, 0, resource.baseDefinitionElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_base]);
+  index(frtStructureDefinition, key, 0, resource.baseTypeElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_type]);
+  index(frtStructureDefinition, key, 0, resource.derivationElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_Derivation]);
+  {$ENDIF}
+  index(frtStructureDefinition, key, 0, resource.nameElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_name]);
+  index(frtStructureDefinition, key, 0, resource.useContextList, CODES_TSearchParamsStructureDefinition[spStructureDefinition_context]);
+  index(frtStructureDefinition, key, 0, resource.contextTypeElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_contexttype]);
   for i := 0 to resource.contextList.Count - 1 do
-    index(frtStructureDefinition, key, 0, resource.contextList[i], 'ext-context');
+    index(frtStructureDefinition, key, 0, resource.contextList[i], CODES_TSearchParamsStructureDefinition[spStructureDefinition_extcontext]);
 
-  index(frtStructureDefinition, key, 0, resource.dateElement, 'date');
-  index(frtStructureDefinition, key, 0, resource.abstractElement, 'abstract');
-  index(frtStructureDefinition, key, 0, resource.descriptionElement, 'description');
-  index(frtStructureDefinition, key, 0, resource.experimentalElement, 'experimental');
-  index(frtStructureDefinition, key, 0, resource.displayElement, 'display');
-  index(frtStructureDefinition, key, 0, resource.statusElement, 'status');
-  index(frtStructureDefinition, key, 0, resource.versionElement, 'version');
-  index(frtStructureDefinition, key, 0, resource.publisherElement, 'publisher');
+  index(frtStructureDefinition, key, 0, resource.dateElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_date]);
+  index(frtStructureDefinition, key, 0, resource.abstractElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_abstract]);
+  index(frtStructureDefinition, key, 0, resource.descriptionElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_description]);
+  index(frtStructureDefinition, key, 0, resource.experimentalElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_experimental]);
+  index(frtStructureDefinition, key, 0, resource.displayElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_display]);
+  index(frtStructureDefinition, key, 0, resource.statusElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_status]);
+  index(frtStructureDefinition, key, 0, resource.versionElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_version]);
+  index(frtStructureDefinition, key, 0, resource.publisherElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_publisher]);
   for i := 0 to resource.CodeList.count - 1 Do
-    index(frtStructureDefinition, key, 0, resource.CodeList[i], 'code');
-  index(frtStructureDefinition, key, 0, resource.kindElement, 'kind');
+    index(frtStructureDefinition, key, 0, resource.CodeList[i], CODES_TSearchParamsStructureDefinition[spStructureDefinition_code]);
+  index(frtStructureDefinition, key, 0, resource.kindElement, CODES_TSearchParamsStructureDefinition[spStructureDefinition_kind]);
   if resource.snapshot <> nil then
     for j := 0 to resource.snapshot.elementList.Count - 1 do
       indexElement(resource.snapshot.elementList[j]);
   if resource.differential <> nil then
     for j := 0 to resource.differential.elementList.Count - 1 do
     begin
-      index(frtStructureDefinition, key, 0, resource.differential.elementList[j].path, 'path');
+      index(frtStructureDefinition, key, 0, resource.differential.elementList[j].path, CODES_TSearchParamsStructureDefinition[spStructureDefinition_path]);
       indexElement(resource.differential.elementList[j]);
     end;
 end;
@@ -3923,51 +4072,51 @@ var
 begin
   for i := 0 to resource.IdentifierList.Count - 1 Do
     if resource.IdentifierList[i] <> nil then
-      index(frtPatient, key, 0, resource.IdentifierList[i], 'identifier');
+      index(frtPatient, key, 0, resource.IdentifierList[i], CODES_TSearchParamsPatient[spPatient_identifier]);
   for i := 0 to resource.nameList.count - 1 do
   begin
-    index(frtPatient, key, 0, resource.nameList[i], 'name', 'phonetic');
+    index(frtPatient, key, 0, resource.nameList[i], 'name', CODES_TSearchParamsPatient[spPatient_phonetic]);
     for j := 0 to resource.nameList[i].givenList.count - 1 do
-      index(frtPatient, key, 0, resource.nameList[i].givenList[j], 'given');
+      index(frtPatient, key, 0, resource.nameList[i].givenList[j], CODES_TSearchParamsPatient[spPatient_given]);
     for j := 0 to resource.nameList[i].familyList.count - 1 do
-      index(frtPatient, key, 0, resource.nameList[i].familyList[j], 'family');
+      index(frtPatient, key, 0, resource.nameList[i].familyList[j], CODES_TSearchParamsPatient[spPatient_family]);
   end;
 
   for i := 0 to resource.telecomList.Count - 1 do
   begin
-    index(frtPatient, key, 0, resource.telecomList[i], 'telecom');
+    index(frtPatient, key, 0, resource.telecomList[i], CODES_TSearchParamsPatient[spPatient_telecom]);
     if resource.telecomList[i].system = ContactPointSystemPhone then
-      index(frtPatient, key, 0, resource.telecomList[i].valueElement, 'phone');
+      index(frtPatient, key, 0, resource.telecomList[i].valueElement, CODES_TSearchParamsPatient[spPatient_phone]);
     if resource.telecomList[i].system = ContactPointSystemEmail then
-      index(frtPatient, key, 0, resource.telecomList[i].valueElement, 'email');
+      index(frtPatient, key, 0, resource.telecomList[i].valueElement, CODES_TSearchParamsPatient[spPatient_email]);
 
   end;
   for i := 0 to resource.AddressList.Count - 1 Do
-    index(frtPatient, key, 0, resource.AddressList[i], 'address');
-  index(frtPatient, key, 0, resource.genderElement, 'gender');
+    index(frtPatient, key, 0, resource.AddressList[i], CODES_TSearchParamsPatient[spPatient_address]);
+  index(frtPatient, key, 0, resource.genderElement, CODES_TSearchParamsPatient[spPatient_gender]);
   if (resource.deceased is TFhirBoolean) then
-    index(frtPatient, key, 0, resource.deceased as TFhirBoolean, 'deceased')
+    index(frtPatient, key, 0, resource.deceased as TFhirBoolean, CODES_TSearchParamsPatient[spPatient_deceased])
   else if (resource.deceased is TFhirDateTime) then
-    index(frtPatient, key, 0, resource.deceased as TFhirDateTime, 'deathdate');
+    index(frtPatient, key, 0, resource.deceased as TFhirDateTime, CODES_TSearchParamsPatient[spPatient_deathdate]);
   for i := 0 to resource.communicationList.Count - 1 Do
-    index(frtPatient, key, 0, resource.communicationList[i].language, 'language');
+    index(frtPatient, key, 0, resource.communicationList[i].language, CODES_TSearchParamsPatient[spPatient_language]);
 
-  index(frtPatient, key, 0, resource.birthDateElement, 'birthdate');
+  index(frtPatient, key, 0, resource.birthDateElement, CODES_TSearchParamsPatient[spPatient_birthdate]);
 
-  index(context, frtPatient, key, 0, resource.managingOrganization, 'organization');
+  index(context, frtPatient, key, 0, resource.managingOrganization, CODES_TSearchParamsPatient[spPatient_organization]);
   for i := 0 to resource.careProviderList.Count - 1 Do
-    index(context, frtPatient, key, 0, resource.careProviderList[i], 'careprovider');
+    index(context, frtPatient, key, 0, resource.careProviderList[i], CODES_TSearchParamsPatient[spPatient_careprovider]);
 
 
   for i := 0 to resource.link_List.count - 1 do
-    index(context, frtPatient, key, 0, resource.link_List[i].other, 'link');
+    index(context, frtPatient, key, 0, resource.link_List[i].other, CODES_TSearchParamsPatient[spPatient_link]);
 
-  index(frtPatient, key, 0, resource.activeElement, 'active');
+  index(frtPatient, key, 0, resource.activeElement, CODES_TSearchParamsPatient[spPatient_active]);
 
   if (resource.animal <> nil) then
   begin
-    index(frtPatient, key, 0, resource.animal.species, 'animal-species');
-    index(frtPatient, key, 0, resource.animal.breed, 'animal-breed');
+    index(frtPatient, key, 0, resource.animal.species, CODES_TSearchParamsPatient[spPatient_animalspecies]);
+    index(frtPatient, key, 0, resource.animal.breed, CODES_TSearchParamsPatient[spPatient_animalbreed]);
   end;
   patientCompartment(key, 'patient', id);
 
@@ -3982,9 +4131,9 @@ begin
       index(frtPatient, key, 0, ex.value as TFhirString, 'mothersMaidenName');
     if ex.url = 'http://hl7.org/fhir/StructureDefinition/us-core-race' then
       if ex.value is TFhirCodeableConcept then
-        index(frtPatient, key, 0, ex.value as TFhirCodeableConcept, 'race');
+        index(frtPatient, key, 0, ex.value as TFhirCodeableConcept, CODES_TSearchParamsPatient[spPatient_race]);
     if ex.url = 'http://hl7.org/fhir/StructureDefinition/us-core-ethnicity' then
-      index(frtPatient, key, 0, ex.value as TFhirCodeableConcept, 'ethnicity');
+      index(frtPatient, key, 0, ex.value as TFhirCodeableConcept, CODES_TSearchParamsPatient[spPatient_ethnicity]);
   end;
 
 end;
@@ -4009,39 +4158,39 @@ procedure TFhirIndexManager.buildIndexValuesDiagnosticReport(key : integer; id :
 var
   i, j, k : integer;
 begin
-  index(frtDiagnosticReport, key, 0, resource.statusElement, 'status');
-  index(frtDiagnosticReport, key, 0, resource.identifierList, 'identifier');
+  index(frtDiagnosticReport, key, 0, resource.statusElement, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_status]);
+  index(frtDiagnosticReport, key, 0, resource.identifierList, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_identifier]);
 
-  index(context, frtDiagnosticReport, key, 0, resource.requestList, 'request');
+  index(context, frtDiagnosticReport, key, 0, resource.requestList, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_request]);
 
-  index(frtDiagnosticReport, key, 0, resource.code, 'code');
+  index(frtDiagnosticReport, key, 0, resource.code, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_code]);
   for j := 0 to resource.resultList.count - 1 do
   begin
-    index(context, frtDiagnosticReport, key, 0, resource.resultList[j], 'result');
+    index(context, frtDiagnosticReport, key, 0, resource.resultList[j], CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_result]);
   end;
 
-  index(context, frtDiagnosticReport, key, 0, resource.subject, 'subject');
-  index(context, frtDiagnosticReport, key, 0, resource.subject, 'patient', frtPatient);
+  index(context, frtDiagnosticReport, key, 0, resource.subject, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_subject]);
+  index(context, frtDiagnosticReport, key, 0, resource.subject, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_patient], frtPatient);
   patientCompartment(key, resource.subject);
-  index(context, frtDiagnosticReport, key, 0, resource.performer, 'performer');
+  index(context, frtDiagnosticReport, key, 0, resource.performer, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_performer]);
 
-  index(context, frtDiagnosticReport, key, 0, resource.encounter, 'encounter');
+  index(context, frtDiagnosticReport, key, 0, resource.encounter, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_encounter]);
   encounterCompartment(key, resource.encounter);
 
-  index(frtDiagnosticReport, key, 0, resource.issuedElement, 'issued');
-  index(frtDiagnosticReport, key, 0, resource.category, 'category');
+  index(frtDiagnosticReport, key, 0, resource.issuedElement, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_issued]);
+  index(frtDiagnosticReport, key, 0, resource.category, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_category]);
   if resource.effective is TFhirPeriod then
-    index(frtDiagnosticReport, key, 0, TFhirPeriod(resource.effective), 'date')
+    index(frtDiagnosticReport, key, 0, TFhirPeriod(resource.effective), CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_date])
   else
-    index(frtDiagnosticReport, key, 0, TFhirDateTime(resource.effective), 'date');
+    index(frtDiagnosticReport, key, 0, TFhirDateTime(resource.effective), CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_date]);
 
   for i := 0 to resource.specimenList.Count - 1 Do
-    index(context, frtDiagnosticReport, key, 0, resource.specimenList[i], 'specimen');
+    index(context, frtDiagnosticReport, key, 0, resource.specimenList[i], CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_specimen]);
 
   for i := 0 to resource.imageList.Count - 1 Do
-    index(context, frtDiagnosticReport, key, 0, resource.imageList[i].link_, 'image');
+    index(context, frtDiagnosticReport, key, 0, resource.imageList[i].link_, CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_image]);
   for i := 0 to resource.codedDiagnosisList.Count - 1 Do
-    index(frtDiagnosticReport, key, 0, resource.codedDiagnosisList[i], 'diagnosis');
+    index(frtDiagnosticReport, key, 0, resource.codedDiagnosisList[i], CODES_TSearchParamsDiagnosticReport[spDiagnosticReport_diagnosis]);
 end;
 
 
@@ -4069,44 +4218,44 @@ procedure TFhirIndexManager.buildIndexValuesDiagnosticOrder(key : integer; id : 
 var
   i, j, k, p, p1 : integer;
 begin
-  index(context, frtDiagnosticOrder, key, 0, resource.subject, 'subject');
-  index(context, frtDiagnosticOrder, key, 0, resource.subject, 'patient');
+  index(context, frtDiagnosticOrder, key, 0, resource.subject, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_subject]);
+  index(context, frtDiagnosticOrder, key, 0, resource.subject, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_patient]);
   patientCompartment(key, resource.subject);
   deviceCompartment(key, resource.subject);
-  index(context, frtDiagnosticOrder, key, 0, resource.orderer, 'orderer');
+  index(context, frtDiagnosticOrder, key, 0, resource.orderer, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_orderer]);
   practitionerCompartment(key, resource.orderer);
-  index(context, frtDiagnosticOrder, key, 0, resource.Encounter, 'encounter');
+  index(context, frtDiagnosticOrder, key, 0, resource.Encounter, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_encounter]);
   encounterCompartment(key, resource.encounter);
   for i := 0 to resource.specimenList.Count - 1 do
-    index(context, frtDiagnosticOrder, key, 0, resource.specimenList[i], 'specimen');
-  index(frtDiagnosticOrder, key, 0, resource.statusElement, 'status');
+    index(context, frtDiagnosticOrder, key, 0, resource.specimenList[i], CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_specimen]);
+  index(frtDiagnosticOrder, key, 0, resource.statusElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_status]);
   for i := 0 to resource.identifierList.Count - 1 do
-    index(frtDiagnosticOrder, key, 0, resource.identifierList[i], 'identifier');
+    index(frtDiagnosticOrder, key, 0, resource.identifierList[i], CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_identifier]);
 
   for j := 0 to resource.eventList.count - 1 do
   begin
     p := index(frtDiagnosticOrder, key, 0, 'event');
-    index(context, frtDiagnosticOrder, key, p, resource.eventList[j].actor, 'actor');
+    index(context, frtDiagnosticOrder, key, p, resource.eventList[j].actor, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_actor]);
     practitionerCompartment(key, resource.eventList[j].actor);
     deviceCompartment(key, resource.eventList[j].actor);
-    index(frtDiagnosticOrder, key, p, resource.eventList[j].statusElement, 'event-status');
-    index(frtDiagnosticOrder, key, p, resource.eventList[j].dateTimeElement, 'event-date');
+    index(frtDiagnosticOrder, key, p, resource.eventList[j].statusElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_eventstatus]);
+    index(frtDiagnosticOrder, key, p, resource.eventList[j].dateTimeElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_eventdate]);
   end;
 
   for k := 0 to resource.itemList.count - 1 do
   begin
     p := index(frtDiagnosticOrder, key, 0, 'item');
-    index(frtDiagnosticOrder, key, p, resource.itemList[k].code, 'code');
+    index(frtDiagnosticOrder, key, p, resource.itemList[k].code, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_code]);
     for i := 0 to resource.itemList[k].specimenList.Count - 1 do
-      index(context, frtDiagnosticOrder, key, 0, resource.itemList[k].specimenList[i], 'specimen');
+      index(context, frtDiagnosticOrder, key, 0, resource.itemList[k].specimenList[i], CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_specimen]);
 
-    index(frtDiagnosticOrder, key, p, resource.itemList[k].statusElement, 'item-status');
+    index(frtDiagnosticOrder, key, p, resource.itemList[k].statusElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_itemstatus]);
     for j := 0 to resource.itemList[k].eventList.count - 1 do
     begin
       p1 := index(frtDiagnosticOrder, key, p, 'item-event');
-      index(context, frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].actor, 'actor');
-      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].statusElement, 'item-past-status');
-      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].dateTimeElement, 'item-date');
+      index(context, frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].actor, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_actor]);
+      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].statusElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_itempaststatus]);
+      index(frtDiagnosticOrder, key, p1, resource.itemList[k].eventList[j].dateTimeElement, CODES_TSearchParamsDiagnosticOrder[spDiagnosticOrder_itemdate]);
     end;
   end;
 end;
@@ -4141,7 +4290,7 @@ procedure TFhirIndexManager.buildIndexValuesValueset(key : integer; id : String;
   begin
     for i := 0 to list.Count - 1 do
     begin
-      index(frtValueSet, key, 0, list[i].codeElement, 'code');
+      index(frtValueSet, key, 0, list[i].codeElement, CODES_TSearchParamsValueSet[spValueSet_code]);
       indexConcepts(list[i].conceptList);
     end;
   end;
@@ -4152,33 +4301,33 @@ begin
   {$IFDEF FHIR_DSTU2}
   if (resource.codeSystem <> nil) then
   begin
-    index(frtValueSet, key, 0, resource.codeSystem.systemElement, 'system');
+    index(frtValueSet, key, 0, resource.codeSystem.systemElement, CODES_TSearchParamsValueSet[spValueSet_system]);
     indexConcepts(resource.codeSystem.conceptList);
   end;
   {$ENDIF}
 
-  index(frtValueSet, key, 0, resource.identifierElement, 'identifier');
-  index(frtValueSet, key, 0, resource.versionElement, 'version');
-  index(frtValueSet, key, 0, resource.nameElement, 'name');
+  index(frtValueSet, key, 0, resource.identifierElement, CODES_TSearchParamsValueSet[spValueSet_identifier]);
+  index(frtValueSet, key, 0, resource.versionElement, CODES_TSearchParamsValueSet[spValueSet_version]);
+  index(frtValueSet, key, 0, resource.nameElement, CODES_TSearchParamsValueSet[spValueSet_name]);
 
-  index(frtValueSet, key, 0, resource.statusElement, 'status');
-  index(frtValueSet, key, 0, resource.urlElement, 'url');
-  index(frtValueSet, key, 0, resource.useContextList, 'context');
+  index(frtValueSet, key, 0, resource.statusElement, CODES_TSearchParamsValueSet[spValueSet_status]);
+  index(frtValueSet, key, 0, resource.urlElement, CODES_TSearchParamsValueSet[spValueSet_url]);
+  index(frtValueSet, key, 0, resource.useContextList, CODES_TSearchParamsValueSet[spValueSet_context]);
 
-  index(frtValueSet, key, 0, resource.dateElement, 'date');
-  index(frtValueSet, key, 0, resource.publisherElement, 'publisher');
-  index(frtValueSet, key, 0, resource.descriptionElement, 'description');
+  index(frtValueSet, key, 0, resource.dateElement, CODES_TSearchParamsValueSet[spValueSet_date]);
+  index(frtValueSet, key, 0, resource.publisherElement, CODES_TSearchParamsValueSet[spValueSet_publisher]);
+  index(frtValueSet, key, 0, resource.descriptionElement, CODES_TSearchParamsValueSet[spValueSet_description]);
   if resource.compose <> nil then
   begin
     for i := 0 to resource.compose.importList.Count - 1 do
-      index(frtValueSet, key, 0, resource.compose.importList[i], 'reference');
+      index(frtValueSet, key, 0, resource.compose.importList[i], CODES_TSearchParamsValueSet[spValueSet_reference]);
     for i := 0 to resource.compose.includeList.Count - 1 do
-      index(frtValueSet, key, 0, resource.compose.includeList[i].systemElement, 'reference');
+      index(frtValueSet, key, 0, resource.compose.includeList[i].systemElement, CODES_TSearchParamsValueSet[spValueSet_reference]);
     for i := 0 to resource.compose.excludeList.Count - 1 do
-      index(frtValueSet, key, 0, resource.compose.excludeList[i].systemElement, 'reference');
+      index(frtValueSet, key, 0, resource.compose.excludeList[i].systemElement, CODES_TSearchParamsValueSet[spValueSet_reference]);
   end;
   if (resource.expansion <> nil) then
-    index(frtValueSet, key, 0, resource.expansion.identifier, 'expansion');
+    index(frtValueSet, key, 0, resource.expansion.identifier, CODES_TSearchParamsValueSet[spValueSet_expansion]);
 end;
 
 {$IFDEF FHIR_DSTU3}
@@ -4205,24 +4354,24 @@ procedure TFhirIndexManager.buildIndexValuesCodeSystem(key : integer; id : Strin
   begin
     for i := 0 to list.Count - 1 do
     begin
-      index(frtCodeSystem, key, 0, list[i].codeElement, 'code');
+      index(frtCodeSystem, key, 0, list[i].codeElement, CODES_TSearchParamsCodeSystem[spCodeSystem_code]);
       indexConcepts(list[i].conceptList);
     end;
   end;
 var
   i : integer;
 begin
-  index(frtCodeSystem, key, 0, resource.identifierElement, 'identifier');
-  index(frtCodeSystem, key, 0, resource.versionElement, 'version');
-  index(frtCodeSystem, key, 0, resource.nameElement, 'name');
+  index(frtCodeSystem, key, 0, resource.identifierElement, CODES_TSearchParamsCodeSystem[spCodeSystem_identifier]);
+  index(frtCodeSystem, key, 0, resource.versionElement, CODES_TSearchParamsCodeSystem[spCodeSystem_version]);
+  index(frtCodeSystem, key, 0, resource.nameElement, CODES_TSearchParamsCodeSystem[spCodeSystem_name]);
 
-  index(frtCodeSystem, key, 0, resource.statusElement, 'status');
-  index(frtCodeSystem, key, 0, resource.urlElement, 'url');
-  index(frtCodeSystem, key, 0, resource.useContextList, 'context');
+  index(frtCodeSystem, key, 0, resource.statusElement, CODES_TSearchParamsCodeSystem[spCodeSystem_status]);
+  index(frtCodeSystem, key, 0, resource.urlElement, CODES_TSearchParamsCodeSystem[spCodeSystem_url]);
+  index(frtCodeSystem, key, 0, resource.useContextList, CODES_TSearchParamsCodeSystem[spCodeSystem_context]);
 
-  index(frtCodeSystem, key, 0, resource.dateElement, 'date');
-  index(frtCodeSystem, key, 0, resource.publisherElement, 'publisher');
-  index(frtCodeSystem, key, 0, resource.descriptionElement, 'description');
+  index(frtCodeSystem, key, 0, resource.dateElement, CODES_TSearchParamsCodeSystem[spCodeSystem_date]);
+  index(frtCodeSystem, key, 0, resource.publisherElement, CODES_TSearchParamsCodeSystem[spCodeSystem_publisher]);
+  index(frtCodeSystem, key, 0, resource.descriptionElement, CODES_TSearchParamsCodeSystem[spCodeSystem_description]);
   indexConcepts(resource.conceptList);
 end;
 
@@ -4247,12 +4396,12 @@ procedure TFhirIndexManager.buildIndexValuesLinkage(key : integer; id : String; 
 var
   i : TFhirLinkageItem;
 begin
-  index(context, frtLinkage, key, 0, resource.author, 'author');
+  index(context, frtLinkage, key, 0, resource.author, CODES_TSearchParamsLinkage[spLinkage_author]);
   for i in resource.itemList do
   begin
-    index(context, frtLinkage, key, 0, i.resource, 'item');
+    index(context, frtLinkage, key, 0, i.resource, CODES_TSearchParamsLinkage[spLinkage_item]);
     if i.type_ = LinkageTypeSource then
-      index(context, frtLinkage, key, 0, i.resource, 'source');
+      index(context, frtLinkage, key, 0, i.resource, CODES_TSearchParamsLinkage[spLinkage_source]);
   end;
 end;
 {$ENDIF}
@@ -4279,40 +4428,40 @@ var
   i, j, k, l : integer;
   list : TFhirConceptMapElementList;
 begin
-  index(frtConceptMap, key, 0, resource.identifierElement, 'identifier');
-  index(frtConceptMap, key, 0, resource.versionElement, 'version');
-  index(frtConceptMap, key, 0, resource.nameElement, 'name');
-  index(frtConceptMap, key, 0, resource.statusElement, 'status');
-  index(frtConceptMap, key, 0, resource.dateElement, 'date');
-  index(frtConceptMap, key, 0, resource.publisherElement, 'publisher');
-  index(frtConceptMap, key, 0, resource.descriptionElement, 'description');
+  index(frtConceptMap, key, 0, resource.identifierElement, CODES_TSearchParamsConceptMap[spConceptMap_identifier]);
+  index(frtConceptMap, key, 0, resource.versionElement, CODES_TSearchParamsConceptMap[spConceptMap_version]);
+  index(frtConceptMap, key, 0, resource.nameElement, CODES_TSearchParamsConceptMap[spConceptMap_name]);
+  index(frtConceptMap, key, 0, resource.statusElement, CODES_TSearchParamsConceptMap[spConceptMap_status]);
+  index(frtConceptMap, key, 0, resource.dateElement, CODES_TSearchParamsConceptMap[spConceptMap_date]);
+  index(frtConceptMap, key, 0, resource.publisherElement, CODES_TSearchParamsConceptMap[spConceptMap_publisher]);
+  index(frtConceptMap, key, 0, resource.descriptionElement, CODES_TSearchParamsConceptMap[spConceptMap_description]);
 
-  index(frtConceptMap, key, 0, resource.useContextList, 'context');
+  index(frtConceptMap, key, 0, resource.useContextList, CODES_TSearchParamsConceptMap[spConceptMap_context]);
   if resource.source is TFhirReference then
-    index(context, frtConceptMap, key, 0, TFhirReference(resource.source), 'source-uri')
+    index(context, frtConceptMap, key, 0, TFhirReference(resource.source), CODES_TSearchParamsConceptMap[spConceptMap_sourceuri])
   else
-    index(frtConceptMap, key, 0, TFhirURI(resource.source), 'source');
+    index(frtConceptMap, key, 0, TFhirURI(resource.source), CODES_TSearchParamsConceptMap[spConceptMap_source]);
   if resource.target is TFhirReference then
-    index(context, frtConceptMap, key, 0, TFhirReference(resource.target), 'target')
+    index(context, frtConceptMap, key, 0, TFhirReference(resource.target), CODES_TSearchParamsConceptMap[spConceptMap_target])
   else
-    index(frtConceptMap, key, 0, TFhirURI(resource.target), 'target');
+    index(frtConceptMap, key, 0, TFhirURI(resource.target), CODES_TSearchParamsConceptMap[spConceptMap_target]);
   list := resource.elementList;
-  index(frtConceptMap, key, 0, resource.urlElement, 'url');
+  index(frtConceptMap, key, 0, resource.urlElement, CODES_TSearchParamsConceptMap[spConceptMap_url]);
 
 
   for i := 0 to list.count - 1 do
   begin
-    index(frtConceptMap, key, 0, list[i].codeSystemElement, 'source-system');
-    index(frtConceptMap, key, 0, list[i].code, 'source-code');
-    k := 0; // todo index(frtConceptMap, key, 0, 'target');
+    index(frtConceptMap, key, 0, list[i].systemElement, CODES_TSearchParamsConceptMap[spConceptMap_sourcesystem]);
+    index(frtConceptMap, key, 0, list[i].code, CODES_TSearchParamsConceptMap[spConceptMap_sourcecode]);
+    k := 0; // todo index(frtConceptMap, key, 0, CODES_TSearchParamsConceptMap[spConceptMap_target]);
     for j := 0 to list[i].targetList.Count - 1 do
     begin
       for l := 0 to  list[i].targetList[j].dependsOnList.Count - 1 do
-        index(frtConceptMap, key, k, list[i].targetList[j].dependsOnList[l].codeElement, 'dependson');
-      index(frtConceptMap, key, k, list[i].targetList[j].codeSystemElement, 'target-system');
-      index(frtConceptMap, key, k, list[i].targetList[j].codeElement, 'target-code');
+        index(frtConceptMap, key, k, list[i].targetList[j].dependsOnList[l].codeElement, CODES_TSearchParamsConceptMap[spConceptMap_dependson]);
+      index(frtConceptMap, key, k, list[i].targetList[j].systemElement, CODES_TSearchParamsConceptMap[spConceptMap_targetsystem]);
+      index(frtConceptMap, key, k, list[i].targetList[j].codeElement, CODES_TSearchParamsConceptMap[spConceptMap_targetcode]);
       for l := 0 to  list[i].targetList[j].productList.Count - 1 do
-        index(frtConceptMap, key, k, list[i].targetList[j].productList[l].codeElement, 'product');
+        index(frtConceptMap, key, k, list[i].targetList[j].productList[l].codeElement, CODES_TSearchParamsConceptMap[spConceptMap_product]);
     end;
   end;
 end;
@@ -4340,19 +4489,19 @@ var
   i : integer;
 begin
   for i  := 0 to resource.identifierList.count - 1 do
-    index(frtDevice, key, 0, resource.identifierList[i], 'identifier');
-  index(context, frtDevice, key, 0, resource.location, 'location');
-  index(frtDevice, key, 0, resource.manufacturerElement, 'manufacturer');
-  index(frtDevice, key, 0, resource.modelElement, 'model');
-  index(context, frtDevice, key, 0, resource.owner, 'organization');
-  index(context, frtDevice, key, 0, resource.patient, 'patient');
+    index(frtDevice, key, 0, resource.identifierList[i], CODES_TSearchParamsDevice[spDevice_identifier]);
+  index(context, frtDevice, key, 0, resource.location, CODES_TSearchParamsDevice[spDevice_location]);
+  index(frtDevice, key, 0, resource.manufacturerElement, CODES_TSearchParamsDevice[spDevice_manufacturer]);
+  index(frtDevice, key, 0, resource.modelElement, CODES_TSearchParamsDevice[spDevice_model]);
+  index(context, frtDevice, key, 0, resource.owner, CODES_TSearchParamsDevice[spDevice_organization]);
+  index(context, frtDevice, key, 0, resource.patient, CODES_TSearchParamsDevice[spDevice_patient]);
   {$IFDEF FHIR_DSTU2}
-  index(frtDevice, key, 0, resource.udiElement, 'udi');
+  index(frtDevice, key, 0, resource.udiElement, CODES_TSearchParamsDevice[spDevice_udi]);
   {$ELSE}
-  index(frtDevice, key, 0, resource.udiCarrierElement, 'udicarrier');
+  index(frtDevice, key, 0, resource.udiCarrierElement, CODES_TSearchParamsDevice[spDevice_udicarrier]);
   {$ENDIF}
-  index(frtDevice, key, 0, resource.urlElement, 'url');
-  index(frtDevice, key, 0, resource.type_, 'type');
+  index(frtDevice, key, 0, resource.urlElement, CODES_TSearchParamsDevice[spDevice_url]);
+  index(frtDevice, key, 0, resource.type_, CODES_TSearchParamsDevice[spDevice_type]);
   patientCompartment(key, resource.patient);
 end;
 
@@ -4382,24 +4531,24 @@ var
   i, j : integer;
 begin
   {$IFDEF FHIR_DSTU3}
-  index(frtAuditEvent, key, 0, resource.actionElement, 'action');
-  index(frtAuditEvent, key, 0, resource.recordedElement, 'date');
+  index(frtAuditEvent, key, 0, resource.actionElement, CODES_TSearchParamsAuditEvent[spAuditEvent_action]);
+  index(frtAuditEvent, key, 0, resource.recordedElement, CODES_TSearchParamsAuditEvent[spAuditEvent_date]);
 
-  index(frtAuditEvent, key, 0, resource.type_, 'type');
+  index(frtAuditEvent, key, 0, resource.type_, CODES_TSearchParamsAuditEvent[spAuditEvent_type]);
   for i := 0 to resource.subTypeList.count - 1 do
-    index(frtAuditEvent, key, 0, resource.subtypeList[i], 'subtype');
+    index(frtAuditEvent, key, 0, resource.subtypeList[i], CODES_TSearchParamsAuditEvent[spAuditEvent_subtype]);
 
   for i := 0 to resource.agentList.count - 1 do
   begin
     if resource.agentList[i].network <> nil then
-      index(frtAuditEvent, key, 0, resource.agentList[i].network.addressElement, 'address');
-    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, 'agent');
-    index(frtAuditEvent, key, 0, resource.agentList[i].nameElement, 'agent-name');
-    index(frtAuditEvent, key, 0, resource.agentList[i].altIdElement, 'altid');
-    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, 'patient', frtPatient);
+      index(frtAuditEvent, key, 0, resource.agentList[i].network.addressElement, CODES_TSearchParamsAuditEvent[spAuditEvent_address]);
+    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_agent]);
+    index(frtAuditEvent, key, 0, resource.agentList[i].nameElement, CODES_TSearchParamsAuditEvent[spAuditEvent_agentname]);
+    index(frtAuditEvent, key, 0, resource.agentList[i].altIdElement, CODES_TSearchParamsAuditEvent[spAuditEvent_altid]);
+    index(context, frtAuditEvent, key, 0, resource.agentList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_patient], frtPatient);
     for j := 0 to resource.agentList[i].policyList.Count - 1 do
-      index(frtAuditEvent, key, 0, resource.agentList[i].policyList[j], 'policy');
-    index(frtAuditEvent, key, 0, resource.agentList[i].userIdElement, 'user');
+      index(frtAuditEvent, key, 0, resource.agentList[i].policyList[j], CODES_TSearchParamsAuditEvent[spAuditEvent_policy]);
+    index(frtAuditEvent, key, 0, resource.agentList[i].userIdElement, CODES_TSearchParamsAuditEvent[spAuditEvent_user]);
 
     patientCompartment(key, resource.agentList[i].reference);
     deviceCompartment(key, resource.agentList[i].reference);
@@ -4408,55 +4557,55 @@ begin
 
   if resource.source <> nil Then
   begin
-    index(frtAuditEvent, key, 0, resource.source.siteElement, 'site');
-    index(frtAuditEvent, key, 0, resource.source.identifierElement, 'source');
+    index(frtAuditEvent, key, 0, resource.source.siteElement, CODES_TSearchParamsAuditEvent[spAuditEvent_site]);
+    index(frtAuditEvent, key, 0, resource.source.identifierElement, CODES_TSearchParamsAuditEvent[spAuditEvent_source]);
   end;
 
   for i := 0 to resource.entityList.count - 1 do
   begin
-    index(context, frtAuditEvent, key, 0, resource.entityList[i].reference, 'entity');
-    index(context, frtAuditEvent, key, 0, resource.entityList[i].reference, 'patient', frtPatient);
-    index(frtAuditEvent, key, 0, resource.entityList[i].identifier, 'entity-id');
-    index(frtAuditEvent, key, 0, resource.entityList[i].nameElement, 'entity-name');
-    index(frtAuditEvent, key, 0, resource.entityList[i].type_, 'entity-type');
+    index(context, frtAuditEvent, key, 0, resource.entityList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_entity]);
+    index(context, frtAuditEvent, key, 0, resource.entityList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_patient], frtPatient);
+    index(frtAuditEvent, key, 0, resource.entityList[i].identifier, CODES_TSearchParamsAuditEvent[spAuditEvent_entityid]);
+    index(frtAuditEvent, key, 0, resource.entityList[i].nameElement, CODES_TSearchParamsAuditEvent[spAuditEvent_entityname]);
+    index(frtAuditEvent, key, 0, resource.entityList[i].type_, CODES_TSearchParamsAuditEvent[spAuditEvent_entitytype]);
     patientCompartment(key, resource.entityList[i].reference);
   end;
 
 {$ELSE}
-  index(frtAuditEvent, key, 0, resource.event.type_, 'type');
-  index(frtAuditEvent, key, 0, resource.event.actionElement, 'action');
-  index(frtAuditEvent, key, 0, resource.event.dateTimeElement, 'date');
+  index(frtAuditEvent, key, 0, resource.event.type_, CODES_TSearchParamsAuditEvent[spAuditEvent_type]);
+  index(frtAuditEvent, key, 0, resource.event.actionElement, CODES_TSearchParamsAuditEvent[spAuditEvent_action]);
+  index(frtAuditEvent, key, 0, resource.event.dateTimeElement, CODES_TSearchParamsAuditEvent[spAuditEvent_date]);
   for i := 0 to resource.event.subTypeList.count - 1 do
-    index(frtAuditEvent, key, 0, resource.event.subtypeList[i], 'subtype');
+    index(frtAuditEvent, key, 0, resource.event.subtypeList[i], CODES_TSearchParamsAuditEvent[spAuditEvent_subtype]);
 
   for i := 0 to resource.participantList.count - 1 do
   begin
-    index(context, frtAuditEvent, key, 0, resource.participantList[i].reference, 'participant');
+    index(context, frtAuditEvent, key, 0, resource.participantList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_participant]);
     deviceCompartment(key, resource.participantList[i].reference);
     practitionerCompartment(key, resource.participantList[i].reference);
-    index(context, frtAuditEvent, key, 0, resource.participantList[i].reference, 'patient', frtPatient);
-    index(frtAuditEvent, key, 0, resource.participantList[i].userIdElement, 'user');
-    index(frtAuditEvent, key, 0, resource.participantList[i].altIdElement, 'altid');
-    index(frtAuditEvent, key, 0, resource.participantList[i].nameElement, 'name');
+    index(context, frtAuditEvent, key, 0, resource.participantList[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_patient], frtPatient);
+    index(frtAuditEvent, key, 0, resource.participantList[i].userIdElement, CODES_TSearchParamsAuditEvent[spAuditEvent_user]);
+    index(frtAuditEvent, key, 0, resource.participantList[i].altIdElement, CODES_TSearchParamsAuditEvent[spAuditEvent_altid]);
+    index(frtAuditEvent, key, 0, resource.participantList[i].nameElement, CODES_TSearchParamsAuditEvent[spAuditEvent_name]);
     for j := 0 to resource.participantList[i].policyList.Count - 1 do
-      index(frtAuditEvent, key, 0, resource.participantList[i].policyList[j], 'policy');
+      index(frtAuditEvent, key, 0, resource.participantList[i].policyList[j], CODES_TSearchParamsAuditEvent[spAuditEvent_policy]);
     if resource.participantList[i].network <> nil then
-      index(frtAuditEvent, key, 0, resource.participantList[i].network.addressElement, 'address');
+      index(frtAuditEvent, key, 0, resource.participantList[i].network.addressElement, CODES_TSearchParamsAuditEvent[spAuditEvent_address]);
   end;
 
   if resource.source <> nil Then
   begin
-    index(frtAuditEvent, key, 0, resource.source.identifierElement, 'source');
-    index(frtAuditEvent, key, 0, resource.source.siteElement, 'site');
+    index(frtAuditEvent, key, 0, resource.source.identifierElement, CODES_TSearchParamsAuditEvent[spAuditEvent_source]);
+    index(frtAuditEvent, key, 0, resource.source.siteElement, CODES_TSearchParamsAuditEvent[spAuditEvent_site]);
   end;
 
   for i := 0 to resource.object_List.count - 1 do
   begin
-    index(frtAuditEvent, key, 0, resource.object_List[i].type_, 'object-type');
-    index(frtAuditEvent, key, 0, resource.object_List[i].identifier, 'identity');
-    index(context, frtAuditEvent, key, 0, resource.object_List[i].reference, 'reference');
+    index(frtAuditEvent, key, 0, resource.object_List[i].type_, CODES_TSearchParamsAuditEvent[spAuditEvent_objecttype]);
+    index(frtAuditEvent, key, 0, resource.object_List[i].identifier, CODES_TSearchParamsAuditEvent[spAuditEvent_identity]);
+    index(context, frtAuditEvent, key, 0, resource.object_List[i].reference, CODES_TSearchParamsAuditEvent[spAuditEvent_reference]);
     patientCompartment(key, resource.object_List[i].reference);
-    index(frtAuditEvent, key, 0, resource.object_List[i].nameElement, 'desc');
+    index(frtAuditEvent, key, 0, resource.object_List[i].nameElement, CODES_TSearchParamsAuditEvent[spAuditEvent_desc]);
   end;
   {$ENDIF}
 end;
@@ -4485,41 +4634,41 @@ procedure TFhirIndexManager.buildIndexValuesCondition(key : integer; id : String
 var
   i : integer;
 begin
-  index(frtCondition, key, 0, resource.code, 'code');
-  index(frtCondition, key, 0, resource.clinicalStatusElement, 'clinicalstatus');
-  index(frtCondition, key, 0, resource.severity, 'severity');
-  index(frtCondition, key, 0, resource.category, 'category');
-  index(frtCondition, key, 0, resource.identifierList, 'identifier');
-  index(context, frtCondition, key, 0, resource.patient, 'patient');
+  index(frtCondition, key, 0, resource.code, CODES_TSearchParamsCondition[spCondition_code]);
+  index(frtCondition, key, 0, resource.clinicalStatusElement, CODES_TSearchParamsCondition[spCondition_clinicalstatus]);
+  index(frtCondition, key, 0, resource.severity, CODES_TSearchParamsCondition[spCondition_severity]);
+  index(frtCondition, key, 0, resource.category, CODES_TSearchParamsCondition[spCondition_category]);
+  index(frtCondition, key, 0, resource.identifierList, CODES_TSearchParamsCondition[spCondition_identifier]);
+  index(context, frtCondition, key, 0, resource.patient, CODES_TSearchParamsCondition[spCondition_patient]);
   patientCompartment(key, resource.patient);
   encounterCompartment(key, resource.encounter);
   practitionerCompartment(key, resource.asserter);
 
-  index(context, frtCondition, key, 0, resource.Encounter, 'encounter');
-  index(context, frtCondition, key, 0, resource.asserter, 'asserter');
+  index(context, frtCondition, key, 0, resource.Encounter, CODES_TSearchParamsCondition[spCondition_encounter]);
+  index(context, frtCondition, key, 0, resource.asserter, CODES_TSearchParamsCondition[spCondition_asserter]);
   if (resource.onsetElement is TFHIRDateTime) then
-    index(frtCondition, key, 0, resource.onsetElement as TFHIRDateTime, 'onset')
+    index(frtCondition, key, 0, resource.onsetElement as TFHIRDateTime, CODES_TSearchParamsCondition[spCondition_onset])
   else if (resource.onsetElement is TFHIRPeriod) then
-    index(frtCondition, key, 0, resource.onsetElement as TFHIRPeriod, 'onset')
+    index(frtCondition, key, 0, resource.onsetElement as TFHIRPeriod, CODES_TSearchParamsCondition[spCondition_onset])
   else if (resource.onsetElement is TFhirQuantity) then
-    index(frtCondition, key, 0, resource.onsetElement as TFhirQuantity, 'age')
+    index(frtCondition, key, 0, resource.onsetElement as TFhirQuantity, CODES_TSearchParamsCondition[spCondition_age])
   else if (resource.onsetElement is TFhirRange) then
-    index(frtCondition, key, 0, resource.onsetElement as TFhirRange, 'onset-info')
+    index(frtCondition, key, 0, resource.onsetElement as TFhirRange, CODES_TSearchParamsCondition[spCondition_onsetinfo])
   else if (resource.onsetElement is TFhirString) then
-    index(frtCondition, key, 0, resource.onsetElement as TFhirString, 'onset-info');
+    index(frtCondition, key, 0, resource.onsetElement as TFhirString, CODES_TSearchParamsCondition[spCondition_onsetinfo]);
 
 
-  index(frtCondition, key, 0, resource.dateRecordedElement, 'date-recorded');
-// todo  index(frtCondition, key, 0, resource.onset, 'onset');
+  index(frtCondition, key, 0, resource.dateRecordedElement, CODES_TSearchParamsCondition[spCondition_daterecorded]);
+// todo  index(frtCondition, key, 0, resource.onset, CODES_TSearchParamsCondition[spCondition_onset]);
   for i := 0 to resource.evidenceList.count - 1 do
-    index(frtCondition, key, 0, resource.evidenceList[i].code, 'evidence');
+    index(frtCondition, key, 0, resource.evidenceList[i].code, CODES_TSearchParamsCondition[spCondition_evidence]);
   if resource.stage <> nil then
-    index(frtCondition, key, 0, resource.stage.summary, 'stage');
+    index(frtCondition, key, 0, resource.stage.summary, CODES_TSearchParamsCondition[spCondition_stage]);
 
-  index(frtCondition, key, 0, resource.bodySiteList, 'body-site');
+  index(frtCondition, key, 0, resource.bodySiteList, CODES_TSearchParamsCondition[spCondition_bodysite]);
 
     // DAF:
-    index(frtCondition, key, 0, resource.identifierList, 'identifier');
+    index(frtCondition, key, 0, resource.identifierList, CODES_TSearchParamsCondition[spCondition_identifier]);
 end;
 
 const
@@ -4561,7 +4710,7 @@ end;
 procedure TFhirIndexManager.buildIndexValuesBinary(key : integer; id : String; context : TFhirResource; resource: TFhirBinary);
 begin
 
-  index(frtBinary, key, 0, resource.contentType, 'contentType');
+  index(frtBinary, key, 0, resource.contentType, CODES_TSearchParamsBinary[spBinary_contentType]);
 
 end;
 
@@ -4590,28 +4739,28 @@ var
 begin
   for i := 0 to resource.targetList.Count - 1 do
   begin
-    index(context, frtProvenance, key, 0, resource.targetList[i], 'target');
-    index(context, frtProvenance, key, 0, resource.targetList[i], 'patient', frtPatient);
+    index(context, frtProvenance, key, 0, resource.targetList[i], CODES_TSearchParamsProvenance[spProvenance_target]);
+    index(context, frtProvenance, key, 0, resource.targetList[i], CODES_TSearchParamsProvenance[spProvenance_patient], frtPatient);
   end;
   if (resource.period <> nil) then
   begin
-    index(frtProvenance, key, 0, resource.period.startElement, 'start');
-    index(frtProvenance, key, 0, resource.period.end_Element, 'end');
+    index(frtProvenance, key, 0, resource.period.startElement, CODES_TSearchParamsProvenance[spProvenance_start]);
+    index(frtProvenance, key, 0, resource.period.end_Element, CODES_TSearchParamsProvenance[spProvenance_end]);
   end;
-  index(context, frtProvenance, key, 0, resource.location, 'location');
+  index(context, frtProvenance, key, 0, resource.location, CODES_TSearchParamsProvenance[spProvenance_location]);
 
   for i := 0 to resource.signatureList.Count - 1 do
-    index(frtProvenance, key, 0, resource.signatureList[i].type_List, {$IFDEF FHIR_DSTU2}'sigtype'{$ELSE}'sig'{$ENDIF});
+    index(frtProvenance, key, 0, resource.signatureList[i].type_List, CODES_TSearchParamsProvenance[{$IFDEF FHIR_DSTU2}spProvenance_sigtype{$ELSE}spProvenance_sig{$ENDIF}]);
 
   for i := 0 to resource.agentList.Count - 1 do
   begin
-    index(context, frtProvenance, key, 0, resource.agentList[i].actor, 'agent');
-    index(frtProvenance, key, 0, resource.agentList[i].userId, 'userid');
+    index(context, frtProvenance, key, 0, resource.agentList[i].actor, CODES_TSearchParamsProvenance[spProvenance_agent]);
+    index(frtProvenance, key, 0, resource.agentList[i].userId, CODES_TSearchParamsProvenance[spProvenance_userid]);
   end;
 
   for i := 0 to resource.entityList.Count - 1 do
   begin
-    index(frtProvenance, key, 0, resource.entityList[i].referenceElement, 'entity');
+    index(frtProvenance, key, 0, resource.entityList[i].referenceElement, CODES_TSearchParamsProvenance[spProvenance_entity]);
     index(frtProvenance, key, 0, resource.entityList[i].type_Element, CODES_TSearchParamsProvenance[spProvenance_Entitytype]);
   end;
 end;
@@ -4620,7 +4769,7 @@ end;
 const
   {$IFDEF FHIR_DSTU3}
   CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
-     spMedication_Code, spMedication_Container, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer, spMedication_Packageitem);
+    spMedication_Code, spMedication_Container, spMedication_Form, spMedication_Ingredient, spMedication_Ingredientcode, spMedication_Manufacturer, spMedication_Packageitem, spMedication_Packageitemcode);
   {$ELSE}
   CHECK_TSearchParamsMedication : Array[TSearchParamsMedication] of TSearchParamsMedication = ( spMedication__content, spMedication__id, spMedication__lastUpdated, spMedication__profile, spMedication__query, spMedication__security, spMedication__tag, spMedication__text,
      spMedication_Code, spMedication_Container, spMedication_Content, spMedication_Form, spMedication_Ingredient, spMedication_Manufacturer);
@@ -4642,19 +4791,29 @@ procedure TFhirIndexManager.buildIndexValuesMedication(key : integer; id : Strin
 var
   i : integer;
 begin
-  index(frtMedication, key, 0, resource.code, 'code');
-  index(context, frtMedication, key, 0, resource.manufacturer, 'manufacturer');
+  index(frtMedication, key, 0, resource.code, CODES_TSearchParamsMedication[spMedication_code]);
+  index(context, frtMedication, key, 0, resource.manufacturer, CODES_TSearchParamsMedication[spMedication_manufacturer]);
   if (resource.package <> nil) then
   begin
-    index(frtMedication, key, 0, resource.package.container, 'container');
+    index(frtMedication, key, 0, resource.package.container, CODES_TSearchParamsMedication[spMedication_container]);
     for i := 0 to resource.package.contentList.count - 1 do
-      index(context, frtMedication, key, 0, resource.package.contentList[i].item, {$IFDEF FHIR_DSTU3} 'package-item' {$ELSE}'content'{$ENDIF});
+      {$IFDEF FHIR_DSTU3}
+      if resource.package.contentList[i].item is TFhirReference then
+        index(context, frtMedication, key, 0, TFhirReference(resource.package.contentList[i].item), CODES_TSearchParamsMedication[spMedication_packageitem])
+      else if resource.package.contentList[i].item is TFhirCodeableConcept then
+        index(frtMedication, key, 0, TFhirCodeableConcept(resource.package.contentList[i].item), CODES_TSearchParamsMedication[spMedication_Packageitemcode])
+      {$ELSE}
+      index(context, frtMedication, key, 0, resource.package.contentList[i].item, CODES_TSearchParamsMedication[spMedication_content]);
+      {$ENDIF}
   end;
   if (resource.product <> nil) then
   begin
-    index(frtMedication, key, 0, resource.product.form, 'form');
+    index(frtMedication, key, 0, resource.product.form, CODES_TSearchParamsMedication[spMedication_form]);
     for i := 0 to resource.product.ingredientList.count - 1 do
-      index(context, frtMedication, key, 0, resource.product.ingredientList[i].item, 'ingredient');
+      if resource.product.ingredientList[i].item is TFhirReference then
+        index(context, frtMedication, key, 0, TFhirReference(resource.product.ingredientList[i].item), CODES_TSearchParamsMedication[spMedication_Ingredient])
+      else if resource.product.ingredientList[i].item is TFhirCodeableConcept then
+        index(frtMedication, key, 0, TFhirCodeableConcept(resource.product.ingredientList[i].item), CODES_TSearchParamsMedication[spMedication_Ingredientcode])
   end;
 end;
 
@@ -4687,30 +4846,30 @@ procedure TFhirIndexManager.buildIndexValuesMedicationAdministration(key : integ
 var
   i : integer;
 begin
-  index(context, frtMedicationAdministration, key, 0, resource.patient, 'patient');
+  index(context, frtMedicationAdministration, key, 0, resource.patient, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_patient]);
   patientCompartment(key, resource.patient);
-  index(context, frtMedicationAdministration, key, 0, resource.Encounter, 'encounter');
-  index(context, frtMedicationAdministration, key, 0, resource.prescription, 'prescription');
-  index(context, frtMedicationAdministration, key, 0, resource.practitioner, 'practitioner');
-  index(frtMedicationAdministration, key, 0, resource.wasNotGiven, {$IFDEF FHIR_DSTU3} 'wasnotgiven' {$ELSE} 'notgiven' {$ENDIF});
+  index(context, frtMedicationAdministration, key, 0, resource.Encounter, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_encounter]);
+  index(context, frtMedicationAdministration, key, 0, resource.prescription, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_prescription]);
+  index(context, frtMedicationAdministration, key, 0, resource.practitioner, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_practitioner]);
+  index(frtMedicationAdministration, key, 0, resource.wasNotGiven, CODES_TSearchParamsMedicationAdministration[{$IFDEF FHIR_DSTU3} spMedicationAdministration_wasnotgiven {$ELSE} spMedicationAdministration_notgiven {$ENDIF}]);
   if resource.effectiveTime is TFhirPeriod then
-    index(frtMedicationAdministration, key, 0, TFhirPeriod(resource.effectiveTime), 'effectivetime')
+    index(frtMedicationAdministration, key, 0, TFhirPeriod(resource.effectiveTime), CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_effectivetime])
   else
-    index(frtMedicationAdministration, key, 0, TFhirDateTime(resource.effectiveTime), 'effectivetime');
+    index(frtMedicationAdministration, key, 0, TFhirDateTime(resource.effectiveTime), CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_effectivetime]);
 
 
-  index(frtMedicationAdministration, key, 0, resource.statusElement, 'status');
+  index(frtMedicationAdministration, key, 0, resource.statusElement, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_status]);
   if resource.medication is TFhirReference then
-    index(context, frtMedicationAdministration, key, 0, resource.medication as TFhirReference, 'medication')
+    index(context, frtMedicationAdministration, key, 0, resource.medication as TFhirReference, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_medication])
   else
-    index(frtMedicationAdministration, key, 0, resource.medication as TFhirCodeableConcept, 'code');
+    index(frtMedicationAdministration, key, 0, resource.medication as TFhirCodeableConcept, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_code]);
 
   for i := 0 to resource.identifierList.Count - 1 do
-    index(frtMedicationAdministration, key, 0, resource.identifierList[i], 'identifier');
+    index(frtMedicationAdministration, key, 0, resource.identifierList[i], CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_identifier]);
   if resource.Encounter <> nil then
-    index(context, frtMedicationAdministration, key, 0, resource.Encounter, 'encounter');
+    index(context, frtMedicationAdministration, key, 0, resource.Encounter, CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_encounter]);
   for i := 0 to resource.deviceList.Count - 1 do
-    index(context, frtMedicationAdministration, key, 0, resource.deviceList[i], 'device');
+    index(context, frtMedicationAdministration, key, 0, resource.deviceList[i], CODES_TSearchParamsMedicationAdministration[spMedicationAdministration_device]);
 end;
 
 const
@@ -4733,19 +4892,19 @@ procedure TFhirIndexManager.buildIndexValuesMedicationOrder(key : integer; id : 
 var
   i : integer;
 begin
-  index(frtMedicationOrder, key, 0, resource.statusElement, 'status');
-  index(context, frtMedicationOrder, key, 0, resource.patient, 'patient');
-  index(context, frtMedicationOrder, key, 0, resource.prescriber, 'prescriber');
+  index(frtMedicationOrder, key, 0, resource.statusElement, CODES_TSearchParamsMedicationOrder[spMedicationOrder_status]);
+  index(context, frtMedicationOrder, key, 0, resource.patient, CODES_TSearchParamsMedicationOrder[spMedicationOrder_patient]);
+  index(context, frtMedicationOrder, key, 0, resource.prescriber, CODES_TSearchParamsMedicationOrder[spMedicationOrder_prescriber]);
   patientCompartment(key, resource.patient);
-  index(context, frtMedicationOrder, key, 0, resource.Encounter, 'encounter');
+  index(context, frtMedicationOrder, key, 0, resource.Encounter, CODES_TSearchParamsMedicationOrder[spMedicationOrder_encounter]);
   if resource.medication is TFhirReference then
-    index(context, frtMedicationOrder, key, 0, resource.medication as TFhirReference, 'medication')
+    index(context, frtMedicationOrder, key, 0, resource.medication as TFhirReference, CODES_TSearchParamsMedicationOrder[spMedicationOrder_medication])
   else
-    index(frtMedicationOrder, key, 0, resource.medication as TFhirCodeableConcept, 'code');
+    index(frtMedicationOrder, key, 0, resource.medication as TFhirCodeableConcept, CODES_TSearchParamsMedicationOrder[spMedicationOrder_code]);
 
   for i := 0 to resource.identifierList.Count - 1 do
-    index(frtMedicationOrder, key, 0, resource.identifierList[i], 'identifier');
-  index(frtMedicationOrder, key, 0, resource.dateWrittenElement, 'datewritten');
+    index(frtMedicationOrder, key, 0, resource.identifierList[i], CODES_TSearchParamsMedicationOrder[spMedicationOrder_identifier]);
+  index(frtMedicationOrder, key, 0, resource.dateWrittenElement, CODES_TSearchParamsMedicationOrder[spMedicationOrder_datewritten]);
 end;
 
 const
@@ -4769,28 +4928,28 @@ procedure TFhirIndexManager.buildIndexValuesMedicationDispense(key : integer; id
 var
   i, j : integer;
 begin
-  index(frtMedicationDispense, key, 0, resource.statusElement, 'status');
-  index(context, frtMedicationDispense, key, 0, resource.patient, 'patient');
+  index(frtMedicationDispense, key, 0, resource.statusElement, CODES_TSearchParamsMedicationDispense[spMedicationDispense_status]);
+  index(context, frtMedicationDispense, key, 0, resource.patient, CODES_TSearchParamsMedicationDispense[spMedicationDispense_patient]);
   patientCompartment(key, resource.patient);
-  index(context, frtMedicationDispense, key, 0, resource.dispenser, 'dispenser');
-  index(frtMedicationDispense, key, 0, resource.identifier, 'identifier');
+  index(context, frtMedicationDispense, key, 0, resource.dispenser, CODES_TSearchParamsMedicationDispense[spMedicationDispense_dispenser]);
+  index(frtMedicationDispense, key, 0, resource.identifier, CODES_TSearchParamsMedicationDispense[spMedicationDispense_identifier]);
   for i := 0 to resource.authorizingPrescriptionList.Count - 1 do
-    index(context, frtMedicationDispense, key, 0, resource.authorizingPrescriptionList[i], 'prescription');
-  index(frtMedicationDispense, key, 0, resource.identifier, 'identifier');
-  index(context, frtMedicationDispense, key, 0, resource.destination, 'destination');
+    index(context, frtMedicationDispense, key, 0, resource.authorizingPrescriptionList[i], CODES_TSearchParamsMedicationDispense[spMedicationDispense_prescription]);
+  index(frtMedicationDispense, key, 0, resource.identifier, CODES_TSearchParamsMedicationDispense[spMedicationDispense_identifier]);
+  index(context, frtMedicationDispense, key, 0, resource.destination, CODES_TSearchParamsMedicationDispense[spMedicationDispense_destination]);
   if resource.medication is TFhirReference then
-    index(context, frtMedicationDispense, key, 0, resource.medication as TFhirReference, 'medication')
+    index(context, frtMedicationDispense, key, 0, resource.medication as TFhirReference, CODES_TSearchParamsMedicationDispense[spMedicationDispense_medication])
   else
-    index(frtMedicationDispense, key, 0, resource.medication as TFhirCodeableConcept, 'code');
-  index(context, frtMedicationDispense, key, 0, resource.receiverList, 'receiver');
-  index(frtMedicationDispense, key, 0, resource.type_, 'type');
-  index(frtMedicationDispense, key, 0, resource.whenPreparedElement, 'whenprepared');
-  index(frtMedicationDispense, key, 0, resource.whenHandedOverElement, 'whenhandedover');
+    index(frtMedicationDispense, key, 0, resource.medication as TFhirCodeableConcept, CODES_TSearchParamsMedicationDispense[spMedicationDispense_code]);
+  index(context, frtMedicationDispense, key, 0, resource.receiverList, CODES_TSearchParamsMedicationDispense[spMedicationDispense_receiver]);
+  index(frtMedicationDispense, key, 0, resource.type_, CODES_TSearchParamsMedicationDispense[spMedicationDispense_type]);
+  index(frtMedicationDispense, key, 0, resource.whenPreparedElement, CODES_TSearchParamsMedicationDispense[spMedicationDispense_whenprepared]);
+  index(frtMedicationDispense, key, 0, resource.whenHandedOverElement, CODES_TSearchParamsMedicationDispense[spMedicationDispense_whenhandedover]);
 
   if resource.substitution <> nil then
   begin
     for i := 0 to resource.substitution.responsiblePartyList.count - 1 do
-      index(context, frtMedicationDispense, key, 0, resource.substitution.responsiblePartyList[i], 'responsibleparty');
+      index(context, frtMedicationDispense, key, 0, resource.substitution.responsiblePartyList[i], CODES_TSearchParamsMedicationDispense[spMedicationDispense_responsibleparty]);
   end;
 end;
 
@@ -4816,19 +4975,19 @@ var
   i : integer;
 begin
   for i := 0 to resource.identifierList.Count - 1 do
-    index(frtMedicationStatement, key, 0, resource.identifierList[i], 'identifier');
+    index(frtMedicationDispense, key, 0, resource.identifierList[i], CODES_TSearchParamsMedicationStatement[spMedicationStatement_identifier]);
   if resource.medication is TFhirReference then
-    index(context, frtMedicationStatement, key, 0, resource.medication as TFhirReference, 'medication')
+    index(context, frtMedicationStatement, key, 0, resource.medication as TFhirReference, CODES_TSearchParamsMedicationStatement[spMedicationStatement_medication])
   else
-    index(frtMedicationStatement, key, 0, resource.medication as TFhirCodeableConcept, 'code');
-  index(context, frtMedicationStatement, key, 0, resource.patient, 'patient');
+    index(frtMedicationStatement, key, 0, resource.medication as TFhirCodeableConcept, CODES_TSearchParamsMedicationStatement[spMedicationStatement_code]);
+  index(context, frtMedicationStatement, key, 0, resource.patient, CODES_TSearchParamsMedicationStatement[spMedicationStatement_patient]);
 
-  index(context, frtMedicationStatement, key, 0, resource.informationSource, 'source');
-  index(frtMedicationStatement, key, 0, resource.statusElement, 'status');
+  index(context, frtMedicationStatement, key, 0, resource.informationSource, CODES_TSearchParamsMedicationStatement[spMedicationStatement_source]);
+  index(frtMedicationStatement, key, 0, resource.statusElement, CODES_TSearchParamsMedicationStatement[spMedicationStatement_status]);
 
   patientCompartment(key, resource.patient);
   if resource.effectiveElement is TFhirPeriod then
-    index(frtMedicationStatement, key, 0, TFhirPeriod(resource.effectiveElement), 'effectivedate')
+    index(frtMedicationStatement, key, 0, TFhirPeriod(resource.effectiveElement), CODES_TSearchParamsMedicationStatement[{$IFDEF FHIR_DSTU3}spMedicationStatement_Effective {$ELSE} spMedicationStatement_Effectivedate{$ENDIF}])
   else
     index(frtMedicationStatement, key, 0, TFhirDateTime(resource.effectiveElement), CODES_TSearchParamsMedicationStatement[{$IFDEF FHIR_DSTU3}spMedicationStatement_Effective {$ELSE} spMedicationStatement_Effectivedate{$ENDIF}]);
 
@@ -4864,26 +5023,26 @@ procedure TFhirIndexManager.buildIndexValuesList(key : integer; id : String; con
 var
   i : integer;
 begin
-  index(context, frtList, key, 0, resource.source, 'source');
+  index(context, frtList, key, 0, resource.source, CODES_TSearchParamsList[spList_source]);
   for i := 0 to resource.entryList.count - 1 do
-    index(context, frtList, key, 0, resource.entryList[i].item, 'item');
-  index(frtList, key, 0, resource.emptyReason, 'empty-reason');
-  index(frtList, key, 0, resource.dateElement, 'date');
-  index(frtList, key, 0, resource.codeElement, 'code');
-  index(context, frtList, key, 0, resource.subject, 'subject');
-  index(context, frtList, key, 0, resource.subject, 'patient', frtPatient);
+    index(context, frtList, key, 0, resource.entryList[i].item, CODES_TSearchParamsList[spList_item]);
+  index(frtList, key, 0, resource.emptyReason, CODES_TSearchParamsList[spList_emptyreason]);
+  index(frtList, key, 0, resource.dateElement, CODES_TSearchParamsList[spList_date]);
+  index(frtList, key, 0, resource.codeElement, CODES_TSearchParamsList[spList_code]);
+  index(context, frtList, key, 0, resource.subject, CODES_TSearchParamsList[spList_subject]);
+  index(context, frtList, key, 0, resource.subject, CODES_TSearchParamsList[spList_patient], frtPatient);
   patientCompartment(key, resource.subject);
   deviceCompartment(key, resource.subject);
-  index(context, frtList, key, 0, resource.encounter, 'encounter');
+  index(context, frtList, key, 0, resource.encounter, CODES_TSearchParamsList[spList_encounter]);
   {$IFDEF FHIR_DSTU3}
   for i := 0 to resource.noteList.Count - 1 do
-    index(frtList, key, 0, resource.noteList[i].text, 'notes');
+    index(frtList, key, 0, resource.noteList[i].text, CODES_TSearchParamsList[spList_notes]);
+  index(frtList, key, 0, resource.identifierList, CODES_TSearchParamsList[spList_identifier]);
   {$ELSE}
-  index(frtList, key, 0, resource.noteElement, 'notes');
+  index(frtList, key, 0, resource.noteElement, CODES_TSearchParamsList[spList_notes]);
   {$ENDIF}
-  index(frtList, key, 0, resource.titleElement, 'title');
-  index(frtList, key, 0, resource.statusElement, 'status');
-  index(frtList, key, 0, resource.identifierList, 'identifier');
+  index(frtList, key, 0, resource.titleElement, CODES_TSearchParamsList[spList_title]);
+  index(frtList, key, 0, resource.statusElement, CODES_TSearchParamsList[spList_status]);
 end;
 
 
@@ -4908,42 +5067,42 @@ procedure TFhirIndexManager.buildIndexValuesCarePlan(key: integer; id : String; 
 var
   i, j, k : integer;
 begin
-  index(context, frtCareplan, key, 0, resource.subject, 'patient');
-  index(context, frtCareplan, key, 0, resource.subject, 'subject');
+  index(context, frtCareplan, key, 0, resource.subject, CODES_TSearchParamsCareplan[spCareplan_patient]);
+  index(context, frtCareplan, key, 0, resource.subject, CODES_TSearchParamsCareplan[spCareplan_subject]);
   patientCompartment(key, resource.subject);
-  index(context, frtCareplan, key, 0, resource.addressesList, 'condition');
-  index(context, frtCareplan, key, 0, resource.goalList, 'goal');
-  index(frtCareplan, key, 0, resource.period, 'date');
+  index(context, frtCareplan, key, 0, resource.addressesList, CODES_TSearchParamsCareplan[spCareplan_condition]);
+  index(context, frtCareplan, key, 0, resource.goalList, CODES_TSearchParamsCareplan[spCareplan_goal]);
+  index(frtCareplan, key, 0, resource.period, CODES_TSearchParamsCareplan[spCareplan_date]);
   for i := 0 to resource.participantList.Count - 1 do
   begin
-    index(context, frtCareplan, key, 0, resource.participantList[i].member, 'participant');
+    index(context, frtCareplan, key, 0, resource.participantList[i].member, CODES_TSearchParamsCareplan[spCareplan_participant]);
     practitionerCompartment(key, resource.participantList[i].member);
     relatedPersonCompartment(key, resource.participantList[i].member);
   end;
   for i := 0 to resource.activityList.Count - 1 do
   begin
-    k := 0; //ci index(frtCareplan, key, 0, 'activity');
-    index(context, frtCareplan, key, 0, resource.activityList[i].reference, 'activityreference');
+    k := 0; //ci index(frtCareplan, key, 0, CODES_TSearchParamsCareplan[spCareplan_activity]);
+    index(context, frtCareplan, key, 0, resource.activityList[i].reference, CODES_TSearchParamsCareplan[spCareplan_activityreference]);
     if resource.activityList[i].detail <> nil then
     begin
-      index(frtCareplan, key, 0, resource.activityList[i].detail.code, 'activitycode');
-      index(context, frtCareplan, key, 0, resource.activityList[i].detail.performerList, 'performer');
+      index(frtCareplan, key, 0, resource.activityList[i].detail.code, CODES_TSearchParamsCareplan[spCareplan_activitycode]);
+      index(context, frtCareplan, key, 0, resource.activityList[i].detail.performerList, CODES_TSearchParamsCareplan[spCareplan_performer]);
       for j := 0 to resource.activityList[i].detail.performerList.Count - 1 do
       begin
         relatedPersonCompartment(0, resource.activityList[i].detail.performerList[j]);
         practitionerCompartment(key, resource.activityList[i].detail.performerList[j]);
       end;
       if (resource.activityList[i].detail.scheduled is TFhirTiming) then
-        index(frtCareplan, key, 0, TFhirTiming(resource.activityList[i].detail.scheduled), 'activitydate')
+        index(frtCareplan, key, 0, TFhirTiming(resource.activityList[i].detail.scheduled), CODES_TSearchParamsCareplan[spCareplan_activitydate])
       else if (resource.activityList[i].detail.scheduled is TFhirPeriod) then
-        index(frtCareplan, key, 0, TFhirPeriod(resource.activityList[i].detail.scheduled), 'activitydate');
+        index(frtCareplan, key, 0, TFhirPeriod(resource.activityList[i].detail.scheduled), CODES_TSearchParamsCareplan[spCareplan_activitydate]);
     end;
   end;
   for i := 0 to resource.relatedPlanList.Count - 1 do
   begin
-    k := index(frtCareplan, key, 0, 'related');
-    index(frtCareplan, key, 0, resource.relatedPlanList[i].codeElement, 'relatedcode');
-    index(context, frtCareplan, key, 0, resource.relatedPlanList[i].planElement, 'relatedplan');
+    k := index(frtCareplan, key, 0, CODES_TSearchParamsCareplan[spCareplan_related]);
+    index(frtCareplan, key, 0, resource.relatedPlanList[i].codeElement, CODES_TSearchParamsCareplan[spCareplan_relatedcode]);
+    index(context, frtCareplan, key, 0, resource.relatedPlanList[i].planElement, CODES_TSearchParamsCareplan[spCareplan_relatedplan]);
   end;
 end;
 
@@ -4974,28 +5133,30 @@ var
   series : TFhirImagingStudySeries;
   image : TFhirImagingStudySeriesInstance;
 begin
-  index(frtImagingStudy, key, 0, resource.accession, 'accession');
-  index(frtImagingStudy, key, 0, resource.identifierList, 'identifier');
-  index(context, frtImagingStudy, key, 0, resource.patient, 'patient');
+  index(frtImagingStudy, key, 0, resource.accession, CODES_TSearchParamsImagingStudy[spImagingStudy_accession]);
+  {$IFDEF FHIR_DSTU3}
+  index(frtImagingStudy, key, 0, resource.identifierList, CODES_TSearchParamsImagingStudy[spImagingStudy_identifier]);
+  {$ENDIF}
+  index(context, frtImagingStudy, key, 0, resource.patient, CODES_TSearchParamsImagingStudy[spImagingStudy_patient]);
   patientCompartment(key, resource.patient);
 
-  index(context, frtImagingStudy, key, 0, resource.orderList, 'order');
-  index(frtImagingStudy, key, 0, resource.startedElement, 'started');
+  index(context, frtImagingStudy, key, 0, resource.orderList, CODES_TSearchParamsImagingStudy[spImagingStudy_order]);
+  index(frtImagingStudy, key, 0, resource.startedElement, CODES_TSearchParamsImagingStudy[spImagingStudy_started]);
 
-  index(frtImagingStudy, key, 0, resource.uidElement, 'study');
+  index(frtImagingStudy, key, 0, resource.uidElement, CODES_TSearchParamsImagingStudy[spImagingStudy_study]);
   for i := 0 to resource.seriesList.count -1 do
   begin
     series := resource.seriesList[i];
-    index(frtImagingStudy, key, 0, series.bodySite, 'bodySite');
+    index(frtImagingStudy, key, 0, series.bodySite, CODES_TSearchParamsImagingStudy[spImagingStudy_bodySite]);
 
-    index(frtImagingStudy, key, 0, series.uidElement, 'series');
-    index(frtImagingStudy, key, 0, series.ModalityElement, 'modality');
-//    index(frtImagingStudy, key, 0, resource., 'size');
+    index(frtImagingStudy, key, 0, series.uidElement, CODES_TSearchParamsImagingStudy[spImagingStudy_series]);
+    index(frtImagingStudy, key, 0, series.ModalityElement, CODES_TSearchParamsImagingStudy[spImagingStudy_modality]);
+//    index(frtImagingStudy, key, 0, resource., CODES_TSearchParamsImagingStudy[spImagingStudy_size]);
     for j := 0 to series.instanceList.count - 1 do
     begin
       image := series.instanceList[j];
-      index(frtImagingStudy, key, 0, image.uidElement, 'uid');
-      index(frtImagingStudy, key, 0, image.sopclassElement, 'dicom-class');
+      index(frtImagingStudy, key, 0, image.uidElement, CODES_TSearchParamsImagingStudy[spImagingStudy_uid]);
+      index(frtImagingStudy, key, 0, image.sopclassElement, CODES_TSearchParamsImagingStudy[spImagingStudy_dicomclass]);
     end;
   end;
 end;
@@ -5022,35 +5183,35 @@ procedure TFhirIndexManager.buildIndexValuesImmunization(key: integer; id : Stri
 var
   i : integer;
 begin
-  index(frtImmunization, key, 0, resource.vaccineCode, 'vaccine-code');
-  index(frtImmunization, key, 0, resource.dateElement, 'date');
+  index(frtImmunization, key, 0, resource.vaccineCode, CODES_TSearchParamsImmunization[spImmunization_vaccinecode]);
+  index(frtImmunization, key, 0, resource.dateElement, CODES_TSearchParamsImmunization[spImmunization_date]);
   if resource.explanation <> nil then
   begin
     for i := 0 to resource.explanation.reasonNotGivenList.count - 1 do
-      index(frtImmunization, key, 0, resource.explanation.reasonNotGivenList[i], 'reason-not-given');
+      index(frtImmunization, key, 0, resource.explanation.reasonNotGivenList[i], CODES_TSearchParamsImmunization[spImmunization_reasonnotgiven]);
 
     for i := 0 to resource.explanation.reasonList.count - 1 do
-      index(frtImmunization, key, 0, resource.explanation.reasonList[i], 'reason');
+      index(frtImmunization, key, 0, resource.explanation.reasonList[i], CODES_TSearchParamsImmunization[spImmunization_reason]);
   end;
   for i := 0 to resource.identifierList.count - 1 do
-      index(frtImmunization, key, 0, resource.identifierList[i], 'identifier');
-  index(frtImmunization, key, 0, resource.lotNumberElement, 'lot-number');
-  index(frtImmunization, key, 0, resource.wasNotGivenElement, 'notgiven');
-  index(context, frtImmunization, key, 0, resource.patient, 'patient');
-  index(frtImmunization, key, 0, resource.statusElement, 'status');
+      index(frtImmunization, key, 0, resource.identifierList[i], CODES_TSearchParamsImmunization[spImmunization_identifier]);
+  index(frtImmunization, key, 0, resource.lotNumberElement, CODES_TSearchParamsImmunization[spImmunization_lotnumber]);
+  index(frtImmunization, key, 0, resource.wasNotGivenElement, CODES_TSearchParamsImmunization[spImmunization_notgiven]);
+  index(context, frtImmunization, key, 0, resource.patient, CODES_TSearchParamsImmunization[spImmunization_patient]);
+  index(frtImmunization, key, 0, resource.statusElement, CODES_TSearchParamsImmunization[spImmunization_status]);
   patientCompartment(key, resource.patient);
 
-  index(context, frtImmunization, key, 0, resource.manufacturer, 'manufacturer');
-  index(context, frtImmunization, key, 0, resource.location, 'location');
-  index(context, frtImmunization, key, 0, resource.performer, 'performer');
-  index(context, frtImmunization, key, 0, resource.requester, 'requester');
+  index(context, frtImmunization, key, 0, resource.manufacturer, CODES_TSearchParamsImmunization[spImmunization_manufacturer]);
+  index(context, frtImmunization, key, 0, resource.location, CODES_TSearchParamsImmunization[spImmunization_location]);
+  index(context, frtImmunization, key, 0, resource.performer, CODES_TSearchParamsImmunization[spImmunization_performer]);
+  index(context, frtImmunization, key, 0, resource.requester, CODES_TSearchParamsImmunization[spImmunization_requester]);
   for i := 0 to resource.reactionList.count - 1 do
   begin
-    index(context, frtImmunization, key, 0, resource.reactionList[i].detail, 'reaction');
-    index(frtImmunization, key, 0, resource.reactionList[i].dateElement, 'reaction-date');
+    index(context, frtImmunization, key, 0, resource.reactionList[i].detail, CODES_TSearchParamsImmunization[spImmunization_reaction]);
+    index(frtImmunization, key, 0, resource.reactionList[i].dateElement, CODES_TSearchParamsImmunization[spImmunization_reactiondate]);
   end;
   for i := 0 to resource.vaccinationProtocolList.count - 1 do
-    index(frtImmunization, key, 0, resource.vaccinationProtocolList[i].doseSequenceElement, 'dose-sequence');
+    index(frtImmunization, key, 0, resource.vaccinationProtocolList[i].doseSequenceElement, CODES_TSearchParamsImmunization[spImmunization_dosesequence]);
 end;
 
 const
@@ -5072,20 +5233,20 @@ procedure TFhirIndexManager.buildIndexValuesOrder(key: integer; id : String; con
 var
   i : integer;
 begin
-  index(frtOrder, key, 0, resource.dateElement, 'date');
-  index(context, frtOrder, key, 0, resource.subject, 'subject');
-  index(context, frtOrder, key, 0, resource.subject, 'patient', frtPatient);
-  index(frtOrder, key, 0, resource.identifierList, 'identifier');
+  index(frtOrder, key, 0, resource.dateElement, CODES_TSearchParamsOrder[spOrder_date]);
+  index(context, frtOrder, key, 0, resource.subject, CODES_TSearchParamsOrder[spOrder_subject]);
+  index(context, frtOrder, key, 0, resource.subject, CODES_TSearchParamsOrder[spOrder_patient], frtPatient);
+  index(frtOrder, key, 0, resource.identifierList, CODES_TSearchParamsOrder[spOrder_identifier]);
   patientCompartment(key, resource.subject);
-  index(context, frtOrder, key, 0, resource.source, 'source');
-  index(context, frtOrder, key, 0, resource.target, 'target');
+  index(context, frtOrder, key, 0, resource.source, CODES_TSearchParamsOrder[spOrder_source]);
+  index(context, frtOrder, key, 0, resource.target, CODES_TSearchParamsOrder[spOrder_target]);
   if resource.when <> nil then
   begin
-    index(frtOrder, key, 0, resource.when.code, 'when_code');
-    index(frtOrder, key, 0, resource.when.schedule, 'when');
+    index(frtOrder, key, 0, resource.when.code, CODES_TSearchParamsOrder[spOrder_when_code]);
+    index(frtOrder, key, 0, resource.when.schedule, CODES_TSearchParamsOrder[spOrder_when]);
   end;
   for i := 0 to resource.detailList.count - 1 do
-    index(context, frtOrder, key, 0, resource.detailList[i], 'detail');
+    index(context, frtOrder, key, 0, resource.detailList[i], CODES_TSearchParamsOrder[spOrder_detail]);
 end;
 
 const
@@ -5107,14 +5268,14 @@ procedure TFhirIndexManager.buildIndexValuesOrderResponse(key: integer; id : Str
 var
   i : integer;
 begin
-  index(context, frtOrderResponse, key, 0, resource.request, 'request');
-  index(frtOrderResponse, key, 0, resource.identifierList, 'identifier');
-  index(frtOrderResponse, key, 0, resource.dateElement, 'date');
-  index(context, frtOrderResponse, key, 0, resource.who, 'who');
-  index(frtOrderResponse, key, 0, resource.orderStatusElement, 'code');
+  index(context, frtOrderResponse, key, 0, resource.request, CODES_TSearchParamsOrderResponse[spOrderResponse_request]);
+  index(frtOrderResponse, key, 0, resource.identifierList, CODES_TSearchParamsOrderResponse[spOrderResponse_identifier]);
+  index(frtOrderResponse, key, 0, resource.dateElement, CODES_TSearchParamsOrderResponse[spOrderResponse_date]);
+  index(context, frtOrderResponse, key, 0, resource.who, CODES_TSearchParamsOrderResponse[spOrderResponse_who]);
+  index(frtOrderResponse, key, 0, resource.orderStatusElement, CODES_TSearchParamsOrderResponse[spOrderResponse_code]);
 
   for i := 0 to resource.fulfillmentList.count - 1 do
-    index(context, frtOrderResponse, key, 0, resource.fulfillmentList[i], 'fulfillment');
+    index(context, frtOrderResponse, key, 0, resource.fulfillmentList[i], CODES_TSearchParamsOrderResponse[spOrderResponse_fulfillment]);
 end;
 
 const
@@ -5138,18 +5299,18 @@ procedure TFhirIndexManager.buildIndexValuesMedia(key: integer; id : String; con
 var
   i : integer;
 begin
-  index(context, frtMedia, key, 0, resource.subject, 'subject');
+  index(context, frtMedia, key, 0, resource.subject, CODES_TSearchParamsMedia[spMedia_subject]);
   patientCompartment(key, resource.subject);
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtMedia, key, 0, resource.identifierList[i], 'identifier');
-  index(context, frtMedia, key, 0, resource.operator, 'operator');
-  index(frtMedia, key, 0, resource.type_Element, 'type');
-  index(frtMedia, key, 0, resource.subtype, 'subtype');
+    index(frtMedia, key, 0, resource.identifierList[i], CODES_TSearchParamsMedia[spMedia_identifier]);
+  index(context, frtMedia, key, 0, resource.operator, CODES_TSearchParamsMedia[spMedia_operator]);
+  index(frtMedia, key, 0, resource.type_Element, CODES_TSearchParamsMedia[spMedia_type]);
+  index(frtMedia, key, 0, resource.subtype, CODES_TSearchParamsMedia[spMedia_subtype]);
   if resource.content <> nil then
-    index(frtMedia, key, 0, resource.content.creationElement, 'created');
+    index(frtMedia, key, 0, resource.content.creationElement, CODES_TSearchParamsMedia[spMedia_created]);
 
-//  index(frtMedia, key, 0, resource.size, 'size');
-  index(frtMedia, key, 0, resource.view, 'view');
+//  index(frtMedia, key, 0, resource.size, CODES_TSearchParamsMedia[spMedia_size]);
+  index(frtMedia, key, 0, resource.view, CODES_TSearchParamsMedia[spMedia_view]);
 end;
 
 
@@ -5175,21 +5336,21 @@ procedure TFhirIndexManager.buildIndexValuesFamilyMemberHistory(key: integer; id
 var
   cond : TFhirFamilyMemberHistoryCondition;
 begin
-  index(frtFamilyMemberHistory, key, 0, resource.dateElement, 'date');
-  index(frtFamilyMemberHistory, key, 0, resource.genderElement, 'gender');
-  index(context, frtFamilyMemberHistory, key, 0, resource.patient, 'patient');
+  index(frtFamilyMemberHistory, key, 0, resource.dateElement, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_date]);
+  index(frtFamilyMemberHistory, key, 0, resource.genderElement, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_gender]);
+  index(context, frtFamilyMemberHistory, key, 0, resource.patient, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_patient]);
   patientCompartment(key, resource.patient);
-  index(frtFamilyMemberHistory, key, 0, resource.identifierList, 'identifier');
+  index(frtFamilyMemberHistory, key, 0, resource.identifierList, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_identifier]);
 
   for cond in resource.conditionList do
   begin
-    index(frtFamilyMemberHistory, key, 0, cond.code, 'code');
-    index(frtFamilyMemberHistory, key, 0, cond.code, 'condition');
+    index(frtFamilyMemberHistory, key, 0, cond.code, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_code]);
+    index(frtFamilyMemberHistory, key, 0, cond.code, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_condition]);
 
   // DAF:
     index(frtFamilyMemberHistory, key, 0, cond.code, 'familymemberhistorycondition');
   end;
-  index(frtFamilyMemberHistory, key, 0, resource.relationship, 'relationship');
+  index(frtFamilyMemberHistory, key, 0, resource.relationship, CODES_TSearchParamsFamilyMemberHistory[spFamilyMemberHistory_relationship]);
 end;
 
 
@@ -5215,21 +5376,21 @@ procedure TFhirIndexManager.buildIndexValuesProcedure(key: integer; id : String;
 var
   i : integer;
 begin
-  index(frtProcedure, key, 0, resource.code, 'code');
+  index(frtProcedure, key, 0, resource.code, CODES_TSearchParamsProcedure[spProcedure_code]);
   if resource.performed is TFhirDateTime then
-    index(frtProcedure, key, 0, resource.performed as TFhirDateTime, 'date')
+    index(frtProcedure, key, 0, resource.performed as TFhirDateTime, CODES_TSearchParamsProcedure[spProcedure_date])
   else
-    index(frtProcedure, key, 0, resource.performed as TFhirPeriod, 'date');
+    index(frtProcedure, key, 0, resource.performed as TFhirPeriod, CODES_TSearchParamsProcedure[spProcedure_date]);
 
-  index(context, frtProcedure, key, 0, resource.subject, 'subject');
-  index(context, frtProcedure, key, 0, resource.subject, 'patient', frtPatient);
+  index(context, frtProcedure, key, 0, resource.subject, CODES_TSearchParamsProcedure[spProcedure_subject]);
+  index(context, frtProcedure, key, 0, resource.subject, CODES_TSearchParamsProcedure[spProcedure_patient], frtPatient);
   patientCompartment(key, resource.subject);
 
-  index(context, frtProcedure, key, 0, resource.location, 'location');
+  index(context, frtProcedure, key, 0, resource.location, CODES_TSearchParamsProcedure[spProcedure_location]);
   for i := 0 to resource.performerList.Count - 1 do
-    index(context, frtProcedure, key, 0, resource.performerList[i].actor, 'performer');
-  index(context, frtProcedure, key, 0, resource.encounter, 'encounter');
-  index(frtProcedure, key, 0, resource.identifierList, 'identifier');
+    index(context, frtProcedure, key, 0, resource.performerList[i].actor, CODES_TSearchParamsProcedure[spProcedure_performer]);
+  index(context, frtProcedure, key, 0, resource.encounter, CODES_TSearchParamsProcedure[spProcedure_encounter]);
+  index(frtProcedure, key, 0, resource.identifierList, CODES_TSearchParamsProcedure[spProcedure_identifier]);
 end;
 
 const
@@ -5252,27 +5413,27 @@ procedure TFhirIndexManager.buildIndexValuesSpecimen(key: integer; id : String; 
 var
   i, j : integer;
 begin
-  index(context, frtSpecimen, key, 0, resource.subject, 'subject');
+  index(context, frtSpecimen, key, 0, resource.subject, CODES_TSearchParamsSpecimen[spSpecimen_subject]);
   patientCompartment(key, resource.subject);
 
-  index(context, frtSpecimen, key, 0, resource.subject, 'patient', frtPatient);
-  index(frtSpecimen, key, 0, resource.accessionIdentifier, 'accession');
-  index(frtSpecimen, key, 0, resource.type_, 'type');
-  index(frtSpecimen, key, 0, resource.identifierList, 'identifier');
-  index(context, frtSpecimen, key, 0, resource.parentList, 'parent');
+  index(context, frtSpecimen, key, 0, resource.subject, CODES_TSearchParamsSpecimen[spSpecimen_patient], frtPatient);
+  index(frtSpecimen, key, 0, resource.accessionIdentifier, CODES_TSearchParamsSpecimen[spSpecimen_accession]);
+  index(frtSpecimen, key, 0, resource.type_, CODES_TSearchParamsSpecimen[spSpecimen_type]);
+  index(frtSpecimen, key, 0, resource.identifierList, CODES_TSearchParamsSpecimen[spSpecimen_identifier]);
+  index(context, frtSpecimen, key, 0, resource.parentList, CODES_TSearchParamsSpecimen[spSpecimen_parent]);
   if (resource.collection <> nil) then
   begin
     if resource.collection.collected is TFhirPeriod then
-      index(frtSpecimen, key, 0, TFhirPeriod(resource.collection.collected), 'collected')
+      index(frtSpecimen, key, 0, TFhirPeriod(resource.collection.collected), CODES_TSearchParamsSpecimen[spSpecimen_collected])
     else
-      index(frtSpecimen, key, 0, TFhirDateTime(resource.collection.collected), 'collected');
-    index(context, frtSpecimen, key, 0, resource.collection.collector, 'collector');
-    index(frtSpecimen, key, 0, resource.collection.bodySite, 'bodysite');
+      index(frtSpecimen, key, 0, TFhirDateTime(resource.collection.collected), CODES_TSearchParamsSpecimen[spSpecimen_collected]);
+    index(context, frtSpecimen, key, 0, resource.collection.collector, CODES_TSearchParamsSpecimen[spSpecimen_collector]);
+    index(frtSpecimen, key, 0, resource.collection.bodySite, CODES_TSearchParamsSpecimen[spSpecimen_bodysite]);
   end;
   for i := 0 to resource.containerList.Count - 1 do
   begin
-    index(frtSpecimen, key, 0, resource.containerList[i].type_, 'container');
-    index(frtSpecimen, key, 0, resource.containerList[i].identifierList, 'container-id');
+    index(frtSpecimen, key, 0, resource.containerList[i].type_, CODES_TSearchParamsSpecimen[spSpecimen_container]);
+    index(frtSpecimen, key, 0, resource.containerList[i].identifierList, CODES_TSearchParamsSpecimen[spSpecimen_containerid]);
   end;
 end;
 
@@ -5297,25 +5458,25 @@ procedure TFhirIndexManager.buildIndexValuesImmunizationRecommendation(key: inte
 var
   i,j  : integer;
 begin
-  index(context, frtImmunizationRecommendation, key, 0, resource.patient, 'patient');
+  index(context, frtImmunizationRecommendation, key, 0, resource.patient, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_patient]);
   patientCompartment(key, resource.patient);
 
 
   for i := 0 to resource.identifierList.count - 1 do
-    index(frtImmunizationRecommendation, key, 0, resource.identifierList[i], 'identifier');
+    index(frtImmunizationRecommendation, key, 0, resource.identifierList[i], CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_identifier]);
 
   for i := 0 to resource.recommendationList.count - 1 do
   begin
-    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].dateElement, 'date');
-    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].vaccineCode, 'vaccine-type');
-    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].doseNumberElement, 'dose-number');
-    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].forecastStatus, 'status');
+    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].dateElement, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_date]);
+    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].vaccineCode, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_vaccinetype]);
+    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].doseNumberElement, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_dosenumber]);
+    index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].forecastStatus, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_status]);
     if resource.recommendationList[i].protocol <> nil then
-      index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].protocol.doseSequenceElement, 'dose-sequence');
+      index(frtImmunizationRecommendation, key, 0, resource.recommendationList[i].protocol.doseSequenceElement, CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_dosesequence]);
     for j := 0 to resource.recommendationList[i].supportingPatientInformationList.Count - 1 do
-      index(context, frtImmunizationRecommendation, key, 0, resource.recommendationList[i].supportingPatientInformationList[j], 'information');
+      index(context, frtImmunizationRecommendation, key, 0, resource.recommendationList[i].supportingPatientInformationList[j], CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_information]);
     for j := 0 to resource.recommendationList[i].supportingImmunizationList.Count - 1 do
-      index(context, frtImmunizationRecommendation, key, 0, resource.recommendationList[i].supportingImmunizationList[j], 'support');
+      index(context, frtImmunizationRecommendation, key, 0, resource.recommendationList[i].supportingImmunizationList[j], CODES_TSearchParamsImmunizationRecommendation[spImmunizationRecommendation_support]);
   end;
 end;
 
@@ -5340,23 +5501,23 @@ procedure TFhirIndexManager.buildIndexValuesQuestionnaire(key: integer; id : Str
   var
     i : integer;
   begin
-    index(frtQuestionnaire, key, 0, group.conceptList, 'code');
+    index(frtQuestionnaire, key, 0, group.conceptList, CODES_TSearchParamsQuestionnaire[spQuestionnaire_code]);
     for I := 0 to group.groupList.Count - 1 do
       indexGroup(group.groupList[i]);
   end;
 begin
-  index(frtQuestionnaire, key, 0, resource.publisherElement, 'publisher');
-  index(frtQuestionnaire, key, 0, resource.statusElement, 'status');
-  index(frtQuestionnaire, key, 0, resource.identifierList, 'identifier');
-  index(frtQuestionnaire, key, 0, resource.dateElement, 'date');
-  index(frtQuestionnaire, key, 0, resource.versionElement, 'version');
-  index(frtQuestionnaire, key, 0, resource.group.titleElement, 'title');
+  index(frtQuestionnaire, key, 0, resource.publisherElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_publisher]);
+  index(frtQuestionnaire, key, 0, resource.statusElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_status]);
+  index(frtQuestionnaire, key, 0, resource.identifierList, CODES_TSearchParamsQuestionnaire[spQuestionnaire_identifier]);
+  index(frtQuestionnaire, key, 0, resource.dateElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_date]);
+  index(frtQuestionnaire, key, 0, resource.versionElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_version]);
+  index(frtQuestionnaire, key, 0, resource.group.titleElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_title]);
   IndexGroup(resource.group);
 end;
 {$ELSE}
 Const
   CHECK_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of TSearchParamsQuestionnaire = (spQuestionnaire__content, spQuestionnaire__id, spQuestionnaire__lastUpdated, spQuestionnaire__profile, spQuestionnaire__query, spQuestionnaire__security, spQuestionnaire__tag, spQuestionnaire__text,
-    spQuestionnaire_Code, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
+    spQuestionnaire_Code, spQuestionnaire_Context, spQuestionnaire_Date, spQuestionnaire_Identifier, spQuestionnaire_Publisher, spQuestionnaire_Status, spQuestionnaire_Title, spQuestionnaire_Version);
 
 procedure TFhirIndexInformation.buildIndexesQuestionnaire;
 var
@@ -5374,19 +5535,20 @@ procedure TFhirIndexManager.buildIndexValuesQuestionnaire(key: integer; id : Str
   var
     i : integer;
   begin
-    index(frtQuestionnaire, key, 0, group.conceptList, 'code');
+    index(frtQuestionnaire, key, 0, group.conceptList, CODES_TSearchParamsQuestionnaire[spQuestionnaire_code]);
     for I := 0 to group.itemList.Count - 1 do
       indexGroup(group.itemList[i]);
   end;
 var
   i : integer;
 begin
-  index(frtQuestionnaire, key, 0, resource.publisherElement, 'publisher');
-  index(frtQuestionnaire, key, 0, resource.statusElement, 'status');
-  index(frtQuestionnaire, key, 0, resource.identifierList, 'identifier');
-  index(frtQuestionnaire, key, 0, resource.dateElement, 'date');
-  index(frtQuestionnaire, key, 0, resource.versionElement, 'version');
-  index(frtQuestionnaire, key, 0, resource.titleElement, 'title');
+  index(frtQuestionnaire, key, 0, resource.publisherElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_publisher]);
+  index(frtQuestionnaire, key, 0, resource.statusElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_status]);
+  index(frtQuestionnaire, key, 0, resource.useContextList, CODES_TSearchParamsQuestionnaire[spQuestionnaire_Context]);
+  index(frtQuestionnaire, key, 0, resource.identifierList, CODES_TSearchParamsQuestionnaire[spQuestionnaire_identifier]);
+  index(frtQuestionnaire, key, 0, resource.dateElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_date]);
+  index(frtQuestionnaire, key, 0, resource.versionElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_version]);
+  index(frtQuestionnaire, key, 0, resource.titleElement, CODES_TSearchParamsQuestionnaire[spQuestionnaire_title]);
   for I := 0 to resource.itemList.Count - 1 do
     indexGroup(resource.itemList[i]);
 end;
@@ -5410,14 +5572,14 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesQuestionnaireResponse(key: integer; id : String; context : TFhirResource; resource: TFhirQuestionnaireResponse);
 begin
-  index(context, frtQuestionnaireResponse, key, 0, resource.author, 'author');
-  index(context, frtQuestionnaireResponse, key, 0, resource.encounter, 'encounter');
-  index(context, frtQuestionnaireResponse, key, 0, resource.questionnaire, 'questionnaire');
-  index(context, frtQuestionnaireResponse, key, 0, resource.subject, 'subject');
-  index(context, frtQuestionnaireResponse, key, 0, resource.subject, 'patient', frtPatient);
-  index(context, frtQuestionnaireResponse, key, 0, resource.source, 'source');
-  index(frtQuestionnaireResponse, key, 0, resource.statusElement, 'status');
-  index(frtQuestionnaireResponse, key, 0, resource.authoredElement, 'authored');
+  index(context, frtQuestionnaireResponse, key, 0, resource.author, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_author]);
+  index(context, frtQuestionnaireResponse, key, 0, resource.encounter, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_encounter]);
+  index(context, frtQuestionnaireResponse, key, 0, resource.questionnaire, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_questionnaire]);
+  index(context, frtQuestionnaireResponse, key, 0, resource.subject, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_subject]);
+  index(context, frtQuestionnaireResponse, key, 0, resource.subject, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_patient], frtPatient);
+  index(context, frtQuestionnaireResponse, key, 0, resource.source, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_source]);
+  index(frtQuestionnaireResponse, key, 0, resource.statusElement, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_status]);
+  index(frtQuestionnaireResponse, key, 0, resource.authoredElement, CODES_TSearchParamsQuestionnaireResponse[spQuestionnaireResponse_authored]);
   patientCompartment(key, resource.subject);
   patientCompartment(key, resource.author);
 end;
@@ -5427,7 +5589,8 @@ end;
 Const
   CHECK_TSearchParamsSlot : Array[TSearchParamsSlot] of TSearchParamsSlot = (
     spSlot__content, spSlot__id, spSlot__lastUpdated, spSlot__profile, spSlot__query, spSlot__security, spSlot__tag, spSlot__text,
-    spSlot_Fbtype, spSlot_Identifier, spSlot_Schedule, spSlot_Slottype, spSlot_Start);
+    {$IFDEF FHIR_DSTU2}spSlot_Fbtype, {$ENDIF} spSlot_Identifier, spSlot_Schedule, spSlot_Slottype, spSlot_Start{$IFDEF FHIR_DSTU3}, spSlot_Status{$ENDIF});
+
 
 procedure TFhirIndexInformation.buildIndexesSlot;
 var
@@ -5442,17 +5605,26 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesSlot(key: integer; id : String; context : TFhirResource; resource: TFhirSlot);
 begin
-  index(context, frtSlot, key, 0, resource.schedule, 'schedule');
-  index(frtSlot, key, 0, resource.freeBusyTypeElement, 'fb-type');
-  index(frtSlot, key, 0, resource.type_, 'slot-type');
-  index(frtSlot, key, 0, resource.identifierList, 'identifier');
-  index(frtSlot, key, 0, resource.startElement, 'start');
+  index(context, frtSlot, key, 0, resource.schedule, CODES_TSearchParamsSlot[spSlot_schedule]);
+  {$IFDEF FHIR_DSTU2}
+  index(frtSlot, key, 0, resource.freeBusyTypeElement, CODES_TSearchParamsSlot[spSlot_fbtype]);
+  index(frtSlot, key, 0, resource.type_, CODES_TSearchParamsSlot[spSlot_slottype]);
+  {$ELSE}
+  index(frtSlot, key, 0, resource.statusElement, CODES_TSearchParamsSlot[spSlot_status]);
+  index(frtSlot, key, 0, resource.serviceTypeList, CODES_TSearchParamsSlot[spSlot_slottype]);
+  {$ENDIF}
+  index(frtSlot, key, 0, resource.identifierList, CODES_TSearchParamsSlot[spSlot_identifier]);
+  index(frtSlot, key, 0, resource.startElement, CODES_TSearchParamsSlot[spSlot_start]);
 end;
 
 Const
   CHECK_TSearchParamsAppointment : Array[TSearchParamsAppointment] of TSearchParamsAppointment = (
     spAppointment__content, spAppointment__id, spAppointment__lastUpdated, spAppointment__profile, spAppointment__query, spAppointment__security, spAppointment__tag, spAppointment__text,
-    spAppointment_Actor, spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Partstatus, spAppointment_Patient, spAppointment_Practitioner, spAppointment_Status);
+    {$IFDEF FHIR_DSTU2}
+    spAppointment_Actor,                                spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Partstatus, spAppointment_Patient, spAppointment_Practitioner,                            spAppointment_Status);
+    {$ELSE}
+    spAppointment_Actor, spAppointment_Appointmenttype, spAppointment_Date, spAppointment_Identifier, spAppointment_Location, spAppointment_Partstatus, spAppointment_Patient, spAppointment_Practitioner, spAppointment_Servicetype, spAppointment_Status);
+    {$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesAppointment;
 var
@@ -5469,21 +5641,25 @@ procedure TFhirIndexManager.buildIndexValuesAppointment(key: integer; id : Strin
 var
   i : integer;
 begin
-  index(frtAppointment, key, 0, resource.startElement, 'date');
-  index(frtAppointment, key, 0, resource.identifierList, 'identifier');
-  index(frtAppointment, key, 0, resource.statusElement, 'status');
+  index(frtAppointment, key, 0, resource.startElement, CODES_TSearchParamsAppointment[spAppointment_date]);
+  index(frtAppointment, key, 0, resource.identifierList, CODES_TSearchParamsAppointment[spAppointment_identifier]);
+  index(frtAppointment, key, 0, resource.statusElement, CODES_TSearchParamsAppointment[spAppointment_status]);
   for i := 0 to resource.participantList.Count - 1 do
   begin
-    index(frtAppointment, key, 0, resource.participantList[i].statusElement, 'status');
-    index(context, frtAppointment, key, 0, resource.participantList[i].actor, 'actor');
-    index(context, frtAppointment, key, 0, resource.participantList[i].actor, 'patient', frtPatient);
-    index(context, frtAppointment, key, 0, resource.participantList[i].actor, 'location', frtLocation);
-    index(context, frtAppointment, key, 0, resource.participantList[i].actor, 'practitioner', frtPractitioner);
+    index(frtAppointment, key, 0, resource.participantList[i].statusElement, CODES_TSearchParamsAppointment[spAppointment_status]);
+    index(context, frtAppointment, key, 0, resource.participantList[i].actor, CODES_TSearchParamsAppointment[spAppointment_actor]);
+    index(context, frtAppointment, key, 0, resource.participantList[i].actor, CODES_TSearchParamsAppointment[spAppointment_patient], frtPatient);
+    index(context, frtAppointment, key, 0, resource.participantList[i].actor, CODES_TSearchParamsAppointment[spAppointment_location], frtLocation);
+    index(context, frtAppointment, key, 0, resource.participantList[i].actor, CODES_TSearchParamsAppointment[spAppointment_practitioner], frtPractitioner);
     patientCompartment(key, resource.participantList[i].actor);
     practitionerCompartment(key, resource.participantList[i].actor);
     deviceCompartment(key, resource.participantList[i].actor);
     relatedPersonCompartment(key, resource.participantList[i].actor);
   end;
+  {$IFDEF FHIR_DSTU3}
+  index(frtAppointment, key, 0, resource.serviceTypeList, CODES_TSearchParamsAppointment[spAppointment_Servicetype]);
+  index(frtAppointment, key, 0, resource.appointmentType, CODES_TSearchParamsAppointment[spAppointment_Appointmenttype]);
+  {$ENDIF}
 end;
 
 Const
@@ -5506,11 +5682,11 @@ procedure TFhirIndexManager.buildIndexValuesSchedule(key: integer; id : String; 
 var
   i : integer;
 begin
-  index(frtSchedule, key, 0, resource.planningHorizon, 'date');
-  index(frtSchedule, key, 0, resource.identifierList, 'identifier');
-  index(context, frtSchedule, key, 0, resource.actor, 'actor');
-  for i := 0 to resource.type_List.Count - 1 do
-    index(frtSchedule, key, 0, resource.type_List[i], 'type');
+  index(frtSchedule, key, 0, resource.planningHorizon, CODES_TSearchParamsSchedule[spSchedule_date]);
+  index(frtSchedule, key, 0, resource.identifierList, CODES_TSearchParamsSchedule[spSchedule_identifier]);
+  index(context, frtSchedule, key, 0, resource.actor, CODES_TSearchParamsSchedule[spSchedule_actor]);
+  for i := 0 to resource.serviceTypeList.Count - 1 do
+    index(frtSchedule, key, 0, resource.serviceTypeList[i], CODES_TSearchParamsSchedule[spSchedule_type]);
   patientCompartment(key, resource.actor);
 end;
 
@@ -5534,13 +5710,13 @@ procedure TFhirIndexManager.buildIndexValuesAppointmentResponse(key: integer; id
 var
   i : integer;
 begin
-  index(frtAppointmentResponse, key, 0, resource.participantStatusElement, 'part-status');
-  index(context, frtAppointmentResponse, key, 0, resource.appointment, 'appointment');
-  index(frtAppointmentResponse, key, 0, resource.identifierList, 'identifier');
-  index(context, frtAppointmentResponse, key, 0, resource.actor, 'actor');
-  index(context, frtAppointmentResponse, key, 0, resource.actor, 'patient', frtPatient);
-  index(context, frtAppointmentResponse, key, 0, resource.actor, 'practitioner', frtPractitioner);
-  index(context, frtAppointmentResponse, key, 0, resource.actor, 'location', frtLocation);
+  index(frtAppointmentResponse, key, 0, resource.participantStatusElement, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_partstatus]);
+  index(context, frtAppointmentResponse, key, 0, resource.appointment, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_appointment]);
+  index(frtAppointmentResponse, key, 0, resource.identifierList, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_identifier]);
+  index(context, frtAppointmentResponse, key, 0, resource.actor, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_actor]);
+  index(context, frtAppointmentResponse, key, 0, resource.actor, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_patient], frtPatient);
+  index(context, frtAppointmentResponse, key, 0, resource.actor, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_practitioner], frtPractitioner);
+  index(context, frtAppointmentResponse, key, 0, resource.actor, CODES_TSearchParamsAppointmentResponse[spAppointmentResponse_location], frtLocation);
   patientCompartment(key, resource.actor);
   deviceCompartment(key, resource.actor);
   practitionerCompartment(key, resource.actor);
@@ -5567,16 +5743,19 @@ procedure TFhirIndexManager.buildIndexValuesHealthcareService(key: integer; id :
 var
   i : integer;
 begin
-  index(frtHealthcareService, key, 0, resource.serviceNameElement, 'name');
-  index(frtHealthcareService, key, 0, resource.identifierList, 'identifier');
-  index(frtHealthcareService, key, 0, resource.characteristicList, 'characteristic');
+  index(frtHealthcareService, key, 0, resource.serviceNameElement, CODES_TSearchParamsHealthcareService[spHealthcareService_name]);
+  index(frtHealthcareService, key, 0, resource.identifierList, CODES_TSearchParamsHealthcareService[spHealthcareService_identifier]);
+  index(frtHealthcareService, key, 0, resource.characteristicList, CODES_TSearchParamsHealthcareService[spHealthcareService_characteristic]);
   for i := 0 to resource.programNameList.Count - 1 do
-    index(frtHealthcareService, key, 0, resource.programNameList[i], 'programname');
-  index(context, frtHealthcareService, key, 0, resource.locationElement, 'location');
-  index(context, frtHealthcareService, key, 0, resource.providedBy, 'organization');
-  index(frtHealthcareService, key, 0, resource.serviceCategoryElement, 'servicecategory');
-  for i := 0 to resource.serviceTypeList.Count - 1 do
-    index(frtHealthcareService, key, 0, resource.serviceTypeList[i].type_Element, 'servicetype');
+    index(frtHealthcareService, key, 0, resource.programNameList[i], CODES_TSearchParamsHealthcareService[spHealthcareService_programname]);
+  {$IFDEF FHIR_DSTU2}
+  index(context, frtHealthcareService, key, 0, resource.location, CODES_TSearchParamsHealthcareService[spHealthcareService_location]);
+  {$ELSE}
+  index(context, frtHealthcareService, key, 0, resource.locationList, CODES_TSearchParamsHealthcareService[spHealthcareService_location]);
+  {$ENDIF}
+  index(context, frtHealthcareService, key, 0, resource.providedBy, CODES_TSearchParamsHealthcareService[spHealthcareService_organization]);
+  index(frtHealthcareService, key, 0, resource.serviceCategoryElement, CODES_TSearchParamsHealthcareService[spHealthcareService_servicecategory]);
+  index(frtHealthcareService, key, 0, resource.serviceTypeList[i], CODES_TSearchParamsHealthcareService[spHealthcareService_servicetype]);
 end;
 
 Const
@@ -5600,20 +5779,20 @@ var
   i : integer;
 begin
 
-  index(frtDataElement, key, 0, resource.dateElement, 'date');
-  index(frtDataElement, key, 0, resource.urlElement, 'url');
-  index(frtDataElement, key, 0, resource.identifierList, 'identifier');
-  index(frtDataElement, key, 0, resource.useContextList, 'context');
-  index(frtDataElement, key, 0, resource.nameElement, 'name');
-  index(frtDataElement, key, 0, resource.publisherElement, 'publisher');
-  index(frtDataElement, key, 0, resource.statusElement, 'status');
-  index(frtDataElement, key, 0, resource.versionElement, 'version');
-  index(frtDataElement, key, 0, resource.stringencyElement, 'stringency');
+  index(frtDataElement, key, 0, resource.dateElement, CODES_TSearchParamsDataElement[spDataElement_date]);
+  index(frtDataElement, key, 0, resource.urlElement, CODES_TSearchParamsDataElement[spDataElement_url]);
+  index(frtDataElement, key, 0, resource.identifierList, CODES_TSearchParamsDataElement[spDataElement_identifier]);
+  index(frtDataElement, key, 0, resource.useContextList, CODES_TSearchParamsDataElement[spDataElement_context]);
+  index(frtDataElement, key, 0, resource.nameElement, CODES_TSearchParamsDataElement[spDataElement_name]);
+  index(frtDataElement, key, 0, resource.publisherElement, CODES_TSearchParamsDataElement[spDataElement_publisher]);
+  index(frtDataElement, key, 0, resource.statusElement, CODES_TSearchParamsDataElement[spDataElement_status]);
+  index(frtDataElement, key, 0, resource.versionElement, CODES_TSearchParamsDataElement[spDataElement_version]);
+  index(frtDataElement, key, 0, resource.stringencyElement, CODES_TSearchParamsDataElement[spDataElement_stringency]);
   for i := 0 to resource.elementList.Count - 1 do
   begin
     if i = 0 then
-      index(frtDataElement, key, 0, resource.elementList[i].definitionElement, 'description');
-    index(frtDataElement, key, 0, resource.elementList[i].codeList, 'code');
+      index(frtDataElement, key, 0, resource.elementList[i].definitionElement, CODES_TSearchParamsDataElement[spDataElement_description]);
+    index(frtDataElement, key, 0, resource.elementList[i].codeList, CODES_TSearchParamsDataElement[spDataElement_code]);
   end;
 end;
 
@@ -5640,23 +5819,23 @@ var
   c : TFhirTestScriptMetadataCapability;
   t : TFhirTestScriptTest;
 begin
-  index(frtTestScript, key, 0, resource.nameElement, 'name');
-  index(frtTestScript, key, 0, resource.descriptionElement, 'description');
-  index(frtTestScript, key, 0, resource.identifier, 'identifier');
+  index(frtTestScript, key, 0, resource.nameElement, CODES_TSearchParamsTestScript[spTestScript_name]);
+  index(frtTestScript, key, 0, resource.descriptionElement, CODES_TSearchParamsTestScript[spTestScript_description]);
+  index(frtTestScript, key, 0, resource.identifier, CODES_TSearchParamsTestScript[spTestScript_identifier]);
   if (resource.metadata <> nil) then
     for c in resource.metadata.capabilityList do
-      index(frtTestScript, key, 0, c.descriptionElement, 'testscript-capability');
+      index(frtTestScript, key, 0, c.descriptionElement, CODES_TSearchParamsTestScript[spTestScript_testscriptcapability]);
 
   if (resource.setup <> nil) and (resource.setup.metadata <> nil) then
     for c in resource.setup.metadata.capabilityList do
-      index(frtTestScript, key, 0, c.descriptionElement, 'testscript-setup-capability');
+      index(frtTestScript, key, 0, c.descriptionElement, CODES_TSearchParamsTestScript[spTestScript_testscriptsetupcapability]);
 
   for t in resource.testList do
     if (t.metadata <> nil) then
       for c in t.metadata.capabilityList do
-        index(frtTestScript, key, 0, c.descriptionElement, 'testscript-test-capability');
+        index(frtTestScript, key, 0, c.descriptionElement, CODES_TSearchParamsTestScript[spTestScript_testscripttestcapability]);
 
-  index(frtTestScript, key, 0, resource.url, 'url');
+  index(frtTestScript, key, 0, resource.url, CODES_TSearchParamsTestScript[spTestScript_url]);
 end;
 
 Const
@@ -5679,27 +5858,27 @@ procedure TFhirIndexManager.buildIndexValuesNamingSystem(key: integer; id : Stri
 var
   i, j : integer;
 begin
-  index(frtNamingSystem, key, 0, resource.kindElement, 'kind');
+  index(frtNamingSystem, key, 0, resource.kindElement, CODES_TSearchParamsNamingSystem[spNamingSystem_kind]);
   for i  := 0 to resource.contactList.Count - 1 do
   begin
-    index(frtNamingSystem, key, 0, resource.contactList[i].name, 'contact');
+    index(frtNamingSystem, key, 0, resource.contactList[i].name, CODES_TSearchParamsNamingSystem[spNamingSystem_contact]);
     for j := 0 to resource.contactList[i].telecomList.Count - 1 do
-      index(frtNamingSystem, key, 0, resource.contactList[i].telecomList[j], 'telecom');
+      index(frtNamingSystem, key, 0, resource.contactList[i].telecomList[j], CODES_TSearchParamsNamingSystem[spNamingSystem_telecom]);
   end;
-  index(frtNamingSystem, key, 0, resource.useContextList, 'context');
-  index(frtNamingSystem, key, 0, resource.dateElement, 'date');
-  index(frtNamingSystem, key, 0, resource.type_, 'type');
-  index(frtNamingSystem, key, 0, resource.nameElement, 'name');
+  index(frtNamingSystem, key, 0, resource.useContextList, CODES_TSearchParamsNamingSystem[spNamingSystem_context]);
+  index(frtNamingSystem, key, 0, resource.dateElement, CODES_TSearchParamsNamingSystem[spNamingSystem_date]);
+  index(frtNamingSystem, key, 0, resource.type_, CODES_TSearchParamsNamingSystem[spNamingSystem_type]);
+  index(frtNamingSystem, key, 0, resource.nameElement, CODES_TSearchParamsNamingSystem[spNamingSystem_name]);
   for i := 0 to resource.uniqueIdList.Count - 1 do
   begin
-    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].period, 'period');
-    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].type_Element, 'id-type');
-    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].valueElement, 'value');
+    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].period, CODES_TSearchParamsNamingSystem[spNamingSystem_period]);
+    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].type_Element, CODES_TSearchParamsNamingSystem[spNamingSystem_idtype]);
+    index(frtNamingSystem, key, 0, resource.uniqueIdList[i].valueElement, CODES_TSearchParamsNamingSystem[spNamingSystem_value]);
   end;
-  index(frtNamingSystem, key, 0, resource.publisherElement, 'publisher');
-  index(context, frtNamingSystem, key, 0, resource.replacedBy, 'replaced-by');
-  index(frtNamingSystem, key, 0, resource.responsibleElement, 'responsible');
-  index(frtNamingSystem, key, 0, resource.statusElement, 'status');
+  index(frtNamingSystem, key, 0, resource.publisherElement, CODES_TSearchParamsNamingSystem[spNamingSystem_publisher]);
+  index(context, frtNamingSystem, key, 0, resource.replacedBy, CODES_TSearchParamsNamingSystem[spNamingSystem_replacedby]);
+  index(frtNamingSystem, key, 0, resource.responsibleElement, CODES_TSearchParamsNamingSystem[spNamingSystem_responsible]);
+  index(frtNamingSystem, key, 0, resource.statusElement, CODES_TSearchParamsNamingSystem[spNamingSystem_status]);
 end;
 
 Const
@@ -5723,14 +5902,14 @@ var
   i : integer;
 begin
   for i := 0 to resource.contactList.Count - 1 do
-    index(frtSubscription, key, 0, resource.contactList[i], 'contact');
-  index(frtSubscription, key, 0, resource.criteriaElement, 'criteria');
-  index(frtSubscription, key, 0, resource.statusElement, 'status');
+    index(frtSubscription, key, 0, resource.contactList[i], CODES_TSearchParamsSubscription[spSubscription_contact]);
+  index(frtSubscription, key, 0, resource.criteriaElement, CODES_TSearchParamsSubscription[spSubscription_criteria]);
+  index(frtSubscription, key, 0, resource.statusElement, CODES_TSearchParamsSubscription[spSubscription_status]);
   for i := 0 to resource.tagList.Count - 1 do
-    index(frtSubscription, key, 0, resource.tagList[i], 'tag');
-  index(frtSubscription, key, 0, resource.channel.type_Element, 'type');
-  index(frtSubscription, key, 0, resource.channel.payloadElement, 'payload');
-  index(frtSubscription, key, 0, resource.channel.endpoint, 'url');
+    index(frtSubscription, key, 0, resource.tagList[i], CODES_TSearchParamsSubscription[spSubscription_tag]);
+  index(frtSubscription, key, 0, resource.channel.type_Element, CODES_TSearchParamsSubscription[spSubscription_type]);
+  index(frtSubscription, key, 0, resource.channel.payloadElement, CODES_TSearchParamsSubscription[spSubscription_payload]);
+  index(frtSubscription, key, 0, resource.channel.endpoint, CODES_TSearchParamsSubscription[spSubscription_url]);
 end;
 
 Const
@@ -5753,14 +5932,14 @@ procedure TFhirIndexManager.buildIndexValuesDetectedIssue(key: integer; id : Str
 var
   i : integer;
 begin
-  index(frtDetectedIssue, key, 0, resource.category, 'category');
-  index(frtDetectedIssue, key, 0, resource.dateElement, 'date');
-  index(frtDetectedIssue, key, 0, resource.identifier, 'identifier');
+  index(frtDetectedIssue, key, 0, resource.category, CODES_TSearchParamsDetectedIssue[spDetectedIssue_category]);
+  index(frtDetectedIssue, key, 0, resource.dateElement, CODES_TSearchParamsDetectedIssue[spDetectedIssue_date]);
+  index(frtDetectedIssue, key, 0, resource.identifier, CODES_TSearchParamsDetectedIssue[spDetectedIssue_identifier]);
   for i := 0 to resource.implicatedList.Count - 1 do
-    index(context, frtDetectedIssue, key, 0, resource.patient, 'implicated');
-  index(context, frtDetectedIssue, key, 0, resource.patient, 'patient');
+    index(context, frtDetectedIssue, key, 0, resource.patient, CODES_TSearchParamsDetectedIssue[spDetectedIssue_implicated]);
+  index(context, frtDetectedIssue, key, 0, resource.patient, CODES_TSearchParamsDetectedIssue[spDetectedIssue_patient]);
   patientCompartment(key, resource.patient);
-  index(context, frtDetectedIssue, key, 0, resource.author, 'author');
+  index(context, frtDetectedIssue, key, 0, resource.author, CODES_TSearchParamsDetectedIssue[spDetectedIssue_author]);
   deviceCompartment(key, resource.author);
   practitionerCompartment(key, resource.author);
 end;
@@ -5784,22 +5963,21 @@ procedure TFhirIndexManager.buildIndexValuesRiskAssessment(key: integer; id : St
 var
   i : integer;
 begin
-  index(frtRiskAssessment, key, 0, resource.dateElement, 'date');
-  index(frtRiskAssessment, key, 0, resource.identifier, 'identifier');
+  index(frtRiskAssessment, key, 0, resource.dateElement, CODES_TSearchParamsRiskAssessment[spRiskAssessment_date]);
+  index(frtRiskAssessment, key, 0, resource.identifier, CODES_TSearchParamsRiskAssessment[spRiskAssessment_identifier]);
 
-  index(frtRiskAssessment, key, 0, resource.method, 'method');
-  index(context, frtRiskAssessment, key, 0, resource.subject, 'subject');
-  index(context, frtRiskAssessment, key, 0, resource.subject, 'patient');
-  index(context, frtRiskAssessment, key, 0, resource.condition, 'condition');
-  index(context, frtRiskAssessment, key, 0, resource.performer, 'performer');
-  index(context, frtRiskAssessment, key, 0, resource.encounter, 'encounter');
+  index(frtRiskAssessment, key, 0, resource.method, CODES_TSearchParamsRiskAssessment[spRiskAssessment_method]);
+  index(context, frtRiskAssessment, key, 0, resource.subject, CODES_TSearchParamsRiskAssessment[spRiskAssessment_subject]);
+  index(context, frtRiskAssessment, key, 0, resource.subject, CODES_TSearchParamsRiskAssessment[spRiskAssessment_patient]);
+  index(context, frtRiskAssessment, key, 0, resource.condition, CODES_TSearchParamsRiskAssessment[spRiskAssessment_condition]);
+  index(context, frtRiskAssessment, key, 0, resource.performer, CODES_TSearchParamsRiskAssessment[spRiskAssessment_performer]);
+  index(context, frtRiskAssessment, key, 0, resource.encounter, CODES_TSearchParamsRiskAssessment[spRiskAssessment_encounter]);
 end;
 
 const
   CHECK_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of TSearchParamsOperationDefinition = (
-    spOperationDefinition__content, spOperationDefinition__id, spOperationDefinition__lastUpdated, spOperationDefinition__profile, spOperationDefinition__query, spOperationDefinition__security, spOperationDefinition__tag,  spOperationDefinition__text,spOperationDefinition_Base, spOperationDefinition_Code,
-    spOperationDefinition_Date, spOperationDefinition_Instance, spOperationDefinition_Kind, spOperationDefinition_Name, spOperationDefinition_Profile, spOperationDefinition_Publisher, spOperationDefinition_Status, spOperationDefinition_System,
-    spOperationDefinition_Type, spOperationDefinition_Url, spOperationDefinition_Version);
+    spOperationDefinition__content, spOperationDefinition__id, spOperationDefinition__lastUpdated, spOperationDefinition__profile, spOperationDefinition__query, spOperationDefinition__security, spOperationDefinition__tag,  spOperationDefinition__text,
+    spOperationDefinition_Base, spOperationDefinition_Code, spOperationDefinition_Context, spOperationDefinition_Date, spOperationDefinition_Instance, spOperationDefinition_Kind, spOperationDefinition_Name, spOperationDefinition_Paramprofile, spOperationDefinition_Publisher, spOperationDefinition_Status, spOperationDefinition_System, spOperationDefinition_Type, spOperationDefinition_Url, spOperationDefinition_Version);
 
 procedure TFhirIndexInformation.buildIndexesOperationDefinition;
 var
@@ -5816,27 +5994,31 @@ procedure TFhirIndexManager.buildIndexValuesOperationDefinition(key : integer; i
 var
   i : integer;
 begin
-  index(frtOperationDefinition, key, 0, resource.urlElement, 'url');
-  index(frtOperationDefinition, key, 0, resource.statusElement, 'status');
-  index(frtOperationDefinition, key, 0, resource.versionElement, 'version');
-  index(frtOperationDefinition, key, 0, resource.publisherElement, 'publisher');
-  index(frtOperationDefinition, key, 0, resource.nameElement, 'name');
-  index(frtOperationDefinition, key, 0, resource.codeElement, 'code');
-  index(context, frtOperationDefinition, key, 0, resource.base, 'base');
-  index(frtOperationDefinition, key, 0, resource.dateElement, 'date');
-  index(frtOperationDefinition, key, 0, resource.kindElement, 'kind');
-  index(frtOperationDefinition, key, 0, resource.system, 'system');
+  index(frtOperationDefinition, key, 0, resource.urlElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_url]);
+  index(frtOperationDefinition, key, 0, resource.statusElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_status]);
+  index(frtOperationDefinition, key, 0, resource.versionElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_version]);
+  index(frtOperationDefinition, key, 0, resource.publisherElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_publisher]);
+  index(frtOperationDefinition, key, 0, resource.nameElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_name]);
+  index(frtOperationDefinition, key, 0, resource.codeElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_code]);
+  index(context, frtOperationDefinition, key, 0, resource.base, CODES_TSearchParamsOperationDefinition[spOperationDefinition_base]);
+  index(frtOperationDefinition, key, 0, resource.dateElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_date]);
+  index(frtOperationDefinition, key, 0, resource.kindElement, CODES_TSearchParamsOperationDefinition[spOperationDefinition_kind]);
+  index(frtOperationDefinition, key, 0, resource.useContextList, CODES_TSearchParamsOperationDefinition[spOperationDefinition_Context]);
+  index(frtOperationDefinition, key, 0, resource.system, CODES_TSearchParamsOperationDefinition[spOperationDefinition_system]);
   for i := 0 to resource.type_List.count - 1 Do
-    index(frtOperationDefinition, key, 0, resource.type_List[i], 'type');
-  index(frtOperationDefinition, key, 0, resource.instance, 'instance');
+    index(frtOperationDefinition, key, 0, resource.type_List[i], CODES_TSearchParamsOperationDefinition[spOperationDefinition_type]);
+  index(frtOperationDefinition, key, 0, resource.instance, CODES_TSearchParamsOperationDefinition[spOperationDefinition_instance]);
   for i := 0 to resource.parameterList.count - 1 Do
-    index(context, frtOperationDefinition, key, 0, resource.parameterList[i].profile, 'profile');
+    index(context, frtOperationDefinition, key, 0, resource.parameterList[i].profile, CODES_TSearchParamsOperationDefinition[spOperationDefinition_Paramprofile]);
 end;
 
 const
   CHECK_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of TSearchParamsReferralRequest = ( spReferralRequest__content, spReferralRequest__id, spReferralRequest__lastUpdated, spReferralRequest__profile, spReferralRequest__query, spReferralRequest__security, spReferralRequest__tag, spReferralRequest__text,
+    {$IFDEF FHIR_DSTU2}
     spReferralRequest_Date, spReferralRequest_Patient, spReferralRequest_Priority, spReferralRequest_Recipient, spReferralRequest_Requester, spReferralRequest_Specialty, spReferralRequest_Status, spReferralRequest_Type);
-
+    {$ELSE}
+    spReferralRequest_Basedon, spReferralRequest_Category, spReferralRequest_Context, spReferralRequest_Date, spReferralRequest_Parent, spReferralRequest_Patient, spReferralRequest_Priority, spReferralRequest_Recipient, spReferralRequest_Requester, spReferralRequest_Specialty, spReferralRequest_Status, spReferralRequest_Type);
+    {$ENDIF}
 procedure TFhirIndexInformation.buildIndexesReferralRequest;
 var
   a : TSearchParamsReferralRequest;
@@ -5853,15 +6035,24 @@ var
   i : integer;
 begin
   patientCompartment(key, resource.patient);
-  index(context, frtReferralRequest, key, 0, resource.patient, 'patient');
-  index(frtReferralRequest, key, 0, resource.statusElement, 'status');
-  index(frtReferralRequest, key, 0, resource.priority, 'priority');
-  index(frtReferralRequest, key, 0, resource.dateElement, 'date');
+  index(context, frtReferralRequest, key, 0, resource.patient, CODES_TSearchParamsReferralRequest[spReferralRequest_patient]);
+  index(frtReferralRequest, key, 0, resource.statusElement, CODES_TSearchParamsReferralRequest[spReferralRequest_status]);
+  index(frtReferralRequest, key, 0, resource.priority, CODES_TSearchParamsReferralRequest[spReferralRequest_priority]);
   for i := 0 to resource.recipientList.Count - 1 do
-    index(context, frtReferralRequest, key, 0, resource.recipientList[i], 'recipient');
-  index(context, frtReferralRequest, key, 0, resource.requester, 'requester');
-  index(frtReferralRequest, key, 0, resource.specialty, 'specialty');
-  index(frtReferralRequest, key, 0, resource.type_, 'type');
+    index(context, frtReferralRequest, key, 0, resource.recipientList[i], CODES_TSearchParamsReferralRequest[spReferralRequest_recipient]);
+  index(context, frtReferralRequest, key, 0, resource.requester, CODES_TSearchParamsReferralRequest[spReferralRequest_requester]);
+  index(frtReferralRequest, key, 0, resource.specialty, CODES_TSearchParamsReferralRequest[spReferralRequest_specialty]);
+  index(frtReferralRequest, key, 0, resource.type_, CODES_TSearchParamsReferralRequest[spReferralRequest_type]);
+
+  {$IFDEF FHIR_DSTU2}
+  index(frtReferralRequest, key, 0, resource.dateElement, CODES_TSearchParamsReferralRequest[spReferralRequest_date]);
+  {$ELSE}
+  index(frtReferralRequest, key, 0, resource.authoredElement, CODES_TSearchParamsReferralRequest[spReferralRequest_date]);
+  index(frtReferralRequest, key, 0, resource.parentElement, CODES_TSearchParamsReferralRequest[spReferralRequest_Parent]);
+  index(frtReferralRequest, key, 0, resource.categoryElement, CODES_TSearchParamsReferralRequest[spReferralRequest_category]);
+  index(context, frtReferralRequest, key, 0, resource.context, CODES_TSearchParamsReferralRequest[spReferralRequest_Context]);
+  index(context, frtReferralRequest, key, 0, resource.basedOnList, CODES_TSearchParamsReferralRequest[spReferralRequest_Basedon]);
+  {$ENDIF}
 end;
 
 const
@@ -5885,23 +6076,23 @@ var
   item : TFhirNutritionOrderSupplement;
 begin
   patientCompartment(key, resource.patient);
-  index(context, frtNutritionOrder, key, 0, resource.patient, 'patient');
-  index(context, frtNutritionOrder, key, 0, resource.orderer, 'provider');
-  index(frtNutritionOrder, key, 0, resource.statusElement, 'status');
-  index(context, frtNutritionOrder, key, 0, resource.encounter, 'encounter');
-  index(frtNutritionOrder, key, 0, resource.identifierList, 'identifier');
-  index(frtNutritionOrder, key, 0, resource.dateTimeElement, 'datetime');
+  index(context, frtNutritionOrder, key, 0, resource.patient, CODES_TSearchParamsNutritionOrder[spNutritionOrder_patient]);
+  index(context, frtNutritionOrder, key, 0, resource.orderer, CODES_TSearchParamsNutritionOrder[spNutritionOrder_provider]);
+  index(frtNutritionOrder, key, 0, resource.statusElement, CODES_TSearchParamsNutritionOrder[spNutritionOrder_status]);
+  index(context, frtNutritionOrder, key, 0, resource.encounter, CODES_TSearchParamsNutritionOrder[spNutritionOrder_encounter]);
+  index(frtNutritionOrder, key, 0, resource.identifierList, CODES_TSearchParamsNutritionOrder[spNutritionOrder_identifier]);
+  index(frtNutritionOrder, key, 0, resource.dateTimeElement, CODES_TSearchParamsNutritionOrder[spNutritionOrder_datetime]);
 
   if (resource.enteralFormula <> nil) then
   begin
-    index(frtNutritionOrder, key, 0, resource.enteralFormula.additiveTypeElement, 'additive');
-    index(frtNutritionOrder, key, 0, resource.enteralFormula.baseFormulaType, 'formula');
+    index(frtNutritionOrder, key, 0, resource.enteralFormula.additiveTypeElement, CODES_TSearchParamsNutritionOrder[spNutritionOrder_additive]);
+    index(frtNutritionOrder, key, 0, resource.enteralFormula.baseFormulaType, CODES_TSearchParamsNutritionOrder[spNutritionOrder_formula]);
 
   end;
   if (resource.oralDiet <> nil) then
-    index(frtNutritionOrder, key, 0, resource.oralDiet.type_List, 'oraldiet');
+    index(frtNutritionOrder, key, 0, resource.oralDiet.type_List, CODES_TSearchParamsNutritionOrder[spNutritionOrder_oraldiet]);
   for item in resource.supplementList do
-    index(frtNutritionOrder, key, 0, item.type_, 'supplement');
+    index(frtNutritionOrder, key, 0, item.type_, CODES_TSearchParamsNutritionOrder[spNutritionOrder_supplement]);
 end;
 
 const
@@ -5921,9 +6112,9 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesBodySite(key: integer; id : String; context : TFhirResource; resource: TFhirBodySite);
 begin
-  index(frtBodySite, key, 0, resource.codeElement, 'code');
-  index(frtBodySite, key, 0, resource.identifierList, 'identifier');
-  index(context, frtBodySite, key, 0, resource.patient, 'patient');
+  index(frtBodySite, key, 0, resource.codeElement, CODES_TSearchParamsBodySite[spBodySite_code]);
+  index(frtBodySite, key, 0, resource.identifierList, CODES_TSearchParamsBodySite[spBodySite_identifier]);
+  index(context, frtBodySite, key, 0, resource.patient, CODES_TSearchParamsBodySite[spBodySite_patient]);
 end;
 
 const
@@ -5947,34 +6138,34 @@ procedure TFhirIndexManager.buildIndexValuesClinicalImpression(key: integer; id 
 var
   i, j : integer;
 begin
-  index(context, frtClinicalImpression, key, 0, resource.patient, 'patient');
+  index(context, frtClinicalImpression, key, 0, resource.patient, CODES_TSearchParamsClinicalImpression[spClinicalImpression_patient]);
   patientCompartment(key, resource.patient);
   practitionerCompartment(key, resource.assessor);
   if (resource.trigger is TFhirCodeableConcept) then
-    index(frtClinicalImpression, key, 0, resource.trigger as TFhirCodeableConcept, 'trigger-code')
+    index(frtClinicalImpression, key, 0, resource.trigger as TFhirCodeableConcept, CODES_TSearchParamsClinicalImpression[spClinicalImpression_triggercode])
   else
-    index(context, frtClinicalImpression, key, 0, resource.trigger as TFhirReference, 'trigger');
+    index(context, frtClinicalImpression, key, 0, resource.trigger as TFhirReference, CODES_TSearchParamsClinicalImpression[spClinicalImpression_trigger]);
 
-  index(context, frtClinicalImpression, key, 0, resource.previous, 'previous');
-  index(frtClinicalImpression, key, 0, resource.dateElement, 'date');
-  index(frtClinicalImpression, key, 0, resource.statusElement, 'status');
+  index(context, frtClinicalImpression, key, 0, resource.previous, CODES_TSearchParamsClinicalImpression[spClinicalImpression_previous]);
+  index(frtClinicalImpression, key, 0, resource.dateElement, CODES_TSearchParamsClinicalImpression[spClinicalImpression_date]);
+  index(frtClinicalImpression, key, 0, resource.statusElement, CODES_TSearchParamsClinicalImpression[spClinicalImpression_status]);
   for i := 0 to resource.problemList.Count - 1 do
-    index(context, frtClinicalImpression, key, 0, resource.problemList[i], 'problem');
+    index(context, frtClinicalImpression, key, 0, resource.problemList[i], CODES_TSearchParamsClinicalImpression[spClinicalImpression_problem]);
   for i := 0 to resource.investigationsList.Count - 1 do
     for j := 0 to resource.investigationsList[i].itemList.Count - 1 do
-      index(context, frtClinicalImpression, key, 0, resource.investigationsList[i].itemList[j], 'investigation');
+      index(context, frtClinicalImpression, key, 0, resource.investigationsList[i].itemList[j], CODES_TSearchParamsClinicalImpression[spClinicalImpression_investigation]);
   for i := 0 to resource.findingList.Count - 1 do
-    index(frtClinicalImpression, key, 0, resource.findingList[i].item, 'finding');
-  index(context, frtClinicalImpression, key, 0, resource.assessor, 'assessor');
+    index(frtClinicalImpression, key, 0, resource.findingList[i].item, CODES_TSearchParamsClinicalImpression[spClinicalImpression_finding]);
+  index(context, frtClinicalImpression, key, 0, resource.assessor, CODES_TSearchParamsClinicalImpression[spClinicalImpression_assessor]);
   for i := 0 to resource.actionList.Count - 1 do
-    index(context, frtClinicalImpression, key, 0, resource.actionList[i], 'action');
-  index(frtClinicalImpression, key, 0, resource.resolvedList, 'resolved');
+    index(context, frtClinicalImpression, key, 0, resource.actionList[i], CODES_TSearchParamsClinicalImpression[spClinicalImpression_action]);
+  index(frtClinicalImpression, key, 0, resource.resolvedList, CODES_TSearchParamsClinicalImpression[spClinicalImpression_resolved]);
   for i := 0 to resource.ruledOutList.Count - 1 do
-    index(frtClinicalImpression, key, 0, resource.ruledOutList[i].item, 'ruledout');
+    index(frtClinicalImpression, key, 0, resource.ruledOutList[i].item, CODES_TSearchParamsClinicalImpression[spClinicalImpression_ruledout]);
   if (resource.triggerElement is TFhirCodeableConcept) then
-    index(frtClinicalImpression, key, 0, resource.triggerElement as TFhirCodeableConcept, 'trigger-code')
+    index(frtClinicalImpression, key, 0, resource.triggerElement as TFhirCodeableConcept, CODES_TSearchParamsClinicalImpression[spClinicalImpression_triggercode])
   else
-    index(context, frtClinicalImpression, key, 0, resource.triggerElement as TFhirReference, 'trigger');
+    index(context, frtClinicalImpression, key, 0, resource.triggerElement as TFhirReference, CODES_TSearchParamsClinicalImpression[spClinicalImpression_trigger]);
 end;
 
 const
@@ -5998,31 +6189,31 @@ procedure TFhirIndexManager.buildIndexValuesCommunication(key: integer; id : Str
 var
   i, j : integer;
 begin
-  index(context, frtCommunication, key, 0, resource.subject, 'patient');
-  index(context, frtCommunication, key, 0, resource.subject, 'subject');
+  index(context, frtCommunication, key, 0, resource.subject, CODES_TSearchParamsCommunication[spCommunication_patient]);
+  index(context, frtCommunication, key, 0, resource.subject, CODES_TSearchParamsCommunication[spCommunication_subject]);
   patientCompartment(key, resource.subject);
   encounterCompartment(key, resource.encounter);
-  index(frtCommunication, key, 0, resource.category, 'category');
-  index(context, frtCommunication, key, 0, resource.encounter, 'encounter');
-  index(frtCommunication, key, 0, resource.identifierList, 'identifier');
-  index(frtCommunication, key, 0, resource.mediumList, 'medium');
-  index(frtCommunication, key, 0, resource.receivedElement, 'received');
-  index(frtCommunication, key, 0, resource.sentElement, 'sent');
+  index(frtCommunication, key, 0, resource.category, CODES_TSearchParamsCommunication[spCommunication_category]);
+  index(context, frtCommunication, key, 0, resource.encounter, CODES_TSearchParamsCommunication[spCommunication_encounter]);
+  index(frtCommunication, key, 0, resource.identifierList, CODES_TSearchParamsCommunication[spCommunication_identifier]);
+  index(frtCommunication, key, 0, resource.mediumList, CODES_TSearchParamsCommunication[spCommunication_medium]);
+  index(frtCommunication, key, 0, resource.receivedElement, CODES_TSearchParamsCommunication[spCommunication_received]);
+  index(frtCommunication, key, 0, resource.sentElement, CODES_TSearchParamsCommunication[spCommunication_sent]);
   for i := 0 to resource.recipientList.count - 1 do
   begin
-    index(context, frtCommunication, key, 0, resource.recipientList[i], 'recipient');
+    index(context, frtCommunication, key, 0, resource.recipientList[i], CODES_TSearchParamsCommunication[spCommunication_recipient]);
     practitionerCompartment(key, resource.recipientList[i]);
     relatedPersonCompartment(key, resource.recipientList[i]);
     deviceCompartment(key, resource.recipientList[i]);
     patientCompartment(key, resource.recipientList[i]);
   end;
-  index(context, frtCommunication, key, 0, resource.sender, 'sender');
-  index(context, frtCommunication, key, 0, resource.requestDetail, 'request');
+  index(context, frtCommunication, key, 0, resource.sender, CODES_TSearchParamsCommunication[spCommunication_sender]);
+  index(context, frtCommunication, key, 0, resource.requestDetail, CODES_TSearchParamsCommunication[spCommunication_request]);
   practitionerCompartment(key, resource.sender);
   relatedPersonCompartment(key, resource.sender);
   deviceCompartment(key, resource.sender);
   patientCompartment(key, resource.sender);
-  index(frtCommunication, key, 0, resource.statusElement, 'status');
+  index(frtCommunication, key, 0, resource.statusElement, CODES_TSearchParamsCommunication[spCommunication_status]);
 end;
 
 const
@@ -6046,26 +6237,26 @@ procedure TFhirIndexManager.buildIndexValuesCommunicationRequest(key: integer; i
 var
   i, j : integer;
 begin
-  index(context, frtCommunicationRequest, key, 0, resource.subject, 'patient');
-  index(context, frtCommunicationRequest, key, 0, resource.subject, 'subject');
+  index(context, frtCommunicationRequest, key, 0, resource.subject, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_patient]);
+  index(context, frtCommunicationRequest, key, 0, resource.subject, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_subject]);
   patientCompartment(key, resource.subject);
-  index(frtCommunicationRequest, key, 0, resource.category, 'category');
-  index(context, frtCommunicationRequest, key, 0, resource.encounter, 'encounter');
-  index(frtCommunicationRequest, key, 0, resource.identifierList, 'identifier');
-  index(frtCommunicationRequest, key, 0, resource.mediumList, 'medium');
-  index(frtCommunicationRequest, key, 0, resource.requestedOnElement, 'requested');
+  index(frtCommunicationRequest, key, 0, resource.category, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_category]);
+  index(context, frtCommunicationRequest, key, 0, resource.encounter, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_encounter]);
+  index(frtCommunicationRequest, key, 0, resource.identifierList, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_identifier]);
+  index(frtCommunicationRequest, key, 0, resource.mediumList, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_medium]);
+  index(frtCommunicationRequest, key, 0, resource.requestedOnElement, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_requested]);
   for i := 0 to resource.recipientList.count - 1 do
   begin
-    index(context, frtCommunicationRequest, key, 0, resource.recipientList[i], 'recipient');
+    index(context, frtCommunicationRequest, key, 0, resource.recipientList[i], CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_recipient]);
     practitionerCompartment(key, resource.recipientList[i]);
     relatedPersonCompartment(key, resource.recipientList[i]);
     deviceCompartment(key, resource.recipientList[i]);
     patientCompartment(key, resource.recipientList[i]);
   end;
-  index(context, frtCommunicationRequest, key, 0, resource.sender, 'sender');
-  index(context, frtCommunicationRequest, key, 0, resource.requester, 'requester');
-  index(frtCommunicationRequest, key, 0, resource.priority, 'priority');
-  index(frtCommunicationRequest, key, 0, resource.statusElement, 'status');
+  index(context, frtCommunicationRequest, key, 0, resource.sender, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_sender]);
+  index(context, frtCommunicationRequest, key, 0, resource.requester, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_requester]);
+  index(frtCommunicationRequest, key, 0, resource.priority, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_priority]);
+  index(frtCommunicationRequest, key, 0, resource.statusElement, CODES_TSearchParamsCommunicationRequest[spCommunicationRequest_status]);
   practitionerCompartment(key, resource.sender);
   relatedPersonCompartment(key, resource.sender);
   deviceCompartment(key, resource.sender);
@@ -6092,9 +6283,9 @@ procedure TFhirIndexManager.buildIndexValuesDeviceComponent(key: integer; id : S
 var
   i, j : integer;
 begin
-  index(context, frtDeviceComponent, key, 0, resource.parent, 'parent');
-  index(context, frtDeviceComponent, key, 0, resource.source, 'source');
-  index(frtDeviceComponent, key, 0, resource.type_, 'type');
+  index(context, frtDeviceComponent, key, 0, resource.parent, CODES_TSearchParamsDeviceComponent[spDeviceComponent_parent]);
+  index(context, frtDeviceComponent, key, 0, resource.source, CODES_TSearchParamsDeviceComponent[spDeviceComponent_source]);
+  index(frtDeviceComponent, key, 0, resource.type_, CODES_TSearchParamsDeviceComponent[spDeviceComponent_type]);
   deviceCompartment(key, resource.source);
 end;
 
@@ -6117,12 +6308,12 @@ procedure TFhirIndexManager.buildIndexValuesDeviceMetric(key: integer; id : Stri
 var
   i, j : integer;
 begin
-  index(context, frtDeviceMetric, key, 0, resource.parent, 'parent');
-  index(context, frtDeviceMetric, key, 0, resource.source, 'source');
+  index(context, frtDeviceMetric, key, 0, resource.parent, CODES_TSearchParamsDeviceMetric[spDeviceMetric_parent]);
+  index(context, frtDeviceMetric, key, 0, resource.source, CODES_TSearchParamsDeviceMetric[spDeviceMetric_source]);
   deviceCompartment(key, resource.source);
-  index(frtDeviceMetric, key, 0, resource.type_, 'type');
-  index(frtDeviceMetric, key, 0, resource.identifierElement, 'identifier');
-  index(frtDeviceMetric, key, 0, resource.categoryElement, 'category');
+  index(frtDeviceMetric, key, 0, resource.type_, CODES_TSearchParamsDeviceMetric[spDeviceMetric_type]);
+  index(frtDeviceMetric, key, 0, resource.identifierElement, CODES_TSearchParamsDeviceMetric[spDeviceMetric_identifier]);
+  index(frtDeviceMetric, key, 0, resource.categoryElement, CODES_TSearchParamsDeviceMetric[spDeviceMetric_category]);
 end;
 
 const
@@ -6144,10 +6335,10 @@ procedure TFhirIndexManager.buildIndexValuesDeviceUseRequest(key: integer; id : 
 var
   i, j : integer;
 begin
-  index(context, frtDeviceUseRequest, key, 0, resource.subject, 'subject');
-  index(context, frtDeviceUseRequest, key, 0, resource.subject, 'patient');
+  index(context, frtDeviceUseRequest, key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_subject]);
+  index(context, frtDeviceUseRequest, key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_patient]);
   patientCompartment(key, resource.subject);
-  index(context, frtDeviceUseRequest, key, 0, resource.device, 'device');
+  index(context, frtDeviceUseRequest, key, 0, resource.device, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_device]);
   deviceCompartment(key, resource.device);
 end;
 
@@ -6170,17 +6361,20 @@ procedure TFhirIndexManager.buildIndexValuesDeviceUseStatement(key: integer; id 
 var
   i, j : integer;
 begin
-  index(context, frtDeviceUseStatement, key, 0, resource.subject, 'subject');
-  index(context, frtDeviceUseStatement, key, 0, resource.subject, 'patient');
+  index(context, frtDeviceUseStatement, key, 0, resource.subject, CODES_TSearchParamsDeviceUseStatement[spDeviceUseStatement_subject]);
+  index(context, frtDeviceUseStatement, key, 0, resource.subject, CODES_TSearchParamsDeviceUseStatement[spDeviceUseStatement_patient]);
   patientCompartment(key, resource.subject);
-  index(context, frtDeviceUseStatement, key, 0, resource.device, 'device');
+  index(context, frtDeviceUseStatement, key, 0, resource.device, CODES_TSearchParamsDeviceUseStatement[spDeviceUseStatement_device]);
   deviceCompartment(key, resource.device);
 end;
 
 const
   CHECK_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of TSearchParamsEpisodeOfCare = ( spEpisodeOfCare__content, spEpisodeOfCare__id, spEpisodeOfCare__lastUpdated, spEpisodeOfCare__profile, spEpisodeOfCare__query, spEpisodeOfCare__security, spEpisodeOfCare__tag, spEpisodeOfCare__text,
-    spEpisodeOfCare_Caremanager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization,
-    spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Teammember, spEpisodeOfCare_Type);
+    {$IFDEF FHIR_DSTU2}
+    spEpisodeOfCare_Caremanager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization, spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Teammember, spEpisodeOfCare_Type);
+    {$ELSE}
+    spEpisodeOfCare_Caremanager, spEpisodeOfCare_Condition, spEpisodeOfCare_Date, spEpisodeOfCare_Identifier, spEpisodeOfCare_Incomingreferral, spEpisodeOfCare_Organization, spEpisodeOfCare_Patient, spEpisodeOfCare_Status, spEpisodeOfCare_Type);
+    {$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesEpisodeOfCare;
 var
@@ -6197,19 +6391,21 @@ procedure TFhirIndexManager.buildIndexValuesEpisodeOfCare(key: integer; id : Str
 var
   i : integer;
 begin
-  index(frtEpisodeOfCare, key, 0, resource.identifierList, 'identifier');
-  index(context, frtEpisodeOfCare, key, 0, resource.managingOrganization, 'organization');
-  index(context, frtEpisodeOfCare, key, 0, resource.patient, 'patient');
-  index(context, frtEpisodeOfCare, key, 0, resource.referralRequestList, 'incomingreferral');
-  index(context, frtEpisodeOfCare, key, 0, resource.careManager, 'care-manager');
+  index(frtEpisodeOfCare, key, 0, resource.identifierList, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_identifier]);
+  index(context, frtEpisodeOfCare, key, 0, resource.managingOrganization, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_organization]);
+  index(context, frtEpisodeOfCare, key, 0, resource.patient, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_patient]);
+  index(context, frtEpisodeOfCare, key, 0, resource.referralRequestList, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_incomingreferral]);
+  index(context, frtEpisodeOfCare, key, 0, resource.careManager, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_caremanager]);
   patientCompartment(key, resource.patient);
-  index(frtEpisodeOfCare, key, 0, resource.period, 'date');
-  index(frtEpisodeOfCare, key, 0, resource.type_List, 'type');
-  index(frtEpisodeOfCare, key, 0, resource.statusElement, 'status');
+  index(frtEpisodeOfCare, key, 0, resource.period, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_date]);
+  index(frtEpisodeOfCare, key, 0, resource.type_List, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_type]);
+  index(frtEpisodeOfCare, key, 0, resource.statusElement, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_status]);
   for i := 0 to resource.conditionList.Count - 1 do
-    index(context, frtEpisodeOfCare, key, 0, resource.conditionList[i], 'condition');
+    index(context, frtEpisodeOfCare, key, 0, resource.conditionList[i], CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_condition]);
+  {$IFDEF FHIR_DSTU2}
   for i := 0 to resource.careTeamList.Count - 1 do
-    index(context, frtEpisodeOfCare, key, 0, resource.careTeamList[i].member, 'team-member');
+    index(context, frtEpisodeOfCare, key, 0, resource.careTeamList[i].member, CODES_TSearchParamsEpisodeOfCare[spEpisodeOfCare_teammember]);
+  {$ENDIF}
 end;
 
 const
@@ -6230,10 +6426,10 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesGoal(key: integer; id : String; context : TFhirResource; resource: TFhirGoal);
 begin
-  index(frtGoal, key, 0, resource.identifierList, 'identifier');
-  index(frtGoal, key, 0, resource.statusElement, 'status');
-  index(context, frtGoal, key, 0, resource.subject, 'subject');
-  index(context, frtGoal, key, 0, resource.subject, 'patient', frtPatient);
+  index(frtGoal, key, 0, resource.identifierList, CODES_TSearchParamsGoal[spGoal_identifier]);
+  index(frtGoal, key, 0, resource.statusElement, CODES_TSearchParamsGoal[spGoal_status]);
+  index(context, frtGoal, key, 0, resource.subject, CODES_TSearchParamsGoal[spGoal_subject]);
+  index(context, frtGoal, key, 0, resource.subject, CODES_TSearchParamsGoal[spGoal_patient], frtPatient);
   patientCompartment(key, resource.subject);
 end;
 
@@ -6257,14 +6453,14 @@ procedure TFhirIndexManager.buildIndexValuesImagingObjectSelection(key: integer;
 var
   i : integer;
 begin
-  index(context, frtImagingObjectSelection, key, 0, resource.patient, 'patient');
+  index(context, frtImagingObjectSelection, key, 0, resource.patient, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_patient]);
   patientCompartment(key, resource.patient);
-  index(context, frtImagingObjectSelection, key, 0, resource.author, 'author');
-  index(frtImagingObjectSelection, key, 0, resource.authoringTimeElement, 'authoring-time');
-  index(frtImagingObjectSelection, key, 0, resource.uidElement, 'identifier');
-  index(frtImagingObjectSelection, key, 0, resource.title, 'title');
+  index(context, frtImagingObjectSelection, key, 0, resource.author, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_author]);
+  index(frtImagingObjectSelection, key, 0, resource.authoringTimeElement, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_authoringtime]);
+  index(frtImagingObjectSelection, key, 0, resource.uidElement, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_identifier]);
+  index(frtImagingObjectSelection, key, 0, resource.title, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_title]);
   for i := 0 to resource.studyList.Count - 1 do
-    index(frtImagingObjectSelection, key, 0, resource.studyList[i].uid, 'selected-study');
+    index(frtImagingObjectSelection, key, 0, resource.studyList[i].uid, CODES_TSearchParamsImagingObjectSelection[spImagingObjectSelection_selectedstudy]);
 end;
 
 
@@ -6290,33 +6486,33 @@ var
   i, j : integer;
 begin
   for i := 0 to resource.addressList.Count - 1 do
-    index(frtPerson, key, 0, resource.addressList[i], 'address');
-  index(frtPerson, key, 0, resource.identifierList, 'identifier');
-  index(frtPerson, key, 0, resource.birthDateElement, 'birthdate');
-  index(frtPerson, key, 0, resource.genderElement, 'gender');
+    index(frtPerson, key, 0, resource.addressList[i], CODES_TSearchParamsPerson[spPerson_address]);
+  index(frtPerson, key, 0, resource.identifierList, CODES_TSearchParamsPerson[spPerson_identifier]);
+  index(frtPerson, key, 0, resource.birthDateElement, CODES_TSearchParamsPerson[spPerson_birthdate]);
+  index(frtPerson, key, 0, resource.genderElement, CODES_TSearchParamsPerson[spPerson_gender]);
   for i := 0 to resource.nameList.count - 1 do
   begin
-    index(frtPerson, key, 0, resource.nameList[i], 'name', 'phonetic');
+    index(frtPerson, key, 0, resource.nameList[i], 'name', CODES_TSearchParamsPerson[spPerson_phonetic]);
 //    for j := 0 to resource.nameList[i].givenList.count - 1 do
-//      index(frtPerson, key, 0, resource.nameList[i].givenList[j], 'given');
+//      index(frtPerson, key, 0, resource.nameList[i].givenList[j], CODES_TSearchParamsPerson[spPerson_given]);
 //    for j := 0 to resource.nameList[i].familyList.count - 1 do
-//      index(frtPerson, key, 0, resource.nameList[i].familyList[j], 'family');
+//      index(frtPerson, key, 0, resource.nameList[i].familyList[j], CODES_TSearchParamsPerson[spPerson_family]);
   end;
-  index(context, frtPerson, key, 0, resource.managingOrganization, 'organization');
+  index(context, frtPerson, key, 0, resource.managingOrganization, CODES_TSearchParamsPerson[spPerson_organization]);
   for i := 0 to resource.telecomList.Count - 1 do
   begin
-    index(frtPerson, key, 0, resource.telecomList[i], 'telecom');
+    index(frtPerson, key, 0, resource.telecomList[i], CODES_TSearchParamsPerson[spPerson_telecom]);
     if (resource.telecomList[i].system = ContactPointSystemPhone) then
-      index(frtPerson, key, 0, resource.telecomList[i].valueElement, 'phone');
+      index(frtPerson, key, 0, resource.telecomList[i].valueElement, CODES_TSearchParamsPerson[spPerson_phone]);
     if (resource.telecomList[i].system = ContactPointSystemEmail) then
-      index(frtPerson, key, 0, resource.telecomList[i].valueElement, 'email');
+      index(frtPerson, key, 0, resource.telecomList[i].valueElement, CODES_TSearchParamsPerson[spPerson_email]);
   end;
   for i := 0 to resource.link_List.Count - 1 do
   begin
-    index(context, frtPerson, key, 0, resource.link_List[i].target, 'link');
-    index(context, frtPerson, key, 0, resource.link_List[i].target, 'patient', frtPatient);
-    index(context, frtPerson, key, 0, resource.link_List[i].target, 'practitioner', frtPractitioner);
-    index(context, frtPerson, key, 0, resource.link_List[i].target, 'relatedperson', frtRelatedPerson);
+    index(context, frtPerson, key, 0, resource.link_List[i].target, CODES_TSearchParamsPerson[spPerson_link]);
+    index(context, frtPerson, key, 0, resource.link_List[i].target, CODES_TSearchParamsPerson[spPerson_patient], frtPatient);
+    index(context, frtPerson, key, 0, resource.link_List[i].target, CODES_TSearchParamsPerson[spPerson_practitioner], frtPractitioner);
+    index(context, frtPerson, key, 0, resource.link_List[i].target, CODES_TSearchParamsPerson[spPerson_relatedperson], frtRelatedPerson);
   end;
 end;
 
@@ -6339,20 +6535,20 @@ procedure TFhirIndexManager.buildIndexValuesProcedureRequest(key: integer; id : 
 var
   i : integer;
 begin
-  index(context, frtProcedureRequest, key, 0, resource.subject, 'subject');
-  index(context, frtProcedureRequest, key, 0, resource.subject, 'patient');
+  index(context, frtProcedureRequest, key, 0, resource.subject, CODES_TSearchParamsProcedureRequest[spProcedureRequest_subject]);
+  index(context, frtProcedureRequest, key, 0, resource.subject, CODES_TSearchParamsProcedureRequest[spProcedureRequest_patient]);
   patientCompartment(key, resource.subject);
-  index(context, frtProcedureRequest, key, 0, resource.encounter, 'encounter');
-  index(context, frtProcedureRequest, key, 0, resource.orderer, 'orderer');
-  index(context, frtProcedureRequest, key, 0, resource.performer, 'performer');
-  index(frtProcedureRequest, key, 0, resource.identifierList, 'identifier');
+  index(context, frtProcedureRequest, key, 0, resource.encounter, CODES_TSearchParamsProcedureRequest[spProcedureRequest_encounter]);
+  index(context, frtProcedureRequest, key, 0, resource.orderer, CODES_TSearchParamsProcedureRequest[spProcedureRequest_orderer]);
+  index(context, frtProcedureRequest, key, 0, resource.performer, CODES_TSearchParamsProcedureRequest[spProcedureRequest_performer]);
+  index(frtProcedureRequest, key, 0, resource.identifierList, CODES_TSearchParamsProcedureRequest[spProcedureRequest_identifier]);
 end;
 
 
 const
   CHECK_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of TSearchParamsSearchParameter = (
     spSearchParameter__content, spSearchParameter__id, spSearchParameter__lastUpdated, spSearchParameter__profile, spSearchParameter__query, spSearchParameter__security, spSearchParameter__tag, spSearchParameter__text,
-    spSearchParameter_Base, spSearchParameter_Code, spSearchParameter_Description, spSearchParameter_Name, spSearchParameter_Target, spSearchParameter_Type, spSearchParameter_Url);
+    spSearchParameter_Base, spSearchParameter_Code, spSearchParameter_Context, spSearchParameter_Description, spSearchParameter_Name, spSearchParameter_Target, spSearchParameter_Type, spSearchParameter_Url);
 
 procedure TFhirIndexInformation.buildIndexesSearchParameter;
 var
@@ -6369,14 +6565,15 @@ procedure TFhirIndexManager.buildIndexValuesSearchParameter(key: integer; id : S
 var
   i : integer;
 begin
-  index(frtSearchParameter, key, 0, resource.baseElement, 'base');
-  index(frtSearchParameter, key, 0, resource.description, 'description');
-  index(frtSearchParameter, key, 0, resource.name, 'name');
-  index(frtSearchParameter, key, 0, resource.code, 'code');
+  index(frtSearchParameter, key, 0, resource.baseElement, CODES_TSearchParamsSearchParameter[spSearchParameter_base]);
+  index(frtSearchParameter, key, 0, resource.description, CODES_TSearchParamsSearchParameter[spSearchParameter_description]);
+  index(frtSearchParameter, key, 0, resource.name, CODES_TSearchParamsSearchParameter[spSearchParameter_name]);
+  index(frtSearchParameter, key, 0, resource.code, CODES_TSearchParamsSearchParameter[spSearchParameter_code]);
+  index(frtSearchParameter, key, 0, resource.useContextList, CODES_TSearchParamsSearchParameter[spSearchParameter_Context]);
   for i := 0 to resource.targetList.count - 1  do
-    index(frtSearchParameter, key, 0, resource.targetList[i], 'target');
-  index(frtSearchParameter, key, 0, resource.type_Element, 'type');
-  index(frtSearchParameter, key, 0, resource.url, 'url');
+    index(frtSearchParameter, key, 0, resource.targetList[i], CODES_TSearchParamsSearchParameter[spSearchParameter_target]);
+  index(frtSearchParameter, key, 0, resource.type_Element, CODES_TSearchParamsSearchParameter[spSearchParameter_type]);
+  index(frtSearchParameter, key, 0, resource.url, CODES_TSearchParamsSearchParameter[spSearchParameter_url]);
 end;
 
 
@@ -6399,12 +6596,12 @@ procedure TFhirIndexManager.buildIndexValuesVisionPrescription(key: integer; id 
 var
   i : integer;
 begin
-  index(frtVisionPrescription, key, 0, resource.identifierList, 'identifier');
-  index(context, frtVisionPrescription, key, 0, resource.patient, 'patient');
+  index(frtVisionPrescription, key, 0, resource.identifierList, CODES_TSearchParamsVisionPrescription[spVisionPrescription_identifier]);
+  index(context, frtVisionPrescription, key, 0, resource.patient, CODES_TSearchParamsVisionPrescription[spVisionPrescription_patient]);
   patientCompartment(key, resource.patient);
-  index(frtVisionPrescription, key, 0, resource.dateWrittenElement, 'dateWritten');
-  index(context, frtVisionPrescription, key, 0, resource.encounter, 'encounter');
-  index(context, frtVisionPrescription, key, 0, resource.prescriber, 'prescriber');
+  index(frtVisionPrescription, key, 0, resource.dateWrittenElement, CODES_TSearchParamsVisionPrescription[spVisionPrescription_dateWritten]);
+  index(context, frtVisionPrescription, key, 0, resource.encounter, CODES_TSearchParamsVisionPrescription[spVisionPrescription_encounter]);
+  index(context, frtVisionPrescription, key, 0, resource.prescriber, CODES_TSearchParamsVisionPrescription[spVisionPrescription_prescriber]);
 end;
 
 procedure TFhirIndexManager.checkTags(resource: TFhirResource; tags: TFHIRTagList);
@@ -6448,7 +6645,7 @@ end;
 
 const
   CHECK_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of TSearchParamsProcessRequest = ( spProcessRequest__content, spProcessRequest__id, spProcessRequest__lastUpdated, spProcessRequest__profile, spProcessRequest__query, spProcessRequest__security, spProcessRequest__tag, spProcessRequest__text,
-    spProcessRequest_Action, spProcessRequest_Identifier, spProcessRequest_Organization, spProcessRequest_Provider);
+    spProcessRequest_Action, spProcessRequest_Identifier, spProcessRequest_Organizationidentifier, spProcessRequest_Organizationreference, spProcessRequest_Provideridentifier, spProcessRequest_Providerreference);
 
 procedure TFhirIndexInformation.buildIndexesProcessRequest;
 var
@@ -6465,15 +6662,21 @@ procedure TFhirIndexManager.buildIndexValuesProcessRequest(key: integer; id : St
 var
   i : integer;
 begin
-  index(frtProcessRequest, key, 0, resource.identifierList, 'identifier');
-  index(frtProcessRequest, key, 0, resource.actionElement, 'action');
-  index(context, frtProcessRequest, key, 0, resource.organization, 'organization');
-  index(context, frtProcessRequest, key, 0, resource.provider, 'provider');
+  index(frtProcessRequest, key, 0, resource.identifierList, CODES_TSearchParamsProcessRequest[spProcessRequest_identifier]);
+  index(frtProcessRequest, key, 0, resource.actionElement, CODES_TSearchParamsProcessRequest[spProcessRequest_action]);
+  if resource.organization is TFhirReference then
+    index(context, frtProcessRequest, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsProcessRequest[spProcessRequest_Organizationreference])
+  else if resource.organization is TFhirIdentifier then
+    index(frtProcessRequest, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsProcessRequest[spProcessRequest_Organizationidentifier]);
+  if resource.provider is TFhirReference then
+    index(context, frtProcessRequest, key, 0, TFhirReference(resource.provider), CODES_TSearchParamsProcessRequest[spProcessRequest_Providerreference])
+  else if resource.provider is TFhirIdentifier then
+    index(frtProcessRequest, key, 0, TFhirIdentifier(resource.provider), CODES_TSearchParamsProcessRequest[spProcessRequest_Provideridentifier]);
 end;
 
 const
   CHECK_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of TSearchParamsProcessResponse = ( spProcessResponse__content, spProcessResponse__id, spProcessResponse__lastUpdated, spProcessResponse__profile, spProcessResponse__query, spProcessResponse__security, spProcessResponse__tag, spProcessResponse__text,
-    spProcessResponse_Identifier, spProcessResponse_Organization, spProcessResponse_Request, spProcessResponse_Requestorganization, spProcessResponse_Requestprovider);
+    spProcessResponse_Identifier, spProcessResponse_Organizationidentifier, spProcessResponse_Organizationreference, spProcessResponse_Requestidentifier, spProcessResponse_Requestorganizationidentifier, spProcessResponse_Requestorganizationreference, spProcessResponse_Requestprovideridentifier, spProcessResponse_Requestproviderreference, spProcessResponse_Requestreference);
 
 procedure TFhirIndexInformation.buildIndexesProcessResponse;
 var
@@ -6490,11 +6693,24 @@ procedure TFhirIndexManager.buildIndexValuesProcessResponse(key: integer; id : S
 var
   i : integer;
 begin
-  index(frtProcessResponse, key, 0, resource.identifierList, 'identifier');
-  index(context, frtProcessResponse, key, 0, resource.request, 'request');
-  index(context, frtProcessResponse, key, 0, resource.organization, 'organization');
-  index(context, frtProcessResponse, key, 0, resource.requestOrganization, 'requestorganization');
-  index(context, frtProcessResponse, key, 0, resource.requestProvider, 'requestprovider');
+  index(frtProcessResponse, key, 0, resource.identifierList, CODES_TSearchParamsProcessResponse[spProcessResponse_identifier]);
+
+  if resource.request is TFhirReference then
+    index(context, frtProcessResponse, key, 0, TFhirReference(resource.request), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestreference])
+  else if resource.request is TFhirIdentifier then
+    index(frtProcessResponse, key, 0, TFhirIdentifier(resource.request), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestidentifier]);
+  if resource.organization is TFhirReference then
+    index(context, frtProcessResponse, key, 0, TFhirReference(resource.organization), CODES_TSearchParamsProcessResponse[spProcessResponse_Organizationreference])
+  else if resource.organization is TFhirIdentifier then
+    index(frtProcessResponse, key, 0, TFhirIdentifier(resource.organization), CODES_TSearchParamsProcessResponse[spProcessResponse_Organizationidentifier]);
+  if resource.requestOrganization is TFhirReference then
+    index(context, frtProcessResponse, key, 0, TFhirReference(resource.requestOrganization), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestorganizationreference])
+  else if resource.requestOrganization is TFhirIdentifier then
+    index(frtProcessResponse, key, 0, TFhirIdentifier(resource.requestOrganization), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestorganizationidentifier]);
+  if resource.requestProvider is TFhirReference then
+    index(context, frtProcessResponse, key, 0, TFhirReference(resource.requestProvider), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestproviderreference])
+  else if resource.requestProvider is TFhirIdentifier then
+    index(frtProcessResponse, key, 0, TFhirIdentifier(resource.requestProvider), CODES_TSearchParamsProcessResponse[spProcessResponse_Requestprovideridentifier]);
 end;
 
 
@@ -6518,22 +6734,26 @@ procedure TFhirIndexManager.buildIndexValuesAccount(key: integer; id : String; c
 var
   i : integer;
 begin
-  index(frtAccount, key, 0, resource.identifierList, 'identifier');
-  index(frtAccount, key, 0, resource.balance, 'balance');
-  index(frtAccount, key, 0, resource.name, 'name');
-  index(context, frtAccount, key, 0, resource.owner, 'owner');
-  index(context, frtAccount, key, 0, resource.owner, 'subject');
-  index(context, frtAccount, key, 0, resource.owner, 'patient', frtPatient);
-  index(frtAccount, key, 0, resource.type_, 'type');
-  index(frtAccount, key, 0, resource.activePeriod, 'period');
-  index(frtAccount, key, 0, resource.statusElement, 'status');
+  index(frtAccount, key, 0, resource.identifierList, CODES_TSearchParamsAccount[spAccount_identifier]);
+  index(frtAccount, key, 0, resource.balance, CODES_TSearchParamsAccount[spAccount_balance]);
+  index(frtAccount, key, 0, resource.name, CODES_TSearchParamsAccount[spAccount_name]);
+  index(context, frtAccount, key, 0, resource.owner, CODES_TSearchParamsAccount[spAccount_owner]);
+  index(context, frtAccount, key, 0, resource.owner, CODES_TSearchParamsAccount[spAccount_subject]);
+  index(context, frtAccount, key, 0, resource.owner, CODES_TSearchParamsAccount[spAccount_patient], frtPatient);
+  index(frtAccount, key, 0, resource.type_, CODES_TSearchParamsAccount[spAccount_type]);
+  index(frtAccount, key, 0, resource.activePeriod, CODES_TSearchParamsAccount[spAccount_period]);
+  index(frtAccount, key, 0, resource.statusElement, CODES_TSearchParamsAccount[spAccount_status]);
 end;
 
 
 const
   CHECK_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of TSearchParamsImplementationGuide = (
     spImplementationGuide__content, spImplementationGuide__id, spImplementationGuide__lastUpdated, spImplementationGuide__profile, spImplementationGuide__query, spImplementationGuide__security, spImplementationGuide__tag, spImplementationGuide__text,
+    {$IFDEF FHIR_DSTU2}
     spImplementationGuide_Context, spImplementationGuide_Date, spImplementationGuide_Dependency, spImplementationGuide_Description, spImplementationGuide_Experimental, spImplementationGuide_Name, spImplementationGuide_Publisher, spImplementationGuide_Status, spImplementationGuide_Url, spImplementationGuide_Version);
+    {$ELSE}
+    spImplementationGuide_Context, spImplementationGuide_Date, spImplementationGuide_Dependency, spImplementationGuide_Description, spImplementationGuide_Experimental, spImplementationGuide_Name, spImplementationGuide_Publisher, spImplementationGuide_Resource, spImplementationGuide_Status, spImplementationGuide_Url, spImplementationGuide_Version);
+    {$ENDIF}
 
 procedure TFhirIndexInformation.buildIndexesImplementationGuide;
 var
@@ -6548,19 +6768,25 @@ end;
 
 procedure TFhirIndexManager.buildIndexValuesImplementationGuide(key: integer; id : String; context : TFhirResource; resource: TFhirImplementationGuide);
 var
+  p : TFhirImplementationGuidePackage;
+  r : TFhirImplementationGuidePackageResource;
   i : integer;
 begin
-  index(frtImplementationGuide, key, 0, resource.useContextList, 'context');
-  index(frtImplementationGuide, key, 0, resource.dateElement, 'date');
+  index(frtImplementationGuide, key, 0, resource.useContextList, CODES_TSearchParamsImplementationGuide[spImplementationGuide_context]);
+  index(frtImplementationGuide, key, 0, resource.dateElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_date]);
   for i := 0 to resource.dependencyList.Count - 1 do
-    index(frtImplementationGuide, key, 0, resource.dependencyList[i].uriElement, 'dependency');
-  index(frtImplementationGuide, key, 0, resource.descriptionElement, 'description');
-  index(frtImplementationGuide, key, 0, resource.experimentalElement, 'experimental');
-  index(frtImplementationGuide, key, 0, resource.nameElement, 'name');
-  index(frtImplementationGuide, key, 0, resource.publisherElement, 'publisher');
-  index(frtImplementationGuide, key, 0, resource.statusElement, 'status');
-  index(frtImplementationGuide, key, 0, resource.urlElement, 'url');
-  index(frtImplementationGuide, key, 0, resource.versionElement, 'version');
+    index(frtImplementationGuide, key, 0, resource.dependencyList[i].uriElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_dependency]);
+  index(frtImplementationGuide, key, 0, resource.descriptionElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_description]);
+  index(frtImplementationGuide, key, 0, resource.experimentalElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_experimental]);
+  index(frtImplementationGuide, key, 0, resource.nameElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_name]);
+  index(frtImplementationGuide, key, 0, resource.publisherElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_publisher]);
+  index(frtImplementationGuide, key, 0, resource.statusElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_status]);
+  index(frtImplementationGuide, key, 0, resource.urlElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_url]);
+  index(frtImplementationGuide, key, 0, resource.versionElement, CODES_TSearchParamsImplementationGuide[spImplementationGuide_version]);
+  for p in resource.packageList do
+    for r in p.resourceList do
+      if r.sourceElement is TFhirReference then
+        index(context, frtImplementationGuide, key, 0, TFhirReference(r.sourceElement), CODES_TSearchParamsImplementationGuide[spImplementationGuide_Resource]);
 end;
 
 {$IFDEF FHIR_DSTU3}
@@ -6584,13 +6810,13 @@ procedure TFhirIndexManager.buildIndexValuesCompartmentDefinition(key: integer; 
 var
   i : integer;
 begin
-  index(frtCompartmentDefinition, key, 0, resource.codeElement, 'code');
-  index(frtCompartmentDefinition, key, 0, resource.dateElement, 'date');
-  index(frtCompartmentDefinition, key, 0, resource.nameElement, 'name');
+  index(frtCompartmentDefinition, key, 0, resource.codeElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_code]);
+  index(frtCompartmentDefinition, key, 0, resource.dateElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_date]);
+  index(frtCompartmentDefinition, key, 0, resource.nameElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_name]);
   for i := 0 to resource.resourceList.Count - 1 do
-    index(frtCompartmentDefinition, key, 0, resource.resourceList[i].codeElement, 'resource');
-  index(frtCompartmentDefinition, key, 0, resource.statusElement, 'status');
-  index(frtCompartmentDefinition, key, 0, resource.urlElement, 'url');
+    index(frtCompartmentDefinition, key, 0, resource.resourceList[i].codeElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_resource]);
+  index(frtCompartmentDefinition, key, 0, resource.statusElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_status]);
+  index(frtCompartmentDefinition, key, 0, resource.urlElement, CODES_TSearchParamsCompartmentDefinition[spCompartmentDefinition_url]);
 end;
 
 const
@@ -6613,16 +6839,16 @@ procedure TFhirIndexManager.buildIndexValuesStructureMap(key: integer; id : Stri
 var
   i : integer;
 begin
-  index(frtStructureMap, key, 0, resource.useContextList, 'context');
-  index(frtStructureMap, key, 0, resource.dateElement, 'date');
-  index(frtStructureMap, key, 0, resource.descriptionElement, 'description');
-  index(frtStructureMap, key, 0, resource.experimentalElement, 'experimental');
-  index(frtStructureMap, key, 0, resource.identifierList, 'identifier');
-  index(frtStructureMap, key, 0, resource.nameElement, 'name');
-  index(frtStructureMap, key, 0, resource.publisherElement, 'publisher');
-  index(frtStructureMap, key, 0, resource.statusElement, 'status');
-  index(frtStructureMap, key, 0, resource.urlElement, 'url');
-  index(frtStructureMap, key, 0, resource.versionElement, 'version');
+  index(frtStructureMap, key, 0, resource.useContextList, CODES_TSearchParamsStructureMap[spStructureMap_context]);
+  index(frtStructureMap, key, 0, resource.dateElement, CODES_TSearchParamsStructureMap[spStructureMap_date]);
+  index(frtStructureMap, key, 0, resource.descriptionElement, CODES_TSearchParamsStructureMap[spStructureMap_description]);
+  index(frtStructureMap, key, 0, resource.experimentalElement, CODES_TSearchParamsStructureMap[spStructureMap_experimental]);
+  index(frtStructureMap, key, 0, resource.identifierList, CODES_TSearchParamsStructureMap[spStructureMap_identifier]);
+  index(frtStructureMap, key, 0, resource.nameElement, CODES_TSearchParamsStructureMap[spStructureMap_name]);
+  index(frtStructureMap, key, 0, resource.publisherElement, CODES_TSearchParamsStructureMap[spStructureMap_publisher]);
+  index(frtStructureMap, key, 0, resource.statusElement, CODES_TSearchParamsStructureMap[spStructureMap_status]);
+  index(frtStructureMap, key, 0, resource.urlElement, CODES_TSearchParamsStructureMap[spStructureMap_url]);
+  index(frtStructureMap, key, 0, resource.versionElement, CODES_TSearchParamsStructureMap[spStructureMap_version]);
 end;
 
 const
@@ -6645,7 +6871,143 @@ procedure TFhirIndexManager.buildIndexValuesMeasureReport(key: integer; id : Str
 var
   i : integer;
 begin
-  index(context, frtMeasureReport, key, 0, resource.patient, 'patient');
+  index(context, frtMeasureReport, key, 0, resource.patient, CODES_TSearchParamsMeasureReport[spMeasureReport_patient]);
+end;
+
+const
+  CHECK_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of TSearchParamsCareTeam = (
+    spCareTeam__content, spCareTeam__id, spCareTeam__lastUpdated, spCareTeam__profile, spCareTeam__query, spCareTeam__security, spCareTeam__tag, spCareTeam__text,
+    spCareTeam_Date, spCareTeam_Identifier, spCareTeam_Participant, spCareTeam_Patient, spCareTeam_Status, spCareTeam_Subject, spCareTeam_Type);
+
+procedure TFhirIndexInformation.buildIndexesCareTeam;
+var
+  a : TSearchParamsCareTeam;
+begin
+  for a := low(TSearchParamsCareTeam) to high(TSearchParamsCareTeam) do
+  begin
+    assert(CHECK_TSearchParamsCareTeam[a] = a);
+    indexes.add(frtCareTeam, CODES_TSearchParamsCareTeam[a], DESC_TSearchParamsCareTeam[a], TYPES_TSearchParamsCareTeam[a], TARGETS_TSearchParamsCareTeam[a], PATHS_TSearchParamsCareTeam[a], USES_TSearchParamsCareTeam[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesCareTeam(key: integer; id : String; context : TFhirResource; resource: TFhirCareTeam);
+var
+  p : TFhirCareTeamParticipant;
+begin
+  index(frtCareTeam, key, 0, resource.period, CODES_TSearchParamsCareTeam[spCareTeam_date]);
+  index(frtCareTeam, key, 0, resource.identifierList, CODES_TSearchParamsCareTeam[spCareTeam_Identifier]);
+  index(frtCareTeam, key, 0, resource.statusElement, CODES_TSearchParamsCareTeam[spCareTeam_Status]);
+  index(frtCareTeam, key, 0, resource.type_List, CODES_TSearchParamsCareTeam[spCareTeam_Type]);
+  index(context, frtCareTeam, key, 0, resource.subject, CODES_TSearchParamsCareTeam[spCareTeam_Subject]);
+  index(context, frtCareTeam, key, 0, resource.subject, CODES_TSearchParamsCareTeam[spCareTeam_Patient], frtPatient);
+  for p in resource.participantList do
+  begin
+    index(context, frtCareTeam, key, 0, p.member, CODES_TSearchParamsCareTeam[spCareTeam_patient], frtPatient);
+    index(context, frtCareTeam, key, 0, p.member, CODES_TSearchParamsCareTeam[spCareTeam_Participant]);
+  end;
+end;
+
+const
+  CHECK_TSearchParamsTask : Array[TSearchParamsTask] of TSearchParamsTask = (
+    spTask__content, spTask__id, spTask__lastUpdated, spTask__profile, spTask__query, spTask__security, spTask__tag, spTask__text,
+    spTask_Created, spTask_Creator, spTask_Definition, spTask_Failure, spTask_Identifier, spTask_Modified, spTask_Owner, spTask_Parent, spTask_Performer,
+    spTask_Priority, spTask_Status, spTask_Subject, spTask_Type);
+
+procedure TFhirIndexInformation.buildIndexesTask;
+var
+  a : TSearchParamsTask;
+begin
+  for a := low(TSearchParamsTask) to high(TSearchParamsTask) do
+  begin
+    assert(CHECK_TSearchParamsTask[a] = a);
+    indexes.add(frtTask, CODES_TSearchParamsTask[a], DESC_TSearchParamsTask[a], TYPES_TSearchParamsTask[a], TARGETS_TSearchParamsTask[a], PATHS_TSearchParamsTask[a], USES_TSearchParamsTask[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesTask(key: integer; id : String; context : TFhirResource; resource: TFhirTask);
+var
+  c : TFhirCoding;
+begin
+  index(frtTask, key, 0, resource.createdElement, CODES_TSearchParamsTask[spTask_created]);
+  index(context, frtTask, key, 0, resource.creatorElement, CODES_TSearchParamsTask[spTask_creator]);
+  index(frtTask, key, 0, resource.definitionElement, CODES_TSearchParamsTask[spTask_definition]);
+  index(frtTask, key, 0, resource.failureReasonElement, CODES_TSearchParamsTask[spTask_failure]);
+  index(frtTask, key, 0, resource.identifierElement, CODES_TSearchParamsTask[spTask_identifier]);
+  index(frtTask, key, 0, resource.lastModifiedElement, CODES_TSearchParamsTask[spTask_modified]);
+  index(context, frtTask, key, 0, resource.owner, CODES_TSearchParamsTask[spTask_owner]);
+  for c in resource.performerTypeList do
+    index(frtTask, key, 0, c, CODES_TSearchParamsTask[spTask_performer]);
+  index(context, frtTask, key, 0, resource.parentElement, CODES_TSearchParamsTask[spTask_Parent]);
+  index(frtTask, key, 0, resource.performerTypeList, CODES_TSearchParamsTask[spTask_Performer]);
+  index(frtTask, key, 0, resource.priorityElement, CODES_TSearchParamsTask[spTask_priority]);
+  index(frtTask, key, 0, resource.statusElement, CODES_TSearchParamsTask[spTask_status]);
+  index(context, frtTask, key, 0, resource.subject, CODES_TSearchParamsTask[spTask_subject]);
+  index(frtTask, key, 0, resource.type_, CODES_TSearchParamsTask[spTask_type]);
+end;
+
+const
+  CHECK_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of TSearchParamsPractitionerRole = (
+    spPractitionerRole__content, spPractitionerRole__id, spPractitionerRole__lastUpdated, spPractitionerRole__profile, spPractitionerRole__query, spPractitionerRole__security, spPractitionerRole__tag, spPractitionerRole__text,
+    spPractitionerRole_Email, spPractitionerRole_Identifier, spPractitionerRole_Location, spPractitionerRole_Organization, spPractitionerRole_Phone, spPractitionerRole_Practitioner, spPractitionerRole_Role, spPractitionerRole_Specialty, spPractitionerRole_Telecom);
+
+procedure TFhirIndexInformation.buildIndexesPractitionerRole;
+var
+  a : TSearchParamsPractitionerRole;
+begin
+  for a := low(TSearchParamsPractitionerRole) to high(TSearchParamsPractitionerRole) do
+  begin
+    assert(CHECK_TSearchParamsPractitionerRole[a] = a);
+    indexes.add(frtPractitionerRole, CODES_TSearchParamsPractitionerRole[a], DESC_TSearchParamsPractitionerRole[a], TYPES_TSearchParamsPractitionerRole[a], TARGETS_TSearchParamsPractitionerRole[a], PATHS_TSearchParamsPractitionerRole[a], USES_TSearchParamsPractitionerRole[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesPractitionerRole(key: integer; id : String; context : TFhirResource; resource: TFhirPractitionerRole);
+var
+  i : integer;
+begin
+  for i := 0 to resource.telecomList.Count - 1 do
+  begin
+    if (resource.telecomList[i].system = ContactPointSystemEmail) then
+      index(frtPractitionerRole, key, 0, resource.telecomList[i], CODES_TSearchParamsPractitionerRole[spPractitionerRole_email]);
+    if (resource.telecomList[i].system = ContactPointSystemPhone) then
+      index(frtPractitionerRole, key, 0, resource.telecomList[i], CODES_TSearchParamsPractitionerRole[spPractitionerRole_phone]);
+    index(frtPractitionerRole, key, 0, resource.telecomList[i], CODES_TSearchParamsPractitionerRole[spPractitionerRole_telecom]);
+  end;
+  index(frtPractitionerRole, key, 0, resource.identifierList, CODES_TSearchParamsPractitionerRole[spPractitionerRole_identifier]);
+  index(context, frtPractitionerRole, key, 0, resource.locationList, CODES_TSearchParamsPractitionerRole[spPractitionerRole_location]);
+  index(context, frtPractitionerRole, key, 0, resource.organizationElement, CODES_TSearchParamsPractitionerRole[spPractitionerRole_organization]);
+  index(context, frtPractitionerRole, key, 0, resource.practitionerElement, CODES_TSearchParamsPractitionerRole[spPractitionerRole_practitioner]);
+  index(frtPractitionerRole, key, 0, resource.roleList, CODES_TSearchParamsPractitionerRole[spPractitionerRole_role]);
+  index(frtPractitionerRole, key, 0, resource.specialtyList, CODES_TSearchParamsPractitionerRole[spPractitionerRole_specialty]);
+end;
+
+const
+  CHECK_TSearchParamsImagingExcerpt : Array[TSearchParamsImagingExcerpt] of TSearchParamsImagingExcerpt = (
+    spImagingExcerpt__content, spImagingExcerpt__id, spImagingExcerpt__lastUpdated, spImagingExcerpt__profile, spImagingExcerpt__query, spImagingExcerpt__security, spImagingExcerpt__tag, spImagingExcerpt__text,
+    spImagingExcerpt_Author, spImagingExcerpt_Authoringtime, spImagingExcerpt_Identifier, spImagingExcerpt_Patient, spImagingExcerpt_Selectedstudy, spImagingExcerpt_Title);
+
+procedure TFhirIndexInformation.buildIndexesImagingExcerpt;
+var
+  a : TSearchParamsImagingExcerpt;
+begin
+  for a := low(TSearchParamsImagingExcerpt) to high(TSearchParamsImagingExcerpt) do
+  begin
+    assert(CHECK_TSearchParamsImagingExcerpt[a] = a);
+    indexes.add(frtImagingExcerpt, CODES_TSearchParamsImagingExcerpt[a], DESC_TSearchParamsImagingExcerpt[a], TYPES_TSearchParamsImagingExcerpt[a], TARGETS_TSearchParamsImagingExcerpt[a], PATHS_TSearchParamsImagingExcerpt[a], USES_TSearchParamsImagingExcerpt[a]);
+  end;
+end;
+
+procedure TFhirIndexManager.buildIndexValuesImagingExcerpt(key: integer; id : String; context : TFhirResource; resource: TFhirImagingExcerpt);
+var
+  s : TFhirImagingExcerptStudy;
+begin
+  index(context, frtImagingExcerpt, key, 0, resource.authorElement, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_author]);
+  index(frtImagingExcerpt, key, 0, resource.authoringTimeElement, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_authoringtime]);
+  index(frtImagingExcerpt, key, 0, resource.uidElement, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_identifier]);
+  index(context, frtImagingExcerpt, key, 0, resource.patient, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_patient]);
+  for s in resource.studyList do
+    index(frtImagingExcerpt, key, 0, s.uidElement, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_Selectedstudy]);
+  index(frtImagingExcerpt, key, 0, resource.titleElement, CODES_TSearchParamsImagingExcerpt[spImagingExcerpt_title]);
 end;
 
 {$ENDIF}
@@ -6938,6 +7300,10 @@ begin
   BuildIndexesCompartmentDefinition;
   BuildIndexesMeasureReport;
   BuildIndexesStructureMap;
+  BuildIndexesCareTeam;
+  BuildIndexesTask;
+  BuildIndexesPractitionerRole;
+  BuildIndexesImagingExcerpt;
   {$ENDIF}
 
 
@@ -7022,7 +7388,7 @@ end.
 
   if (resource.codeSystem <> nil) then
   begin
-    index(frtValueSet, key, 0, resource.codeSystem.systemElement, 'system');
+    index(frtValueSet, key, 0, resource.codeSystem.systemElement, CODES_TSearchParamsValueSet[spValueSet_system]);
     indexConcepts(resource.codeSystem.conceptList);
   end;
   procedure indexConcepts(list : TFhirValueSetCodeSystemConceptList);
@@ -7031,7 +7397,7 @@ end.
   begin
     for i := 0 to list.Count - 1 do
     begin
-      index(frtValueSet, key, 0, list[i].codeElement, 'code');
+      index(frtValueSet, key, 0, list[i].codeElement, CODES_TSearchParamsValueSet[spValueSet_code]);
       indexConcepts(list[i].conceptList);
     end;
   end;

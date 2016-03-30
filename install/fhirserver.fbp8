@@ -17,10 +17,12 @@ begin
         inifile = C:\\work\\ftp.ini
         sectionname = settings
         variables = "BuildCount" +
+                    "certpword" +
                     "ftppassword" +
                     "purpose" +
                     ""
         variabletypes = "String" +
+                        "String" +
                         "String" +
                         "String" +
                         ""
@@ -62,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Major change - move CodeSystem out of ValueSet"
+        as.returnvalue = "fix loading bug"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -332,7 +334,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer2.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer2.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -392,7 +394,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver2-1.0.%BuildCount%.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver2-1.0.%BuildCount%.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -403,13 +405,32 @@ begin
           useerrordialogmonitor = false
           waitforcompletion = true
         end
+        action.ftp.connect
+        begin
+          connecttimeoutinsec = 0
+          cookie = q3B4xMWDXfAo74OHdw==
+          detailedlogging = false
+          enablekeepalives = false
+          ftpconnectionname = HealthIntersections1
+          ftphost = 27.123.25.1
+          ftpport = 21
+          id = {53A13441-EE04-406B-BC5C-EF347787C89A}
+          passive = true
+          proxyport = 0
+          proxytype = fpcmNone
+          transfertype = ftBinary
+          useglobalopt = false
+          usehost = true
+          useproxy = false
+          userid = healthi3
+        end
         action.ftp.upload.file
         begin
           allowgap = true
           autoreconnect = true
           autoupdateskew = true
           checkfilesizes = false
-          connectionname = HealthIntersections
+          connectionname = HealthIntersections1
           detailedlogging = false
           enabletimeout = false
           filespec = fhirserver2-1.0.%BuildCount%.exe
@@ -458,6 +479,13 @@ begin
           validateonparse = true
           xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
         end
+        action.ftp.disconnect
+        begin
+          autoreconnect = false
+          connectionname = HealthIntersections1
+          detailedlogging = false
+          id = {7B8217FE-C2F1-414F-B42C-CD96179CD7F2}
+        end
       end
       action.group
       begin
@@ -487,7 +515,6 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
           description = "Compile the Server (DSTU3)"
-          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -594,7 +621,6 @@ begin
         begin
           captureoutput = true
           description = "Add Map (3)"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -619,7 +645,6 @@ begin
         begin
           captureoutput = true
           description = "Sign the Server (64)"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -630,7 +655,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer3.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer3.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -668,7 +693,6 @@ begin
         action.innosetup.execute
         begin
           description = "Build the server install"
-          enabled = false
           id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
           innoversion = Inno5
           scriptfile = C:\\work\\fhirserver\\install\\install3.iss
@@ -681,7 +705,6 @@ begin
         begin
           captureoutput = true
           description = "Sign the server install"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -692,7 +715,7 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\HL7Connect\\v2\\install\\HL7ConnectCertificate.pfx /p N1ghtM@r&4us /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver3-1.0.%BuildCount%.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\install\\build\\fhirserver3-1.0.%BuildCount%.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo
@@ -709,7 +732,7 @@ begin
           cookie = q3B4xMWDXfAo74OHdw==
           detailedlogging = false
           enablekeepalives = false
-          ftpconnectionname = HealthIntersections
+          ftpconnectionname = HealthIntersections2
           ftphost = 27.123.25.1
           ftpport = 21
           id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
@@ -728,7 +751,7 @@ begin
           autoreconnect = true
           autoupdateskew = true
           checkfilesizes = false
-          connectionname = HealthIntersections
+          connectionname = HealthIntersections2
           detailedlogging = false
           enabletimeout = false
           filespec = fhirserver3-1.0.%BuildCount%.exe
@@ -771,6 +794,13 @@ begin
           validateonparse = true
           xmlsourcefile = C:\\work\\fhirserver\\install\\fhirserver.rss
         end
+        action.ftp.disconnect
+        begin
+          autoreconnect = false
+          connectionname = HealthIntersections2
+          detailedlogging = false
+          id = {228C5155-96FD-4C42-BE3B-EABC1CEB5971}
+        end
       end
       action.variables.savetoini
       begin
@@ -783,13 +813,32 @@ begin
         variables = "BuildCount" +
                     ""
       end
+      action.ftp.connect
+      begin
+        connecttimeoutinsec = 0
+        cookie = q3B4xMWDXfAo74OHdw==
+        detailedlogging = false
+        enablekeepalives = false
+        ftpconnectionname = HealthIntersections3
+        ftphost = 27.123.25.1
+        ftpport = 21
+        id = {D32A498F-5663-446A-A2D5-436DEC142FC9}
+        passive = true
+        proxyport = 0
+        proxytype = fpcmNone
+        transfertype = ftBinary
+        useglobalopt = false
+        usehost = true
+        useproxy = false
+        userid = healthi3
+      end
       action.ftp.upload.file
       begin
         allowgap = true
         autoreconnect = true
         autoupdateskew = true
         checkfilesizes = false
-        connectionname = HealthIntersections
+        connectionname = HealthIntersections3
         detailedlogging = false
         enabletimeout = false
         filespec = fhirserver.rss
@@ -828,7 +877,7 @@ begin
         autoreconnect = true
         autoupdateskew = true
         checkfilesizes = false
-        connectionname = HealthIntersections
+        connectionname = HealthIntersections3
         detailedlogging = false
         enabletimeout = false
         filespec = fhirserver.htm
@@ -849,7 +898,7 @@ begin
       action.ftp.disconnect
       begin
         autoreconnect = false
-        connectionname = HealthIntersections
+        connectionname = HealthIntersections3
         detailedlogging = false
         id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
       end
@@ -869,6 +918,12 @@ begin
     name = BuildDate
     variablescope = vtProject
     variabletype = btDateTime
+  end
+  variable
+  begin
+    name = certpword
+    variablescope = vtProject
+    variabletype = btString
   end
   variable
   begin

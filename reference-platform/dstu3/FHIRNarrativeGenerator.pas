@@ -1681,7 +1681,7 @@ begin
     if (rep.Count <> '') then
       CommaAdd(s, 'Count ' + rep.Count + ' times');
     if (rep.Duration <> '') then
-      CommaAdd(s, 'Duration ' + rep.Duration + displayTimeUnits(rep.periodUnits));
+      CommaAdd(s, 'Duration ' + rep.Duration + displayTimeUnits(rep.periodUnit));
 
     if (rep.when <> EventTimingNull) then
     begin
@@ -1691,7 +1691,7 @@ begin
         st := rep.Period;
         if (rep.PeriodMax <> '') then
           st := st + '-' + rep.PeriodMax;
-        st := st + displayTimeUnits(rep.periodUnits);
+        st := st + displayTimeUnits(rep.periodUnit);
       end;
       CommaAdd(s, 'Do ' + st + displayEventCode(rep.when));
     end
@@ -1711,7 +1711,7 @@ begin
         st := st + ' per ' + rep.Period;
         if (rep.PeriodMax <> '') then
           st := st + '-' + rep.PeriodMax;
-        st := st + ' ' + displayTimeUnits(rep.periodUnits);
+        st := st + ' ' + displayTimeUnits(rep.periodUnit);
       end;
       CommaAdd(s, 'Do ' + st);
     end;
@@ -1759,24 +1759,25 @@ end;
 
 function TFHIRNarrativeGenerator.displayTimeUnits(units: TFHIRUnitsOfTimeEnum): String;
 begin
-  case units of
-    UnitsOfTimeA:
-      result := 'years';
-    UnitsOfTimeD:
-      result := 'days';
-    UnitsOfTimeH:
-      result := 'hours';
-    UnitsOfTimeMIN:
-      result := 'minutes';
-    UnitsOfTimeMO:
-      result := 'months';
-    UnitsOfTimeS:
-      result := 'seconds';
-    UnitsOfTimeWK:
-      result := 'weeks';
-  else
-    result := '??';
-  end;
+//  case units of
+  // ggtodo
+//    UnitsOfTimeA:
+//      result := 'years';
+//    UnitsOfTimeD:
+//      result := 'days';
+//    UnitsOfTimeH:
+//      result := 'hours';
+//    UnitsOfTimeMIN:
+//      result := 'minutes';
+//    UnitsOfTimeMO:
+//      result := 'months';
+//    UnitsOfTimeS:
+//      result := 'seconds';
+//    UnitsOfTimeWK:
+//      result := 'weeks';
+//  else
+//    result := '??';
+//  end;
 end;
 
 function TFHIRNarrativeGenerator.displayHumanName(name: TFHIRHumanName): String;
@@ -1919,14 +1920,14 @@ begin
   // do we need to do a name reference substitution?
   for e in elements do
   begin
-    if (e.path = path) and (e.NameReference <> '') then
+    if (e.path = path) and (e.ContentReference <> '') then
     begin
-      name := e.NameReference;
+      name := e.ContentReference;
       t := nil;
       // now, resolve the name
       for e1 in elements do
       begin
-        if (name = e1.name) then
+        if (name = '#'+e1.id) then
           t := e1;
       end;
       if (t = nil) then

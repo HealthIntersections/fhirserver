@@ -90,7 +90,9 @@ Type
     Class Function GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : WideString) : WideString; overload;
     Class Function FirstChild(oElement : IXMLDOMNode) : IXMLDOMElement;
     Class Function NextSibling(oElement : IXMLDOMElement) : IXMLDOMElement;
+    Class Function NamedChild(oElement : IXMLDOMElement; name : String) : IXMLDOMElement;
     Class Function TextContent(oElement : IXMLDOMElement; aTextAction : TTextAction) : WideString;
+    Class Procedure getNamedChildrenWithWildcard(oElement : IXMLDOMElement; name : string; children : TInterfaceList);
 
     Class Procedure Parse(Const sFilename : String; handler : TMsXmlSaxHandler); Overload;
     Class Procedure Parse(Const oSource : TStream; handler : TMsXmlSaxHandler); Overload;
@@ -277,6 +279,24 @@ Begin
 End;
 
 
+class procedure TMsXmlParser.getNamedChildrenWithWildcard(oElement: IXMLDOMElement; name: string; children: TInterfaceList);
+var
+  c : IXMLDOMElement;
+  n : string;
+begin
+  c := FirstChild(oElement);
+  while (c <> nil) do
+  begin
+    if c.baseName <> '' then
+      n := c.baseName
+    else
+      n := c.NodeName;
+    if (name = n) or (name.endsWith('[x]') and n.startsWith(name.substring(0, name.length-3))) then
+        children.add(c);
+    c := NextSibling(c);
+  end;
+end;
+
 Class Function TMsXmlParser.FirstChild(oElement : IXMLDOMNode) : IXMLDOMElement;
 Var
   oNode : IXMLDOMNode;
@@ -291,6 +311,20 @@ Begin
   End;
 End;
 
+
+class function TMsXmlParser.NamedChild(oElement: IXMLDOMElement; name: String): IXMLDOMElement;
+var
+  n : IXMLDOMElement;
+begin
+  result := nil;
+  n := FirstChild(oElement);
+  while (n <> nil) do
+  begin
+    if n.nodeName = name then
+      exit(n);
+    n := NextSibling(n);
+  end;
+end;
 
 Class Function TMsXmlParser.NextSibling(oElement : IXMLDOMElement) : IXMLDOMElement;
 Var

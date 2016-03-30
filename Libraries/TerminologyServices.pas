@@ -3,10 +3,10 @@ unit TerminologyServices;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   StringSupport,
   AdvObjects, AdvStringLists,
-  FHIRTypes, FHIRResources, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, CDSHooksUtilities, FHIROperations,
   YuStemmer;
 
 Type
@@ -83,7 +83,7 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; params : TFHIRParameters); virtual;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); virtual;
 
     function SpecialEnumeration : String; virtual;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); virtual;
@@ -117,7 +117,7 @@ end;
 
 
 
-procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; params: TFHIRParameters);
+procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse);
 begin
   // nothing here
 end;

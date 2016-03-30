@@ -299,7 +299,9 @@ uses
   MPISearch in 'MPISearch.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\dstu2\FHIROperations.pas',
-  FHIRIndexConstants in '..\reference-platform\dstu2\FHIRIndexConstants.pas';
+  FHIRIndexConstants in '..\reference-platform\dstu2\FHIRIndexConstants.pas',
+  FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
+  FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas';
 
 begin
   JclStartExceptionTracking;

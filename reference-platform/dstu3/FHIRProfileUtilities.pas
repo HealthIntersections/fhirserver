@@ -738,7 +738,7 @@ begin
   try
     props := item.createPropertyList(true);
     try
-      children := getChildMap(profile, definition.name, definition.path, definition.NameReference);
+      children := getChildMap(profile, definition.name, definition.path, definition.ContentReference);
       try
         if children.Count = 0 then
         begin
@@ -805,8 +805,8 @@ begin
   if profile.snapshot = nil then
     raise Exception.Create('Unsuitable profile for creating a resource - no snapshot');
 
-  if profile.constrainedType <> DefinedTypesNull then
-    path := CODES_TFhirDefinedTypesEnum[profile.constrainedType]
+  if profile.BaseType <> DefinedTypesNull then
+    path := CODES_TFhirDefinedTypesEnum[profile.baseType]
   else
     path := profile.name;
   estack := TAdvList<TFhirElementDefinition>.create;
@@ -814,7 +814,7 @@ begin
     result := CreateResourceByName(path);
     try
       populate(profile, result, profile.snapshot.elementList[0], estack);
-      if profile.constrainedType <> DefinedTypesNull then
+      if profile.baseType <> DefinedTypesNull then
       begin
         if result.meta = nil then
           result.meta := TFhirMeta.Create;
@@ -1692,9 +1692,9 @@ begin
     p := r as TFHirStructureDefinition;
     if (p.snapshot = nil) then
     begin
-      sd := fetchResource(frtStructureDefinition, p.base) as TFhirStructureDefinition;
+      sd := fetchResource(frtStructureDefinition, p.baseDefinition) as TFhirStructureDefinition;
       if sd = nil then
-        raise Exception.Create('Unknown base profile: "'+p.base+'"');
+        raise Exception.Create('Unknown base profile: "'+p.baseDefinition+'"');
       try
         messages := TFhirOperationOutcomeIssueList.create;
         pu := TProfileUtilities.create(self.link, messages.link);

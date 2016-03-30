@@ -202,51 +202,6 @@ public class DelphiGenerator {
   }
 
   private void opStart() {
-    defCodeOp.classDefs.add(
-        "  TFHIROperationRequest = class (TAdvObject)\r\n"+
-        "  public\r\n"+
-        "    constructor create(params : TFHIRParameters); overload; virtual;\r\n"+
-        "    constructor create(); overload; override;\r\n"+
-        "    function AsParams : TFHIRParameters; virtual;\r\n"+
-        "  end;\r\n"+
-        "\r\n"+
-        "  TFHIROperationResponse = class (TAdvObject)\r\n"+
-        "  public\r\n"+
-        "    constructor create(params : TFHIRParameters); overload; virtual;\r\n"+
-        "    constructor create(); overload; override;\r\n"+
-        "    function AsParams : TFHIRParameters; virtual;\r\n"+
-        "  end;\r\n\r\n");
-    defCodeOp.classImpls.add(
-        "function TFHIROperationRequest.AsParams: TFHIRParameters;\r\n"+
-            "begin\r\n"+
-            "  raise Exception.Create('Must be overriden');\r\n"+
-            "end;\r\n"+
-            "\r\n"+
-            "constructor TFHIROperationRequest.create(params: TFHIRParameters);\r\n"+
-            "begin\r\n"+
-            "  inherited Create;\r\n"+
-            "end;\r\n"+
-            "\r\n"+
-            "constructor TFHIROperationRequest.create;\r\n"+
-            "begin\r\n"+
-            "  inherited Create;\r\n"+
-            "end;\r\n"+
-            "\r\n"+
-            "function TFHIROperationResponse.AsParams: TFHIRParameters;\r\n"+
-            "begin\r\n"+
-            "  raise Exception.Create('Must be overriden');\r\n"+
-            "end;\r\n"+
-            "\r\n"+
-            "constructor TFHIROperationResponse.create(params: TFHIRParameters);\r\n"+
-            "begin\r\n"+
-            "  inherited Create;\r\n"+
-            "end;\r\n"+
-            "\r\n"+
-            "constructor TFHIROperationResponse.create;\r\n"+
-            "begin\r\n"+
-            "  inherited Create;\r\n"+
-            "end;\r\n"+
-    "\r\n");
   }
   
   private void genOp(OperationDefinition op) throws IOException {
@@ -268,8 +223,10 @@ public class DelphiGenerator {
     StringBuilder properties = new StringBuilder();
     StringBuilder destroy = new StringBuilder();
     StringBuilder create = new StringBuilder();
+    StringBuilder screate = new StringBuilder();
     StringBuilder params = new StringBuilder();
-    StringBuilder gencreate = new StringBuilder();;
+    StringBuilder gencreate = new StringBuilder();
+    StringBuilder names = new StringBuilder();
     List<String> vars = new ArrayList<String>();
     
     for (OperationDefinitionParameterComponent p : plist) {
@@ -290,8 +247,11 @@ public class DelphiGenerator {
           pt = "String";
         if (pt.equals("TFhirAny"))
           pt = "TFhirResource";
+        if (pt.equals("TFhir*"))
+          pt = "TFhirType";
         boolean obj = !Utilities.existsInList(pt, "String", "Boolean", "Integer");
         boolean list = (p.getMax().equals("*") || Integer.parseInt(p.getMax()) > 1);
+        names.append(", '"+p.getName()+"'");
        
         if (list) {
           if (!obj) {
@@ -367,10 +327,13 @@ public class DelphiGenerator {
             create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType())+").value;\r\n");
           } else {
             params.append("      result.addParameter('"+p.getName()+"', TFHIR"+pt+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
-            if (pt.equals("Boolean"))
+            if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
-            else
+              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBool(params.getVar('"+p.getName()+"'));\r\n");
+            } else {
               create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := params.getVar('"+p.getName()+"');\r\n");
+            }
           }
         }
       }
@@ -378,14 +341,16 @@ public class DelphiGenerator {
 
     if (use == null) 
     defCodeOp.classDefs.add(
-        "  TFHIR"+name+"Op"+suffix+" = class (TAdvObject)\r\n  private\r\n"+
+        "  TFHIR"+name+"Op"+suffix+" = class (TFHIROperationObject)\r\n  private\r\n"+
             fields.toString()+
             accessors.toString()+
+            "  protected\r\n"+
+            "    function isKnownName(name : String) : boolean; override;\r\n"+
             "  public\r\n"+
+            "    constructor create; overload;\r\n"+
             "    constructor create(params : TFhirParametersParameter); overload;\r\n"+
-            "    constructor create; overload; override;\r\n"+
             "    destructor Destroy; override;\r\n"+
-            "    function AsParams(name : String) : TFHIRParametersParameter;\r\n"+
+            "    function asParams(name : String) : TFHIRParametersParameter;\r\n"+
             properties.toString()+
         "  end;\r\n");
     else
@@ -393,11 +358,14 @@ public class DelphiGenerator {
         "  TFHIR"+name+"Op"+suffix+" = class (TFHIROperation"+suffix+")\r\n  private\r\n"+
             fields.toString()+
             accessors.toString()+
+            "  protected\r\n"+
+            "    function isKnownName(name : String) : boolean; override;\r\n"+
             "  public\r\n"+
-            "    constructor create(params : TFHIRParameters); overload; override;\r\n"+
             "    constructor create; overload; override;\r\n"+
             "    destructor Destroy; override;\r\n"+
-            "    function AsParams : TFHIRParameters; override;\r\n"+
+            "    procedure load(params : TFHIRParameters); overload; override;\r\n"+
+            "    procedure load(params : TParseMap); overload; override;\r\n"+
+            "    function asParams : TFHIRParameters; override;\r\n"+
             properties.toString()+
         "  end;\r\n");
     defCodeOp.classImpls.add("constructor TFHIR"+name+"Op"+suffix+".create;\r\n"+
@@ -405,18 +373,33 @@ public class DelphiGenerator {
         "  inherited create();\r\n"+
         gencreate.toString()+
         "end;\r\n");
-    defCodeOp.classImpls.add("constructor TFHIR"+name+"Op"+suffix+".create(params : "+(use == null ? "TFhirParametersParameter" : "TFHIRParameters")+");\r\n"+
+    if (use == null)
+      defCodeOp.classImpls.add("constructor TFHIR"+name+"Op"+suffix+".create(params : TFhirParametersParameter);\r\n"+
         (gencreate.length() > 0 ? "var\r\n  p : TFhirParametersParameter;\r\n" : "")+
         "begin\r\n"+
         "  inherited create();\r\n"+
         gencreate.toString()+
         create.toString()+
+        "  loadExtensions(params);\r\n"+
         "end;\r\n");
+    if (use != null) {
+      defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+".load(params : "+(use == null ? "TFhirParametersParameter" : "TFHIRParameters")+");\r\n"+
+        (gencreate.length() > 0 ? "var\r\n  p : TFhirParametersParameter;\r\n" : "")+
+        "begin\r\n"+
+        create.toString()+
+        "  loadExtensions(params);\r\n"+
+        "end;\r\n");
+      defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+".load(params : TParseMap);\r\n"+
+          "begin\r\n"+
+          screate.toString()+
+          "  loadExtensions(params);\r\n"+
+          "end;\r\n");
+    }
     defCodeOp.classImpls.add("destructor TFHIR"+name+"Op"+suffix+".Destroy;\r\nbegin\r\n"+destroy.toString()+"  inherited;\r\nend;\r\n");
     if (use == null) 
-      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".AsParams(name : String) : TFhirParametersParameter;");
+      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".asParams(name : String) : TFhirParametersParameter;");
     else
-      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".AsParams : TFhirParameters;");
+      defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".asParams : TFhirParameters;");
     if (vars.size() > 0) {
       defCodeOp.classImpls.add("var");
       for (int i = 0; i < vars.size(); i++) {
@@ -430,6 +413,7 @@ public class DelphiGenerator {
         "  try\r\n"+
         "    result.name := name;\r\n"+
         params.toString()+
+        "    writeExtensions(result);\r\n"+
         "    result.link;\r\n  finally\r\n    result.free;\r\n  end;\r\nend;\r\n");
     else
     defCodeOp.classImpls.add(
@@ -437,7 +421,19 @@ public class DelphiGenerator {
         "  result := TFHIRParameters.create;\r\n"+
         "  try\r\n"+
         params.toString()+
+        "    writeExtensions(result);\r\n"+
         "    result.link;\r\n  finally\r\n    result.free;\r\n  end;\r\nend;\r\n");
+    defCodeOp.classImpls.add("function TFHIR"+name+"Op"+suffix+".isKnownName(name : String) : boolean;");
+    if (names.length() == 0)
+      defCodeOp.classImpls.add(
+          "begin\r\n"+
+          "  result := false;\r\n"+
+          "end;\r\n");
+    else
+    defCodeOp.classImpls.add(
+        "begin\r\n"+
+        "  result := StringArrayExists(["+names.substring(2)+"], name);\r\n"+
+        "end;\r\n");
   }
 
   private boolean isResource(String name) {
@@ -567,10 +563,12 @@ public class DelphiGenerator {
     defCodeOp.uses.add("DecimalSupport");
     defCodeOp.uses.add("AdvBuffers");
     defCodeOp.uses.add("AdvGenerics");
+    defCodeOp.uses.add("ParseMap");
     defCodeOp.uses.add("DateAndTime");
     defCodeOp.uses.add("FHIRBase");
     defCodeOp.uses.add("FHIRTypes");
     defCodeOp.uses.add("FHIRResources");
+    defCodeOp.uses.add("FHIROpBase");
     defCodeOp.usesImpl.add("FHIRUtilities");
   }
 

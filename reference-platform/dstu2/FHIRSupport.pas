@@ -853,6 +853,8 @@ begin
           CommandType := fcmdTransaction
         else if (s = 'validation') or (s = 'validate') then
           CommandType := fcmdValidate
+        else if (s = 'batch') then
+          CommandType := fcmdBatch
         else
           raise Exception.create('Unknown Operation: '+s);
       end
@@ -1243,6 +1245,7 @@ end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
 begin
+  FForm.Free;
   FForm := Value;
 end;
 

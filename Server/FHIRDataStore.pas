@@ -1740,7 +1740,7 @@ begin
       value := claim.id;
     end;
     resp.request := TFhirReference.Create;
-    resp.request.reference := 'Claim/' + claim.id;
+    TFhirReference(resp.request).reference := 'Claim/' + claim.id;
     resp.outcome := RemittanceOutcomeComplete;
     resp.disposition := 'Automatic Response';
     resp.paymentAmount := TFhirQuantity.Create;

@@ -962,9 +962,11 @@ var
   c : integer;
   domain : String;
   sBearer : String;
-  noErrCode : boolean;
+  noErrCode, upload : boolean;
 Begin
   noErrCode := false;
+  upload := false;
+
   Session := nil;
   try
     if ssl then
@@ -987,13 +989,17 @@ Begin
       sContentType := request.ContentType;
 
     if s.StartsWith('multipart/form-data', true) then
-      form := loadMultipartForm(request.PostStream, request.ContentType)
+    begin
+      form := loadMultipartForm(request.PostStream, request.ContentType);
+      upload := true;
+    end
     else
       form := nil;
     try
       if s.StartsWith('multipart/form-data', true) then
       begin
         oStream := extractFileData(form, 'file', sContentType); // though this might not return the data if we have an operation request
+        upload := true;
       end
       else if request.PostStream <> nil then
       begin
@@ -1086,7 +1092,7 @@ Begin
                     if oRequest.CommandType = fcmdWebUI then
                       HandleWebUIRequest(oRequest, oResponse, secure)
                     else
-                      ProcessRequest(oRequest, oResponse, false);
+                      ProcessRequest(oRequest, oResponse, upload);
                   except
                     on e : EAbort do
                     begin
@@ -1781,7 +1787,7 @@ Begin
     oRequest.url := sHost + sResource;
     oRequest.lastModifiedDate := 0; // Xml
 //    oRequest.contentLocation := sContentLocation; // for version aware updates
-    oRequest.form := form;
+    oRequest.form := form.link;
     oRequest.Provenance := processProvenanceHeader(provenance, lang);
 
     If Not StringStartsWithSensitive(sResource, sBaseURL) Then
@@ -1873,7 +1879,7 @@ Begin
         if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
           oRequest.compartments := BuildCompartmentList(oRequest.Session);
 
-        if (oRequest.CommandType in [fcmdTransaction, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
+        if (oRequest.CommandType in [fcmdTransaction, fcmdBatch, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
           or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.size > 0) and (sContentType <> '')) Then
         begin
           oRequest.CopyPost(oPostStream);
@@ -2500,6 +2506,7 @@ begin
   '</textarea><br/><br/>'+#13#10+
   '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">'+#13#10+
   ' <option value="transaction">Transaction</option>'+#13#10+
+  ' <option value="batch">Batch</option>'+#13#10+
   ' <option value="validation">Validation</option>'+#13#10+
   '</select></td></tr>'+#13#10+
   '<tr><td>Profile:</td><td> <select size="1" name="profile">'+#13#10+

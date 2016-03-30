@@ -3,11 +3,31 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.40 2016-03-30 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.40.exe</link>
+			<description>DSTU3. 2016-03-30 (v1.0.40): Freeze version for Montreal</description>
+		</item>
+<item><title>FHIRServer release 1.0.39 2016-03-28 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.39.exe</link>
+			<description>DSTU2. 2016-03-28 (v1.0.39): fix loading bug</description>
+		</item>
+		<item><title>FHIRServer release 1.0.38 2016-03-23 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.38.exe</link>
+			<description>DSTU2. 2016-03-23 (v1.0.38): various search related fixes</description>
+		</item>
+		<item><title>FHIRServer release 1.0.37 2016-03-18 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.37.exe</link>
+			<description>DSTU3. 2016-03-18 (v1.0.37): various minor fixes to searching and batching</description>
+		</item>
+		<item><title>FHIRServer release 1.0.37 2016-03-18 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.37.exe</link>
+			<description>DSTU2. 2016-03-18 (v1.0.37): various minor fixes to searching and batching</description>
+		</item>
 		<item><title>FHIRServer release 1.0.36 2016-03-11 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.36.exe</link>
 			<description>DSTU3. 2016-03-11 (v1.0.36): Major change - move CodeSystem out of ValueSet</description>
 		</item>
-<item><title>FHIRServer release 1.0.35 2016-02-19 (DSTU2)</title>
+		<item><title>FHIRServer release 1.0.35 2016-02-19 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.35.exe</link>
 			<description>DSTU2. 2016-02-19 (v1.0.35): Enhance SNOMED CT implementation to support Reference Sets additional values + process preferred concept in language reference set</description>
 		</item>

@@ -192,22 +192,22 @@ begin
         begin
           element := nil;
           for e in map.elementList do
-            if (e.codeSystem = match.uriSrc) and (e.code = match.codeSrc) then
+            if (e.system = match.uriSrc) and (e.code = match.codeSrc) then
               element := e;
           if element = nil then
           begin
             element := map.elementList.Append;
-            element.codeSystem := match.uriSrc;
+            element.system := match.uriSrc;
             element.code := match.codeSrc;
           end;
           target := nil;
           for t in element.targetList do
-            if (t.codeSystem = match.uriTgt) and (t.code = match.codeTgt) then
+            if (t.system = match.uriTgt) and (t.code = match.codeTgt) then
               target := t;
           if (target = nil) then
           begin
             target := element.targetList.Append;
-            target.codeSystem := match.uritgt;
+            target.system := match.uritgt;
             target.code := match.codetgt;
             target.equivalence := ConceptMapEquivalenceSpecializes;
           end;
@@ -243,10 +243,10 @@ begin
       begin
         element := map.elementList.Append;
         elements.Add(key, element.link);
-        element.codeSystem := conn.ColStringByName['UrlSrc'];
+        element.system := conn.ColStringByName['UrlSrc'];
         element.code := conn.ColStringByName['CodeSrc'];
         target := element.targetList.Append;
-        target.codeSystem := conn.ColStringByName['UrlTgt'];
+        target.system := conn.ColStringByName['UrlTgt'];
         target.code := conn.ColStringByName['CodeTgt'];
         target.equivalence := ConceptMapEquivalenceSubsumes;
       end;

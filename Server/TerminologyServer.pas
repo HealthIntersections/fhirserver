@@ -3,11 +3,11 @@ unit TerminologyServer;
 interface
 
 uses
-  SysUtils, Classes, IniFiles,
+  SysUtils, Classes, IniFiles, Generics.Collections,
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager, KDBOdbcExpress,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
   CountryCodeServices, AreaCodeServices,
   FHIRValueSetChecker, ClosureManager,
@@ -55,7 +55,7 @@ Type
     function expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSet; overload;
     function expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet; overload;
 
-    function lookupCode(coding : TFhirCoding) : TFhirResource;
+    procedure lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
     function validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters; overload;
     function translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
@@ -180,54 +180,52 @@ begin
   end;
 end;
 
-function TTerminologyServer.lookupCode(coding: TFhirCoding): TFhirResource;
+procedure TTerminologyServer.lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
 var
   provider : TCodeSystemProvider;
-  params : TFhirParameters;
-  op : TFHIROperationOutcome;
   ctxt : TCodeSystemProviderContext;
   s : String;
+  {$IFDEF FHIR_DSTU3}
+  p : TFHIRLookupOpProperty_;
+  {$ENDIF}
+  function hasProp(name : String; def : boolean) : boolean;
+  begin
+    if (props = nil) or (props.Count = 0) then
+      result := def
+    else
+      result := props.Contains(name);
+  end;
 begin
+  provider := getProvider(coding.system);
   try
-    params := TFhirParameters.Create;
+    resp.name := provider.name(nil);
+    s := provider.version(nil);
+    if (s <> '') then
+      resp.version := s;
+    ctxt := provider.locate(coding.code);
     try
-      provider := getProvider(coding.system);
-      try
-        s := provider.name(nil);
-        params.AddParameter('name', s);
-        if (provider.version(nil) <> '') then
-          params.AddParameter('version', provider.version(nil));
-        ctxt := provider.locate(coding.code);
-        try
-          if ctxt = nil then
-            raise Exception.Create('Unable to find code '+coding.code+' in '+s);
+      if ctxt = nil then
+        raise Exception.Create('Unable to find code '+coding.code+' in '+s);
 
-          if provider.IsAbstract(ctxt) then
-            params.AddParameter('abstract', TFhirBoolean.Create(true));
-          params.AddParameter('display', provider.Display(ctxt));
-          provider.extendLookup(ctxt, params);
-          // todo : add designations
-        finally
-          provider.Close(ctxt);
-        end;
-      finally
-        provider.Free;
+      if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
+      begin
+        {$IFDEF FHIR_DSTU3}
+        p := TFHIRLookupOpProperty_.create;
+        resp.property_List.add(p);
+        p.code := 'abstract';
+        p.value := 'true';
+        {$ELSE}
+        resp.abstract := true;
+        {$ENDIF}
       end;
-      result := params.Link;
+      if (hasProp('display', true)) then
+        resp.display := provider.Display(ctxt);
+      provider.extendLookup(ctxt, props, resp);
     finally
-      result.free;
+      provider.Close(ctxt);
     end;
-  except
-    on e : exception do
-    begin
-      op := TFhirOperationOutcome.Create;
-      try
-        op.error('terminology', TFhirIssueTypeEnum.IssueTypeCodeInvalid, 'coding', false, e.Message);
-        result := op.Link;
-      finally
-        op.Free;
-      end;
-    end;
+  finally
+    provider.Free;
   end;
 end;
 
@@ -537,7 +535,7 @@ begin
           result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
       end;
     finally
-      vs.free;
+      cs.free;
     end;
   end;
 end;
@@ -727,7 +725,7 @@ begin
               result.AddParameter('result', true);
               outcome := TFhirCoding.Create;
               result.AddParameter('outcome', outcome);
-              outcome.system := map.codeSystem;
+              outcome.system := map.system;
               outcome.code := map.code;
             end
             else

@@ -2186,8 +2186,8 @@ begin
   begin
     if (ed.path.equals(path)) then
     begin
-      if (ed.NameReference <> '') then
-        exit(getElementDefinitionByName(sd, ed.NameReference))
+      if (ed.ContentReference <> '') then
+        exit(getElementDefinitionByName(sd, ed.ContentReference))
       else
         exit(ed);
     end;
@@ -2197,9 +2197,9 @@ begin
         specifiedType := path.Substring(ed.path.length-3);
         exit(ed);
       end;
-      if ((ed.NameReference <> '') and path.startsWith(ed.path+'.')) then
+      if ((ed.ContentReference <> '') and path.startsWith(ed.path+'.')) then
       begin
-        m := getElementDefinitionByName(sd, ed.NameReference);
+        m := getElementDefinitionByName(sd, ed.ContentReference);
         exit(getElementDefinition(sd, m.path+path.substring(ed.path.length), specifiedType));
       end;
   end;
@@ -2215,7 +2215,7 @@ var
   ed : TFhirElementDefinition;
 begin
   for ed in sd.snapshot.elementList do
-    if (name.equals(ed.name)) then
+    if (name.equals('#'+ed.id)) then
       exit(ed);
   result := nil;
 end;

@@ -10,7 +10,7 @@ uses
   IdContext, IdCustomHTTPServer,
   FHIRLang, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
-  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants;
+  TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 
 Type
   TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
@@ -452,23 +452,31 @@ end;
 function TTerminologyWebServer.processFind(pm: TParseMap): String;
 var
   coding : TFHIRCoding;
-  res : TFhirResource;
+  resp : TFHIRLookupOpResponse;
+  p : TFhirParameters;
 begin
   coding := TFhirCoding.Create;
   try
     coding.system := pm.GetVar('system');
     coding.version := pm.GetVar('version');
     coding.code := pm.GetVar('code');
-    res := FServer.lookupCode(coding);
+    resp := TFHIRLookupOpResponse.Create;
     try
-      if res is TFhirOperationOutcome then
-        result := '<div style="background: red">'+asHtml(res as TFhirOperationOutcome)+'</div>'#13 +
-          #10'<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>'
-      else
-        result := '<div>'+paramsAsHtml(res as TFhirParameters)+'</div>'#13 +
-          #10'<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>'
+      try
+        FServer.lookupCode(coding, nil, resp);
+        p := resp.asParams;
+        try
+          result := '<div>'+paramsAsHtml(p)+'</div>'#13 +
+            #10'<pre class="json">'+asJson(p)+'</pre>'#13#10+'<pre class="xml">'+asXml(p)+'</pre>'
+        finally
+          p.Free;
+        end;
+      except
+        on e : exception do
+          result := '<div>'+e.message+'</div>'#13;
+      end;
     finally
-      res.Free;
+      resp.Free;
     end;
   finally
     coding.Free;

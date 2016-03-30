@@ -13,6 +13,7 @@ import org.hl7.fhir.dstu3.model.OperationDefinition;
 import org.hl7.fhir.dstu3.model.SearchParameter;
 import org.hl7.fhir.dstu3.model.StructureDefinition;
 import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.dstu3.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.dstu3.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.Utilities;
 
@@ -62,11 +63,11 @@ public class DefinitionsLoader3 {
    
   private void processConformance(Definitions def, Conformance resource) {
     def.setVersion(resource.getFhirVersion());
-    def.setGenDate(VersionConverter.convertDateTime(resource.getDateElement()));
+    def.setGenDate(VersionConvertor.convertDateTime(resource.getDateElement()));
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), VersionConverter.convertSearchParamType(sp.getType()), sp.getTarget(), VersionConverter.convertXPathUsageType(sp.getXpathUsage()));
+    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), VersionConvertor.convertSearchParamType(sp.getType()), sp.getTarget(), VersionConvertor.convertXPathUsageType(sp.getXpathUsage()));
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 
@@ -97,7 +98,7 @@ public class DefinitionsLoader3 {
   private static void processType(Definitions def, StructureDefinition sd, Map<String, ValueSet> vsmap) throws Exception {
     if (isPrimitive(sd)) {
       def.getPrimitives().put(sd.getId(), makePrimitive(sd));
-    } else if (!sd.hasConstrainedType()) {
+    } else if (sd.getDerivation() != TypeDerivationRule.CONSTRAINT) {
       TypeDefn type = new TypeDefn();
       type.loadFrom(sd.getDifferential().getElement().get(0), sd, vsmap);
       for (int i = 1; i < sd.getDifferential().getElement().size(); i++) { 
@@ -129,14 +130,15 @@ public class DefinitionsLoader3 {
   }
 
   private static DefinedCode makePrimitive(StructureDefinition sd) {
-    if (sd.hasConstrainedType()) {
+    System.out.println("type "+sd.getId());
+    if (!sd.getBaseType().equals("Element")) {
       DefinedStringPattern dsp = new DefinedStringPattern();
       dsp.setCode(sd.getId());
       dsp.setDefinition(removeprefix(sd.getDescription()));
       dsp.setComment(sd.getSnapshot().getElement().get(0).getComments());
       dsp.setSchema(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_XML_TYPE));
       dsp.setJsonType(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_JSON_TYPE));
-      dsp.setBase(sd.getConstrainedType());
+      dsp.setBase(sd.getBaseType());
       return dsp;
     } else {
       PrimitiveType pt = new PrimitiveType();
