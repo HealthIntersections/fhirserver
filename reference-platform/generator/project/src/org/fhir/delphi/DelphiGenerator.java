@@ -1157,18 +1157,18 @@ public class DelphiGenerator {
         String n = p.getCode().replace("$", "_");
         String d = makeDocoSafe(p.getDescription());
         String nf = n.replace("-", "").replace("[x]", "x");
-        String t = getTarget(p.getWorkingTargets());
-        if (900 - l7 < t.length()) {
-          l7 = 10;
-          t = "\r\n    "+t;
-        }
-        if (t.length() + l7 > 900) {
-          int c = 900 - l7;
-          while (t.charAt(c) != ' ')
-            c--;
-          t = t.substring(0, c)+"\r\n        "+t.substring(c);
-          l7 = t.length() - c;
-        }
+        String t = "\r\n      "+getTarget(p.getWorkingTargets(), 900);
+//        if (900 - l7 < t.length()) {
+//          l7 = 10;
+//          t = "\r\n    "+t;
+//        }
+//        if (t.length() + l7 > 900) {
+//          int c = 900 - l7;
+//          while (t.charAt(c) != ' ')
+//            c--;
+//          t = t.substring(0, c)+"\r\n        "+t.substring(c);
+//          l7 = t.length() - c;
+//        }
           
         if (i == l) {
           def.append("    "+prefix+getTitle(nf)+"); {@enum.value \""+p.getCode()+"\" "+prefix+getTitle(nf)+" "+d+" }\r\n");
@@ -1222,12 +1222,13 @@ public class DelphiGenerator {
       return s;
   }
 
-  private String getTarget(Set<String> targets) throws Exception {
+  private String getTarget(Set<String> targets, int l) throws Exception {
     if (targets.size() == 1 && targets.contains("Any"))
       return "ALL_RESOURCE_TYPES";
 
     StringBuilder s = new StringBuilder();
     s.append("[");
+    int i = 1;
     boolean first = true;
     for (String p : targets) {
       if (definitions.hasResource(p)) {
@@ -1235,6 +1236,11 @@ public class DelphiGenerator {
           s.append(", ");
         s.append("frt"+p);
         first = false;
+        i = i + p.length()+5;
+        if (i > l) {
+          s.append("\r\n      ");
+          i = 6;
+        }
       }
     }
     s.append("]");

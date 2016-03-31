@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.3.0 generated 2016-03-29T23:40:20+11:00
+// FHIR v1.4.0 generated 2016-03-31T08:01:25+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -5747,9 +5747,9 @@ Const
      'Who authorizes the vision product');
 //  CHECK_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of TSearchParamsVisionPrescription = ( spVisionPrescription__content,  spVisionPrescription__id,  spVisionPrescription__lastUpdated,  spVisionPrescription__profile,  spVisionPrescription__query, 
       //  spVisionPrescription__security,  spVisionPrescription__tag,  spVisionPrescription__text,  spVisionPrescription_Datewritten,  spVisionPrescription_Encounter,  spVisionPrescription_Identifier,  spVisionPrescription_Patient,  spVisionPrescription_Prescriber);
-  FHIR_GENERATED_VERSION = '1.3.0';
+  FHIR_GENERATED_VERSION = '1.4.0';
 
-  FHIR_GENERATED_DATE = '2016-03-29T23:40:20+11:00';
+  FHIR_GENERATED_DATE = '2016-03-31T08:01:25+11:00';
 
 
 
