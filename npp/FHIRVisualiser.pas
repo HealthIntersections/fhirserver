@@ -607,17 +607,17 @@ begin
   else if (p.op) then
   begin
     CellText := CODES_TFHIRPathOperation[p.expr.Operation];
-    CellText := CellText + ': '+p.expr.OpTypes.AsString(' | ');
+    CellText := CellText + ': '+p.expr.OpTypes.describe;
   end
   else
   begin
     case p.expr.kind of
-      entName : CellText := p.expr.name;
-      entFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
-      entConstant : CellText := '"'+p.expr.constant+'"';
-      entGroup : CellText := '(Group)';
+      enkName : CellText := p.expr.name;
+      enkFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
+      enkConstant : CellText := '"'+p.expr.constant+'"';
+      enkGroup : CellText := '(Group)';
     end;
-    CellText := CellText + ': '+p.expr.Types.AsString(' | ');
+    CellText := CellText + ': '+p.expr.Types.describe;
   end;
 end;
 
@@ -635,7 +635,7 @@ begin
       inc(ChildCount);
     if (p.expr.Group <> nil) then
       inc(ChildCount);
-    if (p.expr.Operation <> opNull) then
+    if (p.expr.Operation <> popNull) then
       inc(ChildCount, 2);
   end;
 end;
@@ -659,15 +659,15 @@ begin
 
     // possible nodes:
     case pe.kind of
-      entName: i := 0; // no child nodes
-      entFunction:
+      enkName: i := 0; // no child nodes
+      enkFunction:
         begin
           i := pe.Parameters.Count;
           if node.Index < i then
             p.expr := pe.Parameters[node.Index];
         end;
-      entConstant: i := 0; // no children
-      entGroup:
+      enkConstant: i := 0; // no children
+      enkGroup:
         begin
         i := 1;
         if node.Index = 0 then

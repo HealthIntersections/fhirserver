@@ -168,7 +168,6 @@ Type
   private
     FValue : TSmartDecimal;
     FUnit : TUcumTerm;
-    Procedure SetValue(Value : TSmartDecimal);
     Procedure SetUnit(Value : TUcumTerm);
   public
     Constructor Create; Override;
@@ -178,7 +177,7 @@ Type
     procedure divideValue(i : TSmartDecimal); overload;
     procedure divideValue(i : integer); overload;
 
-    Property Value : TSmartDecimal read FValue write SetValue;
+    Property Value : TSmartDecimal read FValue write FValue;
     Property Unit_ : TUcumTerm read FUnit write SetUnit;
   End;
 
@@ -187,7 +186,6 @@ Type
     Fmodel : TUcumModel;
     Fhandlers : TUcumRegistry;
     Fone : TUcumFactor;
-    FContext : TSmartDecimalContext;
 
     function SortTerms(oTerm : TUcumTerm): Boolean; Overload;
     Function SortTerms(oCan : TUcumCanonical): Boolean; Overload;
@@ -205,7 +203,6 @@ Type
     Constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
     Destructor Destroy; Override;
     Function convert(oTerm: TUcumTerm) : TUcumCanonical;
-    Property Context : TSmartDecimalContext read FContext;
   End;
 
 Const
@@ -726,14 +723,12 @@ begin
   Inherited Create;
   Fmodel := oModel;
   Fhandlers := ohandlers;
-  FContext := oModel.Context.Link;
   FOne := TUcumFactor.Create(1);
 end;
 
 destructor TUcumConverter.Destroy;
 begin
   Fmodel.Free;
-  FContext.free;
   Fhandlers.Free;
   FOne.Free;
   inherited;
@@ -899,7 +894,7 @@ var
 begin
   result := TUcumCanonical.Create();
   Try
-    result.FValue := FContext.value(1).Link;
+    result.FValue := TSmartDecimal.valueOf(1);
     result.FValue.Precision := 24; // there's no question about that precision
     result.FUnit := TUcumTerm.Create;
     if (oTerm.Component <> nil) Then
@@ -913,7 +908,7 @@ begin
         if (result.Unit_.Operator = DIVISION) and (t.Unit_ <> nil) Then
         Begin
           debug('going to flip @ '+result.value.AsDecimal+'/'+t.value.AsDecimal, t.Unit_);
-          result.Value := Result.Value.Divide(t.Value).Link;
+          result.Value := Result.Value.Divide(t.Value);
           Result.Unit_.Operator := MULTIPLICATION;
           flipExponents(t.Unit_);
           Result.Unit_.setTermCheckOp(t.Unit_.Link);
@@ -921,7 +916,7 @@ begin
         End
         Else
         Begin
-          result.Value := Result.Value.Multiply(t.Value).Link;
+          result.Value := Result.Value.Multiply(t.Value);
           if (t.Unit_ <> Nil) Then
             Result.Unit_.setTermCheckOp(t.Unit_.Link)
           else
@@ -1135,41 +1130,34 @@ end;
 
 destructor TUcumCanonical.Destroy;
 begin
-  FValue.Free;
   FUnit.Free;
   inherited;
 end;
 
 procedure TUcumCanonical.divideValue(i: integer);
 begin
-  Value := FValue.Divide(i).Link;
+  Value := FValue.Divide(i);
 end;
 
 procedure TUcumCanonical.divideValue(i: TSmartDecimal);
 begin
-  Value := FValue.Divide(i).Link;
+  Value := FValue.Divide(i);
 end;
 
 procedure TUcumCanonical.multiplyValue(i: integer);
 begin
-  Value := FValue.Multiply(i).Link;
+  Value := FValue.Multiply(i);
 end;
 
 procedure TUcumCanonical.multiplyValue(i: TSmartDecimal);
 begin
-  Value := FValue.Multiply(i).Link;
+  Value := FValue.Multiply(i);
 end;
 
 procedure TUcumCanonical.SetUnit(Value: TUcumTerm);
 begin
   FUnit.Free;
   FUnit := Value;
-end;
-
-procedure TUcumCanonical.SetValue(Value: TSmartDecimal);
-begin
-  FValue.Free;
-  FValue := Value;
 end;
 
 

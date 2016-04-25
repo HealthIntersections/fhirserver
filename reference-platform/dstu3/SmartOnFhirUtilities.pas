@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -446,7 +446,7 @@ begin
   else if o.vStr['format']  = 'json' then
     format := ffJson
   else
-    format := ffAsIs;
+    format := ffUnspecified;
 
   if SmartOnFHIR then
   begin

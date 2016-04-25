@@ -8,7 +8,7 @@ Interface
 
 
 Uses
-  SysUtils, Windows, ShellAPI, ShlObj, MultiMon,
+  SysUtils, Messages, Windows, ShellAPI, ShlObj, MultiMon,
   DateSupport, EncodeSupport, FileSupport, MemorySupport, StringSupport;
 
 
@@ -86,6 +86,10 @@ Function FilesCount(hDrop : THandle) : Integer; Overload;
 Function FilesPoint(hDrop : THandle) : TPoint; Overload;
 Function FilesGet(hDrop : THandle; iIndex : Integer) : String; Overload;
 Procedure FilesClose(hDrop : THandle); Overload;
+
+
+// Window of class sForm is active in the system.
+Function IsRunning(Const sForm : String) : Boolean; Overload;
 
 
 Implementation
@@ -677,6 +681,29 @@ End;
 Function ShellApplicationAllUsersFolder : String;
 Begin
   Result := ShellFolder(CSIDL_COMMON_APPDATA);
+End;
+
+
+Function IsRunning(Const sForm : String) : Boolean;
+Var
+  aWindow : HWND;
+Begin
+  aWindow := FindWindow(PChar(sForm), Nil);
+
+  // Searchs table to see if the form exists
+  Result := (aWindow <> 0);
+
+  If Result Then
+  Begin
+    // If an application instance already exists
+    If IsWindowVisible(aWindow) Then
+      SetWindowPos(aWindow, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE Or SWP_NOMOVE)
+    Else
+    Begin
+      ShowWindow(aWindow, SW_SHOWMAXIMIZED);
+      PostMessage(aWindow, WM_USER, 0, 0);
+    End
+  End;
 End;
 
 

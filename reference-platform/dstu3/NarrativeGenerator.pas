@@ -29,7 +29,7 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
 }
 
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 

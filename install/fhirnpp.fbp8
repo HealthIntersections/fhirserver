@@ -191,7 +191,7 @@ begin
                              "-w-UNSAFE_CODE=0" +
                              "-w-UNSAFE_CAST=0" +
                              ""
-          conditionals = NPPUNICODE;RELEASE;FHIR_DSTU2
+          conditionals = NPPUNICODE;RELEASE;FHIR2
           consoleapp = false
           debuginfo = false
           definitionsonly = false

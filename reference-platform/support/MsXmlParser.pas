@@ -31,13 +31,21 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, Classes, ComObj,
-  AdvObjects, Advmemories, AdvBuffers, AdvStreams, AdvStringLists,
+  Windows, SysUtils, Classes, ComObj, Generics.Collections,
+  AdvObjects, Advmemories, AdvBuffers, AdvStreams, AdvStringLists, AdvGenerics,
   XmlBuilder, MsXml;
 
+const
+  MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
 Type
   TTextAction = (ttAsIs, ttTrim, ttTrimPad);
+
+  TSourceLocationObject = class (TAdvObject)
+  public
+    locationStart : TSourceLocation;
+    locationEnd : TSourceLocation;
+  end;
 
   TMsXmlSaxHandler = class (TinterfacedObject, IVBSAXContentHandler, IVBSAXErrorHandler)
   private
@@ -77,6 +85,23 @@ Type
     procedure ignorableWarning(const oLocator: IVBSAXLocator; var strErrorMessage: WideString; nErrorCode: Integer); safecall;
   end;
 
+  TLocatingSaxToDomParser = class (TMsXmlSaxHandler)
+  private
+    FStack : TList<IXMLDOMElement>;
+    FDom : IXMLDOMDocument2;
+    FLastStart : TSourceLocation;
+    FLocations : TAdvList<TSourceLocationObject>;
+    FTimeToAbort : Cardinal;
+  public
+    constructor create(locations : TAdvList<TSourceLocationObject>; timeToAbort : cardinal);
+    destructor Destroy; override;
+    property DOm : IXMLDOMDocument2 read FDom;
+    procedure startElement(sourceLocation : TSourceLocation; uri, localname : string; attrs : IVBSAXAttributes); override;
+    procedure endElement(sourceLocation : TSourceLocation); overload; override;
+    procedure text(chars : String; sourceLocation : TSourceLocation); override;
+  end;
+
+
   TMsXmlParser = class (TAdvObject)
   Private
   Public
@@ -86,18 +111,24 @@ Type
     Class Function Parse(Const oSource : TAdvBuffer) : IXMLDomDocument2; Overload;
     Class Function ParseString(Const sSource : String) : IXMLDomDocument2; Overload;
 
-    Class Function GetAttribute(oElement : IXMLDOMElement; Const sName : WideString) : WideString; overload;
-    Class Function GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : WideString) : WideString; overload;
+    Class Function Parse(Const sFilename : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TAdvStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const oSource : TAdvBuffer; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function ParseString(Const sSource : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+
+    Class Function GetAttribute(oElement : IXMLDOMElement; Const sName : String) : String; overload;
+    Class Function GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : String) : String; overload;
     Class Function FirstChild(oElement : IXMLDOMNode) : IXMLDOMElement;
     Class Function NextSibling(oElement : IXMLDOMElement) : IXMLDOMElement;
     Class Function NamedChild(oElement : IXMLDOMElement; name : String) : IXMLDOMElement;
-    Class Function TextContent(oElement : IXMLDOMElement; aTextAction : TTextAction) : WideString;
+    Class Function TextContent(oElement : IXMLDOMElement; aTextAction : TTextAction) : String;
     Class Procedure getNamedChildrenWithWildcard(oElement : IXMLDOMElement; name : string; children : TInterfaceList);
 
-    Class Procedure Parse(Const sFilename : String; handler : TMsXmlSaxHandler); Overload;
-    Class Procedure Parse(Const oSource : TStream; handler : TMsXmlSaxHandler); Overload;
-    Class Procedure Parse(Const oSource : TAdvStream; handler : TMsXmlSaxHandler); Overload;
-    Class Procedure Parse(Const oSource : TAdvBuffer; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const sFilename : String; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const oSource : TStream; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const oSource : TAdvStream; handler : TMsXmlSaxHandler); Overload;
+    Class Procedure ParseByHandler(Const oSource : TAdvBuffer; handler : TMsXmlSaxHandler); Overload;
   End;
 
 Procedure DetermineMsXmlProgId;
@@ -178,6 +209,11 @@ End;
 { TMsXmlParser }
 
 Class function TMsXmlParser.Parse(const sFilename: String): IXMLDomDocument2;
+begin
+  result := parse(sFileName, nil);
+end;
+
+Class function TMsXmlParser.Parse(const sFilename: String; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oFile : TFileStream;
   oWeb : TAdvWinInetClient;
@@ -193,7 +229,7 @@ begin
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
         Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
-      result := Parse(oWeb.Response);
+      result := Parse(oWeb.Response, locations);
     Finally
       oWeb.Free;
     End;
@@ -202,7 +238,7 @@ begin
   Begin
     oFile := TFileStream.Create(sFilename, fmOpenRead + fmShareDenyWrite);
     Try
-      Result := Parse(oFile);
+      Result := Parse(oFile, locations);
     Finally
       oFile.Free;
     End;
@@ -211,44 +247,72 @@ end;
 
 
 Class function TMsXmlParser.Parse(const oSource: TStream): IXMLDomDocument2;
+begin
+  result := parse(oSource, nil);
+end;
+
+Class function TMsXmlParser.Parse(const oSource: TStream; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 Var
   iDom : IXMLDomDocument2;
   vAdapter : Variant;
   sError : String;
+  ms : TMsXmlParser;
+  sax : TLocatingSaxToDomParser;
 begin
-  CoInitializeEx(nil, COINIT_MULTITHREADED);
-  iDom := LoadMsXMLDom;
-  iDom.validateOnParse := False;
-  iDom.preserveWhiteSpace := True;
-  iDom.resolveExternals := False;
-  iDom.setProperty('NewParser', True);
-  vAdapter := TStreamAdapter.Create(oSource) As IStream;
-  if not iDom.load(vAdapter) Then
-  Begin
-    sError := iDom.parseError.reason + ' at line '+IntToStr(iDom.parseError.line)+' row '+IntToStr(iDom.parseError.linepos);
-    if iDom.parseError.url <> '' Then
-      sError := sError + '. url="'+ iDom.parseError.url+'"';
-    sError := sError + '. source = '+ iDom.parseError.srcText+'"';
-    raise Exception.Create(sError);
-  End;
-  Result := iDom;
+  if (locations = nil) then
+  begin
+    CoInitializeEx(nil, COINIT_MULTITHREADED);
+    iDom := LoadMsXMLDom;
+    iDom.validateOnParse := False;
+    iDom.preserveWhiteSpace := True;
+    iDom.resolveExternals := False;
+    iDom.setProperty('NewParser', True);
+    iDom.setProperty('ProhibitDTD', false);
+    vAdapter := TStreamAdapter.Create(oSource) As IStream;
+    if not iDom.load(vAdapter) Then
+    Begin
+      sError := iDom.parseError.reason + ' at line '+IntToStr(iDom.parseError.line)+' row '+IntToStr(iDom.parseError.linepos);
+      if iDom.parseError.url <> '' Then
+        sError := sError + '. url="'+ iDom.parseError.url+'"';
+      sError := sError + '. source = '+ iDom.parseError.srcText+'"';
+      raise Exception.Create(sError);
+    End;
+    Result := iDom;
+  end
+  else
+  begin
+    ms := TMsXmlParser.Create;
+    try
+      sax := TLocatingSaxToDomParser.create(locations.Link, 0); // no try...finally..., this is interfaced
+      iDom := sax.DOM;
+      ms.ParseByHandler(oSource, sax);
+      result := iDom;
+    finally
+      ms.Free;
+    end;
+  end;
 end;
 
 
 class function TMsXmlParser.Parse(const oSource: TAdvStream): IXMLDomDocument2;
+begin
+  result := parse(oSource, nil);
+end;
+
+class function TMsXmlParser.Parse(const oSource: TAdvStream; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 Var
   oWrapper : TVCLStream;
 begin
   oWrapper := TVCLStream.Create;
   Try
     oWrapper.Stream := oSource.Link;
-    Result := Parse(oWrapper);
+    Result := Parse(oWrapper, locations);
   Finally
     oWrapper.Free;
   End;
 end;
 
-Class Function TMsXmlParser.GetAttribute(oElement : IXMLDOMElement; Const sName : WideString) : WideString;
+Class Function TMsXmlParser.GetAttribute(oElement : IXMLDOMElement; Const sName : String) : String;
 Var
   LAttr : IXMLDOMNamedNodeMap;
   LNode : IXMLDOMAttribute;
@@ -265,7 +329,7 @@ Begin
   End;
 End;
 
-Class Function TMsXmlParser.GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : WideString) : WideString;
+Class Function TMsXmlParser.GetAttribute(oElement : IXMLDOMElement; Const sNamespace, sName : String) : String;
 Var
   LAttr : IXMLDOMNamedNodeMap;
   LNode : IXMLDOMAttribute;
@@ -342,7 +406,7 @@ End;
 
 
 
-class procedure TMsXmlParser.Parse(const oSource: TStream; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const oSource: TStream; handler: TMsXmlSaxHandler);
 var
   v : variant;
   sax : IVBSAXXMLReader ;
@@ -350,6 +414,7 @@ begin
   v := CreateOleObject(GMsXmlProgId_SAX);
   sax := IUnknown(TVarData(v).VDispatch) as IVBSAXXMLReader ;
 
+  sax.PutFeature('prohibit-dtd', false);
   sax.contentHandler := handler;
   sax.errorHandler := handler;
 
@@ -359,7 +424,7 @@ begin
     raise Exception.create(handler.ExceptionMessage);
 end;
 
-class procedure TMsXmlParser.Parse(const sFilename: String; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const sFilename: String; handler: TMsXmlSaxHandler);
 var
   oFile : TFileStream;
   oWeb : TAdvWinInetClient;
@@ -375,7 +440,7 @@ begin
       oWeb.Execute;
       if oWeb.ResponseCode <> '200' Then
         Raise Exception.Create('HTTP Error '+oWeb.ResponseCode);
-      Parse(oWeb.Response, handler);
+      ParseByHandler(oWeb.Response, handler);
     Finally
       oWeb.Free;
     End;
@@ -384,7 +449,7 @@ begin
   Begin
     oFile := TFileStream.Create(sFilename, fmOpenRead + fmShareDenyWrite);
     Try
-      Parse(oFile, handler);
+      ParseByHandler(oFile, handler);
     Finally
       oFile.Free;
     End;
@@ -392,39 +457,44 @@ begin
 
 end;
 
-class procedure TMsXmlParser.Parse(const oSource: TAdvBuffer; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const oSource: TAdvBuffer; handler: TMsXmlSaxHandler);
 var
   oMem : TAdvMemoryStream;
 begin
   oMem := TAdvMemoryStream.Create;
   try
     oMem.Buffer := oSource.Link;
-    Parse(oMem, handler);
+    ParseByHandler(oMem, handler);
   Finally
     oMem.Free;
   End;
 end;
 
 class function TMsXmlParser.ParseString(const sSource: String): IXMLDomDocument2;
+begin
+  result := parseString(sSource, nil);
+end;
+
+class function TMsXmlParser.ParseString(const sSource: String; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oMem : TStringStream;
 begin
   oMem := TStringStream.Create(sSource);
   try
-    result := Parse(oMem);
+    result := Parse(oMem, locations);
   Finally
     oMem.Free;
   End;
 end;
 
-class procedure TMsXmlParser.Parse(const oSource: TAdvStream; handler: TMsXmlSaxHandler);
+class procedure TMsXmlParser.ParseByHandler(const oSource: TAdvStream; handler: TMsXmlSaxHandler);
 Var
   oWrapper : TVCLStream;
 begin
   oWrapper := TVCLStream.Create;
   Try
     oWrapper.Stream := oSource.Link;
-    Parse(oWrapper, handler);
+    ParseByHandler(oWrapper, handler);
   Finally
     oWrapper.Free;
   End;
@@ -439,7 +509,7 @@ Begin
 End;
 
 
-class function TMsXmlParser.TextContent(oElement: IXMLDOMElement; aTextAction: TTextAction): WideString;
+class function TMsXmlParser.TextContent(oElement: IXMLDOMElement; aTextAction: TTextAction): String;
 Var
   oNode : IXMLDOMNode;
 Begin
@@ -459,13 +529,18 @@ Begin
 end;
 
 class function TMsXmlParser.Parse(const oSource: TAdvBuffer): IXMLDomDocument2;
+begin
+  result := parse(oSource, nil);
+end;
+
+class function TMsXmlParser.Parse(const oSource: TAdvBuffer; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 var
   oMem : TAdvMemoryStream;
 begin
   oMem := TAdvMemoryStream.Create;
   try
     oMem.Buffer := oSource.Link;
-    result := Parse(oMem);
+    result := Parse(oMem, locations);
   Finally
     oMem.Free;
   End;
@@ -602,6 +677,91 @@ procedure TMsXmlSaxHandler._Set_documentLocator(const locator: IVBSAXLocator);
 begin
   Set_documentLocator(locator);
 end;
+
+{ TLocatingSaxToDomParser }
+
+constructor TLocatingSaxToDomParser.create(locations : TAdvList<TSourceLocationObject>; timeToAbort : cardinal);
+begin
+  FStack := TList<IXMLDOMElement>.create;
+  FDom := CoDOMDocument.Create;
+  FLocations := locations;
+  FTimeToAbort := timeToAbort;
+end;
+
+
+destructor TLocatingSaxToDomParser.destroy;
+begin
+  FStack.Free;
+  FDom := nil;
+  FLocations.Free;
+  inherited;
+end;
+
+procedure TLocatingSaxToDomParser.startElement(sourceLocation: TSourceLocation; uri,localname: string; attrs: IVBSAXAttributes);
+var
+  ts : cardinal;
+  focus : IXMLDOMElement;
+  loc : TSourceLocationObject;
+  i : integer;
+begin
+  ts := GetTickCount;
+  if (FTimeToAbort > 0) and (FTimeToAbort < ts) then
+    abort;
+
+  focus := FDom.createNode(NODE_ELEMENT, localname, uri) as IXMLDOMElement;
+  if FStack.Count = 0 then
+    FDom.documentElement := focus
+  else
+    FStack[FStack.Count-1].appendChild(focus);
+  FStack.Add(focus);
+
+  loc := TSourceLocationObject.Create;
+  focus.setAttribute(MAP_ATTR_NAME, inttostr(FLocations.Add(loc)));
+
+  // SAX reports that the element 'starts' at the end of the element.
+  // which is where we want to end it. So we store the last location
+  // we saw anything at, and use that instead
+
+  if isNullLoc(FLastStart) then
+    loc.locationStart := sourceLocation
+  else
+    loc.locationStart := FLastStart;
+  loc.locationEnd := nullLoc;
+
+  for i := 0 to attrs.length - 1 do
+    focus.setAttribute(attrs.getQName(i), attrs.getValue(i));
+  FLastStart := nullLoc;
+end;
+
+procedure TLocatingSaxToDomParser.text(chars: String; sourceLocation: TSourceLocation);
+var
+  sl : TSourceLocationObject;
+begin
+ // we consider that an element 'ends' where the text or next element
+  // starts. That's not strictly true, but gives a better output
+  if FStack.Count > 0 then
+  begin
+    sl := FLocations[StrToInt(FStack[FStack.Count-1].getAttribute(MAP_ATTR_NAME))];
+    if isNullLoc(sl.LocationEnd) then
+      sl.LocationEnd := sourceLocation;
+    FStack[FStack.Count-1].appendChild(FDom.createTextNode(chars));
+  end;
+  FLastStart := sourceLocation;
+end;
+
+procedure TLocatingSaxToDomParser.endElement(sourceLocation: TSourceLocation);
+var
+  sl : TSourceLocationObject;
+begin
+  // we consider that an element 'ends' where the text or next element
+  // starts. That's not strictly true, but gives a better output
+    sl := FLocations[StrToInt(FStack[FStack.Count-1].getAttribute(MAP_ATTR_NAME))];
+  if isNullLoc(sl.LocationEnd) then
+    sl.LocationEnd := sourceLocation;
+  FStack.Delete(FStack.Count-1);
+  FLastStart := sourceLocation;
+end;
+
 
 Initialization
   DetermineMsXmlProgId;

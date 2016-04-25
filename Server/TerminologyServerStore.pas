@@ -217,6 +217,9 @@ Type
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
     procedure declareSystems(oConf : TFHIRConformance);
+    {$IFDEF FHIR3}
+    procedure declareCodeSystems(list : TFhirResourceList);
+    {$ENDIF}
     function supportsSystem(s : String) : boolean;
     function subsumes(uri1, code1, uri2, code2 : String) : boolean;
     function NextClosureKey : integer;
@@ -713,7 +716,7 @@ end;
 
 function exempt(vs : TFHIRCodeSystem) : boolean;
 begin
-  {$IFDEF FHIR_DSTU2}
+  {$IFDEF FHIR2}
   if vs.URL.startsWith('http://hl7.org/fhir/ValueSet/v2-')
     and StringArrayExists(['0003', '0207', '0277', '0278', '0279', '0281', '0294', '0396'],
         vs.URL.Substring(vs.url.Length-4)) then
@@ -730,7 +733,7 @@ begin
   if (exempt(vs)) then
     exit;
 
-  {$IFDEF FHIR_DSTU2}
+  {$IFDEF FHIR2}
   if (vs.codeSystem <> nil) then
   begin
     list := TStringList.Create;
@@ -791,6 +794,39 @@ begin
     end;
   end;
 end;
+
+{$IFDEF FHIR3}
+procedure TTerminologyServerStore.declareCodeSystems(list : TFhirResourceList);
+  procedure addCodeSystem(name, id, uri, version : String; count : integer);
+  var
+    cs : TFhirCodeSystem;
+  begin
+    cs := TFhirCodeSystem.Create;
+    list.Add(cs);
+    cs.url := uri;
+    cs.version := version;
+    cs.name := name;
+    cs.id := id;
+    cs.status := ConformanceResourceStatusActive;
+    cs.content := CodesystemContentModeNotPresent;
+    if count <> 0 then
+      cs.count := inttostr(count);
+  end;
+begin
+  if FLoinc <> nil then
+    addCodeSystem('LOINC', 'loinc', FLoinc.system(nil), FLoinc.version(nil), FLoinc.ChildCount(nil));
+  if FSnomed <> nil then
+    addCodeSystem('SNOMED CT', 'sct', FSnomed.system(nil), FSnomed.version(nil), FSnomed.ChildCount(nil));
+  if FSnomed <> nil then
+    addCodeSystem('Ucum', 'ucum', FUcum.system(nil), FUcum.version(nil), FUcum.ChildCount(nil));
+  if FRxNorm <> nil then
+    addCodeSystem('RxNorm', 'rxnorm', FRxNorm.system(nil), FRxNorm.version(nil), 0);
+  if FUnii <> nil then
+    addCodeSystem('Unii', 'unii', FUnii.system(nil), FUnii.version(nil), FUnii.ChildCount(nil));
+  if FCvx <> nil then
+    addCodeSystem('CVX', 'cvx', FCvx.system(nil), FCvx.version(nil), FCvx.ChildCount(nil));
+end;
+{$ENDIF}
 
 procedure TTerminologyServerStore.declareSystems(oConf: TFHIRConformance);
 var
@@ -1005,7 +1041,7 @@ begin
       FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
       FValueSetsById.AddOrSetValue(vs.id, vs.Link);
       FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
-      {$IFDEF FHIR_DSTU2}
+      {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
       begin
         FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
@@ -1015,7 +1051,7 @@ begin
       {$ENDIF}
       UpdateConceptMaps;
     end
-    {$IFDEF FHIR_DSTU3}
+    {$IFDEF FHIR3}
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFhirCodeSystem(resource);
@@ -1064,7 +1100,7 @@ begin
       FValueSetsById.AddOrSetValue(vs.id, vs.Link);
       FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
       invalidateVS(vs.url);
-      {$IFDEF FHIR_DSTU2}
+      {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
       begin
         FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
@@ -1074,7 +1110,7 @@ begin
       {$ENDIF}
       UpdateConceptMaps;
     end
-    {$IFDEF FHIR_DSTU3}
+    {$IFDEF FHIR3}
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFHIRCodeSystem(resource);
@@ -1122,7 +1158,7 @@ begin
       begin
         vs1 := FBaseValueSets[vs.url];
         FValueSetsByURL.Remove(vs.url);
-        {$IFDEF FHIR_DSTU2}
+        {$IFDEF FHIR2}
         if (vs.codeSystem <> nil) then
           FCodeSystemsByUrl.Remove(vs.codeSystem.system);
           FCodeSystemsByid.Remove(vs.id);
@@ -1134,7 +1170,7 @@ begin
         if vs1 <> nil then
         begin
           FValueSetsById.AddOrSetValue(vs.url, vs1.Link);
-          {$IFDEF FHIR_DSTU2}
+          {$IFDEF FHIR2}
           if (vs1.codeSystem <> nil) then
           begin
             FCodeSystemsByUrl.AddOrSetValue(vs1.codeSystem.system, vs1.Link);
@@ -1145,7 +1181,7 @@ begin
         UpdateConceptMaps;
       end;
     end
-    {$IFDEF FHIR_DSTU3}
+    {$IFDEF FHIR3}
     else if (aType = frtCodeSystem) then
     begin
       cs := FCodeSystemsById[id];
@@ -1691,7 +1727,7 @@ end;
 
 function TFhirCodeSystemProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  {$IFDEF FHIR_DSTU3}
+  {$IFDEF FHIR3}
   result := FVs.isAbstract(TFhirCodeSystemProviderContext(context).context);
   {$ELSE}
   result := (TFhirCodeSystemProviderContext(context).context.abstractElement <> nil) and TFhirCodeSystemProviderContext(context).context.abstract;

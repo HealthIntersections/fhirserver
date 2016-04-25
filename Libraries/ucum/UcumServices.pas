@@ -44,12 +44,10 @@ Type
   private
     FUnitCode: String;
     FValue: TSmartDecimal;
-    procedure SetValue(const Value: TSmartDecimal);
   Public
     Constructor Create(oValue : TSmartDecimal; sUnitCode : String); Overload;
-    Destructor Destroy; Override;
 
-    Property Value : TSmartDecimal read FValue write SetValue;
+    Property Value : TSmartDecimal read FValue write FValue;
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
 
@@ -285,14 +283,12 @@ var
   s, d : String;
   t : TSmartDecimal;
 begin
-  if value = nil then
-    Error('Convert', 'A value is required');
   if sourceUnit = '' Then
     Error('Convert', 'Source units are required');
   if destUnit = '' Then
     Error('Convert', 'destination units are required');
   if (sourceUnit = destUnit) Then
-    result := value.Link
+    result := value
   else
   Begin
     term := nil;
@@ -310,7 +306,7 @@ begin
       if s <> d then
         raise Exception.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
       t := value.Multiply(src.Value);
-      result := t.Divide(dst.Value).link;
+      result := t.Divide(dst.Value);
     Finally
       term.Free;
       src.Free;
@@ -357,10 +353,7 @@ begin
     Try
       c := conv.convert(t);
       Try
-        if value.Value = nil then
-          result := TUcumPair.Create(nil, TUcumExpressionComposer.Compose(c.Unit_))
-        else
-          result := TUcumPair.Create(value.Value.Multiply(c.Value).Link, TUcumExpressionComposer.Compose(c.Unit_))
+        result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c.Unit_))
       Finally
         c.Free;
       End;
@@ -491,9 +484,9 @@ function TUcumServices.multiply(o1, o2: TUcumPair): TUcumPair;
 var
   res : TUcumPair;
 begin
-  res := TUcumPair.Create(nil, '');
+  res := TUcumPair.Create(TSmartDecimal.One, '');
   Try
-    res.value := o1.value.Multiply(o2.Value).Link;
+    res.value := o1.value.Multiply(o2.Value);
     res.FUnitCode := o1.FUnitCode +'.'+o2.UnitCode;
     result := getCanonicalForm(res);
   Finally
@@ -733,17 +726,6 @@ begin
   UnitCode := sUnitCode;
 end;
 
-destructor TUcumPair.Destroy;
-begin
-  FValue.Free;
-  inherited;
-end;
-
-procedure TUcumPair.SetValue(const Value: TSmartDecimal);
-begin
-  FValue.Free;
-  FValue := Value;
-end;
 
 { TUCUMCodeHolder }
 
@@ -980,9 +962,9 @@ end;
 function TUcumServices.ParseDecimal(s, s1: String): TSmartDecimal;
 begin
   if s = '' then
-    result := FModel.context.One
+    result := TSmartDecimal.One
   Else
-    result := FModel.context.Value(s);
+    result := TSmartDecimal.ValueOf(s);
 end;
 
 Function TUcumServices.ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
@@ -1004,8 +986,8 @@ Begin
       else if oChild.nodeName = 'value' Then
       begin
         s := TmsXmlParser.GetAttribute(oChild, 'value');
-        result.value := ParseDecimal(s, result.Code).Link;
-        result.value.Precision := 24; // arbitrarily high. even when an integer, these numbers are precise
+        result.value := ParseDecimal(s, result.Code);
+        result.SetPrecision(24); // arbitrarily high. even when an integer, these numbers are precise
         if s[2] = 'e' Then
           result.Text := '10^'+Copy(s, 3, $FF)
         else
@@ -1076,9 +1058,9 @@ Begin
       begin
         result.value.unit_ := TMsXmlParser.GetAttribute(oChild, 'Unit');
         result.value.unitUC := TMsXmlParser.GetAttribute(oChild, 'UNIT');
-        result.value.value := ParseDecimal(TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_).Link;
+        result.value.value := ParseDecimal(TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_);
         if result.value.value.IsWholeNumber then
-          result.value.value.Precision := 24;
+          result.value.SetPrecision(24);
         result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
       End
       else

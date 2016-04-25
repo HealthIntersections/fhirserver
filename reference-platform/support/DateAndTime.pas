@@ -558,21 +558,22 @@ begin
     dtpSec:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2);
     dtpNanoSeconds: result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(NanoSecond, 9), 1, FFractionPrecision);
   end;
-  case FTimezoneType of
-    dttzUTC : result := result + 'Z';
-    dttzSpecified :
-      if TzHour < 0 then
-        result := result + sv(TzHour, 2) + ':'+sv(TzMinute, 2)
-      else
-        result := result + '+'+sv(TzHour, 2) + ':'+sv(TzMinute, 2);
-    dttzLocal :
-      if TimeZoneBias > 0 then
-        result := result + '+'+FormatDateTime('hh:nn', TimeZoneBias, FormatSettings)
-      else
-        result := result + '-'+FormatDateTime('hh:nn', -TimeZoneBias, FormatSettings);
-  {else
-    dttzUnknown - do nothing }
-  end;
+  if (FPrecision > dtpDay) then
+    case FTimezoneType of
+      dttzUTC : result := result + 'Z';
+      dttzSpecified :
+        if TzHour < 0 then
+          result := result + sv(TzHour, 2) + ':'+sv(TzMinute, 2)
+        else
+          result := result + '+'+sv(TzHour, 2) + ':'+sv(TzMinute, 2);
+      dttzLocal :
+        if TimeZoneBias > 0 then
+          result := result + '+'+FormatDateTime('hh:nn', TimeZoneBias, FormatSettings)
+        else
+          result := result + '-'+FormatDateTime('hh:nn', -TimeZoneBias, FormatSettings);
+    {else
+      dttzUnknown - do nothing }
+    end;
 end;
 
 function vs(value : String; start, len, min, max : Integer; name : String):Integer;

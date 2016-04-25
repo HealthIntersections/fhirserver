@@ -7,15 +7,14 @@ Interface
 
 Uses
   SysUtils,
-  StringSupport,
-  DecimalSupport,
-  AdvObjects;
+  StringSupport, DecimalSupport,
+  AdvObjects,
+  DUnitX.TestFramework;
 
 Type
-  {$M+}
-  TDecimalTests = Class (TAdvObject) // but can be used with DUnit
+  [TextFixture]
+  TDecimalTests = Class (TObject)
   Private
-    procedure check(b : boolean);
     procedure testString(s, st, std : String);
     Procedure testTrunc(s1,s2 : String);
     procedure TestAdd(s1,s2,s3:String);
@@ -30,12 +29,16 @@ Type
     procedure TestRoundTrip(n1, n2, n3, t : String);
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
   Published
-    Class procedure runTests;
 
+    [TestCase]
     Procedure TestAsInteger;
+    [TestCase]
     Procedure TestStringSupport;
+    [TestCase]
     Procedure TestAddition;
+    [TestCase]
     Procedure TestMultiplication;
+    [TestCase]
     Procedure TestBounds;
   End;
 
@@ -46,23 +49,17 @@ Implementation
 
 procedure TDecimalTests.testString(s, st, std: String);
 var
-  ctxt : TSmartDecimalContext;
   dec : TSmartDecimal;
   s1, s2 : String;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    dec := ctxt.value(s);
-    s1 := dec.AsString;
-    s2 := dec.AsScientific;
-    check(s1 = st);
-    check(s2 = std);
-    dec := ctxt.value(std);
-    s1 := dec.AsDecimal;
-    check(s1 = st);
-  finally
-    ctxt.Free;
-  end;
+  dec := TSmartDecimal.valueOf(s);
+  s1 := dec.AsString;
+  s2 := dec.AsScientific;
+  Assert.IsTrue(s1 = st);
+  Assert.IsTrue(s2 = std);
+  dec := TSmartDecimal.valueOf(std);
+  s1 := dec.AsDecimal;
+  Assert.IsTrue(s1 = st);
 end;
 
 procedure TDecimalTests.TestStringSupport;
@@ -197,58 +194,25 @@ begin
 end;
 
 
-procedure TDecimalTests.check(b: boolean);
-begin
-  if not b then
-    raise Exception.Create('test failed');
-end;
-
-class procedure TDecimalTests.runTests;
-var
-  this : TDecimalTests;
-begin
-  this := TDecimalTests.Create;
-  try
-    this.TestAsInteger;
-    this.TestStringSupport;
-    this.TestAddition;
-    this.TestMultiplication;
-    this.TestBounds;
-  finally
-    this.free;
-  end;
-end;
 
 procedure TDecimalTests.TestAdd(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.Value(s1);
-    o2 := ctxt.Value(s2);
+    o1 := TSmartDecimal.valueOf(s1);
+    o2 := TSmartDecimal.valueOf(s2);
     o3 := o1.add(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+    Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestSubtract(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.value(s1);
-    o2 := ctxt.value(s2);
-    o3 := o1.Subtract(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := TSmartDecimal.valueOf(s2);
+  o3 := o1.Subtract(o2);
+  Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestMultiplication;
@@ -354,99 +318,62 @@ end;
 
 procedure TDecimalTests.TestMultiply(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.Value(s1);
-    o2 := ctxt.Value(s2);
-    o3 := o1.Multiply(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := TSmartDecimal.valueOf(s2);
+  o3 := o1.Multiply(o2);
+  Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestRoundTrip(n1, n2, n3, t: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3, o4: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.Value(n1);
-    o2 := ctxt.Value(n2);
-    o3 := o1.Divide(o2);
-    o4 := o3.Multiply(ctxt.Value(n3));
-    check(o4.AsDecimal = t);
-  Finally
-    ctxt.Free;
-  End;
-
+  o1 := TSmartDecimal.valueOf(n1);
+  o2 := TSmartDecimal.valueOf(n2);
+  o3 := o1.Divide(o2);
+  o4 := o3.Multiply(TSmartDecimal.valueOf(n3));
+  Assert.IsTrue(o4.AsDecimal = t);
 end;
 
 procedure TDecimalTests.TestDivide(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.value(s1);
-    o2 := ctxt.value(s2);
-    o3 := o1.Divide(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := TSmartDecimal.valueOf(s2);
+  o3 := o1.Divide(o2);
+  Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.testTrunc(s1, s2: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2 : TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.Create;
-  try
-    o1 := ctxt.value(s1);
-    o2 := o1.Trunc;
-    check(o2.AsDecimal = s2);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := o1.Trunc;
+  Assert.IsTrue(o2.AsDecimal = s2);
 end;
 
 procedure TDecimalTests.TestDivInt(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.value(s1);
-    o2 := ctxt.value(s2);
-    o3 := o1.DivInt(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := TSmartDecimal.valueOf(s2);
+  o3 := o1.DivInt(o2);
+  Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestModulo(s1, s2, s3: String);
 var
-  ctxt : TSmartDecimalContext;
   o1, o2, o3: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.value(s1);
-    o2 := ctxt.value(s2);
-    o3 := o1.Modulo(o2);
-    check(o3.AsDecimal = s3);
-  Finally
-    ctxt.Free;
-  End;
+  o1 := TSmartDecimal.valueOf(s1);
+  o2 := TSmartDecimal.valueOf(s2);
+  o3 := o1.Modulo(o2);
+  Assert.IsTrue(o3.AsDecimal = s3);
 end;
 
 procedure TDecimalTests.TestAsInteger;
@@ -487,65 +414,43 @@ end;
 
 procedure TDecimalTests.TestBoundsCase(v, low, high, ilow, ihigh : String);
 var
-  ctxt : TSmartDecimalContext;
   o1: TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  try
-    o1 := ctxt.Value(v);
-    check(o1.upperBound.AsDecimal = high);
-    check(o1.lowerBound.AsDecimal = low);
+  o1 := TSmartDecimal.valueOf(v);
+  Assert.IsTrue(o1.upperBound.AsDecimal = high);
+  Assert.IsTrue(o1.lowerBound.AsDecimal = low);
 //    check(o1.immediateUpperBound.AsDecimal = ihigh);
 //    check(o1.immediateLowerBound.AsDecimal = ilow);
-  Finally
-    ctxt.Free;
-  End;
 end;
 
 procedure TDecimalTests.TestInteger(i: integer);
 var
-  ctxt : TSmartDecimalContext;
   d : TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.create;
-  Try
-    d := ctxt.value(i);
-    check(d.AsInteger = i);
-  Finally
-    ctxt.free;
-  End;
+  d := TSmartDecimal.valueOf(i);
+  Assert.IsTrue(d.AsInteger = i);
 end;
 
 procedure TDecimalTests.TestCardinal(i: cardinal);
 var
   i64 : int64;
-  ctxt : TSmartDecimalContext;
   d : TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.Create;
-  try
-    i64 := i;
-    d := ctxt.value(i64);
-    check(d.AsCardinal = i);
-    //check(d.AsInteger = i);
-  Finally
-    ctxt.free;
-  End;
+  i64 := i;
+  d := TSmartDecimal.valueOf(i64);
+  Assert.IsTrue(d.AsCardinal = i);
+  //check(d.AsInteger = i);
 end;
 
 procedure TDecimalTests.TestInt64(i: int64);
 var
-  ctxt : TSmartDecimalContext;
   d : TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.Create;
-  try
-    d := ctxt.value(i);
-    check(d.AsInt64 = i);
-  Finally
-    ctxt.free;
-  End;
+  d := TSmartDecimal.valueOf(i);
+  Assert.IsTrue(d.AsInt64 = i);
 end;
 
+initialization
+  TDUnitX.RegisterTestFixture(TDecimalTests);
 End.
 

@@ -38,7 +38,7 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore, FHIRBase,
+  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore, FHIRBase, FHIRPath,
   FHIRServerConstants,
   SCIMServer;
 
@@ -71,7 +71,7 @@ Type
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
 
-    procedure ExecuteTests;
+    procedure ExecuteTests(all : boolean);
     procedure Load(fn : String);
     procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
@@ -148,7 +148,9 @@ begin
       else if FindCmdLineSwitch('index') then
         svc.index
       else if FindCmdLineSwitch('tests') then
-        svc.ExecuteTests
+        svc.ExecuteTests(false)
+      else if FindCmdLineSwitch('tests-all') then
+        svc.ExecuteTests(true)
       else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
       begin
         FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
@@ -272,49 +274,9 @@ begin
   writelnt(KDBManagers.Dump);
 end;
 
-procedure TFHIRService.ExecuteTests;
-var
-  tests : TFhirServerTests;
+procedure TFHIRService.ExecuteTests(all : boolean);
 begin
-  try
-    TestMode := true;
-    tests := TFhirServerTests.Create;
-    try
-      tests.ini := FIni;
-      tests.executeLibrary;
-      if FDb = nil then
-        ConnectToDatabase;
-      if dbExists then
-        UnInstallDatabase;
-      InstallDatabase;
-      LoadTerminologies;
-      tests.TerminologyServer := FTerminologyServer.Link;
-      tests.executeBefore;
-
-      CanStart;
-      TFHIRQuestionnaireBuilderTests.runTests(FIni, FWebServer.DataStore);
-      tests.executeRound1;
-      DoStop;
-
-      CanStart;
-      tests.executeRound2;
-      DoStop;
-
-      UnloadTerminologies;
-      UnInstallDatabase;
-
-      tests.executeAfter; // final tests - these go on for a very long time,
-    finally
-      tests.Free;
-    end;
-    ExitCode := 0;
-  except
-    on e: Exception do
-    begin
-      writelnt(e.Message);
-      ExitCode := 1;
-    end;
-  end;
+  ExecuteFhirServerTests(all);
 end;
 
 Procedure TFHIRService.ConnectToDatabase;

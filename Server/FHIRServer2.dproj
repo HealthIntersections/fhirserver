@@ -105,7 +105,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <DCC_Define>FHIR_DSTU2;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR2;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
@@ -115,7 +115,7 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>FHIRServer2_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>-remount -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.54&quot; -lver 2.54 -load C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
+        <Debugger_RunParams>-xremount -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.54&quot; -lver 2.54 -load C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -292,13 +292,11 @@
         <DCCReference Include="FHIRValueSetChecker.pas"/>
         <DCCReference Include="TerminologyWebServer.pas"/>
         <DCCReference Include="FHIRServerConstants.pas"/>
-        <DCCReference Include="..\Libraries\tests\DecimalTests.pas"/>
         <DCCReference Include="..\Libraries\tests\UcumTests.pas"/>
         <DCCReference Include="FHIRServerUtilities.pas"/>
         <DCCReference Include="SearchProcessor.pas"/>
         <DCCReference Include="AuthServer.pas"/>
         <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
-        <DCCReference Include="..\reference-platform\Support\JWTTests.pas"/>
         <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="SCIMServer.pas"/>
@@ -330,7 +328,6 @@
         <DCCReference Include="..\reference-platform\dstu2\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRSecurity.pas"/>
-        <DCCReference Include="..\tests\FHIRParserTests.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
@@ -356,9 +353,10 @@
         <DCCReference Include="MPISearch.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIROperations.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRIndexConstants.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FhirOpBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRMetaModel.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRIndexInformation.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FhirOpBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRXhtml.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

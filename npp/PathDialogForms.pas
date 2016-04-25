@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, AdvGenerics;
+  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, AdvGenerics, FHIRBase;
 
 type
   TPathOutcomeDialogMode = (pomError, pomNoMatch, pomMatch);
@@ -25,7 +25,7 @@ type
 var
   PathDialogForm: TPathDialogForm;
 
-procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TAdvStringSet; mode : TPathOutcomeDialogMode; outcome : String);
+procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetails; mode : TPathOutcomeDialogMode; outcome : String);
 
 implementation
 
@@ -60,7 +60,7 @@ begin
   end;
 end;
 
-procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TAdvStringSet; mode : TPathOutcomeDialogMode; outcome : String);
+procedure pathOutcomeDialog(owner : TNppPlugin; path, rtype : String; types : TFHIRTypeDetails; mode : TPathOutcomeDialogMode; outcome : String);
 var
   t : string;
 begin

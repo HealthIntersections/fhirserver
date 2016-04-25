@@ -31,14 +31,14 @@ unit FHIROperations;
   
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
 
 interface
 
-// FHIR v1.4.0 generated 2016-03-31T08:01:25+11:00
+// FHIR v1.4.0 generated 2016-04-22T12:53:26+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;

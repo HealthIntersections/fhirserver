@@ -711,8 +711,8 @@ end;
 constructor TJWT.create(header, payload: TJsonObject);
 begin
   Create;
-  FHeader := header;
-  FPayload := payload;
+  self.Header := header;
+  self.Payload := payload;
 end;
 
 function TJWT.desc: String;

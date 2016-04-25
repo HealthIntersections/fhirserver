@@ -35,6 +35,9 @@ Uses
   StringSupport, MathSupport, MemorySupport, ErrorSupport;
 
 Type
+  TDateFormat = String;          // eg. DD/MM/YYYY
+  TTimeFormat = String;          // eg. HH:NN:SS
+
   TDateTime = System.TDateTime;  // Number of days and a fraction of a day since 1899-12-30.
   TDuration = Int64;             // Number of milliseconds.
   TYear = Word;
@@ -321,6 +324,13 @@ Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDate
 
 Function IsLeapYearByYear(Const iYear : TYear) : Boolean; Overload;
 function DescribePeriod(Period: TDateTime): String;
+
+Function ShortDateFormat : TDateFormat; Overload;
+Function ShortTimeFormat : TTimeFormat; Overload;
+
+Function LongDateFormat : TDateFormat; Overload;
+Function LongTimeFormat : TTimeFormat; Overload;
+
 
 Implementation
 
@@ -1356,6 +1366,31 @@ begin
     Result := IntToStr(trunc(Period)) + ' days';
 end;
 
+
+
+
+Function ShortDateFormat : TDateFormat;
+Begin
+  Result := FormatSettings.ShortDateFormat;
+End;
+
+
+Function ShortTimeFormat : TTimeFormat;
+Begin
+  Result := FormatSettings.ShortTimeFormat;
+End;
+
+
+Function LongDateFormat : TDateFormat;
+Begin
+  Result := FormatSettings.LongDateFormat;
+End;
+
+
+Function LongTimeFormat : TTimeFormat;
+Begin
+  Result := FormatSettings.LongTimeFormat;
+End;
 
 
 End. // DateSupport //

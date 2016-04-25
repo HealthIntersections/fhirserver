@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -112,7 +112,7 @@ type
     FFormat : TFHIRFormat;
     FExpression : TFHIRExpressionNode;
     FEngine : TFHIRExpressionEngine;
-    FServices : TValidatorServiceProvider;
+    FServices : TWorkerContext;
     FLog : String;
     FLayoutInProgress : boolean;
     FMode : TExecutionMode;
@@ -122,7 +122,7 @@ type
     FCurrentIsOp : boolean;
     FFreq : Int64;
     FStartLast : Int64;
-    FTypes : TAdvStringSet;
+    FTypes : TFHIRTypeDetails;
     FOutcome : TFHIRBaseList;
 
     procedure ResetNode(Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -149,9 +149,9 @@ var
 
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TValidatorServiceProvider;
+    services : TWorkerContext;
     resource : TFHIRResource; context : TFHIRBase; path : String; fmt : TFHIRFormat;
-    out types : TAdvStringSet; out items : TFHIRBaseList) : boolean;
+    out types : TFHIRTypeDetails; out items : TFHIRBaseList) : boolean;
 
 implementation
 
@@ -193,9 +193,9 @@ begin
 end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
-    services : TValidatorServiceProvider;
+    services : TWorkerContext;
     resource : TFHIRResource; context : TFHIRBase; path : String; fmt : TFHIRFormat;
-    out types : TAdvStringSet; out items : TFHIRBaseList) : boolean;
+    out types : TFHIRTypeDetails; out items : TFHIRBaseList) : boolean;
 begin
   FHIRPathDebuggerForm := TFHIRPathDebuggerForm.Create(owner);
   try
@@ -567,10 +567,10 @@ begin
   else if (p.op) then
     CellText := CODES_TFHIRPathOperation[p.expr.Operation]
   else case p.expr.kind of
-    entName : CellText := p.expr.name;
-    entFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
-    entConstant : CellText := '"'+p.expr.constant+'"';
-    entGroup : CellText := '(Group)';
+    enkName : CellText := p.expr.name;
+    enkFunction : CellText := CODES_TFHIRPathFunctions[p.expr.FunctionId]+'()';
+    enkConstant : CellText := '"'+p.expr.constant+'"';
+    enkGroup : CellText := '(Group)';
   end;
 end;
 
@@ -588,7 +588,7 @@ begin
       inc(ChildCount);
     if (p.expr.Group <> nil) then
       inc(ChildCount);
-    if (p.expr.Operation <> opNull) then
+    if (p.expr.Operation <> popNull) then
       inc(ChildCount, 2);
   end;
 end;
@@ -613,15 +613,15 @@ begin
 
     // possible nodes:
     case pe.kind of
-      entName: i := 0; // no child nodes
-      entFunction:
+      enkName: i := 0; // no child nodes
+      enkFunction:
         begin
           i := pe.Parameters.Count;
           if node.Index < i then
             p.expr := pe.Parameters[node.Index];
         end;
-      entConstant: i := 0; // no children
-      entGroup:
+      enkConstant: i := 0; // no children
+      enkGroup:
         begin
         i := 1;
         if node.Index = 0 then

@@ -43,7 +43,7 @@ uses
   XmlBuilder, MsXml, MsXmlParser,
 
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
-  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath,
+  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes,
   FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt;
@@ -107,7 +107,7 @@ type
     function locate(res : TFHIRResource; var path : String; var focus : TArray<TFHIRObject>) : boolean;
     function parse(timeLimit : integer; var fmt : TFHIRFormat; var res : TFHIRResource) : boolean;
 
-    procedure evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TAdvStringSet);
+    procedure evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TFHIRTypeDetails);
     function showOutcomes(fmt : TFHIRFormat; items : TFHIRBaseList; expr : TFHIRExpressionNode; types : TAdvStringSet) : string;
 
     // smart on fhir stuff
@@ -410,18 +410,27 @@ var
   op : TFHIROperationOutcome;
   iss : TFhirOperationOutcomeIssue;
   fmt : TFHIRFormat;
+  ctxt: TFHIRValidatorContext;
 begin
   FuncValidateClear;
   src := CurrentText;
   fmt := determineFormat(src);
-  if (fmt <> ffasIs) then
+  if (fmt <> ffUnspecified) then
   begin
     try
       buffer := TAdvBuffer.Create;
       try
         buffer.AsUnicode := src;
         loadValidator;
-        op := FValidator.validateInstance(buffer, fmt, risOptional, 'validate', nil);
+        ctxt := TFHIRValidatorContext.Create;
+        try
+          ctxt.ResourceIdRule := risOptional;
+          ctxt.OperationDescription := 'validate';
+          FValidator.validate(ctxt, buffer, fmt, nil);
+          op := FValidator.describe(ctxt);
+        finally
+          ctxt.Free;
+        end;
       finally
         buffer.Free;
       end;
@@ -479,13 +488,24 @@ end;
 function SplitElement(var src : String) : String;
 var
   i : integer;
+  s : string;
 begin
   if src = '' then
     exit('');
 
+  if src.StartsWith('<?') then
+    s := '?>'
+  else if src.StartsWith('<!--') then
+    s := '!>'
+  else if src.StartsWith('<!DOCTYPE') then
+    s := ']>'
+  else
+    s := '>';
+
   i := 1;
-  while (i <= length(src)) and (src[i] <> '>') do
+  while (i <= length(src)) and not (src.Substring(i).StartsWith(s)) do
     inc(i);
+  inc(i, length(s));
   result := src.Substring(0, i);
   src := src.Substring(i).trim;
 end;
@@ -494,7 +514,7 @@ function TFHIRPlugin.determineFormat(src: String): TFHIRFormat;
 var
   s : String;
 begin
-  result := ffAsIs; // null
+  result := ffUnspecified; // null
   src := src.Trim;
   if (src <> '') then
     begin
@@ -924,7 +944,7 @@ var
   allSource : boolean;
   sp, ep : integer;
   annot : TFHIRAnnotation;
-  types : TAdvStringSet;
+  types : TFHIRTypeDetails;
   items : TFHIRBaseList;
   expr : TFHIRExpressionNode;
   ok : boolean;
@@ -1114,7 +1134,7 @@ begin
   src := CurrentText;
   fmt := determineFormat(src);
   res := nil;
-  result := fmt <> ffasIs;
+  result := fmt <> ffUnspecified;
   if (result) then
   begin
     s := TStringStream.Create(src);
@@ -1326,7 +1346,7 @@ begin
   end;
 end;
 
-procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TAdvStringSet);
+procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TFHIRTypeDetails);
 var
   engine : TFHIRExpressionEngine;
 begin
@@ -1368,7 +1388,7 @@ begin
     if (dr.text = nil) or (dr.text.div_ = nil) then
       result := prepNarrative('')
     else
-      result := prepNarrative(ComposeXHtml(dr.text.div_));
+      result := prepNarrative(TFHIRXhtmlParser.compose(dr.text.div_));
   end;
 end;
 
@@ -1381,7 +1401,7 @@ var
   res : TFHIRResource;
   items : TFHIRBaseList;
   expr : TFHIRExpressionNode;
-  types : TAdvStringSet;
+  types : TFHIRTypeDetails;
   item : TFHIRBase;
   focus : TArray<TFHIRObject>;
   sp, ep : integer;

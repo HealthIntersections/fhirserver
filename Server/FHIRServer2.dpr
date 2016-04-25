@@ -235,13 +235,11 @@ uses
   FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
   TerminologyWebServer in 'TerminologyWebServer.pas',
   FHIRServerConstants in 'FHIRServerConstants.pas',
-  DecimalTests in '..\Libraries\tests\DecimalTests.pas',
   UcumTests in '..\Libraries\tests\UcumTests.pas',
   FHIRServerUtilities in 'FHIRServerUtilities.pas',
   SearchProcessor in 'SearchProcessor.pas',
   AuthServer in 'AuthServer.pas',
   libeay32 in '..\reference-platform\Support\libeay32.pas',
-  JWTTests in '..\reference-platform\Support\JWTTests.pas',
   HMAC in '..\reference-platform\Support\HMAC.pas',
   JWT in '..\reference-platform\Support\JWT.pas',
   SCIMServer in 'SCIMServer.pas',
@@ -273,7 +271,6 @@ uses
   SCIMObjects in '..\reference-platform\dstu2\SCIMObjects.pas',
   NarrativeGenerator in '..\reference-platform\dstu2\NarrativeGenerator.pas',
   FHIRSecurity in '..\reference-platform\dstu2\FHIRSecurity.pas',
-  FHIRParserTests in '..\tests\FHIRParserTests.pas',
   FHIRNarrativeGenerator in '..\reference-platform\dstu2\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu2\SmartOnFhirUtilities.pas',
   FHIRPath in '..\reference-platform\dstu2\FHIRPath.pas',
@@ -299,9 +296,10 @@ uses
   MPISearch in 'MPISearch.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\dstu2\FHIROperations.pas',
-  FHIRIndexConstants in '..\reference-platform\dstu2\FHIRIndexConstants.pas',
-  FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
-  FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas';
+  FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas',
+  FHIRIndexInformation in '..\reference-platform\dstu2\FHIRIndexInformation.pas',
+  FhirOpBase in '..\reference-platform\dstu2\FhirOpBase.pas',
+  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas';
 
 begin
   JclStartExceptionTracking;

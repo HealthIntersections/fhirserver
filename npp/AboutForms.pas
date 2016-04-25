@@ -18,14 +18,12 @@ type
     Label3: TLabel;
     lblVersion: TLabel;
     Label5: TLabel;
-    Button2: TButton;
     GroupBox1: TGroupBox;
     lnkDoco: TLabel;
     lnkIssue: TLabel;
     lnkSpec: TLabel;
     lnkUpdates: TLabel;
     procedure FormShow(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lnkDocoClick(Sender: TObject);
     procedure lnkIssueClick(Sender: TObject);
@@ -33,11 +31,11 @@ type
     procedure lnkUpdatesClick(Sender: TObject);
   private
     { Private declarations }
-    FServices : TValidatorServiceProvider;
-    procedure SetServices(const Value: TValidatorServiceProvider);
+    FServices : TWorkerContext;
+    procedure SetServices(const Value: TWorkerContext);
   public
     { Public declarations }
-    property Services : TValidatorServiceProvider read FServices write SetServices;
+    property Services : TWorkerContext read FServices write SetServices;
   end;
 
 var
@@ -52,12 +50,6 @@ uses
   FHIRPlugin,
   FHIRPath,
   nppbuildcount;
-
-procedure TAboutForm.Button2Click(Sender: TObject);
-begin
-  FNpp.DoOpen(TFHIRPathTests.runTests(Services));
-  MessageDlg('all tests passed', mtInformation, [mbOk], 0);
-end;
 
 procedure TAboutForm.FormDestroy(Sender: TObject);
 begin
@@ -91,7 +83,7 @@ begin
   ShellExecute(0, 'OPEN', 'http://www.healthintersections.com.au/FhirServer/fhirnpp.htm', '', '', SW_SHOWNORMAL);
 end;
 
-procedure TAboutForm.SetServices(const Value: TValidatorServiceProvider);
+procedure TAboutForm.SetServices(const Value: TWorkerContext);
 begin
   FServices.Free;
   FServices := Value;

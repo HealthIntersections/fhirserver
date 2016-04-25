@@ -2638,7 +2638,7 @@ var
   Parents : TCardinalArray;
   i, group : integer;
   d : TFHIRLookupOpDesignation;
-  {$IFDEF FHIR_DSTU3}
+  {$IFDEF FHIR3}
   p : TFHIRLookupOpProperty_;
   {$ENDIF}
   did : UInt64;
@@ -2692,7 +2692,7 @@ begin
       begin
         Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
         Descriptions := Refs.GetReferences(DescriptionIndex);
-        {$IFDEF FHIR_DSTU3}
+        {$IFDEF FHIR3}
         p := TFHIRLookupOpProperty_.create;
         resp.property_List.Add(p);
         p.code := 'parent';
@@ -2715,7 +2715,7 @@ begin
       begin
         Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
         Descriptions := Refs.GetReferences(DescriptionIndex);
-        {$IFDEF FHIR_DSTU3}
+        {$IFDEF FHIR3}
         p := TFHIRLookupOpProperty_.create;
         resp.property_List.Add(p);
         p.code := 'child';

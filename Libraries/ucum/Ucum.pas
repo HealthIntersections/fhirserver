@@ -101,15 +101,15 @@ type
   TUcumPrefix = class (TUcumConcept)
   private
     Fvalue : TSmartDecimal;
-    procedure SetValue(const Value: TSmartDecimal);
   protected
     Function GetKind : TConceptKind; Override;
   public
 
-    Destructor Destroy; Override;
     function Link : TUcumPrefix; Overload;
     Procedure Define(oFiler : TAdvFiler); Override;
-    Property value : TSmartDecimal read Fvalue write SetValue;  //value for the prefix - 1^-24 through to 1^24
+    Property value : TSmartDecimal read Fvalue write FValue;  //value for the prefix - 1^-24 through to 1^24
+
+    procedure SetPrecision(i : integer);
   End;
 
   TUcumPrefixList = class (TAdvPersistentList)
@@ -159,15 +159,15 @@ type
     FunitUC : String;
     Fvalue : TSmartDecimal;
     Ftext : String;
-    Procedure SetValue(oValue : TSmartDecimal);
   public
-    Destructor Destroy; Override;
     function Link : TUcumValue; Overload;
     Procedure Define(oFiler : TAdvFiler); Override;
     Property unit_ : String read Funit write FUnit;
     Property unitUC : String read FunitUC write FUnitUC;
-    Property value : TSmartDecimal read FValue write SetValue;
+    Property value : TSmartDecimal read FValue write FValue;
     Property text : String read Ftext write FText;
+
+    procedure SetPrecision(i : integer);
   End;
 
   TUcumDefinedUnit = class (TUcumUnit)
@@ -204,7 +204,6 @@ type
 
   TUcumModel = class (TAdvPersistent)
   private
-    FContext : TSmartDecimalContext;
     FProperties : TUcumPropertyList;
     Fprefixes : TUcumPrefixList;
     FbaseUnits : TUcumBaseUnitList;
@@ -228,7 +227,6 @@ type
     Property Version : String read FVersion write FVersion;
     Property RevisionDate : String read FRevisionDate write FRevisionDate;
     Property Properties : TUcumPropertyList read FProperties;
-    Property Context : TSmartDecimalContext read FContext;
   End;
 
 const
@@ -280,12 +278,6 @@ begin
   oFiler['value'].DefineObject(FValue);
 end;
 
-destructor TUcumPrefix.Destroy;
-begin
-  FValue.Free;
-  inherited;
-end;
-
 function TUcumPrefix.GetKind: TConceptKind;
 begin
   result := UcumPREFIX;
@@ -296,10 +288,10 @@ begin
   result := TUcumPrefix(Inherited Link);
 end;
 
-procedure TUcumPrefix.SetValue(const Value: TSmartDecimal);
+
+procedure TUcumPrefix.SetPrecision(i: integer);
 begin
-  FValue.Free;
-  Fvalue := Value;
+  FValue.Precision := i;
 end;
 
 { TUcumUnit }
@@ -346,21 +338,16 @@ begin
   oFiler['value'].DefineObject(Fvalue);
 end;
 
-destructor TUcumValue.Destroy;
-begin
-  FValue.Free;
-  inherited;
-end;
 
 function TUcumValue.Link: TUcumValue;
 begin
   result := TUcumValue(Inherited Link);
 end;
 
-procedure TUcumValue.SetValue(oValue: TSmartDecimal);
+
+procedure TUcumValue.SetPrecision(i: integer);
 begin
-  FValue.Free;
-  FValue := oValue;
+  FValue.Precision  := i;
 end;
 
 { TUcumDefinedUnit }
@@ -484,7 +471,6 @@ end;
 constructor TUcumModel.Create;
 begin
   inherited;
-  FContext := TSmartDecimalContext.Create;
   Fprefixes := TUcumPrefixList.Create;
   FbaseUnits := TUcumBaseUnitList.Create;
   FdefinedUnits := TUcumDefinedUnitList.Create;
@@ -515,7 +501,6 @@ begin
   FbaseUnits.Free;
   FdefinedUnits.Free;
   FProperties.Free;
-  FContext.Free;
   inherited;
 end;
 

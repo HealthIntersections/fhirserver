@@ -109,7 +109,7 @@ begin
   result := source.Clone;
   if not profile.includeDefinition then
   begin
-    {$IFDEF FHIR_DSTU2}
+    {$IFDEF FHIR2}
     result.codeSystem := nil;
     {$ENDIF}
     result.compose := nil;
@@ -165,7 +165,7 @@ begin
     end;
 
     try
-      {$IFDEF FHIR_DSTU2}
+      {$IFDEF FHIR2}
       if (source.codeSystem <> nil) then
       begin
         source.codeSystem.checkNoModifiers('ValueSetExpander.Expand', 'code system');
@@ -286,7 +286,7 @@ procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystem; list: TFhir
 var
   i : integer;
 begin
-  {$IFDEF FHIR_DSTU3}
+  {$IFDEF FHIR3}
   if not (cs.isAbstract(c)) then
   {$ELSE}
   if (c.abstractElement = nil) or not c.Abstract then

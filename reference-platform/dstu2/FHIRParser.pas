@@ -29,7 +29,7 @@ unit FHIRParser;
   
 }
 
-{$IFNDEF FHIR_DSTU2}
+{$IFNDEF FHIR2}
 This is the dstu2 version of the FHIR code
 {$ENDIF}
 

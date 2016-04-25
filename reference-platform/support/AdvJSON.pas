@@ -253,6 +253,7 @@ Type
 
     Procedure Value(Const name : String; Const avalue : String); overload;
     Procedure ValueNumber(Const name : String; Const avalue : String); overload;
+    Procedure ValueBoolean(Const name : String; avalue : Boolean); overload;
     Procedure Value(Const name : String; avalue : Boolean); overload;
     Procedure Value(Const name : String; avalue : Integer); overload;
     Procedure Value(Const name : String; avalue : Int64); overload;
@@ -354,6 +355,7 @@ Type
     class Function ParseNode(stream : TStream; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseNode(b : TBytes; timeToAbort : cardinal = 0): TJsonNode; overload;
     class Function ParseNode(s : String; timeToAbort : cardinal = 0): TJsonNode; overload;
+    class Function ParseFile(fn : String) : TJsonObject; overload;
   End;
 
   TJsonPatchEngine = class (TAdvObject)
@@ -704,6 +706,20 @@ begin
   DoName(name);
   ProduceLine(UseName + '[');
   LevelDown;
+end;
+
+procedure TJSONWriter.ValueBoolean(const name: String; avalue: Boolean);
+begin
+  if name = '' then
+    valueInArray(avalue)
+  else
+  begin
+    DoName(name);
+    if avalue then
+      FCache := UseName + 'true'
+    else
+      FCache := UseName + 'false';
+  end;
 end;
 
 procedure TJSONWriter.ValueBytes(const name: String; bytes: TBytes);
@@ -1093,6 +1109,18 @@ end;
 class function TJSONParser.Parse(s: String; timeToAbort : cardinal = 0): TJsonObject;
 begin
   result := Parse(TEncoding.UTF8.GetBytes(s), timeToAbort);
+end;
+
+class function TJSONParser.ParseFile(fn: String): TJsonObject;
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+  try
+    result := parse(f);
+  finally
+    f.Free;
+  end;
 end;
 
 class function TJSONParser.ParseNode(stream: TAdvStream; timeToAbort : cardinal = 0): TJsonNode;

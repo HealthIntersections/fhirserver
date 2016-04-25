@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -461,7 +461,7 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.create(roRest);
+  request := TFHIRRequest.create(roRest, FFhirStore.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
@@ -653,7 +653,7 @@ begin
     end;
   end;
 
-  req := TFHIRRequest.Create(roUpload);
+  req := TFHIRRequest.Create(roUpload, FFhirStore.Indexes.Compartments.Link);
   try
     req.CommandType := fcmdTransaction;
     req.resource := ProcessZip('en', stream, name, base, init, ini, cursor);
@@ -1445,7 +1445,7 @@ begin
 
   patient := GetResource(request.Session, frtPatient, request.Lang, id, ver, '') as TFHIRPatient;
   try
-    xhtml := FhirHtmlToText(patient.text.div_);
+    xhtml := patient.text.div_.AsPlainText;
     startHooks(hooks, patient, request.baseUrl);
   finally
     patient.Free;
@@ -1659,7 +1659,7 @@ var
 begin
   response.ResponseNo := status;
   response.FreeContentStream := true;
-  if format = ffAsIs then
+  if format = ffUnspecified then
   begin
     response.ContentType := 'text/plain';
     response.ContentStream := StringToUTF8Stream(message);
@@ -1670,7 +1670,7 @@ begin
     try
       issue.text := TFhirNarrative.create;
       issue.text.status := NarrativeStatusGenerated;
-      issue.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToXML(message)+'</p></div>', xppReject);
+      issue.text.div_ := TFHIRXhtmlParser.parse(lang, xppReject, [], '<div><p>'+FormatTextToXML(message)+'</p></div>');
       if addLogins then
       begin
         if FAuthServer.HL7Appid <> '' then
@@ -1775,14 +1775,14 @@ Var
 Begin
   relativeReferenceAdjustment := 0;
   Result := nil;
-  oRequest := TFHIRRequest.Create(roRest);
+  oRequest := TFHIRRequest.Create(roRest, FFhirStore.Indexes.Compartments.Link);
   try
     oRequest.Lang := lang;
     oResponse.origin := sOrigin;
-    oRequest.PostFormat := ffAsIs;
-    oResponse.Format := ffAsIs;
+    oRequest.PostFormat := ffUnspecified;
+    oResponse.Format := ffUnspecified;
     oRequest.secure := secure;
-    aFormat := ffAsIs;
+    aFormat := ffUnspecified;
     oRequest.baseUrl := sHost + AppendForwardSlash(sBaseURL);
     oRequest.url := sHost + sResource;
     oRequest.lastModifiedDate := 0; // Xml
@@ -1832,7 +1832,7 @@ Begin
       oResponse.Format := ffXhtml
     else if StringExistsInsensitive(sContentAccept, 'rdf') Then
       oResponse.Format := ffTurtle
-    else if oRequest.PostFormat <> ffAsIs then
+    else if oRequest.PostFormat <> ffUnspecified then
       oResponse.Format := oRequest.PostFormat;
 
     if oRequest.Parameters.VarExists('_pretty') then
@@ -2353,7 +2353,7 @@ begin
   writelnt('home page: '+session.scopes);
 
   for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-    if (comps = '') or (COMPARTMENT_PARAM_NAMES[frtPatient, a] <> '') then
+    if (comps = '') or FFhirStore.Indexes.Compartments.existsInCompartment(frtPatient, a) then
       counts[a] := 0
     else
       counts[a] := -1;
@@ -2702,7 +2702,7 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.create(roRest);
+  request := TFHIRRequest.create(roRest, FFhirStore.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
@@ -2738,7 +2738,7 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.create(roRest);
+  request := TFHIRRequest.create(roRest, FFhirStore.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;

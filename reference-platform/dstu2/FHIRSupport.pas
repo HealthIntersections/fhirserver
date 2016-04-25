@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFNDEF FHIR_DSTU2}
+{$IFNDEF FHIR2}
 This is the dstu2 version of the FHIR code
 {$ENDIF}
 
@@ -45,9 +45,9 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson,
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics,
   MimeMessage, DateAndTime, JWT, SCIMObjects,
-  FHirBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang;
+  FHirBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
    HTTP_OK_200 = 200;
@@ -74,6 +74,20 @@ Const
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
   {$M+}
+
+  TFHIRCompartment = class (TAdvObject)
+  private
+  public
+
+  end;
+
+  TFHIRCompartmentList = class (TAdvList<TFHIRCompartment>)
+  private
+  public
+    Function Link : TFHIRCompartmentList; overload;
+    function existsInCompartment(comp, resource: TFHIRResourceType) : boolean;
+    procedure register(res : TFHIRResourceType; comp: string; indexes : array of String);
+  end;
 
 
   {@Class TFhirSession
@@ -230,6 +244,7 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFHIRRequest = class (TAdvObject)
   Private
+    FCompartmentInformation : TFHIRCompartmentList;
     FId: String;
     FSubId: String;
     FCommandType: TFHIRCommandType;
@@ -273,7 +288,7 @@ Type
     procedure SetForm(const Value: TMimeMessage);
     procedure SetPatch(const Value: TJsonArray);
   Public
-    Constructor Create(origin : TFHIRRequestOrigin);
+    Constructor Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
@@ -723,13 +738,6 @@ Type
     {!script nolink}
     function makeNarrative(status, html : String; policy : TFHIRXhtmlParserPolicy) : TFhirNarrative;
 
-    {@member parseHTML
-      parse an html fragment into an html node (for use with narrative).
-
-      the html fragment must begin and end with <xhtml></xhtml>
-    }
-    function parseHTML(source : String; policy : TFHIRXhtmlParserPolicy) : TFhirXHtmlNode;
-
     {@member makeBinary
       make a new Binary resource
     }
@@ -746,7 +754,7 @@ Type
       make a new Fhir request (for a conversion parameter)
     }
     {!script nolink}
-    function makeRequest(origin : TFHIRRequestOrigin) : TFhirRequest;
+    function makeRequest(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList) : TFhirRequest;
 
     {@member makeRequest
       make a new OperationOutcome that claims success
@@ -1023,7 +1031,7 @@ begin
       else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) then
       begin
         aResourceType := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFhirResourceType, sId));
-        if (COMPARTMENT_PARAM_NAMES[ResourceType, aResourceType] <> '') then
+        if FCompartmentInformation.existsInCompartment(ResourceType, aResourceType) then
         begin
           if ResourceType <> frtPatient then
             raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
@@ -1130,15 +1138,17 @@ begin
   FSource.AsBytes := b;
 end;
 
-constructor TFHIRRequest.Create(origin : TFHIRRequestOrigin);
+constructor TFHIRRequest.Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
 begin
   inherited Create;
   FTags := TFHIRTagList.create;
   FOrigin := origin;
+  FCompartmentInformation := compartmentInformation;
 end;
 
 destructor TFHIRRequest.Destroy;
 begin
+  FCompartmentInformation.free;
   FPatch.Free;
   FTags.free;
   FSession.Free;
@@ -1564,28 +1574,6 @@ begin
   end;
 end;
 
-function TFHIRFactory.parseHTML(source: String; policy : TFHIRXhtmlParserPolicy): TFhirXHtmlNode;
-var
-  parser : TFHIRXmlParserBase;
-begin
-  parser := TFHIRXmlParserBase.create(Flang);
-  try
-    parser.ParserPolicy := policy;
-    parser.Source := TStringStream.create(source);
-    result := parser.ParseHtml;
-    try
-      if result.Name <> 'div' then
-        raise Exception.create('Wrong name "'+result.Name+'+ on the xhtml fragment');
-      result.link;
-    finally
-      result.free;
-    end;
-  finally
-    parser.source.free;
-    parser.Free;
-  end;
-end;
-
 function TFHIRFactory.makeBinary: TFhirBinary;
 begin
   result := TFhirBinary.create;
@@ -1614,7 +1602,7 @@ begin
   result := TFhirNarrative.create;
   try
     result.statusElement := CheckEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, status);
-    result.div_ := parseHTML(html, policy);
+    result.div_ := TFHIRXhtmlParser.Parse('en', policy, [], html);
     result.link;
   finally
     result.free;
@@ -1659,9 +1647,9 @@ begin
   end;
 end;
 
-function TFHIRFactory.makeRequest(origin : TFHIRRequestOrigin): TFhirRequest;
+function TFHIRFactory.makeRequest(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList): TFhirRequest;
 begin
-  result := TFhirRequest.create(origin);
+  result := TFhirRequest.create(origin, compartmentInformation);
 end;
 
 function TFHIRFactory.makeSuccessfulOperation: TFhirOperationOutcome;
@@ -1851,5 +1839,22 @@ begin
   FUser := Value;
 end;
 
+
+{ TFHIRCompartmentList }
+
+function TFHIRCompartmentList.existsInCompartment(comp, resource: TFHIRResourceType): boolean;
+begin
+  result := false
+end;
+
+function TFHIRCompartmentList.Link: TFHIRCompartmentList;
+begin
+  result := TFHIRCompartmentList(inherited link);
+end;
+
+procedure TFHIRCompartmentList.register(res : TFHIRResourceType; comp: string; indexes: array of String);
+begin
+
+end;
 
 end.

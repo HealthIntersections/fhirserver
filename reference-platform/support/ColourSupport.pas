@@ -33,7 +33,26 @@ Interface
 Type
   TColour = Integer;
 
+  TColourParts = Packed Record
+    Red : Byte;
+    Green : Byte;
+    Blue : Byte;
+    Alpha : Byte;
+  End;
+
+Function ColourCompose(iRed, iGreen, iBlue, iAlpha : Byte) : TColour; Overload;
+
 Implementation
+
+Function ColourCompose(iRed, iGreen, iBlue, iAlpha : Byte) : TColour;
+Begin
+  TColourParts(Result).Red := iRed;
+  TColourParts(Result).Green := iGreen;
+  TColourParts(Result).Blue := iBlue;
+  TColourParts(Result).Alpha := iAlpha;
+End;
+
+
 
 End. // ColourSupport //
 

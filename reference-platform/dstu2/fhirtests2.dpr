@@ -1,13 +1,22 @@
-program dstu2;
+program fhirtests2;
 
 {$APPTYPE CONSOLE}
 
 uses
+  FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
+  TestInsight.DUnitX,
+  FHIRTests,
+  DecimalTests in '..\support\tests\DecimalTests.pas',
+  JWTTests in '..\Support\tests\JWTTests.pas',
+  FHIRPathTests in 'tests\FHIRPathTests.pas',
+  FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   FHIRConstants,
   FHIRParser,
   SysUtils,
   Classes,
   ActiveX,
+  IdSSLOpenSSLHeaders,
   StringSupport in '..\support\StringSupport.pas',
   MathSupport in '..\support\MathSupport.pas',
   DecimalSupport in '..\support\DecimalSupport.pas',
@@ -85,6 +94,7 @@ uses
   AdvJSON in '..\support\AdvJSON.pas',
   AdvGenerics in '..\support\AdvGenerics.pas',
   FHIRLang in 'FHIRLang.pas',
+  FHIRPath in 'FHIRPath.pas',
   AfsResourceVolumes in '..\support\AfsResourceVolumes.pas',
   AfsVolumes in '..\support\AfsVolumes.pas',
   AfsStreamManagers in '..\support\AfsStreamManagers.pas',
@@ -105,8 +115,11 @@ uses
   AdvZipWorkers in '..\support\AdvZipWorkers.pas',
   AdvZipParts in '..\support\AdvZipParts.pas',
   AdvZipUtilities in '..\support\AdvZipUtilities.pas',
-  AdvZipDeclarations in '..\support\AdvZipDeclarations.pas';
+  AdvZipDeclarations in '..\support\AdvZipDeclarations.pas',
+  FHIRTestWorker in 'tests\FHIRTestWorker.pas',
+  FHIRXhtml in 'FHIRXhtml.pas';
 
+(*
 procedure SaveStringToFile(s : AnsiString; fn : String);
 var
   f : TFileStream;
@@ -216,4 +229,14 @@ begin
     on e:exception do
       SaveStringToFile(AnsiString(e.Message), ParamStr(2)+'.err');
   end;
+  *)
+var
+  s : String;
+begin
+  CoInitialize(nil);
+  s := ExtractFilePath(Paramstr(0));
+  IdOpenSSLSetLibPath(s);
+  GBasePath := 'C:\work\org.hl7.fhir.2016May';
+  RunRegisteredTests;
+  TTestingWorkerContext.closeUp;
 end.

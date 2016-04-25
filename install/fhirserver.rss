@@ -3,11 +3,23 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.43 2016-04-13 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.43.exe</link>
+			<description>DSTU3. 2016-04-13 (v1.0.43): update for full invaraints and expressions in May 2016 freeze</description>
+		</item>
+<item><title>FHIRServer release 1.0.42 2016-04-13 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.42.exe</link>
+			<description>DSTU2. 2016-04-13 (v1.0.42): update to current version of Fluent Path</description>
+		</item>
+		<item><title>FHIRServer release 1.0.41 2016-04-01 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.41.exe</link>
+			<description>DSTU3. 2016-04-01 (v1.0.41): Upgrade server for final Montreal freeze</description>
+		</item>
 		<item><title>FHIRServer release 1.0.40 2016-03-30 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.40.exe</link>
 			<description>DSTU3. 2016-03-30 (v1.0.40): Freeze version for Montreal</description>
 		</item>
-<item><title>FHIRServer release 1.0.39 2016-03-28 (DSTU2)</title>
+		<item><title>FHIRServer release 1.0.39 2016-03-28 (DSTU2)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.39.exe</link>
 			<description>DSTU2. 2016-03-28 (v1.0.39): fix loading bug</description>
 		</item>

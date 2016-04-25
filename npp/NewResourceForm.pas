@@ -31,14 +31,14 @@ type
     procedure lbProfilesClick(Sender: TObject);
   private
     { Private declarations }
-    FContext : TValidatorServiceProvider;
+    FContext : TWorkerContext;
     procedure loadLists;
-    procedure SetContext(const Value: TValidatorServiceProvider);
+    procedure SetContext(const Value: TWorkerContext);
   public
     { Public declarations }
     destructor Destroy; override;
 
-    property Context : TValidatorServiceProvider read FContext write SetContext;
+    property Context : TWorkerContext read FContext write SetContext;
   end;
 
 var
@@ -97,7 +97,7 @@ begin
   inherited;
 end;
 
-procedure TResourceNewForm.SetContext(const Value: TValidatorServiceProvider);
+procedure TResourceNewForm.SetContext(const Value: TWorkerContext);
 begin
   FContext.Free;
   FContext := Value;

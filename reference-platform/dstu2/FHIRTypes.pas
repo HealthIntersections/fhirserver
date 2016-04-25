@@ -31,7 +31,7 @@ unit FHIRTypes;
   
 }
 
-{$IFNDEF FHIR_DSTU2}
+{$IFNDEF FHIR2}
 This is the dstu2 version of the FHIR code
 {$ENDIF}
 
@@ -11442,7 +11442,7 @@ end;
 
 function TFhirDateTime.AsStringValue : string;
 begin
-  result := FValue.toString;
+  result := FValue.asXml;
 end;
 
 function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean; 
@@ -11625,6 +11625,7 @@ Constructor TFhirDate.Create(value : TDateAndTime);
 begin
   Create;
   FValue := value;
+  value.Precision := dtpDay;
 end;
 
 Destructor TFhirDate.Destroy;
@@ -11660,7 +11661,7 @@ end;
 
 function TFhirDate.AsStringValue : string;
 begin
-  result := FValue.toString;
+  result := FValue.asXml;
 end;
 
 function TFhirDate.equalsDeep(other : TFHIRBase) : boolean; 
@@ -13174,7 +13175,7 @@ end;
 
 function TFhirInstant.AsStringValue : string;
 begin
-  result := FValue.toString;
+  result := FValue.asXml;
 end;
 
 function TFhirInstant.equalsDeep(other : TFHIRBase) : boolean; 
@@ -14469,7 +14470,7 @@ begin
   inherited;
   if (child_name = 'url') Then
      list.add(FUrl.Link);
-  if (child_name = 'value[x]') Then
+  if (child_name = 'value[x]') or (child_name = 'value') Then
      list.add(FValue.Link);
 end;
 
@@ -16683,7 +16684,7 @@ end;
 procedure TFhirAnnotation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'author[x]') Then
+  if (child_name = 'author[x]') or (child_name = 'author') Then
      list.add(FAuthor.Link);
   if (child_name = 'time') Then
      list.add(FTime.Link);
@@ -18497,7 +18498,7 @@ begin
     list.addAll(FType_List);
   if (child_name = 'when') Then
      list.add(FWhen.Link);
-  if (child_name = 'who[x]') Then
+  if (child_name = 'who[x]') or (child_name = 'who') Then
      list.add(FWho.Link);
   if (child_name = 'contentType') Then
      list.add(FContentType.Link);
@@ -18889,7 +18890,7 @@ end;
 procedure TFhirTimingRepeat.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'bounds[x]') Then
+  if (child_name = 'bounds[x]') or (child_name = 'bounds') Then
      list.add(FBounds.Link);
   if (child_name = 'count') Then
      list.add(FCount.Link);
@@ -21106,7 +21107,7 @@ begin
      list.add(FStrength.Link);
   if (child_name = 'description') Then
      list.add(FDescription.Link);
-  if (child_name = 'valueSet[x]') Then
+  if (child_name = 'valueSet[x]') or (child_name = 'valueSet') Then
      list.add(FValueSet.Link);
 end;
 
@@ -21826,19 +21827,19 @@ begin
     list.addAll(FType_List);
   if (child_name = 'nameReference') Then
      list.add(FNameReference.Link);
-  if (child_name = 'defaultValue[x]') Then
+  if (child_name = 'defaultValue[x]') or (child_name = 'defaultValue') Then
      list.add(FDefaultValue.Link);
   if (child_name = 'meaningWhenMissing') Then
      list.add(FMeaningWhenMissing.Link);
-  if (child_name = 'fixed[x]') Then
+  if (child_name = 'fixed[x]') or (child_name = 'fixed') Then
      list.add(FFixed.Link);
-  if (child_name = 'pattern[x]') Then
+  if (child_name = 'pattern[x]') or (child_name = 'pattern') Then
      list.add(FPattern.Link);
-  if (child_name = 'example[x]') Then
+  if (child_name = 'example[x]') or (child_name = 'example') Then
      list.add(FExample.Link);
-  if (child_name = 'minValue[x]') Then
+  if (child_name = 'minValue[x]') or (child_name = 'minValue') Then
      list.add(FMinValue.Link);
-  if (child_name = 'maxValue[x]') Then
+  if (child_name = 'maxValue[x]') or (child_name = 'maxValue') Then
      list.add(FMaxValue.Link);
   if (child_name = 'maxLength') Then
      list.add(FMaxLength.Link);

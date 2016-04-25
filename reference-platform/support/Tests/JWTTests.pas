@@ -4,33 +4,42 @@ Interface
 
 Uses
   SysUtils,
-  StringSupport,
-  GuidSupport,
-  AdvObjects,
-  AdvJson,
-  libeay32,
-  JWT;
+  StringSupport, GuidSupport,
+  AdvObjects, AdvJson,
+  libeay32, JWT,
+  DUnitX.TestFramework;
 
 Type
-  {$M+}
-  TJWTTests = Class (TAdvObject) // but can be used with DUnit
+  [TextFixture]
+  TJWTTests = Class (TObject)
   Private
   Published
-    Class procedure runTests;
-
+    [SetUp]
+    procedure Setup;
+    [TestCase]
     procedure TestPacking;
+    [TestCase]
     procedure TestUnpacking;
+    [TestCase]
     procedure TestCert;
   End;
 
 Implementation
 
+uses
+  IdSSLOpenSSLHeaders;
 
 var
   gs : String;
 
 { TJWTTests }
 
+
+procedure TJWTTests.Setup;
+begin
+  IdSSLOpenSSLHeaders.Load;
+  LoadEAYExtensions;
+end;
 
 procedure TJWTTests.TestCert;
 var
@@ -41,6 +50,7 @@ begin
   try
     s := TJSONWriter.writeObjectStr(jwk.obj, true);
     Writeln(s);
+    Assert.IsTrue(true);
   finally
     jwk.Free;
   end;
@@ -59,10 +69,10 @@ begin
       '{"typ":"JWT",'+#13#10+' "alg":"HS256"}',
       '{"iss":"joe",'+#13#10+' "exp":1300819380,'+#13#10+' "http://example.com/is_root":true}',
       jwt_hmac_sha256, jwk);
-    if s <> 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk' then
-      raise Exception.Create('packing failed. expected '+#13#10+'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk, but got '+#13#10+s);
+    Assert.IsTrue(s = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk',
+      'packing failed. expected '+#13#10+'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk, but got '+s);
   finally
-    jwk.Free
+    jwk.Free;
   end;
 
   jwk := TJWK.create(TJSONParser.Parse(
@@ -86,15 +96,18 @@ begin
   try
     jwt.id := GUIDToString(CreateGUID);
     s := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, 'C:\work\fhirserver\Exec\jwt-test.key.key', 'fhirserver');
+    Assert.isTrue(true);
   finally
     jwt.Free;
   end;
 end;
 
+var
+  jwk : TJWKList;
+
 procedure TJWTTests.TestUnpacking;
 var
   jwt : TJWT;
-  jwk : TJWKList;
 begin
   // HS256 test from the spec
   jwk := TJWKList.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
@@ -102,13 +115,14 @@ begin
     jwt := TJWTUtils.unpack('eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk', true, jwk);
     try
       // inspect
+      Assert.IsTrue(true);
     finally
       jwt.Free;
     end;
   finally
     jwk.Free;
   end;
-
+   (*
   // from google
   jwk := TJWKList.create(TJSONParser.Parse(
     // as downloaded from google at the same time as the JWT below
@@ -137,6 +151,7 @@ begin
     jwt := TJWTUtils.unpack('eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyNDgwNmQwOWU2MDY3Y2EyMWJjNmUyNTIxOWQxNWRkOTgxZGRmOWQifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwic3ViIjoiMTExOTA0NjIwMDUzMzY0MzkyMjg2Ii'+'wiYXpwIjoiOTQwMDA2MzEwMTM4LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiZW1haWwiOiJncmFoYW1lZ0BnbWFpbC5jb20iLCJhdF9oYXNoIjoidDg0MGJMS3FsRU'+'ZqUmQwLWlJS2dZUSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdWQiOiI5NDAwMDYzMTAxMzguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjE0MDIxODUxMjksImV'+'4cCI6MTQwMjE4OTAyOX0.Jybn06gURs7lcpCYaXBuszC7vacnWxwSwH_ffIDDu7bxOPo9fiVnRDCidKSLy4m0sAL1xxDHA5gXSZ9C6nj7abGqQ_LOrcPdTncuvYUPhF7mUq7fr3EPW-34PVkBSiOrjYdO6SOYyeP443WzPQRkhVJkRP4oQF-k0zXuwCkWlfc', true, jwk);
     try
       // inspect
+      Assert.IsTrue(true);
     finally
       jwt.Free;
     end;
@@ -157,32 +172,17 @@ begin
     jwt := TJWTUtils.unpack(gs {'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.LteI-Jtns1KTLm0-lnDU_gI8_QHDnnIfZCEB2dI-ix4YxLQjaOTVQolkaa-Y4Cie-mEd8c34vSWeeNRgVcXuJsZ_iVYywDWqUDpXY6KwdMx6kXZQ0-'+'mihsowKzrFbmhUWun2aGOx44w3wAxHpU5cqE55B0wx2v_f98zUojMp6mkje_pFRdgPmCIYTbym54npXz7goROYyVl8MEhi1HgKmkOVsihaVLfaf5rt3OMbK70Lup3RrkxFbneKslTQ3bwdMdl_Zk1vmjRklvjhmVXyFlEHZVAe4_4n_FYk6oq6UFFJDkEjrWo25B0lKC7XucZZ5b8NDr04xujyV4XaR11ZuQ'}, true, jwk);
     try
       // inspect
+      Assert.IsTrue(true);
     finally
       jwt.Free;
     end;
   finally
     jwk.Free;
   end;
-
+    *)
 end;
 
-{ TJWTTests }
-
-class procedure TJWTTests.runTests;
-var
-  this : TJWTTests;
-begin
-  LoadEAYExtensions;
-  this := TJWTTests.Create;
-  try
-    this.TestPacking;
-    this.TestUnPacking;
-    this.TestCert;
-  finally
-    this.Free;
-  end;
-  UnloadEAYExtensions;
-end;
-
+initialization
+  TDUnitX.RegisterTestFixture(TJWTTests);
 End.
 

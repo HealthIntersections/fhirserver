@@ -141,8 +141,6 @@ Function StringReplace(Const sValue : String; Const aFind : TCharSet; Const sRep
 Function StringReplaceBefore(Const sValue, sFind, sReplace : String) : String; Overload;
 Function StringReplaceAfter(Const sValue, sFind, sReplace : String) : String; Overload;
 Function StringReplaceAll(Const sValue, sFind, sReplace : String; Const iStartPos : Integer = 1; Const iEndPos : Integer = 0) : String; Overload;
-Function StringIncludeAfter(Const sText, sSymbol : String) : String; Overload;
-Function StringExcludeBefore(Const sText, sSymbol : String) : String; Overload;
 Function StringPadLeft(Const sValue : String; cPad : Char; iLength : Integer) : String; Overload;
 Function StringPadRight(Const sValue : String; cPad : Char; iLength : Integer) : String; Overload;
 
@@ -202,6 +200,21 @@ function EnumIsValid(ATypeInfo: PTypeInfo; AIndex: Integer): Boolean;
 function EnumStrIsValid(ATypeInfo: PTypeInfo; AValue : string): Boolean;
 function EnumToString(ATypeInfo: PTypeInfo; AIndex: Integer): String;
 function StringToEnum(ATypeInfo: PTypeInfo; const AStr: String): Integer;
+
+Function StringIncludeAround(Const sText, sLeft, sRight : String) : String; Overload;
+Function StringIncludeAround(Const sText, sSymbol : String) : String; Overload;
+Function StringIncludeBefore(Const sText, sSymbol : String) : String; Overload;
+Function StringIncludeBefore(Const sText : String; cSymbol : Char) : String; Overload;
+Function StringIncludeAfter(Const sText : String; cSymbol : Char) : String; Overload;
+Function StringIncludeAfter(Const sText, sSymbol : String) : String; Overload;
+
+Function StringExcludeAround(Const sText, sSymbol : String) : String; Overload;
+Function StringExcludeAround(Const sText, sLeft, sRight : String) : String; Overload;
+Function StringExcludeBefore(Const sText : String; cSymbol : Char) : String; Overload;
+Function StringExcludeBefore(Const sText, sSymbol : String) : String; Overload;
+Function StringExcludeAfter(Const sText : String; cSymbol : Char) : String; Overload;
+Function StringExcludeAfter(Const sText, sSymbol : String) : String; Overload;
+
 
 Implementation
 
@@ -1420,7 +1433,75 @@ begin
 end;
 
 
+Function StringIncludeAround(Const sText, sLeft, sRight : String) : String;
+Begin
+  Result := StringIncludeAfter(StringIncludeBefore(sText, sLeft), sRight);
+End;
+
+
+Function StringIncludeAround(Const sText, sSymbol : String) : String;
+Begin
+  Result := StringIncludeAfter(StringIncludeBefore(sText, sSymbol), sSymbol);
+End;
+
+
+Function StringIncludeBefore(Const sText : String; cSymbol : Char) : String;
+Begin
+  Result := sText;
+  If (Length(Result) = 0) Or (Result[1] <> cSymbol) Then
+    Result := cSymbol + Result;
+End;
+
+
+Function StringIncludeBefore(Const sText, sSymbol : String) : String;
+Begin
+  Result := sText;
+  If (StringCompare(sSymbol, sText, Length(sSymbol)) <> 0) Then
+    Result := sSymbol + Result;
+End;
+
+
+Function StringIncludeAfter(Const sText : String; cSymbol : Char) : String;
+Begin
+  Result := sText;
+  If (Length(Result) > 0) And (Result[Length(Result)] <> cSymbol) Then
+    Result := Result + cSymbol;
+End;
+
+
+
+
+Function StringExcludeAround(Const sText, sSymbol : String) : String;
+Begin
+  Result := StringExcludeAround(sText, sSymbol, sSymbol);
+End;
+
+
+Function StringExcludeAround(Const sText, sLeft, sRight : String) : String;
+Begin
+  Result := StringExcludeAfter(StringExcludeBefore(sText, sLeft), sRight);
+End;
+
+
+Function StringExcludeBefore(Const sText : String; cSymbol : Char) : String;
+Begin
+  Result := sText;
+  If (Length(sText) > 0) And (sText[1] = cSymbol) Then
+    Delete(Result, 1, 1);
+End;
+
+
+
+Function StringExcludeAfter(Const sText : String; cSymbol : Char) : String;
+Begin
+  Result := sText;
+  If (Length(sText) > 0) And (sText[Length(sText)] = cSymbol) Then
+    Delete(Result, Length(sText), 1);
+End;
+
+
 Initialization
+
   SetLength(UnicodeWhitespaceArray, 26);
 
   UnicodeWhitespaceArray[0] := #$0009; //

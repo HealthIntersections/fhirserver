@@ -147,7 +147,9 @@ uses
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   ShellSupport in '..\reference-platform\Support\ShellSupport.pas',
   CDSBrowserForm in 'CDSBrowserForm.pas' {CDSBrowser},
-  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
+  FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas',
+  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas';
 
 {$R *.res}
 

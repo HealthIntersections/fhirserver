@@ -1,16 +1,20 @@
 package org.fhir.delphi;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hl7.fhir.dstu3.formats.XmlParser;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu3.model.CompartmentDefinition;
+import org.hl7.fhir.dstu3.model.CompartmentDefinition.CompartmentDefinitionResourceComponent;
 import org.hl7.fhir.dstu3.model.Conformance;
 import org.hl7.fhir.dstu3.model.OperationDefinition;
 import org.hl7.fhir.dstu3.model.SearchParameter;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.dstu3.model.StructureDefinition;
 import org.hl7.fhir.dstu3.model.ValueSet;
 import org.hl7.fhir.dstu3.model.StructureDefinition.TypeDerivationRule;
@@ -43,10 +47,12 @@ public class DefinitionsLoader3 {
         processConformance(def, (Conformance) entry.getResource());
       else if (entry.getResource() instanceof OperationDefinition)
         def.getOperations().add((OperationDefinition) entry.getResource());
-      else if (entry.getResource() instanceof CompartmentDefinition)
-        processCompartmentDefinition(def, (CompartmentDefinition) entry.getResource());
-      else
+      else if (!(entry.getResource() instanceof CompartmentDefinition))
         System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
+    }
+    for (BundleEntryComponent entry : resources.getEntry()) {
+      if (entry.getResource() instanceof CompartmentDefinition)
+        processCompartmentDefinition(def, (CompartmentDefinition) entry.getResource());
     }
     for (BundleEntryComponent entry : searchParams.getEntry()) {
       if (entry.getResource() instanceof SearchParameter) 
@@ -57,8 +63,19 @@ public class DefinitionsLoader3 {
     return def;
   }
 
-  private void processCompartmentDefinition(Definitions def, CompartmentDefinition resource) {
-  
+  private void processCompartmentDefinition(Definitions def, CompartmentDefinition cd) throws Exception {
+    Compartment c = new Compartment();
+    c.setName(cd.getCode().toCode());
+    c.setTitle(cd.getName());
+    c.setDescription(cd.getDescription());
+    for (CompartmentDefinitionResourceComponent r : cd.getResource()) {
+      ResourceDefn rd = def.getResourceByName(r.getCode());
+      List<String> list = new ArrayList<>();
+      for (StringType s : r.getParam())
+        list.add(s.asStringValue());
+      c.getResources().put(rd, list);
+    }
+    def.getCompartments().add(c);
   }
    
   private void processConformance(Definitions def, Conformance resource) {
@@ -67,7 +84,8 @@ public class DefinitionsLoader3 {
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), VersionConvertor.convertSearchParamType(sp.getType()), sp.getTarget(), VersionConvertor.convertXPathUsageType(sp.getXpathUsage()));
+    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), VersionConvertor.convertSearchParamType(sp.getType()), 
+        sp.getTarget(), VersionConvertor.convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 

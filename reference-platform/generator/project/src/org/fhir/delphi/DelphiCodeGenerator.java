@@ -66,7 +66,7 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
           "  \r\n";
 
   public static final String VERSION_MARK = 
-      "{$IFNDEF FHIR_DSTU%%}\r\n"+
+      "{$IFNDEF FHIR%%}\r\n"+
           "This is the dstu%% version of the FHIR code\r\n"+
           "{$ENDIF}\r\n";
 

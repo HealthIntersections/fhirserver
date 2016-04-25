@@ -67,7 +67,7 @@ type
     procedure replaceNames(paramPath : TFSFilterParameterPath; components : TDictionary<String, String>); overload;
     procedure replaceNames(filter : TFSFilter; components : TDictionary<String, String>); overload;
     procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
-    procedure processNumberValue(dec : TSmartDecimalContext; value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
+    procedure processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TFHIRResourceTypeSet): TFHIRResourceTypeSet;
     procedure ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
@@ -504,7 +504,6 @@ var
   qop: TQuantityOperation;
   v1: string;
   v2: string;
-  dec : TSmartDecimalContext;
 begin
   if modifier <> '' then
     raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name + ':' + modifier]));
@@ -520,12 +519,7 @@ begin
   else if findPrefix(value, 'eb') then qop := qopEndsBefore
   else if findPrefix(value, 'ap') then qop := qopApproximate;
 
-  dec := TSmartDecimalContext.Create;
-  try
-    processNumberValue(dec, dec.Value(value), qop, v1, v2);
-  finally
-    dec.Free;
-  end;
+  processNumberValue(TSmartDecimal.ValueOf(value), qop, v1, v2);
 
   case qop of
     qopEqual:        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and flag = 0 and ' + gte('Value', v1) + ' and ' + lte('Value2', v2) + ')';
@@ -720,7 +714,7 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.processNumberValue(dec : TSmartDecimalContext; value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
+procedure TSearchProcessor.processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
 begin
   // work out the numerical limits
   case op of
@@ -741,13 +735,13 @@ begin
       begin
       if value.IsNegative then
       begin
-        minv := normaliseDecimal(value.Multiply(dec.Value('1.2')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(dec.Value('0.8')).upperBound.AsDecimal);
+        minv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('1.2')).lowerBound.AsDecimal);
+        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('0.8')).upperBound.AsDecimal);
       end
       else
       begin
-        minv := normaliseDecimal(value.Multiply(dec.Value('0.8')).lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.Multiply(dec.Value('1.2')).upperBound.AsDecimal);
+        minv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('0.8')).lowerBound.AsDecimal);
+        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.ValueOf('1.2')).upperBound.AsDecimal);
       end;
       end;
   end;
@@ -758,7 +752,6 @@ end;
 
 procedure TSearchProcessor.processQuantityValue(name, lang : String; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
 var
-  dec : TSmartDecimalContext;
   value : TSmartDecimal;
   ns, s : String;
   specified, canonical : TUcumPair;
@@ -775,7 +768,7 @@ begin
   // [number]|[namespace]|[code]
   if Length(parts) = 0 then
     raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
-  if TSmartDecimal.StringIsValid(parts[0]) then
+  if TSmartDecimal.CheckValue(parts[0]) then
     v := parts[0]
   else
   begin
@@ -788,99 +781,94 @@ begin
     v := parts[0].Substring(0, i-1);
     u := parts[0].Substring(i-1);
   end;
-  dec := TSmartDecimalContext.Create;
-  try
-    value := dec.Value(v);
+  value := TSmartDecimal.valueOf(v);
 
-    // work out the numerical limits
-    case op of
-      qopEqual :
-        begin
-        minv := normaliseDecimal(value.lowerBound.AsDecimal);
-        maxv := normaliseDecimal(value.upperBound.AsDecimal);
-        end;
-      qopLess :
-        maxv := normaliseDecimal(value.lowerBound.AsDecimal);
-      qopLessEqual :
-        maxv := normaliseDecimal(value.immediateLowerBound.AsDecimal);
-      qopGreater :
-        minv := normaliseDecimal(value.UpperBound.AsDecimal);
-      qopGreaterEqual :
-        minv := normaliseDecimal(value.immediateUpperBound.AsDecimal);
-      qopApproximate :
-        begin
-        if value.IsNegative then
-        begin
-          minv := normaliseDecimal(value.Multiply(dec.Value('1.2')).lowerBound.AsDecimal);
-          maxv := normaliseDecimal(value.Multiply(dec.Value('0.8')).upperBound.AsDecimal);
-        end
-        else
-        begin
-          minv := normaliseDecimal(value.Multiply(dec.Value('0.8')).lowerBound.AsDecimal);
-          maxv := normaliseDecimal(value.Multiply(dec.Value('1.2')).upperBound.AsDecimal);
-        end;
-        end;
-    end;
-
-    if (length(parts) = 1) then
-      space := u
-    else if length(parts) = 2 then
-    begin
-      if u = '' then
-        space := parts[1]
+  // work out the numerical limits
+  case op of
+    qopEqual :
+      begin
+      minv := normaliseDecimal(value.lowerBound.AsDecimal);
+      maxv := normaliseDecimal(value.upperBound.AsDecimal);
+      end;
+    qopLess :
+      maxv := normaliseDecimal(value.lowerBound.AsDecimal);
+    qopLessEqual :
+      maxv := normaliseDecimal(value.immediateLowerBound.AsDecimal);
+    qopGreater :
+      minv := normaliseDecimal(value.UpperBound.AsDecimal);
+    qopGreaterEqual :
+      minv := normaliseDecimal(value.immediateUpperBound.AsDecimal);
+    qopApproximate :
+      begin
+      if value.IsNegative then
+      begin
+        minv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('1.2')).lowerBound.AsDecimal);
+        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('0.8')).upperBound.AsDecimal);
+      end
       else
       begin
-        space := u;
-        ns := parts[1];
+        minv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('0.8')).lowerBound.AsDecimal);
+        maxv := normaliseDecimal(value.Multiply(TSmartDecimal.valueOf('1.2')).upperBound.AsDecimal);
       end;
-    end
-    else if (length(parts) > 3) or (u <> '') then
-      raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+      end;
+  end;
+
+  if (length(parts) = 1) then
+    space := u
+  else if length(parts) = 2 then
+  begin
+    if u = '' then
+      space := parts[1]
     else
     begin
-      if (parts[2] = 'ucum') or (parts[2] = 'snomed') or (parts[2].StartsWith('http:')) then
-      begin
-        // 2 is namespace
-        space := parts[1];
-        ns := parts[2];
-      end
-      else if (parts[1] = 'ucum') or (parts[1] = 'snomed') or (parts[1].StartsWith('http:')) then
-      begin
-        // 1 is namespace (per spec)
-        space := parts[2];
-        ns := parts[1];
-      end;
+      space := u;
+      ns := parts[1];
     end;
-
-    if (ns = 'ucum') then
-      ns := 'http://unitsofmeasure.org'
-    else if ns  = 'snomed' then
-      ns := 'http://snomed.info/sct';
-
-    if (ns = 'http://unitsofmeasure.org') then
+  end
+  else if (length(parts) > 3) or (u <> '') then
+    raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+  else
+  begin
+    if (parts[2] = 'ucum') or (parts[2] = 'snomed') or (parts[2].StartsWith('http:')) then
     begin
-      specified := TUcumPair.create;
-      try
-        specified.Value := value.Link;
-        specified.UnitCode := space;
-        canonical := repository.TerminologyServer.Ucum.getCanonicalForm(specified);
-        try
-          mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
-          maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
-          spaceC := 'urn:ucum-canonical#'+canonical.UnitCode;
-        finally
-          canonical.free;
-        end;
-      finally
-        specified.free;
-      end;
+      // 2 is namespace
+      space := parts[1];
+      ns := parts[2];
+    end
+    else if (parts[1] = 'ucum') or (parts[1] = 'snomed') or (parts[1].StartsWith('http:')) then
+    begin
+      // 1 is namespace (per spec)
+      space := parts[2];
+      ns := parts[1];
     end;
-
-    if (ns <> '') then
-      space := ns+'#'+space;
-  finally
-    dec.Free;
   end;
+
+  if (ns = 'ucum') then
+    ns := 'http://unitsofmeasure.org'
+  else if ns  = 'snomed' then
+    ns := 'http://snomed.info/sct';
+
+  if (ns = 'http://unitsofmeasure.org') then
+  begin
+    specified := TUcumPair.create;
+    try
+      specified.Value := value;
+      specified.UnitCode := space;
+      canonical := repository.TerminologyServer.Ucum.getCanonicalForm(specified);
+      try
+        mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
+        maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
+        spaceC := 'urn:ucum-canonical#'+canonical.UnitCode;
+      finally
+        canonical.free;
+      end;
+    finally
+      specified.free;
+    end;
+  end;
+
+  if (ns <> '') then
+    space := ns+'#'+space;
 end;
 
 Function TSearchProcessor.filterTypes(types : TFHIRResourceTypeSet) : TFHIRResourceTypeSet;

@@ -58,7 +58,7 @@ This reference implementation supports 3 FHIR versions:
 * FHIR DSTU 3 - current trunk. This is unstable and may not work at times
 
 To save implementers from confusion, you must add one of the following
-defines to your project options: FHIR_DSTU1, FHIR_DSTU2, or FHIR_DSTU3 
+defines to your project options: FHIR_DSTU1, FHIR2, or FHIR3 
 depending on which version you want to support (as well as including the 
 correct files)
 

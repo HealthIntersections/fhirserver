@@ -8,7 +8,7 @@ uses
   EncodeSupport, StringSupport,
   AdvObjects, AdvStringMatches,
   IdContext, IdCustomHTTPServer,
-  FHIRLang, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes,
+  FHIRLang, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
   TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 
@@ -636,7 +636,7 @@ end;
 function TTerminologyWebServer.asHtml(r: TFHIRDomainResource): String;
 begin
   if (r.text <> nil) then
-    result := ComposeXHtml(r.text.div_)
+    result := TFHIRXhtmlParser.Compose(r.text.div_)
   else
     result := '<i>(no narrative)</i>';
 end;

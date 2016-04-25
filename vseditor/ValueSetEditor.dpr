@@ -156,7 +156,8 @@ uses
   ConceptLookupFrm in 'ConceptLookupFrm.pas' {ConceptLookupForm},
   NewServerForm in 'NewServerForm.pas' {frmNewServer},
   QuestionnaireBuilder in '..\reference-platform\dstu2\QuestionnaireBuilder.pas',
-  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas';
+  RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
+  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas';
 
 {$R *.res}
 

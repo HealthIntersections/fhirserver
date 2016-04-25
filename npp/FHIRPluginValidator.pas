@@ -11,7 +11,7 @@ Uses
   FHIRConstants, FHIRClient, FHIRBase;
 
 Type
-  TFHIRPluginValidatorContext = class (TValidatorServiceProvider)
+  TFHIRPluginValidatorContext = class (TWorkerContext)
   private
     FUrl : String;
     FServer : TFHIRClient;

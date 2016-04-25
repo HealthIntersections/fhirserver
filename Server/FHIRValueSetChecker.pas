@@ -69,7 +69,7 @@ begin
   else
   begin
     FVs := vs.link;
-    {$IFDEF FHIR_DSTU2}
+    {$IFDEF FHIR2}
     if fvs.codeSystem <> nil then
     begin
       fvs.codeSystem.checkNoModifiers('ValueSetChecker.prepare', 'CodeSystem');
@@ -153,7 +153,7 @@ begin
     if (code = list[i].code) then
     begin
       result := true;
-      {$IFDEF FHIR_DSTU3}
+      {$IFDEF FHIR3}
       isabstract := cs.isAbstract(list[i]);
       {$ELSE}
       isabstract := list[i].abstract;
@@ -224,7 +224,7 @@ begin
   end
   else
   begin
-    {$IFDEF FHIR_DSTU2}
+    {$IFDEF FHIR2}
     if (fvs.codeSystem <> nil) and ((system = fvs.codeSystem.system) or (system = SYSTEM_NOT_APPLICABLE)) then
     begin
       result := FindCode(fvs, code, fvs.codeSystem.conceptList, displays, isabstract);

@@ -42,9 +42,22 @@ Type
 
   TFileAttributes = Set Of TFileAttribute;
 
+  TFileTime = Record
+    Value : Int64;
+  End;
+
   TFileHandle = Record
     Value : Cardinal;
   End;
+
+  TFileVersion = Record
+    Major : Integer;
+    Minor : Integer;
+    Release : Integer;
+    Build : Integer;
+  End;
+
+
 Function FileGetAttributes(Const sFilename : String) : TFileAttributes; Overload;
 Function FileSetAttributes(Const sFilename : String; iAttributes : TFileAttributes) : Boolean; Overload;
 Function FileExists(Const sFilename : String) : Boolean; Overload;
@@ -61,7 +74,39 @@ Function PathFolder(Const sFilename : String) : String; Overload;
 Function FileCopyAttempt(Const sSource, sDestination : String) : Boolean; Overload;
 Function FileCopyForce(Const sSource, sDestination : String) : Boolean; Overload;
 
+Function PathIncludeExtension(Const sFilename, sExtension : String) : String; Overload;
+Function PathExcludeExtension(Const sFilename : String) : String; Overload;
+Function PathFilename(Const sFilename : String) : String; Overload;
+Function PathTitle(Const sFilename : String) : String; Overload;
+Function PathExtension(Const sFilename : String) : String; Overload;
+
+Function FileTimeToDateTime(Const Value : TFileTime) : TDateTime;
+Function DateTimeToFileTime(Const Value : TDateTime) : TFileTime;
+Function FileTimeZero : TFileTime; Overload;
+Function WindowsFileTimeToFileTime(Const aFileTime : Windows.FileTime) : TFileTime;
+Function FileTimeToWindowsFileTime(Const aFileTime : TFileTime) : Windows.FileTime;
+
+Function FileGetModified(Const sFileName : String) : TFileTime; Overload;
+Function FileSize(Const sFileName : String) : Int64; Overload;
+
+// File versions
+Function FileVersion(Const sFilename : String) : TFileVersion; Overload;
+Function ApplicationFileVersion(Const sFilename : String) : TFileVersion; Overload;
+Function DataFileVersion(Const sFilename : String) : TFileVersion; Overload;
+Function FileVersionToString(Const aVersion : TFileVersion) : String; Overload;
+Function FileVersionZero : TFileVersion; Overload;
+
 Implementation
+
+
+Type
+  TLargeInteger = Record
+    Low : Cardinal;
+    High : Cardinal;
+  End;
+
+  PLargeInteger = ^TLargeInteger;
+
 
 Const
   FILEATTRIBUTE_CARDINALS : Array[TFileAttribute] Of Cardinal =
@@ -196,6 +241,214 @@ End;
 Function FileCopyForce(Const sSource, sDestination : String) : Boolean;
 Begin
   Result := Windows.CopyFile(PChar(sSource), PChar(sDestination), False);
+End;
+
+
+
+Function PathIncludeExtension(Const sFilename, sExtension : String) : String;
+Begin
+  Result := sFilename + sExtension;
+End;
+
+Function PathExcludeExtension(Const sFilename : String) : String;
+Begin
+  Result := StringExcludeAfter(sFilename, PathExtension(sFilename));
+End;
+
+
+Function PathExtension(Const sFilename : String) : String;
+Begin
+  // Return the extension including the '.'.  Eg. PathExtension('notepad.exe') = '.exe'
+
+  Result := SysUtils.ExtractFileExt(sFilename);
+End;
+
+Function PathFilename(Const sFilename : String) : String;
+Begin
+  Result := Copy(sFileName, LastDelimiter('\/:', sFileName) + 1, MaxInt);
+End;
+
+
+Function PathRelative(Const sFolder, sFilename : String) : String;
+Var
+  iPos : Integer;
+Begin
+  Result := sFilename;
+
+  iPos := Pos(StringUpper(sFolder), StringUpper(Result));
+  If iPos > 0 Then
+    Delete(Result, 1, Length(sFolder));
+End;
+
+
+Function PathTitle(Const sFilename : String) : String;
+Begin
+  // Return the filename without the path or the extension.
+
+  Result := PathFilename(sFilename);
+
+  Result := Copy(Result, 1, Length(Result) - Length(PathExtension(sFilename)));
+End;
+
+
+Function FileTimeToDateTime(Const Value : TFileTime) : TDateTime;
+Var
+  SystemTime : TSystemTime;
+Begin
+  If FileTimeToSystemTime(Windows.FileTime(Value), SystemTime) Then
+    Result := SystemTimeToDateTime(SystemTime) + TimezoneBias
+  Else
+    Result := 0;
+End;
+
+
+Function DateTimeToFileTime(Const Value : TDateTime) : TFileTime;
+Var
+  SystemTime : TSystemTime;
+  iValue : Windows.FileTime;
+Begin
+  DateTimeToSystemTime(Value - TimezoneBias, SystemTime);
+
+  If SystemTimeToFileTime(SystemTime, iValue) Then
+    Result := WindowsFileTimeToFileTime(iValue)
+  Else
+    Result := FileTimeZero;
+End;
+
+
+
+Function FileTimeZero : TFileTime;
+Begin
+  Result.Value := 0;
+End;
+
+
+Function FileTimeToWindowsFileTime(Const aFileTime : TFileTime) : Windows.FileTime;
+Begin
+  Result.dwLowDateTime := Cardinal(aFileTime.Value);
+  Result.dwHighDateTime := Cardinal(aFileTime.Value Shr 32);
+End;
+
+
+Function WindowsFileTimeToFileTime(Const aFileTime : Windows.FileTime) : TFileTime;
+Begin
+  Result.Value := Int64(aFileTime);
+End;
+
+
+Function FileGetModified(Const sFileName : String) : TFileTime;
+Var
+  aHandle : TFileHandle;
+Begin
+  aHandle := FileHandleOpen(CreateFile(PChar(sFileName), GENERIC_READ, FILE_SHARE_READ, Nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL Or FILE_FLAG_BACKUP_SEMANTICS, 0));
+  Try
+    If FileHandleIsValid(aHandle) Then
+      GetFileTime(aHandle.Value, Nil, Nil, @Result)
+    Else
+      Result := FileTimeZero;
+  Finally
+    FileHandleClose(aHandle);
+  End;
+End;
+
+
+Function FileVersionToString(Const aVersion : TFileVersion) : String;
+Begin
+  Result := StringFormat('%d.%d.%d.%d', [aVersion.Major, aVersion.Minor, aVersion.Release, aVersion.Build]);
+End;
+
+
+
+
+Function FileVersion(Const sFilename: String): TFileVersion;
+var
+  s : string;
+Begin
+  s := PathExtension(sFilename);
+  If (s = '.exe') or (s = '.dll') Then
+    Result := ApplicationFileVersion(sFilename)
+  Else
+    Result := DataFileVersion(sFilename);
+End;
+
+
+Function FileVersionZero : TFileVersion;
+Begin
+  MemoryZero(@Result, SizeOf(Result));
+End;
+
+
+Function DataFileVersion(Const sFilename: String): TFileVersion;
+Var
+  aFileTime : TFileTime;
+  iFileSize : Int64;
+Begin
+  // Compile a version number from the modified time and size of the file.
+
+  aFileTime := FileGetModified(sFilename);
+
+  Result.Major := Integer(Windows.FileTime(aFileTime).dwHighDateTime);
+  Result.Minor := Integer(Windows.FileTime(aFileTime).dwLowDateTime);
+
+  iFileSize := FileSize(sFilename);
+
+  Result.Release := Integer(iFileSize);
+  Result.Build := Integer(iFileSize Shr 32);
+End;
+
+
+Function ApplicationFileVersion(Const sFilename : String) : TFileVersion;
+Var
+  pBuffer : Pointer;
+  iSize   : Integer;
+  iTemp   : Cardinal;
+  pInfo   : Pointer;
+Begin
+  FillChar(Result, SizeOf(Result), 0);
+
+  iSize := GetFileVersionInfoSize(PChar(sFilename), iTemp);
+
+  If iSize > 0 Then
+  Begin
+    MemoryCreate(pBuffer, iSize);
+    Try
+      If GetFileVersionInfo(PChar(sFilename), 0, iSize, pBuffer) And VerQueryValue(pBuffer, '\', pInfo, iTemp) Then
+      Begin
+        Result.Major := PVSFixedFileInfo(pInfo)^.dwFileVersionMS Shr 16;
+        Result.Minor := PVSFixedFileInfo(pInfo)^.dwFileVersionMS And $FFFF;
+        Result.Release := PVSFixedFileInfo(pInfo)^.dwFileVersionLS Shr 16;
+        Result.Build := PVSFixedFileInfo(pInfo)^.dwFileVersionLS And $FFFF;
+      End;
+    Finally
+      MemoryDestroy(pBuffer, iSize);
+    End;
+  End;
+End;
+
+
+Function FileSize(Const sFileName : String) : Int64;
+Var
+  pResult : PLargeInteger;
+  aHandle : TFileHandle;
+Begin
+  aHandle := FileHandleOpen(CreateFile(PChar(sFileName), GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE, Nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
+  Try
+    If FileHandleIsValid(aHandle) Then
+    Begin
+      pResult := PLargeInteger(@Result);
+
+      pResult^.Low := GetFileSize(aHandle.Value, @pResult^.High);
+
+      If pResult^.Low = FileHandleInvalid.Value Then
+        Result := 0;
+    End
+    Else
+    Begin
+      Result := 0;
+    End;
+  Finally
+    FileHandleClose(aHandle);
+  End;
 End;
 
 

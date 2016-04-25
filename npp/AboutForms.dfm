@@ -14,7 +14,7 @@ inherited AboutForm: TAboutForm
     Left = 358
     Top = 151
     Width = 75
-    Height = 42
+    Height = 72
     Caption = 'Ok'
     ModalResult = 1
     TabOrder = 0
@@ -415,25 +415,13 @@ inherited AboutForm: TAboutForm
       WordWrap = True
     end
   end
-  object Button2: TButton
-    Left = 358
-    Top = 196
-    Width = 75
-    Height = 27
-    Hint = 'Run internal tests'
-    Caption = 'Tests'
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 3
-    OnClick = Button2Click
-  end
   object GroupBox1: TGroupBox
     Left = 8
     Top = 151
     Width = 281
     Height = 70
     Caption = 'Links'
-    TabOrder = 4
+    TabOrder = 3
     object lnkDoco: TLabel
       Left = 26
       Top = 20

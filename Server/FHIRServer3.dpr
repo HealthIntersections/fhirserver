@@ -235,13 +235,11 @@ uses
   FHIRValueSetChecker in 'FHIRValueSetChecker.pas',
   TerminologyWebServer in 'TerminologyWebServer.pas',
   FHIRServerConstants in 'FHIRServerConstants.pas',
-  DecimalTests in '..\Libraries\tests\DecimalTests.pas',
   UcumTests in '..\Libraries\tests\UcumTests.pas',
   FHIRServerUtilities in 'FHIRServerUtilities.pas',
   SearchProcessor in 'SearchProcessor.pas',
   AuthServer in 'AuthServer.pas',
   libeay32 in '..\reference-platform\Support\libeay32.pas',
-  JWTTests in '..\reference-platform\Support\JWTTests.pas',
   HMAC in '..\reference-platform\Support\HMAC.pas',
   JWT in '..\reference-platform\Support\JWT.pas',
   SCIMServer in 'SCIMServer.pas',
@@ -273,10 +271,9 @@ uses
   SCIMObjects in '..\reference-platform\dstu3\SCIMObjects.pas',
   NarrativeGenerator in '..\reference-platform\dstu3\NarrativeGenerator.pas',
   FHIRSecurity in '..\reference-platform\dstu3\FHIRSecurity.pas',
-  FHIRParserTests in '..\tests\FHIRParserTests.pas',
   FHIRNarrativeGenerator in '..\reference-platform\dstu3\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu3\SmartOnFhirUtilities.pas',
-  FHIRPath in '..\reference-platform\dstu3\FHIRPath.pas',
+  FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
   FHIRBase in '..\reference-platform\dstu3\FHIRBase.pas',
@@ -299,8 +296,11 @@ uses
   MPISearch in 'MPISearch.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\dstu3\FHIROperations.pas',
-  FHIRIndexConstants in '..\reference-platform\dstu3\FHIRIndexConstants.pas',
-  FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas';
+  FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
+  fluentpath in '..\Libraries\fluentpath.pas',
+  FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
+  FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
+  FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas';
 
 begin
   JclStartExceptionTracking;

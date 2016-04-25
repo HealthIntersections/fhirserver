@@ -33,13 +33,13 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport,
-  ParseMap,
+  ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers,
   KDBManager, KDBDialects,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
-  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities,
+  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
 
   ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller;
 
@@ -109,7 +109,7 @@ Type
     FLastResourceId: array [TFHIRResourceType] of integer;
     FLastEntryKey: integer;
     FLastCompartmentKey: integer;
-    FValidatorContext : TFHIRServerValidatorContext;
+    FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
     FResConfig: TConfigArray;
     FSupportTransaction: Boolean;
@@ -137,6 +137,7 @@ Type
     procedure RecordFhirSession(session: TFhirSession);
     procedure CloseFhirSession(key: integer);
     function GetSessionByKey(userkey : integer) : TFhirSession;
+    procedure checkDefinitions;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
     function DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
@@ -198,7 +199,7 @@ Type
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
 
     Property OwnerName: String read FOwnerName write FOwnerName;
-    Property ValidatorContext : TFHIRServerValidatorContext read FValidatorContext;
+    Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer;
       allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
     function LookupCode(system, code: String): String;
@@ -270,7 +271,7 @@ begin
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FClaimQueue := TFHIRClaimList.Create;
 
-  FSubscriptionManager := TSubscriptionManager.Create;
+  FSubscriptionManager := TSubscriptionManager.Create(FIndexes.Compartments.Link);
   FSubscriptionManager.dataBase := FDB.Link;
   FSubscriptionManager.Base := 'http://localhost/';
   FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
@@ -380,7 +381,7 @@ begin
 
     FIndexes.ReconcileIndexes(conn);
 
-    FValidatorContext := TFHIRServerValidatorContext.Create;
+    FValidatorContext := TFHIRServerWorkerContext.Create;
     FValidator := TFHIRValidator.Create(FValidatorContext.link);
 
     if TerminologyServer <> nil then
@@ -397,6 +398,8 @@ begin
       FValidatorContext.LoadFromDefinitions(fn);
       writelnt('Load Store');
       LoadExistingResources(conn);
+      writelnt('Check Definitions');
+//      checkDefinitions();
       writelnt('Load Subscription Queue');
       FSubscriptionManager.LoadQueue(conn);
     end;
@@ -1079,7 +1082,7 @@ begin
     with ct.actorList.append do
     begin
       roleList.append.text := 'Server Host';
-      {$IFDEF FHIR_DSTU2}
+      {$IFDEF FHIR2}
       entity := TFhirReference.Create;
       entity.reference := 'Device/this-server';
       {$ELSE}
@@ -1242,6 +1245,68 @@ begin
   tag.TransactionId := conn.transactionId;
 end;
 
+procedure TFHIRDataStore.checkDefinitions;
+var
+  s, sx : string;
+  c, t : integer;
+  fpe : TFHIRExpressionEngine;
+  l : TFHIRStructureDefinitionList;
+  sd : TFhirStructureDefinition;
+  ed: TFhirElementDefinition;
+  inv : TFhirElementDefinitionConstraint;
+  td : TFHIRTypeDetails;
+  expr : TFHIRExpressionNode;
+begin
+  s := '';
+  c := 0;
+  t := 0;
+  fpe:= TFHIRExpressionEngine.create(FValidatorContext.Link);
+  try
+    for sd in FValidatorContext.Profiles.ProfilesByURL.Values do
+      {$IFDEF FHIR2}
+      if sd.constrainedType = DefinedTypesNull then
+      {$ENDIF}
+
+      for ed in sd.snapshot.elementList do
+        for inv in ed.constraintList do
+        begin
+          sx := {$IFDEF FHIR3} inv.expression {$ELSE} inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') {$ENDIF};
+          if (sx <> '') and not sx.contains('$parent') then
+          begin
+            inc(t);
+            try
+              expr := fpe.parse(sx);
+              try
+                if sd.kind = StructureDefinitionKindResource then
+                  td := fpe.check(nil, sd.id, ed.path, '', expr, false)
+                else
+                  td := fpe.check(nil, 'DomainResource', ed.path, '', expr, false);
+                try
+                  if (td.hasNoTypes) then
+                    s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
+                  else
+                    inc(c);
+                finally
+                  td.free;
+                end;
+              finally
+                expr.Free;
+
+              end;
+            except
+              on e : Exception do
+                s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): exception "'+e.message+'" ('+sx+')' + #13#10;
+            end;
+          end;
+        end;
+  finally
+    fpe.Free;
+  end;
+  writeln(StringFormat('checking expressions: %d of %d ok', [c, t]));
+  if (s <> '') then
+    StringToFile(s, 'c:\temp\fail.txt', TEncoding.UTF8);
+end;
+
 procedure TFHIRDataStore.checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
 begin
   if tag.ConfirmedStored then
@@ -1283,35 +1348,26 @@ end;
 
 procedure TFHIRDataStore.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TAdvBuffer; b : TStringBuilder);
 var
-  opJ : TFHIROperationOutcome;
-  opX : TFHIROperationOutcome;
+  ctxt : TFHIRValidatorContext;
   issue : TFHIROperationOutcomeIssue;
 begin
   try
-    opj := nil;
-    opx := nil;
+    ctxt := TFHIRValidatorContext.Create;
     try
-      opX := FValidator.validateInstance(bufXml, ffXml, risRequired, 'validate check', nil);
-      opJ := FValidator.validateInstance(bufJson, ffJson, risRequired, 'validate check', nil);
-      if (opX.issueList.errorCount + opJ.issueList.errorCount = 0) then
-      begin
-        writeln(inttostr(i)+': '+rtype+'/'+id+': passed validation');
-    //      b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+': passed validation'+#13#10);
-      end
+      FValidator.validate(ctxt, bufXml, ffXml);
+      FValidator.validate(ctxt, bufJson, ffJson);
+      if (ctxt.Errors.Count = 0) then
+        writeln(inttostr(i)+': '+rtype+'/'+id+': passed validation')
       else
       begin
         writeln(inttostr(i)+': '+rtype+'/'+id+': failed validation');
         b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
-        for issue in opX.issueList do
+        for issue in ctxt.Errors do
           if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
-            b.Append('  xml: '+issue.Summary+#13#10);
-        for issue in opJ.issueList do
-          if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
-            b.Append('  json: '+issue.Summary+#13#10);
+            b.Append('  '+issue.Summary+#13#10);
       end;
     finally
-      opj.Free;
-      opx.free;
+      ctxt.Free;
     end;
   except
     on e:exception do
@@ -1499,7 +1555,7 @@ begin
 
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR_DSTU3}, frtCodeSystem {$ENDIF}] then
+    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR3}, frtCodeSystem {$ENDIF}] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
       FValidatorContext.seeResource(resource as TFhirStructureDefinition)
@@ -1582,7 +1638,7 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(origin);
+  request := TFHIRRequest.Create(origin, FIndexes.Compartments.Link);
   try
     request.ResourceType := res.ResourceType;
     request.CommandType := fcmdCreate;

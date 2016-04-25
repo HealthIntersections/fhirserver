@@ -51,7 +51,7 @@ uses
   AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvJson,
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
-  FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations,
+  FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
   ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
@@ -601,6 +601,9 @@ begin
     end;
     for i := 0 to list.Count - 1 do
       list[i].Tags['internal'] := '1';
+    {$IFDEF FHIR3}
+    FRepository.TerminologyServer.declareCodeSystems(list);
+    {$ENDIF}
     storeResources(list, roConfig, true);
   finally
     list.Free;
@@ -920,7 +923,7 @@ begin
     html := TAdvStringBuilder.Create;
     try
       html.append('<div><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+RELEASE_DATE+'. '+
-       'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th><th>Validate</th></tr>'+#13#10);
+       'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
       for a := TFHIRResourceType(1)  to High(TFHIRResourceType) do
       begin
         if FRepository.ResConfig[a].Supported and (a <> frtMessageHeader) then
@@ -1039,7 +1042,7 @@ begin
 
       html.append('</div>'#13#10);
       // operations
-      oConf.text.div_ := ParseXhtml(lang, html.asString, xppReject);
+      oConf.text.div_ := TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString);
     finally
       html.free;
     end;
@@ -1545,7 +1548,7 @@ begin
 
       bundle := TFHIRBundle.Create(BundleTypeHistory);
       try
-        if response.Format <> ffAsIs then
+        if response.Format <> ffUnspecified then
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
         bundle.total := inttostr(total);
         bundle.Tags['sql'] := sql;
@@ -2053,7 +2056,7 @@ begin
           bundle.Tags['sql'] := sql;
 
           base := AppendForwardSlash(Request.baseUrl)+CODES_TFhirResourceType[request.ResourceType]+'/_search?';
-          if response.Format <> ffAsIs then
+          if response.Format <> ffUnspecified then
             base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
           bundle.link_List.AddRelRef('self', base+link);
 
@@ -2537,6 +2540,7 @@ var
   mem : TAdvMemoryStream;
   xml : TFHIRComposer;
   vcl : TVclStream;
+  ctxt : TFHIRValidatorContext;
 begin
   try
     if opDesc = '' then
@@ -2547,33 +2551,27 @@ begin
       outcome := TFhirOperationOutcome.create;
     end
     else if (request.Source <> nil) then
-      outcome := FRepository.validator.validateInstance(request.Source, request.PostFormat, risOptional, opDesc, nil)
+    begin
+      ctxt := TFHIRValidatorContext.Create;
+      try
+        ctxt.ResourceIdRule := risOptional;
+        ctxt.OperationDescription := opDesc;
+        FRepository.validator.validate(ctxt, request.Source, request.PostFormat, nil);
+        outcome := FRepository.validator.describe(ctxt);
+      finally
+        ctxt.Free;
+      end;
+    end
     else
     begin
-      buffer := TAdvBuffer.create;
+      ctxt := TFHIRValidatorContext.Create;
       try
-        mem := TAdvMemoryStream.create;
-        vcl := TVclStream.create;
-        try
-          mem.Buffer := buffer.Link;
-          vcl.stream := mem.Link;
-
-          xml := TFHIRXmlComposer.create(request.Lang);
-          try
-            if request.Resource <> nil then
-              xml.Compose(vcl, request.resource, true, nil)
-            else
-              raise Exception.Create('Error: '+response.Message);
-          finally
-            xml.free;
-          end;
-        finally
-          vcl.free;
-          mem.free;
-        end;
-        outcome := FRepository.validator.validateInstance(buffer, ffXml, risOptional, opDesc, nil);
+        ctxt.ResourceIdRule := risOptional;
+        ctxt.OperationDescription := opDesc;
+        FRepository.validator.validate(ctxt, request.Resource, nil);
+        outcome := FRepository.validator.describe(ctxt);
       finally
-        buffer.free;
+        ctxt.Free;
       end;
     end;
 
@@ -4783,10 +4781,11 @@ var
   request: TFHIRRequest;
   response : TFHIRResponse;
 begin
+  CreateIndexer;
   Connection.StartTransact;
   try
     // cut us off from the external request
-    request := TFHIRRequest.create(origin);
+    request := TFHIRRequest.create(origin, FIndexer.Definitions.Compartments.Link);
     response := TFHIRResponse.create;
     try
       for i := 0 to list.count - 1 do
@@ -5568,6 +5567,7 @@ var
   builder : TQuestionnaireBuilder;
   questionnaire : TFHIRQuestionnaire;
   needSecure : boolean;
+  ctxt : TFHIRValidatorContext;
 begin
   try
     manager.NotFound(request, response);
@@ -5637,7 +5637,15 @@ begin
         finally
           profile.free;
         end;
-        op := manager.FRepository.validator.validateInstance(response.Resource, risOptional, 'Produce Questionnaire', nil);
+        ctxt := TFHIRValidatorContext.Create;
+        try
+          ctxt.ResourceIdRule := risOptional;
+          ctxt.OperationDescription := 'Produce Questionnaire';
+          manager.FRepository.validator.validate(ctxt, response.Resource);
+          op := manager.FRepository.validator.describe(ctxt);
+        finally
+          ctxt.Free;
+        end;
         try
           if (op.hasErrors) then
           begin
@@ -5690,7 +5698,7 @@ function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRReques
 var
   needSecure : boolean;
 begin
-  {$IFDEF FHIR_DSTU3}
+  {$IFDEF FHIR3}
   if (params.str['profile'] = '') then
     result := TFhirExpansionProfile.Create
   else if params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details' then
@@ -5836,7 +5844,6 @@ end;
 
 procedure TFhirLookupCodeSystemOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
-  coding : TFhirCoding;
   req : TFHIRLookupOpRequest;
   resp : TFHIRLookupOpResponse;
 begin
@@ -5867,7 +5874,8 @@ begin
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.FRepository.TerminologyServer.lookupCode(coding, {$IFDEF FHIR_DSTU3}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            manager.FRepository.TerminologyServer.lookupCode(req.coding, {$IFDEF FHIR3}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
           except
@@ -5898,7 +5906,7 @@ end;
 
 function TFhirLookupCodeSystemOperation.formalURL: String;
 begin
-  {$IFDEF FHIR_DSTU3}
+  {$IFDEF FHIR3}
   result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
   {$ELSE}
   result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup';
@@ -5947,6 +5955,7 @@ var
   opDesc : string;
   result : boolean;
   needSecure : boolean;
+  ctxt : TFHIRValidatorContext;
   function getParam(name : String) : String;
   var
     params : TFhirParameters;
@@ -5987,36 +5996,17 @@ begin
     else
       opDesc := 'Validate resource '+request.id;
 
-    if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
-      outcome := manager.FRepository.validator.validateInstance(request.Source, request.PostFormat, risOptional, opDesc, profile)
-    else
-    begin
-      buffer := TAdvBuffer.create;
-      try
-        mem := TAdvMemoryStream.create;
-        vcl := TVclStream.create;
-        try
-          mem.Buffer := buffer.Link;
-          vcl.stream := mem.Link;
-          xml := TFHIRXmlComposer.create(request.Lang);
-          try
-            if request.Resource = nil then
-              raise Exception.Create('No resource found to validate');
-            if request.Resource is TFhirParameters then
-              xml.Compose(vcl, TFhirParameters(request.resource).NamedParameter['resource'] as TFhirResource, true, nil)
-            else // request.Resource <> nil
-              xml.Compose(vcl, request.resource, true, nil);
-          finally
-            xml.free;
-          end;
-        finally
-          vcl.free;
-          mem.free;
-        end;
-        outcome := manager.FRepository.validator.validateInstance(buffer, ffXml, risOptional, opDesc, profile);
-      finally
-        buffer.free;
-      end;
+    ctxt := TFHIRValidatorContext.Create;
+    try
+      ctxt.ResourceIdRule := risOptional;
+      ctxt.OperationDescription := opDesc;
+      if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
+        manager.FRepository.validator.validate(ctxt, request.Source, request.PostFormat, profile)
+      else
+        manager.FRepository.validator.validate(ctxt, request.Resource, profile);
+      outcome := manager.FRepository.validator.describe(ctxt);
+    finally
+      ctxt.Free;
     end;
 
     // todo: check version id integrity
@@ -6233,7 +6223,7 @@ function TFhirPatientEverythingOperation.CreateDefinition(base : String): TFHIRO
 begin
   result := CreateBaseDefinition(base);
   try
-    result.comment := 'This server has little idea what a valid patient record is; it returns everything in the patient compartment, and any resource directly referred to from one of these';
+    result.{$IFDEF FHIR2}notes{$ELSE}comment{$ENDIF} := 'This server has little idea what a valid patient record is; it returns everything in the patient compartment, and any resource directly referred to from one of these';
     result.system := False;
     result.type_List.AddItem('Patient');
     result.instance := true;
@@ -6244,7 +6234,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Patient record as a bundle';
-      type_ := AllTypesBundle;
+      type_ := {$IFDEF FHIR3}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
     end;
     result.Link;
   finally
@@ -6274,7 +6264,7 @@ begin
     patient := nil;
     try
 
-      // first, we have toi convert from the patient id to a compartment id
+      // first, we have to convert from the patient id to a compartment id
       if manager.FindResource(frtPatient, request.Id, false, rkey, request, response, '') then
       begin
         request.compartmentId := request.Id;
@@ -6429,7 +6419,6 @@ function TFhirGenerateDocumentOperation.CreateDefinition(base: String): TFHIROpe
 begin
   result := CreateBaseDefinition(base);
   try
-    result.comment := '';
     result.system := False;
     result.type_List.AddItem('Composition');
     result.instance := true;
@@ -6440,7 +6429,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Composition as a bundle (document)';
-      type_ := AllTypesBundle;
+      type_ := {$IFDEF FHIR3}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
     end;
     result.Link;
   finally

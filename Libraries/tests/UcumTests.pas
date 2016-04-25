@@ -117,18 +117,19 @@ procedure TUcumTests.CheckValidation(oElement : IXmlDomElement);
 var
   oChild : IXMLDOMElement;
   bOk : Boolean;
-  Msg : String;
+  Msg, id : String;
 Begin
   bOk := true;
   Msg := '';
   oChild := TMsXmlParser.FirstChild(oElement);
   while (oChild <> nil) Do
   Begin
-    bOk := TestValidationCase(TMsXmlParser.GetAttribute(oChild, 'id'),  TMsXmlParser.GetAttribute(oChild, 'unit'), StringToBoolean(TMsXmlParser.GetAttribute(oChild, 'valid')), Msg) and bOk;
+    id := TMsXmlParser.GetAttribute(oChild, 'id');
+    bOk := TestValidationCase(id,  TMsXmlParser.GetAttribute(oChild, 'unit'), StringToBoolean(TMsXmlParser.GetAttribute(oChild, 'valid')), Msg) and bOk;
+    if not bOk then
+      raise exception.Create('Error running case '+id+': '+Msg);
     oChild := TMsXmlParser.NextSibling(oChild);
   End;
-  if not bOk then
-    raise exception.Create(Msg);
 End;
 
 class procedure TUcumTests.runTests;
@@ -210,20 +211,13 @@ End;
 
 procedure TUcumTests.TestConversionCase(id, value, srcUnit, dstUnit, outcome: String);
 var
-  ctxt : TSmartDecimalContext;
   v, r, o : TSmartDecimal;
 begin
-  ctxt := TSmartDecimalContext.Create;
-  Try
-    v := ctxt.value(value);
-    o := ctxt.value(outcome);
-    r := FUcum.convert(v, srcUnit, dstunit);
-    if r.Compares(o) <> 0 then
-       Error('TestConversionCase', 'case '+id+': conversion of '+value+' '+srcUnit+' to '+dstUnit+' failed. Expected '+outcome+' but got '+r.AsString);
-    assert(r.hasContext(v));
-  Finally
-    ctxt.free;
-  End;
+  v := TSmartDecimal.valueOf(value);
+  o := TSmartDecimal.valueOf(outcome);
+  r := FUcum.convert(v, srcUnit, dstunit);
+  if r.Compares(o) <> 0 then
+     Error('TestConversionCase', 'case '+id+': conversion of '+value+' '+srcUnit+' to '+dstUnit+' failed. Expected '+outcome+' but got '+r.AsString);
 end;
 
 procedure TUcumTests.TestDisplaynameCase(id, unit_, display: String);
@@ -238,32 +232,26 @@ end;
 procedure TUcumTests.TestMultiplicationCase(id, v1, u1, v2, u2, vRes,uRes: String);
 var
   o1, o2, o3 : TUcumPair;
-  context : TSmartDecimalContext;
 begin
-  context := TSmartDecimalContext.create;
-  try
-    o1 := TUcumPair.Create(context.value(v1).link, u1);
+  o1 := TUcumPair.Create(TSmartDecimal.valueOf(v1), u1);
+  Try
+    o2 := TUcumPair.Create(TSmartDecimal.valueOf(v2), u2);
     Try
-      o2 := TUcumPair.Create(context.value(v2).link, u2);
+      o3 := FUcum.multiply(o1, o2);
       Try
-        o3 := FUcum.multiply(o1, o2);
-        Try
-          if o3.UnitCode <> uRes Then
-            Error('TestMultiplicationCase', 'Error in multiplication: got units '+o3.unitCode +' expecting '+URes);
-          if (o3.Value.AsString <> vRes) Then
-            Error('TestMultiplicationCase', 'Error in multiplication: got value '+o3.Value.AsString +' expecting '+vRes);
-        Finally
-          o3.Free;
-        End;
+        if o3.UnitCode <> uRes Then
+          Error('TestMultiplicationCase', 'Error in multiplication: got units '+o3.unitCode +' expecting '+URes);
+        if (o3.Value.AsString <> vRes) Then
+          Error('TestMultiplicationCase', 'Error in multiplication: got value '+o3.Value.AsString +' expecting '+vRes);
       Finally
-        o2.Free;
+        o3.Free;
       End;
     Finally
-      o1.Free;
+      o2.Free;
     End;
-  finally
-    context.Free;
-  end;
+  Finally
+    o1.Free;
+  End;
 end;
 
 Function TUcumTests.TestValidationCase(id, unit_: String; isValid: Boolean; var vMsg : String) : Boolean;

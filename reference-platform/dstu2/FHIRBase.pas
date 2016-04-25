@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFNDEF FHIR_DSTU2}
+{$IFNDEF FHIR2}
 This is the dstu2 version of the FHIR code
 {$ENDIF}
 
@@ -87,9 +87,10 @@ Type
     Format support.
   }
   TFHIRFormat = (
-    ffAsIs, {@enum.value ffAsIs leave the format as received/expected, or default to XML}
+    ffUnspecified, {@enum.value ffAsIs leave the format as received/expected, or default to XML}
     ffXml, {@enum.value ffXml XML}
     ffJson,{@enum.value ffJson JSON}
+    ffJsonLD,{@enum.value ffJson JSON}
     ffTurtle, {@enum.value ffTurtle RDF using Turtle syntax}
     ffXhtml); {@enum.value ffXhtml XHTML - only for retrieval from the server}
 
@@ -132,8 +133,8 @@ Const
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
     'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
-  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('AsIs', 'XML', 'JSON', 'RDF/Turtle', 'XHTML');
-  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/turtle; x-dialect=fhir', 'text/xhtml');
+  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'JSON-LD', 'RDF/Turtle', 'XHTML');
+  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'application/ld+json', 'text/turtle; x-dialect=fhir', 'text/xhtml');
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =
@@ -323,6 +324,7 @@ type
     Function Get(name : String):String;
     function GetEnumerator : TFHIRAttributeListEnumerator;
     Procedure SetValue(name : String; value :String);
+    Procedure Add(name : String; value :String); overload;
   End;
 
   TFHIRBaseList = class;
@@ -353,12 +355,14 @@ type
     function HasComments : Boolean;
     function FhirType : String; virtual;
     function isPrimitive : boolean; virtual;
+    function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
     function isMetaDataBased : boolean; virtual;
     Function PerformQuery(path : String):TFHIRBaseList;
     function hasType(t : String) : boolean; overload;
     function hasType(tl : Array of String) : boolean; overload;
     function describe : String;
+    procedure getProperty(hash : integer; name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
 
   published
     {@member comments
@@ -420,22 +424,25 @@ type
     FContent : String;
     procedure SetNodeType(const Value: TFHIRHtmlNodeType);
     function GetChildNodes: TFhirXHtmlNodeList;
+    function GetAttributes: TFHIRAttributeList;
   protected
     Procedure GetChildrenByName(name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     Constructor Create; Override;
+    Constructor Create(nodeType : TFHIRHtmlNodeType) ; Overload;
     Constructor Create(name : String) ; Overload;
     Destructor Destroy; Override;
     {!script hide}
     function Link : TFhirXHtmlNode; Overload;
     function Clone : TFhirXHtmlNode; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    property Attributes : TFHIRAttributeList read FAttributes;
+    property Attributes : TFHIRAttributeList read GetAttributes;
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
     function primitiveValue : string; override;
     function FhirType : String; override;
+    function NsDecl : String; virtual;
     {!script show}
 
     {@member AsPlainText
@@ -580,17 +587,57 @@ type
     Property Nodes[index : Integer] : TFHIRXHtmlNode read GetItemN write SetItemN; default;
   End;
 
-  TFHIRPathOperation = (opNull, poEquals, poEquivalent, poNotEquals, poNotEquivalent, poLessThen, poGreater, poLessOrEqual, poGreaterOrEqual,
-     poUnion, poIn, poAnd, poOr, poXor, poImplies, poPlus, poMinus, poConcatenate);
+  TFHIRPathOperation = (
+       popNull, popEquals, popEquivalent, popNotEquals, popNotEquivalent, popLessThan, popGreater, popLessOrEqual, popGreaterOrEqual,
+       popIs, popAs, popUnion, popOr, popAnd, popXor, popImplies, popTimes, popDivideBy, popPlus, popConcatenate, popMinus, popDiv, popMod, popIn, popContains);
   TFHIRPathOperationSet = set of TFHIRPathOperation;
-  TFHIRPathFunction = (pfNull, pfEmpty, pfNot, pfWhere, pfAll, pfAny, pfItem, pfFirst, pfLast, pfTail, pfCount, pfAsInteger, pfStartsWith, pfSubString, pfLength, pfMatches, pfDistinct, pfResolve, pfContains, pfExtension, pfLog);
-  TFHIRExpressionNodeType = (entName, entFunction, entConstant, entGroup);
+
+  TFHIRPathFunction = (
+    pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
+    pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
+    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendents,
+    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension);
+
+  TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup);
+  TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
 
 const
-  CODES_TFHIRPathOperation : array [TFHIRPathOperation] of String = ('', '=' , '~' , '!=' , '!~' , '<' , '>' , '<=' , '>=' , '|' , 'in' , 'and' , 'or' , 'xor', 'implies', '+' , '-' , '&');
-  CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = ('', 'empty' , 'not' , 'where' , 'all' , 'any' , 'item' , 'first' , 'last' , 'tail' , 'count' , 'asInteger' , 'startsWith' , 'substring', 'length' , 'matches' , 'distinct' , 'resolve' , 'contains', 'extension', 'log');
+  CODES_TFHIRPathOperation : array [TFHIRPathOperation] of String = (
+    '', '=' , '~' , '!=' , '!~' , '<' , '>' , '<=' , '>=' , 'is', 'as', '|', 'or' , 'and' , 'xor', 'implies',
+     '*', '/', '+' , '&', '-', 'div', 'mod', 'in', 'contains');
+
+  CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = (
+    '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
+    'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
+    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendents',
+    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension');
 
 type
+  TFHIRTypeDetails = class (TAdvObject)
+  private
+    id : integer;
+    FTypes : TStringList;
+    FCollectionStatus : TFHIRCollectionStatus;
+  public
+    constructor create(status : TFHIRCollectionStatus; types : array of String);
+    constructor createList(status : TFHIRCollectionStatus; types : TStringList);
+    destructor Destroy; override;
+    function Link : TFHIRTypeDetails; overload;
+    procedure addType(n : String);
+    procedure addTypes(n : TStringList); overload;
+    procedure addTypes(types : array of String); overload;
+    function hasType(types : array of String) : boolean; overload;
+    function hasType(types : TStringList) : boolean; overload;
+    function hasType(typeName : String) : boolean; overload;
+    procedure update(source : TFHIRTypeDetails);
+    function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
+    function hasNoTypes() : boolean;
+    function toSingleton : TFHIRTypeDetails;
+    property types : TStringList read FTypes;
+    property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
+    function describe : String;
+  end;
+
   TFHIRExpressionNode = class (TAdvObject)
   private
     FTag : integer;
@@ -603,9 +650,9 @@ type
     FOperation : TFHIRPathOperation;
     FProximal : boolean;
     FOpNext: TFHIRExpressionNode;
-    FTypes : TAdvStringSet;
-    FOpTypes : TAdvStringSet;
-    FKind: TFHIRExpressionNodeType;
+    FTypes : TFHIRTypeDetails;
+    FOpTypes : TFHIRTypeDetails;
+    FKind: TFHIRExpressionNodeKind;
     FUniqueId : integer;
     FSourceLocationStart : TSourceLocation;
     FSourceLocationEnd : TSourceLocation;
@@ -616,8 +663,8 @@ type
     procedure SetInner(const Value: TFHIRExpressionNode);
     procedure SetGroup(const Value: TFHIRExpressionNode);
     procedure SetFunctionId(const Value: TFHIRPathFunction);
-    procedure SetTypes(const Value: TAdvStringSet);
-    procedure SetOpTypes(const Value: TAdvStringSet);
+    procedure SetTypes(const Value: TFHIRTypeDetails);
+    procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
   public
     Constructor Create(uniqueId : Integer);
@@ -640,7 +687,7 @@ type
     function opLocation : String;
 
     property tag : integer read FTag write FTag;
-    property kind : TFHIRExpressionNodeType read FKind write FKind;
+    property kind : TFHIRExpressionNodeKind read FKind write FKind;
     property name : String read FName write FName;
     property constant : String read FConstant write FConstant;
     property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
@@ -650,20 +697,22 @@ type
     property Operation : TFHIRPathOperation read FOperation write FOperation;
     property Proximal : boolean read FProximal write FProximal;
     property OpNext : TFHIRExpressionNode read FOpNext write SetOpNext;
-    property Types : TAdvStringSet read FTypes write SetTypes;
-    property OpTypes : TAdvStringSet read FOpTypes write SetOpTypes;
+    property Types : TFHIRTypeDetails read FTypes write SetTypes;
+    property OpTypes : TFHIRTypeDetails read FOpTypes write SetOpTypes;
   end;
 
 function noList(e : TFHIRObjectList) : boolean;
 function compareDeep(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareDeep(e1, e2 : TFHIRBase; allowNull : boolean) : boolean; overload;
 function compareDeep(div1, div2 : TFhirXHtmlNode; allowNull : boolean) : boolean; overload;
+function isPrimitiveType(name : String):boolean;
 
 Implementation
 
 Uses
   StringSupport,
   FHIRUtilities,
+  FHIRXhtml,
   FHIRTypes,
   FHIRResources,
   FHIRPath;
@@ -731,6 +780,12 @@ begin
   result := FCommentsStart;
 end;
 
+procedure TFHIRBase.getProperty(hash: integer; name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
+begin
+  if checkValid then
+    raise Exception.Create('Property '+name+' is not valid');
+end;
+
 function TFHIRBase.HasXmlCommentsStart: Boolean;
 begin
   result := (FCommentsStart <> nil) and (FCommentsStart.count > 0);
@@ -761,6 +816,11 @@ end;
 function TFHIRBase.hasType(t: String): boolean;
 begin
   result := t = FhirType;
+end;
+
+function TFHIRBase.hasPrimitiveValue: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRBase.hasType(tl: array of String): boolean;
@@ -870,6 +930,11 @@ begin
 end;
 
 { TFHIRAttributeList }
+procedure TFHIRAttributeList.Add(name, value: String);
+begin
+  SetValue(name, value);
+end;
+
 function TFHIRAttributeList.Count: Integer;
 begin
   result := Inherited Count;
@@ -1044,7 +1109,7 @@ begin
   case NodeType of
     fhntText : result := Content;
     fhntComment : result := '';
-  else // fhntElement, fhntDocument
+  else // fhntElement, fhntDocumenk
     s := '';
     for i := 0 to ChildNodes.count - 1 do
       s := s + ChildNodes[i].AsPlainText;
@@ -1064,7 +1129,7 @@ begin
   FName := TFhirXHtmlNode(oSource).FName;
   FContent := TFhirXHtmlNode(oSource).FContent;
   if TFhirXHtmlNode(oSource).Attributes <> nil Then
-    FAttributes.assign(TFhirXHtmlNode(oSource).Attributes);
+    Attributes.assign(TFhirXHtmlNode(oSource).Attributes);
   if TFhirXHtmlNode(oSource).FChildNodes <> nil then
     ChildNodes.assign(TFhirXHtmlNode(oSource).FChildNodes);
 end;
@@ -1072,6 +1137,12 @@ end;
 function TFhirXHtmlNode.Clone: TFhirXHtmlNode;
 begin
   result := TFhirXHtmlNode(inherited Clone);
+end;
+
+constructor TFhirXHtmlNode.Create(nodeType: TFHIRHtmlNodeType);
+begin
+  Create;
+  NodeType := fhntElement;
 end;
 
 constructor TFhirXHtmlNode.Create(name: String);
@@ -1111,6 +1182,13 @@ begin
     end;
 end;
 
+function TFhirXHtmlNode.GetAttributes: TFHIRAttributeList;
+begin
+  if FAttributes = nil then
+    FAttributes := TFHIRAttributeList.create;
+  result := FAttributes;
+end;
+
 function TFhirXHtmlNode.GetChildNodes: TFhirXHtmlNodeList;
 begin
   if FChildNodes = nil then
@@ -1123,9 +1201,11 @@ var
   i : integer;
 begin
   inherited;
+  if FAttributes <> Nil then
   for i := 0 to FAttributes.Count - 1 do
     if name = '@'+FAttributes[i].FName then
       list.add(FAttributes[i].Link);
+  if FChildNodes <> Nil then
   for i := 0 to FChildNodes.Count - 1 do
     if name = FChildNodes[i].FName then
       list.add(FChildNodes[i].Link);
@@ -1157,9 +1237,20 @@ begin
   end;
 end;
 
+function TFhirXHtmlNode.NsDecl: String;
+var
+  attr : TFHIRAttribute;
+begin
+  result := '';
+  if FAttributes <> nil then
+   	for attr in Attributes do
+ 	  	if attr.Name = 'xmlns' then
+ 		  	exit(attr.value);
+end;
+
 function TFhirXHtmlNode.primitiveValue: string;
 begin
-  result := FhirHtmlToText(self);
+  result := AsPlainText;
 end;
 
 function TFhirXHtmlNode.SetAttribute(name, value: String) : TFhirXHtmlNode;
@@ -1577,7 +1668,7 @@ begin
   FType := sType;
   FClass := cClass;
   FIsList := bList;
-  FList := oList.Link;
+  FList := oList;
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; sValue: String);
@@ -1766,9 +1857,8 @@ end;
 
 function TFhirAttributeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirAttributeListEnumerator.GetCurrent : TFhirAttribute;
@@ -1794,9 +1884,8 @@ end;
 
 function TFhirXhtmlNodeListEnumerator.MoveNext : boolean;
 begin
+  inc(FIndex);
   Result := FIndex < FList.count;
-  if Result then
-    Inc(FIndex);
 end;
 
 function TFhirXhtmlNodeListEnumerator.GetCurrent : TFhirXhtmlNode;
@@ -1894,10 +1983,10 @@ begin
     msg := 'Reference Count mistmatch'
   else
     case kind of
-    entName:
+    enkName:
       if Name = '' then
         msg := 'No Name provided @ '+location;
-    entFunction:
+    enkFunction:
       begin
         if FFunctionId = pfNull then
           msg := 'No Function id provided @ '+location;
@@ -1905,10 +1994,10 @@ begin
           if not n.check(msg, 0) then
             break;
       end;
-    entConstant:
+    enkConstant:
       if FConstant = '' then
         msg := 'No Constant provided @ '+location;
-    entGroup:
+    enkGroup:
       if FGroup = nil then
         msg := 'No Group provided @ '+location
       else
@@ -1918,7 +2007,7 @@ begin
     FInner.check(msg, 0);
   if (msg = '') then
     begin
-    if FOperation = opNull then
+    if FOperation = popNull then
     begin
       if FOpNext <> nil then
         msg := 'Next provided when it shouldn''t be @ '+location
@@ -1935,7 +2024,7 @@ end;
 function TFHIRExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$context', '$parent', '$resource'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource'], name)
   else
     result := true;
 end;
@@ -1993,7 +2082,7 @@ begin
   FOpNext := Value;
 end;
 
-procedure TFHIRExpressionNode.SetTypes(const Value: TAdvStringSet);
+procedure TFHIRExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
 begin
   FTypes.Free;
   FTypes := Value;
@@ -2002,10 +2091,10 @@ end;
 function TFHIRExpressionNode.summary: String;
 begin
   case FKind of
-    entName: result := inttostr(uniqueId)+': '+FName;
-    entFunction: result := inttostr(uniqueId)+': '+CODES_TFHIRPathFunctions[FFunctionId]+'()';
-    entConstant: result := inttostr(uniqueId)+': "'+FConstant+'"';
-    entGroup: result := inttostr(uniqueId)+': (Group)';
+    enkName: result := inttostr(uniqueId)+': '+FName;
+    enkFunction: result := inttostr(uniqueId)+': '+CODES_TFHIRPathFunctions[FFunctionId]+'()';
+    enkConstant: result := inttostr(uniqueId)+': "'+FConstant+'"';
+    enkGroup: result := inttostr(uniqueId)+': (Group)';
   end;
 end;
 
@@ -2015,11 +2104,11 @@ var
   n : TFHIRExpressionNode;
 begin
   case fKind of
-    entName:
+    enkName:
       b.Append(FName);
-    entConstant:
+    enkConstant:
       b.Append(FConstant);
-    entFunction:
+    enkFunction:
       begin
         b.Append(CODES_TFHIRPathFunctions[FFunctionId]);
         b.Append('(');
@@ -2034,7 +2123,7 @@ begin
         end;
         b.Append(')');
       end;
-    entGroup:
+    enkGroup:
       begin
         b.Append('(');
         FGroup.write(b);
@@ -2046,7 +2135,7 @@ begin
     b.Append('.');
     inner.write(b);
   end;
-  if Operation <> opNull then
+  if Operation <> popNull then
   begin
     b.Append(' ');
     b.Append(CODES_TFHIRPathOperation[Operation]);
@@ -2055,7 +2144,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNode.SetOpTypes(const Value: TAdvStringSet);
+procedure TFHIRExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
 begin
   FOpTypes.Free;
   FOpTypes := Value;
@@ -2072,6 +2161,138 @@ begin
   FGroup.Free;
   FGroup := Value;
 end;
+
+
+{ TFHIRTypeDetails }
+
+var
+  gc : integer = 0;
+
+constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
+begin
+  inherited Create;
+  FTypes := TStringList.create;
+  FTypes.Sorted := true;
+  FCollectionStatus := status;
+  addTypes(types);
+  inc(gc);
+  id := gc;
+end;
+
+constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
+begin
+  inherited Create;
+  FTypes := TStringList.create;
+  FTypes.Sorted := true;
+  FCollectionStatus := status;
+  addTypes(types);
+  inc(gc);
+  id := gc;
+end;
+
+destructor TFHIRTypeDetails.Destroy;
+begin
+  FTypes.Free;
+  inherited;
+end;
+
+procedure TFHIRTypeDetails.addType(n: String);
+begin
+  if (n <> '') then
+    if not hasType(n) then
+      FTypes.add(n);
+end;
+
+procedure TFHIRTypeDetails.addTypes(n: TStringList);
+var
+  t : String;
+begin
+  for t in n do
+    addType(t);
+end;
+
+procedure TFHIRTypeDetails.addTypes(types: array of String);
+var
+  t : String;
+begin
+  for t in types do
+    addType(t);
+end;
+
+function TFHIRTypeDetails.describe: String;
+begin
+  result := FTypes.commaText;
+end;
+
+function TFHIRTypeDetails.hasNoTypes: boolean;
+begin
+  result := FTypes.count = 0;
+end;
+
+function TFHIRTypeDetails.hasType(types: TStringList): boolean;
+var
+  t : String;
+begin
+  result := false;
+  for t in types do
+    if hasType(t) then
+      exit(true);
+end;
+
+function TFHIRTypeDetails.hasType(typeName: String): boolean;
+begin
+  result := FTypes.indexOf(typeName) > -1;
+end;
+
+function TFHIRTypeDetails.Link: TFHIRTypeDetails;
+begin
+  result := TFHIRTypeDetails(inherited Link);
+end;
+
+function TFHIRTypeDetails.hasType(types: array of String): boolean;
+var
+  t : String;
+begin
+  result := false;
+  for t in types do
+    if hasType(t) then
+      exit(true);
+end;
+
+function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
+begin
+  result := TFHIRTypeDetails.createList(csSINGLETON, FTypes);
+end;
+
+function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
+begin
+  result := TFHIRTypeDetails.createList(csNULL, FTypes);
+  if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
+    result.FcollectionStatus := csUNORDERED
+  else
+    result.FcollectionStatus := csORDERED;
+  result.addTypes(types);
+  result.addTypes(right.types);
+end;
+
+procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
+begin
+  addTypes(source.types);
+  if (FcollectionStatus = csNULL) then
+    FcollectionStatus := source.collectionStatus
+  else if (source.FcollectionStatus = csUNORDERED) then
+    FcollectionStatus := source.collectionStatus
+  else
+    FcollectionStatus := csORDERED;
+end;
+
+
+function isPrimitiveType(name : String) : boolean;
+begin
+  result := StringArrayExistsSensitive(['integer', 'unsignedInt', 'positiveInt', 'decimal', 'dateTime', 'date',
+    'time', 'instant', 'string', 'uri', 'oid', 'uuid', 'id', 'boolean', 'code', 'markdown', 'xhtml', 'base64Binary'], name);
+end;
+
 
 
 End.

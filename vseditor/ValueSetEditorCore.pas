@@ -1595,7 +1595,7 @@ begin
 //      mem.Position := 0;
 //      mem.SaveToFile('c:\temp\test.web');
       mem.Position := 0;
-      p := MakeParser('en', ffAsIs, mem, xppAllow);
+      p := MakeParser('en', ffUnspecified, mem, xppAllow);
       try
         vs := p.resource as TFhirValueSet;
         Settings.valueSetServer := url;

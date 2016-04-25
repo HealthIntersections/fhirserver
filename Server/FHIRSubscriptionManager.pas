@@ -119,6 +119,7 @@ Type
     FSMSAccount: String;
     FBase : String;
     FOnGetSessionEvent: TGetSessionEvent;
+    FCompartments : TFHIRCompartmentList;
 
     FCloseAll : boolean;
     FSemaphores : TAdvMap<TWebSocketQueueInfo>;
@@ -160,7 +161,7 @@ Type
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
   public
-    Constructor Create; Override;
+    Constructor Create(Compartments : TFHIRCompartmentList);
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
@@ -194,18 +195,20 @@ uses
 
 { TSubscriptionManager }
 
-constructor TSubscriptionManager.Create;
+constructor TSubscriptionManager.Create(Compartments : TFHIRCompartmentList);
 begin
-  inherited;
+  inherited Create;
   FLock := TCriticalSection.Create('Subscriptions');
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
   FCloseAll := false;
+  FCompartments := Compartments;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
+  FCompartments.Free;
   wsWakeAll;
   FSemaphores.Free;
   FSubscriptionTrackers.Free;
@@ -221,7 +224,7 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(roSubscription);
+  request := TFHIRRequest.Create(roSubscription, FCompartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Id := id;
@@ -1037,7 +1040,7 @@ begin
   try
     result.id := NewGuidId;
     result.link_List.AddRelRef('source', AppendForwardSlash(base)+'Subsecription/'+subscription.id);
-    request := TFHIRRequest.Create(roSubscription);
+    request := TFHIRRequest.Create(roSubscription, FCompartments.Link);
     response := TFHIRResponse.Create;
     try
       request.Session := OnGetSessionEvent(userkey);

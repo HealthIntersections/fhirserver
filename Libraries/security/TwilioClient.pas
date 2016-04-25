@@ -93,7 +93,7 @@ begin
      this.Token := 'fill this out';
      this.From := '+12678434041';
      this.Dest := '+61411867065';
-     this.Body := 'Test body '+FormatDateTime('c', now);
+     this.Body := 'Someone is running FHIR Server tests @ '+FormatDateTime('c', now);
      this.send;
   finally
     this.Free;

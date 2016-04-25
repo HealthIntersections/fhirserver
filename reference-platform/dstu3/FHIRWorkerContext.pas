@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 

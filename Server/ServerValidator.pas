@@ -12,7 +12,7 @@ Uses
 
 Type
 
-  TFHIRServerValidatorContext = class (TValidatorServiceProvider)
+  TFHIRServerWorkerContext = class (TWorkerContext)
   private
     FTerminologyServer : TTerminologyServer;
     FProfile : TFhirExpansionProfile;
@@ -25,7 +25,7 @@ Type
     Constructor Create; Override;
     Destructor Destroy; Override;
 
-    Function Link : TFHIRServerValidatorContext; overload;
+    Function Link : TFHIRServerWorkerContext; overload;
 
     procedure SeeResource(r : TFhirResource); override;
 
@@ -39,14 +39,17 @@ Type
     function validateCode(system, code, version : String; vs : TFHIRValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
+
+    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
+    function getStructure(url : String) : TFHIRStructureDefinition; override;
   end;
 
 
 Implementation
 
-{ TFHIRServerValidatorContext }
+{ TFHIRServerWorkerContext }
 
-constructor TFHIRServerValidatorContext.Create;
+constructor TFHIRServerWorkerContext.Create;
 begin
   inherited;
   FLock := TCriticalSection.Create('Validation.questionnaire');
@@ -56,7 +59,7 @@ begin
   FQuestionnaires := TAdvMap<TFhirQuestionnaire>.create;
 end;
 
-destructor TFHIRServerValidatorContext.Destroy;
+destructor TFHIRServerWorkerContext.Destroy;
 begin
   FQuestionnaires.Free;
   FProfile.Free;
@@ -66,16 +69,16 @@ begin
 end;
 
 
-function TFHIRServerValidatorContext.Link: TFHIRServerValidatorContext;
+function TFHIRServerWorkerContext.Link: TFHIRServerWorkerContext;
 begin
-  result := TFHIRServerValidatorContext(inherited Link);
+  result := TFHIRServerWorkerContext(inherited Link);
 end;
 
-procedure TFHIRServerValidatorContext.SeeResource(r : TFhirResource);
+procedure TFHIRServerWorkerContext.SeeResource(r : TFhirResource);
 begin
   r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
   TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
-  if (r.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR_DSTU3}, frtCodeSystem{$ENDIF}]) then
+  if (r.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR3}, frtCodeSystem{$ENDIF}]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.resourceType = frtQuestionnaire then
   begin
@@ -93,7 +96,7 @@ begin
     inherited SeeResource(r);
 end;
 
-function TFHIRServerValidatorContext.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
+function TFHIRServerWorkerContext.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
 var
   c : TFHIRCoding;
   p : TFHIRParameters;
@@ -124,13 +127,13 @@ begin
   end;
 end;
 
-procedure TFHIRServerValidatorContext.SetTerminologyServer(const Value: TTerminologyServer);
+procedure TFHIRServerWorkerContext.SetTerminologyServer(const Value: TTerminologyServer);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
 end;
 
-function TFHIRServerValidatorContext.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+function TFHIRServerWorkerContext.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
 begin
   if t = frtValueSet then
     result := FTerminologyServer.getValueSetByUrl(url)
@@ -140,7 +143,13 @@ begin
     result := inherited fetchResource(t, url);
 end;
 
-function TFHIRServerValidatorContext.getQuestionnaire(url: string): TFhirQuestionnaire;
+function TFHIRServerWorkerContext.getChildMap(profile: TFHIRStructureDefinition;
+  element: TFhirElementDefinition): TFHIRElementDefinitionList;
+begin
+
+end;
+
+function TFHIRServerWorkerContext.getQuestionnaire(url: string): TFhirQuestionnaire;
 var
   q : TFhirQuestionnaire;
 begin
@@ -158,17 +167,22 @@ begin
   end;
 end;
 
-function TFHIRServerValidatorContext.expand(vs : TFhirValueSet) : TFHIRValueSet;
+function TFHIRServerWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
+begin
+  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+end;
+
+function TFHIRServerWorkerContext.expand(vs : TFhirValueSet) : TFHIRValueSet;
 begin
   result := FTerminologyServer.expandVS(vs, '', FProfile, '', 0, 0, 0);
 end;
 
-function TFHIRServerValidatorContext.supportsSystem(system : string) : boolean;
+function TFHIRServerWorkerContext.supportsSystem(system : string) : boolean;
 begin
   result := FTerminologyServer.supportsSystem(system);
 end;
 
-function TFHIRServerValidatorContext.validateCode(system, code, display : String) : TValidationResult;
+function TFHIRServerWorkerContext.validateCode(system, code, display : String) : TValidationResult;
 var
   op : TFHIROperationOutcome;
 begin
@@ -201,7 +215,7 @@ begin
 end;
 
 
-function TFHIRServerValidatorContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+function TFHIRServerWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 var
   p : TFhirParameters;
 begin
@@ -224,7 +238,7 @@ begin
 end;
 
 
-function TFHIRServerValidatorContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+function TFHIRServerWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 var
   p : TFhirParameters;
 begin

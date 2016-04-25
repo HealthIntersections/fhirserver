@@ -1064,6 +1064,8 @@ interface
   {$endif}
 {$endif}
 
+{$DebugInfo off}
+
 {-------------------------Public constants-----------------------------}
 const
   {The current version of FastMM}

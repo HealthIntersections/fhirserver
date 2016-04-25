@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -123,8 +123,8 @@ Type
   end;
 
 
-  TValidatorServiceProvider = {abstract} class (TAdvObject)
-  private
+  TWorkerContext = {abstract} class (TAdvObject)
+  protected
     FProfiles : TProfileManager;
     FSources : TAdvNameBufferList;
     procedure SetProfiles(const Value: TProfileManager);
@@ -132,7 +132,7 @@ Type
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
-    function link : TValidatorServiceProvider; overload;
+    function link : TWorkerContext; overload;
 
     procedure SeeResource(r : TFhirResource); virtual;
     function GetSourceByName(name : String) : TAdvNameBuffer;
@@ -150,11 +150,14 @@ Type
     function validateCode(system, code, version : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;
+    function getStructure(url : String) : TFHIRStructureDefinition; virtual;
   end;
+
 
   TProfileUtilities = class (TAdvObject)
   private
-    context : TValidatorServiceProvider;
+    context : TWorkerContext;
     messages : TFhirOperationOutcomeIssueList;
     procedure log(message : String);
     function fixedPath(contextPath, pathSimple : String) : String;
@@ -186,7 +189,7 @@ Type
     function overWriteWithCurrent(profile,
       usage: TFHIRElementDefinition): TFHIRElementDefinition;
   public
-    Constructor create(context : TValidatorServiceProvider; messages : TFhirOperationOutcomeIssueList);
+    Constructor create(context : TWorkerContext; messages : TFhirOperationOutcomeIssueList);
     Destructor Destroy; override;
     {
        * Given a base (snapshot) profile structure, and a differential profile, generate a snapshot profile
@@ -209,7 +212,7 @@ implementation
 
 { TProfileUtilities }
 
-constructor TProfileUtilities.create(context : TValidatorServiceProvider; messages : TFhirOperationOutcomeIssueList);
+constructor TProfileUtilities.create(context : TWorkerContext; messages : TFhirOperationOutcomeIssueList);
 begin
   inherited Create;
   self.context := context;
@@ -250,9 +253,9 @@ begin
   else
     s := d.Path;
   if (d.type_List.Count > 0) and (d.type_List[0].profileList.Count > 0) then
-    result := '.' + s
+    result := '.' + s + '['+d.type_List[0].profileList[0].value+']'
   else
-    result := '.' + s + '['+d.type_List[0].profileList[0].value+']';
+    result := '.' + s;
 end;
 
 function TProfileUtilities.overWriteWithCurrent(profile, usage : TFHIRElementDefinition) : TFHIRElementDefinition;
@@ -1341,8 +1344,12 @@ begin
           vsBase := nil;
           vsDerived := nil;
           try
+            if (base.binding.valueSet is TFHIrReference) and (derived.binding.valueSet is TFHIrReference) then
+            begin
             vsBase := context.fetchResource(frtValueSet, (base.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
             vsDerived := context.fetchResource(frtValueSet, (derived.binding.valueSet as TFhirReference).reference) as TFhirValueSet;
+              if (vsBase <> nil) and (vsDerived <> nil) then
+              begin
             expBase := context.expand(vsBase);
             expDerived := context.expand(vsDerived);
             if (expBase = nil) then
@@ -1351,6 +1358,8 @@ begin
               messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
             else if not isSubset(expBase, expDerived) then
               messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+              end;
+            end;
           finally
             expBase.Free;
             expDerived.Free;
@@ -1499,23 +1508,23 @@ end;
 //  inherited;
 //end;
 
-{ TValidatorServiceProvider }
+{ TWorkerContext }
 
-constructor TValidatorServiceProvider.Create;
+constructor TWorkerContext.Create;
 begin
   inherited;
   FSources := TAdvNameBufferList.create;
   FProfiles := TProfileManager.Create;
 end;
 
-destructor TValidatorServiceProvider.Destroy;
+destructor TWorkerContext.Destroy;
 begin
   FProfiles.free;
   FSources.Free;
   inherited;
 end;
 
-function TValidatorServiceProvider.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TWorkerContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
@@ -1524,7 +1533,12 @@ begin
   end;
 end;
 
-function TValidatorServiceProvider.getResourceNames: TAdvStringSet;
+function TWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
+begin
+  result := FHIRUtilities.getChildMap(profile, element.name, element.path, element.contentReference);
+end;
+
+function TWorkerContext.getResourceNames: TAdvStringSet;
 var
   a : TFhirResourceType;
 begin
@@ -1539,17 +1553,22 @@ begin
   end;
 end;
 
-function TValidatorServiceProvider.GetSourceByName(name: String): TAdvNameBuffer;
+function TWorkerContext.GetSourceByName(name: String): TAdvNameBuffer;
 begin
   result := FSources.GetByName(name);
 end;
 
-function TValidatorServiceProvider.link: TValidatorServiceProvider;
+function TWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
 begin
-  result := TValidatorServiceProvider(inherited Link);
+  result := fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition
 end;
 
-procedure TValidatorServiceProvider.LoadFromDefinitions(filename: string);
+function TWorkerContext.link: TWorkerContext;
+begin
+  result := TWorkerContext(inherited Link);
+end;
+
+procedure TWorkerContext.LoadFromDefinitions(filename: string);
 var
   b : TAdvBuffer;
   m : TAdvMemoryStream;
@@ -1609,7 +1628,7 @@ begin
   end;
 end;
 
-procedure TValidatorServiceProvider.LoadFromFile(filename: string; parser : TFHIRParser);
+procedure TWorkerContext.LoadFromFile(filename: string; parser : TFHIRParser);
 var
   fn : TFileStream;
   be : TFhirBundleEntry;
@@ -1634,7 +1653,7 @@ begin
   end;
 end;
 
-procedure TValidatorServiceProvider.LoadFromFile(filename: string);
+procedure TWorkerContext.LoadFromFile(filename: string);
 begin
   filename := LowerCase(filename);
   if ExtractFileExt(filename) = '.json' then
@@ -1643,7 +1662,7 @@ begin
     LoadFromFile(filename, TFHIRXmlParser.create('en'))
 end;
 
-procedure TValidatorServiceProvider.LoadFromFolder(folder: string);
+procedure TWorkerContext.LoadFromFolder(folder: string);
 var
   list : TStringList;
   sr : TSearchRec;
@@ -1666,7 +1685,7 @@ begin
   end;
 end;
 
-procedure TValidatorServiceProvider.Load(feed: TFHIRBundle);
+procedure TWorkerContext.Load(feed: TFHIRBundle);
 var
   i : integer;
   r : TFhirResource;
@@ -1679,7 +1698,7 @@ begin
 end;
 
 
-procedure TValidatorServiceProvider.SeeResource(r: TFhirResource);
+procedure TWorkerContext.SeeResource(r: TFhirResource);
 var
   p : TFhirStructureDefinition;
   pu : TProfileUtilities;
@@ -1715,7 +1734,7 @@ begin
   end;
 end;
 
-procedure TValidatorServiceProvider.SetProfiles(const Value: TProfileManager);
+procedure TWorkerContext.SetProfiles(const Value: TProfileManager);
 begin
   FProfiles.Free;
   FProfiles := Value;

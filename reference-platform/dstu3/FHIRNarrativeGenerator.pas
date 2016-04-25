@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -138,7 +138,7 @@ Type
   TFHIRNarrativeGenerator = class(TAdvObject)
   private
     FPrefix: String; // for links
-    context: TValidatorServiceProvider;
+    context: TWorkerContext;
     FBasePath: String;
     FTooCostlyNote: String;
     function describeSystem(system: TFHIRContactPointSystemEnum): String; overload;
@@ -208,7 +208,7 @@ Type
     procedure generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean); overload;
     procedure inject(r: TFHIRDomainResource; x: TFHIRXhtmlNode; status: TFhirNarrativeStatusEnum);
   public
-    Constructor Create(cc: TValidatorServiceProvider);
+    Constructor Create(cc: TWorkerContext);
     Destructor Destroy; override;
     procedure generate(r: TFHIRDomainResource); overload;
 
@@ -831,7 +831,7 @@ begin
   end;
 end;
 
-constructor TFHIRNarrativeGenerator.create(cc: TValidatorServiceProvider);
+constructor TFHIRNarrativeGenerator.create(cc: TWorkerContext);
 begin
   inherited create;
   context := cc;
@@ -1759,25 +1759,24 @@ end;
 
 function TFHIRNarrativeGenerator.displayTimeUnits(units: TFHIRUnitsOfTimeEnum): String;
 begin
-//  case units of
-  // ggtodo
-//    UnitsOfTimeA:
-//      result := 'years';
-//    UnitsOfTimeD:
-//      result := 'days';
-//    UnitsOfTimeH:
-//      result := 'hours';
-//    UnitsOfTimeMIN:
-//      result := 'minutes';
-//    UnitsOfTimeMO:
-//      result := 'months';
-//    UnitsOfTimeS:
-//      result := 'seconds';
-//    UnitsOfTimeWK:
-//      result := 'weeks';
-//  else
-//    result := '??';
-//  end;
+  case units of
+    UnitsOfTimeA:
+      result := 'years';
+    UnitsOfTimeD:
+      result := 'days';
+    UnitsOfTimeH:
+      result := 'hours';
+    UnitsOfTimeMIN:
+      result := 'minutes';
+    UnitsOfTimeMO:
+      result := 'months';
+    UnitsOfTimeS:
+      result := 'seconds';
+    UnitsOfTimeWK:
+      result := 'weeks';
+  else
+    result := '??';
+  end;
 end;
 
 function TFHIRNarrativeGenerator.displayHumanName(name: TFHIRHumanName): String;

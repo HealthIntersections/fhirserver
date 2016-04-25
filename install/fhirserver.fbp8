@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix loading bug"
+        as.returnvalue = "update to current version of Fluent Path"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -250,7 +250,7 @@ begin
                                "-w-UNSAFE_CODE=0" +
                                "-w-UNSAFE_CAST=0" +
                                ""
-            conditionals = FHIR_DSTU2
+            conditionals = FHIR2
             consoleapp = false
             debuginfo = false
             definitionsonly = true
@@ -448,12 +448,6 @@ begin
           updateonly = false
           usefilespec = true
         end
-        action.build.stop
-        begin
-          buildresult = false
-          enabled = false
-          id = {29832D1A-DB92-478F-A528-46C94A0F30E1}
-        end
         action.xml.node.create
         begin
           addnewline = true
@@ -486,6 +480,12 @@ begin
           detailedlogging = false
           id = {7B8217FE-C2F1-414F-B42C-CD96179CD7F2}
         end
+      end
+      action.build.stop
+      begin
+        buildresult = false
+        enabled = false
+        id = {29832D1A-DB92-478F-A528-46C94A0F30E1}
       end
       action.group
       begin
@@ -571,7 +571,7 @@ begin
                                "-w-UNSAFE_CODE=0" +
                                "-w-UNSAFE_CAST=0" +
                                ""
-            conditionals = FHIR_DSTU3
+            conditionals = FHIR3
             consoleapp = false
             debuginfo = false
             definitionsonly = true

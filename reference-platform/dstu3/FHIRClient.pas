@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -578,7 +578,7 @@ var
         begin
           op := TFhirOperationOutcome(comp.resource);
           if (op.text <> nil) and (op.text.div_ <> nil) then
-            Raise EFHIRClientException.create(FhirHtmlToText(op.text.div_), comp.resource.link as TFhirOperationOutcome)
+            Raise EFHIRClientException.create(op.text.div_.AsPlainText, comp.resource.link as TFhirOperationOutcome)
           else if (op.issueList.Count > 0) and (op.issueList[0].diagnostics <> '') then
             Raise EFHIRClientException.create(op.issueList[0].diagnostics, comp.resource.link as TFhirOperationOutcome)
           else
@@ -608,6 +608,7 @@ begin
   if ct <> '' then
     http.RequestType := ct;
 
+  repeat
   http.SetAddress(url);
   ok := false;
       case verb of
@@ -645,6 +646,10 @@ begin
       code := StrToInt(http.ResponseCode);
       if (code < 200) or (code >= 600) Then
         raise exception.create('unexpected condition');
+    if (code >= 300) and (code < 400) then
+      url := http.getResponseHeader('Location');
+  until (code < 300) or (code >= 400);
+
   if code >= 300 then
     processException;
       ok := true;
@@ -710,7 +715,7 @@ begin
             begin
               op := TFhirOperationOutcome(comp.resource);
               if (op.text <> nil) and (op.text.div_ <> nil) then
-                Raise EFHIRClientException.create(FhirHtmlToText(op.text.div_), comp.resource.link as TFhirOperationOutcome)
+                Raise EFHIRClientException.create(op.text.div_.AsPlainText, comp.resource.link as TFhirOperationOutcome)
               else if (op.issueList.Count > 0) and (op.issueList[0].diagnostics <> '') then
                 Raise EFHIRClientException.create(op.issueList[0].diagnostics, comp.resource.link as TFhirOperationOutcome)
               else

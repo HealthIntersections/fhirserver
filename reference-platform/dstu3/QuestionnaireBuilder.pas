@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU3}
+{$IFNDEF FHIR3}
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
@@ -1257,7 +1257,7 @@ begin
             vse.xmlId := nextId('vs');
             vsCache.Add(vse.url, vse.xmlId);
             vse.text := nil;
-            {$IFDEF FHIR_DSTU2}
+            {$IFDEF FHIR2}
             vse.codeSystemElement := nil;
             {$ENDIF}
             vse.composeElement := nil;

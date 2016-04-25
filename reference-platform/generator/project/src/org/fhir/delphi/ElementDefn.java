@@ -593,7 +593,7 @@ public class ElementDefn {
 
   private ElementDefinition getElementDefinitionByName(StructureDefinition sd, String name) {
     for (ElementDefinition t : sd.getDifferential().getElement()) {
-      if (name.equals("#"+t.getId()))
+      if (name.equals(t.getName()))
         return t;
     }
     return null;

@@ -44,11 +44,8 @@ Type
     FUnits: String;
     FValue: TSmartDecimal;
     FCode: String;
-  protected
-    FContext : TSmartDecimalContext;
   public
     Constructor Create(Code : String); Overload;
-    Destructor Destroy; Override;
 
     Property Code : String read FCode;
     Property Units : String read FUnits;
@@ -128,14 +125,8 @@ begin
   inherited create;
   Name := code;
   FCode := Code;
-  FContext := TSmartDecimalContext.create; 
 end;
 
-destructor TUcumUnitHandler.Destroy;
-begin
-  FContext.Free;
-  inherited;
-end;
 
 { TUcumCelsiusHandler }
 
@@ -143,7 +134,7 @@ constructor TUcumCelsiusHandler.Create;
 begin
   inherited Create('Cel');
   FUnits := 'K';
-  FValue := FContext.Value(1);
+  FValue := TSmartDecimal.valueOf(1);
 end;
 
 { TUcumFahrenheitHandler }
@@ -152,7 +143,7 @@ constructor TUcumFahrenheitHandler.Create;
 begin
   inherited Create('[degF]');
   FUnits := 'F';
-  FValue := FContext.Value('0.5555555555555555555555555555');
+  FValue := TSmartDecimal.valueOf('0.5555555555555555555555555555');
 end;
 
 { TUcumHoldingHandler }
@@ -161,7 +152,7 @@ constructor TUcumHoldingHandler.Create(sCode, sUnits: String; oValue : integer);
 begin
   inherited Create(sCode);
   FUnits := sUnits;
-  FValue := FContext.Value(oValue);
+  FValue := TSmartDecimal.valueOf(oValue);
 end;
 
 

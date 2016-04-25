@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR_DSTU2}
+{$IFNDEF FHIR2}
 This is the dstu2 version of the FHIR code
 {$ENDIF}
 
@@ -42,7 +42,7 @@ uses
 
   MimeMessage, TextUtilities, ZLib,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants;
+  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
 Type
   ETooCostly = class (Exception);
@@ -67,7 +67,6 @@ function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream; poli
 function MakeParser(lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeComposer(lang : string; mimetype : String) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
-function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPolicy):TFhirXHtmlNode;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
@@ -80,7 +79,6 @@ function isAbsoluteUrl(s: String): boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
-Function FhirHtmlToText(html : TFhirXHtmlNode):String;
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource;
 function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
 function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
@@ -113,8 +111,6 @@ function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
 
 procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
-procedure ComposeXHtml(s : TAdvStringBuilder; node: TFhirXHtmlNode); overload;
-function ComposeXHtml(node: TFhirXHtmlNode) : String; overload;
 function ComposeJson(r : TFhirResource) : String; overload;
 
 Function removeCaseAndAccents(s : String) : String;
@@ -167,6 +163,14 @@ type
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
+
+    function ContentReference : String;
+  end;
+
+  TFhirStructureDefinitionHelper = class helper for TFhirStructureDefinition
+  public
+    function baseDefinition : String;
+    function baseType : TFhirDefinedTypesEnum;
   end;
 
   TFHIRResourceHelper = class helper for TFHIRResource
@@ -600,25 +604,11 @@ Begin
   else if (sName = '.json') or (sName = 'json') then
     result := ffJson
   else if sName = '' then
-    result := ffAsIs
+    result := ffUnspecified
   else
     raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST, IssueTypeStructure);
 End;
 
-
-function ParseXhtml(lang : String; content : String; policy : TFHIRXhtmlParserPolicy):TFhirXHtmlNode;
-var
-  parser : TFHIRXmlParser;
-begin
-  parser := TFHIRXmlParser.create(lang);
-  try
-    parser.ParserPolicy := policy;
-    parser.source := TStringStream.Create(content);
-    result := parser.ParseHtml;
-  finally
-    parser.free;
-  end;
-end;
 
 
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
@@ -856,11 +846,6 @@ begin
     end;
 end;
 
-Function FhirHtmlToText(html : TFhirXHtmlNode):String;
-begin
-  result := html.AsPlainText;
-end;
-
 function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
 begin
   result := BuildOperationOutcome(lang, e.message, issueCode);
@@ -875,7 +860,7 @@ begin
   try
     outcome.text := TFhirNarrative.create;
     outcome.text.status := NarrativeStatusGenerated;
-    outcome.text.div_ := ParseXhtml(lang, '<div><p>'+FormatTextToHTML(message)+'</p></div>', xppReject);
+    outcome.text.div_ := TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>'+FormatTextToHTML(message)+'</p></div>');
     report := outcome.issueList.Append;
     report.severity := issueSeverityError;
     report.code := issueCode;
@@ -1885,7 +1870,7 @@ begin
   if (text = nil) or (text.div_ = nil) then
     result := '<html><body>No Narrative</body></html>'
   else
-    result := '<html><body>'+ComposeXHtml(text.div_)+'</body></html>'
+    result := '<html><body>'+TFHIRXhtmlParser.Compose(text.div_)+'</body></html>'
 end;
 
 procedure TFHIRDomainResourceHelper.removeExtension(url: String);
@@ -2797,52 +2782,6 @@ begin
   end;
 end;
 
-procedure ComposeXHtml(s : TAdvStringBuilder; node: TFhirXHtmlNode);
-var
-  i : Integer;
-begin
-  if node = nil then
-    exit;
-  case node.NodeType of
-    fhntText : s.Append(EncodeXML(node.Content, xmlText));
-    fhntComment : s.Append('<!-- '+EncodeXML(node.Content, xmlText)+' -->');
-    fhntElement :
-      begin
-      s.append('<'+node.name);
-      for i := 0 to node.Attributes.count - 1 do
-        s.Append(' '+node.Attributes[i].Name+'="'+EncodeXML(node.Attributes[i].Value, xmlAttribute)+'"');
-      if node.ChildNodes.count = 0 then
-        s.append('/>')
-      else
-      begin
-        s.append('>');
-        for i := 0 to node.ChildNodes.count - 1 do
-          ComposeXHtml(s, node.ChildNodes[i]);
-        s.append('</'+node.name+'>')
-      end;
-      end;
-    fhntDocument:
-      for i := 0 to node.ChildNodes.count - 1 do
-        ComposeXHtml(s, node.ChildNodes[i]);
-  else
-    raise exception.create('not supported');
-  end;
-end;
-
-
-function ComposeXHtml(node: TFhirXHtmlNode) : String;
-var
-  b : TAdvStringBuilder;
-begin
-  b := TAdvStringBuilder.Create;
-  try
-    ComposeXHtml(b, node);
-    result := b.AsString;
-  finally
-    b.Free;
-  end;
-
-end;
 
 function gen(t : TFhirType):String;
 begin
@@ -3294,7 +3233,7 @@ begin
   else if element.FhirType = 'Narrative' then
   begin
     TFhirNarrative(element).status := NarrativeStatusAdditional;
-    TFhirNarrative(element).div_ := ParseXhtml('en', '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>', xppAllow);
+    TFhirNarrative(element).div_ := TFHIRXhtmlParser.Parse('en', xppAllow, [], '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>');
   end
   else if element.FhirType = 'Meta' then
   begin
@@ -3371,6 +3310,11 @@ begin
 end;
 
 { TFhirElementDefinitionHelper }
+
+function TFhirElementDefinitionHelper.ContentReference: String;
+begin
+  result := nameReference;
+end;
 
 function TFhirElementDefinitionHelper.hasType(t: String): boolean;
 var
@@ -3623,6 +3567,18 @@ end;
 function TFhirConceptMapElementTargetHelper.systemElement: TFhirUri;
 begin
   result := codeSystemElement;
+end;
+
+{ TFhirStructureDefinitionHelper }
+
+function TFhirStructureDefinitionHelper.baseDefinition: String;
+begin
+  result := base;
+end;
+
+function TFhirStructureDefinitionHelper.baseType: TFhirDefinedTypesEnum;
+begin
+  result := constrainedType;
 end;
 
 end.

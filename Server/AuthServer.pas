@@ -123,7 +123,7 @@ const
 
 // categories for web login
 // tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther
-  {$IFDEF FHIR_DSTU2}
+  {$IFDEF FHIR2}
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
     tcOther,
