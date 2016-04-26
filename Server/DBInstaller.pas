@@ -41,7 +41,8 @@ const
 //  ServerDBVersion = 3;
 //  ServerDBVersion = 4; // added secure flag in versions table
 //  ServerDBVersion = 5; // added scores to search entries table
-  ServerDBVersion = 6; // added reverse to search entries table
+//  ServerDBVersion = 6; // added reverse to search entries table
+  ServerDBVersion = 7; // changed compartment table. breaking change
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -338,15 +339,16 @@ begin
   FConn.ExecSQL('CREATE TABLE Compartments( '+#13#10+
        ' ResourceCompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // internal primary key
        ' ResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // id of resource that is in a compartment
-       ' CompartmentType '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // field one of composite id for compartment - compartment type (spurioius since there's only one
-       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+                    // field two of composite id for compartment - compartment id (spurioius since there's only one
+       ' TypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // resource type key for the compartment type
+       ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+                    // field two of composite id for compartment - compartment id
        ' CompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+   // key for the resource that creates this compartment
        PrimaryKeyType(FConn.owner.Platform, 'PK_Compartments', 'ResourceCompartmentKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_CompartmentResource_ResKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'TypeKey', 'Types', 'ResourceTypeKey', 'FK_CompartmentResource_TypeKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'CompartmentKey', 'Ids', 'ResourceKey', 'FK_Compartment_ResKey'));
   FConn.ExecSQL('Create INDEX SK_Comps_Res ON Compartments (ResourceKey)');
-  FConn.ExecSQL('Create INDEX SK_Comps_CompKey ON Compartments (CompartmentType, CompartmentKey)');
-  FConn.ExecSQL('Create INDEX SK_Comps_CompId ON Compartments (CompartmentType, Id)');
+  FConn.ExecSQL('Create INDEX SK_Comps_CompKey ON Compartments (TypeKey, CompartmentKey)');
+  FConn.ExecSQL('Create INDEX SK_Comps_CompId ON Compartments (TypeKey, Id)');
 end;
 
 
@@ -836,44 +838,46 @@ begin
   if version > ServerDBVersion then
     raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
 
-  // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
-  if version < 2 then
-  begin
-    Fconn.ExecSQL('ALTER TABLE OAuthLogins ADD Patient char(64) NULL');
-
-    m := Fconn.FetchMetaData;
-    try
-      t := m.getTable('Closures');
-      if not t.hasColumn('Version') then
-      begin
-        Fconn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
-        Fconn.ExecSQL('update Closures set Version = 1');
-      end;
-      t := m.getTable('ClosureEntries');
-      if t.hasColumn('NeedsIndexing') then
-      begin
-        Fconn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
-        Fconn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
-      end;
-    finally
-      m.Free;
-    end;
-  end;
-  if version < 3 then
-    Fconn.ExecSQL('insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
-  if version < 4 then
-  begin
-    Fconn.ExecSQL('ALTER TABLE Versions ADD Secure int NULL');
-    Fconn.ExecSQL('update Versions set Secure = 0');
-  end;
-  if version < 5 then
-  begin
-    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score1 int NULL');
-    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score2 int NULL');
-  end;
-  if version < 6 then
-    Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse int NULL');
-  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
+  if version < 7 then
+    raise Exception.Create('data base must be recreated (-mount or -remount)');  // 7 was a breaking change
+//  // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
+//  if version < 2 then
+//  begin
+//    Fconn.ExecSQL('ALTER TABLE OAuthLogins ADD Patient char(64) NULL');
+//
+//    m := Fconn.FetchMetaData;
+//    try
+//      t := m.getTable('Closures');
+//      if not t.hasColumn('Version') then
+//      begin
+//        Fconn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
+//        Fconn.ExecSQL('update Closures set Version = 1');
+//      end;
+//      t := m.getTable('ClosureEntries');
+//      if t.hasColumn('NeedsIndexing') then
+//      begin
+//        Fconn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
+//        Fconn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
+//      end;
+//    finally
+//      m.Free;
+//    end;
+//  end;
+//  if version < 3 then
+//    Fconn.ExecSQL('insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
+//  if version < 4 then
+//  begin
+//    Fconn.ExecSQL('ALTER TABLE Versions ADD Secure int NULL');
+//    Fconn.ExecSQL('update Versions set Secure = 0');
+//  end;
+//  if version < 5 then
+//  begin
+//    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score1 int NULL');
+//    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score2 int NULL');
+//  end;
+//  if version < 6 then
+//    Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse int NULL');
+//  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 
 end.

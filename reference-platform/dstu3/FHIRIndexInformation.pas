@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-04-22T12:53:26+10:00
+// FHIR v1.4.0 generated 2016-04-27T00:18:34+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -182,9 +182,9 @@ begin
   indexes.add(frtAccount, 'status', 'active | inactive', SearchParamTypeTOKEN, [], 'Account.status', SearchXpathUsageNormal);
   indexes.add(frtAccount, 'subject', 'What is account tied to?', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtLocation, frtHealthcareService, frtOrganization, frtPractitioner], 'Account.subject', SearchXpathUsageNormal);
   indexes.add(frtAccount, 'type', 'E.g. patient, expense, depreciation', SearchParamTypeTOKEN, [], 'Account.type', SearchXpathUsageNormal);
-  compartments.register(frtAccount, 'Patient', ['subject']);
-  compartments.register(frtAccount, 'Practitioner', ['subject']);
-  compartments.register(frtAccount, 'Device', ['subject']);
+  compartments.register(frtAccount, frtPatient, ['subject']);
+  compartments.register(frtAccount, frtPractitioner, ['subject']);
+  compartments.register(frtAccount, frtDevice, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -212,9 +212,9 @@ begin
   indexes.add(frtAllergyIntolerance, 'status', 'active | unconfirmed | confirmed | inactive | resolved | refuted | entered-in-error', SearchParamTypeTOKEN, [], 'AllergyIntolerance.status', SearchXpathUsageNormal);
   indexes.add(frtAllergyIntolerance, 'substance', 'Substance, (or class) considered to be responsible for risk', SearchParamTypeTOKEN, [], 'AllergyIntolerance.substance | AllergyIntolerance.reaction.substance', SearchXpathUsageNormal);
   indexes.add(frtAllergyIntolerance, 'type', 'allergy | intolerance - Underlying mechanism (if known)', SearchParamTypeTOKEN, [], 'AllergyIntolerance.type', SearchXpathUsageNormal);
-  compartments.register(frtAllergyIntolerance, 'Patient', ['patient', 'recorder', 'reporter']);
-  compartments.register(frtAllergyIntolerance, 'RelatedPerson', ['reporter']);
-  compartments.register(frtAllergyIntolerance, 'Practitioner', ['recorder', 'reporter']);
+  compartments.register(frtAllergyIntolerance, frtPatient, ['patient', 'recorder', 'reporter']);
+  compartments.register(frtAllergyIntolerance, frtRelatedPerson, ['reporter']);
+  compartments.register(frtAllergyIntolerance, frtPractitioner, ['recorder', 'reporter']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -237,10 +237,10 @@ begin
   indexes.add(frtAppointment, 'practitioner', 'One of the individuals of the appointment is this practitioner', SearchParamTypeREFERENCE, [frtPractitioner], 'Appointment.participant.actor', SearchXpathUsageNormal);
   indexes.add(frtAppointment, 'service-type', 'The specific service that is to be performed during this appointment', SearchParamTypeTOKEN, [], 'Appointment.serviceType', SearchXpathUsageNormal);
   indexes.add(frtAppointment, 'status', 'The overall status of the appointment', SearchParamTypeTOKEN, [], 'Appointment.status', SearchXpathUsageNormal);
-  compartments.register(frtAppointment, 'Patient', ['actor']);
-  compartments.register(frtAppointment, 'RelatedPerson', ['actor']);
-  compartments.register(frtAppointment, 'Practitioner', ['actor']);
-  compartments.register(frtAppointment, 'Device', ['actor']);
+  compartments.register(frtAppointment, frtPatient, ['actor']);
+  compartments.register(frtAppointment, frtRelatedPerson, ['actor']);
+  compartments.register(frtAppointment, frtPractitioner, ['actor']);
+  compartments.register(frtAppointment, frtDevice, ['actor']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -260,10 +260,10 @@ begin
   indexes.add(frtAppointmentResponse, 'part-status', 'The participants acceptance status for this appointment', SearchParamTypeTOKEN, [], 'AppointmentResponse.participantStatus', SearchXpathUsageNormal);
   indexes.add(frtAppointmentResponse, 'patient', 'This Response is for this Patient', SearchParamTypeREFERENCE, [frtPatient], 'AppointmentResponse.actor', SearchXpathUsageNormal);
   indexes.add(frtAppointmentResponse, 'practitioner', 'This Response is for this Practitioner', SearchParamTypeREFERENCE, [frtPractitioner], 'AppointmentResponse.actor', SearchXpathUsageNormal);
-  compartments.register(frtAppointmentResponse, 'Patient', ['actor']);
-  compartments.register(frtAppointmentResponse, 'RelatedPerson', ['actor']);
-  compartments.register(frtAppointmentResponse, 'Practitioner', ['actor']);
-  compartments.register(frtAppointmentResponse, 'Device', ['actor']);
+  compartments.register(frtAppointmentResponse, frtPatient, ['actor']);
+  compartments.register(frtAppointmentResponse, frtRelatedPerson, ['actor']);
+  compartments.register(frtAppointmentResponse, frtPractitioner, ['actor']);
+  compartments.register(frtAppointmentResponse, frtDevice, ['actor']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -293,9 +293,9 @@ begin
   indexes.add(frtAuditEvent, 'subtype', 'More specific type/id for the event', SearchParamTypeTOKEN, [], 'AuditEvent.subtype', SearchXpathUsageNormal);
   indexes.add(frtAuditEvent, 'type', 'Type/identifier of event', SearchParamTypeTOKEN, [], 'AuditEvent.type', SearchXpathUsageNormal);
   indexes.add(frtAuditEvent, 'user', 'Unique identifier for the user', SearchParamTypeTOKEN, [], 'AuditEvent.agent.userId', SearchXpathUsageNormal);
-  compartments.register(frtAuditEvent, 'Patient', ['patient', 'agent.patient', 'entity.patient']);
-  compartments.register(frtAuditEvent, 'Practitioner', ['agent']);
-  compartments.register(frtAuditEvent, 'Device', ['agent']);
+  compartments.register(frtAuditEvent, frtPatient, ['patient', 'agent.patient', 'entity.patient']);
+  compartments.register(frtAuditEvent, frtPractitioner, ['agent']);
+  compartments.register(frtAuditEvent, frtDevice, ['agent']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -314,9 +314,9 @@ begin
   indexes.add(frtBasic, 'identifier', 'Business identifier', SearchParamTypeTOKEN, [], 'Basic.identifier', SearchXpathUsageNormal);
   indexes.add(frtBasic, 'patient', 'Identifies the focus of this resource', SearchParamTypeREFERENCE, [frtPatient], 'Basic.subject', SearchXpathUsageNormal);
   indexes.add(frtBasic, 'subject', 'Identifies the focus of this resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'Basic.subject', SearchXpathUsageNormal);
-  compartments.register(frtBasic, 'Patient', ['patient', 'author']);
-  compartments.register(frtBasic, 'RelatedPerson', ['author']);
-  compartments.register(frtBasic, 'Practitioner', ['author']);
+  compartments.register(frtBasic, frtPatient, ['patient', 'author']);
+  compartments.register(frtBasic, frtRelatedPerson, ['author']);
+  compartments.register(frtBasic, frtPractitioner, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -345,7 +345,7 @@ begin
   indexes.add(frtBodySite, 'code', 'Named anatomical location', SearchParamTypeTOKEN, [], 'BodySite.code', SearchXpathUsageNormal);
   indexes.add(frtBodySite, 'identifier', 'Identifier for this instance of the anatomical location', SearchParamTypeTOKEN, [], 'BodySite.identifier', SearchXpathUsageNormal);
   indexes.add(frtBodySite, 'patient', 'Patient to whom bodysite belongs', SearchParamTypeREFERENCE, [frtPatient], 'BodySite.patient', SearchXpathUsageNormal);
-  compartments.register(frtBodySite, 'Patient', ['patient']);
+  compartments.register(frtBodySite, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -386,9 +386,9 @@ begin
   indexes.add(frtCarePlan, 'relatedcode', 'includes | replaces | fulfills', SearchParamTypeTOKEN, [], 'CarePlan.relatedPlan.code', SearchXpathUsageNormal);
   indexes.add(frtCarePlan, 'relatedplan', 'Plan relationship exists with', SearchParamTypeREFERENCE, [frtCarePlan], 'CarePlan.relatedPlan.plan', SearchXpathUsageNormal);
   indexes.add(frtCarePlan, 'subject', 'Who care plan is for', SearchParamTypeREFERENCE, [frtPatient, frtGroup], 'CarePlan.subject', SearchXpathUsageNormal);
-  compartments.register(frtCarePlan, 'Patient', ['patient', 'participant', 'performer']);
-  compartments.register(frtCarePlan, 'RelatedPerson', ['participant', 'performer']);
-  compartments.register(frtCarePlan, 'Practitioner', ['participant', 'performer']);
+  compartments.register(frtCarePlan, frtPatient, ['patient', 'participant', 'performer']);
+  compartments.register(frtCarePlan, frtRelatedPerson, ['participant', 'performer']);
+  compartments.register(frtCarePlan, frtPractitioner, ['participant', 'performer']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -408,9 +408,9 @@ begin
   indexes.add(frtCareTeam, 'status', 'active | suspended | inactive | entered in error', SearchParamTypeTOKEN, [], 'CareTeam.status', SearchXpathUsageNormal);
   indexes.add(frtCareTeam, 'subject', 'Who care team is for', SearchParamTypeREFERENCE, [frtPatient, frtGroup], 'CareTeam.subject', SearchXpathUsageNormal);
   indexes.add(frtCareTeam, 'type', 'Type of team', SearchParamTypeTOKEN, [], 'CareTeam.type', SearchXpathUsageNormal);
-  compartments.register(frtCareTeam, 'Patient', ['patient', 'participant']);
-  compartments.register(frtCareTeam, 'RelatedPerson', ['participant']);
-  compartments.register(frtCareTeam, 'Practitioner', ['participant']);
+  compartments.register(frtCareTeam, frtPatient, ['patient', 'participant']);
+  compartments.register(frtCareTeam, frtRelatedPerson, ['participant']);
+  compartments.register(frtCareTeam, frtPractitioner, ['participant']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -437,8 +437,8 @@ begin
   indexes.add(frtClaim, 'targetidentifier', 'The target payor/insurer for the Claim', SearchParamTypeTOKEN, [], 'Claim.target.as(Identifier)', SearchXpathUsageNormal);
   indexes.add(frtClaim, 'targetreference', 'The target payor/insurer for the Claim', SearchParamTypeREFERENCE, [frtOrganization], 'Claim.target.as(Reference)', SearchXpathUsageNormal);
   indexes.add(frtClaim, 'use', 'The kind of financial resource', SearchParamTypeTOKEN, [], 'Claim.use', SearchXpathUsageNormal);
-  compartments.register(frtClaim, 'Patient', ['patientidentifier', 'patientreference']);
-  compartments.register(frtClaim, 'Practitioner', ['provideridentifier', 'providerreference']);
+  compartments.register(frtClaim, frtPatient, ['patientidentifier', 'patientreference']);
+  compartments.register(frtClaim, frtPractitioner, ['provideridentifier', 'providerreference']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -486,8 +486,8 @@ begin
   indexes.add(frtClinicalImpression, 'status', 'in-progress | completed | entered-in-error', SearchParamTypeTOKEN, [], 'ClinicalImpression.status', SearchXpathUsageNormal);
   indexes.add(frtClinicalImpression, 'trigger', 'Request or event that necessitated this assessment', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'ClinicalImpression.trigger.as(Reference)', SearchXpathUsageNormal);
   indexes.add(frtClinicalImpression, 'trigger-code', 'Request or event that necessitated this assessment', SearchParamTypeTOKEN, [], 'ClinicalImpression.trigger.as(CodeableConcept)', SearchXpathUsageNormal);
-  compartments.register(frtClinicalImpression, 'Patient', ['patient']);
-  compartments.register(frtClinicalImpression, 'Practitioner', ['assessor']);
+  compartments.register(frtClinicalImpression, frtPatient, ['patient']);
+  compartments.register(frtClinicalImpression, frtPractitioner, ['assessor']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -537,11 +537,11 @@ begin
   indexes.add(frtCommunication, 'sent', 'When sent', SearchParamTypeDATE, [], 'Communication.sent', SearchXpathUsageNormal);
   indexes.add(frtCommunication, 'status', 'in-progress | completed | suspended | rejected | failed', SearchParamTypeTOKEN, [], 'Communication.status', SearchXpathUsageNormal);
   indexes.add(frtCommunication, 'subject', 'Focus of message', SearchParamTypeREFERENCE, [frtPatient], 'Communication.subject', SearchXpathUsageNormal);
-  compartments.register(frtCommunication, 'Patient', ['subject', 'sender', 'recipient']);
-  compartments.register(frtCommunication, 'Encounter', ['encounter']);
-  compartments.register(frtCommunication, 'RelatedPerson', ['sender', 'recipient']);
-  compartments.register(frtCommunication, 'Practitioner', ['sender', 'recipient']);
-  compartments.register(frtCommunication, 'Device', ['sender', 'recipient']);
+  compartments.register(frtCommunication, frtPatient, ['subject', 'sender', 'recipient']);
+  compartments.register(frtCommunication, frtEncounter, ['encounter']);
+  compartments.register(frtCommunication, frtRelatedPerson, ['sender', 'recipient']);
+  compartments.register(frtCommunication, frtPractitioner, ['sender', 'recipient']);
+  compartments.register(frtCommunication, frtDevice, ['sender', 'recipient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -567,11 +567,11 @@ begin
   indexes.add(frtCommunicationRequest, 'status', 'proposed | planned | requested | received | accepted | in-progress | completed | suspended | rejected | failed', SearchParamTypeTOKEN, [], 'CommunicationRequest.status', SearchXpathUsageNormal);
   indexes.add(frtCommunicationRequest, 'subject', 'Focus of message', SearchParamTypeREFERENCE, [frtPatient], 'CommunicationRequest.subject', SearchXpathUsageNormal);
   indexes.add(frtCommunicationRequest, 'time', 'When scheduled', SearchParamTypeDATE, [], 'CommunicationRequest.scheduled.as(DateTime)', SearchXpathUsageNormal);
-  compartments.register(frtCommunicationRequest, 'Patient', ['subject', 'sender', 'recipient', 'requester']);
-  compartments.register(frtCommunicationRequest, 'Encounter', ['encounter']);
-  compartments.register(frtCommunicationRequest, 'RelatedPerson', ['sender', 'recipient', 'requester']);
-  compartments.register(frtCommunicationRequest, 'Practitioner', ['sender', 'recipient', 'requester']);
-  compartments.register(frtCommunicationRequest, 'Device', ['sender', 'recipient']);
+  compartments.register(frtCommunicationRequest, frtPatient, ['subject', 'sender', 'recipient', 'requester']);
+  compartments.register(frtCommunicationRequest, frtEncounter, ['encounter']);
+  compartments.register(frtCommunicationRequest, frtRelatedPerson, ['sender', 'recipient', 'requester']);
+  compartments.register(frtCommunicationRequest, frtPractitioner, ['sender', 'recipient', 'requester']);
+  compartments.register(frtCommunicationRequest, frtDevice, ['sender', 'recipient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -618,11 +618,11 @@ begin
   indexes.add(frtComposition, 'subject', 'Who and/or what the composition is about', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'Composition.subject', SearchXpathUsageNormal);
   indexes.add(frtComposition, 'title', 'Human Readable name/title', SearchParamTypeSTRING, [], 'Composition.title', SearchXpathUsageNormal);
   indexes.add(frtComposition, 'type', 'Kind of composition (LOINC if possible)', SearchParamTypeTOKEN, [], 'Composition.type', SearchXpathUsageNormal);
-  compartments.register(frtComposition, 'Patient', ['subject', 'author', 'attester']);
-  compartments.register(frtComposition, 'Encounter', ['encounter']);
-  compartments.register(frtComposition, 'RelatedPerson', ['author']);
-  compartments.register(frtComposition, 'Practitioner', ['subject', 'author', 'attester']);
-  compartments.register(frtComposition, 'Device', ['author']);
+  compartments.register(frtComposition, frtPatient, ['subject', 'author', 'attester']);
+  compartments.register(frtComposition, frtEncounter, ['encounter']);
+  compartments.register(frtComposition, frtRelatedPerson, ['author']);
+  compartments.register(frtComposition, frtPractitioner, ['subject', 'author', 'attester']);
+  compartments.register(frtComposition, frtDevice, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -680,9 +680,9 @@ begin
   indexes.add(frtCondition, 'patient', 'Who has the condition?', SearchParamTypeREFERENCE, [frtPatient], 'Condition.patient', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'severity', 'The severity of the condition', SearchParamTypeTOKEN, [], 'Condition.severity', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'stage', 'Simple summary (disease specific)', SearchParamTypeTOKEN, [], 'Condition.stage.summary', SearchXpathUsageNormal);
-  compartments.register(frtCondition, 'Patient', ['patient']);
-  compartments.register(frtCondition, 'Encounter', ['encounter']);
-  compartments.register(frtCondition, 'Practitioner', ['asserter']);
+  compartments.register(frtCondition, frtPatient, ['patient']);
+  compartments.register(frtCondition, frtEncounter, ['encounter']);
+  compartments.register(frtCondition, frtPractitioner, ['asserter']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForConformance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -838,9 +838,9 @@ begin
   indexes.add(frtDetectedIssue, 'identifier', 'Unique id for the detected issue', SearchParamTypeTOKEN, [], 'DetectedIssue.identifier', SearchXpathUsageNormal);
   indexes.add(frtDetectedIssue, 'implicated', 'Problem resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'DetectedIssue.implicated', SearchXpathUsageNormal);
   indexes.add(frtDetectedIssue, 'patient', 'Associated patient', SearchParamTypeREFERENCE, [frtPatient], 'DetectedIssue.patient', SearchXpathUsageNormal);
-  compartments.register(frtDetectedIssue, 'Patient', ['patient']);
-  compartments.register(frtDetectedIssue, 'Practitioner', ['author']);
-  compartments.register(frtDetectedIssue, 'Device', ['author']);
+  compartments.register(frtDetectedIssue, frtPatient, ['patient']);
+  compartments.register(frtDetectedIssue, frtPractitioner, ['author']);
+  compartments.register(frtDetectedIssue, frtDevice, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -862,7 +862,7 @@ begin
   indexes.add(frtDevice, 'type', 'The type of the device', SearchParamTypeTOKEN, [], 'Device.type', SearchXpathUsageNormal);
   indexes.add(frtDevice, 'udicarrier', 'Barcode string (udi)', SearchParamTypeTOKEN, [], 'Device.udiCarrier', SearchXpathUsageNormal);
   indexes.add(frtDevice, 'url', 'Network address to contact device', SearchParamTypeURI, [], 'Device.url', SearchXpathUsageNormal);
-  compartments.register(frtDevice, 'Device', ['{def}']);
+  compartments.register(frtDevice, frtDevice, ['{def}']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -878,7 +878,7 @@ begin
   indexes.add(frtDeviceComponent, 'parent', 'The parent DeviceComponent resource', SearchParamTypeREFERENCE, [frtDeviceComponent], 'DeviceComponent.parent', SearchXpathUsageNormal);
   indexes.add(frtDeviceComponent, 'source', 'The device source', SearchParamTypeREFERENCE, [frtDevice], 'DeviceComponent.source', SearchXpathUsageNormal);
   indexes.add(frtDeviceComponent, 'type', 'The device component type', SearchParamTypeTOKEN, [], 'DeviceComponent.type', SearchXpathUsageNormal);
-  compartments.register(frtDeviceComponent, 'Device', ['source']);
+  compartments.register(frtDeviceComponent, frtDevice, ['source']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -896,7 +896,7 @@ begin
   indexes.add(frtDeviceMetric, 'parent', 'The parent DeviceMetric resource', SearchParamTypeREFERENCE, [frtDeviceComponent], 'DeviceMetric.parent', SearchXpathUsageNormal);
   indexes.add(frtDeviceMetric, 'source', 'The device resource', SearchParamTypeREFERENCE, [frtDevice], 'DeviceMetric.source', SearchXpathUsageNormal);
   indexes.add(frtDeviceMetric, 'type', 'The component type', SearchParamTypeTOKEN, [], 'DeviceMetric.type', SearchXpathUsageNormal);
-  compartments.register(frtDeviceMetric, 'Device', ['source']);
+  compartments.register(frtDeviceMetric, frtDevice, ['source']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDeviceUseRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -912,8 +912,8 @@ begin
   indexes.add(frtDeviceUseRequest, 'device', 'Device requested', SearchParamTypeREFERENCE, [frtDevice], 'DeviceUseRequest.device', SearchXpathUsageNormal);
   indexes.add(frtDeviceUseRequest, 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, [frtPatient], 'DeviceUseRequest.subject', SearchXpathUsageNormal);
   indexes.add(frtDeviceUseRequest, 'subject', 'Search by subject', SearchParamTypeREFERENCE, [frtPatient], 'DeviceUseRequest.subject', SearchXpathUsageNormal);
-  compartments.register(frtDeviceUseRequest, 'Patient', ['subject']);
-  compartments.register(frtDeviceUseRequest, 'Device', ['device']);
+  compartments.register(frtDeviceUseRequest, frtPatient, ['subject']);
+  compartments.register(frtDeviceUseRequest, frtDevice, ['device']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -929,8 +929,8 @@ begin
   indexes.add(frtDeviceUseStatement, 'device', 'Search by device', SearchParamTypeREFERENCE, [frtDevice], 'DeviceUseStatement.device', SearchXpathUsageNormal);
   indexes.add(frtDeviceUseStatement, 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, [frtPatient], 'DeviceUseStatement.subject', SearchXpathUsageNormal);
   indexes.add(frtDeviceUseStatement, 'subject', 'Search by subject', SearchParamTypeREFERENCE, [frtPatient], 'DeviceUseStatement.subject', SearchXpathUsageNormal);
-  compartments.register(frtDeviceUseStatement, 'Patient', ['subject']);
-  compartments.register(frtDeviceUseStatement, 'Device', ['device']);
+  compartments.register(frtDeviceUseStatement, frtPatient, ['subject']);
+  compartments.register(frtDeviceUseStatement, frtDevice, ['device']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDiagnosticOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -960,10 +960,10 @@ begin
   indexes.add(frtDiagnosticOrder, 'specimen', 'If the whole order relates to specific specimens', SearchParamTypeREFERENCE, [frtSpecimen], 'DiagnosticOrder.specimen | DiagnosticOrder.item.specimen', SearchXpathUsageNormal);
   indexes.add(frtDiagnosticOrder, 'status', 'proposed | draft | planned | requested | received | accepted | in-progress | review | completed | cancelled | suspended | rejected | failed | entered-in-error', SearchParamTypeTOKEN, [], 'DiagnosticOrder.status', SearchXpathUsageNormal);
   indexes.add(frtDiagnosticOrder, 'subject', 'Who and/or what test is about', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtLocation, frtGroup], 'DiagnosticOrder.subject', SearchXpathUsageNormal);
-  compartments.register(frtDiagnosticOrder, 'Patient', ['subject']);
-  compartments.register(frtDiagnosticOrder, 'Encounter', ['encounter']);
-  compartments.register(frtDiagnosticOrder, 'Practitioner', ['actor', 'orderer']);
-  compartments.register(frtDiagnosticOrder, 'Device', ['actor', 'subject']);
+  compartments.register(frtDiagnosticOrder, frtPatient, ['subject']);
+  compartments.register(frtDiagnosticOrder, frtEncounter, ['encounter']);
+  compartments.register(frtDiagnosticOrder, frtPractitioner, ['actor', 'orderer']);
+  compartments.register(frtDiagnosticOrder, frtDevice, ['actor', 'subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -991,10 +991,10 @@ begin
   indexes.add(frtDiagnosticReport, 'specimen', 'The specimen details', SearchParamTypeREFERENCE, [frtSpecimen], 'DiagnosticReport.specimen', SearchXpathUsageNormal);
   indexes.add(frtDiagnosticReport, 'status', 'The status of the report', SearchParamTypeTOKEN, [], 'DiagnosticReport.status', SearchXpathUsageNormal);
   indexes.add(frtDiagnosticReport, 'subject', 'The subject of the report', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtLocation, frtGroup], 'DiagnosticReport.subject', SearchXpathUsageNormal);
-  compartments.register(frtDiagnosticReport, 'Patient', ['subject']);
-  compartments.register(frtDiagnosticReport, 'Encounter', ['encounter']);
-  compartments.register(frtDiagnosticReport, 'Practitioner', ['performer']);
-  compartments.register(frtDiagnosticReport, 'Device', ['subject']);
+  compartments.register(frtDiagnosticReport, frtPatient, ['subject']);
+  compartments.register(frtDiagnosticReport, frtEncounter, ['encounter']);
+  compartments.register(frtDiagnosticReport, frtPractitioner, ['performer']);
+  compartments.register(frtDiagnosticReport, frtDevice, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1020,10 +1020,10 @@ begin
   indexes.add(frtDocumentManifest, 'status', 'current | superseded | entered-in-error', SearchParamTypeTOKEN, [], 'DocumentManifest.status', SearchXpathUsageNormal);
   indexes.add(frtDocumentManifest, 'subject', 'The subject of the set of documents', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtPractitioner, frtGroup], 'DocumentManifest.subject', SearchXpathUsageNormal);
   indexes.add(frtDocumentManifest, 'type', 'Kind of document set', SearchParamTypeTOKEN, [], 'DocumentManifest.type', SearchXpathUsageNormal);
-  compartments.register(frtDocumentManifest, 'Patient', ['subject', 'author', 'recipient']);
-  compartments.register(frtDocumentManifest, 'RelatedPerson', ['author']);
-  compartments.register(frtDocumentManifest, 'Practitioner', ['subject', 'author', 'recipient']);
-  compartments.register(frtDocumentManifest, 'Device', ['subject', 'author']);
+  compartments.register(frtDocumentManifest, frtPatient, ['subject', 'author', 'recipient']);
+  compartments.register(frtDocumentManifest, frtRelatedPerson, ['author']);
+  compartments.register(frtDocumentManifest, frtPractitioner, ['subject', 'author', 'recipient']);
+  compartments.register(frtDocumentManifest, frtDevice, ['subject', 'author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1062,10 +1062,10 @@ begin
   indexes.add(frtDocumentReference, 'status', 'current | superseded | entered-in-error', SearchParamTypeTOKEN, [], 'DocumentReference.status', SearchXpathUsageNormal);
   indexes.add(frtDocumentReference, 'subject', 'Who/what is the subject of the document', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtPractitioner, frtGroup], 'DocumentReference.subject', SearchXpathUsageNormal);
   indexes.add(frtDocumentReference, 'type', 'Kind of document (LOINC if possible)', SearchParamTypeTOKEN, [], 'DocumentReference.type', SearchXpathUsageNormal);
-  compartments.register(frtDocumentReference, 'Patient', ['subject', 'author']);
-  compartments.register(frtDocumentReference, 'RelatedPerson', ['author']);
-  compartments.register(frtDocumentReference, 'Practitioner', ['subject', 'author', 'authenticator']);
-  compartments.register(frtDocumentReference, 'Device', ['subject', 'author']);
+  compartments.register(frtDocumentReference, frtPatient, ['subject', 'author']);
+  compartments.register(frtDocumentReference, frtRelatedPerson, ['author']);
+  compartments.register(frtDocumentReference, frtPractitioner, ['subject', 'author', 'authenticator']);
+  compartments.register(frtDocumentReference, frtDevice, ['subject', 'author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1144,10 +1144,10 @@ begin
   indexes.add(frtEncounter, 'special-arrangement', 'Wheelchair, translator, stretcher, etc.', SearchParamTypeTOKEN, [], 'Encounter.hospitalization.specialArrangement', SearchXpathUsageNormal);
   indexes.add(frtEncounter, 'status', 'planned | arrived | in-progress | onleave | finished | cancelled', SearchParamTypeTOKEN, [], 'Encounter.status', SearchXpathUsageNormal);
   indexes.add(frtEncounter, 'type', 'Specific type of encounter', SearchParamTypeTOKEN, [], 'Encounter.type', SearchXpathUsageNormal);
-  compartments.register(frtEncounter, 'Patient', ['patient']);
-  compartments.register(frtEncounter, 'Encounter', ['{def}']);
-  compartments.register(frtEncounter, 'RelatedPerson', ['participant']);
-  compartments.register(frtEncounter, 'Practitioner', ['practitioner', 'participant']);
+  compartments.register(frtEncounter, frtPatient, ['patient']);
+  compartments.register(frtEncounter, frtEncounter, ['{def}']);
+  compartments.register(frtEncounter, frtRelatedPerson, ['participant']);
+  compartments.register(frtEncounter, frtPractitioner, ['practitioner', 'participant']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1163,7 +1163,7 @@ begin
   indexes.add(frtEnrollmentRequest, 'identifier', 'The business identifier of the Enrollment', SearchParamTypeTOKEN, [], 'EnrollmentRequest.identifier', SearchXpathUsageNormal);
   indexes.add(frtEnrollmentRequest, 'patient', 'The party to be enrolled', SearchParamTypeREFERENCE, [frtPatient], 'EnrollmentRequest.subject', SearchXpathUsageNormal);
   indexes.add(frtEnrollmentRequest, 'subject', 'The party to be enrolled', SearchParamTypeREFERENCE, [frtPatient], 'EnrollmentRequest.subject', SearchXpathUsageNormal);
-  compartments.register(frtEnrollmentRequest, 'Patient', ['subject']);
+  compartments.register(frtEnrollmentRequest, frtPatient, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1198,8 +1198,8 @@ begin
   indexes.add(frtEpisodeOfCare, 'patient', 'Patient for this episode of care', SearchParamTypeREFERENCE, [frtPatient], 'EpisodeOfCare.patient', SearchXpathUsageNormal);
   indexes.add(frtEpisodeOfCare, 'status', 'The current status of the Episode of Care as provided (does not check the status history collection)', SearchParamTypeTOKEN, [], 'EpisodeOfCare.status', SearchXpathUsageNormal);
   indexes.add(frtEpisodeOfCare, 'type', 'Type/class  - e.g. specialist referral, disease management', SearchParamTypeTOKEN, [], 'EpisodeOfCare.type', SearchXpathUsageNormal);
-  compartments.register(frtEpisodeOfCare, 'Patient', ['patient']);
-  compartments.register(frtEpisodeOfCare, 'Practitioner', ['care-manager']);
+  compartments.register(frtEpisodeOfCare, frtPatient, ['patient']);
+  compartments.register(frtEpisodeOfCare, frtPractitioner, ['care-manager']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1264,7 +1264,7 @@ begin
   indexes.add(frtFamilyMemberHistory, 'identifier', 'A search by a record identifier', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.identifier', SearchXpathUsageNormal);
   indexes.add(frtFamilyMemberHistory, 'patient', 'The identity of a subject to list family member history items for', SearchParamTypeREFERENCE, [frtPatient], 'FamilyMemberHistory.patient', SearchXpathUsageNormal);
   indexes.add(frtFamilyMemberHistory, 'relationship', 'Search for family history of members based on relationship', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  compartments.register(frtFamilyMemberHistory, 'Patient', ['patient']);
+  compartments.register(frtFamilyMemberHistory, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1282,9 +1282,9 @@ begin
   indexes.add(frtFlag, 'encounter', 'Alert relevant during encounter', SearchParamTypeREFERENCE, [frtEncounter], 'Flag.encounter', SearchXpathUsageNormal);
   indexes.add(frtFlag, 'patient', 'The identity of a subject to list flags for', SearchParamTypeREFERENCE, [frtPatient], 'Flag.subject', SearchXpathUsageNormal);
   indexes.add(frtFlag, 'subject', 'The identity of a subject to list flags for', SearchParamTypeREFERENCE, [frtPatient, frtLocation, frtOrganization, frtPractitioner, frtGroup], 'Flag.subject', SearchXpathUsageNormal);
-  compartments.register(frtFlag, 'Patient', ['patient']);
-  compartments.register(frtFlag, 'Practitioner', ['author']);
-  compartments.register(frtFlag, 'Device', ['author']);
+  compartments.register(frtFlag, frtPatient, ['patient']);
+  compartments.register(frtFlag, frtPractitioner, ['author']);
+  compartments.register(frtFlag, frtDevice, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1303,7 +1303,7 @@ begin
   indexes.add(frtGoal, 'status', 'proposed | planned | accepted | rejected | in-progress | achieved | sustaining | on-hold | cancelled', SearchParamTypeTOKEN, [], 'Goal.status', SearchXpathUsageNormal);
   indexes.add(frtGoal, 'subject', 'Who this goal is intended for', SearchParamTypeREFERENCE, [frtPatient, frtOrganization, frtGroup], 'Goal.subject', SearchXpathUsageNormal);
   indexes.add(frtGoal, 'targetdate', 'Reach goal on or before', SearchParamTypeDATE, [], 'Goal.target.as(Date)', SearchXpathUsageNormal);
-  compartments.register(frtGoal, 'Patient', ['patient']);
+  compartments.register(frtGoal, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1325,9 +1325,9 @@ begin
   indexes.add(frtGroup, 'member', 'Reference to the group member', SearchParamTypeREFERENCE, [frtMedication, frtDevice, frtPatient, frtPractitioner, frtSubstance], 'Group.member.entity', SearchXpathUsageNormal);
   indexes.add(frtGroup, 'type', 'The type of resources the group contains', SearchParamTypeTOKEN, [], 'Group.type', SearchXpathUsageNormal);
   indexes.add(frtGroup, 'value', 'Value held by characteristic', SearchParamTypeTOKEN, [], 'Group.characteristic.value', SearchXpathUsageNormal);
-  compartments.register(frtGroup, 'Patient', ['member']);
-  compartments.register(frtGroup, 'Practitioner', ['member']);
-  compartments.register(frtGroup, 'Device', ['member']);
+  compartments.register(frtGroup, frtPatient, ['member']);
+  compartments.register(frtGroup, frtPractitioner, ['member']);
+  compartments.register(frtGroup, frtDevice, ['member']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1378,7 +1378,7 @@ begin
   indexes.add(frtImagingExcerpt, 'patient', 'Subject of key DICOM object selection', SearchParamTypeREFERENCE, [frtPatient], 'ImagingExcerpt.patient', SearchXpathUsageNormal);
   indexes.add(frtImagingExcerpt, 'selected-study', 'Study selected in key DICOM object selection', SearchParamTypeURI, [], 'ImagingExcerpt.study.uid', SearchXpathUsageNormal);
   indexes.add(frtImagingExcerpt, 'title', 'Title of key DICOM object selection', SearchParamTypeTOKEN, [], 'ImagingExcerpt.title', SearchXpathUsageNormal);
-  compartments.register(frtImagingExcerpt, 'Patient', ['patient']);
+  compartments.register(frtImagingExcerpt, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForImagingObjectSelection(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1397,10 +1397,10 @@ begin
   indexes.add(frtImagingObjectSelection, 'patient', 'Subject of key DICOM object selection', SearchParamTypeREFERENCE, [frtPatient], 'ImagingObjectSelection.patient', SearchXpathUsageNormal);
   indexes.add(frtImagingObjectSelection, 'selected-study', 'Study selected in key DICOM object selection', SearchParamTypeURI, [], 'ImagingObjectSelection.study.uid', SearchXpathUsageNormal);
   indexes.add(frtImagingObjectSelection, 'title', 'Title of key DICOM object selection', SearchParamTypeTOKEN, [], 'ImagingObjectSelection.title', SearchXpathUsageNormal);
-  compartments.register(frtImagingObjectSelection, 'Patient', ['patient', 'author']);
-  compartments.register(frtImagingObjectSelection, 'RelatedPerson', ['author']);
-  compartments.register(frtImagingObjectSelection, 'Practitioner', ['author']);
-  compartments.register(frtImagingObjectSelection, 'Device', ['author']);
+  compartments.register(frtImagingObjectSelection, frtPatient, ['patient', 'author']);
+  compartments.register(frtImagingObjectSelection, frtRelatedPerson, ['author']);
+  compartments.register(frtImagingObjectSelection, frtPractitioner, ['author']);
+  compartments.register(frtImagingObjectSelection, frtDevice, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1424,7 +1424,7 @@ begin
   indexes.add(frtImagingStudy, 'started', 'When the study was started', SearchParamTypeDATE, [], 'ImagingStudy.started', SearchXpathUsageNormal);
   indexes.add(frtImagingStudy, 'study', 'The study identifier for the image', SearchParamTypeURI, [], 'ImagingStudy.uid', SearchXpathUsageNormal);
   indexes.add(frtImagingStudy, 'uid', 'The instance unique identifier', SearchParamTypeURI, [], 'ImagingStudy.series.instance.uid', SearchXpathUsageNormal);
-  compartments.register(frtImagingStudy, 'Patient', ['patient']);
+  compartments.register(frtImagingStudy, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1453,8 +1453,8 @@ begin
   indexes.add(frtImmunization, 'requester', 'The practitioner who ordered the vaccination', SearchParamTypeREFERENCE, [frtPractitioner], 'Immunization.requester', SearchXpathUsageNormal);
   indexes.add(frtImmunization, 'status', 'Immunization event status', SearchParamTypeTOKEN, [], 'Immunization.status', SearchXpathUsageNormal);
   indexes.add(frtImmunization, 'vaccine-code', 'Vaccine Product Administered', SearchParamTypeTOKEN, [], 'Immunization.vaccineCode', SearchXpathUsageNormal);
-  compartments.register(frtImmunization, 'Patient', ['patient']);
-  compartments.register(frtImmunization, 'Practitioner', ['performer', 'requester']);
+  compartments.register(frtImmunization, frtPatient, ['patient']);
+  compartments.register(frtImmunization, frtPractitioner, ['performer', 'requester']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1476,7 +1476,7 @@ begin
   indexes.add(frtImmunizationRecommendation, 'status', 'Vaccine administration status', SearchParamTypeTOKEN, [], 'ImmunizationRecommendation.recommendation.forecastStatus', SearchXpathUsageNormal);
   indexes.add(frtImmunizationRecommendation, 'support', 'Past immunizations supporting recommendation', SearchParamTypeREFERENCE, [frtImmunization], 'ImmunizationRecommendation.recommendation.supportingImmunization', SearchXpathUsageNormal);
   indexes.add(frtImmunizationRecommendation, 'vaccine-type', 'Vaccine recommendation applies to', SearchParamTypeTOKEN, [], 'ImmunizationRecommendation.recommendation.vaccineCode', SearchXpathUsageNormal);
-  compartments.register(frtImmunizationRecommendation, 'Patient', ['patient']);
+  compartments.register(frtImmunizationRecommendation, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1533,7 +1533,7 @@ begin
   indexes.add(frtLinkage, 'author', 'Author of the Linkage', SearchParamTypeREFERENCE, [frtOrganization, frtPractitioner], 'Linkage.author', SearchXpathUsageNormal);
   indexes.add(frtLinkage, 'item', 'Matches on any item in the Linkage', SearchParamTypeREFERENCE, [], 'Linkage.item.resource', SearchXpathUsageNormal);
   indexes.add(frtLinkage, 'source', 'Matches on any item in the Linkage with a type of ''source''', SearchParamTypeREFERENCE, [], 'Linkage.item.resource', SearchXpathUsageNormal);
-  compartments.register(frtLinkage, 'Practitioner', ['author']);
+  compartments.register(frtLinkage, frtPractitioner, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1558,9 +1558,9 @@ begin
   indexes.add(frtList, 'status', 'current | retired | entered-in-error', SearchParamTypeTOKEN, [], 'List.status', SearchXpathUsageNormal);
   indexes.add(frtList, 'subject', 'If all resources have the same subject', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtLocation, frtGroup], 'List.subject', SearchXpathUsageNormal);
   indexes.add(frtList, 'title', 'Descriptive name for the list', SearchParamTypeSTRING, [], 'List.title', SearchXpathUsageNormal);
-  compartments.register(frtList, 'Patient', ['subject', 'source']);
-  compartments.register(frtList, 'Practitioner', ['source']);
-  compartments.register(frtList, 'Device', ['subject', 'source']);
+  compartments.register(frtList, frtPatient, ['subject', 'source']);
+  compartments.register(frtList, frtPractitioner, ['source']);
+  compartments.register(frtList, frtDevice, ['subject', 'source']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1618,7 +1618,7 @@ begin
   indexes.add(frtMeasureReport, '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add(frtMeasureReport, '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add(frtMeasureReport, 'patient', 'The identity of a patient to search for individual measure report results for', SearchParamTypeREFERENCE, [frtPatient], 'MeasureReport.patient', SearchXpathUsageNormal);
-  compartments.register(frtMeasureReport, 'Patient', ['patient']);
+  compartments.register(frtMeasureReport, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1639,9 +1639,9 @@ begin
   indexes.add(frtMedia, 'subtype', 'The type of acquisition equipment/process', SearchParamTypeTOKEN, [], 'Media.subtype', SearchXpathUsageNormal);
   indexes.add(frtMedia, 'type', 'photo | video | audio', SearchParamTypeTOKEN, [], 'Media.type', SearchXpathUsageNormal);
   indexes.add(frtMedia, 'view', 'Imaging view, e.g. Lateral or Antero-posterior', SearchParamTypeTOKEN, [], 'Media.view', SearchXpathUsageNormal);
-  compartments.register(frtMedia, 'Patient', ['subject']);
-  compartments.register(frtMedia, 'Practitioner', ['subject', 'operator']);
-  compartments.register(frtMedia, 'Device', ['subject']);
+  compartments.register(frtMedia, frtPatient, ['subject']);
+  compartments.register(frtMedia, frtPractitioner, ['subject', 'operator']);
+  compartments.register(frtMedia, frtDevice, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1685,10 +1685,10 @@ begin
   indexes.add(frtMedicationAdministration, 'prescription', 'The identity of a prescription to list administrations from', SearchParamTypeREFERENCE, [frtMedicationOrder], 'MedicationAdministration.prescription', SearchXpathUsageNormal);
   indexes.add(frtMedicationAdministration, 'status', 'MedicationAdministration event status (for example one of active/paused/completed/nullified)', SearchParamTypeTOKEN, [], 'MedicationAdministration.status', SearchXpathUsageNormal);
   indexes.add(frtMedicationAdministration, 'wasnotgiven', 'Administrations that were not made', SearchParamTypeTOKEN, [], 'MedicationAdministration.wasNotGiven', SearchXpathUsageNormal);
-  compartments.register(frtMedicationAdministration, 'Patient', ['patient']);
-  compartments.register(frtMedicationAdministration, 'Encounter', ['encounter']);
-  compartments.register(frtMedicationAdministration, 'Practitioner', ['practitioner']);
-  compartments.register(frtMedicationAdministration, 'Device', ['device']);
+  compartments.register(frtMedicationAdministration, frtPatient, ['patient']);
+  compartments.register(frtMedicationAdministration, frtEncounter, ['encounter']);
+  compartments.register(frtMedicationAdministration, frtPractitioner, ['practitioner']);
+  compartments.register(frtMedicationAdministration, frtDevice, ['device']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1714,8 +1714,8 @@ begin
   indexes.add(frtMedicationDispense, 'type', 'Return all dispenses of a specific type', SearchParamTypeTOKEN, [], 'MedicationDispense.type', SearchXpathUsageNormal);
   indexes.add(frtMedicationDispense, 'whenhandedover', 'Date when medication handed over to patient (outpatient setting), or supplied to ward or clinic (inpatient setting)', SearchParamTypeDATE, [], 'MedicationDispense.whenHandedOver', SearchXpathUsageNormal);
   indexes.add(frtMedicationDispense, 'whenprepared', 'Date when medication prepared', SearchParamTypeDATE, [], 'MedicationDispense.whenPrepared', SearchXpathUsageNormal);
-  compartments.register(frtMedicationDispense, 'Patient', ['patient']);
-  compartments.register(frtMedicationDispense, 'Practitioner', ['dispenser', 'receiver', 'responsibleparty']);
+  compartments.register(frtMedicationDispense, frtPatient, ['patient']);
+  compartments.register(frtMedicationDispense, frtPractitioner, ['dispenser', 'receiver', 'responsibleparty']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMedicationOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1736,9 +1736,9 @@ begin
   indexes.add(frtMedicationOrder, 'patient', 'The identity of a patient to list orders  for', SearchParamTypeREFERENCE, [frtPatient], 'MedicationOrder.patient', SearchXpathUsageNormal);
   indexes.add(frtMedicationOrder, 'prescriber', 'Who ordered the medication(s)', SearchParamTypeREFERENCE, [frtPractitioner], 'MedicationOrder.prescriber', SearchXpathUsageNormal);
   indexes.add(frtMedicationOrder, 'status', 'Status of the prescription', SearchParamTypeTOKEN, [], 'MedicationOrder.status', SearchXpathUsageNormal);
-  compartments.register(frtMedicationOrder, 'Patient', ['patient']);
-  compartments.register(frtMedicationOrder, 'Encounter', ['encounter']);
-  compartments.register(frtMedicationOrder, 'Practitioner', ['prescriber']);
+  compartments.register(frtMedicationOrder, frtPatient, ['patient']);
+  compartments.register(frtMedicationOrder, frtEncounter, ['encounter']);
+  compartments.register(frtMedicationOrder, frtPractitioner, ['prescriber']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1758,9 +1758,9 @@ begin
   indexes.add(frtMedicationStatement, 'patient', 'The identity of a patient to list statements  for', SearchParamTypeREFERENCE, [frtPatient], 'MedicationStatement.patient', SearchXpathUsageNormal);
   indexes.add(frtMedicationStatement, 'source', 'Who the information in the statement came from', SearchParamTypeREFERENCE, [frtPatient, frtPractitioner, frtRelatedPerson], 'MedicationStatement.informationSource', SearchXpathUsageNormal);
   indexes.add(frtMedicationStatement, 'status', 'Return statements that match the given status', SearchParamTypeTOKEN, [], 'MedicationStatement.status', SearchXpathUsageNormal);
-  compartments.register(frtMedicationStatement, 'Patient', ['patient', 'source']);
-  compartments.register(frtMedicationStatement, 'RelatedPerson', ['source']);
-  compartments.register(frtMedicationStatement, 'Practitioner', ['source']);
+  compartments.register(frtMedicationStatement, frtPatient, ['patient', 'source']);
+  compartments.register(frtMedicationStatement, frtRelatedPerson, ['source']);
+  compartments.register(frtMedicationStatement, frtPractitioner, ['source']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1787,8 +1787,8 @@ begin
   indexes.add(frtMessageHeader, 'source-uri', 'Actual message source address or id', SearchParamTypeURI, [], 'MessageHeader.source.endpoint', SearchXpathUsageNormal);
   indexes.add(frtMessageHeader, 'target', 'Particular delivery destination within the destination', SearchParamTypeREFERENCE, [frtDevice], 'MessageHeader.destination.target', SearchXpathUsageNormal);
   indexes.add(frtMessageHeader, 'timestamp', 'Time that the message was sent', SearchParamTypeDATE, [], 'MessageHeader.timestamp', SearchXpathUsageNormal);
-  compartments.register(frtMessageHeader, 'Practitioner', ['receiver', 'author', 'responsible', 'enterer']);
-  compartments.register(frtMessageHeader, 'Device', ['target']);
+  compartments.register(frtMessageHeader, frtPractitioner, ['receiver', 'author', 'responsible', 'enterer']);
+  compartments.register(frtMessageHeader, frtDevice, ['target']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForModuleDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1849,9 +1849,9 @@ begin
   indexes.add(frtNutritionOrder, 'provider', 'The identify of the provider who placed the nutrition order', SearchParamTypeREFERENCE, [frtPractitioner], 'NutritionOrder.orderer', SearchXpathUsageNormal);
   indexes.add(frtNutritionOrder, 'status', 'Status of the nutrition order.', SearchParamTypeTOKEN, [], 'NutritionOrder.status', SearchXpathUsageNormal);
   indexes.add(frtNutritionOrder, 'supplement', 'Type of supplement product requested', SearchParamTypeTOKEN, [], 'NutritionOrder.supplement.type', SearchXpathUsageNormal);
-  compartments.register(frtNutritionOrder, 'Patient', ['patient']);
-  compartments.register(frtNutritionOrder, 'Encounter', ['encounter']);
-  compartments.register(frtNutritionOrder, 'Practitioner', ['provider']);
+  compartments.register(frtNutritionOrder, frtPatient, ['patient']);
+  compartments.register(frtNutritionOrder, frtEncounter, ['encounter']);
+  compartments.register(frtNutritionOrder, frtPractitioner, ['provider']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1890,11 +1890,11 @@ begin
   indexes.add(frtObservation, 'value-date', 'The value of the observation, if the value is a date or period of time', SearchParamTypeDATE, [], 'Observation.value.as(DateTime) | Observation.value.as(Period)', SearchXpathUsageNormal);
   indexes.add(frtObservation, 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', SearchParamTypeQUANTITY, [], 'Observation.value.as(Quantity)', SearchXpathUsageNormal);
   indexes.add(frtObservation, 'value-string', 'The value of the observation, if the value is a string, and also searches in CodeableConcept.text', SearchParamTypeSTRING, [], 'Observation.value.as(String)', SearchXpathUsageNormal);
-  compartments.register(frtObservation, 'Patient', ['subject', 'performer']);
-  compartments.register(frtObservation, 'Encounter', ['encounter']);
-  compartments.register(frtObservation, 'RelatedPerson', ['performer']);
-  compartments.register(frtObservation, 'Practitioner', ['performer']);
-  compartments.register(frtObservation, 'Device', ['subject', 'device']);
+  compartments.register(frtObservation, frtPatient, ['subject', 'performer']);
+  compartments.register(frtObservation, frtEncounter, ['encounter']);
+  compartments.register(frtObservation, frtRelatedPerson, ['performer']);
+  compartments.register(frtObservation, frtPractitioner, ['performer']);
+  compartments.register(frtObservation, frtDevice, ['subject', 'device']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1954,9 +1954,9 @@ begin
   indexes.add(frtOrder, 'target', 'Who is intended to fulfill the order', SearchParamTypeREFERENCE, [frtDevice, frtOrganization, frtPractitioner], 'Order.target', SearchXpathUsageNormal);
   indexes.add(frtOrder, 'when', 'A formal schedule', SearchParamTypeDATE, [], 'Order.when.schedule', SearchXpathUsageNormal);
   indexes.add(frtOrder, 'when_code', 'Code specifies when request should be done. The code may simply be a priority code', SearchParamTypeTOKEN, [], 'Order.when.code', SearchXpathUsageNormal);
-  compartments.register(frtOrder, 'Patient', ['subject']);
-  compartments.register(frtOrder, 'Practitioner', ['source', 'target']);
-  compartments.register(frtOrder, 'Device', ['target']);
+  compartments.register(frtOrder, frtPatient, ['subject']);
+  compartments.register(frtOrder, frtPractitioner, ['source', 'target']);
+  compartments.register(frtOrder, frtDevice, ['target']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForOrderResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1975,9 +1975,9 @@ begin
   indexes.add(frtOrderResponse, 'identifier', 'Identifiers assigned to this order by the orderer or by the receiver', SearchParamTypeTOKEN, [], 'OrderResponse.identifier', SearchXpathUsageNormal);
   indexes.add(frtOrderResponse, 'request', 'The order that this is a response to', SearchParamTypeREFERENCE, [frtOrder], 'OrderResponse.request', SearchXpathUsageNormal);
   indexes.add(frtOrderResponse, 'who', 'Who made the response', SearchParamTypeREFERENCE, [frtDevice, frtOrganization, frtPractitioner], 'OrderResponse.who', SearchXpathUsageNormal);
-  compartments.register(frtOrderResponse, 'Patient', ['request.patient']);
-  compartments.register(frtOrderResponse, 'Practitioner', ['who']);
-  compartments.register(frtOrderResponse, 'Device', ['who']);
+  compartments.register(frtOrderResponse, frtPatient, ['request.patient']);
+  compartments.register(frtOrderResponse, frtPractitioner, ['who']);
+  compartments.register(frtOrderResponse, frtDevice, ['who']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForOrderSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2059,8 +2059,8 @@ begin
   indexes.add(frtPatient, 'phonetic', 'A portion of either family or given name using some kind of phonetic matching algorithm', SearchParamTypeSTRING, [], 'Patient.name', SearchXpathUsagePhonetic);
   indexes.add(frtPatient, 'race', 'Returns patients with a race extension matching the specified code.', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add(frtPatient, 'telecom', 'The value in any kind of telecom details of the patient', SearchParamTypeTOKEN, [], 'Patient.telecom', SearchXpathUsageNormal);
-  compartments.register(frtPatient, 'Patient', ['link']);
-  compartments.register(frtPatient, 'Practitioner', ['careprovider']);
+  compartments.register(frtPatient, frtPatient, ['link']);
+  compartments.register(frtPatient, frtPractitioner, ['careprovider']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2140,9 +2140,9 @@ begin
   indexes.add(frtPerson, 'practitioner', 'The Person links to this Practitioner', SearchParamTypeREFERENCE, [frtPractitioner], 'Person.link.target', SearchXpathUsageNormal);
   indexes.add(frtPerson, 'relatedperson', 'The Person links to this RelatedPerson', SearchParamTypeREFERENCE, [frtRelatedPerson], 'Person.link.target', SearchXpathUsageNormal);
   indexes.add(frtPerson, 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'Person.telecom', SearchXpathUsageNormal);
-  compartments.register(frtPerson, 'Patient', ['patient']);
-  compartments.register(frtPerson, 'RelatedPerson', ['link']);
-  compartments.register(frtPerson, 'Practitioner', ['practitioner']);
+  compartments.register(frtPerson, frtPatient, ['patient']);
+  compartments.register(frtPerson, frtRelatedPerson, ['link']);
+  compartments.register(frtPerson, frtPractitioner, ['practitioner']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2175,7 +2175,7 @@ begin
   indexes.add(frtPractitioner, 'role', 'The practitioner can perform this role at for the organization', SearchParamTypeTOKEN, [], 'Practitioner.practitionerRole.role', SearchXpathUsageNormal);
   indexes.add(frtPractitioner, 'specialty', 'The practitioner has this specialty at an organization', SearchParamTypeTOKEN, [], 'Practitioner.practitionerRole.specialty', SearchXpathUsageNormal);
   indexes.add(frtPractitioner, 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'Practitioner.telecom | Practitioner.practitionerRole.telecom', SearchXpathUsageNormal);
-  compartments.register(frtPractitioner, 'Practitioner', ['{def}']);
+  compartments.register(frtPractitioner, frtPractitioner, ['{def}']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2197,7 +2197,7 @@ begin
   indexes.add(frtPractitionerRole, 'role', 'The practitioner can perform this role at for the organization', SearchParamTypeTOKEN, [], 'PractitionerRole.role', SearchXpathUsageNormal);
   indexes.add(frtPractitionerRole, 'specialty', 'The practitioner has this specialty at an organization', SearchParamTypeTOKEN, [], 'PractitionerRole.specialty', SearchXpathUsageNormal);
   indexes.add(frtPractitionerRole, 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom', SearchXpathUsageNormal);
-  compartments.register(frtPractitionerRole, 'Practitioner', ['practitioner']);
+  compartments.register(frtPractitionerRole, frtPractitioner, ['practitioner']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2218,10 +2218,10 @@ begin
   indexes.add(frtProcedure, 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, [frtPatient], 'Procedure.subject', SearchXpathUsageNormal);
   indexes.add(frtProcedure, 'performer', 'The reference to the practitioner', SearchParamTypeREFERENCE, [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson], 'Procedure.performer.actor', SearchXpathUsageNormal);
   indexes.add(frtProcedure, 'subject', 'Search by subject', SearchParamTypeREFERENCE, [frtPatient, frtGroup], 'Procedure.subject', SearchXpathUsageNormal);
-  compartments.register(frtProcedure, 'Patient', ['patient', 'performer']);
-  compartments.register(frtProcedure, 'Encounter', ['encounter']);
-  compartments.register(frtProcedure, 'RelatedPerson', ['performer']);
-  compartments.register(frtProcedure, 'Practitioner', ['performer']);
+  compartments.register(frtProcedure, frtPatient, ['patient', 'performer']);
+  compartments.register(frtProcedure, frtEncounter, ['encounter']);
+  compartments.register(frtProcedure, frtRelatedPerson, ['performer']);
+  compartments.register(frtProcedure, frtPractitioner, ['performer']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProcedureRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2240,11 +2240,11 @@ begin
   indexes.add(frtProcedureRequest, 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, [frtPatient], 'ProcedureRequest.subject', SearchXpathUsageNormal);
   indexes.add(frtProcedureRequest, 'performer', 'Who should perform the procedure', SearchParamTypeREFERENCE, [frtOrganization, frtPatient, frtPractitioner, frtRelatedPerson], 'ProcedureRequest.performer', SearchXpathUsageNormal);
   indexes.add(frtProcedureRequest, 'subject', 'Search by subject', SearchParamTypeREFERENCE, [frtPatient, frtGroup], 'ProcedureRequest.subject', SearchXpathUsageNormal);
-  compartments.register(frtProcedureRequest, 'Patient', ['subject', 'orderer', 'performer']);
-  compartments.register(frtProcedureRequest, 'Encounter', ['encounter']);
-  compartments.register(frtProcedureRequest, 'RelatedPerson', ['performer', 'orderer']);
-  compartments.register(frtProcedureRequest, 'Practitioner', ['performer', 'orderer']);
-  compartments.register(frtProcedureRequest, 'Device', ['orderer']);
+  compartments.register(frtProcedureRequest, frtPatient, ['subject', 'orderer', 'performer']);
+  compartments.register(frtProcedureRequest, frtEncounter, ['encounter']);
+  compartments.register(frtProcedureRequest, frtRelatedPerson, ['performer', 'orderer']);
+  compartments.register(frtProcedureRequest, frtPractitioner, ['performer', 'orderer']);
+  compartments.register(frtProcedureRequest, frtDevice, ['orderer']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2263,7 +2263,7 @@ begin
   indexes.add(frtProcessRequest, 'organizationreference', 'The organization who generated this request', SearchParamTypeREFERENCE, [frtOrganization], 'ProcessRequest.organization.as(Reference)', SearchXpathUsageNormal);
   indexes.add(frtProcessRequest, 'provideridentifier', 'The provider who regenerated this request', SearchParamTypeTOKEN, [], 'ProcessRequest.provider.as(Identifier)', SearchXpathUsageNormal);
   indexes.add(frtProcessRequest, 'providerreference', 'The provider who regenerated this request', SearchParamTypeREFERENCE, [frtPractitioner], 'ProcessRequest.provider.as(Reference)', SearchXpathUsageNormal);
-  compartments.register(frtProcessRequest, 'Practitioner', ['providerreference']);
+  compartments.register(frtProcessRequest, frtPractitioner, ['providerreference']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2285,7 +2285,7 @@ begin
   indexes.add(frtProcessResponse, 'requestprovideridentifier', 'The Provider who is responsible the request transaction', SearchParamTypeTOKEN, [], 'ProcessResponse.requestProvider.as(Identifier)', SearchXpathUsageNormal);
   indexes.add(frtProcessResponse, 'requestproviderreference', 'The Provider who is responsible the request transaction', SearchParamTypeREFERENCE, [frtPractitioner], 'ProcessResponse.requestProvider.as(Reference)', SearchXpathUsageNormal);
   indexes.add(frtProcessResponse, 'requestreference', 'The reference to the claim', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'ProcessResponse.request.as(Reference)', SearchXpathUsageNormal);
-  compartments.register(frtProcessResponse, 'Practitioner', ['requestproviderreference']);
+  compartments.register(frtProcessResponse, frtPractitioner, ['requestproviderreference']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProtocol(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2300,7 +2300,7 @@ begin
   indexes.add(frtProtocol, '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add(frtProtocol, 'identifier', 'The unique id for a particular protocol', SearchParamTypeTOKEN, [], 'Protocol.identifier', SearchXpathUsageNormal);
   indexes.add(frtProtocol, 'subject', 'Protocols with specified subject', SearchParamTypeREFERENCE, [frtCondition, frtMedication, frtDevice], 'Protocol.subject', SearchXpathUsageNormal);
-  compartments.register(frtProtocol, 'Device', ['subject']);
+  compartments.register(frtProtocol, frtDevice, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2323,10 +2323,10 @@ begin
   indexes.add(frtProvenance, 'start', 'Starting time with inclusive boundary', SearchParamTypeDATE, [], 'Provenance.period.start', SearchXpathUsageNormal);
   indexes.add(frtProvenance, 'target', 'Target Reference(s) (usually version specific)', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'Provenance.target', SearchXpathUsageNormal);
   indexes.add(frtProvenance, 'userid', 'Authorization-system identifier for the agent', SearchParamTypeTOKEN, [], 'Provenance.agent.userId', SearchXpathUsageNormal);
-  compartments.register(frtProvenance, 'Patient', ['target.subject', 'target.patient', 'patient']);
-  compartments.register(frtProvenance, 'RelatedPerson', ['agent']);
-  compartments.register(frtProvenance, 'Practitioner', ['agent']);
-  compartments.register(frtProvenance, 'Device', ['agent']);
+  compartments.register(frtProvenance, frtPatient, ['target.subject', 'target.patient', 'patient']);
+  compartments.register(frtProvenance, frtRelatedPerson, ['agent']);
+  compartments.register(frtProvenance, frtPractitioner, ['agent']);
+  compartments.register(frtProvenance, frtDevice, ['agent']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2367,11 +2367,11 @@ begin
   indexes.add(frtQuestionnaireResponse, 'source', 'The person who answered the questions', SearchParamTypeREFERENCE, [frtPatient, frtPractitioner, frtRelatedPerson], 'QuestionnaireResponse.source', SearchXpathUsageNormal);
   indexes.add(frtQuestionnaireResponse, 'status', 'The status of the questionnaire response', SearchParamTypeTOKEN, [], 'QuestionnaireResponse.status', SearchXpathUsageNormal);
   indexes.add(frtQuestionnaireResponse, 'subject', 'The subject of the questionnaire', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPES, 'QuestionnaireResponse.subject', SearchXpathUsageNormal);
-  compartments.register(frtQuestionnaireResponse, 'Patient', ['subject', 'author']);
-  compartments.register(frtQuestionnaireResponse, 'Encounter', ['encounter']);
-  compartments.register(frtQuestionnaireResponse, 'RelatedPerson', ['author', 'source']);
-  compartments.register(frtQuestionnaireResponse, 'Practitioner', ['author', 'source']);
-  compartments.register(frtQuestionnaireResponse, 'Device', ['author']);
+  compartments.register(frtQuestionnaireResponse, frtPatient, ['subject', 'author']);
+  compartments.register(frtQuestionnaireResponse, frtEncounter, ['encounter']);
+  compartments.register(frtQuestionnaireResponse, frtRelatedPerson, ['author', 'source']);
+  compartments.register(frtQuestionnaireResponse, frtPractitioner, ['author', 'source']);
+  compartments.register(frtQuestionnaireResponse, frtDevice, ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForReferralRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2396,8 +2396,8 @@ begin
   indexes.add(frtReferralRequest, 'specialty', 'The specialty that the referral is for', SearchParamTypeTOKEN, [], 'ReferralRequest.specialty', SearchXpathUsageNormal);
   indexes.add(frtReferralRequest, 'status', 'The status of the referral', SearchParamTypeTOKEN, [], 'ReferralRequest.status', SearchXpathUsageNormal);
   indexes.add(frtReferralRequest, 'type', 'The type of the referral', SearchParamTypeTOKEN, [], 'ReferralRequest.type', SearchXpathUsageNormal);
-  compartments.register(frtReferralRequest, 'Patient', ['patient', 'requester']);
-  compartments.register(frtReferralRequest, 'Practitioner', ['requester', 'recipient']);
+  compartments.register(frtReferralRequest, frtPatient, ['patient', 'requester']);
+  compartments.register(frtReferralRequest, frtPractitioner, ['requester', 'recipient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2425,8 +2425,8 @@ begin
   indexes.add(frtRelatedPerson, 'phone', 'A value in a phone contact', SearchParamTypeTOKEN, [], 'RelatedPerson.telecom.where(system=''phone'')', SearchXpathUsageNormal);
   indexes.add(frtRelatedPerson, 'phonetic', 'A portion of name using some kind of phonetic matching algorithm', SearchParamTypeSTRING, [], 'RelatedPerson.name', SearchXpathUsagePhonetic);
   indexes.add(frtRelatedPerson, 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'RelatedPerson.telecom', SearchXpathUsageNormal);
-  compartments.register(frtRelatedPerson, 'Patient', ['patient']);
-  compartments.register(frtRelatedPerson, 'RelatedPerson', ['{def}']);
+  compartments.register(frtRelatedPerson, frtPatient, ['patient']);
+  compartments.register(frtRelatedPerson, frtRelatedPerson, ['{def}']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2447,9 +2447,9 @@ begin
   indexes.add(frtRiskAssessment, 'patient', 'Who/what does assessment apply to?', SearchParamTypeREFERENCE, [frtPatient], 'RiskAssessment.subject', SearchXpathUsageNormal);
   indexes.add(frtRiskAssessment, 'performer', 'Who did assessment?', SearchParamTypeREFERENCE, [frtDevice, frtPractitioner], 'RiskAssessment.performer', SearchXpathUsageNormal);
   indexes.add(frtRiskAssessment, 'subject', 'Who/what does assessment apply to?', SearchParamTypeREFERENCE, [frtPatient, frtGroup], 'RiskAssessment.subject', SearchXpathUsageNormal);
-  compartments.register(frtRiskAssessment, 'Patient', ['subject']);
-  compartments.register(frtRiskAssessment, 'Practitioner', ['performer']);
-  compartments.register(frtRiskAssessment, 'Device', ['performer']);
+  compartments.register(frtRiskAssessment, frtPatient, ['subject']);
+  compartments.register(frtRiskAssessment, frtPractitioner, ['performer']);
+  compartments.register(frtRiskAssessment, frtDevice, ['performer']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2466,10 +2466,10 @@ begin
   indexes.add(frtSchedule, 'date', 'Search for Schedule resources that have a period that contains this date specified', SearchParamTypeDATE, [], 'Schedule.planningHorizon', SearchXpathUsageNormal);
   indexes.add(frtSchedule, 'identifier', 'A Schedule Identifier', SearchParamTypeTOKEN, [], 'Schedule.identifier', SearchXpathUsageNormal);
   indexes.add(frtSchedule, 'type', 'The type of appointments that can be booked into associated slot(s)', SearchParamTypeTOKEN, [], 'Schedule.serviceType', SearchXpathUsageNormal);
-  compartments.register(frtSchedule, 'Patient', ['actor']);
-  compartments.register(frtSchedule, 'RelatedPerson', ['actor']);
-  compartments.register(frtSchedule, 'Practitioner', ['actor']);
-  compartments.register(frtSchedule, 'Device', ['actor']);
+  compartments.register(frtSchedule, frtPatient, ['actor']);
+  compartments.register(frtSchedule, frtRelatedPerson, ['actor']);
+  compartments.register(frtSchedule, frtPractitioner, ['actor']);
+  compartments.register(frtSchedule, frtDevice, ['actor']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2549,9 +2549,9 @@ begin
   indexes.add(frtSpecimen, 'patient', 'The patient the specimen comes from', SearchParamTypeREFERENCE, [frtPatient], 'Specimen.subject', SearchXpathUsageNormal);
   indexes.add(frtSpecimen, 'subject', 'The subject of the specimen', SearchParamTypeREFERENCE, [frtDevice, frtPatient, frtSubstance, frtGroup], 'Specimen.subject', SearchXpathUsageNormal);
   indexes.add(frtSpecimen, 'type', 'The specimen type', SearchParamTypeTOKEN, [], 'Specimen.type', SearchXpathUsageNormal);
-  compartments.register(frtSpecimen, 'Patient', ['subject']);
-  compartments.register(frtSpecimen, 'Practitioner', ['collector']);
-  compartments.register(frtSpecimen, 'Device', ['subject']);
+  compartments.register(frtSpecimen, frtPatient, ['subject']);
+  compartments.register(frtSpecimen, frtPractitioner, ['collector']);
+  compartments.register(frtSpecimen, frtDevice, ['subject']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2663,8 +2663,8 @@ begin
   indexes.add(frtSupplyDelivery, 'receiver', 'Who collected the Supply', SearchParamTypeREFERENCE, [frtPractitioner], 'SupplyDelivery.receiver', SearchXpathUsageNormal);
   indexes.add(frtSupplyDelivery, 'status', 'in-progress | completed | abandoned', SearchParamTypeTOKEN, [], 'SupplyDelivery.status', SearchXpathUsageNormal);
   indexes.add(frtSupplyDelivery, 'supplier', 'Dispenser', SearchParamTypeREFERENCE, [frtPractitioner], 'SupplyDelivery.supplier', SearchXpathUsageNormal);
-  compartments.register(frtSupplyDelivery, 'Patient', ['patient']);
-  compartments.register(frtSupplyDelivery, 'Practitioner', ['supplier', 'receiver']);
+  compartments.register(frtSupplyDelivery, frtPatient, ['patient']);
+  compartments.register(frtSupplyDelivery, frtPractitioner, ['supplier', 'receiver']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2684,7 +2684,7 @@ begin
   indexes.add(frtSupplyRequest, 'source', 'Who initiated this order', SearchParamTypeREFERENCE, [frtOrganization, frtPatient, frtPractitioner], 'SupplyRequest.source', SearchXpathUsageNormal);
   indexes.add(frtSupplyRequest, 'status', 'requested | completed | failed | cancelled', SearchParamTypeTOKEN, [], 'SupplyRequest.status', SearchXpathUsageNormal);
   indexes.add(frtSupplyRequest, 'supplier', 'Who is intended to fulfill the request', SearchParamTypeREFERENCE, [frtOrganization], 'SupplyRequest.supplier', SearchXpathUsageNormal);
-  compartments.register(frtSupplyRequest, 'Patient', ['patient']);
+  compartments.register(frtSupplyRequest, frtPatient, ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2769,9 +2769,9 @@ begin
   indexes.add(frtVisionPrescription, 'identifier', 'Return prescriptions with this external identifier', SearchParamTypeTOKEN, [], 'VisionPrescription.identifier', SearchXpathUsageNormal);
   indexes.add(frtVisionPrescription, 'patient', 'The identity of a patient to list dispenses for', SearchParamTypeREFERENCE, [frtPatient], 'VisionPrescription.patient', SearchXpathUsageNormal);
   indexes.add(frtVisionPrescription, 'prescriber', 'Who authorizes the vision product', SearchParamTypeREFERENCE, [frtPractitioner], 'VisionPrescription.prescriber', SearchXpathUsageNormal);
-  compartments.register(frtVisionPrescription, 'Patient', ['patient']);
-  compartments.register(frtVisionPrescription, 'Encounter', ['encounter']);
-  compartments.register(frtVisionPrescription, 'Practitioner', ['prescriber']);
+  compartments.register(frtVisionPrescription, frtPatient, ['patient']);
+  compartments.register(frtVisionPrescription, frtEncounter, ['encounter']);
+  compartments.register(frtVisionPrescription, frtPractitioner, ['prescriber']);
 end;
 
 procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);

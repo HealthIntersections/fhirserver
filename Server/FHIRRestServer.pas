@@ -2359,7 +2359,7 @@ begin
       counts[a] := -1;
 
   if (comps <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id in ('+comps+'))'
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(DataStore.ResConfig[frtPatient].key)+' and Id in ('+comps+'))'
   else
     cmp := '';
 

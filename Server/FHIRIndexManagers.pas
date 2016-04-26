@@ -47,7 +47,7 @@ uses
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
   FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
-  TerminologyServer,
+  TerminologyServer, ServerUtilities,
   UcumServices;
 
 Const
@@ -149,7 +149,10 @@ Type
     FParent: Integer;
     FFlag: boolean;
     FName : String;
+    FTargetType : TFhirResourceType;
   public
+    function Link : TFhirIndexEntry; overload;
+
     Property EntryKey : Integer Read FEntryKey write FEntryKey;
     Property IndexKey : Integer Read FIndexKey write FIndexKey;
     property Key : integer read FKey write FKey;
@@ -161,19 +164,16 @@ Type
     Property concept : integer read FConcept write FConcept;
     Property type_ : TFhirSearchParamTypeEnum read FType write FType;
     Property flag : boolean read FFlag write FFlag;
+    Property TargetType : TFhirResourceType read FTargetType write FTargetType;
   end;
 
-  TFhirIndexEntryList = class (TAdvObjectList)
+  TFhirIndexEntryList = class (TAdvList<TFhirIndexEntry>)
   private
     FKeyEvent : TFHIRGetNextKey;
-    function GetItemN(iIndex: integer): TFhirIndexEntry;
     procedure filter(indexes : TFhirIndexList; name : String; list : TAdvList<TFhirIndexEntry>);
-  protected
-    function ItemClass : TAdvObjectClass; override;
   public
-    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer; overload;
+    function add(key, parent : integer; index : TFhirIndex; ref : integer; value1, value2 : String; target : integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer; overload;
     function add(key, parent : integer; index : TFhirComposite) : integer; overload;
-    Property Item[iIndexEntry : integer] : TFhirIndexEntry read GetItemN; default;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
   end;
 
@@ -182,21 +182,19 @@ Type
     FCKey: integer;
     FKey: integer;
     FId: string;
+    FTKey: integer;
   public
-    property Key : integer read FKey write FKey;
-    property CKey : integer read FCKey write FCKey;
-    property Id : string read FId write FId;
+    function link : TFhirCompartmentEntry; overload;
+    property Key : integer read FKey write FKey; // id of resource that is in a compartment
+    property TKey : integer read FTKey write FTKey; // resource type key for the compartment type
+    property Id : string read FId write FId; // field two of composite id for compartment - compartment id
+    property CKey : integer read FCKey write FCKey; // key for the resource that creates this compartment
   end;
 
-  TFhirCompartmentEntryList = class (TAdvObjectList)
-  private
-    function GetItemN(iIndex: integer): TFhirCompartmentEntry;
-  protected
-    function ItemClass : TAdvObjectClass; override;
+  TFhirCompartmentEntryList = class (TAdvList<TFhirCompartmentEntry>)
   public
-    procedure add(key, ckey : integer; id : string);
+    procedure add(key, tkey, ckey : integer; id : string);
     procedure removeById(id : String);
-    Property Item[iCompartmentEntry : integer] : TFhirCompartmentEntry read GetItemN; default;
   end;
 
   TFhirIndexSpaces = class (TAdvObject)
@@ -239,36 +237,22 @@ Type
     FInfo : TFHIRIndexInformation;
     FKeyEvent : TFHIRGetNextKey;
     FSpaces : TFhirIndexSpaces;
-    FPatientCompartments : TFhirCompartmentEntryList;
+    FCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
     FBases : TStringList;
     FValidationInfo : TWorkerContext;
     FTerminologyServer : TTerminologyServer;
+    FResConfig: TConfigArray;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
 
+              // addToCompartment
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
     procedure patientCompartmentNot(key : integer; type_, id : String); overload;
     procedure patientCompartment(key : integer; type_, id : String); overload;
-
-    procedure practitionerCompartment(key : integer; reference : TFhirReference); overload;
-    procedure practitionerCompartmentNot(key : integer; type_, id : String); overload;
-    procedure practitionerCompartment(key : integer; type_, id : String); overload;
-
-    procedure deviceCompartment(key : integer; reference : TFhirReference); overload;
-    procedure deviceCompartmentNot(key : integer; type_, id : String); overload;
-    procedure deviceCompartment(key : integer; type_, id : String); overload;
-
-    procedure relatedPersonCompartment(key : integer; reference : TFhirReference); overload;
-    procedure relatedPersonCompartmentNot(key : integer; type_, id : String); overload;
-    procedure relatedPersonCompartment(key : integer; type_, id : String); overload;
-
-    procedure encounterCompartment(key : integer; reference : TFhirReference); overload;
-    procedure encounterCompartmentNot(key : integer; type_, id : String); overload;
-    procedure encounterCompartment(key : integer; type_, id : String); overload;
 
     // very primitives
     procedure index(aType : TFhirResourceType; key, parent : integer; value1, value2, name : String); overload;
@@ -416,7 +400,7 @@ Type
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext);
+    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TConfigArray);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -558,7 +542,7 @@ end;
 
 { TFhirIndexEntryList }
 
-function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer;
+function TFhirIndexEntryList.add(key, parent : integer; index: TFhirIndex; ref: integer; value1, value2: String; target : Integer; ttype : TFHIRResourceType; type_ : TFhirSearchParamTypeEnum; flag : boolean = false; concept : integer = 0) : integer;
 var
   entry : TFhirIndexEntry;
   dummy : string;
@@ -594,7 +578,7 @@ begin
 
   for i := 0 to count - 1 do
   begin
-    entry := Item[i];
+    entry := Items[i];
     if (entry.Value1 = lowercase(value1)) and (entry.Value2 = lowercase(value2)) and (entry.FIndexKey = index.key) and (entry.target = target) and (entry.type_ = type_) and (entry.flag = flag) and (entry.RefType = ref) then
       exit;
   end;
@@ -615,6 +599,7 @@ begin
     entry.target := target;
     entry.concept := concept;
     entry.flag := flag;
+    entry.targetType := ttype;
     Inherited Add(entry.Link);
   finally
     entry.free;
@@ -648,58 +633,33 @@ var
   i : integer;
 begin
   for i := 0 to Count - 1 do
-    if Item[i].FName = name then
-      list.Add(Item[i].Link as TFhirIndexEntry);
+    if Items[i].FName = name then
+      list.Add(Items[i].Link as TFhirIndexEntry);
 end;
 
-function TFhirIndexEntryList.GetItemN(iIndex: integer): TFhirIndexEntry;
-begin
-  result := TFhirIndexEntry(objectByindex[iIndex]);
-end;
-
-function TFhirIndexEntryList.ItemClass: TAdvObjectClass;
-begin
-  result := TFhirIndexEntry;
-end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TConfigArray);
 begin
   inherited Create;
-  FPatientCompartments := TFhirCompartmentEntryList.create;
+  FCompartments := TFhirCompartmentEntryList.create;
   FValidationInfo := ValidationInfo;
   FSpaces := aSpaces;
   FInfo := aInfo;
   FEntries := TFhirIndexEntryList.Create;
+  FResConfig := ResConfig;
 end;
 
 destructor TFhirIndexManager.Destroy;
 begin
   FValidationInfo.Free;
   FTerminologyServer.free;
-  FPatientCompartments.Free;
+  FCompartments.Free;
   FSpaces.Free;
   FEntries.Free;
   FInfo.Free;
   inherited;
-end;
-
-procedure TFhirIndexManager.deviceCompartment(key: integer;
-  reference: TFhirReference);
-begin
-
-end;
-
-procedure TFhirIndexManager.deviceCompartment(key: integer; type_, id: String);
-begin
-
-end;
-
-procedure TFhirIndexManager.deviceCompartmentNot(key: integer; type_,
-  id: String);
-begin
-
 end;
 
 
@@ -778,7 +738,7 @@ begin
     value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)))
   else if (length(value) > INDEX_ENTRY_LENGTH) then
      raise exception.create('string too long for indexing: '+value+ ' ('+inttostr(length(value))+' chars)');
-  FEntries.add(key, parent, ndx, 0, value, '', 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, value, '', 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index2(aType : TFhirResourceType; key, parent : integer; value, name: String);
@@ -793,7 +753,7 @@ begin
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeReference]) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
-  FEntries.add(key, parent, ndx, 0, '', value, 0, SearchParamTypeString);
+  FEntries.add(key, parent, ndx, 0, '', value, 0, frtNull, SearchParamTypeString);
 end;
 
 function TFhirIndexManager.Link: TFHIRIndexManager;
@@ -823,7 +783,7 @@ begin
   else if (length(value2) > INDEX_ENTRY_LENGTH) then
     raise exception.create('string too long for indexing: '+value2+ ' ('+inttostr(length(value2))+' chars)');
 
-  FEntries.add(key, parent, ndx, 0, value1, value2, 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, value1, value2, 0, frtNull, ndx.SearchType);
 end;
 
 
@@ -839,7 +799,7 @@ begin
     raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
   concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
-  FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, ndx.SearchType, false, concept);
+  FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, frtNull, ndx.SearchType, false, concept);
 end;
 
 
@@ -870,7 +830,7 @@ begin
   else
     concept := 0;
 
-  FEntries.add(key, parent, ndx, 0, value.value, '', 0, ndx.SearchType, false, concept);
+  FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType, false, concept);
 end;
 
 
@@ -880,46 +840,10 @@ begin
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.relatedPersonCompartment(key: integer; type_,
-  id: String);
-begin
-
-end;
-
-procedure TFhirIndexManager.relatedPersonCompartment(key: integer;
-  reference: TFhirReference);
-begin
-
-end;
-
-procedure TFhirIndexManager.relatedPersonCompartmentNot(key: integer; type_,
-  id: String);
-begin
-
-end;
-
 procedure TFhirIndexManager.SetTerminologyServer(const Value: TTerminologyServer);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
-end;
-
-procedure TFhirIndexManager.encounterCompartment(key: integer;
-  reference: TFhirReference);
-begin
-
-end;
-
-procedure TFhirIndexManager.encounterCompartment(key: integer; type_,
-  id: String);
-begin
-
-end;
-
-procedure TFhirIndexManager.encounterCompartmentNot(key: integer; type_,
-  id: String);
-begin
-
 end;
 
 procedure TFhirIndexManager.evaluateByFHIRPath(key : integer; context, resource: TFhirResource);
@@ -929,6 +853,9 @@ var
   ndx : TFhirIndex;
   matches : TFHIRBaseList;
   match : TFHIRBase;
+  a : TFhirResourceType;
+  s : string;
+  ie : TFhirIndexEntry;
 begin
   path := TFHIRExpressionEngine.Create(FValidationInfo.link);
   try
@@ -1019,6 +946,29 @@ begin
   finally
     path.Free;
   end;
+
+  // ok, now compartment information
+  for a in [frtPatient, frtPractitioner, frtRelatedPerson, frtEncounter, frtDevice] do
+  begin
+    // a resource is automatically in it's own compartment
+    if (a = resource.ResourceType) then
+      FCompartments.add(key, FResConfig[a].key, key, resource.id);
+    if FInfo.Compartments.existsInCompartment(a, resource.ResourceType) then
+      for s in FInfo.Compartments.getIndexNames(a, resource.ResourceType) do
+      begin
+        if (s <> '{def}') and not s.Contains('.') then // we already did this one above, so we just ignore this here and compartments with '.' in them are in error
+        begin
+          ndx := FInfo.FIndexes.getByName(resource.ResourceType, s);
+          if (ndx = nil) then
+            raise Exception.Create('Unknown index '+s+' on '+CODES_TFhirResourceType[resource.ResourceType]);
+          for ie in FEntries do
+          begin
+            if (ie.FKey = key) and (ie.IndexKey = ndx.Key) and (ie.TargetType = a) then
+              FCompartments.add(key, FResConfig[a].key, ie.FTarget, ie.Value1);
+          end;
+        end;
+      end;
+  end;
 end;
 
 function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : String;
@@ -1037,7 +987,7 @@ begin
   FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where Target in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
   FSpaces.FDB.ExecSQL('update Ids set deleted = 1 where MasterResourceKey = '+inttostr(key));
-  FPatientCompartments.Clear;
+  FCompartments.Clear;
 
   processCompartmentTags(key, id, tags);
   {$IFDEF FHIR3}
@@ -1123,22 +1073,22 @@ begin
   FSpaces.FDB.terminate;
 
   result := '';
-  if FPatientCompartments.Count > 0 then
+  if FCompartments.Count > 0 then
   begin
-    FSpaces.FDB.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, CompartmentType, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
+    FSpaces.FDB.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, TypeKey, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
     FSpaces.FDB.prepare;
-    for i := 0 to FPatientCompartments.Count - 1 Do
+    for i := 0 to FCompartments.Count - 1 Do
     begin
       if i > 0 then
         result := result + ', ';
-      result := result + ''''+FPatientCompartments[i].id+'''';
+      result := result + ''''+FCompartments[i].id+'''';
 
       FSpaces.FDB.BindInteger('pk', FKeyEvent(ktCompartment, frtNull, dummy));
-      FSpaces.FDB.BindInteger('r', FPatientCompartments[i].key);
-      FSpaces.FDB.BindInteger('ct', 1);
-      FSpaces.FDB.BindString('id', FPatientCompartments[i].id);
-      if FPatientCompartments[i].ckey > 0 then
-        FSpaces.FDB.BindInteger('ck', FPatientCompartments[i].ckey)
+      FSpaces.FDB.BindInteger('r', FCompartments[i].key);
+      FSpaces.FDB.BindInteger('ct', FCompartments[i].tkey);
+      FSpaces.FDB.BindString('id', FCompartments[i].id);
+      if FCompartments[i].ckey > 0 then
+        FSpaces.FDB.BindInteger('ck', FCompartments[i].ckey)
       else
         FSpaces.FDB.BindNull('ck');
       FSpaces.FDB.execute;
@@ -1176,9 +1126,9 @@ begin
   if (length(value.code) > INDEX_ENTRY_LENGTH) then
     raise exception.create('code too long for indexing: '+value.code);
   if value.display <> '' then
-    FEntries.add(key, parent, ndx, ref, value.code, lowercase(RemoveAccents(copy(value.display, 1, INDEX_ENTRY_LENGTH))), 0, ndx.SearchType, false, concept)
+    FEntries.add(key, parent, ndx, ref, value.code, lowercase(RemoveAccents(copy(value.display, 1, INDEX_ENTRY_LENGTH))), 0, frtNull, ndx.SearchType, false, concept)
   else
-    FEntries.add(key, parent, ndx, ref, value.code, '', 0, ndx.SearchType, false, concept);
+    FEntries.add(key, parent, ndx, ref, value.code, '', 0, frtNull, ndx.SearchType, false, concept);
 end;
 
 Function ComparatorPrefix(v : String; c : TFhirQuantityComparatorEnum) : String;
@@ -1254,11 +1204,11 @@ begin
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   ref := FSpaces.ResolveSpace(value.low.unit_);
-  FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   if value.low.system <> '' then
   begin
     ref := FSpaces.ResolveSpace(value.low.system+'#'+value.low.code);
-    FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
+    FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   end;
 
   // ok, if there's a ucum code:
@@ -1276,7 +1226,7 @@ begin
         if (length(v2) > INDEX_ENTRY_LENGTH) then
           raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         ref := FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode);
-        FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType, true);
+        FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType, true);
       finally
         canonical.free;
       end;
@@ -1311,11 +1261,11 @@ begin
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   ref := FSpaces.ResolveSpace(value.unit_);
-  FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   if value.system <> '' then
   begin
     ref := FSpaces.ResolveSpace(value.system+'#'+value.code);
-    FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType);
+    FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   end;
 
   // ok, if there's a ucum code:
@@ -1333,7 +1283,7 @@ begin
         if (length(v2) > INDEX_ENTRY_LENGTH) then
           raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         ref := FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode);
-        FEntries.add(key, parent, ndx, ref, v1, v2, 0, ndx.SearchType, true);
+        FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType, true);
       finally
         canonical.free;
       end;
@@ -1372,7 +1322,7 @@ begin
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = SearchParamTypeDate) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing date');
-  FEntries.add(key, parent, ndx, 0, HL7DateToString(min, 'yyyymmddhhnnss', false), HL7DateToString(max, 'yyyymmddhhnnss', false), 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, HL7DateToString(min, 'yyyymmddhhnnss', false), HL7DateToString(max, 'yyyymmddhhnnss', false), 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirIdentifier; name: String);
@@ -1394,7 +1344,7 @@ begin
     ref := FSpaces.ResolveSpace(value.system);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise exception.create('id too long for indexing: '+value.value);
-  FEntries.add(key, parent, ndx, ref, value.value, '', 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirAddress; name: String);
@@ -1436,7 +1386,7 @@ begin
     ref := FSpaces.ResolveSpace(value.systemElement.value);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise exception.create('contact value too long for indexing: '+value.value);
-  FEntries.add(key, parent, ndx, ref, value.value, '', 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirIdentifierList; name: String);
@@ -1558,7 +1508,9 @@ var
   contained : TFhirResource;
   url : String;
   ok : boolean;
+  ttype : TFhirResourceType;
 begin
+  ttype := frtNull;
   if (value = nil) then
     exit;
   if (value.reference = '') and (value.display <> '') then
@@ -1602,6 +1554,7 @@ begin
       raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFHIRResourceType[context.ResourceType]+' = "'+sumContainedResources(TFhirDomainResource(context))+'"');
     if (specificType = frtNull) or (contained.ResourceType = specificType) then
     begin
+      ttype := contained.ResourceType;
       ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType]);
       target := FKeyEvent(ktResource, contained.ResourceType, id);
       FSpaces.FDB.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
@@ -1632,6 +1585,7 @@ begin
     begin
       if (specificType = frtNull) or (type_ = CODES_TFHIRResourceType[specificType]) then
       begin
+        ttype := ResourceTypeByName(type_);
         ref := FSpaces.ResolveSpace(type_);
         FSpaces.FDB.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
         FSpaces.FDB.Prepare;
@@ -1652,7 +1606,7 @@ begin
   end;
 
   if ok then
-    FEntries.add(key, parent, ndx, ref, id, '', target, ndx.SearchType);
+    FEntries.add(key, parent, ndx, ref, id, '', target, ttype, ndx.SearchType);
 end;
 
 
@@ -1669,7 +1623,7 @@ begin
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
-  FEntries.add(key, parent, ndx, 0, value.value, '', 0, ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
 
@@ -1707,41 +1661,24 @@ begin
   patientCompartment(key, 'Patient', sid);
 end;
 
+
 procedure TFhirIndexManager.patientCompartment(key : integer; type_, id : String);
 begin
-  FSpaces.FDB.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
+  FSpaces.FDB.sql := 'Select i.ResourceTypeKey, ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
   FSpaces.FDB.Prepare;
   FSpaces.FDB.BindString('t', type_);
   FSpaces.FDB.BindString('id', id);
   FSpaces.FDB.Execute;
   if FSpaces.FDB.FetchNext then
-    FPatientCompartments.add(key, FSpaces.FDB.ColIntegerByName['ResourceKey'], id)
+    FCompartments.add(key, FSpaces.FDB.ColIntegerByName['ResourceTypeKey'], FSpaces.FDB.ColIntegerByName['ResourceKey'], id)
   else
-    FPatientCompartments.add(key, 0, id);
+    FCompartments.add(key, 0, 0, id);
   FSpaces.FDB.Terminate;
 end;
 
 procedure TFhirIndexManager.patientCompartmentNot(key : integer; type_, id : String);
 begin
-  FPatientCompartments.removeById(id);
-end;
-
-procedure TFhirIndexManager.practitionerCompartment(key: integer; type_,
-  id: String);
-begin
-
-end;
-
-procedure TFhirIndexManager.practitionerCompartment(key: integer;
-  reference: TFhirReference);
-begin
-
-end;
-
-procedure TFhirIndexManager.practitionerCompartmentNot(key: integer; type_,
-  id: String);
-begin
-
+  FCompartments.removeById(id);
 end;
 
 procedure TFhirIndexManager.processCompartmentTags(key: integer; id: String; tags: TFHIRTagList);
@@ -1844,13 +1781,14 @@ end;
 
 { TFhirCompartmentEntryList }
 
-procedure TFhirCompartmentEntryList.add(key, ckey: integer; id: string);
+procedure TFhirCompartmentEntryList.add(key, tkey, ckey: integer; id: string);
 var
   item : TFhirCompartmentEntry;
 begin
   item := TFhirCompartmentEntry.create;
   try
     item.key := key;
+    item.tkey := tkey;
     item.ckey := ckey;
     item.id := id;
     inherited add(item.Link);
@@ -1859,23 +1797,13 @@ begin
   end;
 end;
 
-function TFhirCompartmentEntryList.GetItemN(iIndex: integer): TFhirCompartmentEntry;
-begin
-  result := TFhirCompartmentEntry(ObjectByIndex[iIndex]);
-end;
-
-function TFhirCompartmentEntryList.ItemClass: TAdvObjectClass;
-begin
-  result := TFhirCompartmentEntry;
-end;
-
 procedure TFhirCompartmentEntryList.removeById(id: String);
 var
   i : integer;
 begin
   for i := count - 1 downto 0 do
-    if GetItemN(i).Id = id then
-      DeleteByIndex(i);
+    if items[i].Id = id then
+      Delete(i);
 end;
 
 { TFhirComposite }
@@ -2010,6 +1938,7 @@ begin
   inherited Create;
   FIndexes := TFhirIndexList.create;
   FComposites := TFhirCompositeList.create;
+  FCompartments := TFHIRCompartmentList.Create;
   buildIndexes;
 end;
 
@@ -2017,6 +1946,7 @@ destructor TFHIRIndexInformation.Destroy;
 begin
   FIndexes.Free;
   FComposites.Free;
+  FCompartments.Free;
   inherited;
 end;
 
@@ -4413,6 +4343,20 @@ end;
 
 
 {$ENDIF}
+
+{ TFhirIndexEntry }
+
+function TFhirIndexEntry.Link: TFhirIndexEntry;
+begin
+  result := TFhirIndexEntry(inherited Link);
+end;
+
+{ TFhirCompartmentEntry }
+
+function TFhirCompartmentEntry.link: TFhirCompartmentEntry;
+begin
+  result := TFhirCompartmentEntry(inherited Link);
+end;
 
 initialization
   TFHIRIndexInformation.Create.free;

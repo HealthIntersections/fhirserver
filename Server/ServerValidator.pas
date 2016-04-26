@@ -40,7 +40,6 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
 
-    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
     function getStructure(url : String) : TFHIRStructureDefinition; override;
   end;
 
@@ -141,12 +140,6 @@ begin
     result := getQuestionnaire(url)
   else
     result := inherited fetchResource(t, url);
-end;
-
-function TFHIRServerWorkerContext.getChildMap(profile: TFHIRStructureDefinition;
-  element: TFhirElementDefinition): TFHIRElementDefinitionList;
-begin
-
 end;
 
 function TFHIRServerWorkerContext.getQuestionnaire(url: string): TFhirQuestionnaire;

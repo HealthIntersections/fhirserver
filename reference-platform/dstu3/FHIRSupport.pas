@@ -83,10 +83,18 @@ Type
 
   TFHIRCompartmentList = class (TAdvList<TFHIRCompartment>)
   private
+    FPatientCompartment : array [TFHIRResourceType] of TAdvStringSet;
+    FPractitionerCompartment : array [TFHIRResourceType] of TAdvStringSet;
+    FEncounterCompartment : array [TFHIRResourceType] of TAdvStringSet;
+    FRelatedPersonCompartment : array [TFHIRResourceType] of TAdvStringSet;
+    FDeviceCompartment : array [TFHIRResourceType] of TAdvStringSet;
   public
+    Constructor Create; override;
+    Destructor Destroy; override;
     Function Link : TFHIRCompartmentList; overload;
     function existsInCompartment(comp, resource: TFHIRResourceType) : boolean;
-    procedure register(res : TFHIRResourceType; comp: string; indexes : array of String);
+    function getIndexNames(comp, resource: TFHIRResourceType) : TAdvStringSet;
+    procedure register(resource, comp: TFHIRResourceType; indexes : array of String);
   end;
 
 
@@ -1842,9 +1850,60 @@ end;
 
 { TFHIRCompartmentList }
 
+constructor TFHIRCompartmentList.Create;
+var
+  a : TFHIRResourceType;
+begin
+  inherited;
+  for a := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+  begin
+    FPatientCompartment[a] := nil;
+    FPractitionerCompartment[a] := nil;
+    FEncounterCompartment[a] := nil;
+    FRelatedPersonCompartment[a] := nil;
+    FDeviceCompartment[a] := nil;
+  end;
+end;
+
+destructor TFHIRCompartmentList.Destroy;
+var
+  a : TFHIRResourceType;
+begin
+  for a := Low(TFHIRResourceType) to High(TFHIRResourceType) do
+  begin
+    FPatientCompartment[a].free;
+    FPractitionerCompartment[a].free;
+    FEncounterCompartment[a].free;
+    FRelatedPersonCompartment[a].free;
+    FDeviceCompartment[a].free;
+  end;
+  inherited;
+end;
+
 function TFHIRCompartmentList.existsInCompartment(comp, resource: TFHIRResourceType): boolean;
 begin
-  result := false
+  case comp of
+    frtPatient : result := FPatientCompartment[resource] <> nil;
+    frtPractitioner : result := FPractitionerCompartment[resource] <> nil;
+    frtEncounter : result := FEncounterCompartment[resource] <> nil;
+    frtRelatedPerson : result := FRelatedPersonCompartment[resource] <> nil;
+    frtDevice : result := FDeviceCompartment[resource] <> nil;
+  else
+    result := false
+  end;
+end;
+
+function TFHIRCompartmentList.getIndexNames(comp, resource: TFHIRResourceType): TAdvStringSet;
+begin
+  case comp of
+    frtPatient : result := FPatientCompartment[resource];
+    frtPractitioner : result := FPractitionerCompartment[resource];
+    frtEncounter : result := FEncounterCompartment[resource];
+    frtRelatedPerson : result := FRelatedPersonCompartment[resource];
+    frtDevice : result := FDeviceCompartment[resource];
+  else
+    result := nil
+  end;
 end;
 
 function TFHIRCompartmentList.Link: TFHIRCompartmentList;
@@ -1852,9 +1911,17 @@ begin
   result := TFHIRCompartmentList(inherited link);
 end;
 
-procedure TFHIRCompartmentList.register(res : TFHIRResourceType; comp: string; indexes: array of String);
+procedure TFHIRCompartmentList.register(resource, comp: TFHIRResourceType; indexes: array of String);
 begin
-
+  case comp of
+    frtPatient : FPatientCompartment[resource] := TAdvStringSet.create(indexes);
+    frtPractitioner : FPractitionerCompartment[resource] := TAdvStringSet.create(indexes);
+    frtEncounter : FEncounterCompartment[resource] := TAdvStringSet.create(indexes);
+    frtRelatedPerson : FRelatedPersonCompartment[resource] := TAdvStringSet.create(indexes);
+    frtDevice : FDeviceCompartment[resource] := TAdvStringSet.create(indexes);
+  else
+    raise Exception.Create('Unknown compartment');
+  end;
 end;
 
 end.

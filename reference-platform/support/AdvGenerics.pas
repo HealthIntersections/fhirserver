@@ -316,6 +316,7 @@ Type
     FItems : TArray<String>;
   public
     Constructor Create(initial : String); overload;
+    Constructor Create(initial : array of String); overload;
     Constructor Create(c1, c2 : TAdvStringSet); overload;
     Destructor Destroy; override;
     function Link : TAdvStringSet; overload;
@@ -1570,6 +1571,15 @@ begin
   create;
   addAll(c1);
   addAll(c2);
+end;
+
+constructor TAdvStringSet.Create(initial: array of String);
+var
+  s : String;
+begin
+  create;
+  for s in initial do
+    add(s);
 end;
 
 destructor TAdvStringSet.Destroy;

@@ -8,7 +8,7 @@ uses
   StringSupport, EncodeSupport,
   AdvObjects, DateAndTime, DecimalSupport,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
-  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport,
+  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities,
   UcumServices;
 
 const
@@ -31,6 +31,7 @@ type
 
   TSearchProcessor = class (TAdvObject)
   private
+    FResConfig: TConfigArray;
     FLink: String;
     FSort: String;
     FFilter: String;
@@ -78,6 +79,7 @@ type
     procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
   public
+    constructor create(ResConfig: TConfigArray);
     Destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
@@ -155,10 +157,10 @@ begin
     filter := 'Ids.MasterResourceKey is null and Ids.ResourceTypeKey = '+inttostr(typekey);
 
   if (compartmentId <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id = '''+compartmentId+''')';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig[frtPatient].key)+' and Id = '''+compartmentId+''')';
 
   if (compartments <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id in ('+compartments+'))';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig[frtPatient].key)+' and Id in ('+compartments+'))';
 
   link_ := '';
   first := false;
@@ -1260,6 +1262,12 @@ begin
   end;
   if not ok then
     raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
+end;
+
+constructor TSearchProcessor.create(ResConfig: TConfigArray);
+begin
+  Inherited Create;
+  FResConfig := ResConfig;
 end;
 
 destructor TSearchProcessor.Destroy;

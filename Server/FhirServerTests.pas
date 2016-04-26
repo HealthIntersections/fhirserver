@@ -6,8 +6,7 @@ uses
   SysUtils, Classes, ShellSupport, IniFiles,
   AdvObjects, GuidSupport, AdvXmlBuilders,
   FHIRTypes, FHIRResources, FHIRParser,
-  TerminologyServer, FHIRDataStore, FHIRClient, FHIRPath,
-  TestForm;
+  TerminologyServer, FHIRDataStore, FHIRClient, FHIRPath;
 
 procedure ExecuteFhirServerTests(all: boolean);
 //Type

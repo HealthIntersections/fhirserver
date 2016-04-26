@@ -1375,7 +1375,7 @@ begin
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary) values ('+searchKey+', '''+id+''', 0, 2, '+DBGetDate(FConnection.Owner.Platform)+', '+booleanToSQl(false)+')');
 
   if (request.compartments <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id in ('+request.compartments+'))'
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FRepository.ResConfig[frtPatient].key)+' and Id in ('+request.compartments+'))'
   else
     cmp := '';
 
@@ -1827,7 +1827,7 @@ begin
   else
     s := inttostr(Session.Key);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
-  sp := TSearchProcessor.create;
+  sp := TSearchProcessor.create(FRepository.ResConfig);
   try
     sp.typekey := typekey;
     sp.type_ := aType;
@@ -2664,7 +2664,7 @@ var
   cmp : String;
 begin
   if (compartments <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where CompartmentType = 1 and Id in ('+compartments+'))'
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FRepository.ResConfig[frtPatient].key)+' and Id in ('+compartments+'))'
   else
     cmp := '';
 
@@ -3045,7 +3045,7 @@ begin
   if FIndexer = nil then
   begin
     FSpaces := TFHIRIndexSpaces.Create(FConnection);
-    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, FRepository.ValidatorContext.Link);
+    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, FRepository.ValidatorContext.Link, FRepository.ResConfig);
     FIndexer.TerminologyServer := FRepository.TerminologyServer.Link;
     FIndexer.Bases := FRepository.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
@@ -3172,7 +3172,7 @@ begin
   p := TParseMap.create(params);
   result := TMatchingResourceList.Create;
   try
-    sp := TSearchProcessor.create;
+    sp := TSearchProcessor.create(FRepository.ResConfig);
     try
       sp.typekey := key;
       sp.type_ := atype;

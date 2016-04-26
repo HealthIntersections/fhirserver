@@ -40,8 +40,7 @@ uses
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
-
-  ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller;
+  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -49,25 +48,6 @@ const
   IMPL_COOKIE_PREFIX = 'implicit-';
 
 Type
-  TFHIRResourceConfig = record
-    key: integer;
-    Supported: Boolean;
-    IdGuids: Boolean;
-    IdClient: Boolean;
-    IdServer: Boolean;
-    cmdUpdate: Boolean;
-    cmdDelete: Boolean;
-    cmdValidate: Boolean;
-    cmdHistoryInstance: Boolean;
-    cmdHistoryType: Boolean;
-    cmdSearch: Boolean;
-    cmdCreate: Boolean;
-    cmdOperation: Boolean;
-    versionUpdates: Boolean;
-  end;
-
-  TConfigArray = Array [TFHIRResourceType] of TFHIRResourceConfig;
-
   TQuestionnaireCache = class(TAdvObject)
   private
     FLock: TCriticalSection;
@@ -594,7 +574,7 @@ var
 begin
   spaces := TFHIRIndexSpaces.Create(conn);
   try
-    sp := TSearchProcessor.Create;
+    sp := TSearchProcessor.Create(ResConfig);
     try
       sp.typekey := typekey;
       sp.type_ := getTypeForKey(typekey);

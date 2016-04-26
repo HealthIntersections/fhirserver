@@ -1156,7 +1156,7 @@ public class DelphiGenerator {
     
     for (Compartment c : definitions.getCompartments()) {
       if (c.getResources().containsKey(r) && !c.getResources().get(r).isEmpty()) {
-        b.append("  compartments.register(frt"+r.getName()+", '"+c.getName()+"', [");
+        b.append("  compartments.register(frt"+r.getName()+", frt"+c.getName()+", [");
         boolean first = true;
         for (String s : c.getResources().get(r)) {
           if (first)
