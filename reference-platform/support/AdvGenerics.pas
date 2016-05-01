@@ -176,6 +176,7 @@ Type
       end;
       TItemArray = array of TItem;
   private
+    FAdvObjectReferenceCount : TAdvReferenceCount;
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
@@ -202,6 +203,8 @@ Type
     constructor Create(ACapacity: Integer = 0); overload;
     constructor Create(const Collection: TEnumerable<TAdvPair<T>>); overload;
     destructor Destroy; override;
+    function Link : TAdvMap<T>; overload;
+    Procedure Free; Overload;
 
     procedure Add(const Key: String; const Value: T);
     procedure Remove(const Key: String);
@@ -1075,6 +1078,14 @@ begin
     FOnKeyNotify(Self, Key, Action);
 end;
 
+function TAdvMap<T>.Link: TAdvMap<T>;
+begin
+  Result := Self;
+
+  If Assigned(Self) Then
+    InterlockedIncrement(FAdvObjectReferenceCount);
+end;
+
 procedure TAdvMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
 begin
   if Assigned(FOnValueNotify) then
@@ -1263,6 +1274,13 @@ begin
   TAdvObject(oldValue).Free;
 end;
 
+procedure TAdvMap<T>.Free;
+begin
+  If Assigned(Self) and (InterlockedDecrement(FAdvObjectReferenceCount) < 0) Then
+    Destroy;
+end;
+
+
 procedure TAdvMap<T>.AddOrSetValue(const Key: String; const Value: T);
 var
   hc: Integer;
@@ -1277,6 +1295,7 @@ begin
   else
     DoAdd(hc, not index, Key, Value);
 end;
+
 
 function TAdvMap<T>.ContainsKey(const Key: String): Boolean;
 begin

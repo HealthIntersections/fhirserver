@@ -216,6 +216,8 @@ Function StringExcludeAfter(Const sText : String; cSymbol : Char) : String; Over
 Function StringExcludeAfter(Const sText, sSymbol : String) : String; Overload;
 
 
+function jsonEscape(s : String; isString : boolean) : String;
+
 Implementation
 
 
@@ -1498,6 +1500,37 @@ Begin
   If (Length(sText) > 0) And (sText[Length(sText)] = cSymbol) Then
     Delete(Result, Length(sText), 1);
 End;
+
+
+function jsonEscape(s : String; isString : boolean) : String;
+var
+  b : TStringBuilder;
+  c : char;
+begin
+  if s = '' then
+    exit('');
+  b := TStringBuilder.Create;
+  try
+    for c in s do
+    begin
+      if (c = #13) then
+        b.append('\r')
+      else if (c = #10) then
+        b.append('\n')
+      else if (c = '"') then
+        b.append('\"')
+      else if (c = '\') then
+        b.append('\\')
+      else if (c = '/') and not isString then
+        b.append('\/')
+      else
+        b.append(c);
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 
 Initialization

@@ -34,7 +34,7 @@ interface
 
 uses
   AdvObjects, AdvBuffers,
-  FHIRBase, FHIRProfileUtilities, FHIRTestWorker, FHIRValidator,
+  FHIRBase, FHIRSupport, FHIRTestWorker, FHIRValidator, FHIRParser,
   DUnitX.TestFramework;
 
 type
@@ -44,6 +44,7 @@ type
     FServices : TWorkerContext;
 
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
+    procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
   public
 
     [SetupFixture] procedure setup;
@@ -105,13 +106,16 @@ type
     [TestCase] procedure testJsonGroupBad3;
     [TestCase] procedure testJsonGroupEmpty;
 
+    [TestCase] procedure testResource;
+    [TestCase] procedure testResourceBundle;
+
   end;
 
 implementation
 
 uses
   SysUtils, Classes, StringSupport,
-  FHIRParser, FHIRParserBase, FHIRTypes, FHIRResources;
+  FHIRParserBase, FHIRTypes, FHIRResources;
 
 { TFHIRValidatorTests }
 
@@ -161,6 +165,56 @@ begin
   end;
 end;
 
+
+procedure TFHIRValidatorTests.validateResource(path: String; errorCount: integer; fmt: TFHIRFormat);
+var
+  p : TFHIRParser;
+  f : TFilestream;
+  val : TFHIRValidator;
+  ctxt : TFHIRValidatorContext;
+  ec : integer;
+  msg : TFhirOperationOutcomeIssue;
+  s : string;
+begin
+  if (fmt = ffXml) then
+    p := TFHIRXmlParser.Create(nil, 'en')
+  else
+    p := TFHIRJsonParser.Create(nil, 'en');
+  try
+    f := TFilestream.create(IncludeTrailingBackslash(GBasePath)+path, fmOpenRead + fmShareDenywrite);
+    try
+      p.source := f;
+      p.Parse;
+
+      ctxt := TFHIRValidatorContext.Create;
+      try
+        ctxt.ResourceIdRule := risOptional;
+        val := TFHIRValidator.Create(FServices.link);
+        try
+          val.validate(ctxt, p.resource);
+        finally
+          val.Free;
+        end;
+        ec := 0;
+        s := '';
+        for msg in ctxt.Errors do
+          if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
+          begin
+            inc(ec);
+            s := s + msg.locationList[0].value+': '+ msg.details.text+'. ';
+          end;
+        Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
+      finally
+        ctxt.Free;
+      end;
+
+    finally
+      f.free;
+    end;
+  finally
+    p.Free;
+  end;
+end;
 
 procedure TFHIRValidatorTests.testXmlListMinimal;
 begin
@@ -370,6 +424,16 @@ end;
 procedure TFHIRValidatorTests.testJsonListXhtmlWrongNS2;
 begin
   validate('build\tests\validation-examples\list-xhtml-wrongns2.json', 1, ffJson);
+end;
+
+procedure TFHIRValidatorTests.testResource;
+begin
+  validateResource('build\tests\validation-examples\list-minimal.xml', 0, ffXml);
+end;
+
+procedure TFHIRValidatorTests.testResourceBundle;
+begin
+  validateResource('build\tests\validation-examples\bundle-continua.json', 7, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlBadElement;

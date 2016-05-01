@@ -488,8 +488,8 @@ Begin
        ' Parent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MasterResourceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' SpaceKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Value nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Value2 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Value nchar(210) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Value2 nchar(210) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Flag '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, false)+', '+#13#10+
        ' Target '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Concept '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+

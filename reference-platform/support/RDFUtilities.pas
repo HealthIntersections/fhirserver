@@ -128,39 +128,9 @@ function ttlLiteral(s : String) : String;
 
 implementation
 
-function escape(s : String; isString : boolean) : String;
-var
-  b : TStringBuilder;
-  c : char;
-begin
-  if s = '' then
-    exit('');
-  b := TStringBuilder.Create;
-  try
-    for c in s do
-    begin
-      if (c = #13) then
-        b.append('\r')
-      else if (c = #10) then
-        b.append('\n')
-      else if (c = '"') then
-        b.append('\"')
-      else if (c = '\') then
-        b.append('\\')
-      else if (c = '/') and not isString then
-        b.append('\/')
-      else
-        b.append(c);
-    end;
-    result := b.ToString;
-  finally
-    b.Free;
-  end;
-end;
-
 function ttlLiteral(s : String) : String;
 begin
-  result := '"'+escape(s, true)+'"';
+  result := '"'+jsonEscape(s, true)+'"';
 end;
 
 function pctEncode(s : String; isString : boolean) : String;
@@ -196,7 +166,7 @@ end;
 
 function literal(s : String) : TRDFString;
 begin
-  result := TRDFString.create('"'+escape(s, true)+'"');
+  result := TRDFString.create('"'+jsonEscape(s, true)+'"');
 end;
 
 
@@ -288,7 +258,7 @@ begin
     if (i < Fpredicates.count) then
           b.Append(';');
     if (po.Fcomment <> '') then
-      b.Append(' # '+escape(po.Fcomment, false));
+      b.Append(' # '+jsonEscape(po.Fcomment, false));
   end;
 end;
 
@@ -519,7 +489,7 @@ begin
   if (url.startsWith(prefixUri)) then
   begin
     Fprefixes.AddOrSetValue(prefix, prefixUri);
-    result := prefix+':'+escape(url.substring(prefixUri.length), false);
+    result := prefix+':'+jsonEscape(url.substring(prefixUri.length), false);
   end;
 end;
 

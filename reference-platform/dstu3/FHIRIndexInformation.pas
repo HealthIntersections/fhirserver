@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-04-27T00:18:34+10:00
+// FHIR v1.4.0 generated 2016-04-30T11:06:22+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -676,7 +676,7 @@ begin
   indexes.add(frtCondition, 'evidence', 'Manifestation/symptom', SearchParamTypeTOKEN, [], 'Condition.evidence.code', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'identifier', 'A unique identifier of the condition record', SearchParamTypeTOKEN, [], 'Condition.identifier', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'onset', 'Date related onsets (dateTime and Period)', SearchParamTypeDATE, [], 'Condition.onset.as(dateTime) | Condition.onset.as(Period)', SearchXpathUsageNormal);
-  indexes.add(frtCondition, 'onset-info', 'Other onsets (boolean, age, range, string)', SearchParamTypeSTRING, [], 'Condition.onset.as(boolean) | Condition.onset.as(string)', SearchXpathUsageNormal);
+  indexes.add(frtCondition, 'onset-info', 'Other onsets (boolean, age, range, string)', SearchParamTypeSTRING, [], 'Condition.onset.as(boolean) | Condition.onset.as(Quantity) | Condition.onset.as(Range) | Condition.onset.as(string)', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'patient', 'Who has the condition?', SearchParamTypeREFERENCE, [frtPatient], 'Condition.patient', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'severity', 'The severity of the condition', SearchParamTypeTOKEN, [], 'Condition.severity', SearchXpathUsageNormal);
   indexes.add(frtCondition, 'stage', 'Simple summary (disease specific)', SearchParamTypeTOKEN, [], 'Condition.stage.summary', SearchXpathUsageNormal);

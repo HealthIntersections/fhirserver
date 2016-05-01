@@ -17,6 +17,7 @@ Type
 
   TTerminologyWebServer = class (TAdvObject)
   private
+    FWorker : TWorkerContext;
     FServer : TTerminologyServer;
     FFHIRPath : String;
     FWebDir : String;
@@ -71,7 +72,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; Worker : TWorkerContext; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -86,7 +87,7 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TWorkerContext; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
@@ -94,10 +95,12 @@ begin
   FWebDir := WebDir;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   FServer.webBase := BaseURl;
+  FWorker := worker;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
+  FWorker.Free;
   FServer.free;
   inherited;
 end;
@@ -648,7 +651,7 @@ var
 begin
   b := TBytesStream.Create();
   try
-    json := TFHIRJsonComposer.Create('en');
+    json := TFHIRJsonComposer.Create(FWorker.link, 'en');
     try
       json.Compose(b, r, true);
     finally
@@ -667,7 +670,7 @@ var
 begin
   b := TBytesStream.Create();
   try
-    xml := TFHIRXmlComposer.Create('en');
+    xml := TFHIRXmlComposer.Create(FWorker.link, 'en');
     try
       xml.Compose(b, r, true);
     finally

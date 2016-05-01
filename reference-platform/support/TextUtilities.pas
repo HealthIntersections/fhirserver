@@ -44,7 +44,9 @@ function UTF8StreamToString(value : TStream) : String; overload;
 function UTF8StreamToString(value : TAdvAccessStream) : String; overload;
 
 function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
 procedure StringToFile(content, filename : String; encoding : TEncoding);
+procedure StringToStream(content: String; stream : TStream; encoding : TEncoding);
 
 procedure BytesToFile(bytes : TBytes; filename : String);
 
@@ -375,6 +377,15 @@ begin
   end;
 end;
 
+procedure StringToStream(content: String; stream : TStream; encoding : TEncoding);
+var
+  bytes : TBytes;
+begin
+  bytes := encoding.GetBytes(content);
+  if (length(bytes) > 0) then
+    stream.write(bytes[0], length(bytes));
+end;
+
 function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
 var
   LFileStream: TFilestream;
@@ -394,6 +405,16 @@ begin
     end
   else
     raise Exception.Create('File "' + filename + '" not found');
+end;
+
+function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+var
+  bytes : TBytes;
+begin
+  SetLength(bytes, stream.Size);
+  if stream.Size > 0 then
+    stream.Read(bytes[0], stream.size);
+  result := encoding.GetString(bytes);
 end;
 
 function StringToUTF8Stream(value : String):TStream;

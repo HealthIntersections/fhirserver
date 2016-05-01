@@ -1767,8 +1767,8 @@ public class VersionConvertor {
 	private static void copyDomainResource(org.hl7.fhir.dstu3.model.DomainResource src, org.hl7.fhir.dstu2.model.DomainResource tgt) {
 		copyResource(src, tgt);
 		tgt.setText(convertNarrative(src.getText()));
-		for (org.hl7.fhir.dstu3.model.Resource t : src.getContained())
-			tgt.addContained(convertResource(t));
+//		for (org.hl7.fhir.dstu3.model.Resource t : src.getContained())
+//			tgt.addContained(convertResource(t));
 		for (org.hl7.fhir.dstu3.model.Extension t : src.getExtension())
 			tgt.addExtension(convertExtension(t));
 		for (org.hl7.fhir.dstu3.model.Extension t : src.getModifierExtension())

@@ -531,10 +531,22 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirTransformOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
 implementation
 
 uses
-  SystemService;
+  SystemService, FHIRStructureMapUtilities;
 
 function booleanToSQL(b : boolean): string;
 begin
@@ -552,7 +564,7 @@ begin
   inherited Create;
   FLang := lang;
   FRepository := repository;
-  FFactory := TFHIRFactory.create(lang);
+  FFactory := TFHIRFactory.create(repository.Validator.Context.link, lang);
   FOperations := TAdvObjectList.create;
 
 
@@ -578,6 +590,7 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.create);
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
+  FOperations.add(TFhirTransformOperation.create);
 end;
 
 
@@ -685,7 +698,7 @@ begin
     begin
       mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
       try
-        parser := comp.Create(lang);
+        parser := comp.Create(FRepository.Validator.Context.link, lang);
         try
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
@@ -765,9 +778,9 @@ begin
   b :=  TBytesStream.Create;
   try
     if (xml) then
-      comp := TFHIRXmlComposer.Create('en')
+      comp := TFHIRXmlComposer.Create(FRepository.Validator.Context.Link, 'en')
     else
-      comp := TFHIRJsonComposer.Create('en');
+      comp := TFHIRJsonComposer.Create(FRepository.Validator.Context.Link, 'en');
     try
       comp.SummaryOption := summary;
       comp.NoHeader := true;
@@ -2408,7 +2421,7 @@ begin
       try
         json2 := TJsonPatchEngine.applyPatch(json, request.patch);
         try
-          parser := TFHIRJsonParser.Create(request.lang);
+          parser := TFHIRJsonParser.Create(request.Context.link, request.lang);
           try
             parser.parse(json2);
             request.Resource := parser.resource.Link;
@@ -2550,7 +2563,7 @@ begin
     begin
       outcome := TFhirOperationOutcome.create;
     end
-    else if (request.Source <> nil) then
+    else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
     begin
       ctxt := TFHIRValidatorContext.Create;
       try
@@ -3847,7 +3860,7 @@ begin
           request.PostFormat := ffXml;
           if not upload and FRepository.validate and (request.resource <> nil) then
           begin
-            comp := TFHIRXmlComposer.Create('en');
+            comp := TFHIRXmlComposer.Create(FRepository.Validator.Context.Link, 'en');
             mem := TAdvMemoryStream.Create;
             m := TVCLStream.Create;
             try
@@ -4026,7 +4039,7 @@ var
 begin
   mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
   try
-    parser := comp.Create(lang);
+    parser := comp.Create(FRepository.Validator.Context.link, lang);
     try
       parser.source := mem;
       parser.ParserPolicy := xppDrop;
@@ -4101,7 +4114,7 @@ begin
       if FConnection.FetchNext then
       begin
         s := FConnection.ColBlobByName['JsonContent'];
-        parser := MakeParser(lang, ffJson, s, xppDrop);
+        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := TResourceWithReference.Create(id, parser.resource.Link);
         finally
@@ -4368,7 +4381,7 @@ begin
       raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := MakeParser(lang, ffJson, s, xppDrop);
+    parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
     try
       result := parser.resource.Link as TFHIRResource;
       try
@@ -4405,7 +4418,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(lang, ffJson, s, xppDrop);
+        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result.Add(parser.resource.Link);
         finally
@@ -4447,7 +4460,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(lang, ffJson, s, xppDrop);
+        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4477,7 +4490,7 @@ begin
     begin
       needSecure := FConnection.ColIntegerByName['Secure'] = 1;
       s := FConnection.ColBlobByName['JsonContent'];
-      parser := MakeParser(lang, ffJson, s, xppDrop);
+      parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
       try
         result := parser.resource.Link;
       finally
@@ -4529,7 +4542,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(lang, ffJson, s, xppDrop);
+        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4785,7 +4798,7 @@ begin
   Connection.StartTransact;
   try
     // cut us off from the external request
-    request := TFHIRRequest.create(origin, FIndexer.Definitions.Compartments.Link);
+    request := TFHIRRequest.create(FRepository.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
     response := TFHIRResponse.create;
     try
       for i := 0 to list.count - 1 do
@@ -4867,7 +4880,7 @@ begin
       begin
         tags := TFHIRTagList.create;
         try
-          parser := MakeParser('en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
+          parser := MakeParser(FRepository.Validator.Context, 'en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -5584,7 +5597,7 @@ begin
           else if request.Parameters.VarExists('identifier') then
             profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
-            profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
+            profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
@@ -6119,10 +6132,10 @@ begin
               if (request.form <> nil) and request.form.hasParam('coding') then
               begin
                 coded := TFhirCodeableConcept.Create;
-                coded.codingList.add(LoadDTFromFormParam(request.form.getParam('coding'), request.lang, 'coding', TFhirCoding) as TFhirCoding)
+                coded.codingList.add(LoadDTFromFormParam(request.Context, request.form.getParam('coding'), request.lang, 'coding', TFhirCoding) as TFhirCoding)
               end
               else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
-                coded := LoadDTFromFormParam(request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
+                coded := LoadDTFromFormParam(request.Context, request.form.getParam('codeableConcept'), request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
               else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
               begin
                 coded := TFhirCodeableConcept.Create;
@@ -6569,7 +6582,7 @@ begin
 //            cacheId := vs.url;
 //          end
           else if (request.form <> nil) and request.form.hasParam('claim') then
-            claim := LoadFromFormParam(request.form.getparam('valueSet'), request.Lang) as TFhirClaim
+            claim := LoadFromFormParam(request.Context, request.form.getparam('valueSet'), request.Lang) as TFhirClaim
           else if (request.Resource <> nil) and (request.Resource is TFHIRClaim) then
             claim := request.Resource.Link as TFHIRClaim
           else
@@ -6690,10 +6703,10 @@ begin
               if params.hasParameter('coding') then
               begin
                 coded := TFhirCodeableConcept.Create;
-                coded.codingList.add(LoadDTFromParam(params.str['coding'], request.lang, 'coding', TFhirCoding) as TFhirCoding)
+                coded.codingList.add(LoadDTFromParam(request.Context, params.str['coding'], request.lang, 'coding', TFhirCoding) as TFhirCoding)
               end
               else if params.hasParameter('codeableConcept') then
-                coded := LoadDTFromParam(params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
+                coded := LoadDTFromParam(request.Context, params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
               else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
               begin
                 coded := TFhirCodeableConcept.Create;
@@ -6821,8 +6834,8 @@ begin
         end
         else
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFHIRDefinedTypesEnum[sdBase.baseType], sdBase) then
-            raise Exception.Create('Implicit base type "'+CODES_TFHIRDefinedTypesEnum[sdBase.baseType]+'" not found');
+          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+sdBase.baseType, sdBase) then
+            raise Exception.Create('Implicit base type "'+sdBase.baseType+'" not found');
         end;
 
         op := TFhirOperationOutcome.Create;
@@ -7211,7 +7224,7 @@ begin
           else if request.Parameters.VarExists('identifier') then
             profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
-            profile := LoadFromFormParam(request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
+            profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
@@ -7415,7 +7428,7 @@ begin
             if not manager.FRepository.TerminologyServer.UseClosure(n, cm) then
               errorResp(404, StringFormat('closure name ''%s'' not known', [CODES_TFHIRResourceType[request.ResourceType]+':'+request.Id]))
             else if (v <> '') and params.hasParameter('concept') then
-              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
+             errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
             else if (v <> '') and not StringIsInteger32(v) then
               errorResp(404, StringFormat('closure ''%s'': version %s is not valid', [n, v]))
             else
@@ -7741,7 +7754,7 @@ begin
         blob := manager.FConnection.ColBlobByName['JsonContent'];
         deleted := manager.FConnection.ColIntegerByName['Status'] = 2;
         manager.FConnection.Terminate;
-        parser := MakeParser('en', ffJson, blob, xppDrop);
+        parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
         try
           manager.FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
           manager.FConnection.prepare;
@@ -7901,7 +7914,7 @@ begin
         blob := manager.FConnection.ColBlobByName['JsonContent'];
         deleted := manager.FConnection.ColIntegerByName['Status'] = 2;
         manager.FConnection.Terminate;
-        parser := MakeParser('en', ffJson, blob, xppDrop);
+        parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
         try
           manager.FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
           manager.FConnection.prepare;
@@ -8029,6 +8042,134 @@ end;
 function TFhirCurrentTestScriptOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtTestScript];
+end;
+
+{ TFhirTransformOperation }
+
+function TFhirTransformOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirTransformOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  params : TFHIRTransformOpRequest;
+  rkey : integer;
+  needSecure : boolean;
+  lib : TAdvMap<TFHIRStructureMap>;
+  map : TFHIRStructureMap;
+  utils : TFHIRStructureMapUtilities;
+  outcome : TFHIRBundle;
+//  params : TFhirParameters;
+//  sdParam, sdBase : TFhirStructureDefinition;
+//  utils : TProfileUtilities;
+//  op : TFhirOperationOutcome;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceType, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], CODES_TFHIRResourceType[request.ResourceType]]), IssueTypeForbidden) then
+    begin
+      params := TFHIRTransformOpRequest.Create;
+      try
+        if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
+          params.load(request.Resource.Link as TFHIRParameters)
+        else
+        begin
+          params.load(request.Parameters);
+          if (request.Resource <> nil) then
+            params.content := request.Resource.Link;
+        end;
+
+        lib := manager.FRepository.getMaps;
+        try
+          map := nil;
+          if request.Id <> '' then
+          begin
+            if manager.FindResource(frtStructureMap, request.Id, false, rkey, request, response, '') then
+            begin
+              map := manager.GetResourceByKey(rkey, needSecure) as TFHIRStructureMap;
+              if needSecure and not request.secure then
+                raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
+            end;
+          end
+          else if params.source <> '' then
+          begin
+            map := lib[params.source].link;
+            manager.check(response, map <> nil, 404 , manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), [params.source]), IssueTypeNotFound);
+          end
+          else
+            manager.check(response, false, 404, manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), ['no id provided']), IssueTypeNotFound);
+          if (map <> nil) then
+          begin
+            try
+              outcome := TFHIRBundle.Create;
+              try
+                utils := TFHIRStructureMapUtilities.Create(manager.FRepository.Validator.Context.link, lib.Link, nil);
+                try
+                  try
+                    utils.transform(nil, params.content, map, outcome);
+                    response.HTTPCode := 200;
+                    response.Message := 'OK';
+                    response.Body := '';
+                    response.LastModifiedDate := now;
+                    response.Resource := outcome.Link;
+                  except
+                    on e : exception do
+                      manager.check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
+                  end;
+                finally
+                  utils.Free;
+                end;
+              finally
+                outcome.Free;
+              end;
+            finally
+              map.Free;
+            end;
+          end;
+        finally
+          lib.Free;
+        end;
+      finally
+        params.Free
+      end;
+
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceType, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirTransformOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/StructureMap-transform';
+end;
+
+function TFhirTransformOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirTransformOperation.Name: String;
+begin
+  result := 'transform';
+
+end;
+
+function TFhirTransformOperation.owningResource: TFhirResourceType;
+begin
+  result := frtStructureMap;
+end;
+
+function TFhirTransformOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtStructureMap];
 end;
 
 end.

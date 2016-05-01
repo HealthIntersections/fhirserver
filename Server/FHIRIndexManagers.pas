@@ -51,7 +51,7 @@ uses
   UcumServices;
 
 Const
-  INDEX_ENTRY_LENGTH = 128;
+  INDEX_ENTRY_LENGTH = 210;
   NARRATIVE_INDEX_NAME = '_text';
 
 Type

@@ -101,6 +101,7 @@ Type
   TSubscriptionManager = class (TAdvObject)
   private
     FLock : TCriticalSection;
+    FWorker : TWorkerContext;
     FSubscriptions : TSubscriptionEntryList;
     FSubscriptionTrackers  : TSubscriptionTrackerList;
     FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
@@ -161,7 +162,7 @@ Type
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
   public
-    Constructor Create(Compartments : TFHIRCompartmentList);
+    Constructor Create(worker : TWorkerContext; Compartments : TFHIRCompartmentList);
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
@@ -195,7 +196,7 @@ uses
 
 { TSubscriptionManager }
 
-constructor TSubscriptionManager.Create(Compartments : TFHIRCompartmentList);
+constructor TSubscriptionManager.Create(worker : TWorkerContext; Compartments : TFHIRCompartmentList);
 begin
   inherited Create;
   FLock := TCriticalSection.Create('Subscriptions');
@@ -203,11 +204,13 @@ begin
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
   FCloseAll := false;
+  FWorker := worker;
   FCompartments := Compartments;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
+  FWorker.Free;
   FCompartments.Free;
   wsWakeAll;
   FSemaphores.Free;
@@ -224,7 +227,7 @@ var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(roSubscription, FCompartments.Link);
+  request := TFHIRRequest.Create(FWorker.link, roSubscription, FCompartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Id := id;
@@ -315,7 +318,7 @@ var
   parser : TFHIRJsonParser;
   subscription : TFhirSubscription;
 begin
-  parser := TFHIRJsonParser.Create(connection.request.AcceptLanguage);
+  parser := TFHIRJsonParser.Create(FWorker.link, connection.request.AcceptLanguage);
   try
     subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
   finally
@@ -535,7 +538,7 @@ begin
         msg.Body.Text := 'An update has occurred'
       else
       begin
-        comp := MakeComposer('en', subst.channel.payload);
+        comp := MakeComposer('en', subst.channel.payload, nil);
         try
           bs := TBytesStream.Create;
           try
@@ -586,7 +589,7 @@ begin
   end
   else
   begin
-    client := TFhirClient.create(subst.channel.endpoint, subst.channel.payload.Contains('json'));
+    client := TFhirClient.create(nil, subst.channel.endpoint, subst.channel.payload.Contains('json'));
     try
       client.transaction(bundle);
     finally
@@ -628,9 +631,9 @@ begin
   b := TMemoryStream.Create;
   try
     if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/xml') then
-      comp := TFHIRXmlComposer.Create('en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
     else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/json') then
-      comp := TFHIRJsonComposer.Create('en')
+      comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
     else
       raise Exception.Create('unknown payload type '+subst.channel.payload);
     try
@@ -922,7 +925,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser('en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(FWorker.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -951,7 +954,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser('en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(FWorker.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -1040,7 +1043,7 @@ begin
   try
     result.id := NewGuidId;
     result.link_List.AddRelRef('source', AppendForwardSlash(base)+'Subsecription/'+subscription.id);
-    request := TFHIRRequest.Create(roSubscription, FCompartments.Link);
+    request := TFHIRRequest.Create(FWorker.link, roSubscription, FCompartments.Link);
     response := TFHIRResponse.Create;
     try
       request.Session := OnGetSessionEvent(userkey);

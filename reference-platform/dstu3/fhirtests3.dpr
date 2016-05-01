@@ -12,6 +12,7 @@ uses
   FHIRPathTests in 'tests\FHIRPathTests.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   FHIRParserTests in 'tests\FHIRParserTests.pas',
+  StructureMapTests in 'tests\StructureMapTests.pas',
   FHIRConstants,
   FHIRParser,
   SysUtils,
@@ -118,7 +119,8 @@ uses
   AdvZipUtilities in '..\support\AdvZipUtilities.pas',
   AdvZipDeclarations in '..\support\AdvZipDeclarations.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
-  FHIRXhtml in 'FHIRXhtml.pas';
+  FHIRXhtml in 'FHIRXhtml.pas',
+  FHIRClientTests in 'tests\FHIRClientTests.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

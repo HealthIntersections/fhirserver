@@ -45,9 +45,9 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics,
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
   MimeMessage, DateAndTime, JWT, SCIMObjects,
-  FHirBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
+  FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
    HTTP_OK_200 = 200;
@@ -95,6 +95,40 @@ Type
     function existsInCompartment(comp, resource: TFHIRResourceType) : boolean;
     function getIndexNames(comp, resource: TFHIRResourceType) : TAdvStringSet;
     procedure register(resource, comp: TFHIRResourceType; indexes : array of String);
+  end;
+
+  TValidationResult = class (TAdvObject)
+  private
+    FSeverity : TFhirIssueSeverityEnum;
+    FMessage  : String;
+    FDisplay: String;
+  public
+    constructor Create; overload; override;
+    constructor Create(Severity : TFhirIssueSeverityEnum; Message : String); overload; virtual;
+    constructor Create(display : String); overload; virtual;
+    Property Severity : TFhirIssueSeverityEnum read FSeverity write FSeverity;
+    Property Message : String read FMessage write FMessage;
+    Property Display : String read FDisplay write FDisplay;
+    function isOk : boolean;
+
+  end;
+
+  TWorkerContext = class abstract (TAdvObject)
+  public
+    function link : TWorkerContext; overload;
+
+    function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; virtual; abstract;
+    function getResourceNames : TAdvStringSet; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual; abstract;
+    function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
+    function supportsSystem(system : string) : boolean; virtual; abstract;
+    function validateCode(system, code, display : String) : TValidationResult; overload; virtual; abstract;
+    function validateCode(system, code, version : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;  abstract;
+    function getStructure(url : String) : TFHIRStructureDefinition; overload; virtual; abstract;
+    function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; virtual; abstract;
   end;
 
 
@@ -252,6 +286,7 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFHIRRequest = class (TAdvObject)
   Private
+    Fworker: TWorkerContext;
     FCompartmentInformation : TFHIRCompartmentList;
     FId: String;
     FSubId: String;
@@ -296,7 +331,7 @@ Type
     procedure SetForm(const Value: TMimeMessage);
     procedure SetPatch(const Value: TJsonArray);
   Public
-    Constructor Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+    Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
@@ -315,6 +350,7 @@ Type
     function canWrite(aResourceType : TFhirResourceType):boolean;
     function canGetUser : boolean;
     procedure reset;
+    property Context : TWorkerContext read FWorker;
 
     // main rest function. Set the following things before calling this:
     // form
@@ -616,8 +652,10 @@ Type
   TFHIRFactory = class (TFhirResourceFactory)
   private
     FLang : String;
+    FWorker: TWorkerContext;
   public
-    Constructor Create(lang : String);
+    Constructor Create(worker: TWorkerContext; lang : String);
+    Destructor Destroy; override;
     {@member makeAttachmentFromFile
       make a new Attachment, and load the contents from the file. The mime type will be filled out based on the systems interpretation of the file extension
     }
@@ -1120,7 +1158,7 @@ var
 begin
   stream := TStringStream.Create('');
   try
-    comp := TFHIRXmlComposer.create(lang);
+    comp := TFHIRXmlComposer.create(Fworker.link, lang);
     try
       comp.Compose(stream, resource, true, nil);
     finally
@@ -1146,9 +1184,10 @@ begin
   FSource.AsBytes := b;
 end;
 
-constructor TFHIRRequest.Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+constructor TFHIRRequest.Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
 begin
   inherited Create;
+  FWorker := worker;
   FTags := TFHIRTagList.create;
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
@@ -1157,6 +1196,7 @@ end;
 destructor TFHIRRequest.Destroy;
 begin
   FCompartmentInformation.free;
+  FWorker.Free;
   FPatch.Free;
   FTags.free;
   FSession.Free;
@@ -1457,6 +1497,12 @@ begin
   end;
 end;
 
+destructor TFHIRFactory.Destroy;
+begin
+  FWorker.free;
+  inherited;
+end;
+
 function TFHIRFactory.makeAddress(use, street, city, state, postalCode, country : String): TFhirAddress;
 begin
   result := TFhirAddress.create;
@@ -1637,10 +1683,11 @@ begin
     result := '';
 end;
 
-constructor TFHIRFactory.Create(lang: String);
+constructor TFHIRFactory.Create(worker: TWorkerContext; lang: String);
 begin
   Inherited Create;
   FLang := lang;
+  FWorker := worker;
 end;
 
 
@@ -1657,7 +1704,7 @@ end;
 
 function TFHIRFactory.makeRequest(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList): TFhirRequest;
 begin
-  result := TFhirRequest.create(origin, compartmentInformation);
+  result := TFhirRequest.create(FWorker.link, origin, compartmentInformation);
 end;
 
 function TFHIRFactory.makeSuccessfulOperation: TFhirOperationOutcome;
@@ -1922,6 +1969,38 @@ begin
   else
     raise Exception.Create('Unknown compartment');
   end;
+end;
+
+{ TValidationResult }
+
+constructor TValidationResult.Create(Severity: TFhirIssueSeverityEnum; Message: String);
+begin
+  inherited create;
+  FSeverity := Severity;
+  FMessage := Message;
+end;
+
+constructor TValidationResult.Create;
+begin
+  Inherited Create;
+end;
+
+constructor TValidationResult.Create(display: String);
+begin
+  inherited Create;
+  FDisplay := display;
+end;
+
+function TValidationResult.isOk: boolean;
+begin
+  result := not (Severity in [IssueSeverityError, IssueSeverityFatal]);
+end;
+
+{ TWorkerContext }
+
+function TWorkerContext.link: TWorkerContext;
+begin
+  result := TWorkerContext(inherited link);
 end;
 
 end.

@@ -41,7 +41,7 @@ uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
   StringSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser,
-  FHIRProfileUtilities, FHIRPath,
+  FHIRSupport, FHIRProfileUtilities, FHIRPath,
   MsXml, MsXmlParser, AdvJson,
   DUnitX.TestFramework;
 
@@ -49,7 +49,17 @@ var
   GBasePath : String;
 
 Type
-  TTestingWorkerContext = class (TWorkerContext)
+  FHIRFolderBasedTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  private
+    FFolder : String;
+    FFilter : String;
+  protected
+    function GetCaseInfoArray : TestCaseInfoArray; override;
+  public
+    Constructor Create(folder, filter : String);
+  end;
+
+  TTestingWorkerContext = class (TBaseWorkerContext)
   public
     function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
     function supportsSystem(system : string) : boolean; override;
@@ -433,7 +443,7 @@ end;
 
 { TTestingWorkerContext }
 var
-  GWorkerContext : TWorkerContext;
+  GWorkerContext : TBaseWorkerContext;
 
 class procedure TTestingWorkerContext.closeUp;
 begin
@@ -481,6 +491,42 @@ end;
 function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
   raise EFHIRPath.create('Not done yet');
+end;
+
+{ FHIRFolderBasedTestCaseAttribute }
+
+constructor FHIRFolderBasedTestCaseAttribute.Create(folder, filter: String);
+begin
+  inherited Create;
+  FFolder := folder;
+  FFilter := filter;
+end;
+
+function FHIRFolderBasedTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+var
+  sl : TStringlist;
+  sr : TSearchRec;
+  s : String;
+  i : integer;
+begin
+  sl := TStringList.create;
+  try
+    if FindFirst(FFolder+'\*.*', faAnyFile, SR) = 0 then
+    repeat
+      s := sr.Name;
+      if (FFilter = '') or (s.endsWith(FFilter)) then
+        sl.Add(sr.Name);
+    until FindNext(SR) <> 0;
+    setLength(result, sl.Count);
+    for i := 0 to sl.Count - 1 do
+    begin
+      result[i].Name := sl[i];
+      SetLength(result[i].Values, 1);
+      result[i].Values[0] := IncludeTrailingPathDelimiter(FFolder) + sl[i];
+    end;
+  finally
+    sl.Free;
+  end;
 end;
 
 end.

@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-04-27T00:18:34+10:00
+// FHIR v1.4.0 generated 2016-04-30T11:06:22+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1075,6 +1075,39 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirQuestionnaire read FReturn write SetReturn;
+  end;
+
+  //Operation transform (Model Instance Transformation)
+  TFHIRTransformOpRequest = class (TFHIROperationRequest)
+  private
+    FSource : String;
+    FContent : TFhirResource;
+    procedure SetContent(value : TFhirResource);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property source : String read FSource write FSource;
+    property content : TFhirResource read FContent write SetContent;
+  end;
+
+  TFHIRTransformOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirResource;
+    procedure SetReturn(value : TFhirResource);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirResource read FReturn write SetReturn;
   end;
 
   //Operation reserve (Reserve Task)
@@ -4395,6 +4428,102 @@ begin
 end;
 
 function TFHIRQuestionnaireOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return'], name);
+end;
+
+procedure TFHIRTransformOpRequest.SetContent(value : TFhirResource);
+begin
+  FContent.free;
+  FContent := value;
+end;
+
+constructor TFHIRTransformOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRTransformOpRequest.load(params : TFHIRParameters);
+begin
+  FSource := params.str['source'];
+  FContent := (params.res['content'] as TFhirResource).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRTransformOpRequest.load(params : TParseMap);
+begin
+  FSource := params.getVar('source');
+  loadExtensions(params);
+end;
+
+destructor TFHIRTransformOpRequest.Destroy;
+begin
+  FContent.free;
+  inherited;
+end;
+
+function TFHIRTransformOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FSource <> '') then
+      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
+    if (FContent <> nil) then
+      result.addParameter('content', FContent.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRTransformOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['source', 'content'], name);
+end;
+
+procedure TFHIRTransformOpResponse.SetReturn(value : TFhirResource);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+constructor TFHIRTransformOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRTransformOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirResource).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRTransformOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRTransformOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+
+function TFHIRTransformOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRTransformOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
 end;

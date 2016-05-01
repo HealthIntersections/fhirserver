@@ -54,7 +54,7 @@ Type
     FWebSource : String;
     FNotServing : boolean;
 
-    procedure ConnectToDatabase;
+    procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
     procedure StopRestServer;
@@ -279,7 +279,7 @@ begin
   ExecuteFhirServerTests(all);
 end;
 
-Procedure TFHIRService.ConnectToDatabase;
+Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);
 var
   dbn : String;
   ver : integer;
@@ -310,34 +310,37 @@ begin
     writelnt('Database not configured');
     raise Exception.Create('Database Access not configured');
   end;
-  conn := FDb.GetConnection('check version');
-  try
-    meta := conn.FetchMetaData;
+  if not noCheck then
+  begin
+    conn := FDb.GetConnection('check version');
     try
-      if meta.HasTable('Config') then
-      begin
-        // db version check
-        ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
-        if (ver <> ServerDBVersion) then
+      meta := conn.FetchMetaData;
+      try
+        if meta.HasTable('Config') then
         begin
-          writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
-          dbi := TFHIRDatabaseInstaller.create(conn, '');
-          try
-            dbi.upgrade(ver);
-          finally
-            dbi.Free;
+          // db version check
+          ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
+          if (ver <> ServerDBVersion) then
+          begin
+            writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
+            dbi := TFHIRDatabaseInstaller.create(conn, '');
+            try
+              dbi.upgrade(ver);
+            finally
+              dbi.Free;
+            end;
           end;
         end;
+      finally
+        meta.Free;
       end;
-    finally
-      meta.Free;
-    end;
-    conn.Release;
-  except
-    on e : Exception do
-    begin
-      conn.Error(e);
-      raise;
+      conn.Release;
+    except
+      on e : Exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
     end;
   end;
 end;
@@ -552,7 +555,7 @@ var
   conn : TKDBConnection;
 begin
   if FDb = nil then
-    ConnectToDatabase;
+    ConnectToDatabase(true);
   writelnt('unmount database');
   conn := FDb.GetConnection('setup');
   try

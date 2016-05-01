@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-04-27T00:18:34+10:00
+// FHIR v1.4.0 generated 2016-04-30T11:06:22+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -2587,121 +2587,7 @@ Type
 
 Const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportRule', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingExcerpt', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 
-      'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'ModuleDefinition', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'OrderSet', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Protocol', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription');
-  PLURAL_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'accounts',
-     'allergyintolerances',
-     'appointments',
-     'appointmentresponses',
-     'auditevents',
-     'basics',
-     'binaries',
-     'bodysites',
-     'bundles',
-     'careplans',
-     'careteams',
-     'claims',
-     'claimresponses',
-     'clinicalimpressions',
-     'codesystems',
-     'communications',
-     'communicationrequests',
-     'compartmentdefinitions',
-     'compositions',
-     'conceptmaps',
-     'conditions',
-     'conformances',
-     'contracts',
-     'coverages',
-     'dataelements',
-     'decisionsupportrules',
-     'decisionsupportservicemodules',
-     'detectedissues',
-     'devices',
-     'devicecomponents',
-     'devicemetrics',
-     'deviceuserequests',
-     'deviceusestatements',
-     'diagnosticorders',
-     'diagnosticreports',
-     'documentmanifests',
-     'documentreferences',
-     'eligibilityrequests',
-     'eligibilityresponses',
-     'encounters',
-     'enrollmentrequests',
-     'enrollmentresponses',
-     'episodeofcares',
-     'expansionprofiles',
-     'explanationofbenefits',
-     'familymemberhistories',
-     'flags',
-     'goals',
-     'groups',
-     'guidanceresponses',
-     'healthcareservices',
-     'imagingexcerpts',
-     'imagingobjectselections',
-     'imagingstudies',
-     'immunizations',
-     'immunizationrecommendations',
-     'implementationguides',
-     'libraries',
-     'linkages',
-     'lists',
-     'locations',
-     'measures',
-     'measurereports',
-     'media',
-     'medications',
-     'medicationadministrations',
-     'medicationdispenses',
-     'medicationorders',
-     'medicationstatements',
-     'messageheaders',
-     'moduledefinitions',
-     'namingsystems',
-     'nutritionorders',
-     'observations',
-     'operationdefinitions',
-     'operationoutcomes',
-     'orders',
-     'orderresponses',
-     'ordersets',
-     'organizations',
-     'parameters',
-     'patients',
-     'paymentnotices',
-     'paymentreconciliations',
-     'people',
-     'practitioners',
-     'practitionerroles',
-     'procedures',
-     'procedurerequests',
-     'processrequests',
-     'processresponses',
-     'protocols',
-     'provenances',
-     'questionnaires',
-     'questionnaireresponses',
-     'referralrequests',
-     'relatedpeople',
-     'riskassessments',
-     'schedules',
-     'searchparameters',
-     'sequences',
-     'slots',
-     'specimen',
-     'structuredefinitions',
-     'structuremaps',
-     'subscriptions',
-     'substances',
-     'supplydeliveries',
-     'supplyrequests',
-     'tasks',
-     'testscripts',
-     'valuesets',
-     'visionprescriptions');
-     
+      'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'ModuleDefinition', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'OrderSet', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Protocol', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'allergyintolerance',
      'appointment',
@@ -2814,7 +2700,8 @@ Const
      'task',
      'testscript',
      'valueset',
-     'visionprescription');
+     'visionprescription',
+     'custom');
      
   CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, TFhirAccount,
      TFhirAllergyIntolerance,
@@ -2928,7 +2815,8 @@ Const
      TFhirTask,
      TFhirTestScript,
      TFhirValueSet,
-     TFhirVisionPrescription);
+     TFhirVisionPrescription,
+     nil);
      
   ALL_RESOURCE_TYPES = [frtAccount,
      frtAllergyIntolerance,
@@ -3042,7 +2930,8 @@ Const
      frtTask,
      frtTestScript,
      frtValueSet,
-     frtVisionPrescription];
+     frtVisionPrescription,
+     frtCustom];
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'reporter', 'route', 'severity', 'status', 'substance', 'type');
@@ -3158,7 +3047,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.4.0';
 
-  FHIR_GENERATED_DATE = '2016-04-27T00:18:34+10:00';
+  FHIR_GENERATED_DATE = '2016-04-30T11:06:22+10:00';
 
 
 

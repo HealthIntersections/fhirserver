@@ -7,12 +7,12 @@ Uses
   MsXml, MsXmlParser,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRProfileUtilities, FHIRConstants,
+  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
   TerminologyServer;
 
 Type
 
-  TFHIRServerWorkerContext = class (TWorkerContext)
+  TFHIRServerWorkerContext = class (TBaseWorkerContext)
   private
     FTerminologyServer : TTerminologyServer;
     FProfile : TFhirExpansionProfile;

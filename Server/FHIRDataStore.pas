@@ -105,6 +105,7 @@ Type
     FOwnerName: String;
     FSubscriptionManager: TSubscriptionManager;
     FQuestionnaireCache: TQuestionnaireCache;
+    FMaps : TAdvMap<TFHIRStructureMap>;
     FClaimQueue: TFHIRClaimList;
     FValidate: Boolean;
     FAudits: TFhirResourceList;
@@ -177,6 +178,7 @@ Type
     function ResourceTypeKeyForName(name: String): integer;
     procedure ProcessSubscriptions;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
+    function getMaps : TAdvMap<TFHIRStructureMap>;
 
     Property OwnerName: String read FOwnerName write FOwnerName;
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
@@ -250,8 +252,9 @@ begin
 
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FClaimQueue := TFHIRClaimList.Create;
+  FMaps := TAdvMap<TFHIRStructureMap>.create;
 
-  FSubscriptionManager := TSubscriptionManager.Create(FIndexes.Compartments.Link);
+  FSubscriptionManager := TSubscriptionManager.Create(ValidatorContext.link, FIndexes.Compartments.Link);
   FSubscriptionManager.dataBase := FDB.Link;
   FSubscriptionManager.Base := 'http://localhost/';
   FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
@@ -524,6 +527,7 @@ begin
   FTags.free;
   FSubscriptionManager.free;
   FQuestionnaireCache.free;
+  FMaps.Free;
   FClaimQueue.free;
   FLock.free;
   FIndexes.free;
@@ -1547,6 +1551,8 @@ begin
       FQuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
     if resource.ResourceType = frtClaim then
       FClaimQueue.add(resource.Link);
+    if resource.ResourceType = frtStructureMap then
+      FMaps.add(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
   finally
     FLock.Unlock;
   end;
@@ -1618,7 +1624,7 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(origin, FIndexes.Compartments.Link);
+  request := TFHIRRequest.Create(ValidatorContext.Link, origin, FIndexes.Compartments.Link);
   try
     request.ResourceType := res.ResourceType;
     request.CommandType := fcmdCreate;
@@ -1790,6 +1796,20 @@ begin
   end;
 end;
 
+function TFHIRDataStore.getMaps: TAdvMap<TFHIRStructureMap>;
+var
+  s : String;
+begin
+  FLock.Lock;
+  try
+    result := TAdvMap<TFHIRStructureMap>.create;
+    for s in FMaps.Keys do
+      result.Add(s, FMaps[s].Link);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TFHIRDataStore.GetNextKey(keytype: TKeyType; aType: TFHIRResourceType;
   var id: string): integer;
 begin
@@ -1834,7 +1854,7 @@ begin
         inc(i);
         mem := conn.ColBlobByName['JsonContent'];
 
-        parser := MakeParser('en', ffJson, mem, xppDrop);
+        parser := MakeParser(Validator.Context, 'en', ffJson, mem, xppDrop);
         try
           SeeResource(conn.ColIntegerByName['ResourceKey'],
             conn.ColIntegerByName['ResourceVersionKey'],

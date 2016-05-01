@@ -300,7 +300,8 @@ uses
   fluentpath in '..\Libraries\fluentpath.pas',
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
-  FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas';
+  FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
+  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas';
 
 begin
   JclStartExceptionTracking;

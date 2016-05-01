@@ -337,7 +337,8 @@ const
     tcOther , // frtTask,
     tcOther , // frtTestScript,
     tcOther , // frtValueSet,
-    tcClinical); // frtVisionPrescription);
+    tcClinical,// frtVisionPrescription,
+    tcOther ); // frtCustom
   {$ENDIF}
 
 

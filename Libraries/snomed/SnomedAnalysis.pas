@@ -343,7 +343,7 @@ begin
       assess(b, '78621006');
       assess(b, '900000000000441003');
 
-      xml := TFHIRXmlComposer.Create('en');
+      xml := TFHIRXmlComposer.Create(nil, 'en');
       try
         f := TFileStream.Create('c:\temp\cdefs.xml', fmcreate);
         try

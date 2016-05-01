@@ -41,7 +41,7 @@ uses
   AdvObjects, AdvGenerics, DecimalSupport, DateAndTime,
   XmlBuilder,
 
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRProfileUtilities, FHIRConstants,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRConstants,
   FHIRParser;
 
 const
@@ -101,13 +101,25 @@ type
     function done : boolean;
     function take : String;
 
+    function hasComment: boolean;
+    procedure skipComments;
+
     function nextId : integer;
     function error(msg : String) : Exception; overload;
     function error(msg : String; offset : integer) : Exception; overload;
     function error(msg : String; location : TSourceLocation) : Exception; overload;
-    function isConstant : boolean;
-    function isToken : boolean;
+
+    function isConstant(incDoubleQuotes : boolean = false) : boolean;
+    function isStringConstant: boolean;
+    function readConstant(desc: String): String;
+    class function processConstant(s: String): String;
+
     function isOp : boolean;
+    function isToken : boolean; overload;
+    function hasToken(kw : String) : boolean; overload;
+    procedure token(kw : String); overload;
+    procedure skiptoken(kw : String); overload;
+    function takeDottedToken: String;
   end;
 
   TFHIRPathDebugPackage = class (TAdvObject)
@@ -265,7 +277,8 @@ type
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
 
     // Parse a path for later use using execute
-    function parse(path : String) : TFHIRExpressionNode;
+    function parse(path : String) : TFHIRExpressionNode; overload;
+    function parse(lexer : TFHIRPathLexer) : TFHIRExpressionNode; overload;
 
     // check that paths referred to in the expression are valid
     function check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
@@ -327,7 +340,7 @@ begin
       begin
         types := TFHIRTypeDetails.Create(csSINGLETON, []);
         for td in ed.type_List do
-          types.addType(CODES_TFhirDefinedTypesEnum[td.code]);
+          types.addType(td.code);
       end;
     finally
       sd.free;
@@ -446,20 +459,21 @@ begin
   FLog := TStringBuilder.Create;
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
-  for sd in worker.Profiles.ProfilesByURL.Values do
-  begin
-    {$IFDEF FHIR3}
-    if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
-      allTypes.add(sd.id);
-    if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and isPrimitive(sd) then
-      primitiveTypes.add(sd.id);
-    {$ELSE}
-    raise Exception.Create('Debug this');
-    if (sd.constrainedType = DefinedTypesNull) then
-      allTypes.add(sd.id);
-    if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
-      primitiveTypes.add(sd.id);
-    {$ENDIF}
+  for sd in worker.allStructures do
+    if (sd.kind <> StructureDefinitionKindLogical) then
+    begin
+      {$IFDEF FHIR3}
+      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
+        allTypes.add(sd.id);
+      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and isPrimitive(sd) then
+        primitiveTypes.add(sd.id);
+      {$ELSE}
+      raise Exception.Create('Debug this');
+      if (sd.constrainedType = DefinedTypesNull) then
+        allTypes.add(sd.id);
+      if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
+        primitiveTypes.add(sd.id);
+      {$ENDIF}
   end;
 end;
 
@@ -2874,7 +2888,7 @@ begin
   end;
 end;
 
-function processConstant(s: String; lexer : TFHIRPathLexer) : String;
+class function TFHIRPathLexer.processConstant(s: String) : String;
 var
   b : TStringBuilder;
   i : integer;
@@ -2907,10 +2921,10 @@ begin
               inc(i,4);
             end
             else
-              lexer.error('Improper unicode escape in '+s);
+              raise Exception.create('Improper unicode escape in '+s);
             end
         else
-          lexer.error('Unknown character escape \'+ch);
+          raise Exception.create('Unknown character escape \'+ch);
         end;
         inc(i);
       end
@@ -2926,6 +2940,22 @@ begin
   end;
 end;
 
+
+function TFHIRExpressionEngine.parse(lexer: TFHIRPathLexer): TFHIRExpressionNode;
+var
+  msg : String;
+begin
+  if lexer.done then
+    raise lexer.error('Path cannot be empty');
+  result := parseExpression(lexer, true);
+  try
+    if not result.check(msg, 0) then
+      raise EFHIRPath.create('Error parsing "'+lexer.FPath+'": '+msg);
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
 
 function TFHIRExpressionEngine.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
 var
@@ -2943,10 +2973,16 @@ begin
       lexer.Fcurrent := '-' + lexer.Fcurrent;
     end;
 
+    if (lexer.Current = '+') then
+    begin
+      lexer.take;
+      lexer.Fcurrent := '+' + lexer.Fcurrent;
+    end;
+
     if lexer.isConstant then
     begin
       if lexer.current.startsWith('''') then
-        processConstant(lexer.current, lexer);
+        lexer.processConstant(lexer.current);
       result.Constant := lexer.take;
       result.kind := enkConstant;
       result.SourceLocationEnd := lexer.FCurrentLocation;
@@ -2963,9 +2999,12 @@ begin
     end
     else
     begin
-      if not lexer.isToken then
+      if not lexer.isToken and not lexer.current.startsWith('"') then
         raise lexer.error('Found '+lexer.current+' expecting a token name');
-      result.Name := lexer.take;
+      if (lexer.current.startsWith('"')) then
+        result.Name := lexer.readConstant('Path Name')
+      else
+        result.Name := lexer.take;
       result.SourceLocationEnd := lexer.FCurrentLocation;
       if not result.checkName then
         raise lexer.error('Found '+lexer.current+' expecting a valid token name');
@@ -3159,8 +3198,8 @@ begin
     result := TFHIRDateTime.create(TDateAndTime.CreateXML(s))
   else
     result := TFHIRDate.create(TDateAndTime.CreateXML(s));
-
 end;
+
 function TFHIRExpressionEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRBase;
 begin
   if (constant = 'true') then
@@ -3174,7 +3213,7 @@ begin
   else if StringIsDecimal(constant) then
     result := TFhirDecimal.Create(constant)
   else if constant.StartsWith('''') then
-    result := TFhirString.Create(processConstant(constant, nil))
+    result := TFhirString.Create(TFHIRPathLexer.processConstant(constant))
   else if constant.StartsWith('%') then
     result := replaceFixedConstant(context, constant)
   else if constant.StartsWith('@') then
@@ -3319,9 +3358,9 @@ begin
       else
         for t in ed.type_List do
         begin
-          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFhirDefinedTypesEnum[t.Code]) as TFhirStructureDefinition;
+          dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code) as TFhirStructureDefinition;
           if (dt = nil) then
-            raise EFHIRPath.create('unknown data type '+CODES_TFhirDefinedTypesEnum[t.code]);
+            raise EFHIRPath.create('unknown data type '+t.code);
           sdl.add(dt);
         end;
     end
@@ -3343,10 +3382,10 @@ begin
           if (ed.path.startsWith(path)) then
             for t in ed.type_List do
             begin
-              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
+              if (t.code = 'Element') or (t.code = 'BackboneElement') then
                 tn := ed.path
               else
-                tn := CODES_TFhirDefinedTypesEnum[t.code];
+                tn := t.code;
               if (tn = 'Resource') then
               begin
                 rt := worker.getResourceNames();
@@ -3377,9 +3416,9 @@ begin
         begin
           if (ed.path.startsWith(path) and not ed.path.substring(path.length).contains('.')) then
             for t in ed.type_List do
-              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
+              if (t.code = 'Element') or (t.code = 'BackboneElement') then
                 result.addType(ed.path)
-              else if (t.code = DefinedTypesResource) then
+              else if (t.code = 'Resource') then
               begin
                 rt := worker.getResourceNames;
                 try
@@ -3390,7 +3429,7 @@ begin
                 end;
               end
               else
-                result.addType(CODES_TFhirDefinedTypesEnum[t.code]);
+                result.addType(t.code);
         end;
       end
       else
@@ -3406,12 +3445,12 @@ begin
           begin
             for t in ed.type_list do
             begin
-              if (t.code = DefinedTypesNull) then
+              if (t.code = '') then
                 break; // raise EFHIRPath.create('Illegal reference to primitive value attribute @ '+path);
 
-              if (t.code = DefinedTypesElement) or (t.code = DefinedTypesBackboneElement) then
+              if (t.code = 'Element') or (t.code = 'BackboneElement') then
                 result.addType(path)
-              else if (t.code = DefinedTypesResource) then
+              else if (t.code = 'Resource') then
               begin
                 rt := worker.getResourceNames;
                 try
@@ -3422,7 +3461,7 @@ begin
                 end;
               end
               else
-                result.addType(CODES_TFhirDefinedTypesEnum[t.code]);
+                result.addType(t.code);
             end;
           end;
         end;
@@ -3449,7 +3488,7 @@ var
 begin
 	result := false;
 	for t in ed.type_List do
-		if (s.equals(CODES_TFhirDefinedTypesEnum[t.code])) then
+		if (s.equals(t.code)) then
 			exit(true);
 end;
 
@@ -3459,7 +3498,7 @@ var
 begin
   if list.count <> 1 then
     exit(false);
-  s := CODES_TFhirDefinedTypesEnum[list[0].code];
+  s := list[0].code;
   result := (s = 'Element') or (s = 'BackboneElement') or (s = 'Resource') or (s = 'DomainResource');
 end;
 
@@ -3498,10 +3537,10 @@ begin
 
       if (ed.type_list.count > 1) then // if there's more than one type, the test above would fail this
         raise Exception.Create('Internal typing issue....');
-      sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+CODES_TFhirDefinedTypesEnum[ed.type_List[0].code]);
+      sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+ed.type_List[0].code);
       try
         if (sd = nil) then
-          raise Exception.Create('Unknown type '+CODES_TFhirDefinedTypesEnum[ed.type_List[0].code]);
+          raise Exception.Create('Unknown type '+ed.type_List[0].code);
         result := getElementDefinition(sd, sd.id+path.Substring(ed.path.Length), true, specifiedType);
       finally
         sd.Free;
@@ -3517,7 +3556,7 @@ end;
 
 function TFHIRExpressionEngine.hasDataType(ed : TFhirElementDefinition) : boolean;
 begin
-  result := (ed.type_List.Count > 0) and not ((ed.type_list[0].code = DefinedTypesElement) or (ed.type_list[0].code = DefinedTypesBackboneElement));
+  result := (ed.type_List.Count > 0) and not ((ed.type_list[0].code = 'Element') or (ed.type_list[0].code = 'BackboneElement'));
 end;
 
 function TFHIRExpressionEngine.getElementDefinitionByName(sd : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;
@@ -3613,16 +3652,9 @@ begin
   if (FCursor <= FPath.Length) then
   begin
     ch := FPath[FCursor];
-    if charInSet(ch, ['!', '>', '<', ':']) then
+    if charInSet(ch, ['!', '>', '<', ':', '=', '-']) then
     begin
-      if (FCursor < FPath.Length) and charInSet(FPath[FCursor+1], ['=', '~']) then
-        Grab(2)
-      else
-        Grab(1);
-    end
-    else if charInSet(ch, ['{']) then
-    begin
-      if (FCursor < FPath.Length) and charInSet(FPath[FCursor+1], ['}']) then
+      if (FCursor < FPath.Length) and charInSet(FPath[FCursor+1], ['=', '~', '-']) then
         Grab(2)
       else
         Grab(1);
@@ -3662,10 +3694,28 @@ begin
           inc(FCursor);
       FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
     end
+    else if (ch = '/') then
+    begin
+      inc(FCursor);
+      while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['/']) do
+      begin
+        inc(FCursor);
+        while (FCursor <= FPath.Length) and not CharInSet(FPath[FCursor], [#13, #10]) do
+          inc(FCursor);
+      end;
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
     else if (ch = '$') then
     begin
       inc(FCursor);
       while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['a'..'z']) do
+        inc(FCursor);
+      FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
+    end
+    else if (ch = '{') then
+    begin
+      inc(FCursor);
+      if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['}']) then
         inc(FCursor);
       FCurrent := copy(FPath, FCurrentStart, FCursor-FCurrentStart);
     end
@@ -3686,7 +3736,7 @@ begin
       if (FCursor > FPath.length) then
         raise error('Unterminated string');
       inc(FCursor);
-      FCurrent := copy(FPath, FCurrentStart+1, FCursor-FCurrentStart-2);
+      FCurrent := '"'+copy(FPath, FCurrentStart+1, FCursor-FCurrentStart-2)+'"';
     end
     else if (ch = '''') then
     begin
@@ -3728,6 +3778,23 @@ begin
   result := FId;
 end;
 
+function TFHIRPathLexer.hasComment : boolean;
+begin
+  result := not done() and FCurrent.startsWith('//');
+end;
+
+procedure TFHIRPathLexer.skipComments;
+begin
+  while (not done and hasComment()) do
+    next();
+end;
+
+procedure TFHIRPathLexer.skiptoken(kw: String);
+begin
+  if (kw = current) then
+    next();
+end;
+
 function TFHIRPathLexer.done: boolean;
 begin
   result := FCurrentStart > FPath.Length;
@@ -3748,14 +3815,20 @@ begin
   result := error(msg, FCurrentStart);
 end;
 
-function TFHIRPathLexer.isConstant: boolean;
+function TFHIRPathLexer.isConstant(incDoubleQuotes : boolean): boolean;
 begin
-  result := (FCurrent <> '') and (CharInSet(FCurrent[1], ['''', '0'..'9', '@', '%', '-']) or (FCurrent = 'true') or (FCurrent = 'false') or (FCurrent = '{}'));
+  result := (FCurrent <> '') and (CharInSet(FCurrent[1], ['''', '0'..'9', '@', '%', '-', '+']) or
+    (incDoubleQuotes and (FCurrent[1] = '"')) or (FCurrent = 'true') or (FCurrent = 'false') or (FCurrent = '{}'));
 end;
 
 function TFHIRPathLexer.isOp: boolean;
 begin
   result := (current <> '') and StringArrayExistsSensitive(CODES_TFHIRPathOperation, current);
+end;
+
+function TFHIRPathLexer.hasToken(kw: String): boolean;
+begin
+  result := not done() and (kw = current);
 end;
 
 function TFHIRPathLexer.isToken: boolean;
@@ -3783,6 +3856,47 @@ begin
   result := current;
   next;
 end;
+
+procedure TFHIRPathLexer.token(kw: String);
+begin
+  if (kw <> current) then
+    raise error('Found "'+current+'" expecting "'+kw+'"');
+  next();
+end;
+
+function TFHIRPathLexer.readConstant(desc : String): String;
+begin
+  if (not isStringConstant()) then
+    raise error('Found '+current+' expecting "['+desc+']"');
+
+  result := processConstant(take);
+end;
+
+function TFHIRPathLexer.isStringConstant : boolean;
+begin
+  result := (current[1] = '''') or (current[1] = '"');
+end;
+
+
+function TFHIRPathLexer.takeDottedToken() : String;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.create;
+  try
+    b.append(take());
+    while not done() and (FCurrent = '.') do
+    begin
+      b.append(take());
+      b.append(take());
+    end;
+    result := b.toString();
+  finally
+    b.free;
+  end;
+end;
+
+
 
 { TFHIRPathExecutionTypeContext }
 
