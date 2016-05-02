@@ -373,7 +373,7 @@ begin
     b.appendLine('		<div class="container">  <!-- container -->');
     b.appendLine('			<div class="inner-wrapper">');
     b.appendLine('				<p>');
-    b.appendLine('        <a href="/snomed/doco/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR Version <a href="/index.html" style="color: gold">0.5.0-5264</a>');
+    b.appendLine('        <a href="/snomed/doco/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR Version <a href="/index.html" style="color: gold">0.5.0-5264</a>');
     b.appendLine('        </span>');
     b.appendLine('        </p>');
     b.appendLine('			</div>  <!-- /inner-wrapper -->');

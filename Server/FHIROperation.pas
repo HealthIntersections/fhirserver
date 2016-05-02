@@ -52,7 +52,8 @@ uses
 
   FHIRBase, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
-  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
+  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
+  FHIRStructureMapUtilities,
   ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
@@ -531,6 +532,19 @@ type
     function formalURL : String; override;
   end;
 
+  TServerTransformerServices = class (TTransformerServices)
+  private
+    FRepository : TFHIRDataStore;
+  public
+    Constructor create(Repository : TFHIRDataStore);
+    Destructor Destroy; override;
+    property Repository : TFHIRDataStore read FRepository;
+
+    function oid2Uri(oid : String) : String; override;
+    function translate(appInfo : TAdvObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
+    procedure log(s : String); override;
+  end;
+
   TFhirTransformOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -546,7 +560,7 @@ type
 implementation
 
 uses
-  SystemService, FHIRStructureMapUtilities;
+  SystemService;
 
 function booleanToSQL(b : boolean): string;
 begin
@@ -8059,7 +8073,7 @@ var
   lib : TAdvMap<TFHIRStructureMap>;
   map : TFHIRStructureMap;
   utils : TFHIRStructureMapUtilities;
-  outcome : TFHIRBundle;
+  outcome : TFHIRBase;
 //  params : TFhirParameters;
 //  sdParam, sdBase : TFhirStructureDefinition;
 //  utils : TProfileUtilities;
@@ -8102,9 +8116,9 @@ begin
           if (map <> nil) then
           begin
             try
-              outcome := TFHIRBundle.Create;
+              outcome := TFHIRCodeableConcept.Create;
               try
-                utils := TFHIRStructureMapUtilities.Create(manager.FRepository.Validator.Context.link, lib.Link, nil);
+                utils := TFHIRStructureMapUtilities.Create(manager.FRepository.Validator.Context.link, lib.Link, TServerTransformerServices.create(manager.FRepository.link));
                 try
                   try
                     utils.transform(nil, params.content, map, outcome);
@@ -8112,7 +8126,7 @@ begin
                     response.Message := 'OK';
                     response.Body := '';
                     response.LastModifiedDate := now;
-                    response.Resource := outcome.Link;
+                    response.Resource := TFHIRCustomResource.createFromBase(manager.FRepository.ValidatorContext, outcome);
                   except
                     on e : exception do
                       manager.check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
@@ -8170,6 +8184,35 @@ end;
 function TFhirTransformOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtStructureMap];
+end;
+
+{ TServerTransformerServices }
+
+constructor TServerTransformerServices.create(Repository: TFHIRDataStore);
+begin
+  Inherited Create;
+  FRepository := Repository;
+end;
+
+destructor TServerTransformerServices.Destroy;
+begin
+  FRepository.Free;
+  inherited;
+end;
+
+procedure TServerTransformerServices.log(s: String);
+begin
+  // nothing right now
+end;
+
+function TServerTransformerServices.oid2Uri(oid: String): String;
+begin
+  result := FRepository.oid2URI(oid);
+end;
+
+function TServerTransformerServices.translate(appInfo: TAdvObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
+begin
+  raise Exception.Create('Not Done Yet');
 end;
 
 end.

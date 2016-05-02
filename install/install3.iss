@@ -41,7 +41,7 @@ AppPublisherURL=http://www.healthintersections.com.au
 AppVersion=0.01
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
-AppCopyright=Copyright © Health Intersections Pty Ltd 2011 - 2013
+AppCopyright=Copyright © Health Intersections Pty Ltd 2011+
 VersionInfoVersion=0.0.0.1
 
 ; dialog support
@@ -82,7 +82,7 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
-Source: "C:\work\org.hl7.fhir.2016May\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "fhir-spec.zip,*.zip"
+Source: "C:\work\org.hl7.fhir.2016May\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "fhir-spec.zip,*.asp"
 Source: "C:\work\org.hl7.fhir.2016May\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
 Source: "C:\work\org.hl7.fhir.2016May\build\publish\validation-min.xml.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
 

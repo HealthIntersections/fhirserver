@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.45 2016-04-29 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.46 2016-05-02 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.46.exe</link>
+			<description>DSTU3. 2016-05-02 (v1.0.46): fix various reported bugs for Montreal connectathon + $transform</description>
+		</item>
+<item><title>FHIRServer release 1.0.45 2016-04-29 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.45.exe</link>
 			<description>DSTU3. 2016-04-29 (v1.0.45): fix valdation error</description>
 		</item>
-<item><title>FHIRServer release 1.0.44 2016-04-27 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.44 2016-04-27 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.44.exe</link>
 			<description>DSTU3. 2016-04-27 (v1.0.44): Major fixes - validation, indexing, expressions, compartments</description>
 		</item>

@@ -191,8 +191,9 @@ Type
     FLang: String;
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
-    FWorker : TWorkerContext;
   protected
+    FWorker : TWorkerContext;
+
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); overload; virtual;
 //    Procedure ComposeBinary(xml : TXmlBuilder; binary : TFhirBinary);
     procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; node: TFhirXHtmlNode); overload;
@@ -627,20 +628,33 @@ end;
 procedure TFHIRXmlComposerBase.Compose(stream: TStream; oResource: TFhirResource; isPretty : Boolean; links : TFhirBundleLinkList);
 var
   xml : TXmlBuilder;
+  mx : TFHIRMMXmlParser;
 begin
-  xml := TAdvXmlBuilder.Create;
-  try
-    xml.IsPretty := isPretty;
-    xml.NoHeader := NoHeader;
-    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
-    xml.Start;
-    if FComment <> '' then
-      xml.Comment(FComment);
-    ComposeResource(xml, oResource, links);
-    xml.Finish;
-    xml.Build(stream);
-  finally
-    xml.Free;
+  if oResource.resourceType = frtCustom then
+  begin
+    mx := TFHIRMMXmlParser.create(FWorker.Link);
+    try
+      mx.compose(TFHIRCustomResource(oResource).Root, stream, isPretty, '');
+    finally
+      mx.free;
+    end;
+  end
+  else
+  begin
+    xml := TAdvXmlBuilder.Create;
+    try
+      xml.IsPretty := isPretty;
+      xml.NoHeader := NoHeader;
+      xml.CurrentNamespaces.DefaultNS := FHIR_NS;
+      xml.Start;
+      if FComment <> '' then
+        xml.Comment(FComment);
+      ComposeResource(xml, oResource, links);
+      xml.Finish;
+      xml.Build(stream);
+    finally
+      xml.Free;
+    end;
   end;
 end;
 
@@ -2191,7 +2205,7 @@ begin
 '		<div class="container">  <!-- container -->'+#13#10+
 '			<div class="inner-wrapper">'+#13#10+
 '				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011 - 2013. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
 '        </span>'+#13#10+
 '        </p>'+#13#10+
 '			</div>  <!-- /inner-wrapper -->'+#13#10+

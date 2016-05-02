@@ -41,7 +41,7 @@ AppPublisherURL=http://www.healthintersections.com.au
 AppVersion=0.01
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
-AppCopyright=Copyright © Health Intersections Pty Ltd 2011 - 2013
+AppCopyright=Copyright © Health Intersections Pty Ltd 2011+
 VersionInfoVersion=0.0.0.1
 
 ; dialog support

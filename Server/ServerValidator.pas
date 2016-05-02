@@ -43,7 +43,6 @@ Type
     function getStructure(url : String) : TFHIRStructureDefinition; override;
   end;
 
-
 Implementation
 
 { TFHIRServerWorkerContext }

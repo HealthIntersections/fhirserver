@@ -240,7 +240,8 @@ type
   private
    	procedure parseChildren(path : String; obj : TFHIRBase; context : TFHIRMMElement);
   public
-    function parse(r : TFHIRResource) : TFHIRMMElement;
+    function parse(r : TFHIRResource) : TFHIRMMElement; overload;
+    function parse(r : TFHIRBase) : TFHIRMMElement; overload;
   end;
 
   TFHIRCustomResource = class (TFHIRResource)
@@ -255,6 +256,8 @@ type
   public
     constructor Create(root : TFHIRMMElement);
     Destructor Destroy; override;
+
+    class function CreateFromBase(context : TWorkerContext; base : TFHIRBase) : TFHIRCustomResource;
 
     property Root : TFHIRMMElement read FRoot write SetRoot;
     procedure Assign(oSource : TAdvObject); override;
@@ -2036,6 +2039,29 @@ begin
   end;
 end;
 
+function TFHIRMMResourceLoader.parse(r: TFHIRBase): TFHIRMMElement;
+var
+  name, path : String;
+  sd : TFHIRStructureDefinition;
+begin
+  name := r.fhirType;
+  path := name;
+
+  sd := getDefinition(-1, -1, name);
+  if (sd = nil) then
+    raise Exception.create('Unable to find definition for '+name);
+
+  result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
+  try
+    result.Type_ := name;
+    parseChildren(path, r, result);
+    result.numberChildren();
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 procedure TFHIRMMResourceLoader.parseChildren(path: String; obj: TFHIRBase; context: TFHIRMMElement);
 var
   properties : TAdvList<TFHIRMMProperty>;
@@ -2092,6 +2118,24 @@ constructor TFHIRCustomResource.Create(root: TFHIRMMElement);
 begin
   inherited Create;
   FRoot := root;
+end;
+
+class function TFHIRCustomResource.CreateFromBase(context : TWorkerContext; base: TFHIRBase): TFHIRCustomResource;
+var
+  e : TFHIRMMElement;
+  l : TFHIRMMResourceLoader;
+begin
+  l := TFHIRMMResourceLoader.create(context.link);
+  try
+    e := l.parse(base);
+    try
+      result := TFHIRCustomResource.create(e.link);
+    finally
+      e.free;
+    end;
+  finally
+    l.free;
+  end;
 end;
 
 destructor TFHIRCustomResource.Destroy;

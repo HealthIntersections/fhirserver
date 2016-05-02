@@ -435,6 +435,13 @@ type
   TFhirValueSetCodeSystem = TFhirCodeSystem;
 
 
+  TFHIRNamingSystemHelper = class helper for TFHIRNamingSystem
+  public
+    function hasOid(oid : String) : boolean;
+    function getUri : String;
+  end;
+
+
 function Path(const parts : array of String) : String;
 
 
@@ -3817,6 +3824,28 @@ begin
     o.field := name;
     o.value := value;
   end;
+end;
+
+{ TFHIRNamingSystemHelper }
+
+function TFHIRNamingSystemHelper.getUri: String;
+var
+  id : TFhirNamingSystemUniqueId;
+begin
+  result := '';
+  for id in uniqueIdList do
+    if (id.type_ = NamingsystemIdentifierTypeUri) then
+      exit(id.value);
+end;
+
+function TFHIRNamingSystemHelper.hasOid(oid: String): boolean;
+var
+  id : TFhirNamingSystemUniqueId;
+begin
+  result := false;
+  for id in uniqueIdList do
+    if (id.type_ = NamingSystemIdentifierTypeOID) and (id.value = oid) then
+      exit(true);
 end;
 
 end.

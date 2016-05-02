@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport,
+  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers,
@@ -106,6 +106,7 @@ Type
     FSubscriptionManager: TSubscriptionManager;
     FQuestionnaireCache: TQuestionnaireCache;
     FMaps : TAdvMap<TFHIRStructureMap>;
+    FNamingSystems : TAdvMap<TFHIRNamingSystem>;
     FClaimQueue: TFHIRClaimList;
     FValidate: Boolean;
     FAudits: TFhirResourceList;
@@ -179,6 +180,7 @@ Type
     procedure ProcessSubscriptions;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     function getMaps : TAdvMap<TFHIRStructureMap>;
+    function oid2Uri(oid : String) : String;
 
     Property OwnerName: String read FOwnerName write FOwnerName;
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
@@ -253,6 +255,7 @@ begin
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FClaimQueue := TFHIRClaimList.Create;
   FMaps := TAdvMap<TFHIRStructureMap>.create;
+  FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
 
   FSubscriptionManager := TSubscriptionManager.Create(ValidatorContext.link, FIndexes.Compartments.Link);
   FSubscriptionManager.dataBase := FDB.Link;
@@ -528,6 +531,7 @@ begin
   FSubscriptionManager.free;
   FQuestionnaireCache.free;
   FMaps.Free;
+  FNamingSystems.Free;
   FClaimQueue.free;
   FLock.free;
   FIndexes.free;
@@ -1033,6 +1037,31 @@ begin
   try
     inc(FLastVersionKey);
     result := FLastVersionKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRDataStore.oid2Uri(oid: String): String;
+var
+  ns : TFHIRNamingSystem;
+begin
+  result := '';
+  FLock.Lock;
+  try
+		result := UriForKnownOid(oid);
+		if (result = '') then
+    begin
+  		for ns in FNamingSystems.Values do
+      begin
+        if ns.hasOid(oid) then
+        begin
+          result := ns.getUri;
+          if (result <> '') then
+            exit;
+        end;
+      end;
+    end;
   finally
     FLock.Unlock;
   end;
@@ -1553,6 +1582,8 @@ begin
       FClaimQueue.add(resource.Link);
     if resource.ResourceType = frtStructureMap then
       FMaps.add(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
+    if resource.ResourceType = frtNamingSystem then
+      FNamingSystems.Add(inttostr(key), TFHIRNamingSystem(resource).Link);
   finally
     FLock.Unlock;
   end;
