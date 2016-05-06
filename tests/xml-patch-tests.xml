@@ -27,7 +27,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo"/>
+      <remove sel="f:doc/f:foo"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir"/>
@@ -42,7 +42,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo"/>
+      <remove sel="f:doc/f:foo"/>
     </patch>
     <error message="The xpath foo matched multiple nodes"/>
   </case>
@@ -55,7 +55,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[1]"/>
+      <remove sel="f:doc/f:foo[1]"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -72,7 +72,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[2]"/>
+      <remove sel="f:doc/f:foo[2]"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -89,7 +89,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[@t='1']"/>
+      <remove sel="f:doc/f:foo[@t='1']"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -106,7 +106,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[@t='2']"/>
+      <remove sel="f:doc/f:foo[@t='2']"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -123,7 +123,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[@t='1']/@t"/>
+      <remove sel="f:doc/f:foo[@t='1']/@t"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -141,7 +141,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo[@t='2']/text()"/>
+      <remove sel="f:doc/f:foo[@t='2']/text()"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -158,7 +158,7 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo"/>
+      <remove sel="f:doc/f:foo"/>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir"/>
@@ -172,19 +172,19 @@
       </doc>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <remove sel="f:foo"/>
+      <remove sel="f:doc/f:foo"/>
     </patch>
     <error message="Nothing to delete found for xpath foo"/>
   </case>
   
 <!-- addition -->  
   
-  <case name="Remove Element - NS error">
+  <case name="Add simple case">
     <target>
       <doc xmlns="http://hl7.org/fhir"/>
     </target>
     <patch xmlns="http://hl7.org/fhir">
-      <add sel="."><foo id="ert4773">This is a new child</foo></add>
+      <add sel="f:doc"><foo id="ert4773">This is a new child</foo></add>
     </patch>
     <patched>
       <doc xmlns="http://hl7.org/fhir">
@@ -193,5 +193,27 @@
     </patched>
   </case>
   
+  <case name="Add text">
+    <target>
+      <doc xmlns="http://hl7.org/fhir"/>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <add sel="f:doc">This is new text</add>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">This is new text</doc>
+    </patched>
+  </case>
   
+  <case name="Add attribute">
+    <target>
+      <doc xmlns="http://hl7.org/fhir"/>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <add sel="f:doc" type="@user">Attribute text</add>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir" user="Attribute text"/>
+    </patched>
+  </case>
 </tests>
