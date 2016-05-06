@@ -1,0 +1,197 @@
+<tests>
+
+  <case name="Missing patch operation">
+    <target>
+      <test/>    
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+    </patch>
+    <error message="No Patch Operations Found"/>
+  </case>
+  
+  <case name="Missing target document">
+    <target>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="doc/foo"/>
+    </patch>
+    <error message="No Target Document Found"/>
+  </case>
+
+<!-- removal tests -->
+  
+  <case name="Remove Element - simplest">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir"/>
+    </patched>
+  </case>
+  
+  <case name="Remove Element - error">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+        <foo>test</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo"/>
+    </patch>
+    <error message="The xpath foo matched multiple nodes"/>
+  </case>
+  
+  <case name="Remove Element - duplicate 1">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+        <foo>test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[1]"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test1</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  <case name="Remove Element - duplicate 2">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+        <foo>test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[2]"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  <case name="Remove By Attribute - duplicate 1">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="1">test</foo>
+        <foo t="2">test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[@t='1']"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="2">test1</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  <case name="Remove By Attribute - duplicate 2">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="1">test</foo>
+        <foo t="2">test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[@t='2']"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="2">test</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  <case name="Remove Attribute - duplicate 1">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="1">test</foo>
+        <foo t="2">test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[@t='1']/@t"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+        <foo t="2">test1</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  <case name="Remove Text">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="1">test</foo>
+        <foo t="2">test1</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo[@t='2']/text()"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo t="1">test</foo>
+        <foo t="2"></foo>
+      </doc>
+    </patched>
+  </case>
+
+  <case name="Remove Element - NS1">
+    <target>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo>test</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo"/>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir"/>
+    </patched>
+  </case>
+    
+  <case name="Remove Element - NS error">
+    <target>
+      <doc xmlns="http://hl7.org/fhir1">
+        <foo>test</foo>
+      </doc>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <remove sel="f:foo"/>
+    </patch>
+    <error message="Nothing to delete found for xpath foo"/>
+  </case>
+  
+<!-- addition -->  
+  
+  <case name="Remove Element - NS error">
+    <target>
+      <doc xmlns="http://hl7.org/fhir"/>
+    </target>
+    <patch xmlns="http://hl7.org/fhir">
+      <add sel="."><foo id="ert4773">This is a new child</foo></add>
+    </patch>
+    <patched>
+      <doc xmlns="http://hl7.org/fhir">
+        <foo id="ert4773">This is a new child</foo>
+      </doc>
+    </patched>
+  </case>
+  
+  
+</tests>
