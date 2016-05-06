@@ -44,7 +44,7 @@ Uses
 
   MsXml, XmlBuilder, MsXmlParser, AdvXmlEntities, AdvJSON,
 
-  FHIRBase, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
+  FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
 Type
   TNodeStack = class(TAdvObject)

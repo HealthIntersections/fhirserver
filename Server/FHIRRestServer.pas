@@ -154,9 +154,9 @@ Type
     function BuildCompartmentList(session : TFHIRSession) : String;
 
     procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
-    function GetResource(session : TFhirSession; rtype : TFhirResourceType; lang, id, ver, op : String) : TFhirResource;
-    function FindResource(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFhirResource;
-    function DoSearch(session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFHIRBundle;
+    function GetResource(session : TFhirSession; rtype : String; lang, id, ver, op : String) : TFhirResource;
+    function FindResource(session : TFhirSession; rtype : String; lang, params : String) : TFhirResource;
+    function DoSearch(session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
     function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse; secure : boolean) : TDateTime;
@@ -180,7 +180,7 @@ Type
     function CheckSessionOK(session : TFhirSession; ip : string) : Boolean;
     Function BuildFhirHomePage(comps, lang, host, sBaseURL : String; session : TFhirSession; secure : boolean): String;
     Function BuildFhirAuthenticationPage(lang, host, path, msg : String; secure : boolean) : String;
-    Function BuildFhirUploadPage(lang, host, sBaseURL : String; aType : TFHIRResourceType; session : TFhirSession) : String;
+    Function BuildFhirUploadPage(lang, host, sBaseURL : String; aType : String; session : TFhirSession) : String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -296,6 +296,7 @@ Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : Stri
 var
   s, txu : String;
   ts : TStringList;
+  i : integer;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
@@ -332,17 +333,10 @@ Begin
   FSSLPassword := FIni.ReadString('web', 'certpword', '');
   FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
 
-  if FIni.ReadString('web', 'insecure', '') = 'conformance' then
-    nonSecureTypes := [frtConformance, frtStructureDefinition, frtValueSet, frtConceptMap, frtDataElement, frtOperationDefinition, frtSearchParameter, frtNamingSystem]
-  else if FIni.ReadString('web', 'insecure', '') = 'conformance+patient' then
-    nonSecureTypes := [frtConformance, frtStructureDefinition, frtValueSet, frtConceptMap, frtDataElement, frtOperationDefinition, frtSearchParameter, frtNamingSystem, frtPatient]
-  else
-    nonSecureTypes := ALL_RESOURCE_TYPES;
-
-
   FFhirStore := TFHIRDataStore.Create(db.Link, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
   FFhirStore.ownername := FOwnerName;
   FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
+
   if FIni.ReadString('web', 'host', '') <> '' then
   begin
     if FIni.ReadString('web', 'base', '') <> '' then
@@ -356,6 +350,13 @@ Begin
   FFhirStore.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort)+ FBasePath;
   FFhirStore.FormalURLSecureOpen := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort) + FBasePath;
   FFhirStore.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort) + FSecurePath;
+
+  if FIni.ReadString('web', 'insecure', '') = 'conformance' then
+    FFhirStore.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem'])
+  else if FIni.ReadString('web', 'insecure', '') = 'conformance+patient' then
+    FFhirStore.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem', 'Patient'])
+  else
+    FFhirStore.ValidatorContext.setNonSecureTypes([]);
 
   if FPort = 80 then
     txu := 'http://'+FHost
@@ -456,7 +457,7 @@ begin
   CoUninitialize;
 end;
 
-function TFhirWebServer.DoSearch(session: TFhirSession; rtype: TFhirResourceType; lang, params: String): TFHIRBundle;
+function TFhirWebServer.DoSearch(session: TFhirSession; rtype: string; lang, params: String): TFHIRBundle;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -465,7 +466,7 @@ begin
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
-    request.ResourceType := rType;
+    request.ResourceName := rType;
     request.Lang := lang;
     request.LoadParams(params);
     request.CommandType := fcmdSearch;
@@ -991,7 +992,7 @@ Begin
     if s.StartsWith('multipart/form-data', true) then
     begin
       form := loadMultipartForm(request.PostStream, request.ContentType);
-      upload := true;
+      upload := false;
     end
     else
       form := nil;
@@ -999,7 +1000,7 @@ Begin
       if s.StartsWith('multipart/form-data', true) then
       begin
         oStream := extractFileData(form, 'file', sContentType); // though this might not return the data if we have an operation request
-        upload := true;
+        upload := false;
       end
       else if request.PostStream <> nil then
       begin
@@ -1075,9 +1076,9 @@ Begin
                   response.ResponseNo := 200;
                   response.ContentType := 'text/html; charset=UTF-8';
                   response.FreeContentStream := true;
-                  response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceType, oRequest.Session));
+                  response.ContentStream := StringToUTF8Stream(BuildFhirUploadPage(lang, sHost, '', oRequest.ResourceName, oRequest.Session));
                 end
-                else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceType <> frtNull) then
+                else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceName <> '') then
                 begin
                   response.ResponseNo := 200;
                   response.ContentType := 'text/html; charset=UTF-8';
@@ -1200,10 +1201,10 @@ begin
   if request.Parameters.GetVar('profile').StartsWith('Profile/') then
   begin
     id := request.Parameters.GetVar('profile').Substring(8);
-    profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, '','') as TFHirStructureDefinition;
+    profile := GetResource(request.Session, 'StructureDefinition', request.Lang, id, '','') as TFHirStructureDefinition;
   end
   else
-    profile := FindResource(request.Session, frtStructureDefinition, request.Lang, 'url='+request.Parameters.GetVar('profile')) as TFHirStructureDefinition;
+    profile := FindResource(request.Session, 'StructureDefinition', request.Lang, 'url='+request.Parameters.GetVar('profile')) as TFHirStructureDefinition;
   try
     id := profile.id;
     fid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
@@ -1266,11 +1267,10 @@ begin
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
-  i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, typ);
-  if i = -1 then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.ValidatorContext.hasCustomResource(typ)) then
     raise Exception.Create('Unknown resource type '+typ);
 
-  r := GetResource(request.Session, TFHIRResourceType(i), request.Lang, id, '', '');
+  r := GetResource(request.Session, typ, request.Lang, id, '', '');
   try
     if r is TFhirOperationOutcome then
     begin
@@ -1332,10 +1332,9 @@ begin
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
   request.Id := Id;
-  i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, typ);
-  if i = -1 then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.validatorContext.hasCustomResource(typ)) then
     raise Exception.Create('Unknown resource type '+typ);
-  request.ResourceType := TFhirResourceType(i);
+  request.ResourceName := typ;
   request.CommandType := fcmdUpdate;
 
   p := TParseMap.create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
@@ -1378,7 +1377,7 @@ var
 begin
    // get the right questionnaire
   StringSplit(request.Id.Substring(8), '/', id, ver);
-  profile := GetResource(request.Session, frtStructureDefinition, request.Lang, id, ver, '') as TFHirStructureDefinition;
+  profile := GetResource(request.Session, 'StructureDefinition', request.Lang, id, ver, '') as TFHirStructureDefinition;
   try
     fullid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
     s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
@@ -1443,7 +1442,7 @@ begin
     FLock.Unlock;
   end;
 
-  patient := GetResource(request.Session, frtPatient, request.Lang, id, ver, '') as TFHIRPatient;
+  patient := GetResource(request.Session, 'Patient', request.Lang, id, ver, '') as TFHIRPatient;
   try
     xhtml := patient.text.div_.AsPlainText;
     startHooks(hooks, patient, request.baseUrl);
@@ -1534,7 +1533,7 @@ var
 begin
    // get the right questionnaire
   StringSplit(request.Id.Substring(14), '/', id, ver);
-  questionnaire := GetResource(request.Session, frtQuestionnaire, request.Lang, id, ver, '') as TFHirQuestionnaire;
+  questionnaire := GetResource(request.Session, 'Questionnaire', request.Lang, id, ver, '') as TFHirQuestionnaire;
   try
     // convert to xhtml
     s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', false);
@@ -1566,11 +1565,10 @@ begin
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
-  i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, typ);
-  if i = -1 then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.validatorContext.hasCustomResource(typ))  then
     raise Exception.Create('Unknown resource type '+typ);
 
-  r := GetResource(request.Session, TFHIRResourceType(i), request.Lang, id, ver, 'qa-edit');
+  r := GetResource(request.Session, typ, request.Lang, id, ver, 'qa-edit');
   try
     if r is TFhirOperationOutcome then
     begin
@@ -1912,7 +1910,7 @@ Begin
               oRequest.Source.LoadFromStream(oPostStream);
 
             oPostStream.Position := 0;
-            if oRequest.ResourceType = frtBinary then
+            if oRequest.ResourceEnum = frtBinary then
             begin
               oRequest.Resource := TFhirBinary.create;
 //!              TFhirBinary(oRequest.Resource).Content.loadFromStream(oPostStream);
@@ -1920,7 +1918,11 @@ Begin
             end
             else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/json-patch+json') then
             begin
-              oRequest.patch := TJsonParser.ParseNode(oPostStream) as TJsonArray
+              oRequest.patchJson := TJsonParser.ParseNode(oPostStream) as TJsonArray
+            end
+            else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/patch-ops-error+xml') then
+            begin
+              oRequest.patchXml := TMsXmlParser.parse(oPostStream).documentElement;
             end
             else if oRequest.CommandType <> fcmdWebUI then
               try
@@ -2018,6 +2020,8 @@ begin
       begin
         if rdr.Parts[i].name.EndsWith('.json') then
           p := TFHIRJsonParser.create(FFhirStore.Validator.Context.Link, lang)
+        else if rdr.Parts[i].name.EndsWith('.map') then
+          p := TFHIRTextParser.create(FFhirStore.Validator.Context.Link, lang)
         else
           p := TFHIRXmlParser.create(FFhirStore.Validator.Context.Link, lang);
         try
@@ -2261,9 +2265,9 @@ begin
     FLock.Unlock;
   end;
   if request.session = nil then // during OAuth only
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
   else
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+CODES_TFhirResourceType[request.ResourceType]+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
+    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -2351,193 +2355,206 @@ end;
 
 function TFhirWebServer.BuildFhirHomePage(comps, lang, host, sBaseURL : String; session : TFhirSession; secure : boolean): String;
 var
-  counts : Array [TFHIRResourceType] of Integer;
-  a : TFHIRResourceType;
+  counts : TStringList;
+  a : String;
   db : TKDBConnection;
   s : String;
   names : TStringList;
   profiles : TAdvStringMatch;
-  i, j : integer;
+  i, j, ix : integer;
   cmp : String;
   b : TStringBuilder;
   pol : String;
 begin
   writelnt('home page: '+session.scopes);
-
-  for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-    if (comps = '') or FFhirStore.Indexes.Compartments.existsInCompartment(frtPatient, a) then
-      counts[a] := 0
-    else
-      counts[a] := -1;
-
-  if (comps <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(DataStore.ResConfig[frtPatient].key)+' and Id in ('+comps+'))'
-  else
-    cmp := '';
-
-  pol := FFhirStore.ProfilesAsOptionList;
-  profiles := TAdvStringMatch.create;
+  counts := TStringList.create;
   try
-    profiles.forced := true;
-    if FFhirStore <> nil then
+    for a in FFhirStore.ValidatorContext.allResourceNames do
     begin
-      db := FFhirStore.DB.GetConnection('fhir');
-      try
-        db.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
-
-        db.prepare;
-        db.execute;
-        while db.fetchNext do
-        begin
-          j := StringArrayIndexOfSensitive(CODES_TFHIRResourceType, db.ColStringByname['ResourceName']);
-          if j > -1 then
-            counts[TFhirResourceType(j)] := db.ColIntegerByName['Count'];
-        end;
-        db.terminate;
-        db.Release;
-      except
-        on e:exception do
-        begin
-          db.Error(e);
-          recordStack(e);
-          raise;
-        end;
-      end;
-    end;
-
-   s := host+sBaseURL;
-   b := TStringBuilder.Create;
-   try
-    b.Append(
-  '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
-  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
-  '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
-  ''#13#10+
-  '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
-  '<head>'#13#10+
-  '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
-  TFHIRXhtmlComposer.pagelinks+
-  FHIR_JS+
-  '</head>'#13#10+
-  ''#13#10+
-  '<body>'#13#10+
-  TFHIRXhtmlComposer.Header(Session, sBaseURL, lang, SERVER_VERSION));
-
-  b.Append(
-  '<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10);
-
-    if session <> nil then
-      if secure then
-      begin
-        b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10);
-        if session.canGetUser and (session.User <> nil) then
-        begin
-          b.Append('<p>You bearer token is '+inttostr(session.UserKey)+'.'+session.User.hash+'. Use this to get access to the secure API without needing OAuth login</p>');
-        end;
-      end
+      ix := counts.add(a);
+      if (comps = '') or FFhirStore.Indexes.Compartments.existsInCompartment(frtPatient, a) then
+        counts.Objects[ix] := TObject(0)
       else
-        b.Append('<p>Welcome '+FormatTextToXml(session.Name)+' (or use <a href="https://'+FHost+port(FSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
+        counts.Objects[ix] := TObject(-1);
+    end;
 
-  b.Append(
-  '<p>'#13#10+
-  StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>'])+#13#10+
-  StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s])+' This server defines some <a href="local.hts">extensions to the API</a>, and also offers <a href="/tx">Terminology Services</a>'+#13#10+
-  '</p>'#13#10+
-  '<hr/>'#13#10+
-  ''#13#10+
-  '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
-   '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-  '<li><a class="tag" href="'+sBaseUrl+'/$meta">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
-  '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a></li>'+
-  '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
-  '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);
+    if (comps <> '') then
+      cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(DataStore.ResConfig['Patient'].key)+' and Id in ('+comps+'))'
+    else
+      cmp := '';
 
-  b.Append(
-  '<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
-
-  if (session.canAdministerUsers) then
-    b.Append('<li><a href="/scim/web">Manage Users</a></li>'+#13#10);
-
-  b.Append(
-  '</ul>'+#13#10+
-  ''#13#10+
-  '<hr/>'#13#10+
-  '<p>'+GetFhirMessage('MSG_HOME_PAGE_3', lang)+'</p>'+#13#10);
-
-
-  b.Append(
-  '<table class="lines">'#13#10+
-
-             '<tr><th>'+GetFhirMessage('NAME_TYPE', lang)+'</th>'+
-             '<th>'+GetFhirMessage('NAME_STORED', lang)+'</th>'+
-             '<th colspan="4">'+GetFhirMessage('NAME_OPERATIONS', lang)+'</th><td style="border-left: 1px solid grey"/><th>'+GetFhirMessage('NAME_TYPE', lang)+'</th>'+
-             '<th>'+GetFhirMessage('NAME_STORED', lang)+'</th>'+
-             '<th colspan="4">'+GetFhirMessage('NAME_OPERATIONS', lang)+'</th></tr>'#13#10);
-
-    names := TStringList.create;
-    Try
-      for a := TFHIRResourceType(1) to High(TFHIRResourceType) do
-        if (counts[a] > -1) and (FFhirStore.ResConfig[a].Supported)  then
-          names.Add(CODES_TFHIRResourceType[a]);
-
-      names.Sort;
-      j := 0;
-      for i := 0 to names.count div 2 do
+    pol := FFhirStore.ProfilesAsOptionList;
+    profiles := TAdvStringMatch.create;
+    try
+      profiles.forced := true;
+      if FFhirStore <> nil then
       begin
-        inc(j);
-        if j mod 2 = 1 then
-          b.Append('<tr bgcolor="#F0F0F0">')
-        else
-          b.Append('<tr bgcolor="#FFFFFF">');
+        db := FFhirStore.DB.GetConnection('fhir');
+        try
+          db.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
 
-        a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, names[i]));
-        b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseUrl, counts[a], true, true, session.canRead(a)));
+          db.prepare;
+          db.execute;
+          while db.fetchNext do
+          begin
+            j := counts.IndexOf(db.ColStringByname['ResourceName']);
+            if j = -1 then
+              j := counts.add(db.ColStringByname['ResourceName']);
+            counts.objects[j] := TObject(db.ColIntegerByName['Count']);
+          end;
+          db.terminate;
+          db.Release;
+        except
+          on e:exception do
+          begin
+            db.Error(e);
+            recordStack(e);
+            raise;
+          end;
+        end;
+      end;
 
-        b.Append('<td style="border-left: 1px solid grey"/>');
+     s := host+sBaseURL;
+     b := TStringBuilder.Create;
+     try
+      b.Append(
+    '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
+    '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
+    ''#13#10+
+    '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
+    '<head>'#13#10+
+    '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
+    TFHIRXhtmlComposer.pagelinks+
+    FHIR_JS+
+    '</head>'#13#10+
+    ''#13#10+
+    '<body>'#13#10+
+    TFHIRXhtmlComposer.Header(Session, sBaseURL, lang, SERVER_VERSION));
 
-        if (i + names.count div 2) + 1 < names.count then
+    b.Append(
+    '<h2>'+FOwnerName+' '+GetFhirMessage('NAME_SERVER', lang)+'</h2>'#13#10);
+
+      if session <> nil then
+        if secure then
         begin
-          a := TFHIRResourceType(StringArrayIndexOfSensitive(CODES_TFHIRResourceType, names[1 + i + names.count div 2]));
-          b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseUrl, counts[a], true, true, session.canRead(a)));
+          b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10);
+          if session.canGetUser and (session.User <> nil) then
+          begin
+            b.Append('<p>You bearer token is '+inttostr(session.UserKey)+'.'+session.User.hash+'. Use this to get access to the secure API without needing OAuth login</p>');
+          end;
+        end
+        else
+          b.Append('<p>Welcome '+FormatTextToXml(session.Name)+' (or use <a href="https://'+FHost+port(FSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
+
+    b.Append(
+    '<p>'#13#10+
+    StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>'])+#13#10+
+    StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s])+' This server defines some <a href="local.hts">extensions to the API</a>, and also offers <a href="/tx">Terminology Services</a>'+#13#10+
+    '</p>'#13#10+
+    '<hr/>'#13#10+
+    ''#13#10+
+    '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
+     '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
+    '<li><a class="tag" href="'+sBaseUrl+'/$meta">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
+    '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a></li>'+
+    '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
+    '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);
+
+    b.Append(
+    '<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
+
+    if (session.canAdministerUsers) then
+      b.Append('<li><a href="/scim/web">Manage Users</a></li>'+#13#10);
+
+    b.Append(
+    '</ul>'+#13#10+
+    ''#13#10+
+    '<hr/>'#13#10+
+    '<p>'+GetFhirMessage('MSG_HOME_PAGE_3', lang)+'</p>'+#13#10);
+
+
+    b.Append(
+    '<table class="lines">'#13#10+
+
+               '<tr><th>'+GetFhirMessage('NAME_TYPE', lang)+'</th>'+
+               '<th>'+GetFhirMessage('NAME_STORED', lang)+'</th>'+
+               '<th colspan="4">'+GetFhirMessage('NAME_OPERATIONS', lang)+'</th><td style="border-left: 1px solid grey"/><th>'+GetFhirMessage('NAME_TYPE', lang)+'</th>'+
+               '<th>'+GetFhirMessage('NAME_STORED', lang)+'</th>'+
+               '<th colspan="4">'+GetFhirMessage('NAME_OPERATIONS', lang)+'</th></tr>'#13#10);
+
+      names := TStringList.create;
+      Try
+        for a in FFhirStore.ValidatorContext.allResourceNames do
+        begin
+          ix := counts.IndexOf(a);
+          if (integer(counts.objects[ix]) > -1) and (FFhirStore.ResConfig[a].Supported)  then
+            names.Add(a);
         end;
 
-        b.Append('</tr>');
+        names.Sort;
+        j := 0;
+        for i := 0 to names.count div 2 do
+        begin
+          inc(j);
+          if j mod 2 = 1 then
+            b.Append('<tr bgcolor="#F0F0F0">')
+          else
+            b.Append('<tr bgcolor="#FFFFFF">');
 
+          a := names[i];
+          ix := counts.IndexOf(a);
+          b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseUrl, integer(counts.Objects[ix]), true, true, session.canRead(a)));
+
+          b.Append('<td style="border-left: 1px solid grey"/>');
+
+          if (i + names.count div 2) + 1 < names.count then
+          begin
+            a := names[1 + i + names.count div 2];
+            ix := counts.IndexOf(a);
+            b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseUrl, integer(counts.Objects[ix]), true, true, session.canRead(a)));
+          end;
+
+          b.Append('</tr>');
+
+        end;
+      finally
+        names.free;
       end;
+      b.Append(
+    '</table>'#13#10+
+    '<hr/><h2>'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</h2>'#13#10+
+    '<a name="upload"> </a><form enctype="multipart/form-data" method="POST">'+#13#10+
+    '<p><input type="hidden" name="_format" value="text/html"/><br/>'+#13#10+
+    ''+GetFhirMessage('MSG_CONTENT_MESSAGE', lang)+'.<br/><br/>'+#13#10+
+    ''+GetFhirMessage('MSG_CONTENT_UPLOAD', lang)+': <br/><input type="file" name="file" size="60"/><br/>'+#13#10+
+    ''+GetFhirMessage('MSG_CONTENT_PASTE', lang)+':<br/> <textarea name="src" cols="70" rows="5"/>'+#13#10+
+    '</textarea><br/><br/>'+#13#10+
+    '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">'+#13#10+
+    ' <option value="transaction">Transaction</option>'+#13#10+
+    ' <option value="batch">Batch</option>'+#13#10+
+    ' <option value="validation">Validation</option>'+#13#10+
+    '</select></td></tr>'+#13#10+
+    '<tr><td>Profile:</td><td> <select size="1" name="profile">'+#13#10+
+    '<option value=""></option>'+#13#10+
+    pol+
+    '</select> (if validating, use the selected profile)</td></tr></table><br/>'+#13#10+
+    '<input type="submit" value="'+GetFhirMessage('NAME_UPLOAD', lang)+'"/>'#13#10+
+    '</p></form>'#13#10+
+    TFHIRXhtmlComposer.footer(sBaseURL, lang));
+    result := b.ToString;
+     finally
+       b.Free;
+     end;
     finally
-      names.free;
+      profiles.free;
     end;
-    b.Append(
-  '</table>'#13#10+
-  '<hr/><h2>'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</h2>'#13#10+
-  '<a name="upload"> </a><form enctype="multipart/form-data" method="POST">'+#13#10+
-  '<p><input type="hidden" name="_format" value="text/html"/><br/>'+#13#10+
-  ''+GetFhirMessage('MSG_CONTENT_MESSAGE', lang)+'.<br/><br/>'+#13#10+
-  ''+GetFhirMessage('MSG_CONTENT_UPLOAD', lang)+': <br/><input type="file" name="file" size="60"/><br/>'+#13#10+
-  ''+GetFhirMessage('MSG_CONTENT_PASTE', lang)+':<br/> <textarea name="src" cols="70" rows="5"/>'+#13#10+
-  '</textarea><br/><br/>'+#13#10+
-  '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">'+#13#10+
-  ' <option value="transaction">Transaction</option>'+#13#10+
-  ' <option value="batch">Batch</option>'+#13#10+
-  ' <option value="validation">Validation</option>'+#13#10+
-  '</select></td></tr>'+#13#10+
-  '<tr><td>Profile:</td><td> <select size="1" name="profile">'+#13#10+
-  '<option value=""></option>'+#13#10+
-  pol+
-  '</select> (if validating, use the selected profile)</td></tr></table><br/>'+#13#10+
-  '<input type="submit" value="'+GetFhirMessage('NAME_UPLOAD', lang)+'"/>'#13#10+
-  '</p></form>'#13#10+
-  TFHIRXhtmlComposer.footer(sBaseURL, lang));
-  result := b.ToString;
-   finally
-     b.Free;
-   end;
   finally
-    profiles.free;
+    counts.free;
   end;
 end;
 
-function TFhirWebServer.BuildFhirUploadPage(lang, host, sBaseURL : String; aType : TFHIRResourceType; session : TFhirSession): String;
+function TFhirWebServer.BuildFhirUploadPage(lang, host, sBaseURL : String; aType : String; session : TFhirSession): String;
 var
   s : String;
 begin
@@ -2550,7 +2567,7 @@ begin
 ''#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
 '<head>'#13#10+
-'    <title>'+StringFormat(GetFhirMessage('UPLOAD', lang), [CODES_TFHIRResourceType[aType]])+'</title>'#13#10+
+'    <title>'+StringFormat(GetFhirMessage('UPLOAD', lang), [aType])+'</title>'#13#10+
 '    <link rel="Stylesheet" href="/css/fhir.css" type="text/css" media="screen" />'#13#10+
 FHIR_JS+
 '</head>'#13#10+
@@ -2574,8 +2591,8 @@ result := result +
 '</div>'#13#10+
 ''#13#10+
 '<div id="div-cnt" class="content">'#13#10+
-'<h2>'+StringFormat(GetFhirMessage('UPLOAD', lang), [CODES_TFHIRResourceType[aType]])+'</h2>'#13#10+
-'<form action="'+s+lowercase(CODES_TFHIRResourceType[aType])+'/upload" enctype="multipart/form-data" method="POST">'+#13#10+
+'<h2>'+StringFormat(GetFhirMessage('UPLOAD', lang), [aType])+'</h2>'#13#10+
+'<form action="'+s+lowercase(aType)+'/upload" enctype="multipart/form-data" method="POST">'+#13#10+
 '<input type="hidden" name="format" size="text/html"/><br/>'+#13#10+
 ''+GetFhirMessage('MSG_CONTENT_UPLOAD', lang)+': <input type="file" name="file" size="60"/><br/>'+#13#10+
 '<input type="submit" value="Upload"/>'#13#10+
@@ -2709,7 +2726,7 @@ begin
   End;
 end;
 
-function TFhirWebServer.GetResource(session : TFhirSession; rtype: TFhirResourceType; lang, id, ver, op: String): TFhirResource;
+function TFhirWebServer.GetResource(session : TFhirSession; rtype: string; lang, id, ver, op: String): TFhirResource;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -2718,7 +2735,7 @@ begin
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
-    request.ResourceType := rType;
+    request.ResourceName := rType;
     request.Lang := lang;
     request.Id := id;
     request.LoadParams('');
@@ -2738,14 +2755,14 @@ begin
     if response.Resource <> nil then
       result := response.resource.link
     else
-      raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'/'+id+'/'+ver);
+      raise Exception.Create('Unable to find resource '+rtype+'/'+id+'/'+ver);
   finally
     response.free;
     request.Free;
   end;
 end;
 
-function TFhirWebServer.FindResource(session : TFhirSession; rtype: TFhirResourceType; lang, params: String): TFhirResource;
+function TFhirWebServer.FindResource(session : TFhirSession; rtype: string; lang, params: String): TFhirResource;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -2754,7 +2771,7 @@ begin
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
-    request.ResourceType := rType;
+    request.ResourceName := rType;
     request.Lang := lang;
     request.LoadParams(params);
     request.CommandType := fcmdSearch;
@@ -2762,7 +2779,7 @@ begin
     if (response.bundle <> nil) and (response.bundle.entryList.Count = 1) then
       result := response.bundle.entryList[0].resource.link
     else
-      raise Exception.Create('Unable to find resource '+CODES_TFhirResourceType[rtype]+'?'+params);
+      raise Exception.Create('Unable to find resource '+rtype+'?'+params);
   finally
     response.free;
     request.Free;
@@ -2918,7 +2935,7 @@ begin
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
   else
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
-  op.resourceElement := TFhirEnum.Create('', CODES_TFhirResourceType[req.ResourceType]);
+  op.resourceElement := TFhirEnum.Create('', req.ResourceName);
   if resp.Format = ffJson then
     op.accept := ContentTypeJson
   else

@@ -42,7 +42,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvBuffers, ADvMemories,
   AdvObjectLists, AdvNameBuffers,
   AdvFiles, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRSupport, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRContext, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';
@@ -109,7 +109,11 @@ Type
 
   TBaseWorkerContext = class abstract (TWorkerContext)
   protected
+    FLock : TCriticalSection;
     FProfiles : TProfileManager;
+    FCustomResources : TAdvMap<TFHIRCustomResourceInformation>;
+    FNonSecureNames : TArray<String>;
+
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
   public
@@ -117,12 +121,15 @@ Type
     Destructor Destroy; Override;
     function link : TBaseWorkerContext; overload;
 
+    property Profiles : TProfileManager read FProfiles;
     procedure SeeResource(r : TFhirResource); virtual;
-    Property Profiles : TProfileManager read FProfiles write SetProfiles;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
     procedure LoadFromFile(filename: string; parser : TFHIRParser); overload;
+    procedure registerCustomResource(cr : TFHIRCustomResourceInformation);
+    procedure setNonSecureTypes(names : Array of String);
+    function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
 
     function getResourceNames : TAdvStringSet; override;
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
@@ -130,6 +137,11 @@ Type
     function getStructure(url : String) : TFHIRStructureDefinition; override;
     function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; override;
     function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
+    function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
+    function hasCustomResource(name : String) : boolean; override;
+    function allResourceNames : TArray<String>; override;
+    function nonSecureResourceNames : TArray<String>; override;
+
   end;
 
 
@@ -1463,6 +1475,27 @@ end;
 
 { TBaseWorkerContext }
 
+function TBaseWorkerContext.allResourceNames: TArray<String>;
+var
+  i : integer;
+  s : string;
+begin
+  FLock.Lock;
+  try
+    SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) + FCustomResources.Count);
+    for i := 0 to length(ALL_RESOURCE_TYPE_NAMES)-1 do
+      result[i] := ALL_RESOURCE_TYPE_NAMES[i];
+    i := length(ALL_RESOURCE_TYPE_NAMES);
+    for s in FCustomResources.Keys do
+    begin
+      result[i] := s;
+      inc(i);
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TBaseWorkerContext.allStructures: TAdvMap<TFHIRStructureDefinition>.TValueCollection;
 begin
   result := FProfiles.ProfilesByURL.Values;
@@ -1471,12 +1504,16 @@ end;
 constructor TBaseWorkerContext.Create;
 begin
   inherited;
+  FLock := TCriticalSection.Create('worker-context');
   FProfiles := TProfileManager.Create;
+  FCustomResources := TAdvMap<TFHIRCustomResourceInformation>.create;
 end;
 
 destructor TBaseWorkerContext.Destroy;
 begin
+  FCustomResources.Free;
   FProfiles.free;
+  FLock.Free;
   inherited;
 end;
 
@@ -1492,6 +1529,16 @@ end;
 function TBaseWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
   result := FHIRUtilities.getChildMap(profile, element.name, element.path, element.contentReference);
+end;
+
+function TBaseWorkerContext.getCustomResource(name: String): TFHIRCustomResourceInformation;
+begin
+  FLock.Lock;
+  try
+    result := FCustomResources[name].Link;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function TBaseWorkerContext.getResourceNames: TAdvStringSet;
@@ -1524,6 +1571,31 @@ begin
       if (ns = sns) then
         exit(sd);
     end;
+end;
+
+function TBaseWorkerContext.hasCustomResource(name: String): boolean;
+begin
+  FLock.Lock;
+  try
+    result := FCustomResources.ContainsKey(name);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TBaseWorkerContext.hasCustomResourceDefinition(sd: TFHIRStructureDefinition): boolean;
+var
+  cr : TFHIRCustomResourceInformation;
+begin
+  FLock.Lock;
+  try
+    result := false;
+    for cr in FCustomResources.Values do
+      if cr.Definition.id = sd.id then
+        exit(true);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function TBaseWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
@@ -1658,6 +1730,24 @@ begin
   end;
 end;
 
+function TBaseWorkerContext.nonSecureResourceNames: TArray<String>;
+begin
+  if length(FNonSecureNames) = 0 then
+    result := allResourceNames
+  else
+    result := FNonSecureNames;
+end;
+
+procedure TBaseWorkerContext.registerCustomResource(cr: TFHIRCustomResourceInformation);
+begin
+  FLock.Lock;
+  try
+    FCustomResources.Add(cr.name, cr.Link);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TBaseWorkerContext.Load(feed: TFHIRBundle);
 var
   i : integer;
@@ -1704,6 +1794,20 @@ begin
       end;
     end;
     FProfiles.SeeProfile(0, p);
+  end;
+end;
+
+procedure TBaseWorkerContext.setNonSecureTypes(names: array of String);
+var
+  i : integer;
+begin
+  FLock.Lock;
+  try
+    SetLength(FNonSecureNames, length(names));
+    for i := 0 to length(names)-1 do
+      FNonSecureNames[i] := names[i];
+  finally
+    FLock.Unlock;
   end;
 end;
 

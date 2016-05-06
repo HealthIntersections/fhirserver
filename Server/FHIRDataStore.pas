@@ -86,12 +86,11 @@ Type
     FLastTagVersionKey: integer;
     FLastTagKey: integer;
     FLastResourceKey: integer;
-    FLastResourceId: array [TFHIRResourceType] of integer;
     FLastEntryKey: integer;
     FLastCompartmentKey: integer;
     FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
-    FResConfig: TConfigArray;
+    FResConfig: TAdvMap<TFHIRResourceConfig>;
     FSupportTransaction: Boolean;
     FDoAudit: Boolean;
     FSupportSystemHistory: Boolean;
@@ -123,11 +122,13 @@ Type
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
     function DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
-    function getTypeForKey(key: integer): TFHIRResourceType;
+    function getTypeForKey(key: integer): String;
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure RegisterAuditEvent(session: TFhirSession; ip: String);
     procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TAdvBuffer; b : TStringBuilder);
+
+    procedure loadCustomResources(guides : TAdvStringSet);
   public
     constructor Create(DB: TKDBManager; SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer);
     Destructor Destroy; Override;
@@ -145,21 +146,21 @@ Type
     function NextVersionKey: integer;
     function NextTagVersionKey: integer;
     function NextSearchKey: integer;
-    function NextResourceKeySetId(aType: TFHIRResourceType; id: string) : integer;
-    function NextResourceKeyGetId(aType: TFHIRResourceType; var id: string): integer;
+    function NextResourceKeySetId(aType: String; id: string) : integer;
+    function NextResourceKeyGetId(aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
-    Function GetNextKey(keytype: TKeyType; aType: TFHIRResourceType; var id: string): integer;
+    Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
-    procedure DropResource(key, vkey: integer; id: string; aType: TFHIRResourceType; indexer: TFhirIndexManager);
+    procedure DropResource(key, vkey: integer; id, resource: string; indexer: TFhirIndexManager);
     procedure RegisterConsentRecord(session: TFhirSession);
     function KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
     Property Validator: TFHIRValidator read FValidator;
     function GetTagByKey(key: integer): TFHIRTag;
     Property DB: TKDBManager read FDB;
-    Property ResConfig: TConfigArray read FResConfig;
+    Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
     Property SupportTransaction: Boolean read FSupportTransaction;
     Property DoAudit: Boolean read FDoAudit;
     Property SupportSystemHistory: Boolean read FSupportSystemHistory;
@@ -234,16 +235,24 @@ var
   i, ver: integer;
   conn: TKDBConnection;
   a: TFHIRResourceType;
-  fn : String;
+  rn, fn : String;
   dbi : TFHIRDatabaseInstaller;
+  implGuides : TAdvStringSet;
+  cfg : TFHIRResourceConfig;
 begin
   inherited Create;
   LoadMessages; // load while thread safe
   FIndexes := TFHIRIndexInformation.create;
   FBases := TStringList.Create;
   FBases.add('http://localhost/');
+  FResConfig := TAdvMap<TFHIRResourceConfig>.create;
   for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-    FResConfig[a].Supported := false;
+  begin
+    cfg := TFHIRResourceConfig.Create;
+    cfg.name := CODES_TFHIRResourceType[a];
+    cfg.Supported := false;
+    FResConfig.Add(cfg.name,  cfg);
+  end;
   FDB := DB;
   FSourceFolder := SourceFolder;
   FSessions := TStringList.Create;
@@ -273,130 +282,148 @@ begin
   FSubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   FSubscriptionManager.OnGetSessionEvent := GetSessionByKey;
 
-  conn := FDB.GetConnection('setup');
+  implGuides := TAdvStringSet.create;
   try
-    FLastSessionKey := conn.CountSQL('Select max(SessionKey) from Sessions');
-    FLastVersionKey := conn.CountSQL
-      ('Select Max(ResourceVersionKey) from Versions');
-    FLastTagVersionKey :=
-      conn.CountSQL('Select Max(ResourceTagKey) from VersionTags');
-    FLastSearchKey := conn.CountSQL('Select Max(SearchKey) from Searches');
-    FLastTagKey := conn.CountSQL('Select Max(TagKey) from Tags');
-    FLastResourceKey := conn.CountSQL('select Max(ResourceKey) from Ids');
-    FLastEntryKey := conn.CountSQL('select max(EntryKey) from indexEntries');
-    FLastCompartmentKey :=
-      conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
-    conn.execSQL('Update Sessions set Closed = ' +
-      DBGetDate(conn.Owner.Platform) + ' where Closed = null');
+    conn := FDB.GetConnection('setup');
+    try
+      FLastSessionKey := conn.CountSQL('Select max(SessionKey) from Sessions');
+      FLastVersionKey := conn.CountSQL
+        ('Select Max(ResourceVersionKey) from Versions');
+      FLastTagVersionKey :=
+        conn.CountSQL('Select Max(ResourceTagKey) from VersionTags');
+      FLastSearchKey := conn.CountSQL('Select Max(SearchKey) from Searches');
+      FLastTagKey := conn.CountSQL('Select Max(TagKey) from Tags');
+      FLastResourceKey := conn.CountSQL('select Max(ResourceKey) from Ids');
+      FLastEntryKey := conn.CountSQL('select max(EntryKey) from indexEntries');
+      FLastCompartmentKey :=
+        conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
+      conn.execSQL('Update Sessions set Closed = ' +
+        DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
-    conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-    begin
-      FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']).ConfirmedStored := true;
+      conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        FTags.addTag(conn.ColIntegerByName['TagKey'], TFHIRTagCategory(conn.ColIntegerByName['Kind']), conn.ColStringByName['Uri'], conn.ColStringByName['Code'], conn.ColStringByName['Display']).ConfirmedStored := true;
+      end;
+      conn.terminate;
+
+      conn.SQL := 'Select * from Config';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+        if conn.ColIntegerByName['ConfigKey'] = 1 then
+          FSupportTransaction := conn.ColStringByName['Value'] = '1'
+        else if conn.ColIntegerByName['ConfigKey'] = 2 then
+          FBases.add(AppendForwardSlash(conn.ColStringByName['Value']))
+        else if conn.ColIntegerByName['ConfigKey'] = 3 then
+          FSupportSystemHistory := conn.ColStringByName['Value'] = '1'
+        else if conn.ColIntegerByName['ConfigKey'] = 4 then
+          FDoAudit := conn.ColStringByName['Value'] = '1'
+        else if conn.ColIntegerByName['ConfigKey'] = 6 then
+          FSystemId := conn.ColStringByName['Value']
+        else if conn.ColIntegerByName['ConfigKey'] = 7 then
+          FResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
+        else if conn.ColIntegerByName['ConfigKey'] = 8 then
+        begin
+          if conn.ColStringByName['Value'] <> FHIR_GENERATED_VERSION then
+            raise Exception.Create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+FHIR_GENERATED_VERSION)
+        end
+        else if conn.ColIntegerByName['ConfigKey'] <> 5 then
+          raise Exception.Create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
+
+      conn.terminate;
+      conn.SQL := 'Select * from Types';
+      conn.Prepare;
+      conn.Execute;
+      While conn.FetchNext do
+      begin
+        rn := conn.ColStringByName['ResourceName'];
+        if conn.ColStringByName['ImplementationGuide'] <> '' then
+          implGuides.add(conn.ColStringByName['ImplementationGuide']);
+
+        if FResConfig.ContainsKey(rn) then
+          cfg := FResConfig[rn]
+        else
+        begin
+          cfg := TFHIRResourceConfig.Create;
+          cfg.name := rn;
+          FResConfig.Add(cfg.name, cfg);
+        end;
+        cfg.key := conn.ColIntegerByName['ResourceTypeKey'];
+        cfg.Supported := conn.ColStringByName['Supported'] = '1';
+        cfg.IdGuids := conn.ColStringByName['IdGuids'] = '1';
+        cfg.IdClient := conn.ColStringByName['IdClient'] = '1';
+        cfg.IdServer := conn.ColStringByName['IdServer'] = '1';
+        cfg.cmdUpdate := conn.ColStringByName['cmdUpdate'] = '1';
+        cfg.cmdDelete := conn.ColStringByName['cmdDelete'] = '1';
+        cfg.cmdValidate := conn.ColStringByName['cmdValidate'] = '1';
+        cfg.cmdHistoryInstance := conn.ColStringByName['cmdHistoryInstance'] = '1';
+        cfg.cmdHistoryType := conn.ColStringByName['cmdHistoryType'] = '1';
+        cfg.cmdSearch := conn.ColStringByName['cmdSearch'] = '1';
+        cfg.cmdCreate := conn.ColStringByName['cmdCreate'] = '1';
+        cfg.cmdOperation := conn.ColStringByName['cmdOperation'] = '1';
+        cfg.versionUpdates := conn.ColStringByName['versionUpdates'] = '1';
+        cfg.LastResourceId := conn.ColIntegerByName['LastId'];
+      end;
+      conn.terminate;
+      conn.SQL :=
+        'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
+      conn.Prepare;
+      conn.Execute;
+      While conn.FetchNext do
+      begin
+        rn := getTypeForKey(conn.ColIntegerByName['ResourceTypeKey']);
+        if StringIsInteger32(conn.ColStringByName['MaxId']) and (conn.ColIntegerByName['MaxId'] > FResConfig[rn].LastResourceId) then
+          raise Exception.Create('Error in database - LastResourceId (' +
+            inttostr(FResConfig[rn].LastResourceId) + ') < MaxId (' +
+            inttostr(conn.ColIntegerByName['MaxId']) + ') found for ' +
+            rn);
+      end;
+      conn.terminate;
+
+      FTagsByKey := TAdvMap<TFHIRTag>.Create;
+      for i := 0 to FTags.Count - 1 do
+        FTagsByKey.add(inttostr(FTags[i].key), FTags[i].Link);
+
+      FIndexes.ReconcileIndexes(conn);
+
+      FValidatorContext := TFHIRServerWorkerContext.Create;
+      FValidator := TFHIRValidator.Create(FValidatorContext.link);
+
+      if TerminologyServer <> nil then
+      begin
+        // the expander is tied to what's on the system
+        FTerminologyServer := TerminologyServer.Link;
+        FValidatorContext.TerminologyServer := TerminologyServer.Link;
+
+        // the order here is important: specification resources must be loaded prior to stored resources
+        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.xml.zip';
+        if not FileExists(fn) then
+          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.xml.zip';
+        writelnt('Load Validation Pack from ' + fn);
+        FValidatorContext.LoadFromDefinitions(fn);
+        writelnt('Load Custom Resources');
+        LoadCustomResources(implGuides);
+        writelnt('Load Store');
+        LoadExistingResources(conn);
+        writelnt('Check Definitions');
+  //      checkDefinitions();
+        writelnt('Load Subscription Queue');
+        FSubscriptionManager.LoadQueue(conn);
+      end;
+      conn.Release;
+    except
+      on e: Exception do
+      begin
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
     end;
-    conn.terminate;
-
-    conn.SQL := 'Select * from Config';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if conn.ColIntegerByName['ConfigKey'] = 1 then
-        FSupportTransaction := conn.ColStringByName['Value'] = '1'
-      else if conn.ColIntegerByName['ConfigKey'] = 2 then
-        FBases.add(AppendForwardSlash(conn.ColStringByName['Value']))
-      else if conn.ColIntegerByName['ConfigKey'] = 3 then
-        FSupportSystemHistory := conn.ColStringByName['Value'] = '1'
-      else if conn.ColIntegerByName['ConfigKey'] = 4 then
-        FDoAudit := conn.ColStringByName['Value'] = '1'
-      else if conn.ColIntegerByName['ConfigKey'] = 6 then
-        FSystemId := conn.ColStringByName['Value']
-      else if conn.ColIntegerByName['ConfigKey'] = 7 then
-        FResConfig[frtNull].cmdSearch := conn.ColStringByName['Value'] = '1'
-      else if conn.ColIntegerByName['ConfigKey'] = 8 then
-        if conn.ColStringByName['Value'] <> FHIR_GENERATED_VERSION then
-          raise Exception.Create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+FHIR_GENERATED_VERSION);
-
-    conn.terminate;
-    conn.SQL := 'Select * from Types';
-    conn.Prepare;
-    conn.Execute;
-    While conn.FetchNext do
-    begin
-      a := TFHIRResourceType(StringArrayIndexOfSensitive
-        (CODES_TFHIRResourceType, conn.ColStringByName['ResourceName']));
-      FResConfig[a].key := conn.ColIntegerByName['ResourceTypeKey'];
-      FResConfig[a].Supported := conn.ColStringByName['Supported'] = '1';
-      FResConfig[a].IdGuids := conn.ColStringByName['IdGuids'] = '1';
-      FResConfig[a].IdClient := conn.ColStringByName['IdClient'] = '1';
-      FResConfig[a].IdServer := conn.ColStringByName['IdServer'] = '1';
-      FResConfig[a].cmdUpdate := conn.ColStringByName['cmdUpdate'] = '1';
-      FResConfig[a].cmdDelete := conn.ColStringByName['cmdDelete'] = '1';
-      FResConfig[a].cmdValidate := conn.ColStringByName['cmdValidate'] = '1';
-      FResConfig[a].cmdHistoryInstance := conn.ColStringByName
-        ['cmdHistoryInstance'] = '1';
-      FResConfig[a].cmdHistoryType := conn.ColStringByName
-        ['cmdHistoryType'] = '1';
-      FResConfig[a].cmdSearch := conn.ColStringByName['cmdSearch'] = '1';
-      FResConfig[a].cmdCreate := conn.ColStringByName['cmdCreate'] = '1';
-      FResConfig[a].cmdOperation := conn.ColStringByName['cmdOperation'] = '1';
-      FResConfig[a].versionUpdates := conn.ColStringByName
-        ['versionUpdates'] = '1';
-      FLastResourceId[a] := conn.ColIntegerByName['LastId'];
-    end;
-    conn.terminate;
-    conn.SQL :=
-      'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
-    conn.Prepare;
-    conn.Execute;
-    While conn.FetchNext do
-    begin
-      a := getTypeForKey(conn.ColIntegerByName['ResourceTypeKey']);
-      if StringIsInteger32(conn.ColStringByName['MaxId']) and (conn.ColIntegerByName['MaxId'] > FLastResourceId[a]) then
-        raise Exception.Create('Error in database - LastResourceId (' +
-          inttostr(FLastResourceId[a]) + ') < MaxId (' +
-          inttostr(conn.ColIntegerByName['MaxId']) + ') found for ' +
-          CODES_TFHIRResourceType[a]);
-    end;
-    conn.terminate;
-
-    FTagsByKey := TAdvMap<TFHIRTag>.Create;
-    for i := 0 to FTags.Count - 1 do
-      FTagsByKey.add(inttostr(FTags[i].key), FTags[i].Link);
-
-    FIndexes.ReconcileIndexes(conn);
-
-    FValidatorContext := TFHIRServerWorkerContext.Create;
-    FValidator := TFHIRValidator.Create(FValidatorContext.link);
-
-    if TerminologyServer <> nil then
-    begin
-      // the expander is tied to what's on the system
-      FTerminologyServer := TerminologyServer.Link;
-      FValidatorContext.TerminologyServer := TerminologyServer.Link;
-
-      // the order here is important: specification resources must be loaded prior to stored resources
-      fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.xml.zip';
-      if not FileExists(fn) then
-        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.xml.zip';
-      writelnt('Load Validation Pack from ' + fn);
-      FValidatorContext.LoadFromDefinitions(fn);
-      writelnt('Load Store');
-      LoadExistingResources(conn);
-      writelnt('Check Definitions');
-//      checkDefinitions();
-      writelnt('Load Subscription Queue');
-      FSubscriptionManager.LoadQueue(conn);
-    end;
-    conn.Release;
-  except
-    on e: Exception do
-    begin
-      conn.Error(e);
-      recordStack(e);
-      raise;
-    end;
+  finally
+    implGuides.free;
   end;
 end;
 
@@ -417,7 +444,7 @@ begin
     if not GetSession(IMPL_COOKIE_PREFIX + clientInfo, result, dummy) then
     begin
       new := true;
-      session := TFhirSession.Create(false);
+      session := TFhirSession.Create(FValidatorContext.link, false);
       try
         inc(FLastSessionKey);
         session.key := FLastSessionKey;
@@ -540,6 +567,7 @@ begin
   FValidatorContext.Free;
   FTerminologyServer.free;
   FDB.Free;
+  FResConfig.free;
   inherited;
 end;
 
@@ -582,7 +610,7 @@ var
 begin
   spaces := TFHIRIndexSpaces.Create(conn);
   try
-    sp := TSearchProcessor.Create(ResConfig);
+    sp := TSearchProcessor.Create(ResConfig.Link);
     try
       sp.typekey := typekey;
       sp.type_ := getTypeForKey(typekey);
@@ -802,7 +830,7 @@ begin
     CloseFhirSession(c);
   if result = nil then
   begin
-    result := TFhirSession.Create(true);
+    result := TFhirSession.Create(FValidatorContext.Link, true);
     try
       result.innerToken := NewGuidURN;
       result.outerToken := NewGuidURN;
@@ -868,15 +896,15 @@ begin
   end;
 end;
 
-function TFHIRDataStore.getTypeForKey(key: integer): TFHIRResourceType;
+function TFHIRDataStore.getTypeForKey(key: integer): String;
 var
-  a: TFHIRResourceType;
+  a: TFHIRResourceConfig;
 begin
-  result := frtNull;
-  for a := Low(FResConfig) to High(FResConfig) do
-    if FResConfig[a].key = key then
+  result := '';
+  for a in FResConfig.Values do
+    if a.key = key then
     begin
-      result := a;
+      result := a.Name;
       exit;
     end;
 end;
@@ -912,7 +940,7 @@ begin
       password);
     if (result and (password = hash)) then
     begin
-      session := TFhirSession.Create(true);
+      session := TFhirSession.Create(FValidatorContext.Link, true);
       try
         session.innerToken := token;
         session.outerToken := '$BEARER';
@@ -1172,7 +1200,7 @@ var
   session: TFhirSession;
   key : integer;
 begin
-  session := TFhirSession.Create(true);
+  session := TFhirSession.Create(FValidatorContext.Link, true);
   try
     session.innerToken := innerToken;
     session.outerToken := outerToken;
@@ -1350,13 +1378,8 @@ begin
 end;
 
 function TFHIRDataStore.ResourceTypeKeyForName(name: String): integer;
-var
-  i: integer;
 begin
-  i := StringArrayIndexOfSensitive(CODES_TFHIRResourceType, name);
-  if i < 1 then
-    raise Exception.Create('Unknown Resource Type ''' + name + '''');
-  result := FResConfig[TFHIRResourceType(i)].key;
+  result := FResConfig[name].key;
 end;
 
 procedure TFHIRDataStore.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TAdvBuffer; b : TStringBuilder);
@@ -1417,7 +1440,7 @@ begin
             bufX.asBytes := conn.ColBlobByName['XmlContent'];
             inc(i);
 //            if (i = 57) then
-            RunValidateResource(i, CODES_TFHIRResourceType[getTypeForKey(conn.ColIntegerByName['ResourceTypeKey'])], conn.ColStringByName['Id'], bufJ, bufX, b);
+            RunValidateResource(i, getTypeForKey(conn.ColIntegerByName['ResourceTypeKey']), conn.ColStringByName['Id'], bufJ, bufX, b);
           finally
             bufJ.free;
             bufX.free;
@@ -1581,32 +1604,37 @@ begin
     if resource.ResourceType = frtClaim then
       FClaimQueue.add(resource.Link);
     if resource.ResourceType = frtStructureMap then
-      FMaps.add(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
+      FMaps.AddOrSetValue(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
     if resource.ResourceType = frtNamingSystem then
-      FNamingSystems.Add(inttostr(key), TFHIRNamingSystem(resource).Link);
+      FNamingSystems.AddOrSetValue(inttostr(key), TFHIRNamingSystem(resource).Link);
   finally
     FLock.Unlock;
   end;
 end;
 
-procedure TFHIRDataStore.DropResource(key, vkey: integer; id: string;
-  aType: TFHIRResourceType; indexer: TFhirIndexManager);
+procedure TFHIRDataStore.DropResource(key, vkey: integer; id: string; resource: String; indexer: TFhirIndexManager);
 var
   i: integer;
+  aType : TFhirResourceType;
 begin
-  FLock.Lock('DropResource');
-  try
-    if aType in [frtValueSet, frtConceptMap] then
-      TerminologyServer.DropTerminologyResource(aType, id)
-    else if aType = frtStructureDefinition then
-      FValidatorContext.Profiles.DropProfile(aType, id);
-    FSubscriptionManager.DropResource(key, vkey);
-    FQuestionnaireCache.clear(aType, id);
-    for i := FClaimQueue.Count - 1 downto 0 do
-      if FClaimQueue[i].id = id then
-        FClaimQueue.DeleteByIndex(i);
-  finally
-    FLock.Unlock;
+  i := StringArrayIndexOfSensitive(CODES_TFhirResourceType, resource);
+  if i > -1 then
+  begin
+    aType := TFhirResourceType(i);
+    FLock.Lock('DropResource');
+    try
+      if aType in [frtValueSet, frtConceptMap] then
+        TerminologyServer.DropTerminologyResource(aType, id)
+      else if aType = frtStructureDefinition then
+        FValidatorContext.Profiles.DropProfile(aType, id);
+      FSubscriptionManager.DropResource(key, vkey);
+      FQuestionnaireCache.clear(aType, id);
+      for i := FClaimQueue.Count - 1 downto 0 do
+        if FClaimQueue[i].id = id then
+          FClaimQueue.DeleteByIndex(i);
+    finally
+      FLock.Unlock;
+    end;
   end;
 end;
 
@@ -1657,7 +1685,7 @@ var
 begin
   request := TFHIRRequest.Create(ValidatorContext.Link, origin, FIndexes.Compartments.Link);
   try
-    request.ResourceType := res.ResourceType;
+    request.ResourceName := res.fhirType;
     request.CommandType := fcmdCreate;
     request.resource := res.Link;
     request.lastModifiedDate := dateTime.AsUTCDateTime;
@@ -1742,22 +1770,20 @@ begin
   end;
 end;
 
-function TFHIRDataStore.NextResourceKeyGetId(aType: TFHIRResourceType;
-  var id: string): integer;
+function TFHIRDataStore.NextResourceKeyGetId(aType: String; var id: string): integer;
 begin
   FLock.Lock('NextResourceKey');
   try
     inc(FLastResourceKey);
     result := FLastResourceKey;
-    inc(FLastResourceId[aType]);
-    id := inttostr(FLastResourceId[aType]);
+    inc(FResConfig[aType].LastResourceId);
+    id := inttostr(FResConfig[aType].LastResourceId);
   finally
     FLock.Unlock;
   end;
 end;
 
-function TFHIRDataStore.NextResourceKeySetId(aType: TFHIRResourceType;
-  id: string): integer;
+function TFHIRDataStore.NextResourceKeySetId(aType: String; id: string): integer;
 var
   i: integer;
 begin
@@ -1768,8 +1794,8 @@ begin
     if IsNumericString(id) and StringIsInteger32(id) then
     begin
       i := StrToInt(id);
-      if (i > FLastResourceId[aType]) then
-        FLastResourceId[aType] := i;
+      if (i > FResConfig[aType].LastResourceId) then
+        FResConfig[aType].LastResourceId := i;
     end;
   finally
     FLock.Unlock;
@@ -1841,8 +1867,7 @@ begin
   end;
 end;
 
-function TFHIRDataStore.GetNextKey(keytype: TKeyType; aType: TFHIRResourceType;
-  var id: string): integer;
+function TFHIRDataStore.GetNextKey(keytype: TKeyType; aType: string; var id: string): integer;
 begin
   case keytype of
     ktResource:
@@ -1861,12 +1886,46 @@ begin
   result := TFHIRDataStore(Inherited Link);
 end;
 
+
+procedure TFHIRDataStore.loadCustomResources(guides: TAdvStringSet);
+var
+  storage: TFhirOperationManager;
+  s : String;
+  names : TStringList;
+begin
+  names := TStringList.create;
+  try
+    storage := TFhirOperationManager.Create('en', self.Link);
+    try
+      storage.OwnerName := OwnerName;
+      storage.Connection := FDB.GetConnection('fhir');
+      try
+        for s in guides do
+          if not storage.loadCustomResources(nil, s, true, names) then
+            raise Exception.Create('Error Loading Custom resources');
+        storage.Connection.Release;
+      except
+        on e : exception do
+        begin
+          storage.Connection.Error(e);
+          raise;
+        end;
+      end;
+    finally
+      storage.free;
+    end;
+  finally
+    names.Free;
+  end;
+end;
+
 procedure TFHIRDataStore.LoadExistingResources(conn: TKDBConnection);
 var
   parser: TFHIRParser;
   mem: TBytes;
   i: integer;
   cback: TKDBConnection;
+  url : String;
 begin
   FTerminologyServer.Loading := true;
   conn.SQL :=

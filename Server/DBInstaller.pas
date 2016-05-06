@@ -42,7 +42,8 @@ const
 //  ServerDBVersion = 4; // added secure flag in versions table
 //  ServerDBVersion = 5; // added scores to search entries table
 //  ServerDBVersion = 6; // added reverse to search entries table
-  ServerDBVersion = 7; // changed compartment table. breaking change
+//  ServerDBVersion = 7; // changed compartment table. breaking change
+  ServerDBVersion = 8; // added ImplementationGuide column to Types table
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -186,6 +187,7 @@ Begin
   FConn.ExecSQL('CREATE TABLE Types( '+#13#10+
        ' ResourceTypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' ResourceName nchar(32) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ImplementationGuide nchar(64) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Supported int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' LastId int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' IdGuids int '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
@@ -211,7 +213,7 @@ Begin
     else if (a = frtAuditEvent) then
       FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
       '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0)')
-    else
+    else if (a <> frtCustom) then
       FConn.ExecSql('insert into Types (ResourceTypeKey, ResourceName, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
       '('+inttostr(ord(a)+1)+', '''+CODES_TFHIRResourceType[a]+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
 End;
@@ -839,45 +841,11 @@ begin
     raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
 
   if version < 7 then
-    raise Exception.Create('data base must be recreated (-mount or -remount)');  // 7 was a breaking change
-//  // 1- > 2 upgrade - add Patient to OAuthLogins. Also, clean up changes to Closures
-//  if version < 2 then
-//  begin
-//    Fconn.ExecSQL('ALTER TABLE OAuthLogins ADD Patient char(64) NULL');
-//
-//    m := Fconn.FetchMetaData;
-//    try
-//      t := m.getTable('Closures');
-//      if not t.hasColumn('Version') then
-//      begin
-//        Fconn.ExecSQL('ALTER TABLE Closures ADD Version int NULL');
-//        Fconn.ExecSQL('update Closures set Version = 1');
-//      end;
-//      t := m.getTable('ClosureEntries');
-//      if t.hasColumn('NeedsIndexing') then
-//      begin
-//        Fconn.ExecSQL('sp_RENAME ''ClosureEntries.NeedsIndexing'' , ''IndexedVersion'', ''COLUMN''');
-//        Fconn.ExecSQL('update ClosureEntries set IndexedVersion = 1');
-//      end;
-//    finally
-//      m.Free;
-//    end;
-//  end;
-//  if version < 3 then
-//    Fconn.ExecSQL('insert into Config (ConfigKey, Value) values (8, '''+FHIR_GENERATED_VERSION+''')');
-//  if version < 4 then
-//  begin
-//    Fconn.ExecSQL('ALTER TABLE Versions ADD Secure int NULL');
-//    Fconn.ExecSQL('update Versions set Secure = 0');
-//  end;
-//  if version < 5 then
-//  begin
-//    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score1 int NULL');
-//    Fconn.ExecSQL('ALTER TABLE SearchEntries ADD Score2 int NULL');
-//  end;
-//  if version < 6 then
-//    Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse int NULL');
-//  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
+    raise Exception.Create('Database must be recreated due to a breaking change to the database schema (-mount or -remount)');  // 7 was a breaking change
+  if version < 8 then
+    Fconn.ExecSQL('ALTER TABLE Types ADD ImplementationGuide char(64) NULL');
+
+  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 
 end.

@@ -7,7 +7,7 @@ Uses
   MsXml, MsXmlParser,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
+  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
   TerminologyServer;
 
 Type
@@ -40,7 +40,6 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
 
-    function getStructure(url : String) : TFHIRStructureDefinition; override;
   end;
 
 Implementation
@@ -157,11 +156,6 @@ begin
   finally
     FLock.Unlock;
   end;
-end;
-
-function TFHIRServerWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
-begin
-  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
 end;
 
 function TFHIRServerWorkerContext.expand(vs : TFhirValueSet) : TFHIRValueSet;

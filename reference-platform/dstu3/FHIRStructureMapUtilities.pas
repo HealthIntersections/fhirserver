@@ -6,7 +6,7 @@ uses
   SysUtils, Generics.Collections,
   StringSupport, DecimalSupport, GUIDSupport, TextUtilities,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRPath, FHIRXhtml;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRPath, FHIRXhtml;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);

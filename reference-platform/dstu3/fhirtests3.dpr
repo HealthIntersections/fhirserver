@@ -120,7 +120,11 @@ uses
   AdvZipDeclarations in '..\support\AdvZipDeclarations.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   FHIRXhtml in 'FHIRXhtml.pas',
-  FHIRClientTests in 'tests\FHIRClientTests.pas';
+  FHIRClientTests in 'tests\FHIRClientTests.pas',
+  InternetFetcher in '..\support\InternetFetcher.pas',
+  JsonTests in '..\support\Tests\JsonTests.pas',
+  XmlTests in '..\support\Tests\XmlTests.pas',
+  XmlPatch in '..\support\XmlPatch.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

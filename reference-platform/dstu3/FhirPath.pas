@@ -41,7 +41,7 @@ uses
   AdvObjects, AdvGenerics, DecimalSupport, DateAndTime,
   XmlBuilder,
 
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRConstants,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRConstants,
   FHIRParser;
 
 const

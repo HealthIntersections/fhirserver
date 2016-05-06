@@ -3,10 +3,13 @@ unit ServerUtilities;
 interface
 
 uses
+  AdvObjects,
   FHIRResources;
 
 type
-  TFHIRResourceConfig = record
+  TFHIRResourceConfig = class (TAdvObject)
+  public
+    name : String;
     key: integer;
     Supported: Boolean;
     IdGuids: Boolean;
@@ -21,12 +24,30 @@ type
     cmdCreate: Boolean;
     cmdOperation: Boolean;
     versionUpdates: Boolean;
+    lastResourceId : integer;
+
+    constructor Create; override;
   end;
 
-  TConfigArray = Array [TFHIRResourceType] of TFHIRResourceConfig;
-
-
-
 implementation
+
+constructor TFHIRResourceConfig.Create;
+begin
+  inherited;
+  Supported := true;
+  IdGuids := false;
+  IdClient := true;
+  IdServer := true;
+  cmdUpdate := true;
+  cmdDelete := true;
+  cmdValidate := true;
+  cmdHistoryInstance := true;
+  cmdHistoryType := true;
+  cmdSearch := true;
+  cmdCreate := true;
+  cmdOperation := true;
+  versionUpdates := false;
+  lastResourceId  := 0;
+end;
 
 end.

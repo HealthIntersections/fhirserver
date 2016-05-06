@@ -371,7 +371,7 @@ begin
       { trim off the trailing newline that some browsers
         send. Can't do this with parameters, because
         the user might want this stuff }
-      itemvalue := DecodeMime(itemvalue)
+      itemvalue := DecodeMimeURL(itemvalue)
     else
       itemvalue := itemvalue;
 

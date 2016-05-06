@@ -42,7 +42,7 @@ uses
   IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, DateAndTime,
-  FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
+  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
 
 Type
   EFHIRClientException = class (Exception)

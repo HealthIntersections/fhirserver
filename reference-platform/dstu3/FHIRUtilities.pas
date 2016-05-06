@@ -38,11 +38,11 @@ interface
 uses
   SysUtils, Classes, Soap.EncdDecd,
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
-  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories,
+  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
 
-  MimeMessage, TextUtilities, ZLib,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
+  FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
 Type
   ETooCostly = class (Exception);
@@ -129,7 +129,10 @@ procedure BuildNarrative(vs : TFhirValueSet); overload;
 procedure BuildNarrative(cs : TFhirCodeSystem); overload;
 function ComposeJson(worker: TWorkerContext; r : TFhirResource) : String; overload;
 
+function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
+
+function CustomResourceNameIsOk(name : String) : boolean;
 
 type
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
@@ -632,7 +635,6 @@ Begin
 End;
 
 
-
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 begin
   result := resource.text.div_.Content;
@@ -645,7 +647,7 @@ begin
   result := length(s) in [1..ID_LENGTH];
   if result then
     for i := 1 to length(s) do
-      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.']);
+      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.', '_']);
 end;
 
 procedure iterateReferences(path : String; node : TFHIRObject; list : TFhirReferenceList);
@@ -1453,6 +1455,41 @@ begin
   end;
 end;
 
+function CustomResourceNameIsOk(name : String) : boolean;
+var
+  fetcher : TInternetFetcher;
+  json : TJsonObject;
+  stream : TFileStream;
+  n : TJsonNode;
+begin
+  result := false;
+  fetcher := TInternetFetcher.create;
+  try
+    fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
+    fetcher.Fetch;
+//    fetcher.Buffer.SaveToFileName('c:\temp\test.json');
+    stream := TFileStream.Create('c:\temp\test.json', fmOpenRead + fmShareDenyWrite);
+    try
+//      fetcher.Buffer.SaveToStream(stream);
+//      stream.Position := 0;
+      json := TJSONParser.Parse(stream);
+      try
+        for n in json.arr['prefixes'] do
+          if name.StartsWith(TJsonString(n).value) then
+            exit(true);
+        for n in json.arr['names'] do
+          if name = TJsonString(n).value then
+            exit(true);
+      finally
+        json.Free;
+      end;
+    finally
+      stream.Free;
+    end;
+  finally
+    fetcher.Free;
+  end;
+end;
 
 (*
 
@@ -1541,7 +1578,7 @@ end;
     if (vs.CodeSystem :=:= nil) then
       return nil;
     for (ValueSetDefineConceptComponent c : vs.CodeSystem.Concept) begin
-      ValueSetDefineConceptComponent v := getConceptForCode(c, code);   
+      ValueSetDefineConceptComponent v := getConceptForCode(c, code);
       if (v <> nil) then
         return v;
     end;
@@ -1598,6 +1635,26 @@ end;
 Function removeCaseAndAccents(s : String) : String;
 begin
   result := lowercase(s);
+end;
+
+function getConformanceResourceUrl(res : TFHIRResource) : string;
+begin
+  case res.ResourceType of
+    frtCodeSystem: result := TFHIRCodeSystem(res).url;
+    frtConceptMap: result := TFHIRConceptMap(res).url;
+    frtConformance: result := TFHIRConformance(res).url;
+    frtDataElement: result := TFHIRDataElement(res).url;
+    frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
+    frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
+    frtOperationDefinition: result := TFHIROperationDefinition(res).url;
+    frtSearchParameter: result := TFHIRSearchParameter(res).url;
+    frtStructureDefinition: result := TFHIRStructureDefinition(res).url;
+    frtStructureMap: result := TFHIRStructureMap(res).url;
+    frtTestScript: result := TFHIRTestScript(res).url;
+    frtValueSet: result := TFHIRValueSet(res).url;
+  else
+    result := '';
+  end;
 end;
 
 { TFHIROperationOutcomeHelper }
@@ -2910,14 +2967,14 @@ begin
         begin
           // The path navigates further into the referenced element, so go ahead along the path over there
           result.free;
-          result := getChildMap(profile, name, e.ContentReference+'.'+path.substring(p.length+1), '');
+          result := getChildMap(profile, name, e.ContentReference+'.'+path.substring(p.length+1), '').link;
           exit;
         end
         else
         begin
           // The path we are looking for is actually this element, but since it defers it definition, go get the referenced element
           result.free;
-          result := getChildMap(profile, name, e.ContentReference, '');
+          result := getChildMap(profile, name, e.ContentReference, '').Link;
           exit;
         end;
       end

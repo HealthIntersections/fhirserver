@@ -20,7 +20,7 @@ uses
   AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
-  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath;
+  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -233,7 +233,7 @@ begin
     request.Id := id;
     request.Session := OnGetSessionEvent(userkey);
     request.Resource := resource.Link;
-    request.ResourceType := resource.ResourceType;
+    request.ResourceName := resource.fhirType;
     request.CommandType := fcmdUpdate;
     request.LoadParams('');
     OnExecuteOperation(request, response, false);

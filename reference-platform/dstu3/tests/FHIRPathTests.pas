@@ -46,7 +46,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser,
-  FHIRSupport,
+  FHIRContext,
   FHIRPath, FHIRTestWorker,
   DUnitX.TestFramework;
 

@@ -39,7 +39,7 @@ uses
   TextUtilities,
   AdvObjects, AdvGenerics,
   FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRMetaModel,
-  FHIRSupport, FHIRTestWorker, FHIRStructureMapUtilities, FHIRProfileUtilities;
+  FHIRContext, FHIRTestWorker, FHIRStructureMapUtilities, FHIRProfileUtilities;
 
 type
   StructureMapTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

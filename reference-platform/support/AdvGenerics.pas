@@ -328,6 +328,7 @@ Type
     procedure add(value : String);
 
     function contains(s : String) : boolean;
+    procedure remove(s : String);
     function isEmpty : boolean;
     function ToString : String; override;
     function AsString(sep : String = ', ') : String;
@@ -1625,6 +1626,12 @@ end;
 function TAdvStringSet.Link: TAdvStringSet;
 begin
   result := TAdvStringSet(inherited Link);
+end;
+
+procedure TAdvStringSet.remove(s: String);
+begin
+  if contains(s) then
+    raise Exception.Create('Not done yet');
 end;
 
 function TAdvStringSet.ToString: String;

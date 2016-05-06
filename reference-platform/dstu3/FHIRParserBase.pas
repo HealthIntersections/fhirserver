@@ -42,7 +42,7 @@ uses
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
   AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -346,7 +346,7 @@ Type
     Property OnGetLink : TFHIRXhtmlComposerGetLink read FOnGetLink write FOnGetLink;
     Property OperationName : String read FOperationName write FOperationName;
 
-    class function ResourceLinks(a : TFhirResourceType; lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
+    class function ResourceLinks(a, lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
     class function Header(Session : TFhirSession; base, lang, version : String) : String;
     class function Footer(base, lang : String; tail : boolean = true) : string;
@@ -2420,13 +2420,13 @@ begin
     result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
 end;
 
-class function TFHIRXhtmlComposer.ResourceLinks(a : TFhirResourceType; lang, base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
+class function TFHIRXhtmlComposer.ResourceLinks(a : String; lang, base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
 var
   bef, aft, pfx, pfxp : String;
 begin
   if bPrefixLinks then
   begin
-    pfx := base+'/'+CODES_TFHIRResourceType[a]+'/';
+    pfx := base+'/'+a+'/';
     pfxp := base+'/'+'StructureDefinition/'
   end
   else
@@ -2445,19 +2445,19 @@ begin
     bef := '&nbsp;';
     aft := '';
   end;
-  result := bef + CODES_TFHIRResourceType[a] + aft;
+  result := bef + a + aft;
   if not bTable then
     result := result + ':';
   if count > -1 then
     result := result + bef + inttostr(count) + aft;
-  if a = frtBinary then
+  if a = 'Binary' then
     result := result + bef + 'n/a' + aft
   else
-    result := result + bef + '<a class="button" href="'+pfxp+CODES_TFHIRResourceType[a]+'">'+GetFhirMessage('NAME_PROFILE', lang)+'</a>' + aft;
+    result := result + bef + '<a class="button" href="'+pfxp+a+'">'+GetFhirMessage('NAME_PROFILE', lang)+'</a>' + aft;
   if canRead then
   begin
     result := result + bef + '<a class="button" href="'+pfx+'_history">'+GetFhirMessage('NAME_UPDATES', lang)+'</a>' + aft;
-    if a = frtBinary then
+    if a = 'Binary' then
       result := result + bef + 'n/a' + aft
     else
       result := result + bef + '<a class="button" href="'+pfx+'_search">'+GetFhirMessage('NAME_SEARCH', lang)+'</a>' + aft;

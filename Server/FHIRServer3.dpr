@@ -301,7 +301,9 @@ uses
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
-  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas';
+  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
+  FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
+  XmlPatch in '..\reference-platform\support\XmlPatch.pas';
 
 begin
   JclStartExceptionTracking;

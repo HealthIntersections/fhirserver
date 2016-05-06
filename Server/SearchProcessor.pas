@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, Generics.Collections, System.Character,
   ParseMap,
   StringSupport, EncodeSupport,
-  AdvObjects, DateAndTime, DecimalSupport,
+  AdvObjects, DateAndTime, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities,
   UcumServices;
@@ -31,7 +31,7 @@ type
 
   TSearchProcessor = class (TAdvObject)
   private
-    FResConfig: TConfigArray;
+    FResConfig: TADvMap<TFHIRResourceConfig>;
     FLink: String;
     FSort: String;
     FFilter: String;
@@ -39,7 +39,7 @@ type
     FCompartmentId: String;
     FCompartments: String;
     FParams: TParseMap;
-    FType: TFHIRResourceType;
+    FType: String;
     FBaseURL: String;
     FIndexes: TFhirIndexInformation;
     FLang: String;
@@ -50,11 +50,11 @@ type
     FReverse: boolean;
 
     function processValueSetMembership(vs : String) : String;
-    function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
-    function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
-    function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TFHIRResourceTypeSet) : String;
+    function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
+    function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
+    function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
     Function ProcessSearchFilter(value : String) : String;
-    Function ProcessParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
+    Function ProcessParam(types : TArray<String>; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
     procedure SetIndexes(const Value: TFhirIndexInformation);
     procedure SetRepository(const Value: TFHIRDataStore);
     procedure SplitByCommas(value: String; list: TStringList);
@@ -70,23 +70,23 @@ type
     procedure processQuantityValue(name, lang: String; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
     procedure processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
-    function filterTypes(types: TFHIRResourceTypeSet): TFHIRResourceTypeSet;
-    procedure ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
-    procedure ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TFHIRResourceTypeSet);
-    procedure ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
-    procedure ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
-    procedure ProcessReferenceParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
-    procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
-    procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
+    function filterTypes(types: TArray<String>): TArray<String>;
+    procedure ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TArray<String>);
+    procedure ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessReferenceParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
   public
-    constructor create(ResConfig: TConfigArray);
+    constructor create(ResConfig: TADvMap<TFHIRResourceConfig>);
     Destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
     // inbound
     property typekey : integer read FTypeKey write FTypeKey;
-    property type_ : TFHIRResourceType read FType write FType;
+    property type_ : String read FType write FType;
     property compartmentId : String read FCompartmentId write FCompartmentId;
     property compartments : String read FCompartments write FCompartments;
     property baseURL : String read FBaseURL write FBaseURL;
@@ -157,10 +157,10 @@ begin
     filter := 'Ids.MasterResourceKey is null and Ids.ResourceTypeKey = '+inttostr(typekey);
 
   if (compartmentId <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig[frtPatient].key)+' and Id = '''+compartmentId+''')';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig['Patient'].key)+' and Id = '''+compartmentId+''')';
 
   if (compartments <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig[frtPatient].key)+' and Id in ('+compartments+'))';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig['Patient'].key)+' and Id in ('+compartments+'))';
 
   link_ := '';
   first := false;
@@ -217,7 +217,7 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   qop: TQuantityOperation;
   v1: string;
@@ -273,12 +273,12 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.ProcessReferenceParam(var Result: string; name,modifier,value: string; key: Integer;types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessReferenceParam(var Result: string; name,modifier,value: string; key: Integer;types : TArray<String>);
 var
   parts: TArray<String>;
-  targets : TFHIRResourceTypeSet;
+  targets : TArray<String>;
   i : integer;
-  a : TFHIRResourceType;
+  a : String;
 begin
   // _id is a special case
   if (name = '_id') or (name = 'id') then  //  ?? what's this? or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
@@ -293,11 +293,7 @@ begin
     if IsId(value) then
     begin
       targets := Findexes.GetTargetsByName(types, name);
-      i := 0;
-      for a := low(TFHIRResourceType) to HIgh(TFHIRResourceType) do
-        if a in targets then
-          inc(i);
-      if (i <> 1) then
+      if (length(targets) <> 1) then
         raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
       else
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
@@ -340,7 +336,7 @@ begin
     raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
 end;
 
-procedure TSearchProcessor.ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   system, code : String;
 begin
@@ -391,7 +387,7 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   pfx: string;
   sfx: string;
@@ -433,7 +429,7 @@ begin
   SetLength(result, c);
 end;
 
-procedure TSearchProcessor.ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TArray<String>);
 var
   v : String;
 begin
@@ -462,10 +458,10 @@ begin
   end
   else
     raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
-  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(value) + sfx + ')';
+  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(v) + sfx + ')';
 end;
 
-procedure TSearchProcessor.ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   qop: TQuantityOperation;
 begin
@@ -501,7 +497,7 @@ begin
   end;
 end;
 
-procedure TSearchProcessor.ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types: TFHIRResourceTypeSet);
+procedure TSearchProcessor.ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types: TArray<String>);
 var
   qop: TQuantityOperation;
   v1: string;
@@ -665,23 +661,23 @@ function TSearchProcessor.BuildParameterString(index: Integer; n: Char; j: strin
 begin
   case op of
     fscoEQ:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoNE:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <> ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <> ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoCO:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(Value) + '%''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(RemoveAccents(Value)) + '%''' + j + ')';
     fscoSW:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''' + SQLWrapString(Value) + '%''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''' + SQLWrapString(RemoveAccents(Value)) + '%''' + j + ')';
     fscoEW:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value like ''%' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoGT:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value > ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value > ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoLT:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value < ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value < ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoGE:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value >= ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value >= ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
     fscoLE:
-      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + SQLWrapString(Value) + '''' + j + ')';
+      result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
   else
     // fscoPO, fscoSS, fscoSB, fscoIN, fscoRE
     raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of string');
@@ -873,9 +869,9 @@ begin
     space := ns+'#'+space;
 end;
 
-Function TSearchProcessor.filterTypes(types : TFHIRResourceTypeSet) : TFHIRResourceTypeSet;
+Function TSearchProcessor.filterTypes(types : TArray<String>) : TArray<String>;
 var
-  a : TFHIRResourceType;
+  a : string;
 begin
   result := [];
   for a in types do
@@ -888,7 +884,7 @@ begin
   result := StringArrayExistsSensitive(['_id', '_lastUpdated', '_tag', '_profile', '_security', '_text', '_content', '_list', '_query'], name);
 end;
 
-Function TSearchProcessor.processParam(types : TFHIRResourceTypeSet; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
+Function TSearchProcessor.processParam(types : TArray<String>; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
 var
   key, i : integer;
   left, right, op, modifier, tl : String;
@@ -896,10 +892,10 @@ var
   ts : TStringList;
   pfx, sfx : String;
   date : TDateAndTime;
-  a : TFHIRResourceType;
+  a : String;
   type_ : TFhirSearchParamTypeEnum;
 begin
-  a := frtNull;
+  a := '';
   date := nil;
   result := '';
   op := '';
@@ -930,8 +926,7 @@ begin
       StringSplit(left, ':', left, modifier);
       if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
-      a := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFHIRResourceType, modifier));
-      types := filterTypes([a]);
+      types := filterTypes([modifier]);
     end
     else
     begin
@@ -974,7 +969,7 @@ begin
     else
     begin
       key := FIndexes.GetKeyByName(name);
-      if (types = [frtNull]) and not isCommonSearchParameter(name) then
+      if (length(types) = 0) and not isCommonSearchParameter(name) then
         key := 0;
 
       if key > 0 then
@@ -1131,7 +1126,7 @@ begin
     value := value.Substring(subst.Length);
 end;
 
-function TSearchProcessor.BuildFilter(filter: TFSFilter; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+function TSearchProcessor.BuildFilter(filter: TFSFilter; parent: char; issuer: TFSCharIssuer; types : TArray<String>): String;
 begin
   case filter.FilterItemType of
     fsitParameter : result := BuildFilterParameter(filter as TFSFilterParameter, TFSFilterParameter(filter).ParamPath, parent, issuer, types);
@@ -1141,7 +1136,7 @@ begin
   end;
 end;
 
-function TSearchProcessor.BuildFilterLogical(filter: TFSFilterLogical; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+function TSearchProcessor.BuildFilterLogical(filter: TFSFilterLogical; parent: char; issuer: TFSCharIssuer; types : TArray<String>): String;
 begin
   if filter.Operation = fsloNot then
     result := '(Not '+BuildFilter(filter.Filter2, parent, issuer, types)+')'
@@ -1153,7 +1148,7 @@ begin
 end;
 
 
-function TSearchProcessor.BuildFilterParameter(filter: TFSFilterParameter; path : TFSFilterParameterPath; parent: char; issuer: TFSCharIssuer; types : TFHIRResourceTypeSet): String;
+function TSearchProcessor.BuildFilterParameter(filter: TFSFilterParameter; path : TFSFilterParameterPath; parent: char; issuer: TFSCharIssuer; types : TArray<String>): String;
 var
   index : integer;
   n : char;
@@ -1264,7 +1259,7 @@ begin
     raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
 end;
 
-constructor TSearchProcessor.create(ResConfig: TConfigArray);
+constructor TSearchProcessor.create(ResConfig: TADvMap<TFHIRResourceConfig>);
 begin
   Inherited Create;
   FResConfig := ResConfig;
@@ -1275,6 +1270,7 @@ begin
   FRepository.Free;
   FSession.Free;
   FIndexes.Free;
+  FResConfig.Free;
   inherited;
 end;
 

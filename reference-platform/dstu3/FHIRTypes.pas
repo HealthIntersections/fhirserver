@@ -2366,9 +2366,10 @@ Type
     MapTransformTranslate, {@enum.value MapTransformTranslate  }
     MapTransformReference, {@enum.value MapTransformReference  }
     MapTransformEvaluate,
-    MapTransformPointer,
     MapTransformUuid,
+    MapTransformPointer,
     MapTransformDateOp);
+
   TFhirMapTransformEnumList = set of TFhirMapTransformEnum;
 
   {@Enum TFhirSubscriptionStatusEnum
@@ -13291,7 +13292,7 @@ Const
   SYSTEMS_TFhirMapContextTypeEnum : Array[TFhirMapContextTypeEnum] of String = ('', 'http://hl7.org/fhir/map-context-type', 'http://hl7.org/fhir/map-context-type');
   CODES_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'first', 'share', 'last');
   SYSTEMS_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode');
-  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'pointer', 'uuid', 'dateOp');
+  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'uuid', 'pointer', 'dateOp');
   SYSTEMS_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform');
   CODES_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'requested', 'active', 'error', 'off');
   SYSTEMS_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status');
@@ -27007,14 +27008,10 @@ begin
   else inherited;
 end;
 
-var
-  cthing : TAdvObject;
-
 function TFhirCodeableConcept.makeProperty(propName: string) : TFHIRObject;
 begin
   if (propName = 'coding') then result := CodingList.append(){2}
   else result := inherited makeProperty(propName);
-  cthing := result;
 end;
 
 function TFhirCodeableConcept.FhirType : string;
@@ -30633,7 +30630,7 @@ end;
 
 destructor TFhirElementDefinition.Destroy;
 begin
-  FPath.free;
+    FPath.free;
   FRepresentation.Free;
   FName.free;
   FLabel_.free;

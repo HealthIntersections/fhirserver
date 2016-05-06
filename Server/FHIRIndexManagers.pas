@@ -46,7 +46,7 @@ uses
   AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
   EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
   KDBManager,
-  FHIRBase, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
+  FHIRBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
   TerminologyServer, ServerUtilities,
   UcumServices;
 
@@ -57,35 +57,37 @@ Const
 Type
   TKeyType = (ktResource, ktEntries, ktCompartment);
 
-  TFHIRGetNextKey = function (keytype : TKeyType; aType : TFhirResourceType; var id : string) : Integer of Object;
+  TFHIRGetNextKey = function (keytype : TKeyType; aType : String; var id : string) : Integer of Object;
 
   TFhirIndex = class (TAdvObject)
   private
-    FResourceType : TFhirResourceType;
+    FResourceType : String;
     FKey: Integer;
     FName: String;
     FDescription : String;
     FSearchType: TFhirSearchParamTypeEnum;
-    FTargetTypes : TFhirResourceTypeSet;
+    FTargetTypes : TArray<String>;
     FURI: String;
     FPath : String;
     FUsage : TFhirSearchXpathUsageEnum;
+    FMapping : String;
   public
     function Link : TFhirIndex; Overload;
     function Clone : TFhirIndex; Overload;
     procedure Assign(source : TAdvObject); Override;
 
-    property ResourceType : TFhirResourceType read FResourceType write FResourceType;
+    property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
     Property Description : String read FDescription write FDescription;
     Property Key : Integer read FKey write FKey;
     Property SearchType : TFhirSearchParamTypeEnum read FSearchType write FSearchType;
-    Property TargetTypes : TFhirResourceTypeSet read FTargetTypes write FTargetTypes;
+    Property TargetTypes : TArray<String> read FTargetTypes write FTargetTypes;
     Property URI : String read FURI write FURI;
     Property Path : String read FPath;
     Property Usage : TFhirSearchXpathUsageEnum read FUsage;
+    Property Mapping : String read FMapping write FMapping;
 
-    function specifiedTarget : TFhirResourceType;
+    function specifiedTarget : String;
   end;
 
   TFhirIndexList = class (TAdvObjectList)
@@ -96,15 +98,16 @@ Type
   public
     function Link : TFhirIndexList; Overload;
 
-    function getByName(atype : TFhirResourceType; name : String): TFhirIndex;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum); overload;
-    procedure add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum; url : String); overload;
+    function getByName(atype : String; name : String): TFhirIndex;
+    function add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum): TFhirIndex; overload;
+    function add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum; url : String): TFhirIndex; overload;
+    function add(resourceType : String; sp : TFhirSearchParameter): TFhirIndex; overload;
     Property Item[iIndex : integer] : TFhirIndex read GetItemN; default;
   end;
 
   TFhirComposite = class (TAdvObject)
   private
-    FResourceType : TFhirResourceType;
+    FResourceType : String;
     FKey: Integer;
     FName: String;
     FComponents : TDictionary<String, String>;
@@ -116,7 +119,7 @@ Type
     function Clone : TFhirComposite; Overload;
     procedure Assign(source : TAdvObject); Override;
 
-    property ResourceType : TFhirResourceType read FResourceType write FResourceType;
+    property ResourceType : String read FResourceType write FResourceType;
     property Name : String read FName write FName;
     Property Key : Integer read FKey write FKey;
     Property Components : TDictionary<String, String> read FComponents;
@@ -130,8 +133,8 @@ Type
   public
     function Link : TFhirCompositeList; Overload;
 
-    function getByName(atype : TFhirResourceType; name : String): TFhirComposite;
-    procedure add(aResourceType : TFhirResourceType; name : String; components : array of String); overload;
+    function getByName(aType : String; name : String): TFhirComposite;
+    procedure add(aResourceType : String; name : String; components : array of String); overload;
     Property Item[iIndex : integer] : TFhirComposite read GetItemN; default;
   end;
 
@@ -220,10 +223,10 @@ Type
     function Link : TFHIRIndexInformation; overload;
     procedure ReconcileIndexes(connection : TKDBConnection);
 
-    Function GetTargetsByName(types : TFhirResourceTypeSet; name : String) : TFhirResourceTypeSet;
+    Function GetTargetsByName(types : TArray<String>; name : String) : TArray<String>;
     Function GetKeyByName(name : String) : integer;
-    Function GetTypeByName(types : TFhirResourceTypeSet; name : String) : TFhirSearchParamTypeEnum;
-    Function GetComposite(types : TFhirResourceTypeSet; name : String; var otypes : TFhirResourceTypeSet) : TFhirComposite;
+    Function GetTypeByName(types : TArray<String>; name : String) : TFhirSearchParamTypeEnum;
+    Function GetComposite(types : TArray<String>; name : String; var otypes : TArray<String>) : TFhirComposite;
 
     property Indexes : TFhirIndexList read FIndexes;
     property Composites : TFhirCompositeList read FComposites;
@@ -243,7 +246,7 @@ Type
     FBases : TStringList;
     FValidationInfo : TWorkerContext;
     FTerminologyServer : TTerminologyServer;
-    FResConfig: TConfigArray;
+    FResConfig: TAdvMap<TFHIRResourceConfig>;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
@@ -255,45 +258,45 @@ Type
     procedure patientCompartment(key : integer; type_, id : String); overload;
 
     // very primitives
-    procedure index(aType : TFhirResourceType; key, parent : integer; value1, value2, name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value, name : String); overload;
-    procedure index2(aType : TFhirResourceType; key, parent : integer; value, name : String); overload;
+    procedure index(aType : String; key, parent : integer; value1, value2, name : String); overload;
+    procedure index(aType : String; key, parent : integer; value, name : String); overload;
+    procedure index2(aType : String; key, parent : integer; value, name : String); overload;
 
     // primitives
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : Boolean; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirString; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirUri; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirEnum; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirInteger; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirBoolean; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : Boolean; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirString; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirUri; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirEnum; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirInteger; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirBoolean; name : String); overload;
 
     // intervals of time
-    procedure index(aType : TFhirResourceType; key, parent : integer; min, max : TDateTime; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirInstant; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirDateTime; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirDate; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirPeriod; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirTiming; name : String); overload;
+    procedure index(aType : String; key, parent : integer; min, max : TDateTime; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirInstant; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirDateTime; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirDate; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirPeriod; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirTiming; name : String); overload;
 
     // complexes
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirRatio; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirQuantity; name : String; units : string = ''); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirRange; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirSampledData; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirCoding; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirCodingList; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirCodeableConcept; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirCodeableConceptList; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirIdentifier; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirIdentifierList; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirHumanName; name, phoneticName : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirAddress; name : String); overload;
-    procedure index(aType : TFhirResourceType; key, parent : integer; value : TFhirContactPoint; name : String); overload;
-    procedure index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value : TFhirReference; name : String; specificType : TFhirResourceType = frtNull); overload;
-    procedure index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value : TFhirReferenceList; name : String; specificType : TFhirResourceType = frtNull); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirRatio; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = ''); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirRange; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirSampledData; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirCoding; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirCodingList; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirCodeableConcept; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirCodeableConceptList; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirIdentifier; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirIdentifierList; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirHumanName; name, phoneticName : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirAddress; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirContactPoint; name : String); overload;
+    procedure index(context : TFhirResource; aType : String; key, parent : integer; value : TFhirReference; name : String; specificType : String = ''); overload;
+    procedure index(context : TFhirResource; aType : String; key, parent : integer; value : TFhirReferenceList; name : String; specificType : String = ''); overload;
 
     // structure holder
-    function index(aType : TFhirResourceType; key, parent : integer; name : String) : Integer; overload;
+    function index(aType : String; key, parent : integer; name : String) : Integer; overload;
 
     { resource functionality }
     {$IFDEF FHIR2}
@@ -399,8 +402,9 @@ Type
 
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
+    function transform(base : TFHIRBase; uri : String) : TFHIRBase;
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TConfigArray);
+    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -448,48 +452,68 @@ begin
   result := TFhirIndex(Inherited Link);
 end;
 
-function TFhirIndex.specifiedTarget: TFhirResourceType;
+function TFhirIndex.specifiedTarget: String;
 var
-  a : TFhirResourceType;
+  a : String;
+  s : String;
 begin
-  result := frtNull;
-  for a in ALL_RESOURCE_TYPES do
-    if a in FTargetTypes then
-      if result = frtNull then
-        result := a
-      else
-        exit(frtNull);
+  result := '';
+  for a in ALL_RESOURCE_TYPE_NAMES do
+    for s in FTargetTypes do
+      if s = a then
+        if result = '' then
+          result := a
+        else
+          exit('');
 end;
 
 { TFhirIndexList }
 
-procedure TFhirIndexList.add(aResourceType : TFhirResourceType; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum);
+function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum) : TFHIRIndex;
 begin
-  add(aResourceType, name, description, aType, aTargetTypes, path, usage, 'http://hl7.org/fhir/SearchParameter/'+CODES_TFHIRResourceType[aResourceType]+'-'+name.Replace('[', '').Replace(']', ''));
+  result := add(aResourceType, name, description, aType, aTargetTypes, path, usage, 'http://hl7.org/fhir/SearchParameter/'+aResourceType+'-'+name.Replace('[', '').Replace(']', ''));
 end;
 
 
-procedure TFhirIndexList.add(aResourceType: TFhirResourceType; name, description: String; aType: TFhirSearchParamTypeEnum; aTargetTypes: TFhirResourceTypeSet; path : String; usage : TFhirSearchXpathUsageEnum; url: String);
+function TFhirIndexList.add(aResourceType : String; name, description : String; aType : TFhirSearchParamTypeEnum; aTargetTypes : Array of String; path : String; usage : TFhirSearchXpathUsageEnum; url: String) : TFHIRIndex;
 var
   ndx : TFhirIndex;
+  i : integer;
 begin
   ndx := TFhirIndex.Create;
   try
     ndx.ResourceType := aResourceType;
     ndx.name := name;
     ndx.SearchType := aType;
-    ndx.TargetTypes := aTargetTypes;
+    SetLength(ndx.FTargetTypes, length(aTargetTypes));
+    for i := 0 to length(ndx.TargetTypes)-1 do
+      ndx.FTargetTypes[i] := aTargetTypes[i];
     ndx.URI := url;
     ndx.description := description;
     ndx.FPath := path;
     ndx.FUsage := usage;
     inherited add(ndx.Link);
+    result := ndx;
   finally
     ndx.free;
   end;
 end;
 
-function TFhirIndexList.getByName(atype : TFhirResourceType; name: String): TFhirIndex;
+function TFhirIndexList.add(resourceType : String; sp: TFhirSearchParameter) : TFhirIndex;
+var
+  targets : TArray<String>;
+  i : integer;
+begin
+  SetLength(targets, sp.targetList.Count);
+  for i := 0 to sp.targetList.Count - 1 do
+    targets[i] := sp.targetList[i].value;
+
+  result := add(resourceType, sp.name, sp.description, sp.type_, targets, sp.expression, sp.xpathUsage);
+  if (sp.hasExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/index-transform')) then
+    result.Mapping := sp.getExtensionString('http://www.healthintersections.com.au/fhir/StructureDefinition/index-transform');
+end;
+
+function TFhirIndexList.getByName(atype, name: String): TFhirIndex;
 var
   i : integer;
 begin
@@ -587,7 +611,7 @@ begin
   entry := TFhirIndexEntry.create;
   try
     entry.FName := index.Name;
-    entry.EntryKey := KeyEvent(ktEntries, frtNull, dummy);
+    entry.EntryKey := KeyEvent(ktEntries, '', dummy);
     result := entry.EntryKey;
     entry.IndexKey := index.Key;
     entry.key := key;
@@ -617,7 +641,7 @@ begin
 
   entry := TFhirIndexEntry.create;
   try
-    entry.EntryKey := KeyEvent(ktEntries, frtNull, dummy);
+    entry.EntryKey := KeyEvent(ktEntries, '', dummy);
     result := entry.EntryKey;
     entry.IndexKey := index.Key;
     entry.key := key;
@@ -640,7 +664,7 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TConfigArray);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
 begin
   inherited Create;
   FCompartments := TFhirCompartmentEntryList.create;
@@ -659,6 +683,7 @@ begin
   FSpaces.Free;
   FEntries.Free;
   FInfo.Free;
+  FResConfig.Free;
   inherited;
 end;
 
@@ -691,19 +716,19 @@ begin
 end;
 
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirString; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirString; name: String);
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirUri; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirUri; name: String);
 begin
   if (value <> nil) then
     index(aType, key, parent, value.value, name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirCodeableConcept; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirCodeableConcept; name: String);
 var
   i : integer;
 begin
@@ -716,7 +741,7 @@ begin
   End;
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value, name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
   types : TFhirSearchParamTypeEnumList;
@@ -726,7 +751,7 @@ begin
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+aType);
 
   if StringIsInteger32(value) then
     types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeNumber, SearchParamTypeUri]
@@ -741,7 +766,7 @@ begin
   FEntries.add(key, parent, ndx, 0, value, '', 0, frtNull, ndx.SearchType);
 end;
 
-procedure TFhirIndexManager.index2(aType : TFhirResourceType; key, parent : integer; value, name: String);
+procedure TFhirIndexManager.index2(aType : String; key, parent : integer; value, name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -749,7 +774,7 @@ begin
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+aType);
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeReference]) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
   value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
@@ -761,7 +786,7 @@ begin
   result := TFHIRIndexManager (inherited Link);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value1, value2, name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value1, value2, name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -769,7 +794,7 @@ begin
     exit;
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+aType);
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate]) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
 
@@ -787,23 +812,23 @@ begin
 end;
 
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: Boolean; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: Boolean; name: String);
 var
   ndx : TFhirIndex;
   concept : integer;
 begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+aType);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
-  concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
+  concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
   FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, frtNull, ndx.SearchType, false, concept);
 end;
 
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirEnum; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirEnum; name: String);
 var
   ndx : TFhirIndex;
   concept : integer;
@@ -817,14 +842,14 @@ begin
 
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown index '+name+' on type '+aType);
   if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
-    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
      raise exception.create('string too long for indexing: '+value.value+ ' ('+inttostr(length(value.value))+' chars)');
   if value.system <> '' then
   begin
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, value.system, value.value);
+    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, value.system, value.value);
     assert(concept <> 0);
   end
   else
@@ -834,7 +859,7 @@ begin
 end;
 
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirInstant; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirInstant; name: String);
 begin
   if (value <> nil) and (value.value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
@@ -846,13 +871,18 @@ begin
   FTerminologyServer := Value;
 end;
 
+function TFhirIndexManager.transform(base: TFHIRBase; uri: String): TFHIRBase;
+begin
+  raise Exception.Create('not done yet');
+end;
+
 procedure TFhirIndexManager.evaluateByFHIRPath(key : integer; context, resource: TFhirResource);
 var
   path : TFHIRExpressionEngine;
   i : integer;
   ndx : TFhirIndex;
   matches : TFHIRBaseList;
-  match : TFHIRBase;
+  match, work : TFHIRBase;
   a : TFhirResourceType;
   s : string;
   ie : TFhirIndexEntry;
@@ -862,83 +892,92 @@ begin
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin
       ndx := FInfo.Indexes[i];
-      if (ndx.Path <> '') and (ndx.ResourceType = resource.ResourceType) then
+      if (ndx.Path <> '') and (ndx.ResourceType = resource.fhirType) then
       begin
         matches := path.evaluate(nil, resource, ndx.Path);
         for match in matches do
         begin
-          case ndx.Usage of
-            SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
-            SearchXpathUsageNormal:
-              begin
-              if match is TFhirString then
-                index(resource.ResourceType, key, 0, TFhirString(match), ndx.Name)
-              else if match is TFhirUri then
-                index(resource.ResourceType, key, 0, TFhirUri(match), ndx.Name)
-              else if match is TFhirEnum then
-                index(resource.ResourceType, key, 0, TFhirEnum(match), ndx.Name)
-              else if match is TFhirInteger  then
-                index(resource.ResourceType, key, 0, TFhirInteger(match), ndx.Name)
-              else if match is TFhirBoolean  then
-                index(resource.ResourceType, key, 0, TFhirBoolean(match), ndx.Name)
-              else if match is TFhirInstant  then
-                index(resource.ResourceType, key, 0, TFhirInstant(match), ndx.Name)
-              else if match is TFhirDateTime  then
-                index(resource.ResourceType, key, 0, TFhirDateTime(match), ndx.Name)
-              else if match is TFhirDate  then
-                index(resource.ResourceType, key, 0, TFhirDate(match), ndx.Name)
-              else if match is TFhirPeriod  then
-                index(resource.ResourceType, key, 0, TFhirPeriod(match), ndx.Name)
-              else if match is TFhirTiming  then
-                index(resource.ResourceType, key, 0, TFhirTiming(match), ndx.Name)
-              else if match is TFhirRatio  then
-                index(resource.ResourceType, key, 0, TFhirRatio(match), ndx.Name)
-              else if match is TFhirQuantity  then
-                index(resource.ResourceType, key, 0, TFhirQuantity(match), ndx.Name)
-              else if match is TFhirRange  then
-                index(resource.ResourceType, key, 0, TFhirRange(match), ndx.Name)
-              else if match is TFhirSampledData  then
-                index(resource.ResourceType, key, 0, TFhirSampledData(match), ndx.Name)
-              else if match is TFhirCoding  then
-                index(resource.ResourceType, key, 0, TFhirCoding(match), ndx.Name)
-              else if match is TFhirCodeableConcept  then
-                index(resource.ResourceType, key, 0, TFhirCodeableConcept(match), ndx.Name)
-              else if match is TFhirIdentifier  then
-                index(resource.ResourceType, key, 0, TFhirIdentifier(match), ndx.Name)
-              else if match is TFhirHumanName  then
-                index(resource.ResourceType, key, 0, TFhirHumanName(match), ndx.Name, '')
-              else if match is TFhirAddress  then
-                index(resource.ResourceType, key, 0, TFhirAddress(match), ndx.Name)
-              else if match is TFhirContactPoint  then
-                index(resource.ResourceType, key, 0, TFhirContactPoint(match), ndx.Name)
-              else if match is TFhirReference then
-                index(context, resource.ResourceType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-              else if match is TFhirReference then
-                index(context, resource.ResourceType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-              else
-                raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
-              end;
-            SearchXpathUsagePhonetic:
-              begin
-              if match is TFhirString then
-                index(resource.ResourceType, key, 0, EncodeNYSIIS(TFhirString(match).value), ndx.Name)
-              else if match is TFhirHumanName then
-                index(resource.ResourceType, key, 0, TFhirHumanName(match), '', ndx.Name)
-              else
-                raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
-              end;
-            SearchXpathUsageNearby:
-              begin
-                // todo when a chance arises
-              end;
-            SearchXpathUsageDistance:
-              begin
-                // todo when a chance arises
-              end;
-            SearchXpathUsageOther:
-              begin
-                // todo when a chance arises
-              end;
+          // custom resource support : do we need to do a transform?
+          if ndx.mapping = '' then
+            work := match.Link
+          else
+            work := transform(match, ndx.mapping);
+          try
+            case ndx.Usage of
+              SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
+              SearchXpathUsageNormal:
+                begin
+                if match is TFhirString then
+                  index(resource.fhirType, key, 0, TFhirString(match), ndx.Name)
+                else if match is TFhirUri then
+                  index(resource.fhirType, key, 0, TFhirUri(match), ndx.Name)
+                else if match is TFhirEnum then
+                  index(resource.fhirType, key, 0, TFhirEnum(match), ndx.Name)
+                else if match is TFhirInteger  then
+                  index(resource.fhirType, key, 0, TFhirInteger(match), ndx.Name)
+                else if match is TFhirBoolean  then
+                  index(resource.fhirType, key, 0, TFhirBoolean(match), ndx.Name)
+                else if match is TFhirInstant  then
+                  index(resource.fhirType, key, 0, TFhirInstant(match), ndx.Name)
+                else if match is TFhirDateTime  then
+                  index(resource.fhirType, key, 0, TFhirDateTime(match), ndx.Name)
+                else if match is TFhirDate  then
+                  index(resource.fhirType, key, 0, TFhirDate(match), ndx.Name)
+                else if match is TFhirPeriod  then
+                  index(resource.fhirType, key, 0, TFhirPeriod(match), ndx.Name)
+                else if match is TFhirTiming  then
+                  index(resource.fhirType, key, 0, TFhirTiming(match), ndx.Name)
+                else if match is TFhirRatio  then
+                  index(resource.fhirType, key, 0, TFhirRatio(match), ndx.Name)
+                else if match is TFhirQuantity  then
+                  index(resource.fhirType, key, 0, TFhirQuantity(match), ndx.Name)
+                else if match is TFhirRange  then
+                  index(resource.fhirType, key, 0, TFhirRange(match), ndx.Name)
+                else if match is TFhirSampledData  then
+                  index(resource.fhirType, key, 0, TFhirSampledData(match), ndx.Name)
+                else if match is TFhirCoding  then
+                  index(resource.fhirType, key, 0, TFhirCoding(match), ndx.Name)
+                else if match is TFhirCodeableConcept  then
+                  index(resource.fhirType, key, 0, TFhirCodeableConcept(match), ndx.Name)
+                else if match is TFhirIdentifier  then
+                  index(resource.fhirType, key, 0, TFhirIdentifier(match), ndx.Name)
+                else if match is TFhirHumanName  then
+                  index(resource.fhirType, key, 0, TFhirHumanName(match), ndx.Name, '')
+                else if match is TFhirAddress  then
+                  index(resource.fhirType, key, 0, TFhirAddress(match), ndx.Name)
+                else if match is TFhirContactPoint  then
+                  index(resource.fhirType, key, 0, TFhirContactPoint(match), ndx.Name)
+                else if match is TFhirReference then
+                    index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
+                else if match is TFhirReference then
+                  index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
+                else
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
+                end;
+              SearchXpathUsagePhonetic:
+                begin
+                if match is TFhirString then
+                  index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(match).value), ndx.Name)
+                else if match is TFhirHumanName then
+                  index(resource.fhirType, key, 0, TFhirHumanName(match), '', ndx.Name)
+                else
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
+                end;
+              SearchXpathUsageNearby:
+                begin
+                  // todo when a chance arises
+                end;
+              SearchXpathUsageDistance:
+                begin
+                  // todo when a chance arises
+                end;
+              SearchXpathUsageOther:
+                begin
+                  // todo when a chance arises
+                end;
+            end;
+          finally
+            work.Free;
           end;
         end;
       end;
@@ -952,19 +991,19 @@ begin
   begin
     // a resource is automatically in it's own compartment
     if (a = resource.ResourceType) then
-      FCompartments.add(key, FResConfig[a].key, key, resource.id);
-    if FInfo.Compartments.existsInCompartment(a, resource.ResourceType) then
-      for s in FInfo.Compartments.getIndexNames(a, resource.ResourceType) do
+      FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, key, resource.id);
+    if FInfo.Compartments.existsInCompartment(a, resource.fhirType) then
+      for s in FInfo.Compartments.getIndexNames(a, resource.fhirType) do
       begin
         if (s <> '{def}') and not s.Contains('.') then // we already did this one above, so we just ignore this here and compartments with '.' in them are in error
         begin
-          ndx := FInfo.FIndexes.getByName(resource.ResourceType, s);
+          ndx := FInfo.FIndexes.getByName(resource.fhirType, s);
           if (ndx = nil) then
             raise Exception.Create('Unknown index '+s+' on '+CODES_TFhirResourceType[resource.ResourceType]);
           for ie in FEntries do
           begin
             if (ie.FKey = key) and (ie.IndexKey = ndx.Key) and (ie.TargetType = a) then
-              FCompartments.add(key, FResConfig[a].key, ie.FTarget, ie.Value1);
+              FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, ie.FTarget, ie.Value1);
           end;
         end;
       end;
@@ -1019,7 +1058,7 @@ begin
   begin
     FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Flag, Extension, Xhtml) values (:k, :i, :r, 1, ''html'', :xb)';
     FSpaces.FDB.prepare;
-    FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, frtNull, dummy));
+    FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
     FSpaces.FDB.BindInteger('i', FInfo.FNarrativeIndex);
     FSpaces.FDB.BindInteger('r', key);
     FSpaces.FDB.BindBlobFromBytes('xb', EncodeXhtml(TFhirDomainResource(resource)));
@@ -1083,7 +1122,7 @@ begin
         result := result + ', ';
       result := result + ''''+FCompartments[i].id+'''';
 
-      FSpaces.FDB.BindInteger('pk', FKeyEvent(ktCompartment, frtNull, dummy));
+      FSpaces.FDB.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
       FSpaces.FDB.BindInteger('r', FCompartments[i].key);
       FSpaces.FDB.BindInteger('ct', FCompartments[i].tkey);
       FSpaces.FDB.BindString('id', FCompartments[i].id);
@@ -1097,7 +1136,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirCoding; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirCoding; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -1108,14 +1147,14 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if ndx.SearchType <> SearchParamTypeToken then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Coding');
   if (value.system <> '') then
   begin
     ref := FSpaces.ResolveSpace(value.system);
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, CODES_TFHIRResourceType[aType]+'.'+name, value.system, value.code);
+    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, value.system, value.code);
   end
   else
   begin
@@ -1178,7 +1217,7 @@ begin
 end;
 
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirRange; name : String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value : TFhirRange; name : String);
 var
   ndx : TFhirIndex;
   v1, v2, crap : String;
@@ -1191,7 +1230,7 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
     raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing range');
@@ -1236,7 +1275,7 @@ begin
   end;
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirQuantity; name : String; units : string = '');
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value : TFhirQuantity; name : String; units : string = '');
 var
   ndx : TFhirIndex;
   v1, v2 : String;
@@ -1245,11 +1284,13 @@ var
 begin
   if value = nil then
     exit;
+  if value.value = '' then
+    exit;
 
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join: "'+name+'"');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeNumber, SearchParamTypeQuantity]) then
     raise Exception.create('Unsuitable index "'+name+'" '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing quantity');
@@ -1293,39 +1334,39 @@ begin
   end;
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirPeriod; name : String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value : TFhirPeriod; name : String);
 begin
   if (value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value : TFhirTiming; name : String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value : TFhirTiming; name : String);
 begin
   if (value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirDateTime; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirDateTime; name: String);
 begin
   if (value <> nil) and (value.value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; min, max : TDateTime; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; min, max : TDateTime; name: String);
 var
   ndx : TFhirIndex;
 begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = SearchParamTypeDate) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing date');
   FEntries.add(key, parent, ndx, 0, HL7DateToString(min, 'yyyymmddhhnnss', false), HL7DateToString(max, 'yyyymmddhhnnss', false), 0, frtNull, ndx.SearchType);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirIdentifier; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -1335,7 +1376,7 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Identifier');
@@ -1347,7 +1388,7 @@ begin
   FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirAddress; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirAddress; name: String);
 var
   i : integer;
 begin
@@ -1367,7 +1408,7 @@ begin
   index(aType, key, parent, value.useElement, name+'-use');
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirContactPoint; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirContactPoint; name: String);
 var
   ndx : TFhirIndex;
   ref : integer;
@@ -1377,10 +1418,10 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then
-    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Contact on '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Contact on '+aType);
   ref := 0;
   if (value.systemElement <> nil) and (value.systemElement.value <> '') then
     ref := FSpaces.ResolveSpace(value.systemElement.value);
@@ -1389,7 +1430,7 @@ begin
   FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirIdentifierList; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirIdentifierList; name: String);
 var
   i : integer;
 begin
@@ -1398,7 +1439,7 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirCodingList; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirCodingList; name: String);
 var
   i : integer;
 begin
@@ -1407,7 +1448,7 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirCodeableConceptList; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirCodeableConceptList; name: String);
 var
   i : integer;
 begin
@@ -1416,17 +1457,17 @@ begin
       index(atype, key, parent, value[i], name);
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirSampledData; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirSampledData; name: String);
 begin
  // todo
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirRatio; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirRatio; name: String);
 begin
   // don't have a clue what to do here
 end;
 
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirHumanName; name, phoneticName: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirHumanName; name, phoneticName: String);
 var
   i : integer;
 begin
@@ -1459,7 +1500,7 @@ begin
 end;
 
 {
-procedure TFhirIndexManager.index(aType : TFhirResourceType; key, parent : integer; value: TFhirDecimal; name: String);
+procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirDecimal; name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -1468,7 +1509,7 @@ begin
   ndx := FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing decimal');
@@ -1499,7 +1540,7 @@ begin
   delete(result, 1, 1);
 end;
 
-procedure TFhirIndexManager.index(context : TFhirResource; aType : TFhirResourceType; key, parent : integer; value: TFhirReference; name: String; specificType : TFhirResourceType = frtNull);
+procedure TFhirIndexManager.index(context : TFhirResource; aType : String; key, parent : integer; value: TFhirReference; name: String; specificType : String = '');
 var
   ndx : TFhirIndex;
   ref, i : integer;
@@ -1528,9 +1569,9 @@ begin
     raise Exception.create('Unknown index '+name);
 // ggtodo - until target types are sorted out....
 //  if (ndx.TargetTypes = []) then
-//    raise Exception.create('Attempt to index a resource join in an index ('+CODES_TFHIRResourceType[aType]+'/'+name+') that is a not a join (has no target types)');
+//    raise Exception.create('Attempt to index a resource join in an index ('+aType+'/'+name+') that is a not a join (has no target types)');
   if ndx.SearchType <> SearchParamTypeReference then
-    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing reference on a '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing reference on a '+aType);
 
   if (length(value.reference) > INDEX_ENTRY_LENGTH) then
     raise exception.create('resource url too long for indexing: '+value.reference);
@@ -1552,11 +1593,11 @@ begin
       raise exception.create('Reference to contained resource found in a resource that does not have contained resources"');
     if contained = nil then
       raise exception.create('No contained resource found in resource for "'+value.reference+'", list from '+CODES_TFHIRResourceType[context.ResourceType]+' = "'+sumContainedResources(TFhirDomainResource(context))+'"');
-    if (specificType = frtNull) or (contained.ResourceType = specificType) then
+    if (specificType = '') or (contained.fhirType = specificType) then
     begin
       ttype := contained.ResourceType;
       ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType]);
-      target := FKeyEvent(ktResource, contained.ResourceType, id);
+      target := FKeyEvent(ktResource, contained.fhirType, id);
       FSpaces.FDB.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
       FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
       FSpaces.FDB.Prepare;
@@ -1583,7 +1624,7 @@ begin
     end;
     if isLocalTypeReference(url, type_, id) then
     begin
-      if (specificType = frtNull) or (type_ = CODES_TFHIRResourceType[specificType]) then
+      if (specificType = '') or (type_ = specificType) then
       begin
         ttype := ResourceTypeByName(type_);
         ref := FSpaces.ResolveSpace(type_);
@@ -1610,7 +1651,7 @@ begin
 end;
 
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirInteger; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirInteger; name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -1619,7 +1660,7 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
-  if (ndx.TargetTypes <> []) then
+  if (length(ndx.TargetTypes) > 0) then
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
@@ -1629,13 +1670,13 @@ end;
 
 
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirDate; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirDate; name: String);
 begin
   if (value <> nil) and (value.value <> nil) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
-procedure TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; value: TFhirBoolean; name: String);
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirBoolean; name: String);
 var
   ndx : TFhirIndex;
 begin
@@ -1701,19 +1742,19 @@ begin
 
 end;
 
-function TFhirIndexManager.index(aType: TFhirResourceType; key, parent: integer; name: String): Integer;
+function TFhirIndexManager.index(aType: String; key, parent: integer; name: String): Integer;
 var
   ndx : TFhirComposite;
 begin
   ndx := FInfo.FComposites.getByName(aType, name);
   if (ndx = nil) then
-    raise Exception.create('Unknown composite index '+name+' on type '+CODES_TFHIRResourceType[aType]);
+    raise Exception.create('Unknown composite index '+name+' on type '+aType);
   if (ndx.Key = 0) then
     raise Exception.create('unknown composite index '+ndx.Name);
   result := FEntries.add(key, parent, ndx);
 end;
 
-procedure TFhirIndexManager.index(context: TFhirResource; aType: TFhirResourceType; key, parent: integer; value: TFhirReferenceList; name: String; specificType : TFhirResourceType = frtNull);
+procedure TFhirIndexManager.index(context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
 var
   i : integer;
 begin
@@ -1844,7 +1885,7 @@ end;
 
 { TFhirCompositeList }
 
-procedure TFhirCompositeList.add(aResourceType: TFhirResourceType; name: String; components: array of String);
+procedure TFhirCompositeList.add(aResourceType: string; name: String; components: array of String);
 var
   ndx : TFhirComposite;
   i : integer;
@@ -1866,7 +1907,7 @@ begin
 
 end;
 
-function TFhirCompositeList.getByName(atype: TFhirResourceType; name: String): TFhirComposite;
+function TFhirCompositeList.getByName(aType: String; name: String): TFhirComposite;
 var
   i : integer;
 begin
@@ -1911,20 +1952,20 @@ begin
   end;
 
   // manual additions:
-  composites.add(frtDocumentReference, 'relatesTo', ['code', 'relation', 'target', 'relatesTo']);
-  composites.add(frtGroup, 'characteristic', ['value', 'value', 'code', 'characteristic']);
-  composites.add(frtObservation, 'related', ['target', 'related-target', 'type', 'related-type']);
-  composites.add(frtDiagnosticOrder, 'event', ['status', 'event-status', 'date', 'event-date']);
-  composites.add(frtDiagnosticOrder, 'item', ['status', 'item-status', 'code', 'item-code', 'site', 'bodysite', 'event', 'item-event']);
-  composites.add(frtDiagnosticOrder, 'item-event', ['status', 'item-past-status', 'date', 'item-date', 'actor', 'actor']);
-  composites.add(frtPatient, 'name', ['given', 'given', 'family', 'family']);
+  composites.add('DocumentReference', 'relatesTo', ['code', 'relation', 'target', 'relatesTo']);
+  composites.add('Group', 'characteristic', ['value', 'value', 'code', 'characteristic']);
+  composites.add('Observation', 'related', ['target', 'related-target', 'type', 'related-type']);
+  composites.add('DiagnosticOrder', 'event', ['status', 'event-status', 'date', 'event-date']);
+  composites.add('DiagnosticOrder', 'item', ['status', 'item-status', 'code', 'item-code', 'site', 'bodysite', 'event', 'item-event']);
+  composites.add('DiagnosticOrder', 'item-event', ['status', 'item-past-status', 'date', 'item-date', 'actor', 'actor']);
+  composites.add('Patient', 'name', ['given', 'given', 'family', 'family']);
 
   // DAF
-  indexes.add(frtCondition, 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
-  indexes.add(frtPatient, 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add(frtPatient, 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
-  indexes.add(frtPatient, 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
-  indexes.add(frtFamilyMemberHistory, 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', SearchParamTypeToken, [], '', SearchXpathUsageNull);
+  indexes.add('Condition', 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
+  indexes.add('Patient', 'mothersMaidenName', 'Search based on Patient mother''s Maiden Name', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add('Patient', 'birthOrderBoolean', 'Search based on Patient''s birth order (boolean or integer)', SearchParamTypeString, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-mothersMaidenName');
+  indexes.add('Patient', 'age', 'Search based on Patient''s age', SearchParamTypeNumber, [], '', SearchXpathUsageNull, 'http://hl7.org/fhir/SearchParameter/patient-extensions-Patient-age');
+  indexes.add('FamilyMemberHistory', 'familymemberhistorycondition', 'Search for a history of a particular condition within a patient''s family', SearchParamTypeToken, [], '', SearchXpathUsageNull);
   {$IFDEF FHIR2}
   indexes.add(frtList, 'identifier', 'identifier', SearchParamTypeToken, [], '', SearchXpathUsageNull);
 
@@ -1978,14 +2019,22 @@ begin
   connection.terminate;
 end;
 
-function TFhirIndexInformation.GetTargetsByName(types: TFhirResourceTypeSet; name: String): TFhirResourceTypeSet;
+function TFhirIndexInformation.GetTargetsByName(types: TArray<String>; name: String): TArray<String>;
 var
   i : integer;
+  s : String;
+  ok : boolean;
 begin
   result := [];
   for i := 0 to FIndexes.Count - 1 Do
-    if SameText(FIndexes[i].Name, name) and (FIndexes[i].ResourceType in types) then
-      result := result + FIndexes[i].TargetTypes;
+    if SameText(FIndexes[i].Name, name) then
+    begin
+      ok := false;
+      for s in types do
+        ok := ok or (s = FIndexes[i].ResourceType);
+      if ok then
+        result := result + FIndexes[i].TargetTypes;
+    end;
 end;
 
 function TFhirIndexInformation.GetKeyByName(name: String): integer;
@@ -2001,22 +2050,32 @@ begin
     end;
 end;
 
-function TFhirIndexInformation.GetTypeByName(types: TFhirResourceTypeSet; name: String): TFhirSearchParamTypeEnum;
+function TFhirIndexInformation.GetTypeByName(types: TArray<String>; name: String): TFhirSearchParamTypeEnum;
 var
   i : integer;
+  s : String;
+  ok : boolean;
 begin
   result := SearchParamTypeNull;
   for i := 0 to FIndexes.Count - 1 Do
-    if SameText(FIndexes[i].Name, name) and ((FIndexes[i].ResourceType in types) or (types = [frtNull])) then
-      if (result <> SearchParamTypeNull) and (result <> FIndexes[i].FSearchType) And ((FIndexes[i].FSearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
-        raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
-      else
-        result := FIndexes[i].FSearchType;
+    if SameText(FIndexes[i].Name, name) then
+    begin
+      ok := length(types) = 0;
+      for s in types do
+        ok := ok or (s = FIndexes[i].ResourceType);
+      if ok then
+        if (result <> SearchParamTypeNull) and (result <> FIndexes[i].FSearchType) And ((FIndexes[i].FSearchType in [SearchParamTypeDate, SearchParamTypeToken]) or (result in [SearchParamTypeDate, SearchParamTypeToken])) then
+          raise Exception.create('Chained Parameters cross resource joins that create disparate index handling requirements')
+        else
+          result := FIndexes[i].FSearchType;
+    end;
 end;
 
-function TFhirIndexInformation.GetComposite(types: TFhirResourceTypeSet; name: String; var otypes: TFhirResourceTypeSet): TFhirComposite;
+function TFhirIndexInformation.GetComposite(types: TArray<String>; name: String; var otypes: TArray<String>): TFhirComposite;
 var
   i : integer;
+  s : String;
+  ok : boolean;
 begin
   oTypes := types;
 
@@ -2024,14 +2083,20 @@ begin
   result := nil;
   while (i < FComposites.Count) do
   begin
-    if SameText(FComposites.item[i].name, name) and (FComposites.item[i].FResourceType in types) then
-      if result = nil then
-      begin
-        result := FComposites.item[i];
-        oTypes := [FComposites.item[i].FResourceType];
-      end
-      else
-        raise Exception.Create('Ambiguous composite reference "'+name+'"');
+    if SameText(FComposites.item[i].name, name) then
+    begin
+      ok := length(types) = 0;
+      for s in types do
+        ok := ok or (s = FComposites.item[i].FResourceType);
+      if ok then
+        if result = nil then
+        begin
+          result := FComposites.item[i];
+          oTypes := [FComposites.item[i].FResourceType];
+        end
+        else
+          raise Exception.Create('Ambiguous composite reference "'+name+'"');
+    end;
     inc(i);
   end;
 end;

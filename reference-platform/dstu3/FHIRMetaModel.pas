@@ -37,7 +37,7 @@ uses
   SysUtils, Classes, Variants, Math,
   AdvObjects, AdvGenerics, AdvStreams, AdvBuffers, AdvVclStreams,  AdvMemories,
   MsXml, MsXmlParser, XmlBuilder, AdvXmlBuilders, AdvJson, DateAndTime,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRXHtml;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRUtilities, FHIRSupport, FHIRXHtml;
 
 
 type
@@ -1647,7 +1647,7 @@ var
   npath : String;
   e : TJsonNode;
   arr : TJsonArray;
-  am : TJsonObject;
+  am : TJsonNode;
 begin
   processed.add(name);
   npath := path+'/'+prop.Name;
@@ -2177,7 +2177,7 @@ end;
 
 function TFHIRCustomResource.FhirType: string;
 begin
-  raise Exception.Create('Not done yet: TFHIRCustomResource.FhirType:');
+  result := FRoot.fhirType;
 end;
 
 procedure TFHIRCustomResource.GetChildrenByName(child_name: string; list: TFHIRObjectList);

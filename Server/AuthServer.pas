@@ -23,7 +23,7 @@ Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
 
 type
-  TDoSearchEvent = function (session : TFhirSession; rtype : TFhirResourceType; lang, params : String) : TFHIRBundle of object;
+  TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle of object;
 
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther);
 
@@ -383,7 +383,7 @@ var
   patient : TFhirPatient;
   b : TStringBuilder;
 begin
-  bundle := OnDoSearch(nil, frtPatient, 'en', '_summary=true&__wantObject=true');
+  bundle := OnDoSearch(nil, 'Patient', 'en', '_summary=true&__wantObject=true');
   b := TStringBuilder.create;
   try
     b.Append('<option value=""/>');
@@ -575,7 +575,7 @@ var
 begin
   variables.add('userlevel', '');
   variables.add('userinfo', '');
-  security := TFHIRSecurityRights.create(user, scope, true);
+  security := TFHIRSecurityRights.create(FFhirStore.ValidatorContext.Link, user, scope, true);
   try
     if security.canAdministerUsers then
       variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
@@ -594,12 +594,12 @@ begin
 
     for t := Low(TFHIRResourceType) to High(TFHIRResourceType) do
     begin
-      if security.canRead(t) then
+      if security.canRead(CODES_TFHIRResourceType[t]) then
       begin
         variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
         variables['read'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';
       end;
-      if security.canWrite(t) then
+      if security.canWrite(CODES_TFHIRResourceType[t]) then
       begin
         variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]] := 'checked';
         variables['write'+CODES_TTokenCategory[RESOURCE_CATEGORY[t]]+'disabled'] := '';

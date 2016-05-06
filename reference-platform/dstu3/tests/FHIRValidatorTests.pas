@@ -34,7 +34,7 @@ interface
 
 uses
   AdvObjects, AdvBuffers,
-  FHIRBase, FHIRSupport, FHIRTestWorker, FHIRValidator, FHIRParser,
+  FHIRBase, FHIRContext, FHIRSupport, FHIRTestWorker, FHIRValidator, FHIRParser,
   DUnitX.TestFramework;
 
 type

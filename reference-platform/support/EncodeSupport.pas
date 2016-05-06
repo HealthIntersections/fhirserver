@@ -51,6 +51,7 @@ Function DecodeXML(Const sValue : String) : String; Overload;
 Function EncodeQuotedString(Const sValue : String; Const cQuote : Char) : String; Overload;
 Function EncodeMIME(Const sValue : String) : String; Overload;
 Function DecodeMIME(Const sValue : String) : String; Overload;
+Function DecodeMIMEURL(Const sValue : String) : String;  overload;
 Function SizeOfDecodeHexadecimal(Const aBuffer; iSize : Cardinal) : Cardinal; Overload;
 Function DecodeHexadecimal(Const cHigh, cLow : AnsiChar) : Byte; Overload;
 Procedure DecodeHexadecimal(Const sValue : AnsiString; Var aBuffer; iCount : Integer); Overload;
@@ -621,6 +622,35 @@ Begin
   End;
 End;
 
+Function DecodeMIMEURL(Const sValue : String) : String;  overload;
+Var
+  bytes : TBytes;
+  iStr, iBytes : Integer;
+  cValue : Char;
+Begin
+  Result := sValue;
+  iStr := 1;
+  iBytes := 0;
+
+  SetLength(bytes, sValue.length);
+  While (iStr <= Length(Result)) Do
+  Begin
+    cValue := Result[iStr];
+
+    if cValue = '+' then
+      bytes[iStr] := 32 // ' '
+    else If (iStr <= Length(Result) - 2) and (cValue = '%') Then
+    Begin
+      bytes[iBytes] := DecodeHexadecimal(AnsiChar(Result[iStr + 1]), AnsiChar(Result[iStr + 2]));
+      inc(iStr, 2);
+    End
+    else
+      bytes[iBytes] := ord(cValue);
+    Inc(iStr);
+    Inc(iBytes);
+  End;
+  result := TEncoding.UTF8.GetString(bytes, 0, iBytes);
+End;
 
 Function EncodeNYSIIS(Const sValue : String) : String;
 // NYSIIS Phonetic Encoder

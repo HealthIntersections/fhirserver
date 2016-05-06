@@ -109,12 +109,14 @@ Type
     Class Function Parse(Const oSource : TStream) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TAdvStream) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TAdvBuffer) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const bytes : TBytes) : IXMLDomDocument2; Overload;
     Class Function ParseString(Const sSource : String) : IXMLDomDocument2; Overload;
 
     Class Function Parse(Const sFilename : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TAdvStream; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
     Class Function Parse(Const oSource : TAdvBuffer; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
+    Class Function Parse(Const bytes : TBytes; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
     Class Function ParseString(Const sSource : String; locations : TAdvList<TSourceLocationObject>) : IXMLDomDocument2; Overload;
 
     Class Function GetAttribute(oElement : IXMLDOMElement; Const sName : String) : String; overload;
@@ -546,6 +548,23 @@ begin
   End;
 end;
 
+
+class function TMsXmlParser.Parse(const bytes: TBytes): IXMLDomDocument2;
+begin
+  result := parse(bytes, nil);
+end;
+
+class function TMsXmlParser.Parse(const bytes: TBytes; locations: TAdvList<TSourceLocationObject>): IXMLDomDocument2;
+var
+  b : TBytesStream;
+begin
+  b := TBytesStream.Create(bytes);
+  try
+    result := parse(b, locations);
+  finally
+    b.Free;
+  end;
+end;
 
 { TMsXmlSaxHandler }
 

@@ -34,13 +34,13 @@ This is the dstu3 version of the FHIR code
 {$ENDIF}
 
 
-
+{cr-todo}
 interface
 
 uses
   SysUtils, Classes, IniFiles,
-  AdvObjects,
-  FHIRResources, FHIRConstants,
+  AdvObjects, AdvGenerics,
+  FHIRResources, FHIRConstants, FHIRContext,
   SCIMObjects;
 
 Const
@@ -52,9 +52,6 @@ Const
   SCIM_SMART_PREFIX = 'http://smarthealthit.org/fhir/scopes/';
   SCIM_OPENID_PREFIX = 'http://openid.net/specs/openid-connect-core-1_0#';
 
-var
-  nonSecureTypes : TFhirResourceTypeSet;
-
 type
   TFHIRSecurityRights = class (TAdvObject)
   private
@@ -63,21 +60,23 @@ type
     FUserInfo : boolean;
     FAdministerUsers : boolean;
     FReadAll : boolean;
-    FReadAllowed : array [TFhirResourceType] of boolean;
-    FWriteAllowed : array [TFhirResourceType] of boolean;
+    FReadAllowed : TAdvStringSet;
+    FWriteAllowed : TAdvStringSet;
+    FWorker : TWorkerContext;
 
-    procedure init;
+    function isNonSecure(name : String) : boolean;
+    procedure init(worker : TWorkerContext);
     procedure processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);
   public
 //    constructor create(config : TIniFile); overload;
-    constructor create(user : TSCIMUser; secure : boolean); overload;
-    constructor create(base : TSCIMUser; choice : String; secure : boolean); overload;
-    constructor create(base : TSCIMUser; choice : TStringList; secure : boolean); overload;
+    constructor create(worker : TWorkerContext; user : TSCIMUser; secure : boolean); overload;
+    constructor create(worker : TWorkerContext; base : TSCIMUser; choice : String; secure : boolean); overload;
+    constructor create(worker : TWorkerContext; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
     destructor Destroy; override;
 
     property canGetUserInfo : boolean read FUserInfo;
-    function canRead(aType : TFHIRResourceType) : boolean;
-    function canWrite(aType : TFHIRResourceType) : boolean;
+    function canRead(resourceName : String) : boolean;
+    function canWrite(resourceName : String) : boolean;
     property canReadAll : boolean read FReadAll;
     property canAdministerUsers : boolean read FAdministerUsers;
     procedure allowAll;
@@ -103,13 +102,13 @@ end;
 
 { TFHIRSecurityRights }
 
-constructor TFHIRSecurityRights.create(user: TSCIMUser; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TWorkerContext; user: TSCIMUser; secure : boolean);
 var
   list : TStringList;
   i : integer;
 begin
   inherited Create;
-  init;
+  init(worker);
   list := TStringList.Create;
   try
     for i := 0 to user.entitlementCount - 1 do
@@ -125,14 +124,14 @@ begin
   end;
 end;
 
-constructor TFHIRSecurityRights.create(base: TSCIMUser; choice: String; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TWorkerContext; base: TSCIMUser; choice: String; secure : boolean);
 var
   user : TFHIRSecurityRights;
   list : TStringList;
 begin
   inherited Create;
-  init;
-  user := TFHIRSecurityRights.create(base, secure);
+  init(worker);
+  user := TFHIRSecurityRights.create(FWorker.link, base, secure);
   try
     list := TStringList.Create;
     try
@@ -146,13 +145,13 @@ begin
   end;
 end;
 
-constructor TFHIRSecurityRights.create(base: TSCIMUser; choice: TStringList; secure : boolean);
+constructor TFHIRSecurityRights.create(worker : TWorkerContext; base: TSCIMUser; choice: TStringList; secure : boolean);
 var
   user : TFHIRSecurityRights;
 begin
   inherited Create;
-  init;
-  user := TFHIRSecurityRights.create(base, secure);
+  init(worker);
+  user := TFHIRSecurityRights.create(FWorker.link, base, secure);
   try
     processScopes(choice, user, false);
   finally
@@ -162,23 +161,34 @@ end;
 
 destructor TFHIRSecurityRights.destroy;
 begin
+  FReadAllowed.Free;
+  FWriteAllowed.Free;
+  Fworker.Free;
   inherited;
 end;
 
 var
   GID : integer;
-procedure TFHIRSecurityRights.init;
+procedure TFHIRSecurityRights.init(worker : TWorkerContext);
 var
   a : TFhirResourceType;
 begin
   GId := GId + 1;
   FId := inttostr(GID);
+  FWorker := worker;
 
-  for a := Low(TFhirResourceType) to High(TFhirResourceType) do
-  begin
-    FReadAllowed[a] := false;
-    FWriteAllowed[a] := false;
-  end;
+  FReadAllowed := TAdvStringSet.create;
+  FWriteAllowed := TAdvStringSet.create;
+end;
+
+function TFHIRSecurityRights.isNonSecure(name: String): boolean;
+var
+  s : string;
+begin
+  result := false;
+  for s in FWorker.nonSecureResourceNames do
+    if name = s then
+      exit(true);
 end;
 
 procedure TFHIRSecurityRights.allowAll;
@@ -207,22 +217,22 @@ begin
   result.add(SCIM_SMART_PREFIX+'user/*.*');
 end;
 
-function TFHIRSecurityRights.canRead(aType: TFHIRResourceType): boolean;
+function TFHIRSecurityRights.canRead(resourceName : String): boolean;
 begin
-  result := FReadAllowed[aType];
+  result := FReadAllowed.contains(resourceName);
 end;
 
 
-function TFHIRSecurityRights.canWrite(aType: TFHIRResourceType): boolean;
+function TFHIRSecurityRights.canWrite(resourceName : String): boolean;
 begin
-  result := FWriteAllowed[aType];
+  result := FWriteAllowed.contains(resourceName);
 end;
 
 procedure TFHIRSecurityRights.processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);
 var
-  a : TFhirResourceType;
   s : String;
   writeall : boolean;
+  rn : String;
 begin
   FSource := scopes.CommaText.replace(',', ' ');
   if (scopes.IndexOf('openid') > -1) and (scopes.IndexOf('profile') > -1) and ((base = nil)  or (base.canGetUserInfo)) then
@@ -232,69 +242,67 @@ begin
 
   FReadAll := true;
   writeall := true;
-  for a := Low(TFhirResourceType) to High(TFhirResourceType) do
+  for rn in FWorker.allResourceNames do
   begin
-    if (base <> nil) and not base.canRead(a) then
-      FReadAllowed[a] := false
-    else if not assigned(base) and not (secure or (a in nonSecureTypes)) then
+    if (base <> nil) and not base.canRead(rn) then
+      FReadAllowed.remove(rn)
+    else if not assigned(base) and not (secure or isNonSecure(rn)) then
       // no base, so default system access, which is everything if secure, otherwise the non sure types
-      FReadAllowed[a] := false
+      FReadAllowed.remove(rn)
     else if scopes.IndexOf('user/*.*') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/*.*') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('*.*') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('user/*.read') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/*.read') > -1 then
-      FReadAllowed[a] := true
-    else if scopes.IndexOf('user/'+CODES_TFHIRResourceType[a]+'.*') > -1 then
-      FReadAllowed[a] := true
-    else if scopes.IndexOf('patient/'+CODES_TFHIRResourceType[a]+'.*') > -1 then
-      FReadAllowed[a] := true
-    else if scopes.IndexOf('user/'+CODES_TFHIRResourceType[a]+'.read') > -1 then
-      FReadAllowed[a] := true
-    else if scopes.IndexOf('patient/'+CODES_TFHIRResourceType[a]+'.read') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
+    else if scopes.IndexOf('user/'+rn+'.*') > -1 then
+      FReadAllowed.add(rn)
+    else if scopes.IndexOf('patient/'+rn+'.*') > -1 then
+      FReadAllowed.add(rn)
+    else if scopes.IndexOf('user/'+rn+'.read') > -1 then
+      FReadAllowed.add(rn)
+    else if scopes.IndexOf('patient/'+rn+'.read') > -1 then
+      FReadAllowed.add(rn)
     else
-      FReadAllowed[a] := false;
-    if (a <> frtNull) then
-      FReadAll := FReadAll and FReadAllowed[a];
+      FReadAllowed.remove(rn);
+    FReadAll := FReadAll and FReadAllowed.contains(rn);
 
-    if (base <> nil) and not base.canWrite(a) then
-      FWriteAllowed[a] := false
-    else if not assigned(base) and not (secure or (a in nonSecureTypes)) then
+    if (base <> nil) and not base.canWrite(rn) then
+      FWriteAllowed.remove(rn)
+    else if not assigned(base) and not (secure or isNonSecure(rn)) then
       // no base, so default system access, which is everything if secure, otherwise the non sure types
-      FWriteAllowed[a] := false
+      FWriteAllowed.remove(rn)
     else if scopes.IndexOf('user/*.*') > -1 then
-      FWriteAllowed[a] := true
+      FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/*.*') > -1 then
-      FWriteAllowed[a] := true
+      FWriteAllowed.add(rn)
    else if scopes.IndexOf('*.*') > -1 then
-      FReadAllowed[a] := true
+      FReadAllowed.add(rn)
    else if scopes.IndexOf('user/*.write') > -1 then
-      FWriteAllowed[a] := true
+      FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/*.write') > -1 then
-      FWriteAllowed[a] := true
-    else if scopes.IndexOf('user/'+CODES_TFHIRResourceType[a]+'.*') > -1 then
-      FWriteAllowed[a] := true
-    else if scopes.IndexOf('patient/'+CODES_TFHIRResourceType[a]+'.*') > -1 then
-      FWriteAllowed[a] := true
-    else if scopes.IndexOf('user/'+CODES_TFHIRResourceType[a]+'.write') > -1 then
-      FWriteAllowed[a] := true
-    else if scopes.IndexOf('patient/'+CODES_TFHIRResourceType[a]+'.write') > -1 then
-      FWriteAllowed[a] := true
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('user/'+rn+'.*') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('patient/'+rn+'.*') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('user/'+rn+'.write') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('patient/'+rn+'.write') > -1 then
+      FWriteAllowed.add(rn)
     else
-      FWriteAllowed[a] := false;
-    if (a <> frtNull) then
-      writeall := writeall and FWriteAllowed[a];
+      FWriteAllowed.remove(rn);
+    writeall := writeall and FWriteAllowed.contains(rn);
   end;
 
   if FreadAll then
-    FReadAllowed[frtNull] := true;
+    FReadAllowed.add('');
   if WriteAll then
-    FWriteAllowed[frtNull] := true;
+    FWriteAllowed.add('');
 
   s := '';
   if FUserInfo then
@@ -305,14 +313,13 @@ begin
     s := s +' User/*.*'
   else
   begin
-    for a := Low(TFhirResourceType) to High(TFhirResourceType) do
-      if (a <> frtNull) then
-        if FWriteAllowed[a] and FReadAllowed[a] then
-          s := s +' '+CODES_TFHIRResourceType[a]+'.*'
-        else if FReadAllowed[a] then
-          s := s +' '+CODES_TFHIRResourceType[a]+'.read'
-        else if FWriteAllowed[a] then
-          s := s +' '+CODES_TFHIRResourceType[a]+'.write'
+    for rn in FWorker.allResourceNames do
+      if FWriteAllowed.contains(rn) and FReadAllowed.contains(rn) then
+        s := s +' '+rn+'.*'
+      else if FReadAllowed.contains(rn) then
+        s := s +' '+rn+'.read'
+      else if FWriteAllowed.contains(rn) then
+        s := s +' '+rn+'.write'
   end;
   FSource := s.Trim;
 end;

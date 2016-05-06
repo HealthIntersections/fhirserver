@@ -360,6 +360,8 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRXhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRStructureMapUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRContext.pas"/>
+        <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

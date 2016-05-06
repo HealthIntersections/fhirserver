@@ -1166,14 +1166,14 @@ public class DelphiGenerator {
     Collections.sort(names);
     for (String name : names) {
       SearchParameterDefn sp = params.get(name);
-      b.append("  indexes.add(frt"+r.getName()+", '"+sp.getCode()+"', '"+defCodeType.escape(sp.getDescription())+"', SearchParamType"+getTitle(sp.getType().toString())+", "+
+      b.append("  indexes.add('"+r.getName()+"', '"+sp.getCode()+"', '"+defCodeType.escape(sp.getDescription())+"', SearchParamType"+getTitle(sp.getType().toString())+", "+
           getTarget(sp.getWorkingTargets(), 800)+", '"+defCodeType.escape(sp.getExpression())+"', SearchXpathUsage"+Utilities.capitalize(sp.getxPathUsage().toCode())+");\r\n");
     }
 
     
     for (Compartment c : definitions.getCompartments()) {
       if (c.getResources().containsKey(r) && !c.getResources().get(r).isEmpty()) {
-        b.append("  compartments.register(frt"+r.getName()+", frt"+c.getName()+", [");
+        b.append("  compartments.register(frt"+c.getName()+", '"+r.getName()+"', [");
         boolean first = true;
         for (String s : c.getResources().get(r)) {
           if (first)
@@ -1269,7 +1269,7 @@ public class DelphiGenerator {
 
   private String getTarget(Set<String> targets, int l) throws Exception {
     if ((targets.size() == 1 && targets.contains("Any")) || (targets.size() == definitions.getResources().size()))
-      return "ALL_RESOURCE_TYPES";
+      return "ALL_RESOURCE_TYPE_NAMES";
 
     StringBuilder s = new StringBuilder();
     s.append("[");
@@ -1279,7 +1279,7 @@ public class DelphiGenerator {
       if (definitions.hasResource(p)) {
         if (!first)
           s.append(", ");
-        s.append("frt"+p);
+        s.append("'"+p+"'");
         first = false;
         i = i + p.length()+5;
         if (i > l) {
@@ -3860,6 +3860,14 @@ public class DelphiGenerator {
         con.append(s2+",\r\n     ");
     }
     con.append("frtCustom];\r\n     ");
+
+    con.append("\r\n  ALL_RESOURCE_TYPE_NAMES = [");
+    for (int i = 0; i < types.size(); i++) {
+      String s = types.get(i);
+      String s2 = getTitle(s);
+      con.append("'"+s2+"',\r\n     ");
+    }
+    con.append("'Custom'];\r\n     ");
 
 
     defCodeRes.enumDefs.add(def.toString());

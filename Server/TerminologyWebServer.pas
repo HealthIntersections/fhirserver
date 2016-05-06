@@ -8,7 +8,7 @@ uses
   EncodeSupport, StringSupport,
   AdvObjects, AdvStringMatches,
   IdContext, IdCustomHTTPServer,
-  FHIRLang, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml,
+  FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
   TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 

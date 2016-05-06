@@ -250,12 +250,13 @@ procedure TFHIROperationBaseObject.writeExtensions(params: TFhirParametersParame
 var
   p : TFHIROpExtension;
 begin
-  for p in FExtensions do
-    with params.partList.Append do
-    begin
-      name := p.name;
-      value := p.value.Link;
-    end;
+  if FExtensions <> nil then
+    for p in FExtensions do
+      with params.partList.Append do
+      begin
+        name := p.name;
+        value := p.value.Link;
+      end;
 end;
 
 { TFHIROpExtension }

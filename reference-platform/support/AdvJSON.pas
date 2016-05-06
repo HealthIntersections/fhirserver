@@ -66,11 +66,11 @@ Type
   private
     FArray : TJsonArray;
     cursor : integer;
-    function GetCurrent: TJsonObject;
+    function GetCurrent: TJsonNode;
   public
     Destructor Destroy; Override;
     function MoveNext() : boolean;
-    Property Current : TJsonObject read GetCurrent;
+    Property Current : TJsonNode read GetCurrent;
   end;
 
   TJsonArray = class (TJsonNode)
@@ -2058,9 +2058,9 @@ end;
 
 { TJsonArrayEnumerator }
 
-function TJsonArrayEnumerator.GetCurrent: TJsonObject;
+function TJsonArrayEnumerator.GetCurrent: TJsonNode;
 begin
-  result := FArray.GetObj(cursor);
+  result := FArray.GetItem(cursor);
 end;
 
 destructor TJsonArrayEnumerator.Destroy;
