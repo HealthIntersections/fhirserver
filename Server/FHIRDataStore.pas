@@ -104,7 +104,9 @@ Type
     FOwnerName: String;
     FSubscriptionManager: TSubscriptionManager;
     FQuestionnaireCache: TQuestionnaireCache;
+    {$IFDEF FHIR3}
     FMaps : TAdvMap<TFHIRStructureMap>;
+    {$ENDIF}
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
     FClaimQueue: TFHIRClaimList;
     FValidate: Boolean;
@@ -180,7 +182,9 @@ Type
     function ResourceTypeKeyForName(name: String): integer;
     procedure ProcessSubscriptions;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
+    {$IFDEF FHIR3}
     function getMaps : TAdvMap<TFHIRStructureMap>;
+    {$ENDIF}
     function oid2Uri(oid : String) : String;
 
     Property OwnerName: String read FOwnerName write FOwnerName;
@@ -263,7 +267,9 @@ begin
 
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FClaimQueue := TFHIRClaimList.Create;
+  {$IFDEF FHIR3}
   FMaps := TAdvMap<TFHIRStructureMap>.create;
+  {$ENDIF}
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
 
   FSubscriptionManager := TSubscriptionManager.Create(ValidatorContext.link, FIndexes.Compartments.Link);
@@ -557,7 +563,9 @@ begin
   FTags.free;
   FSubscriptionManager.free;
   FQuestionnaireCache.free;
+  {$IFDEF FHIR3}
   FMaps.Free;
+  {$ENDIF}
   FNamingSystems.Free;
   FClaimQueue.free;
   FLock.free;
@@ -1305,7 +1313,7 @@ begin
   try
     for sd in FValidatorContext.Profiles.ProfilesByURL.Values do
       {$IFDEF FHIR2}
-      if sd.constrainedType = DefinedTypesNull then
+      if sd.constrainedType = '' then
       {$ENDIF}
 
       for ed in sd.snapshot.elementList do
@@ -1603,8 +1611,10 @@ begin
       FQuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
     if resource.ResourceType = frtClaim then
       FClaimQueue.add(resource.Link);
+    {$IFDEF FHIR3}
     if resource.ResourceType = frtStructureMap then
       FMaps.AddOrSetValue(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
+    {$ENDIF}
     if resource.ResourceType = frtNamingSystem then
       FNamingSystems.AddOrSetValue(inttostr(key), TFHIRNamingSystem(resource).Link);
   finally
@@ -1853,6 +1863,7 @@ begin
   end;
 end;
 
+{$IFDEF FHIR3}
 function TFHIRDataStore.getMaps: TAdvMap<TFHIRStructureMap>;
 var
   s : String;
@@ -1866,6 +1877,7 @@ begin
     FLock.Unlock;
   end;
 end;
+{$ENDIF}
 
 function TFHIRDataStore.GetNextKey(keytype: TKeyType; aType: string; var id: string): integer;
 begin

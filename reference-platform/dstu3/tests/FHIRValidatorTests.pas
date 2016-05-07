@@ -201,7 +201,7 @@ begin
           if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
           begin
             inc(ec);
-            s := s + msg.locationList[0].value+': '+ msg.details.text+'. ';
+            s := s + msg.expressionList[0].value+': '+ msg.details.text+'. ';
           end;
         Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
       finally

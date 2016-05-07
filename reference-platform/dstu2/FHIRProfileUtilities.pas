@@ -41,29 +41,13 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvBuffers, ADvMemories,
   AdvObjectLists, AdvNameBuffers,
   AdvFiles, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRContext, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';
   IS_DERIVED = 'derived.fact';
 
 
-type
-  TValidationResult = class (TAdvObject)
-  private
-    FSeverity : TFhirIssueSeverityEnum;
-    FMessage  : String;
-    FDisplay: String;
-  public
-    constructor Create; overload; override;
-    constructor Create(Severity : TFhirIssueSeverityEnum; Message : String); overload; virtual;
-    constructor Create(display : String); overload; virtual;
-    Property Severity : TFhirIssueSeverityEnum read FSeverity write FSeverity;
-    Property Message : String read FMessage write FMessage;
-    Property Display : String read FDisplay write FDisplay;
-    function isOk : boolean;
-
-  end;
 
 Type
   TProfileManager = class (TAdvObject)
@@ -122,35 +106,41 @@ Type
   end;
 
 
-  TWorkerContext = {abstract} class (TAdvObject)
+  TBaseWorkerContext = class abstract (TWorkerContext)
   protected
+    FLock : TCriticalSection;
     FProfiles : TProfileManager;
-    FSources : TAdvNameBufferList;
+    FCustomResources : TAdvMap<TFHIRCustomResourceInformation>;
+    FNonSecureNames : TArray<String>;
+
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(feed: TFHIRBundle);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
-    function link : TWorkerContext; overload;
+    function link : TBaseWorkerContext; overload;
 
+    property Profiles : TProfileManager read FProfiles;
     procedure SeeResource(r : TFhirResource); virtual;
-    function GetSourceByName(name : String) : TAdvNameBuffer;
-    Property Profiles : TProfileManager read FProfiles write SetProfiles;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
     procedure LoadFromFile(filename: string; parser : TFHIRParser); overload;
+    procedure registerCustomResource(cr : TFHIRCustomResourceInformation);
+    procedure setNonSecureTypes(names : Array of String);
+    function hasCustomResourceDefinition(sd : TFHIRStructureDefinition) : boolean;
 
-    function getResourceNames : TAdvStringSet; virtual;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; virtual;
-    function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
-    function supportsSystem(system : string) : boolean; virtual; abstract;
-    function validateCode(system, code, display : String) : TValidationResult; overload; virtual; abstract;
-    function validateCode(system, code, version : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
-    function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
-    function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
-    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;
-    function getStructure(url : String) : TFHIRStructureDefinition; virtual;
+    function getResourceNames : TAdvStringSet; override;
+    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; override;
+    function getStructure(url : String) : TFHIRStructureDefinition; override;
+    function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; override;
+    function getStructure(ns, name : String) : TFHIRStructureDefinition; overload; override;
+    function getCustomResource(name : String) : TFHIRCustomResourceInformation; override;
+    function hasCustomResource(name : String) : boolean; override;
+    function allResourceNames : TArray<String>; override;
+    function nonSecureResourceNames : TArray<String>; override;
+
   end;
 
   TProfileUtilities = class (TAdvObject)
@@ -355,7 +345,7 @@ begin
       begin // one matching element in the differential
         log(cpath+': single match in the differential at '+inttostr(diffCursor));
         template := nil;
-        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> DefinedTypesReference) then
+        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> 'Reference') then
         begin
           p := diffMatches[0].type_List[0].profileList[0].value;
           sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
@@ -364,7 +354,7 @@ begin
             begin
               template := sd.Snapshot.elementList[0].Clone;
               template.Path := currentBase.path;
-              if (diffMatches[0].type_List[0].Code <> DefinedTypesExtension) then
+              if (diffMatches[0].type_List[0].Code <> 'Extension') then
               begin
                 template.min := currentBase.min;
                 template.max := currentBase.max;
@@ -386,9 +376,9 @@ begin
         outcome.name := diffMatches[0].Name;
         outcome.slicing := nil;
         updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
-        if (outcome.path.endsWith('[x]')) and (outcome.type_List.Count = 1 ) and (outcome.type_List[0].code <> DefinedTypesNull) then
+        if (outcome.path.endsWith('[x]')) and (outcome.type_List.Count = 1 ) and (outcome.type_List[0].code <> '') then
           // if the base profile allows multiple types, but the profile only allows one, rename it
-          outcome.path := outcome.path.substring(0, outcome.path.length-3)+ capitalize(CODES_TFhirDefinedTypesEnum[outcome.type_List[0].code]);
+          outcome.path := outcome.path.substring(0, outcome.path.length-3)+ capitalize(outcome.type_List[0].code);
         if (resultPathBase = '') then
           resultPathBase := outcome.path
         else if (not outcome.path.startsWith(resultPathBase)) then
@@ -778,9 +768,9 @@ begin
               begin
                 case ed.type_List.Count of
                   0 : t := '';
-                  1 : t := CODES_TFhirDefinedTypesEnum[ed.type_List[0].code];
+                  1 : t := ed.type_List[0].code;
                 else
-                  t := CODES_TFhirDefinedTypesEnum[ed.type_List[random(ed.type_List.Count)].code];
+                  t := ed.type_List[random(ed.type_List.Count)].code;
                 end;
                 if (t = '') or (t = 'Element') or (t = 'BackboneElement') then
                   value := TFHIRObjectClass(prop.Class_).Create as TFHIRElement
@@ -816,8 +806,8 @@ begin
   if profile.snapshot = nil then
     raise Exception.Create('Unsuitable profile for creating a resource - no snapshot');
 
-  if profile.constrainedType <> DefinedTypesNull then
-    path := CODES_TFhirDefinedTypesEnum[profile.constrainedType]
+  if profile.BaseType <> '' then
+    path := profile.baseType
   else
     path := profile.name;
   estack := TAdvList<TFhirElementDefinition>.create;
@@ -825,7 +815,7 @@ begin
     result := CreateResourceByName(path);
     try
       populate(profile, result, profile.snapshot.elementList[0], estack);
-      if profile.constrainedType <> DefinedTypesNull then
+      if profile.baseType <> '' then
       begin
         if result.meta = nil then
           result.meta := TFhirMeta.Create;
@@ -862,9 +852,9 @@ begin
   if (type_.profileList.Count > 0) then
     result := context.fetchResource(frtStructureDefinition, type_.profileList[0].StringValue) as TFhirStructureDefinition;
   if (result = nil) then
-    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+CODES_TFhirDefinedTypesEnum[type_.code]) as TFhirStructureDefinition;
+    result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
   if (result = nil) then
-    writeln('XX: failed to find profile for type: ' + CODES_TFhirDefinedTypesEnum[type_.code]); // debug GJM
+    writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
 end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
@@ -882,7 +872,7 @@ begin
         first := false
       else
         b.append(', ');
-      b.append(CODES_TFhirDefinedTypesEnum[type_.code]);
+      b.append(type_.code);
       if (type_.profileList.count > 1) then
         b.append('{'+type_.profileList[0].StringValue+'}');
     end;
@@ -918,7 +908,7 @@ begin
     result := true;
     for type_ in types do
     begin
-    t := CODES_TFhirDefinedTypesEnum[type_.code];
+    t := type_.code;
       if (not isDataType(t)) and (t <> 'Reference') and (t <> 'Narrative') and (t <> 'Extension') and (t <> 'ElementDefinition') and not isPrimitive(t) then
         result := false;
     end;
@@ -1406,13 +1396,13 @@ begin
             try
               for td in base.type_List do
               begin
-                b.add(CODES_TFhirDefinedTypesEnum[td.code]);
-                if (td.code= ts.code) or (td.code = DefinedTypesExtension) or (td.code = DefinedTypesElement) or
-                    (((td.code = DefinedTypesResource) or (td.code = DefinedTypesDomainResource)) and isResource(CODES_TFhirDefinedTypesEnum[ts.code])) then
+                b.add(td.code);
+                if (td.code= ts.code) or (td.code = 'Extension') or (td.code = 'Element') or
+                    (((td.code = 'Resource') or (td.code = 'DomainResource')) and isResource(ts.code)) then
                   ok := true;
               end;
               if (not ok) then
-                raise Exception.create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+CODES_TFhirDefinedTypesEnum[ts.code]+' from '+b.CommaText);
+                raise Exception.create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+ts.code+' from '+b.CommaText);
             finally
               b.Free;
             end;
@@ -1474,31 +1464,6 @@ begin
   result := UpperCase(s[1])+s.Substring(1);
 end;
 
-{ TValidationResult }
-
-constructor TValidationResult.Create(Severity: TFhirIssueSeverityEnum; Message: String);
-begin
-  inherited create;
-  FSeverity := Severity;
-  FMessage := Message;
-end;
-
-constructor TValidationResult.Create;
-begin
-  Inherited Create;
-end;
-
-constructor TValidationResult.Create(display: String);
-begin
-  inherited Create;
-  FDisplay := display;
-end;
-
-function TValidationResult.isOk: boolean;
-begin
-  result := not (Severity in [IssueSeverityError, IssueSeverityFatal]);
-end;
-
 
 //{ TExtensionContext }
 //
@@ -1516,23 +1481,51 @@ end;
 //  inherited;
 //end;
 
-{ TWorkerContext }
+{ TBaseWorkerContext }
 
-constructor TWorkerContext.Create;
+function TBaseWorkerContext.allResourceNames: TArray<String>;
+var
+  i : integer;
+  s : string;
+begin
+  FLock.Lock;
+  try
+    SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) + FCustomResources.Count);
+    for i := 0 to length(ALL_RESOURCE_TYPE_NAMES)-1 do
+      result[i] := ALL_RESOURCE_TYPE_NAMES[i];
+    i := length(ALL_RESOURCE_TYPE_NAMES);
+    for s in FCustomResources.Keys do
+    begin
+      result[i] := s;
+      inc(i);
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TBaseWorkerContext.allStructures: TAdvMap<TFHIRStructureDefinition>.TValueCollection;
+begin
+  result := FProfiles.ProfilesByURL.Values;
+end;
+
+constructor TBaseWorkerContext.Create;
 begin
   inherited;
-  FSources := TAdvNameBufferList.create;
+  FLock := TCriticalSection.Create('worker-context');
   FProfiles := TProfileManager.Create;
+  FCustomResources := TAdvMap<TFHIRCustomResourceInformation>.create;
 end;
 
-destructor TWorkerContext.Destroy;
+destructor TBaseWorkerContext.Destroy;
 begin
+  FCustomResources.Free;
   FProfiles.free;
-  FSources.Free;
+  FLock.Free;
   inherited;
 end;
 
-function TWorkerContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
+function TBaseWorkerContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
@@ -1541,12 +1534,22 @@ begin
   end;
 end;
 
-function TWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
+function TBaseWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
   result := FHIRUtilities.getChildMap(profile, element.name, element.path, element.contentReference);
 end;
 
-function TWorkerContext.getResourceNames: TAdvStringSet;
+function TBaseWorkerContext.getCustomResource(name: String): TFHIRCustomResourceInformation;
+begin
+  FLock.Lock;
+  try
+    result := FCustomResources[name].Link;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TBaseWorkerContext.getResourceNames: TAdvStringSet;
 var
   a : TFhirResourceType;
 begin
@@ -1561,22 +1564,59 @@ begin
   end;
 end;
 
-function TWorkerContext.GetSourceByName(name: String): TAdvNameBuffer;
+function TBaseWorkerContext.getStructure(ns, name: String): TFHIRStructureDefinition;
+var
+  sd : TFhirStructureDefinition;
+  sns : String;
 begin
-  result := FSources.GetByName(name);
+  result := nil;
+  for sd in allStructures do
+    if (name = sd.Id) then
+    begin
+      if ((ns = '') or (ns = FHIR_NS)) and not sd.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace') then
+        exit(sd);
+      sns := sd.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-namespace');
+      if (ns = sns) then
+        exit(sd);
+    end;
 end;
 
-function TWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
+function TBaseWorkerContext.hasCustomResource(name: String): boolean;
+begin
+  FLock.Lock;
+  try
+    result := FCustomResources.ContainsKey(name);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TBaseWorkerContext.hasCustomResourceDefinition(sd: TFHIRStructureDefinition): boolean;
+var
+  cr : TFHIRCustomResourceInformation;
+begin
+  FLock.Lock;
+  try
+    result := false;
+    for cr in FCustomResources.Values do
+      if cr.Definition.id = sd.id then
+        exit(true);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TBaseWorkerContext.getStructure(url: String): TFHIRStructureDefinition;
 begin
   result := fetchResource(frtStructureDefinition, url) as TFhirStructureDefinition
 end;
 
-function TWorkerContext.link: TWorkerContext;
+function TBaseWorkerContext.link: TBaseWorkerContext;
 begin
-  result := TWorkerContext(inherited Link);
+  result := TBaseWorkerContext(inherited Link);
 end;
 
-procedure TWorkerContext.LoadFromDefinitions(filename: string);
+procedure TBaseWorkerContext.LoadFromDefinitions(filename: string);
 var
   b : TAdvBuffer;
   m : TAdvMemoryStream;
@@ -1600,7 +1640,7 @@ begin
         for i := 0 to r.Parts.count - 1 do
         begin
           if StringArrayExists(['.xsd', '.xsl', '.xslt', '.sch'], ExtractFileExt(r.Parts[i].Name)) then
-            FSources.add(r.Parts[i].Link)
+            // ignore
           else if ExtractFileExt(r.Parts[i].Name) = '.xml' then
           begin
             mem := TAdvMemoryStream.create;
@@ -1609,11 +1649,14 @@ begin
               vcl := TVCLStream.create;
               try
                 vcl.Stream := mem.link;
-                xml := TFHIRXmlParser.create('en');
+                xml := TFHIRXmlParser.create(self.link, 'en');
                 try
                   xml.source := vcl;
                   xml.Parse;
-                  Load(xml.resource as TFhirBundle);
+                  if xml.resource is TFhirBundle then
+                    Load(xml.resource as TFhirBundle)
+                  else
+                    SeeResource(xml.resource);
                 finally
                   xml.free;
                 end;
@@ -1636,7 +1679,7 @@ begin
   end;
 end;
 
-procedure TWorkerContext.LoadFromFile(filename: string; parser : TFHIRParser);
+procedure TBaseWorkerContext.LoadFromFile(filename: string; parser : TFHIRParser);
 var
   fn : TFileStream;
   be : TFhirBundleEntry;
@@ -1661,16 +1704,18 @@ begin
   end;
 end;
 
-procedure TWorkerContext.LoadFromFile(filename: string);
+procedure TBaseWorkerContext.LoadFromFile(filename: string);
 begin
   filename := LowerCase(filename);
-  if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRJsonParser.create('en'))
+  if ExtractFileExt(filename) = '.zip' then
+    LoadFromDefinitions(filename)
+  else if ExtractFileExt(filename) = '.json' then
+    LoadFromFile(filename, TFHIRJsonParser.create(self.Link, 'en'))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRXmlParser.create('en'))
+    LoadFromFile(filename, TFHIRXmlParser.create(self.Link, 'en'))
 end;
 
-procedure TWorkerContext.LoadFromFolder(folder: string);
+procedure TBaseWorkerContext.LoadFromFolder(folder: string);
 var
   list : TStringList;
   sr : TSearchRec;
@@ -1693,7 +1738,25 @@ begin
   end;
 end;
 
-procedure TWorkerContext.Load(feed: TFHIRBundle);
+function TBaseWorkerContext.nonSecureResourceNames: TArray<String>;
+begin
+  if length(FNonSecureNames) = 0 then
+    result := allResourceNames
+  else
+    result := FNonSecureNames;
+end;
+
+procedure TBaseWorkerContext.registerCustomResource(cr: TFHIRCustomResourceInformation);
+begin
+  FLock.Lock;
+  try
+    FCustomResources.Add(cr.name, cr.Link);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TBaseWorkerContext.Load(feed: TFHIRBundle);
 var
   i : integer;
   r : TFhirResource;
@@ -1706,7 +1769,7 @@ begin
 end;
 
 
-procedure TWorkerContext.SeeResource(r: TFhirResource);
+procedure TBaseWorkerContext.SeeResource(r: TFhirResource);
 var
   p : TFhirStructureDefinition;
   pu : TProfileUtilities;
@@ -1717,11 +1780,11 @@ begin
   if r is TFHirStructureDefinition then
   begin
     p := r as TFHirStructureDefinition;
-    if (p.snapshot = nil) then
+    if (p.snapshot = nil) and (p.baseDefinition <> '') and (p.kind <> StructureDefinitionKindLogical) then
     begin
-      sd := fetchResource(frtStructureDefinition, p.base) as TFhirStructureDefinition;
+      sd := fetchResource(frtStructureDefinition, p.baseDefinition) as TFhirStructureDefinition;
       if sd = nil then
-        raise Exception.Create('Unknown base profile: "'+p.base+'"');
+        raise Exception.Create('Unknown base profile: "'+p.baseDefinition+'"');
       try
         messages := TFhirOperationOutcomeIssueList.create;
         pu := TProfileUtilities.create(self.link, messages.link);
@@ -1742,7 +1805,21 @@ begin
   end;
 end;
 
-procedure TWorkerContext.SetProfiles(const Value: TProfileManager);
+procedure TBaseWorkerContext.setNonSecureTypes(names: array of String);
+var
+  i : integer;
+begin
+  FLock.Lock;
+  try
+    SetLength(FNonSecureNames, length(names));
+    for i := 0 to length(names)-1 do
+      FNonSecureNames[i] := names[i];
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TBaseWorkerContext.SetProfiles(const Value: TProfileManager);
 begin
   FProfiles.Free;
   FProfiles := Value;
@@ -1952,26 +2029,26 @@ begin
   if id.endsWith('/1') then
     id := id.subString(0, id.length-2);
 
-  if (Types.Count = 0) or (Types[0].code = DefinedTypesResource) then
+  if (Types.Count = 0) or (Types[0].code = 'Resource') then
   begin
     path := id;
     profile := FProfile;
   end
   else if Types.Count = 1 then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+CODES_TFhirDefinedTypesEnum[Types[0].code]];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].code];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+CODES_TFhirDefinedTypesEnum[Types[0].code]+' @ '+id);
-    path := CODES_TFhirDefinedTypesEnum[Types[0].code]+id.Substring(statedPath.Length);
+      raise Exception.Create('Unable to find profile for '+Types[0].code+' @ '+id);
+    path := Types[0].code+id.Substring(statedPath.Length);
   end
   else if FType <> nil then
   begin
-    profile := FProfiles['http://hl7.org/fhir/Profile/'+CODES_TFhirDefinedTypesEnum[FType.code]];
+    profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.code];
     if (profile = nil) then
-      raise Exception.Create('Unable to find profile for '+CODES_TFhirDefinedTypesEnum[FType.code]+' @ '+id);
+      raise Exception.Create('Unable to find profile for '+FType.code+' @ '+id);
     if not id.startsWith(statedPath+'._'+FType.tags['type']) then
       raise Exception.Create('Internal logic error');
-    path := CODES_TFhirDefinedTypesEnum[Types[0].code]+id.Substring(statedPath.Length+2+FType.tags['type'].length);
+    path := Types[0].code+id.Substring(statedPath.Length+2+FType.tags['type'].length);
   end
   else
     raise Exception.Create('not handled - multiple types');

@@ -43,7 +43,7 @@ uses
   XmlBuilder, MsXml, MsXmlParser,
 
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
-  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml,
+  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes,
   FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt;
@@ -77,6 +77,7 @@ type
     errors : TAdvList<TFHIRAnnotation>;
     matches : TAdvList<TFHIRAnnotation>;
     errorSorter : TFHIRAnnotationComparer;
+    FWorker : TWorkerContext;
     FValidator : TFHIRValidator;
     FClient : TFHIRClient;
     FConformance : TFHIRConformance;
@@ -552,10 +553,10 @@ begin
 
     OpMessage('Loading', 'Loading Definition Source');
     try
-      FValidator := TFHIRValidator.Create(TFHIRPluginValidatorContext.Create(Settings.TerminologyServer));
-      FValidator.Context.LoadFromDefinitions(Settings.DefinitionsSource);
+      TFHIRPluginValidatorContext(FWorker).LoadFromDefinitions(Settings.DefinitionsSource);
       if Settings.AdditionalDefinitions <> '' then
-        FValidator.Context.LoadFromFolder(Settings.AdditionalDefinitions);
+        TFHIRPluginValidatorContext(FWorker).LoadFromFolder(Settings.AdditionalDefinitions);
+      FValidator := TFHIRValidator.Create(FWorker.link);
     finally
       OpMessage('', '');
     end;
@@ -608,7 +609,7 @@ begin
   loadValidator;
   a := TAboutForm.Create(self);
   try
-    a.Services := FValidator.Context.link;
+    a.Services := FWorker.link;
     a.ShowModal;
   finally
     a.Free;
@@ -629,7 +630,7 @@ begin
     try
       try
         OpMessage('Connecting to Server', 'Connecting to Server '+server.fhirEndpoint);
-        FClient := TFhirClient.Create(server.fhirEndpoint, false);
+        FClient := TFhirClient.Create(FWorker.link, server.fhirEndpoint, false);
         FClient.timeout := 5000;
         ok := true;
         if server.SmartOnFHIR then
@@ -768,9 +769,9 @@ begin
     FuncValidateClear;
     FuncMatchesClear;
     if fmt = ffJson then
-      comp := TFHIRXmlComposer.Create('en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
     else
-      comp := TFHIRJsonComposer.Create('en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
     s := TStringStream.Create('');
     try
       comp.Compose(s, res, true);
@@ -798,7 +799,7 @@ begin
   if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and parse(0, fmt, res) then
   try
     loadValidator;
-    engine := TFHIRExpressionEngine.Create(FValidator.Context.Link);
+    engine := TFHIRExpressionEngine.Create(FWorker.Link);
     try
       expr := engine.parse(FHIRToolbox.mPath.Text);
       try
@@ -845,7 +846,7 @@ begin
       d := res as TFhirDomainResource;
       d.text := nil;
       loadValidator;
-      narr := TFHIRNarrativeGenerator.Create(FValidator.Context.link);
+      narr := TFHIRNarrativeGenerator.Create(FWorker.link);
       try
         narr.generate(d);
       finally
@@ -854,9 +855,9 @@ begin
     end;
 
     if fmt = ffXml then
-      comp := TFHIRXmlComposer.Create('en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
     else
-      comp := TFHIRJsonComposer.Create('en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
     try
       s := TStringStream.Create('');
       try
@@ -880,7 +881,7 @@ begin
   loadValidator;
   ResourceNewForm := TResourceNewForm.Create(self);
   try
-    ResourceNewForm.Context := FValidator.Context.Link;
+    ResourceNewForm.Context := FWorker.Link;
     ResourceNewForm.ShowModal;
   finally
     FreeAndNil(ResourceNewForm);
@@ -903,15 +904,15 @@ begin
     FetchResourceFrm := TFetchResourceFrm.create(self);
   FetchResourceFrm.Conformance := FConformance.link;
   FetchResourceFrm.Client := FClient.link;
-  FetchResourceFrm.Profiles := FValidator.Context.Profiles.Link;
+  FetchResourceFrm.Profiles := TFHIRPluginValidatorContext(FWorker).Profiles.Link;
   if FetchResourceFrm.ShowModal = mrOk then
   begin
     res := FClient.readResource(FetchResourceFrm.SelectedType, FetchResourceFrm.SelectedId);
     try
       if FetchResourceFrm.rbJson.Checked then
-        comp := TFHIRJsonComposer.Create('en')
+        comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
       else
-        comp := TFHIRXmlComposer.Create('en');
+        comp := TFHIRXmlComposer.Create(FWorker.link, 'en');
       try
         s := TStringStream.Create;
         try
@@ -955,7 +956,7 @@ begin
   if (parse(0, fmt, res)) then
   try
     FuncMatchesClear;
-    ok := RunPathDebugger(self, FValidator.Context, res, res, FHIRToolbox.mPath.Text, fmt, types, items);
+    ok := RunPathDebugger(self, FWorker, res, res, FHIRToolbox.mPath.Text, fmt, types, items);
     try
       if ok then
       begin
@@ -1006,9 +1007,9 @@ begin
     FClient.createResource(res, id).Free;
     res.id := id;
     if fmt = ffXml then
-      comp := TFHIRXmlComposer.Create('en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
     else
-      comp := TFHIRJsonComposer.Create('en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
     try
       s := TStringStream.Create('');
       try
@@ -1090,9 +1091,9 @@ begin
         if (MessageDlg('Success. Open transaction response?', mtConfirmation, mbYesNo, 0) = mrYes) then
         begin
           if FClient.Json then
-            comp := TFHIRJsonComposer.Create('en')
+            comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
           else
-            comp := TFHIRXmlComposer.Create('en');
+            comp := TFHIRXmlComposer.Create(FWorker.link, 'en');
           try
             s := TStringStream.Create;
             try
@@ -1140,9 +1141,9 @@ begin
     s := TStringStream.Create(src);
     try
       if fmt = ffXml then
-        prsr := TFHIRXmlParser.Create('en')
+        prsr := TFHIRXmlParser.Create(FWorker.link, 'en')
       else
-        prsr := TFHIRJsonParser.Create('en');
+        prsr := TFHIRJsonParser.Create(FWorker.link, 'en');
       try
         prsr.timeLimit := timeLimit;
         prsr.KeepLineNumbers := true;
@@ -1201,9 +1202,9 @@ var
   comp : TFHIRComposer;
 begin
   if fmt = ffXml then
-    comp := TFHIRXmlComposer.Create('en')
+    comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
   else
-    comp := TFHIRJsonComposer.Create('en');
+    comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
   try
     result := comp.Compose(expr, items, types, true);
   finally
@@ -1254,6 +1255,7 @@ end;
 procedure TFHIRPlugin.DoNppnReady;
 begin
   Settings := TFHIRPluginSettings.create(GetPluginsConfigDir);
+  FWorker := TFHIRPluginValidatorContext.Create(Settings.TerminologyServer);
   if not Settings.NoWelcomeScreen then
     ShowWelcomeScreen(self);
 
@@ -1280,6 +1282,7 @@ begin
     FreeAndNil(FetchResourceFrm);
     FreeAndNil(FHIRToolbox);
     FreeAndNil(FHIRVisualizer);
+    FWorker.Free;
     Settings.Free;
   except
     // just hide it
@@ -1351,7 +1354,7 @@ var
   engine : TFHIRExpressionEngine;
 begin
   loadValidator;
-  engine := TFHIRExpressionEngine.Create(FValidator.Context.Link);
+  engine := TFHIRExpressionEngine.Create(FWorker.Link);
   try
     expr := engine.parse(FHIRToolbox.mPath.Text);
     try

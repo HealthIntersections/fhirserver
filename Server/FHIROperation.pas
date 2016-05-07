@@ -53,8 +53,10 @@ uses
   FHIRBase, FHIRContext, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
-  FHIRStructureMapUtilities, ServerUtilities,
-  ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
+  {$IFDEF FHIR3}
+  FHIRStructureMapUtilities,
+  {$ENDIF}
+  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -537,6 +539,7 @@ type
     function formalURL : String; override;
   end;
 
+  {$IFDEF FHIR3}
   TServerTransformerServices = class (TTransformerServices)
   private
     FRepository : TFHIRDataStore;
@@ -573,6 +576,7 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+  {$ENDIF}
 
 implementation
 
@@ -621,8 +625,10 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.create);
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
+  {$IFDEF FHIR3}
   FOperations.add(TFhirTransformOperation.create);
   FOperations.add(TFhirActivateOperation.create);
+  {$ENDIF}
 end;
 
 
@@ -8227,6 +8233,8 @@ begin
   result := [frtTestScript];
 end;
 
+
+{$IFDEF FHIR3}
 { TFhirTransformOperation }
 
 function TFhirTransformOperation.CreateDefinition(base: String): TFHIROperationDefinition;
@@ -8474,6 +8482,7 @@ function TFhirActivateOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtImplementationGuide];
 end;
+{$ENDIF}
 
 end.
 

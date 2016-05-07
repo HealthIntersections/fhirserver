@@ -47,7 +47,7 @@ Type
     Function Exists : Boolean; Overload; Override;
     Function Active : Boolean; Overload; Override;
 
-    Function Open(Const sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Override;
+    Function Open(Const libName, sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Override;
     Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Cardinal); Override;
     Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Cardinal); Override;
     Procedure Close(oHandle : TAfsHandle); Overload; Override;
@@ -218,7 +218,7 @@ Begin { Function TAfsResourceVolume.Active }
 End;  { Function TAfsResourceVolume.Active }
 
 
-Function TAfsResourceVolume.Open(Const sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle;
+Function TAfsResourceVolume.Open(Const libName, sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle;
 Var
   oFile : TAfsResourceFile;
   hModule, hResource, iResource, hGlobal : Cardinal;
@@ -238,7 +238,7 @@ Begin { Function TAfsResourceVolume.Open }
     Case amMode Of
       amRead, amWrite:
       Begin { amRead }
-        hModule := LoadLibrary(PChar(Name));
+        hModule := LoadLibrary(PChar(libName));
         Try
           hResource := FindResource(hModule, PChar(oFile.Name), oFile.ResourceType);
           If hResource <> 0 Then
@@ -364,8 +364,8 @@ Begin { Procedure TAfsResourceVolume.Rename }
     Error('Rename', StringSupport.StringFormat('Cannot rename to "%s" - target filename already exists', [sDest]))
   Else
   Begin { If }
-    hSource := Open(sSource, amRead, asWrite);
-    hDest := Open(sDest, amCreate, asNone);
+    hSource := Open('', sSource, amRead, asWrite);
+    hDest := Open('', sDest, amCreate, asNone);
     Try
       // Have to call the Write method to update the dirty flag - still,
       // we bypass a buffer copy doing it this way.

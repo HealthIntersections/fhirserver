@@ -117,7 +117,9 @@ uses
   AdvZipUtilities in '..\support\AdvZipUtilities.pas',
   AdvZipDeclarations in '..\support\AdvZipDeclarations.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
-  FHIRXhtml in 'FHIRXhtml.pas';
+  FHIRXhtml in 'FHIRXhtml.pas',
+  InternetFetcher in '..\support\InternetFetcher.pas',
+  FHIRContext in 'FHIRContext.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

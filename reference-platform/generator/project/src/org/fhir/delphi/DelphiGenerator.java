@@ -1947,7 +1947,7 @@ public class DelphiGenerator {
     literalPath = literalPath +"."+e.getName();
     
     String tn = null;
-    if (e.typeCode().equals("code") && e.hasBinding()) {
+    if (e.typeCode().equals("code") && e.hasBinding() && !e.getBinding().getName().equals("FHIRDefinedType")) {
       BindingSpecification cd = e.getBinding();
       if (cd != null && (cd.getBinding() == BindingSpecification.BindingMethod.CodeList)) {
         tn = "TFhir"+enumName(getTitle(getCodeList(cd.getReference()).substring(1)))+"Enum";
@@ -1957,7 +1957,7 @@ public class DelphiGenerator {
         }
         typeNames.put(e,  tn);
       }
-      if (cd != null && (cd.getBinding() == BindingSpecification.BindingMethod.ValueSet)) {
+      if (cd != null && (cd.getBinding() == BindingSpecification.BindingMethod.ValueSet) && !e.getBinding().getName().equals("FHIRDefinedType")) {
         tn = "TFhir"+enumName(getTitle(getCodeList(urlTail(cd.getReference()))))+"Enum";
         if (!enumNames.contains(tn)) {
           enumNames.add(tn);
@@ -3861,7 +3861,7 @@ public class DelphiGenerator {
     }
     con.append("frtCustom];\r\n     ");
 
-    con.append("\r\n  ALL_RESOURCE_TYPE_NAMES = [");
+    con.append("\r\n  ALL_RESOURCE_TYPE_NAMES : Array of String = [");
     for (int i = 0; i < types.size(); i++) {
       String s = types.get(i);
       String s2 = getTitle(s);

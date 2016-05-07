@@ -205,7 +205,7 @@ Type
     Function WebDesc : String;
     function EndPointDesc(secure : boolean) : String;
     procedure GetWebUILink(resource : TFhirResource; base, statedType, id, ver : String; var link, text : String);
-    function loadMultipartForm(const request: TStream; const contentType : String): TMimeMessage;
+    function loadMultipartForm(const request: TStream; const contentType : String; var upload : boolean): TMimeMessage;
     function processProvenanceHeader(header, lang : String) : TFhirProvenance;
     function DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -991,8 +991,7 @@ Begin
 
     if s.StartsWith('multipart/form-data', true) then
     begin
-      form := loadMultipartForm(request.PostStream, request.ContentType);
-      upload := false;
+      form := loadMultipartForm(request.PostStream, request.ContentType, upload);
     end
     else
       form := nil;
@@ -1000,7 +999,6 @@ Begin
       if s.StartsWith('multipart/form-data', true) then
       begin
         oStream := extractFileData(form, 'file', sContentType); // though this might not return the data if we have an operation request
-        upload := false;
       end
       else if request.PostStream <> nil then
       begin
@@ -2606,14 +2604,19 @@ result := result +
 end;
 
 
-function TFhirWebServer.loadMultipartForm(const request : TStream; const contentType : String) : TMimeMessage;
+function TFhirWebServer.loadMultipartForm(const request : TStream; const contentType : String; var upload : boolean) : TMimeMessage;
 var
   m : TMimeMessage;
+  mp : TMimePart;
 begin
   m := TMimeMessage.Create;
   Try
     m.ReadFromStream(request, contentType);
     result := m;
+    upload := false;
+    for mp in m.parts do
+      if SameText(mp.FileName, 'cda.zip') then
+        upload := true;
   Except
     on e:exception do
     begin
@@ -2935,7 +2938,7 @@ begin
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', req.OperationName)
   else
     op.type_ := TFhirCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
-  op.resourceElement := TFhirEnum.Create('', req.ResourceName);
+  op.resourceElement := TFhirCode.Create(req.ResourceName);
   if resp.Format = ffJson then
     op.accept := ContentTypeJson
   else

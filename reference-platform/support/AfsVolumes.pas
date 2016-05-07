@@ -93,7 +93,7 @@ Type
     Function Exists : Boolean; Overload; Virtual; Abstract;
     Function Active : Boolean; Overload; Virtual; Abstract;
 
-    Function Open(Const sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Virtual; Abstract;
+    Function Open(Const libName, sName : String; amMode : TAfsMode; asShare : TAfsShare) : TAfsHandle; Overload; Virtual; Abstract;
     Procedure Read(oHandle : TAfsHandle; Var Buffer; iCount : Cardinal); Virtual; Abstract;
     Procedure Write(oHandle : TAfsHandle; Const Buffer; iCount : Cardinal); Virtual; Abstract;
     Procedure Close(oHandle : TAfsHandle); Overload; Virtual; Abstract;
@@ -404,7 +404,7 @@ Begin { Procedure TAfsEntity.Open }
   Else
   Begin { If }
     FStream.Volume := FVolume.Link;
-    FStream.Handle := FVolume.Open(Name, FMode, FShare);
+    FStream.Handle := FVolume.Open('', Name, FMode, FShare);
 
     If FStream.Handle = 0 Then
       Error('Open', StringFormat('Unable to open ''%s'' in volume ''%s''', [Name, FVolume.Name]));

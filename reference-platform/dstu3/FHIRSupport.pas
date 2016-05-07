@@ -33,9 +33,6 @@ POSSIBILITY OF SUCH DAMAGE.
 This is the dstu3 version of the FHIR code
 {$ENDIF}
 
-// custom resource todo list:
-//  security scopes for custom resources
-//  search restrictions for resources
 
 
 {!Wrapper uses Classes,FHIRBase,FHIRResources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIRTypes}
@@ -835,7 +832,7 @@ begin
   if (Length(id) > ID_LENGTH) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
   for i := 1 to length(id) do
-    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
+    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-', '_']) then
       Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_INVALID', lang), [id, id[i]]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
 end;
 

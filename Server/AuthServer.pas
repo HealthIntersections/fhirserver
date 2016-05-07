@@ -220,7 +220,7 @@ const
     tcOther , // frtSupplyRequest,
     tcOther , // frtTestScript,
     tcOther , // frtValueSet,
-    tcClinical); // frtVisionPrescription);
+    tcClinical, tcOther); // frtVisionPrescription);
   {$ELSE}
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (

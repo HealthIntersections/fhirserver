@@ -45,9 +45,9 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics,
-  MimeMessage, DateAndTime, JWT, SCIMObjects,
-  FHirBase, FHirResources, FHIRConstants, FHIRTypes, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
+  MimeMessage, DateAndTime, JWT, SCIMObjects, MsXml,
+  FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
    HTTP_OK_200 = 200;
@@ -83,10 +83,18 @@ Type
 
   TFHIRCompartmentList = class (TAdvList<TFHIRCompartment>)
   private
+    FPatientCompartment : TAdvMap<TAdvStringSet>;
+    FPractitionerCompartment : TAdvMap<TAdvStringSet>;
+    FEncounterCompartment : TAdvMap<TAdvStringSet>;
+    FRelatedPersonCompartment : TAdvMap<TAdvStringSet>;
+    FDeviceCompartment : TAdvMap<TAdvStringSet>;
   public
+    Constructor Create; override;
+    Destructor Destroy; override;
     Function Link : TFHIRCompartmentList; overload;
-    function existsInCompartment(comp, resource: TFHIRResourceType) : boolean;
-    procedure register(res : TFHIRResourceType; comp: string; indexes : array of String);
+    function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
+    function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String);
   end;
 
 
@@ -102,6 +110,7 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFhirSession = class (TAdvObject)
   private
+    Fworker : TWorkerContext;
     FProvider : TFHIRAuthProvider;
     FId : String;
     FName : String;
@@ -132,7 +141,7 @@ Type
     procedure setScopes(scopes: String);
     procedure SetTestScript(const Value: TFhirTestScript);
   public
-    Constructor Create(secure : boolean);
+    Constructor Create(worker : TWorkerContext; secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
     procedure describe(b : TStringBuilder);
@@ -217,9 +226,9 @@ Type
     Property JWTPacked : string read FJWTPacked write FJWTPacked;
 
     Property useCount : integer read FUseCount write FUseCount;
-    function canRead(aResourceType : TFhirResourceType):boolean;
+    function canRead(resourceName : String):boolean;
     function canReadAll : boolean;
-    function canWrite(aResourceType : TFhirResourceType):boolean;
+    function canWrite(resourceName : String):boolean;
     function canGetUser : boolean;
     function canAdministerUsers : boolean;
     procedure allowAll; // for internal use
@@ -244,11 +253,13 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFHIRRequest = class (TAdvObject)
   Private
+    Fworker: TWorkerContext;
     FCompartmentInformation : TFHIRCompartmentList;
     FId: String;
     FSubId: String;
     FCommandType: TFHIRCommandType;
-    FResourceType: TFhirResourceType;
+    FResourceName : String;
+    FResourceEnum : TFhirResourceType;
     FFormat: TFHIRFormat;
     FResource: TFhirResource;
     FUrl: String;
@@ -276,8 +287,10 @@ Type
     FSummary: TFHIRSummaryOption;
     FOrigin : TFHIRRequestOrigin;
     FSecure : Boolean;
-    FPatch: TJsonArray;
+    FPatchJson: TJsonArray;
+    FPatchXml: IXMLDOMElement;
     FrequestId: String;
+    FCustom : TFHIRCustomResourceInformation;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -286,9 +299,11 @@ Type
     procedure SetProvenance(const Value: TFhirProvenance);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
-    procedure SetPatch(const Value: TJsonArray);
+    procedure SetPatchJson(const Value: TJsonArray);
+    function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
+    procedure SetResourceName(const Value: String);
   Public
-    Constructor Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+    Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
@@ -303,10 +318,11 @@ Type
     Property Session : TFhirSession read FSession write SetSession;
     Property ip : string read FIp write FIp;
     Property form : TMimeMessage read FForm write SetForm;
-    function canRead(aResourceType : TFhirResourceType):boolean;
-    function canWrite(aResourceType : TFhirResourceType):boolean;
+    function canRead(resourceName : String):boolean;
+    function canWrite(resourceName : String):boolean;
     function canGetUser : boolean;
     procedure reset;
+    property Context : TWorkerContext read FWorker;
 
     // main rest function. Set the following things before calling this:
     // form
@@ -346,7 +362,8 @@ Type
 
       frtNull if this is a bundle
     }
-    Property ResourceType : TFhirResourceType Read FResourceType write FResourceType;
+    Property ResourceName : String Read FResourceName write SetResourceName;
+    Property ResourceEnum : TFHIRResourceType Read FResourceEnum;
 
     {@member CommandType
       The command (http transaction). This can be changed, though it is unusual to
@@ -385,7 +402,8 @@ Type
     }
     Property Resource : TFhirResource read FResource write SetResource;
 
-    Property patch : TJsonArray read FPatch write SetPatch;
+    Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
+    Property patchXml : IXMLDOMElement read FPatchXml write FPatchXml;
     {@member Tags
       Tags on the request - if it's a resource directly
     }
@@ -608,8 +626,10 @@ Type
   TFHIRFactory = class (TFhirResourceFactory)
   private
     FLang : String;
+    FWorker: TWorkerContext;
   public
-    Constructor Create(lang : String);
+    Constructor Create(worker: TWorkerContext; lang : String);
+    Destructor Destroy; override;
     {@member makeAttachmentFromFile
       make a new Attachment, and load the contents from the file. The mime type will be filled out based on the systems interpretation of the file extension
     }
@@ -811,7 +831,7 @@ begin
   if (Length(id) > ID_LENGTH) then
     Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
   for i := 1 to length(id) do
-    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-']) then
+    if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-', '_']) then
       Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_INVALID', lang), [id, id[i]]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
 end;
 
@@ -920,9 +940,11 @@ begin
   end
   else
   begin
-    if (sType <> '') And not RecogniseFHIRResourceManagerName(sType, aResourceType) Then
+    if (sType <> '') then
+      if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
       Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sType]), HTTP_ERR_NOTFOUND, IssueTypeNotSupported);
-    ResourceType := aResourceType;
+    ResourceName := sType;
+    FResourceEnum := aResourceType;
     sId := NextSegment(sURL);
     if sId = '' then
     begin
@@ -1020,25 +1042,24 @@ begin
       end
       else if sId = '*' then // all tpes
       begin
-        if ResourceType <> frtPatient then
+        if ResourceName <> 'Patient' then
           raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
 
         CompartmentId := Id;
         CommandType := fcmdSearch;
-        ResourceType := frtNull;
+        ResourceName := '';
         Id := '';
       end
-      else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) then
+      else if StringArrayExistsInSensitive(CODES_TFhirResourceType, sId) or FWorker.hasCustomResource(sId) then
       begin
-        aResourceType := TFHIRResourceType(StringArrayIndexOfInSensitive(CODES_TFhirResourceType, sId));
-        if FCompartmentInformation.existsInCompartment(ResourceType, aResourceType) then
+        if FCompartmentInformation.existsInCompartment(ResourceEnum, sId) then
         begin
-          if ResourceType <> frtPatient then
+          if ResourceName <> 'Patient' then
             raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
 
           CompartmentId := Id;
           CommandType := fcmdSearch;
-          ResourceType := aResourceType;
+          ResourceName := sId;
           Id := '';
         end
         else
@@ -1089,20 +1110,20 @@ begin
     result := session.canGetUser;
 end;
 
-function TFHIRRequest.canRead(aResourceType: TFhirResourceType): boolean;
+function TFHIRRequest.canRead(resourceName : String): boolean;
 begin
   if session = nil then
     result := true
   else
-    result := session.canRead(aResourceType);
+    result := session.canRead(resourceName);
 end;
 
-function TFHIRRequest.canWrite(aResourceType: TFhirResourceType): boolean;
+function TFHIRRequest.canWrite(resourceName : String): boolean;
 begin
   if session = nil then
     result := true
   else
-    result := session.canWrite(aResourceType);
+    result := session.canWrite(resourceName);
 end;
 
 function TFHIRRequest.Compose: String;
@@ -1112,7 +1133,7 @@ var
 begin
   stream := TStringStream.Create('');
   try
-    comp := TFHIRXmlComposer.create(lang);
+    comp := TFHIRXmlComposer.create(Fworker.link, lang);
     try
       comp.Compose(stream, resource, true, nil);
     finally
@@ -1138,9 +1159,10 @@ begin
   FSource.AsBytes := b;
 end;
 
-constructor TFHIRRequest.Create(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+constructor TFHIRRequest.Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
 begin
   inherited Create;
+  FWorker := worker;
   FTags := TFHIRTagList.create;
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
@@ -1149,7 +1171,9 @@ end;
 destructor TFHIRRequest.Destroy;
 begin
   FCompartmentInformation.free;
-  FPatch.Free;
+  FCustom.Free;
+  FWorker.Free;
+  FPatchJson.Free;
   FTags.free;
   FSession.Free;
   FSource.Free;
@@ -1204,7 +1228,7 @@ end;
 
 function TFHIRRequest.LogSummary: String;
 begin
-  result := CODES_TFHIRCommandType[CommandType]+'\('+CODES_TFHIRFormat[PostFormat]+')'+CODES_TFhirResourceType[ResourceType]+'\'+Id;
+  result := CODES_TFHIRCommandType[CommandType]+'\('+CODES_TFHIRFormat[PostFormat]+')'+ResourceName+'\'+Id;
   if SubId <> '' then
     result := result + '\'+SubId;
 end;
@@ -1226,12 +1250,21 @@ begin
     Summary := soFull;
 end;
 
+function TFHIRRequest.RecogniseCustomResource(stype: String; var resourceType: TFhirResourceType): boolean;
+begin
+  FCustom := Fworker.getCustomResource(stype);
+  result := FCustom <> nil;
+  if result then
+    resourceType := frtCustom;
+end;
+
 procedure TFHIRRequest.reset;
 begin
   FId := '';
   FSubId := '';
   FCommandType := fcmdUnknown;
-  FResourceType := frtNull;
+  FResourceEnum := frtNull;
+  FResourceName := '';
   FResource := nil;
   FUrl := '';
   FParams.Free;
@@ -1259,10 +1292,10 @@ begin
   FForm := Value;
 end;
 
-procedure TFHIRRequest.SetPatch(const Value: TJsonArray);
+procedure TFHIRRequest.SetPatchJson(const Value: TJsonArray);
 begin
-  FPatch.Free;
-  FPatch := Value;
+  FPatchJson.Free;
+  FPatchJson := Value;
 end;
 
 procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenance);
@@ -1275,6 +1308,17 @@ procedure TFHIRRequest.SetResource(const Value: TFhirResource);
 begin
   FResource.Free;
   FResource := Value;
+end;
+
+procedure TFHIRRequest.SetResourceName(const Value: String);
+begin
+  FResourceName := Value;
+  if (value = '') then
+    FResourceEnum := frtNull
+  else if StringArrayExistsInSensitive(CODES_TFhirResourceType, Value) then
+    FResourceEnum := TFhirResourceType(StringArrayIndexOfSensitive(CODES_TFhirResourceType, Value))
+  else
+    FResourceEnum := frtCustom;
 end;
 
 procedure TFHIRRequest.SetSession(const Value: TFhirSession);
@@ -1301,7 +1345,7 @@ begin
   addValue('Command', CODES_TFHIRCommandType[CommandType], true);
   addValue('Url', FUrl, true);
   addValue('format', CODES_TFHIRFormat[PostFormat], true);
-  addValue('type', CODES_TFhirResourceType[ResourceType], ResourceType <> frtNull);
+  addValue('type', ResourceName, ResourceEnum <> frtNull);
   addValue('id', FId, true);
   addValue('subId', FSubId, FSubId <> '');
   addValue('baseUrl', FBaseUrl, FBaseUrl <> '');
@@ -1447,6 +1491,12 @@ begin
   finally
     result.free;
   end;
+end;
+
+destructor TFHIRFactory.Destroy;
+begin
+  FWorker.free;
+  inherited;
 end;
 
 function TFHIRFactory.makeAddress(use, street, city, state, postalCode, country : String): TFhirAddress;
@@ -1629,10 +1679,11 @@ begin
     result := '';
 end;
 
-constructor TFHIRFactory.Create(lang: String);
+constructor TFHIRFactory.Create(worker: TWorkerContext; lang: String);
 begin
   Inherited Create;
   FLang := lang;
+  FWorker := worker;
 end;
 
 
@@ -1649,7 +1700,7 @@ end;
 
 function TFHIRFactory.makeRequest(origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList): TFhirRequest;
 begin
-  result := TFhirRequest.create(origin, compartmentInformation);
+  result := TFhirRequest.create(FWorker.link, origin, compartmentInformation);
 end;
 
 function TFHIRFactory.makeSuccessfulOperation: TFhirOperationOutcome;
@@ -1719,9 +1770,9 @@ begin
   result := FSecurity.canGetUserInfo;
 end;
 
-function TFhirSession.canRead(aResourceType: TFhirResourceType): boolean;
+function TFhirSession.canRead(resourceName : String): boolean;
 begin
-  result := FSecurity.canRead(aResourceType);
+  result := FSecurity.canRead(resourceName);
 end;
 
 function TFhirSession.canReadAll: boolean;
@@ -1729,14 +1780,15 @@ begin
   result := FSecurity.canReadAll;
 end;
 
-function TFhirSession.canWrite(aResourceType: TFhirResourceType): boolean;
+function TFhirSession.canWrite(resourceName : String): boolean;
 begin
-  result := FSecurity.canWrite(aResourceType);
+  result := FSecurity.canWrite(resourceName);
 end;
 
-constructor TFhirSession.Create(secure : boolean);
+constructor TFhirSession.Create(worker : TWorkerContext; secure : boolean);
 begin
   inherited Create;
+  FWOrker := worker;
   FSecure := secure;
   FFirstCreated := now;
   FTaggedCompartments := TStringList.create;
@@ -1802,6 +1854,7 @@ begin
   FTaggedCompartments.Free;
   FPatientList.Free;
   FUser.Free;
+  FWOrker.Free;
   inherited;
 end;
 
@@ -1824,7 +1877,7 @@ end;
 
 procedure TFhirSession.setScopes(scopes: String);
 begin
-  FSecurity := TFHIRSecurityRights.create(FUser, scopes, FSecure);
+  FSecurity := TFHIRSecurityRights.create(FWorker.Link, FUser, scopes, FSecure);
 end;
 
 procedure TFhirSession.SetTestScript(const Value: TFhirTestScript);
@@ -1842,9 +1895,50 @@ end;
 
 { TFHIRCompartmentList }
 
-function TFHIRCompartmentList.existsInCompartment(comp, resource: TFHIRResourceType): boolean;
+constructor TFHIRCompartmentList.Create;
 begin
+  inherited;
+  FPatientCompartment := TAdvMap<TAdvStringSet>.create;
+  FPractitionerCompartment := TAdvMap<TAdvStringSet>.create;
+  FEncounterCompartment := TAdvMap<TAdvStringSet>.create;
+  FRelatedPersonCompartment := TAdvMap<TAdvStringSet>.create;
+  FDeviceCompartment := TAdvMap<TAdvStringSet>.create;
+end;
+
+destructor TFHIRCompartmentList.Destroy;
+begin
+  FPatientCompartment.free;
+  FPractitionerCompartment.free;
+  FEncounterCompartment.free;
+  FRelatedPersonCompartment.free;
+  FDeviceCompartment.free;
+  inherited;
+end;
+
+function TFHIRCompartmentList.existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
+begin
+  case comp of
+    frtPatient : result := FPatientCompartment.containsKey(resource);
+    frtPractitioner : result := FPractitionerCompartment.ContainsKey(resource);
+    frtEncounter : result := FEncounterCompartment.containsKey(resource);
+    frtRelatedPerson : result := FRelatedPersonCompartment.containsKey(resource);
+    frtDevice : result := FDeviceCompartment.containsKey(resource);
+  else
   result := false
+end;
+end;
+
+function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+begin
+  case comp of
+    frtPatient : result := FPatientCompartment[resource];
+    frtPractitioner : result := FPractitionerCompartment[resource];
+    frtEncounter : result := FEncounterCompartment[resource];
+    frtRelatedPerson : result := FRelatedPersonCompartment[resource];
+    frtDevice : result := FDeviceCompartment[resource];
+  else
+    result := nil
+  end;
 end;
 
 function TFHIRCompartmentList.Link: TFHIRCompartmentList;
@@ -1852,9 +1946,17 @@ begin
   result := TFHIRCompartmentList(inherited link);
 end;
 
-procedure TFHIRCompartmentList.register(res : TFHIRResourceType; comp: string; indexes: array of String);
+procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
 begin
-
+  case comp of
+    frtPatient : FPatientCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtPractitioner : FPractitionerCompartment.Add(resource, TAdvStringSet.create(indexes));
+    frtEncounter : FEncounterCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtDevice : FDeviceCompartment.add(resource, TAdvStringSet.create(indexes));
+  else
+    raise Exception.Create('Unknown compartment');
+  end;
 end;
 
 end.

@@ -47,6 +47,7 @@ type
     property TransferEncoding : String read GetTransferEncoding write SetTransferEncoding;
 
     function ParamName : String;
+    function FileName : String;
   end;
 
   TMimeMessage = class (TMimeBase)
@@ -195,6 +196,22 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TMimePart.destroy';
 begin
   FContent.Free;
   inherited;
+end;
+
+function TMimePart.FileName: String;
+var
+  s : String;
+begin
+  s := Headers.Values['Content-Disposition'];
+  StringSplit(s, ';', s, result);
+  if (s = 'form-data') and result.Contains('filename="') then
+  begin
+    result := result.Substring(result.IndexOf('filename="')+10);
+    result := copy(result, 1, pos('"', result)-1);
+  end
+  else
+    result := '';
+
 end;
 
 procedure TMimePart.DecodeContent;

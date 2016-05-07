@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, ShellApi,
-  FHIRProfileUtilities;
+  FHIRProfileUtilities, FHIRContext;
 
 type
   TAboutForm = class(TNppForm)

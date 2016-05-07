@@ -46,7 +46,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser,
-  FHIRProfileUtilities,
+  FHIRContext,
   FHIRPath, FHIRTestWorker,
   DUnitX.TestFramework;
 
@@ -288,7 +288,7 @@ var
 begin
   f := TFileStream.Create(name, fmOpenRead + fmShareDenyWrite);
   try
-    json := TFHIRJsonParser.Create('en');
+    json := TFHIRJsonParser.Create(nil, 'en');
     try
       json.source := f;
       json.Parse;
@@ -583,6 +583,10 @@ begin
   testBoolean(patient(), 'Patient.name.given.count() = 3', true);
   testBoolean(patient(), 'Patient.name.given.count() > -3', true);
   testBoolean(patient(), 'Patient.name.given.count() != 0', true);
+  testBoolean(patient(), '1 < 2', true);
+  testBoolean(patient(), '1 < -2', false);
+  testBoolean(patient(), '+1 < +2', true);
+  testBoolean(patient(), '-1 < 2', true);
 end;
 
 procedure TFHIRPathTests.testLiteralDecimal();

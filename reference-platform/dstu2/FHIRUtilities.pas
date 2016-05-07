@@ -38,11 +38,11 @@ interface
 uses
   SysUtils, Classes, Soap.EncdDecd,
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
-  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories,
+  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
 
-  MimeMessage, TextUtilities, ZLib,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
+  FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
 Type
   ETooCostly = class (Exception);
@@ -63,9 +63,9 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
-function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeParser(lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(lang : string; mimetype : String) : TFHIRComposer;
+function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeComposer(lang : string; mimetype : String; worker : TWorkerContext) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
@@ -80,9 +80,9 @@ function isAbsoluteUrl(s: String): boolean;
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource;
-function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
-function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
-function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadFromFormParam(worker : TWorkerContext; part : TMimePart; lang : String) : TFhirResource;
+function LoadDTFromFormParam(worker : TWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 
 function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
@@ -104,6 +104,21 @@ function asUTCMin(value : TFhirTiming) : TDateTime; overload;
 function asUTCMax(value : TFhirTiming) : TDateTime; overload;
 
 function asCode(obj : TFHIRObject) : TFHIRCode;
+function asString(obj : TFHIRObject) : TFHIRString;
+function asId(obj : TFHIRObject) : TFHIRId;
+function asUri(obj : TFHIRObject) : TFHIRUri;
+function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
+function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
+function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
+function asInstant(obj : TFHIRObject) : TFHIRInstant;
+function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
+function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
+function asDate(obj : TFHIRObject) : TFHIRDate;
+function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
+function asTime(obj : TFHIRObject) : TFHIRTime;
+function asOid(obj : TFHIRObject) : TFHIROid;
+function asInteger(obj : TFHIRObject) : TFHIRInteger;
+
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
 function HasExtension(element : TFhirElement; url : string):Boolean;
@@ -111,9 +126,12 @@ function GetExtension(element : TFhirElement; url : string) : TFhirExtension;
 
 procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
-function ComposeJson(r : TFhirResource) : String; overload;
+function ComposeJson(worker: TWorkerContext; r : TFhirResource) : String; overload;
 
+function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
+
+function CustomResourceNameIsOk(name : String) : boolean;
 
 type
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
@@ -170,7 +188,7 @@ type
   TFhirStructureDefinitionHelper = class helper for TFhirStructureDefinition
   public
     function baseDefinition : String;
-    function baseType : TFhirDefinedTypesEnum;
+    function baseType : String;
   end;
 
   TFHIRResourceHelper = class helper for TFHIRResource
@@ -419,6 +437,11 @@ type
   TFhirCodeSystemConcept = TFhirValueSetCodeSystemConcept;
   TFhirCodeSystemConceptList = TFhirValueSetCodeSystemConceptList;
   TFhirCodeSystemConceptDesignation = TFhirValueSetCodeSystemConceptDesignation;
+  TFHIRNamingSystemHelper = class helper for TFHIRNamingSystem
+  public
+    function hasOid(oid : String) : boolean;
+    function getUri : String;
+  end;
 
 const
   frtCodeSystem = frtValueSet;
@@ -454,7 +477,8 @@ function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boole
 implementation
 
 uses
-  JclDebug;
+  JclDebug,
+  FHIRMetaModel;
 
 function dumpStack : String;
 var
@@ -509,26 +533,28 @@ begin
 
 end;
 
-function MakeParser(lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 var
   mem : TBytesStream;
 begin
   mem := TBytesStream.Create(content);
   try
-    result := MakeParser(lang, aformat, mem, policy);
+    result := MakeParser(oWorker, lang, aformat, mem, policy);
   finally
     mem.Free;
   end;
 end;
 
-function MakeParser(lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat = ffJSON Then
-    result := TFHIRJsonParser.Create(lang)
+    result := TFHIRJsonParser.Create(oWorker.Link, lang)
   else if aFormat = ffXhtml then
-    result := DetectFormat(oContent).create(lang)
+    result := DetectFormat(oContent).create(oWorker.Link, lang)
+  else if aFormat = ffText then
+    result := TFHIRTextParser.create(oWorker.Link, lang)
   else
-    result := TFHIRXmlParser.Create(lang);
+    result := TFHIRXmlParser.Create(oWorker.Link, lang);
   try
     result.source := oContent;
     result.ParserPolicy := policy;
@@ -539,14 +565,14 @@ begin
   end;
 end;
 
-function MakeComposer(lang : string; mimetype : String) : TFHIRComposer;
+function MakeComposer(lang : string; mimetype : String; worker : TWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRXmlComposer.Create(lang)
+    result := TFHIRXmlComposer.Create(worker.link, lang)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'xml') then
-    result := TFHIRJsonComposer.Create(lang)
+    result := TFHIRJsonComposer.Create(worker.link, lang)
   else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
-    result := TFHIRXhtmlComposer.Create(lang)
+    result := TFHIRXhtmlComposer.Create(worker.link, lang)
   else
     raise Exception.Create('Format '+mimetype+' not recognised');
 end;
@@ -623,7 +649,7 @@ begin
   result := length(s) in [1..ID_LENGTH];
   if result then
     for i := 1 to length(s) do
-      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.']);
+      result := result and CharInset(s[i], ['0'..'9', 'a'..'z', 'A'..'Z', '-', '.', '_']);
 end;
 
 procedure iterateReferences(path : String; node : TFHIRObject; list : TFhirReferenceList);
@@ -1314,7 +1340,7 @@ begin
   end;
 end;
 
-function LoadDTFromFormParam(part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromFormParam(worker : TWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1328,13 +1354,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRJsonParser.Create(lang)
+        parser := TFHIRJsonParser.Create(worker.link, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRXMLParser.Create(lang);
+        parser := TFHIRXMLParser.Create(worker.link, lang);
     end;
     if parser = nil then
-      parser := DetectFormat(part.content).Create(lang);
+      parser := DetectFormat(part.content).Create(worker.link, lang);
     mem := TAdvMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1355,12 +1381,12 @@ begin
   end;
 end;
 
-function LoadDTFromParam(value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
+function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 var
   parser : TFHIRParser;
   mem : TStringStream;
 begin
-  parser := TFHIRJsonParser.Create(lang);
+  parser := TFHIRJsonParser.Create(worker.link, lang);
   try
     // first, figure out the format
     mem := TStringStream.Create(value, TEncoding.UTF8);
@@ -1375,7 +1401,7 @@ begin
   end;
 end;
 
-function LoadFromFormParam(part : TMimePart; lang : String) : TFhirResource;
+function LoadFromFormParam(worker : TWorkerContext; part : TMimePart; lang : String) : TFhirResource;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1389,13 +1415,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRJsonParser.Create(lang)
+        parser := TFHIRJsonParser.Create(worker.link, lang)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRXMLParser.Create(lang);
+        parser := TFHIRXMLParser.Create(worker.link, lang);
     end;
     if parser = nil then
-      parser := DetectFormat(part.content).Create(lang);
+      parser := DetectFormat(part.content).Create(worker.link, Lang);
     mem := TAdvMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1416,6 +1442,41 @@ begin
   end;
 end;
 
+function CustomResourceNameIsOk(name : String) : boolean;
+var
+  fetcher : TInternetFetcher;
+  json : TJsonObject;
+  stream : TFileStream;
+  n : TJsonNode;
+begin
+  result := false;
+  fetcher := TInternetFetcher.create;
+  try
+    fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
+    fetcher.Fetch;
+//    fetcher.Buffer.SaveToFileName('c:\temp\test.json');
+    stream := TFileStream.Create('c:\temp\test.json', fmOpenRead + fmShareDenyWrite);
+    try
+//      fetcher.Buffer.SaveToStream(stream);
+//      stream.Position := 0;
+      json := TJSONParser.Parse(stream);
+      try
+        for n in json.arr['prefixes'] do
+          if name.StartsWith(TJsonString(n).value) then
+            exit(true);
+        for n in json.arr['names'] do
+          if name = TJsonString(n).value then
+            exit(true);
+      finally
+        json.Free;
+      end;
+    finally
+      stream.Free;
+    end;
+  finally
+    fetcher.Free;
+  end;
+end;
 
 (*
 
@@ -1561,6 +1622,23 @@ end;
 Function removeCaseAndAccents(s : String) : String;
 begin
   result := lowercase(s);
+end;
+
+function getConformanceResourceUrl(res : TFHIRResource) : string;
+begin
+  case res.ResourceType of
+    frtConceptMap: result := TFHIRConceptMap(res).url;
+    frtConformance: result := TFHIRConformance(res).url;
+    frtDataElement: result := TFHIRDataElement(res).url;
+    frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
+    frtOperationDefinition: result := TFHIROperationDefinition(res).url;
+    frtSearchParameter: result := TFHIRSearchParameter(res).url;
+    frtStructureDefinition: result := TFHIRStructureDefinition(res).url;
+    frtTestScript: result := TFHIRTestScript(res).url;
+    frtValueSet: result := TFHIRValueSet(res).url;
+  else
+    result := '';
+  end;
 end;
 
 { TFHIROperationOutcomeHelper }
@@ -3254,12 +3332,242 @@ begin
     result := TFHIRCode.create(TFHIREnum(obj).value);
     obj.Free;
   end
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRCode.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
   else
   begin
     obj.Free;
     raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
 end;
+
+function asString(obj : TFHIRObject) : TFHIRString;
+begin
+  if obj is TFHIRString then
+    result := obj as TFHIRString
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRString.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRString\"')
+  end;
+end;
+
+function asId(obj : TFHIRObject) : TFHIRId;
+begin
+  if obj is TFHIRId then
+    result := obj as TFHIRId
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRId.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRId\"')
+  end;
+end;
+
+function asUri(obj : TFHIRObject) : TFHIRUri;
+begin
+  if obj is TFHIRUri then
+    result := obj as TFHIRUri
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUri.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUri\"')
+  end;
+end;
+
+function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
+begin
+  if obj is TFHIRDateTime then
+    result := obj as TFHIRDateTime
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDateTime.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDateTime\"')
+  end;
+end;
+
+function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
+begin
+  if obj is TFHIRUnsignedInt then
+    result := obj as TFHIRUnsignedInt
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUnsignedInt\"')
+  end;
+end;
+
+function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
+begin
+  if obj is TFHIRPositiveInt then
+    result := obj as TFHIRPositiveInt
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRPositiveInt\"')
+  end;
+end;
+
+function asInstant(obj : TFHIRObject) : TFHIRInstant;
+begin
+  if obj is TFHIRInstant then
+    result := obj as TFHIRInstant
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInstant.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInstant\"')
+  end;
+end;
+
+function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
+begin
+  if obj is TFHIRBoolean then
+    result := obj as TFHIRBoolean
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBoolean\"')
+  end;
+end;
+
+function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
+begin
+  if obj is TFHIRBase64Binary then
+    result := obj as TFHIRBase64Binary
+//  else if obj is TFHIRMMElement then
+//  begin
+//    result := TFHIRBase64Binary.create(TFHIRMMElement(obj).value);
+//    obj.Free;
+//  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBase64Binary\"')
+  end;
+end;
+
+function asDate(obj : TFHIRObject) : TFHIRDate;
+begin
+  if obj is TFHIRDate then
+    result := obj as TFHIRDate
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDate.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDate\"')
+  end;
+end;
+
+function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
+begin
+  if obj is TFHIRDecimal then
+    result := obj as TFHIRDecimal
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDecimal\"')
+  end;
+end;
+
+function asTime(obj : TFHIRObject) : TFHIRTime;
+begin
+  if obj is TFHIRTime then
+    result := obj as TFHIRTime
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRTime.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRTime\"')
+  end;
+end;
+
+function asOid(obj : TFHIRObject) : TFHIROid;
+begin
+  if obj is TFHIROid then
+    result := obj as TFHIROid
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIROid.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIROid\"')
+  end;
+end;
+
+function asInteger(obj : TFHIRObject) : TFHIRInteger;
+begin
+  if obj is TFHIRInteger then
+    result := obj as TFHIRInteger
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInteger.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInteger\"')
+  end;
+end;
+
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
@@ -3277,11 +3585,11 @@ begin
   end;
 end;
 
-function ComposeJson(r : TFhirResource) : String;
+function ComposeJson(worker: TWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRJsonComposer;
 begin
-  comp := TFHIRJsonComposer.Create('en');
+  comp := TFHIRJsonComposer.Create(worker.link, 'en');
   try
     result := comp.Compose(r, false);
   finally
@@ -3322,7 +3630,7 @@ var
 begin
   result := false;
   for edt in type_List do
-    if CODES_TFhirDefinedTypesEnum[edt.code] = t then
+    if edt.code = t then
       exit(true);
 end;
 
@@ -3332,7 +3640,7 @@ var
 begin
   result := false;
   for edt in type_List do
-    if SameText(CODES_TFhirDefinedTypesEnum[edt.code], t) then
+    if SameText(edt.code, t) then
     begin
       if edt.profileList.Count > 0 then
         profile := edt.profileList[0].value
@@ -3576,9 +3884,31 @@ begin
   result := base;
 end;
 
-function TFhirStructureDefinitionHelper.baseType: TFhirDefinedTypesEnum;
+function TFhirStructureDefinitionHelper.baseType: String ;
 begin
   result := constrainedType;
+end;
+
+{ TFHIRNamingSystemHelper }
+
+function TFHIRNamingSystemHelper.getUri: String;
+var
+  id : TFhirNamingSystemUniqueId;
+begin
+  result := '';
+  for id in uniqueIdList do
+    if (id.type_ = NamingsystemIdentifierTypeUri) then
+      exit(id.value);
+end;
+
+function TFHIRNamingSystemHelper.hasOid(oid: String): boolean;
+var
+  id : TFhirNamingSystemUniqueId;
+begin
+  result := false;
+  for id in uniqueIdList do
+    if (id.type_ = NamingSystemIdentifierTypeOID) and (id.value = oid) then
+      exit(true);
 end;
 
 end.

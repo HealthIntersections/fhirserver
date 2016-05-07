@@ -38,7 +38,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2015-12-22T12:09:07+11:00
+// FHIR v1.0.2 generated 2016-04-22T13:45:58+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -129,155 +129,6 @@ Type
     ResourceSlicingRulesOpen, {@enum.value ResourceSlicingRulesOpen  }
     ResourceSlicingRulesOpenAtEnd); {@enum.value ResourceSlicingRulesOpenAtEnd  }
   TFhirResourceSlicingRulesEnumList = set of TFhirResourceSlicingRulesEnum;
-
-  {@Enum TFhirDefinedTypesEnum
-    Either a resource or a data type.
-  }
-  TFhirDefinedTypesEnum = (
-    DefinedTypesNull,  {@enum.value DefinedTypesNull Value is missing from Instance }
-    DefinedTypesAddress, {@enum.value DefinedTypesAddress  }
-    DefinedTypesAge, {@enum.value DefinedTypesAge  }
-    DefinedTypesAnnotation, {@enum.value DefinedTypesAnnotation  }
-    DefinedTypesAttachment, {@enum.value DefinedTypesAttachment  }
-    DefinedTypesBackboneElement, {@enum.value DefinedTypesBackboneElement  }
-    DefinedTypesCodeableConcept, {@enum.value DefinedTypesCodeableConcept  }
-    DefinedTypesCoding, {@enum.value DefinedTypesCoding  }
-    DefinedTypesContactPoint, {@enum.value DefinedTypesContactPoint  }
-    DefinedTypesCount, {@enum.value DefinedTypesCount  }
-    DefinedTypesDistance, {@enum.value DefinedTypesDistance  }
-    DefinedTypesDuration, {@enum.value DefinedTypesDuration  }
-    DefinedTypesElement, {@enum.value DefinedTypesElement  }
-    DefinedTypesElementDefinition, {@enum.value DefinedTypesElementDefinition  }
-    DefinedTypesExtension, {@enum.value DefinedTypesExtension  }
-    DefinedTypesHumanName, {@enum.value DefinedTypesHumanName  }
-    DefinedTypesIdentifier, {@enum.value DefinedTypesIdentifier  }
-    DefinedTypesMeta, {@enum.value DefinedTypesMeta  }
-    DefinedTypesMoney, {@enum.value DefinedTypesMoney  }
-    DefinedTypesNarrative, {@enum.value DefinedTypesNarrative  }
-    DefinedTypesPeriod, {@enum.value DefinedTypesPeriod  }
-    DefinedTypesQuantity, {@enum.value DefinedTypesQuantity  }
-    DefinedTypesRange, {@enum.value DefinedTypesRange  }
-    DefinedTypesRatio, {@enum.value DefinedTypesRatio  }
-    DefinedTypesReference, {@enum.value DefinedTypesReference  }
-    DefinedTypesSampledData, {@enum.value DefinedTypesSampledData  }
-    DefinedTypesSignature, {@enum.value DefinedTypesSignature  }
-    DefinedTypesSimpleQuantity, {@enum.value DefinedTypesSimpleQuantity  }
-    DefinedTypesTiming, {@enum.value DefinedTypesTiming  }
-    DefinedTypesBase64Binary, {@enum.value DefinedTypesBase64Binary  }
-    DefinedTypesBoolean, {@enum.value DefinedTypesBoolean  }
-    DefinedTypesCode, {@enum.value DefinedTypesCode  }
-    DefinedTypesDate, {@enum.value DefinedTypesDate  }
-    DefinedTypesDateTime, {@enum.value DefinedTypesDateTime  }
-    DefinedTypesDecimal, {@enum.value DefinedTypesDecimal  }
-    DefinedTypesId, {@enum.value DefinedTypesId  }
-    DefinedTypesInstant, {@enum.value DefinedTypesInstant  }
-    DefinedTypesInteger, {@enum.value DefinedTypesInteger  }
-    DefinedTypesMarkdown, {@enum.value DefinedTypesMarkdown  }
-    DefinedTypesOid, {@enum.value DefinedTypesOid  }
-    DefinedTypesPositiveInt, {@enum.value DefinedTypesPositiveInt  }
-    DefinedTypesString, {@enum.value DefinedTypesString  }
-    DefinedTypesTime, {@enum.value DefinedTypesTime  }
-    DefinedTypesUnsignedInt, {@enum.value DefinedTypesUnsignedInt  }
-    DefinedTypesUri, {@enum.value DefinedTypesUri  }
-    DefinedTypesUuid, {@enum.value DefinedTypesUuid  }
-    DefinedTypesXhtml, {@enum.value DefinedTypesXhtml  }
-    DefinedTypesAccount, {@enum.value DefinedTypesAccount  }
-    DefinedTypesAllergyIntolerance, {@enum.value DefinedTypesAllergyIntolerance  }
-    DefinedTypesAppointment, {@enum.value DefinedTypesAppointment  }
-    DefinedTypesAppointmentResponse, {@enum.value DefinedTypesAppointmentResponse  }
-    DefinedTypesAuditEvent, {@enum.value DefinedTypesAuditEvent  }
-    DefinedTypesBasic, {@enum.value DefinedTypesBasic  }
-    DefinedTypesBinary, {@enum.value DefinedTypesBinary  }
-    DefinedTypesBodySite, {@enum.value DefinedTypesBodySite  }
-    DefinedTypesBundle, {@enum.value DefinedTypesBundle  }
-    DefinedTypesCarePlan, {@enum.value DefinedTypesCarePlan  }
-    DefinedTypesClaim, {@enum.value DefinedTypesClaim  }
-    DefinedTypesClaimResponse, {@enum.value DefinedTypesClaimResponse  }
-    DefinedTypesClinicalImpression, {@enum.value DefinedTypesClinicalImpression  }
-    DefinedTypesCommunication, {@enum.value DefinedTypesCommunication  }
-    DefinedTypesCommunicationRequest, {@enum.value DefinedTypesCommunicationRequest  }
-    DefinedTypesComposition, {@enum.value DefinedTypesComposition  }
-    DefinedTypesConceptMap, {@enum.value DefinedTypesConceptMap  }
-    DefinedTypesCondition, {@enum.value DefinedTypesCondition  }
-    DefinedTypesConformance, {@enum.value DefinedTypesConformance  }
-    DefinedTypesContract, {@enum.value DefinedTypesContract  }
-    DefinedTypesCoverage, {@enum.value DefinedTypesCoverage  }
-    DefinedTypesDataElement, {@enum.value DefinedTypesDataElement  }
-    DefinedTypesDetectedIssue, {@enum.value DefinedTypesDetectedIssue  }
-    DefinedTypesDevice, {@enum.value DefinedTypesDevice  }
-    DefinedTypesDeviceComponent, {@enum.value DefinedTypesDeviceComponent  }
-    DefinedTypesDeviceMetric, {@enum.value DefinedTypesDeviceMetric  }
-    DefinedTypesDeviceUseRequest, {@enum.value DefinedTypesDeviceUseRequest  }
-    DefinedTypesDeviceUseStatement, {@enum.value DefinedTypesDeviceUseStatement  }
-    DefinedTypesDiagnosticOrder, {@enum.value DefinedTypesDiagnosticOrder  }
-    DefinedTypesDiagnosticReport, {@enum.value DefinedTypesDiagnosticReport  }
-    DefinedTypesDocumentManifest, {@enum.value DefinedTypesDocumentManifest  }
-    DefinedTypesDocumentReference, {@enum.value DefinedTypesDocumentReference  }
-    DefinedTypesDomainResource, {@enum.value DefinedTypesDomainResource  }
-    DefinedTypesEligibilityRequest, {@enum.value DefinedTypesEligibilityRequest  }
-    DefinedTypesEligibilityResponse, {@enum.value DefinedTypesEligibilityResponse  }
-    DefinedTypesEncounter, {@enum.value DefinedTypesEncounter  }
-    DefinedTypesEnrollmentRequest, {@enum.value DefinedTypesEnrollmentRequest  }
-    DefinedTypesEnrollmentResponse, {@enum.value DefinedTypesEnrollmentResponse  }
-    DefinedTypesEpisodeOfCare, {@enum.value DefinedTypesEpisodeOfCare  }
-    DefinedTypesExplanationOfBenefit, {@enum.value DefinedTypesExplanationOfBenefit  }
-    DefinedTypesFamilyMemberHistory, {@enum.value DefinedTypesFamilyMemberHistory  }
-    DefinedTypesFlag, {@enum.value DefinedTypesFlag  }
-    DefinedTypesGoal, {@enum.value DefinedTypesGoal  }
-    DefinedTypesGroup, {@enum.value DefinedTypesGroup  }
-    DefinedTypesHealthcareService, {@enum.value DefinedTypesHealthcareService  }
-    DefinedTypesImagingObjectSelection, {@enum.value DefinedTypesImagingObjectSelection  }
-    DefinedTypesImagingStudy, {@enum.value DefinedTypesImagingStudy  }
-    DefinedTypesImmunization, {@enum.value DefinedTypesImmunization  }
-    DefinedTypesImmunizationRecommendation, {@enum.value DefinedTypesImmunizationRecommendation  }
-    DefinedTypesImplementationGuide, {@enum.value DefinedTypesImplementationGuide  }
-    DefinedTypesList, {@enum.value DefinedTypesList  }
-    DefinedTypesLocation, {@enum.value DefinedTypesLocation  }
-    DefinedTypesMedia, {@enum.value DefinedTypesMedia  }
-    DefinedTypesMedication, {@enum.value DefinedTypesMedication  }
-    DefinedTypesMedicationAdministration, {@enum.value DefinedTypesMedicationAdministration  }
-    DefinedTypesMedicationDispense, {@enum.value DefinedTypesMedicationDispense  }
-    DefinedTypesMedicationOrder, {@enum.value DefinedTypesMedicationOrder  }
-    DefinedTypesMedicationStatement, {@enum.value DefinedTypesMedicationStatement  }
-    DefinedTypesMessageHeader, {@enum.value DefinedTypesMessageHeader  }
-    DefinedTypesNamingSystem, {@enum.value DefinedTypesNamingSystem  }
-    DefinedTypesNutritionOrder, {@enum.value DefinedTypesNutritionOrder  }
-    DefinedTypesObservation, {@enum.value DefinedTypesObservation  }
-    DefinedTypesOperationDefinition, {@enum.value DefinedTypesOperationDefinition  }
-    DefinedTypesOperationOutcome, {@enum.value DefinedTypesOperationOutcome  }
-    DefinedTypesOrder, {@enum.value DefinedTypesOrder  }
-    DefinedTypesOrderResponse, {@enum.value DefinedTypesOrderResponse  }
-    DefinedTypesOrganization, {@enum.value DefinedTypesOrganization  }
-    DefinedTypesParameters, {@enum.value DefinedTypesParameters  }
-    DefinedTypesPatient, {@enum.value DefinedTypesPatient  }
-    DefinedTypesPaymentNotice, {@enum.value DefinedTypesPaymentNotice  }
-    DefinedTypesPaymentReconciliation, {@enum.value DefinedTypesPaymentReconciliation  }
-    DefinedTypesPerson, {@enum.value DefinedTypesPerson  }
-    DefinedTypesPractitioner, {@enum.value DefinedTypesPractitioner  }
-    DefinedTypesProcedure, {@enum.value DefinedTypesProcedure  }
-    DefinedTypesProcedureRequest, {@enum.value DefinedTypesProcedureRequest  }
-    DefinedTypesProcessRequest, {@enum.value DefinedTypesProcessRequest  }
-    DefinedTypesProcessResponse, {@enum.value DefinedTypesProcessResponse  }
-    DefinedTypesProvenance, {@enum.value DefinedTypesProvenance  }
-    DefinedTypesQuestionnaire, {@enum.value DefinedTypesQuestionnaire  }
-    DefinedTypesQuestionnaireResponse, {@enum.value DefinedTypesQuestionnaireResponse  }
-    DefinedTypesReferralRequest, {@enum.value DefinedTypesReferralRequest  }
-    DefinedTypesRelatedPerson, {@enum.value DefinedTypesRelatedPerson  }
-    DefinedTypesResource, {@enum.value DefinedTypesResource  }
-    DefinedTypesRiskAssessment, {@enum.value DefinedTypesRiskAssessment  }
-    DefinedTypesSchedule, {@enum.value DefinedTypesSchedule  }
-    DefinedTypesSearchParameter, {@enum.value DefinedTypesSearchParameter  }
-    DefinedTypesSlot, {@enum.value DefinedTypesSlot  }
-    DefinedTypesSpecimen, {@enum.value DefinedTypesSpecimen  }
-    DefinedTypesStructureDefinition, {@enum.value DefinedTypesStructureDefinition  }
-    DefinedTypesSubscription, {@enum.value DefinedTypesSubscription  }
-    DefinedTypesSubstance, {@enum.value DefinedTypesSubstance  }
-    DefinedTypesSupplyDelivery, {@enum.value DefinedTypesSupplyDelivery  }
-    DefinedTypesSupplyRequest, {@enum.value DefinedTypesSupplyRequest  }
-    DefinedTypesTestScript, {@enum.value DefinedTypesTestScript  }
-    DefinedTypesValueSet, {@enum.value DefinedTypesValueSet  }
-    DefinedTypesVisionPrescription); {@enum.value DefinedTypesVisionPrescription  }
-  TFhirDefinedTypesEnumList = set of TFhirDefinedTypesEnum;
 
   {@Enum TFhirResourceAggregationModeEnum
     How resource references can be aggregated.
@@ -2190,7 +2041,6 @@ Type
   {@Class TFhirElement : TFHIRBase
     Base definition for all elements in a resource.
   }
-  {!.Net HL7Connect.Fhir.Element}
   TFhirElement = class (TFHIRBase)
   private
     FId : TFhirId;
@@ -2211,6 +2061,7 @@ Type
     function Link : TFhirElement; overload;
     function Clone : TFhirElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -2250,7 +2101,6 @@ Type
   {@Class TFhirElementList
     A list of FhirElement
   }
-  {!.Net HL7Connect.Fhir.ElementList}
   TFhirElementList = class (TFHIRObjectList)
   private
 
@@ -2333,7 +2183,6 @@ Type
   {@Class TFhirBackboneElement : TFHIRElement
     Base definition for all elements that are defined inside a resource - but not those in a data type.
   }
-  {!.Net HL7Connect.Fhir.BackboneElement}
   TFhirBackboneElement = class (TFHIRElement)
   private
     FmodifierExtensionList : TFhirExtensionList;
@@ -2350,6 +2199,7 @@ Type
     function Link : TFhirBackboneElement; overload;
     function Clone : TFhirBackboneElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -2380,7 +2230,6 @@ Type
   {@Class TFhirBackboneElementList
     A list of FhirBackboneElement
   }
-  {!.Net HL7Connect.Fhir.BackboneElementList}
   TFhirBackboneElementList = class (TFHIRObjectList)
   private
 
@@ -2463,7 +2312,6 @@ Type
   {@Class TFhirType : TFhirElement
     A base FHIR type - (polymorphism support)
   }
-  {!.Net HL7Connect.Fhir.Type}
   TFhirType = class (TFhirElement)
   Public
     {!script hide}
@@ -2476,7 +2324,6 @@ Type
   {@Class TFHIRPrimitiveType : TFhirType
     A base FHIR type - (polymorphism support)
   }
-  {!.Net HL7Connect.Fhir.Type}
   TFHIRPrimitiveType = class (TFhirType)
   Private
     Function GetStringValue : String;
@@ -2487,6 +2334,7 @@ Type
     Function Clone : TFHIRPrimitiveType; Overload;
     Property StringValue : String read GetStringValue;
     function isPrimitive : boolean; override;
+    function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
     {!script show}
   End;
@@ -2498,7 +2346,6 @@ Type
     
     Used where a FHIR element is a Enum, and extensions
   }
-  {!.Net HL7Connect.Fhir.Enum}
   TFhirEnum = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -2545,7 +2392,6 @@ Type
   {@Class TFhirEnumList
     A list of FhirEnum
   }
-  {!.Net HL7Connect.Fhir.EnumList}
   TFhirEnumList = class (TFHIRObjectList)
   private
 
@@ -2642,7 +2488,6 @@ Type
     
     Used where a FHIR element is a Integer, and extensions
   }
-  {!.Net HL7Connect.Fhir.Integer}
   TFhirInteger = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -2687,7 +2532,6 @@ Type
   {@Class TFhirIntegerList
     A list of FhirInteger
   }
-  {!.Net HL7Connect.Fhir.IntegerList}
   TFhirIntegerList = class (TFHIRObjectList)
   private
 
@@ -2778,7 +2622,6 @@ Type
     
     Used where a FHIR element is a DateTime, and extensions
   }
-  {!.Net HL7Connect.Fhir.DateTime}
   TFhirDateTime = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
@@ -2823,7 +2666,6 @@ Type
   {@Class TFhirDateTimeList
     A list of FhirDateTime
   }
-  {!.Net HL7Connect.Fhir.DateTimeList}
   TFhirDateTimeList = class (TFHIRObjectList)
   private
 
@@ -2914,7 +2756,6 @@ Type
     
     Used where a FHIR element is a Date, and extensions
   }
-  {!.Net HL7Connect.Fhir.Date}
   TFhirDate = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
@@ -2959,7 +2800,6 @@ Type
   {@Class TFhirDateList
     A list of FhirDate
   }
-  {!.Net HL7Connect.Fhir.DateList}
   TFhirDateList = class (TFHIRObjectList)
   private
 
@@ -3050,7 +2890,6 @@ Type
     
     Used where a FHIR element is a Decimal, and extensions
   }
-  {!.Net HL7Connect.Fhir.Decimal}
   TFhirDecimal = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -3095,7 +2934,6 @@ Type
   {@Class TFhirDecimalList
     A list of FhirDecimal
   }
-  {!.Net HL7Connect.Fhir.DecimalList}
   TFhirDecimalList = class (TFHIRObjectList)
   private
 
@@ -3186,7 +3024,6 @@ Type
     
     Used where a FHIR element is a Uri, and extensions
   }
-  {!.Net HL7Connect.Fhir.Uri}
   TFhirUri = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -3231,7 +3068,6 @@ Type
   {@Class TFhirUriList
     A list of FhirUri
   }
-  {!.Net HL7Connect.Fhir.UriList}
   TFhirUriList = class (TFHIRObjectList)
   private
 
@@ -3322,7 +3158,6 @@ Type
     
     Used where a FHIR element is a Base64Binary, and extensions
   }
-  {!.Net HL7Connect.Fhir.Base64Binary}
   TFhirBase64Binary = class (TFhirPrimitiveType)
   Private
     FValue: TBytes;
@@ -3367,7 +3202,6 @@ Type
   {@Class TFhirBase64BinaryList
     A list of FhirBase64Binary
   }
-  {!.Net HL7Connect.Fhir.Base64BinaryList}
   TFhirBase64BinaryList = class (TFHIRObjectList)
   private
 
@@ -3458,7 +3292,6 @@ Type
     
     Used where a FHIR element is a Time, and extensions
   }
-  {!.Net HL7Connect.Fhir.Time}
   TFhirTime = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -3503,7 +3336,6 @@ Type
   {@Class TFhirTimeList
     A list of FhirTime
   }
-  {!.Net HL7Connect.Fhir.TimeList}
   TFhirTimeList = class (TFHIRObjectList)
   private
 
@@ -3594,7 +3426,6 @@ Type
     
     Used where a FHIR element is a String, and extensions
   }
-  {!.Net HL7Connect.Fhir.String}
   TFhirString = class (TFhirPrimitiveType)
   Private
     FValue: String;
@@ -3639,7 +3470,6 @@ Type
   {@Class TFhirStringList
     A list of FhirString
   }
-  {!.Net HL7Connect.Fhir.StringList}
   TFhirStringList = class (TFHIRObjectList)
   private
 
@@ -3730,7 +3560,6 @@ Type
     
     Used where a FHIR element is a Boolean, and extensions
   }
-  {!.Net HL7Connect.Fhir.Boolean}
   TFhirBoolean = class (TFhirPrimitiveType)
   Private
     FValue: Boolean;
@@ -3775,7 +3604,6 @@ Type
   {@Class TFhirBooleanList
     A list of FhirBoolean
   }
-  {!.Net HL7Connect.Fhir.BooleanList}
   TFhirBooleanList = class (TFHIRObjectList)
   private
 
@@ -3866,7 +3694,6 @@ Type
     
     Used where a FHIR element is a Instant, and extensions
   }
-  {!.Net HL7Connect.Fhir.Instant}
   TFhirInstant = class (TFhirPrimitiveType)
   Private
     FValue: TDateAndTime;
@@ -3911,7 +3738,6 @@ Type
   {@Class TFhirInstantList
     A list of FhirInstant
   }
-  {!.Net HL7Connect.Fhir.InstantList}
   TFhirInstantList = class (TFHIRObjectList)
   private
 
@@ -4002,7 +3828,6 @@ Type
     
     Used where a FHIR element is a Markdown, and extensions
   }
-  {!.Net HL7Connect.Fhir.Markdown}
   TFhirMarkdown = class (TFhirString)
   Private
   Public
@@ -4033,7 +3858,6 @@ Type
   {@Class TFhirMarkdownList
     A list of FhirMarkdown
   }
-  {!.Net HL7Connect.Fhir.MarkdownList}
   TFhirMarkdownList = class (TFHIRObjectList)
   private
 
@@ -4124,7 +3948,6 @@ Type
     
     Used where a FHIR element is a UnsignedInt, and extensions
   }
-  {!.Net HL7Connect.Fhir.UnsignedInt}
   TFhirUnsignedInt = class (TFhirInteger)
   Private
   Public
@@ -4155,7 +3978,6 @@ Type
   {@Class TFhirUnsignedIntList
     A list of FhirUnsignedInt
   }
-  {!.Net HL7Connect.Fhir.UnsignedIntList}
   TFhirUnsignedIntList = class (TFHIRObjectList)
   private
 
@@ -4246,7 +4068,6 @@ Type
     
     Used where a FHIR element is a Code, and extensions
   }
-  {!.Net HL7Connect.Fhir.Code}
   TFhirCode = class (TFhirString)
   Private
   Public
@@ -4277,7 +4098,6 @@ Type
   {@Class TFhirCodeList
     A list of FhirCode
   }
-  {!.Net HL7Connect.Fhir.CodeList}
   TFhirCodeList = class (TFHIRObjectList)
   private
 
@@ -4368,7 +4188,6 @@ Type
     
     Used where a FHIR element is a Id, and extensions
   }
-  {!.Net HL7Connect.Fhir.Id}
   TFhirId = class (TFhirString)
   Private
   Public
@@ -4399,7 +4218,6 @@ Type
   {@Class TFhirIdList
     A list of FhirId
   }
-  {!.Net HL7Connect.Fhir.IdList}
   TFhirIdList = class (TFHIRObjectList)
   private
 
@@ -4490,7 +4308,6 @@ Type
     
     Used where a FHIR element is a Oid, and extensions
   }
-  {!.Net HL7Connect.Fhir.Oid}
   TFhirOid = class (TFhirUri)
   Private
   Public
@@ -4521,7 +4338,6 @@ Type
   {@Class TFhirOidList
     A list of FhirOid
   }
-  {!.Net HL7Connect.Fhir.OidList}
   TFhirOidList = class (TFHIRObjectList)
   private
 
@@ -4612,7 +4428,6 @@ Type
     
     Used where a FHIR element is a PositiveInt, and extensions
   }
-  {!.Net HL7Connect.Fhir.PositiveInt}
   TFhirPositiveInt = class (TFhirInteger)
   Private
   Public
@@ -4643,7 +4458,6 @@ Type
   {@Class TFhirPositiveIntList
     A list of FhirPositiveInt
   }
-  {!.Net HL7Connect.Fhir.PositiveIntList}
   TFhirPositiveIntList = class (TFHIRObjectList)
   private
 
@@ -4734,7 +4548,6 @@ Type
     
     Used where a FHIR element is a Uuid, and extensions
   }
-  {!.Net HL7Connect.Fhir.Uuid}
   TFhirUuid = class (TFhirUri)
   Private
   Public
@@ -4765,7 +4578,6 @@ Type
   {@Class TFhirUuidList
     A list of FhirUuid
   }
-  {!.Net HL7Connect.Fhir.UuidList}
   TFhirUuidList = class (TFHIRObjectList)
   private
 
@@ -4854,7 +4666,6 @@ Type
   {@Class TFhirExtension : TFHIRType
     Optional Extensions Element - found in all resources.
   }
-  {!.Net HL7Connect.Fhir.Extension}
   TFhirExtension = class (TFHIRType)
   private
     FUrl : TFhirUri;
@@ -4874,6 +4685,7 @@ Type
     function Link : TFhirExtension; overload;
     function Clone : TFhirExtension; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -4916,7 +4728,6 @@ Type
   {@Class TFhirExtensionList
     A list of FhirExtension
   }
-  {!.Net HL7Connect.Fhir.ExtensionList}
   TFhirExtensionList = class (TFHIRObjectList)
   private
 
@@ -4999,7 +4810,6 @@ Type
   {@Class TFhirNarrative : TFHIRType
     A human-readable formatted text, including images.
   }
-  {!.Net HL7Connect.Fhir.Narrative}
   TFhirNarrative = class (TFHIRType)
   private
     FStatus : TFhirEnum;
@@ -5019,6 +4829,7 @@ Type
     function Link : TFhirNarrative; overload;
     function Clone : TFhirNarrative; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5058,7 +4869,6 @@ Type
   {@Class TFhirNarrativeList
     A list of FhirNarrative
   }
-  {!.Net HL7Connect.Fhir.NarrativeList}
   TFhirNarrativeList = class (TFHIRObjectList)
   private
 
@@ -5141,7 +4951,6 @@ Type
   {@Class TFhirPeriod : TFhirType
     A time period defined by a start and end date and optionally time.
   }
-  {!.Net HL7Connect.Fhir.Period}
   TFhirPeriod = class (TFhirType)
   private
     FStart : TFhirDateTime;
@@ -5163,6 +4972,7 @@ Type
     function Link : TFhirPeriod; overload;
     function Clone : TFhirPeriod; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5205,7 +5015,6 @@ Type
   {@Class TFhirPeriodList
     A list of FhirPeriod
   }
-  {!.Net HL7Connect.Fhir.PeriodList}
   TFhirPeriodList = class (TFHIRObjectList)
   private
 
@@ -5288,7 +5097,6 @@ Type
   {@Class TFhirCoding : TFhirType
     A reference to a code defined by a terminology system.
   }
-  {!.Net HL7Connect.Fhir.Coding}
   TFhirCoding = class (TFhirType)
   private
     FSystem : TFhirUri;
@@ -5322,6 +5130,7 @@ Type
     function Link : TFhirCoding; overload;
     function Clone : TFhirCoding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5391,7 +5200,6 @@ Type
   {@Class TFhirCodingList
     A list of FhirCoding
   }
-  {!.Net HL7Connect.Fhir.CodingList}
   TFhirCodingList = class (TFHIRObjectList)
   private
 
@@ -5474,7 +5282,6 @@ Type
   {@Class TFhirRange : TFhirType
     A set of ordered Quantities defined by a low and high limit.
   }
-  {!.Net HL7Connect.Fhir.Range}
   TFhirRange = class (TFhirType)
   private
     FLow : TFhirQuantity;
@@ -5492,6 +5299,7 @@ Type
     function Link : TFhirRange; overload;
     function Clone : TFhirRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5534,7 +5342,6 @@ Type
   {@Class TFhirRangeList
     A list of FhirRange
   }
-  {!.Net HL7Connect.Fhir.RangeList}
   TFhirRangeList = class (TFHIRObjectList)
   private
 
@@ -5617,7 +5424,6 @@ Type
   {@Class TFhirAttachment : TFhirType
     For referring to data content defined in other formats.
   }
-  {!.Net HL7Connect.Fhir.Attachment}
   TFhirAttachment = class (TFhirType)
   private
     FContentType : TFhirCode;
@@ -5663,6 +5469,7 @@ Type
     function Link : TFhirAttachment; overload;
     function Clone : TFhirAttachment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5759,7 +5566,6 @@ Type
   {@Class TFhirAttachmentList
     A list of FhirAttachment
   }
-  {!.Net HL7Connect.Fhir.AttachmentList}
   TFhirAttachmentList = class (TFHIRObjectList)
   private
 
@@ -5842,7 +5648,6 @@ Type
   {@Class TFhirQuantity : TFhirType
     A measured amount (or an amount that can potentially be measured). Note that measured amounts include amounts that are not precisely quantified, including amounts involving arbitrary units and floating currencies.
   }
-  {!.Net HL7Connect.Fhir.Quantity}
   TFhirQuantity = class (TFhirType)
   private
     FValue : TFhirDecimal;
@@ -5876,6 +5681,7 @@ Type
     function Link : TFhirQuantity; overload;
     function Clone : TFhirQuantity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -5942,7 +5748,6 @@ Type
   {@Class TFhirQuantityList
     A list of FhirQuantity
   }
-  {!.Net HL7Connect.Fhir.QuantityList}
   TFhirQuantityList = class (TFHIRObjectList)
   private
 
@@ -6025,7 +5830,6 @@ Type
   {@Class TFhirAnnotation : TFhirType
     A  text note which also  contains information about who made the statement and when.
   }
-  {!.Net HL7Connect.Fhir.Annotation}
   TFhirAnnotation = class (TFhirType)
   private
     FAuthor : TFhirType;
@@ -6049,6 +5853,7 @@ Type
     function Link : TFhirAnnotation; overload;
     function Clone : TFhirAnnotation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6100,7 +5905,6 @@ Type
   {@Class TFhirAnnotationList
     A list of FhirAnnotation
   }
-  {!.Net HL7Connect.Fhir.AnnotationList}
   TFhirAnnotationList = class (TFHIRObjectList)
   private
 
@@ -6183,7 +5987,6 @@ Type
   {@Class TFhirRatio : TFhirType
     A relationship of two Quantity values - expressed as a numerator and a denominator.
   }
-  {!.Net HL7Connect.Fhir.Ratio}
   TFhirRatio = class (TFhirType)
   private
     FNumerator : TFhirQuantity;
@@ -6201,6 +6004,7 @@ Type
     function Link : TFhirRatio; overload;
     function Clone : TFhirRatio; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6243,7 +6047,6 @@ Type
   {@Class TFhirRatioList
     A list of FhirRatio
   }
-  {!.Net HL7Connect.Fhir.RatioList}
   TFhirRatioList = class (TFHIRObjectList)
   private
 
@@ -6326,7 +6129,6 @@ Type
   {@Class TFhirSampledData : TFhirType
     A series of measurements taken by a device, with upper and lower limits. There may be more than one dimension in the data.
   }
-  {!.Net HL7Connect.Fhir.SampledData}
   TFhirSampledData = class (TFhirType)
   private
     FOrigin : TFhirQuantity;
@@ -6366,6 +6168,7 @@ Type
     function Link : TFhirSampledData; overload;
     function Clone : TFhirSampledData; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6453,7 +6256,6 @@ Type
   {@Class TFhirSampledDataList
     A list of FhirSampledData
   }
-  {!.Net HL7Connect.Fhir.SampledDataList}
   TFhirSampledDataList = class (TFHIRObjectList)
   private
 
@@ -6536,7 +6338,6 @@ Type
   {@Class TFhirCodeableConcept : TFhirType
     A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
   }
-  {!.Net HL7Connect.Fhir.CodeableConcept}
   TFhirCodeableConcept = class (TFhirType)
   private
     FcodingList : TFhirCodingList;
@@ -6557,6 +6358,7 @@ Type
     function Link : TFhirCodeableConcept; overload;
     function Clone : TFhirCodeableConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6596,7 +6398,6 @@ Type
   {@Class TFhirCodeableConceptList
     A list of FhirCodeableConcept
   }
-  {!.Net HL7Connect.Fhir.CodeableConceptList}
   TFhirCodeableConceptList = class (TFHIRObjectList)
   private
 
@@ -6679,7 +6480,6 @@ Type
   {@Class TFhirReference : TFhirType
     A reference from one resource to another.
   }
-  {!.Net HL7Connect.Fhir.Reference}
   TFhirReference = class (TFhirType)
   private
     FReference : TFhirString;
@@ -6701,6 +6501,7 @@ Type
     function Link : TFhirReference; overload;
     function Clone : TFhirReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6743,7 +6544,6 @@ Type
   {@Class TFhirReferenceList
     A list of FhirReference
   }
-  {!.Net HL7Connect.Fhir.ReferenceList}
   TFhirReferenceList = class (TFHIRObjectList)
   private
 
@@ -6826,7 +6626,6 @@ Type
   {@Class TFhirIdentifier : TFhirType
     A technical identifier - identifies some entity uniquely and unambiguously.
   }
-  {!.Net HL7Connect.Fhir.Identifier}
   TFhirIdentifier = class (TFhirType)
   private
     FUse : TFhirEnum;
@@ -6858,6 +6657,7 @@ Type
     function Link : TFhirIdentifier; overload;
     function Clone : TFhirIdentifier; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -6933,7 +6733,6 @@ Type
   {@Class TFhirIdentifierList
     A list of FhirIdentifier
   }
-  {!.Net HL7Connect.Fhir.IdentifierList}
   TFhirIdentifierList = class (TFHIRObjectList)
   private
 
@@ -7016,7 +6815,6 @@ Type
   {@Class TFhirSignature : TFhirType
     A digital signature along with supporting context. The signature may be electronic/cryptographic in nature, or a graphical image representing a hand-written signature, or a signature process. Different Signature approaches have different utilities.
   }
-  {!.Net HL7Connect.Fhir.Signature}
   TFhirSignature = class (TFhirType)
   private
     Ftype_List : TFhirCodingList;
@@ -7047,6 +6845,7 @@ Type
     function Link : TFhirSignature; overload;
     function Clone : TFhirSignature; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -7113,7 +6912,6 @@ Type
   {@Class TFhirSignatureList
     A list of FhirSignature
   }
-  {!.Net HL7Connect.Fhir.SignatureList}
   TFhirSignatureList = class (TFHIRObjectList)
   private
 
@@ -7196,7 +6994,6 @@ Type
   {@Class TFhirTimingRepeat : TFhirElement
     A set of rules that describe when the event should occur.
   }
-  {!.Net HL7Connect.Fhir.TimingRepeat}
   TFhirTimingRepeat = class (TFhirElement)
   private
     FBounds : TFhirType;
@@ -7252,6 +7049,7 @@ Type
     function Link : TFhirTimingRepeat; overload;
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -7366,7 +7164,6 @@ Type
   {@Class TFhirTimingRepeatList
     A list of FhirTimingRepeat
   }
-  {!.Net HL7Connect.Fhir.TimingRepeatList}
   TFhirTimingRepeatList = class (TFHIRObjectList)
   private
 
@@ -7449,7 +7246,6 @@ Type
   {@Class TFhirTiming : TFhirType
     Specifies an event that may occur multiple times. Timing schedules are used to record when things are expected or requested to occur. The most common usage is in dosage instructions for medications. They are also used when planning care of various kinds.
   }
-  {!.Net HL7Connect.Fhir.Timing}
   TFhirTiming = class (TFhirType)
   private
     FeventList : TFhirDateTimeList;
@@ -7470,6 +7266,7 @@ Type
     function Link : TFhirTiming; overload;
     function Clone : TFhirTiming; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -7518,7 +7315,6 @@ Type
   {@Class TFhirTimingList
     A list of FhirTiming
   }
-  {!.Net HL7Connect.Fhir.TimingList}
   TFhirTimingList = class (TFHIRObjectList)
   private
 
@@ -7601,7 +7397,6 @@ Type
   {@Class TFhirElementDefinitionSlicing : TFhirElement
     Indicates that the element is sliced into a set of alternative definitions (i.e. in a structure definition, there are multiple different constraints on a single element in the base resource). Slicing can be used in any resource that has cardinality ..* on the base resource, or any resource with a choice of types. The set of slices is any elements that come after this in the element sequence that have the same path, until a shorter path occurs (the shorter path terminates the set).
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionSlicing}
   TFhirElementDefinitionSlicing = class (TFhirElement)
   private
     FdiscriminatorList : TFhirStringList;
@@ -7630,6 +7425,7 @@ Type
     function Link : TFhirElementDefinitionSlicing; overload;
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -7684,7 +7480,6 @@ Type
   {@Class TFhirElementDefinitionSlicingList
     A list of FhirElementDefinitionSlicing
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionSlicingList}
   TFhirElementDefinitionSlicingList = class (TFHIRObjectList)
   private
 
@@ -7767,7 +7562,6 @@ Type
   {@Class TFhirElementDefinitionBase : TFhirElement
     Information about the base definition of the element, provided to make it unncessary for tools to trace the deviation of the element through the derived and related profiles. This information is only provided where the element definition represents a constraint on another element definition, and must be present if there is a base element definition.
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionBase}
   TFhirElementDefinitionBase = class (TFhirElement)
   private
     FPath : TFhirString;
@@ -7793,6 +7587,7 @@ Type
     function Link : TFhirElementDefinitionBase; overload;
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -7844,7 +7639,6 @@ Type
   {@Class TFhirElementDefinitionBaseList
     A list of FhirElementDefinitionBase
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionBaseList}
   TFhirElementDefinitionBaseList = class (TFHIRObjectList)
   private
 
@@ -7927,15 +7721,14 @@ Type
   {@Class TFhirElementDefinitionType : TFhirElement
     The data type or resource that the value of this element is permitted to be.
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionType}
   TFhirElementDefinitionType = class (TFhirElement)
   private
-    FCode : TFhirEnum;
+    FCode : TFhirCode;
     FprofileList : TFhirUriList;
     FAggregation : TFhirEnumList;
-    Procedure SetCode(value : TFhirEnum);
-    Function GetCodeST : TFhirDefinedTypesEnum;
-    Procedure SetCodeST(value : TFhirDefinedTypesEnum);
+    Procedure SetCode(value : TFhirCode);
+    Function GetCodeST : String;
+    Procedure SetCodeST(value : String);
     function GetProfileList : TFhirUriList;
     function GetHasProfileList : Boolean;
     function GetAggregation : TFhirEnumList;
@@ -7953,16 +7746,20 @@ Type
     function Link : TFhirElementDefinitionType; overload;
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
     {@member code
+      Typed access to Name of Data type or Resource that is a(or the) type used for this element.
+    }
+    property code : String read GetCodeST write SetCodeST;
+    {@member codeElement
       Name of Data type or Resource that is a(or the) type used for this element.
     }
-    property code : TFhirDefinedTypesEnum read GetCodeST write SetCodeST;
-    property codeElement : TFhirEnum read FCode write SetCode;
+    property codeElement : TFhirCode read FCode write SetCode;
 
     {@member profileList
       Identifies a profile structure or implementation Guide that SHALL hold for resources or datatypes referenced as the type of this element. Can be a local reference - to another structure in this profile, or a reference to a structure in another profile. When more than one profile is specified, the content must conform to all of them. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
@@ -7995,7 +7792,6 @@ Type
   {@Class TFhirElementDefinitionTypeList
     A list of FhirElementDefinitionType
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionTypeList}
   TFhirElementDefinitionTypeList = class (TFHIRObjectList)
   private
 
@@ -8078,7 +7874,6 @@ Type
   {@Class TFhirElementDefinitionConstraint : TFhirElement
     Formal constraints such as co-occurrence and other constraints that can be computationally evaluated within the context of the instance.
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionConstraint}
   TFhirElementDefinitionConstraint = class (TFhirElement)
   private
     FKey : TFhirId;
@@ -8112,6 +7907,7 @@ Type
     function Link : TFhirElementDefinitionConstraint; overload;
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -8178,7 +7974,6 @@ Type
   {@Class TFhirElementDefinitionConstraintList
     A list of FhirElementDefinitionConstraint
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionConstraintList}
   TFhirElementDefinitionConstraintList = class (TFHIRObjectList)
   private
 
@@ -8261,7 +8056,6 @@ Type
   {@Class TFhirElementDefinitionBinding : TFhirElement
     Binds to a value set if this element is coded (code, Coding, CodeableConcept).
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionBinding}
   TFhirElementDefinitionBinding = class (TFhirElement)
   private
     FStrength : TFhirEnum;
@@ -8285,6 +8079,7 @@ Type
     function Link : TFhirElementDefinitionBinding; overload;
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -8333,7 +8128,6 @@ Type
   {@Class TFhirElementDefinitionBindingList
     A list of FhirElementDefinitionBinding
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionBindingList}
   TFhirElementDefinitionBindingList = class (TFHIRObjectList)
   private
 
@@ -8416,7 +8210,6 @@ Type
   {@Class TFhirElementDefinitionMapping : TFhirElement
     Identifies a concept from an external specification that roughly corresponds to this element.
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionMapping}
   TFhirElementDefinitionMapping = class (TFhirElement)
   private
     FIdentity : TFhirId;
@@ -8442,6 +8235,7 @@ Type
     function Link : TFhirElementDefinitionMapping; overload;
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string) : TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -8493,7 +8287,6 @@ Type
   {@Class TFhirElementDefinitionMappingList
     A list of FhirElementDefinitionMapping
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionMappingList}
   TFhirElementDefinitionMappingList = class (TFHIRObjectList)
   private
 
@@ -8576,7 +8369,6 @@ Type
   {@Class TFhirElementDefinition : TFhirType
     Captures constraints on each element within the resource, profile, or extension.
   }
-  {!.Net HL7Connect.Fhir.ElementDefinition}
   TFhirElementDefinition = class (TFhirType)
   private
     FPath : TFhirString;
@@ -8691,6 +8483,7 @@ Type
     function Link : TFhirElementDefinition; overload;
     function Clone : TFhirElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -8973,7 +8766,6 @@ Type
   {@Class TFhirElementDefinitionList
     A list of FhirElementDefinition
   }
-  {!.Net HL7Connect.Fhir.ElementDefinitionList}
   TFhirElementDefinitionList = class (TFHIRObjectList)
   private
 
@@ -9056,7 +8848,6 @@ Type
   {@Class TFhirHumanName : TFhirType
     A human's name with the ability to identify parts and usage.
   }
-  {!.Net HL7Connect.Fhir.HumanName}
   TFhirHumanName = class (TFhirType)
   private
     FUse : TFhirEnum;
@@ -9092,6 +8883,7 @@ Type
     function Link : TFhirHumanName; overload;
     function Clone : TFhirHumanName; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -9164,7 +8956,6 @@ Type
   {@Class TFhirHumanNameList
     A list of FhirHumanName
   }
-  {!.Net HL7Connect.Fhir.HumanNameList}
   TFhirHumanNameList = class (TFHIRObjectList)
   private
 
@@ -9247,7 +9038,6 @@ Type
   {@Class TFhirAddress : TFhirType
     There is a variety of postal address formats defined around the world. This format defines a superset that is the basis for all addresses around the world.
   }
-  {!.Net HL7Connect.Fhir.Address}
   TFhirAddress = class (TFhirType)
   private
     FUse : TFhirEnum;
@@ -9298,6 +9088,7 @@ Type
     function Link : TFhirAddress; overload;
     function Clone : TFhirAddress; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -9403,7 +9194,6 @@ Type
   {@Class TFhirAddressList
     A list of FhirAddress
   }
-  {!.Net HL7Connect.Fhir.AddressList}
   TFhirAddressList = class (TFHIRObjectList)
   private
 
@@ -9486,7 +9276,6 @@ Type
   {@Class TFhirMeta : TFhirType
     The metadata about a resource. This is content in the resource that is maintained by the infrastructure. Changes to the content may not always be associated with version changes to the resource.
   }
-  {!.Net HL7Connect.Fhir.Meta}
   TFhirMeta = class (TFhirType)
   private
     FVersionId : TFhirId;
@@ -9517,6 +9306,7 @@ Type
     function Link : TFhirMeta; overload;
     function Clone : TFhirMeta; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -9577,7 +9367,6 @@ Type
   {@Class TFhirMetaList
     A list of FhirMeta
   }
-  {!.Net HL7Connect.Fhir.MetaList}
   TFhirMetaList = class (TFHIRObjectList)
   private
 
@@ -9660,7 +9449,6 @@ Type
   {@Class TFhirContactPoint : TFhirType
     Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
   }
-  {!.Net HL7Connect.Fhir.ContactPoint}
   TFhirContactPoint = class (TFhirType)
   private
     FSystem : TFhirEnum;
@@ -9692,6 +9480,7 @@ Type
     function Link : TFhirContactPoint; overload;
     function Clone : TFhirContactPoint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
     function FhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
@@ -9755,7 +9544,6 @@ Type
   {@Class TFhirContactPointList
     A list of FhirContactPoint
   }
-  {!.Net HL7Connect.Fhir.ContactPointList}
   TFhirContactPointList = class (TFHIRObjectList)
   private
 
@@ -9850,15 +9638,6 @@ Const
   SYSTEMS_TFhirPropertyRepresentationEnum : Array[TFhirPropertyRepresentationEnum] of String = ('', 'http://hl7.org/fhir/property-representation');
   CODES_TFhirResourceSlicingRulesEnum : Array[TFhirResourceSlicingRulesEnum] of String = ('', 'closed', 'open', 'openAtEnd');
   SYSTEMS_TFhirResourceSlicingRulesEnum : Array[TFhirResourceSlicingRulesEnum] of String = ('', 'http://hl7.org/fhir/resource-slicing-rules', 'http://hl7.org/fhir/resource-slicing-rules', 'http://hl7.org/fhir/resource-slicing-rules');
-  CODES_TFhirDefinedTypesEnum : Array[TFhirDefinedTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 
-    'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 
-    'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Slot', 'Specimen', 'StructureDefinition', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'TestScript', 'ValueSet', 'VisionPrescription');
-  SYSTEMS_TFhirDefinedTypesEnum : Array[TFhirDefinedTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
-    'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirResourceAggregationModeEnum : Array[TFhirResourceAggregationModeEnum] of String = ('', 'contained', 'referenced', 'bundled');
   SYSTEMS_TFhirResourceAggregationModeEnum : Array[TFhirResourceAggregationModeEnum] of String = ('', 'http://hl7.org/fhir/resource-aggregation-mode', 'http://hl7.org/fhir/resource-aggregation-mode', 'http://hl7.org/fhir/resource-aggregation-mode');
   CODES_TFhirConstraintSeverityEnum : Array[TFhirConstraintSeverityEnum] of String = ('', 'error', 'warning');
@@ -10148,8 +9927,6 @@ Function TFhirPropertyRepresentationEnumListAsInteger(aSet : TFhirPropertyRepres
 Function IntegerAsTFhirPropertyRepresentationEnumList(i : integer) : TFhirPropertyRepresentationEnumList; overload;
 Function TFhirResourceSlicingRulesEnumListAsInteger(aSet : TFhirResourceSlicingRulesEnumList) : Integer; overload;
 Function IntegerAsTFhirResourceSlicingRulesEnumList(i : integer) : TFhirResourceSlicingRulesEnumList; overload;
-Function TFhirDefinedTypesEnumListAsInteger(aSet : TFhirDefinedTypesEnumList) : Integer; overload;
-Function IntegerAsTFhirDefinedTypesEnumList(i : integer) : TFhirDefinedTypesEnumList; overload;
 Function TFhirResourceAggregationModeEnumListAsInteger(aSet : TFhirResourceAggregationModeEnumList) : Integer; overload;
 Function IntegerAsTFhirResourceAggregationModeEnumList(i : integer) : TFhirResourceAggregationModeEnumList; overload;
 Function TFhirConstraintSeverityEnumListAsInteger(aSet : TFhirConstraintSeverityEnumList) : Integer; overload;
@@ -10466,9 +10243,15 @@ end;
 
 procedure TFhirElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'id') then IdElement := propValue as TFhirId{5a}
+  if (propName = 'id') then IdElement := asId(propValue){5a}
   else if (propName = 'extension') then ExtensionList.add(propValue as TFhirExtension){2}
   else inherited;
+end;
+
+function TFhirElement.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'extension') then result := ExtensionList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirElement.FhirType : string;
@@ -10725,6 +10508,12 @@ begin
   else inherited;
 end;
 
+function TFhirBackboneElement.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'modifierExtension') then result := ModifierExtensionList.append(){2}
+  else result := inherited makeProperty(propName);
+end;
+
 function TFhirBackboneElement.FhirType : string;
 begin
   result := 'BackboneElement';
@@ -10946,6 +10735,11 @@ end;
 function TFHIRPrimitiveType.isPrimitive: boolean;
 begin
   result := true;
+end;
+
+function TFHIRPrimitiveType.hasPrimitiveValue: boolean;
+begin
+  result := StringValue <> '';
 end;
 
 function TFHIRPrimitiveType.primitiveValue: string;
@@ -14483,9 +14277,14 @@ end;
 
 procedure TFhirExtension.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'url') then UrlElement := propValue as TFhirUri{5a}
+  if (propName = 'url') then UrlElement := asUri(propValue){5a}
   else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
   else inherited;
+end;
+
+function TFhirExtension.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirExtension.FhirType : string;
@@ -14760,6 +14559,12 @@ begin
   else inherited;
 end;
 
+function TFhirNarrative.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'div') then begin Div_ := TFhirXHtmlNode.create(); result := Div_; end{4b}
+  else result := inherited makeProperty(propName);
+end;
+
 function TFhirNarrative.FhirType : string;
 begin
   result := 'Narrative';
@@ -14996,9 +14801,14 @@ end;
 
 procedure TFhirPeriod.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'start') then StartElement := propValue as TFhirDateTime{5a}
-  else if (propName = 'end') then End_Element := propValue as TFhirDateTime{5a}
+  if (propName = 'start') then StartElement := asDateTime(propValue){5a}
+  else if (propName = 'end') then End_Element := asDateTime(propValue){5a}
   else inherited;
+end;
+
+function TFhirPeriod.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirPeriod.FhirType : string;
@@ -15276,12 +15086,17 @@ end;
 
 procedure TFhirCoding.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
-  else if (propName = 'version') then VersionElement := propValue as TFhirString{5a}
+  if (propName = 'system') then SystemElement := asUri(propValue){5a}
+  else if (propName = 'version') then VersionElement := asString(propValue){5a}
   else if (propName = 'code') then CodeElement := asCode(propValue)
-  else if (propName = 'display') then DisplayElement := propValue as TFhirString{5a}
-  else if (propName = 'userSelected') then UserSelectedElement := propValue as TFhirBoolean{5a}
+  else if (propName = 'display') then DisplayElement := asString(propValue){5a}
+  else if (propName = 'userSelected') then UserSelectedElement := asBoolean(propValue){5a}
   else inherited;
+end;
+
+function TFhirCoding.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirCoding.FhirType : string;
@@ -15626,6 +15441,13 @@ begin
   else inherited;
 end;
 
+function TFhirRange.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'low') then begin Low := TFhirQuantity.create(); result := Low; end{4b}
+  else if (propName = 'high') then begin High := TFhirQuantity.create(); result := High; end{4b}
+  else result := inherited makeProperty(propName);
+end;
+
 function TFhirRange.FhirType : string;
 begin
   result := 'Range';
@@ -15878,13 +15700,18 @@ procedure TFhirAttachment.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'contentType') then ContentTypeElement := asCode(propValue)
   else if (propName = 'language') then LanguageElement := asCode(propValue)
-  else if (propName = 'data') then DataElement := propValue as TFhirBase64Binary{5a}
-  else if (propName = 'url') then UrlElement := propValue as TFhirUri{5a}
-  else if (propName = 'size') then SizeElement := propValue as TFhirUnsignedInt{5a}
-  else if (propName = 'hash') then HashElement := propValue as TFhirBase64Binary{5a}
-  else if (propName = 'title') then TitleElement := propValue as TFhirString{5a}
-  else if (propName = 'creation') then CreationElement := propValue as TFhirDateTime{5a}
+  else if (propName = 'data') then DataElement := asBase64Binary(propValue){5a}
+  else if (propName = 'url') then UrlElement := asUri(propValue){5a}
+  else if (propName = 'size') then SizeElement := asUnsignedInt(propValue){5a}
+  else if (propName = 'hash') then HashElement := asBase64Binary(propValue){5a}
+  else if (propName = 'title') then TitleElement := asString(propValue){5a}
+  else if (propName = 'creation') then CreationElement := asDateTime(propValue){5a}
   else inherited;
+end;
+
+function TFhirAttachment.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirAttachment.FhirType : string;
@@ -16351,12 +16178,17 @@ end;
 
 procedure TFhirQuantity.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'value') then ValueElement := propValue as TFhirDecimal{5a}
+  if (propName = 'value') then ValueElement := asDecimal(propValue){5a}
   else if (propName = 'comparator') then ComparatorElement := asEnum(SYSTEMS_TFhirQuantityComparatorEnum, CODES_TFhirQuantityComparatorEnum, propValue)
-  else if (propName = 'unit') then Unit_Element := propValue as TFhirString{5a}
-  else if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
+  else if (propName = 'unit') then Unit_Element := asString(propValue){5a}
+  else if (propName = 'system') then SystemElement := asUri(propValue){5a}
   else if (propName = 'code') then CodeElement := asCode(propValue)
   else inherited;
+end;
+
+function TFhirQuantity.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirQuantity.FhirType : string;
@@ -16703,9 +16535,14 @@ end;
 procedure TFhirAnnotation.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName.startsWith('author')) then Author := propValue as TFhirType{4}
-  else if (propName = 'time') then TimeElement := propValue as TFhirDateTime{5a}
-  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
+  else if (propName = 'time') then TimeElement := asDateTime(propValue){5a}
+  else if (propName = 'text') then TextElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirAnnotation.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirAnnotation.FhirType : string;
@@ -16980,6 +16817,13 @@ begin
   else inherited;
 end;
 
+function TFhirRatio.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'numerator') then begin Numerator := TFhirQuantity.create(); result := Numerator; end{4b}
+  else if (propName = 'denominator') then begin Denominator := TFhirQuantity.create(); result := Denominator; end{4b}
+  else result := inherited makeProperty(propName);
+end;
+
 function TFhirRatio.FhirType : string;
 begin
   result := 'Ratio';
@@ -17226,13 +17070,19 @@ end;
 procedure TFhirSampledData.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'origin') then Origin := propValue as TFhirQuantity{4b}
-  else if (propName = 'period') then PeriodElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'factor') then FactorElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'lowerLimit') then LowerLimitElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'upperLimit') then UpperLimitElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'dimensions') then DimensionsElement := propValue as TFhirPositiveInt{5a}
-  else if (propName = 'data') then DataElement := propValue as TFhirString{5a}
+  else if (propName = 'period') then PeriodElement := asDecimal(propValue){5a}
+  else if (propName = 'factor') then FactorElement := asDecimal(propValue){5a}
+  else if (propName = 'lowerLimit') then LowerLimitElement := asDecimal(propValue){5a}
+  else if (propName = 'upperLimit') then UpperLimitElement := asDecimal(propValue){5a}
+  else if (propName = 'dimensions') then DimensionsElement := asPositiveInt(propValue){5a}
+  else if (propName = 'data') then DataElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirSampledData.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'origin') then begin Origin := TFhirQuantity.create(); result := Origin; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirSampledData.FhirType : string;
@@ -17620,8 +17470,14 @@ end;
 procedure TFhirCodeableConcept.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'coding') then CodingList.add(propValue as TFhirCoding){2}
-  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
+  else if (propName = 'text') then TextElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirCodeableConcept.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'coding') then result := CodingList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirCodeableConcept.FhirType : string;
@@ -17870,9 +17726,14 @@ end;
 
 procedure TFhirReference.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'reference') then ReferenceElement := propValue as TFhirString{5a}
-  else if (propName = 'display') then DisplayElement := propValue as TFhirString{5a}
+  if (propName = 'reference') then ReferenceElement := asString(propValue){5a}
+  else if (propName = 'display') then DisplayElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirReference.makeProperty(propName: string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirReference.FhirType : string;
@@ -18184,11 +18045,19 @@ procedure TFhirIdentifier.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirIdentifierUseEnum, CODES_TFhirIdentifierUseEnum, propValue)
   else if (propName = 'type') then Type_ := propValue as TFhirCodeableConcept{4b}
-  else if (propName = 'system') then SystemElement := propValue as TFhirUri{5a}
-  else if (propName = 'value') then ValueElement := propValue as TFhirString{5a}
+  else if (propName = 'system') then SystemElement := asUri(propValue){5a}
+  else if (propName = 'value') then ValueElement := asString(propValue){5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else if (propName = 'assigner') then Assigner := propValue as TFhirReference{TFhirOrganization}{4b}
   else inherited;
+end;
+
+function TFhirIdentifier.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'type') then begin Type_ := TFhirCodeableConcept.create(); result := Type_; end{4b}
+  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
+  else if (propName = 'assigner') then begin Assigner := TFhirReference{TFhirOrganization}.create(); result := Assigner; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirIdentifier.FhirType : string;
@@ -18519,11 +18388,17 @@ end;
 procedure TFhirSignature.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'type') then Type_List.add(propValue as TFhirCoding){2}
-  else if (propName = 'when') then WhenElement := propValue as TFhirInstant{5a}
+  else if (propName = 'when') then WhenElement := asInstant(propValue){5a}
   else if (propName.startsWith('who')) then Who := propValue as TFhirType{4}
   else if (propName = 'contentType') then ContentTypeElement := asCode(propValue)
-  else if (propName = 'blob') then BlobElement := propValue as TFhirBase64Binary{5a}
+  else if (propName = 'blob') then BlobElement := asBase64Binary(propValue){5a}
   else inherited;
+end;
+
+function TFhirSignature.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := Type_List.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirSignature.FhirType : string;
@@ -18933,17 +18808,22 @@ end;
 procedure TFhirTimingRepeat.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName.startsWith('bounds')) then Bounds := propValue as TFhirType{4}
-  else if (propName = 'count') then CountElement := propValue as TFhirInteger{5a}
-  else if (propName = 'duration') then DurationElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'durationMax') then DurationMaxElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'count') then CountElement := asInteger(propValue){5a}
+  else if (propName = 'duration') then DurationElement := asDecimal(propValue){5a}
+  else if (propName = 'durationMax') then DurationMaxElement := asDecimal(propValue){5a}
   else if (propName = 'durationUnits') then DurationUnitsElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, propValue)
-  else if (propName = 'frequency') then FrequencyElement := propValue as TFhirInteger{5a}
-  else if (propName = 'frequencyMax') then FrequencyMaxElement := propValue as TFhirInteger{5a}
-  else if (propName = 'period') then PeriodElement := propValue as TFhirDecimal{5a}
-  else if (propName = 'periodMax') then PeriodMaxElement := propValue as TFhirDecimal{5a}
+  else if (propName = 'frequency') then FrequencyElement := asInteger(propValue){5a}
+  else if (propName = 'frequencyMax') then FrequencyMaxElement := asInteger(propValue){5a}
+  else if (propName = 'period') then PeriodElement := asDecimal(propValue){5a}
+  else if (propName = 'periodMax') then PeriodMaxElement := asDecimal(propValue){5a}
   else if (propName = 'periodUnits') then PeriodUnitsElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, propValue)
   else if (propName = 'when') then WhenElement := asEnum(SYSTEMS_TFhirEventTimingEnum, CODES_TFhirEventTimingEnum, propValue)
   else inherited;
+end;
+
+function TFhirTimingRepeat.makeProperty(propName : string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirTimingRepeat.FhirType : string;
@@ -19437,6 +19317,14 @@ begin
   else inherited;
 end;
 
+function TFhirTiming.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'event') then result := EventList.append(){2}
+  else if (propName = 'repeat') then begin Repeat_ := TFhirTimingRepeat.create(); result := Repeat_; end{4b}
+  else if (propName = 'code') then begin Code := TFhirCodeableConcept.create(); result := Code; end{4b}
+  else result := inherited makeProperty(propName);
+end;
+
 function TFhirTiming.FhirType : string;
 begin
   result := 'Timing';
@@ -19685,33 +19573,6 @@ begin
  end;
 
 
-function TFhirDefinedTypesEnumListAsInteger(aSet : TFhirDefinedTypesEnumList) : Integer;
-var
-  a : TFhirDefinedTypesEnum;
-begin
-  result := 0;
-  for a := low(TFhirDefinedTypesEnum) to high(TFhirDefinedTypesEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirDefinedTypesEnumList(i : Integer) : TFhirDefinedTypesEnumList;
-var
-  aLoop : TFhirDefinedTypesEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirDefinedTypesEnum) to high(TFhirDefinedTypesEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirResourceAggregationModeEnumListAsInteger(aSet : TFhirResourceAggregationModeEnumList) : Integer;
 var
   a : TFhirResourceAggregationModeEnum;
@@ -19852,10 +19713,16 @@ end;
 procedure TFhirElementDefinitionSlicing.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'discriminator') then DiscriminatorList.add(propValue as TFhirString){2}
-  else if (propName = 'description') then DescriptionElement := propValue as TFhirString{5a}
-  else if (propName = 'ordered') then OrderedElement := propValue as TFhirBoolean{5a}
+  else if (propName = 'description') then DescriptionElement := asString(propValue){5a}
+  else if (propName = 'ordered') then OrderedElement := asBoolean(propValue){5a}
   else if (propName = 'rules') then RulesElement := asEnum(SYSTEMS_TFhirResourceSlicingRulesEnum, CODES_TFhirResourceSlicingRulesEnum, propValue)
   else inherited;
+end;
+
+function TFhirElementDefinitionSlicing.makeProperty(propName : string) : TFHIRObject;
+begin
+  if (propName = 'discriminator') then result := DiscriminatorList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionSlicing.FhirType : string;
@@ -20154,10 +20021,15 @@ end;
 
 procedure TFhirElementDefinitionBase.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'path') then PathElement := propValue as TFhirString{5a}
-  else if (propName = 'min') then MinElement := propValue as TFhirInteger{5a}
-  else if (propName = 'max') then MaxElement := propValue as TFhirString{5a}
+  if (propName = 'path') then PathElement := asString(propValue){5a}
+  else if (propName = 'min') then MinElement := asInteger(propValue){5a}
+  else if (propName = 'max') then MaxElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirElementDefinitionBase.makeProperty(propName : string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionBase.FhirType : string;
@@ -20427,7 +20299,7 @@ end;
 procedure TFhirElementDefinitionType.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FCode := TFhirElementDefinitionType(oSource).FCode.Link;
+  codeElement := TFhirElementDefinitionType(oSource).codeElement.Clone;
   if (TFhirElementDefinitionType(oSource).FProfileList = nil) then
   begin
     FProfileList.free;
@@ -20464,17 +20336,23 @@ end;
 procedure TFhirElementDefinitionType.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFHIREnum, FCode.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFhirCode, FCode.Link));{2}
   oList.add(TFHIRProperty.create(self, 'profile', 'uri', true, TFhirUri, FProfileList.Link)){3};
   oList.add(TFHIRProperty.create(self, 'aggregation', 'code', true, TFHIREnum, FAggregation.Link)){3};
 end;
 
 procedure TFhirElementDefinitionType.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'code') then CodeElement := asEnum(SYSTEMS_TFhirDefinedTypesEnum, CODES_TFhirDefinedTypesEnum, propValue)
+  if (propName = 'code') then CodeElement := asCode(propValue)
   else if (propName = 'profile') then ProfileList.add(propValue as TFhirUri){2}
   else if (propName = 'aggregation') then FAggregation.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
   else inherited;
+end;
+
+function TFhirElementDefinitionType.makeProperty(propName : string) : TFHIRObject;
+begin
+  if (propName = 'profile') then result := ProfileList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionType.FhirType : string;
@@ -20526,26 +20404,30 @@ end;
 
 { TFhirElementDefinitionType }
 
-Procedure TFhirElementDefinitionType.SetCode(value : TFhirEnum);
+Procedure TFhirElementDefinitionType.SetCode(value : TFhirCode);
 begin
   FCode.free;
   FCode := value;
 end;
 
-Function TFhirElementDefinitionType.GetCodeST : TFhirDefinedTypesEnum;
+Function TFhirElementDefinitionType.GetCodeST : String;
 begin
   if FCode = nil then
-    result := TFhirDefinedTypesEnum(0)
+    result := ''
   else
-    result := TFhirDefinedTypesEnum(StringArrayIndexOfSensitive(CODES_TFhirDefinedTypesEnum, FCode.value));
+    result := FCode.value;
 end;
 
-Procedure TFhirElementDefinitionType.SetCodeST(value : TFhirDefinedTypesEnum);
+Procedure TFhirElementDefinitionType.SetCodeST(value : String);
 begin
-  if ord(value) = 0 then
-    CodeElement := nil
-  else
-    CodeElement := TFhirEnum.create(SYSTEMS_TFhirDefinedTypesEnum[value], CODES_TFhirDefinedTypesEnum[value]);
+  if value <> '' then
+  begin
+    if FCode = nil then
+      FCode := TFhirCode.create;
+    FCode.value := value
+  end
+  else if FCode <> nil then
+    FCode.value := '';
 end;
 
 Function TFhirElementDefinitionType.GetProfileList : TFhirUriList;
@@ -20584,6 +20466,8 @@ end;
 Procedure TFhirElementDefinitionType.SetAggregationST(value : TFhirResourceAggregationModeEnumList);
 var a : TFhirResourceAggregationModeEnum;
 begin
+  if Faggregation = nil then
+    Faggregation := TFhirEnumList.create(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum);
   Faggregation.clear;
   for a := low(TFhirResourceAggregationModeEnum) to high(TFhirResourceAggregationModeEnum) do
     if a in value then
@@ -20770,12 +20654,17 @@ end;
 
 procedure TFhirElementDefinitionConstraint.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'key') then KeyElement := propValue as TFhirId{5a}
-  else if (propName = 'requirements') then RequirementsElement := propValue as TFhirString{5a}
+  if (propName = 'key') then KeyElement := asId(propValue){5a}
+  else if (propName = 'requirements') then RequirementsElement := asString(propValue){5a}
   else if (propName = 'severity') then SeverityElement := asEnum(SYSTEMS_TFhirConstraintSeverityEnum, CODES_TFhirConstraintSeverityEnum, propValue)
-  else if (propName = 'human') then HumanElement := propValue as TFhirString{5a}
-  else if (propName = 'xpath') then XpathElement := propValue as TFhirString{5a}
+  else if (propName = 'human') then HumanElement := asString(propValue){5a}
+  else if (propName = 'xpath') then XpathElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirElementDefinitionConstraint.makeProperty(propName : string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionConstraint.FhirType : string;
@@ -21122,9 +21011,14 @@ end;
 procedure TFhirElementDefinitionBinding.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'strength') then StrengthElement := asEnum(SYSTEMS_TFhirBindingStrengthEnum, CODES_TFhirBindingStrengthEnum, propValue)
-  else if (propName = 'description') then DescriptionElement := propValue as TFhirString{5a}
+  else if (propName = 'description') then DescriptionElement := asString(propValue){5a}
   else if (propName.startsWith('valueSet')) then ValueSet := propValue as TFhirType{4}
   else inherited;
+end;
+
+function TFhirElementDefinitionBinding.makeProperty(propName : string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionBinding.FhirType : string;
@@ -21395,10 +21289,15 @@ end;
 
 procedure TFhirElementDefinitionMapping.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'identity') then IdentityElement := propValue as TFhirId{5a}
+  if (propName = 'identity') then IdentityElement := asId(propValue){5a}
   else if (propName = 'language') then LanguageElement := asCode(propValue)
-  else if (propName = 'map') then MapElement := propValue as TFhirString{5a}
+  else if (propName = 'map') then MapElement := asString(propValue){5a}
   else inherited;
+end;
+
+function TFhirElementDefinitionMapping.makeProperty(propName : string) : TFHIRObject;
+begin
+  result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinitionMapping.FhirType : string;
@@ -21897,38 +21796,52 @@ end;
 
 procedure TFhirElementDefinition.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'path') then PathElement := propValue as TFhirString{5a}
+  if (propName = 'path') then PathElement := asString(propValue){5a}
   else if (propName = 'representation') then FRepresentation.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
-  else if (propName = 'name') then NameElement := propValue as TFhirString{5a}
-  else if (propName = 'label') then Label_Element := propValue as TFhirString{5a}
+  else if (propName = 'name') then NameElement := asString(propValue){5a}
+  else if (propName = 'label') then Label_Element := asString(propValue){5a}
   else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2}
   else if (propName = 'slicing') then Slicing := propValue as TFhirElementDefinitionSlicing{4b}
-  else if (propName = 'short') then ShortElement := propValue as TFhirString{5a}
-  else if (propName = 'definition') then DefinitionElement := propValue as TFhirString{5a}
-  else if (propName = 'comments') then CommentsElement := propValue as TFhirString{5a}
-  else if (propName = 'requirements') then RequirementsElement := propValue as TFhirString{5a}
+  else if (propName = 'short') then ShortElement := asString(propValue){5a}
+  else if (propName = 'definition') then DefinitionElement := asString(propValue){5a}
+  else if (propName = 'comments') then CommentsElement := asString(propValue){5a}
+  else if (propName = 'requirements') then RequirementsElement := asString(propValue){5a}
   else if (propName = 'alias') then AliasList.add(propValue as TFhirString){2}
-  else if (propName = 'min') then MinElement := propValue as TFhirInteger{5a}
-  else if (propName = 'max') then MaxElement := propValue as TFhirString{5a}
+  else if (propName = 'min') then MinElement := asInteger(propValue){5a}
+  else if (propName = 'max') then MaxElement := asString(propValue){5a}
   else if (propName = 'base') then Base := propValue as TFhirElementDefinitionBase{4b}
   else if (propName = 'type') then Type_List.add(propValue as TFhirElementDefinitionType){2}
-  else if (propName = 'nameReference') then NameReferenceElement := propValue as TFhirString{5a}
+  else if (propName = 'nameReference') then NameReferenceElement := asString(propValue){5a}
   else if (propName.startsWith('defaultValue')) then DefaultValue := propValue as TFhirType{4}
-  else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := propValue as TFhirString{5a}
+  else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asString(propValue){5a}
   else if (propName.startsWith('fixed')) then Fixed := propValue as TFhirType{4}
   else if (propName.startsWith('pattern')) then Pattern := propValue as TFhirType{4}
   else if (propName.startsWith('example')) then Example := propValue as TFhirType{4}
   else if (propName.startsWith('minValue')) then MinValue := propValue as TFhirType{4}
   else if (propName.startsWith('maxValue')) then MaxValue := propValue as TFhirType{4}
-  else if (propName = 'maxLength') then MaxLengthElement := propValue as TFhirInteger{5a}
+  else if (propName = 'maxLength') then MaxLengthElement := asInteger(propValue){5a}
   else if (propName = 'condition') then ConditionList.add(propValue as TFhirId){2}
   else if (propName = 'constraint') then ConstraintList.add(propValue as TFhirElementDefinitionConstraint){2}
-  else if (propName = 'mustSupport') then MustSupportElement := propValue as TFhirBoolean{5a}
-  else if (propName = 'isModifier') then IsModifierElement := propValue as TFhirBoolean{5a}
-  else if (propName = 'isSummary') then IsSummaryElement := propValue as TFhirBoolean{5a}
+  else if (propName = 'mustSupport') then MustSupportElement := asBoolean(propValue){5a}
+  else if (propName = 'isModifier') then IsModifierElement := asBoolean(propValue){5a}
+  else if (propName = 'isSummary') then IsSummaryElement := asBoolean(propValue){5a}
   else if (propName = 'binding') then Binding := propValue as TFhirElementDefinitionBinding{4b}
   else if (propName = 'mapping') then MappingList.add(propValue as TFhirElementDefinitionMapping){2}
   else inherited;
+end;
+
+function TFhirElementDefinition.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := CodeList.append(){2}
+  else if (propName = 'slicing') then begin Slicing := TFhirElementDefinitionSlicing.create(); result := Slicing; end{4b}
+  else if (propName = 'alias') then result := AliasList.append(){2}
+  else if (propName = 'base') then begin Base := TFhirElementDefinitionBase.create(); result := Base; end{4b}
+  else if (propName = 'type') then result := Type_List.append(){2}
+  else if (propName = 'condition') then result := ConditionList.append(){2}
+  else if (propName = 'constraint') then result := ConstraintList.append(){2}
+  else if (propName = 'binding') then begin Binding := TFhirElementDefinitionBinding.create(); result := Binding; end{4b}
+  else if (propName = 'mapping') then result := MappingList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirElementDefinition.FhirType : string;
@@ -22052,6 +21965,8 @@ end;
 Procedure TFhirElementDefinition.SetRepresentationST(value : TFhirPropertyRepresentationEnumList);
 var a : TFhirPropertyRepresentationEnum;
 begin
+  if Frepresentation = nil then
+    Frepresentation := TFhirEnumList.create(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum);
   Frepresentation.clear;
   for a := low(TFhirPropertyRepresentationEnum) to high(TFhirPropertyRepresentationEnum) do
     if a in value then
@@ -22787,13 +22702,23 @@ end;
 procedure TFhirHumanName.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, propValue)
-  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
+  else if (propName = 'text') then TextElement := asString(propValue){5a}
   else if (propName = 'family') then FamilyList.add(propValue as TFhirString){2}
   else if (propName = 'given') then GivenList.add(propValue as TFhirString){2}
   else if (propName = 'prefix') then PrefixList.add(propValue as TFhirString){2}
   else if (propName = 'suffix') then SuffixList.add(propValue as TFhirString){2}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
+end;
+
+function TFhirHumanName.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'family') then result := FamilyList.append(){2}
+  else if (propName = 'given') then result := GivenList.append(){2}
+  else if (propName = 'prefix') then result := PrefixList.append(){2}
+  else if (propName = 'suffix') then result := SuffixList.append(){2}
+  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirHumanName.FhirType : string;
@@ -23216,15 +23141,22 @@ procedure TFhirAddress.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirAddressUseEnum, CODES_TFhirAddressUseEnum, propValue)
   else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAddressTypeEnum, CODES_TFhirAddressTypeEnum, propValue)
-  else if (propName = 'text') then TextElement := propValue as TFhirString{5a}
+  else if (propName = 'text') then TextElement := asString(propValue){5a}
   else if (propName = 'line') then LineList.add(propValue as TFhirString){2}
-  else if (propName = 'city') then CityElement := propValue as TFhirString{5a}
-  else if (propName = 'district') then DistrictElement := propValue as TFhirString{5a}
-  else if (propName = 'state') then StateElement := propValue as TFhirString{5a}
-  else if (propName = 'postalCode') then PostalCodeElement := propValue as TFhirString{5a}
-  else if (propName = 'country') then CountryElement := propValue as TFhirString{5a}
+  else if (propName = 'city') then CityElement := asString(propValue){5a}
+  else if (propName = 'district') then DistrictElement := asString(propValue){5a}
+  else if (propName = 'state') then StateElement := asString(propValue){5a}
+  else if (propName = 'postalCode') then PostalCodeElement := asString(propValue){5a}
+  else if (propName = 'country') then CountryElement := asString(propValue){5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
+end;
+
+function TFhirAddress.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'line') then result := LineList.append(){2}
+  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirAddress.FhirType : string;
@@ -23703,12 +23635,20 @@ end;
 
 procedure TFhirMeta.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'versionId') then VersionIdElement := propValue as TFhirId{5a}
-  else if (propName = 'lastUpdated') then LastUpdatedElement := propValue as TFhirInstant{5a}
+  if (propName = 'versionId') then VersionIdElement := asId(propValue){5a}
+  else if (propName = 'lastUpdated') then LastUpdatedElement := asInstant(propValue){5a}
   else if (propName = 'profile') then ProfileList.add(propValue as TFhirUri){2}
   else if (propName = 'security') then SecurityList.add(propValue as TFhirCoding){2}
   else if (propName = 'tag') then TagList.add(propValue as TFhirCoding){2}
   else inherited;
+end;
+
+function TFhirMeta.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'profile') then result := ProfileList.append(){2}
+  else if (propName = 'security') then result := SecurityList.append(){2}
+  else if (propName = 'tag') then result := TagList.append(){2}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirMeta.FhirType : string;
@@ -24080,11 +24020,17 @@ end;
 procedure TFhirContactPoint.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'system') then SystemElement := asEnum(SYSTEMS_TFhirContactPointSystemEnum, CODES_TFhirContactPointSystemEnum, propValue)
-  else if (propName = 'value') then ValueElement := propValue as TFhirString{5a}
+  else if (propName = 'value') then ValueElement := asString(propValue){5a}
   else if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirContactPointUseEnum, CODES_TFhirContactPointUseEnum, propValue)
-  else if (propName = 'rank') then RankElement := propValue as TFhirPositiveInt{5a}
+  else if (propName = 'rank') then RankElement := asPositiveInt(propValue){5a}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
+end;
+
+function TFhirContactPoint.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirContactPoint.FhirType : string;

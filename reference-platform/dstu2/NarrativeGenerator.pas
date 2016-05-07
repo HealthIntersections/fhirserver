@@ -301,7 +301,7 @@ begin
   result := true;
   if (child.Type_List.count <> 1) then
   begin
-    t := CODES_TFhirDefinedTypesEnum[child.Type_List[0].Code];
+    t := child.Type_List[0].Code;
     if (t = 'Address') or (t = 'Reference') then
       result := true;
   end;
@@ -793,7 +793,7 @@ begin
   else if (child.Type_List.count <> 1) then
   begin
     result := true;
-    t := CODES_TFhirDefinedTypesEnum[child.Type_List[0].Code];
+    t := child.Type_List[0].Code;
     if (t = 'Address')or (t = 'Contact') or (t = 'Reference') or (t = 'Uri') then
       result := false;
   end

@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   nppforms,
-  FHIRResources, FHIRTypes, FHIRPluginValidator, FHIRProfileUtilities, FHIRParserBase, FHIRParser;
+  FHIRResources, FHIRTypes, FHIRPluginValidator, FHIRProfileUtilities, FHIRParserBase, FHIRParser, FHIRContext;
 
 type
   TResourceNewForm = class(TNppForm)
@@ -68,9 +68,9 @@ begin
     res := pu.populateByProfile(sd);
     try
       if rbJson.Checked then
-        comp := TFHIRJsonComposer.Create('en')
+        comp := TFHIRJsonComposer.Create(FContext.link, 'en')
       else
-        comp := TFHIRXmlComposer.Create('en');
+        comp := TFHIRXmlComposer.Create(FContext.link, 'en');
       try
         s := TStringStream.Create;
         try
@@ -132,9 +132,9 @@ begin
   lbProfiles.Clear;
   s := edtFilter.Text;
   s := s.toLower;
-  for sd in FContext.Profiles.ProfilesByURL.Values do
+  for sd in TFHIRPluginValidatorContext(FContext).Profiles.ProfilesByURL.Values do
     if (sd.kind = StructureDefinitionKindResource) and ((edtFilter.Text = '') or sd.name.ToLower.Contains(s)) then
-      if sd.constrainedType = DefinedTypesNull then
+      if sd.baseType = '' then
         lbResources.Items.AddObject(sd.name, sd)
       else
         lbProfiles.Items.AddObject(sd.name, sd)

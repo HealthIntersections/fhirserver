@@ -157,7 +157,9 @@ uses
   NewServerForm in 'NewServerForm.pas' {frmNewServer},
   QuestionnaireBuilder in '..\reference-platform\dstu2\QuestionnaireBuilder.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
-  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas';
+  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas',
+  FHIRContext in '..\reference-platform\dstu2\FHIRContext.pas',
+  FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas';
 
 {$R *.res}
 

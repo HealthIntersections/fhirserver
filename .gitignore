@@ -63,3 +63,5 @@ tests/FHIRTest.stat
 reference-platform/generator/workspace/.metadata/
 reference-platform/generator/workspace/.recommenders/
 reference-platform/generator/project/.settings/org.eclipse.jdt.core.prefs
+install/fhirquick.fbpbrk
+install/fhirquick.fbpInf

@@ -605,7 +605,7 @@ var
 begin
   params := AsParams;
   try
-    json := TFHIRJsonComposer.Create('en');
+    json := TFHIRJsonComposer.Create(nil, 'en');
     try
       s := json.Compose('request', params, false);
       result := HashStringToCode32(s);
@@ -1226,7 +1226,7 @@ begin
     try
       try
         try
-          FClient := TFhirClient.Create(server.fhirEndpoint, true);
+          FClient := TFhirClient.Create(nil, server.fhirEndpoint, true);
           try
             FClient.timeout := 15000;
             FClient.smartToken := token.link;

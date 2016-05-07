@@ -38,7 +38,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2015-12-22T12:09:07+11:00
+// FHIR v1.0.2 generated 2016-04-22T13:45:58+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;

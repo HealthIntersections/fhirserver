@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-04-30T11:06:22+10:00
+// FHIR v1.4.0 generated 2016-05-06T08:21:06+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -1754,179 +1754,6 @@ Type
     ResponseCodeFatalError); {@enum.value ResponseCodeFatalError  }
   TFhirResponseCodeEnumList = set of TFhirResponseCodeEnum;
 
-  {@Enum TFhirDefinedTypesEnum
-    Either a resource or a data type.
-  }
-  TFhirDefinedTypesEnum = (
-    DefinedTypesNull,  {@enum.value DefinedTypesNull Value is missing from Instance }
-    DefinedTypesActionDefinition, {@enum.value DefinedTypesActionDefinition  }
-    DefinedTypesAddress, {@enum.value DefinedTypesAddress  }
-    DefinedTypesAge, {@enum.value DefinedTypesAge  }
-    DefinedTypesAnnotation, {@enum.value DefinedTypesAnnotation  }
-    DefinedTypesAttachment, {@enum.value DefinedTypesAttachment  }
-    DefinedTypesBackboneElement, {@enum.value DefinedTypesBackboneElement  }
-    DefinedTypesCodeableConcept, {@enum.value DefinedTypesCodeableConcept  }
-    DefinedTypesCoding, {@enum.value DefinedTypesCoding  }
-    DefinedTypesContactPoint, {@enum.value DefinedTypesContactPoint  }
-    DefinedTypesCount, {@enum.value DefinedTypesCount  }
-    DefinedTypesDataRequirement, {@enum.value DefinedTypesDataRequirement  }
-    DefinedTypesDistance, {@enum.value DefinedTypesDistance  }
-    DefinedTypesDuration, {@enum.value DefinedTypesDuration  }
-    DefinedTypesElement, {@enum.value DefinedTypesElement  }
-    DefinedTypesElementDefinition, {@enum.value DefinedTypesElementDefinition  }
-    DefinedTypesExtension, {@enum.value DefinedTypesExtension  }
-    DefinedTypesHumanName, {@enum.value DefinedTypesHumanName  }
-    DefinedTypesIdentifier, {@enum.value DefinedTypesIdentifier  }
-    DefinedTypesMeta, {@enum.value DefinedTypesMeta  }
-    DefinedTypesModuleMetadata, {@enum.value DefinedTypesModuleMetadata  }
-    DefinedTypesMoney, {@enum.value DefinedTypesMoney  }
-    DefinedTypesNarrative, {@enum.value DefinedTypesNarrative  }
-    DefinedTypesParameterDefinition, {@enum.value DefinedTypesParameterDefinition  }
-    DefinedTypesPeriod, {@enum.value DefinedTypesPeriod  }
-    DefinedTypesQuantity, {@enum.value DefinedTypesQuantity  }
-    DefinedTypesRange, {@enum.value DefinedTypesRange  }
-    DefinedTypesRatio, {@enum.value DefinedTypesRatio  }
-    DefinedTypesReference, {@enum.value DefinedTypesReference  }
-    DefinedTypesSampledData, {@enum.value DefinedTypesSampledData  }
-    DefinedTypesSignature, {@enum.value DefinedTypesSignature  }
-    DefinedTypesSimpleQuantity, {@enum.value DefinedTypesSimpleQuantity  }
-    DefinedTypesTiming, {@enum.value DefinedTypesTiming  }
-    DefinedTypesTriggerDefinition, {@enum.value DefinedTypesTriggerDefinition  }
-    DefinedTypesBase64Binary, {@enum.value DefinedTypesBase64Binary  }
-    DefinedTypesBoolean, {@enum.value DefinedTypesBoolean  }
-    DefinedTypesCode, {@enum.value DefinedTypesCode  }
-    DefinedTypesDate, {@enum.value DefinedTypesDate  }
-    DefinedTypesDateTime, {@enum.value DefinedTypesDateTime  }
-    DefinedTypesDecimal, {@enum.value DefinedTypesDecimal  }
-    DefinedTypesId, {@enum.value DefinedTypesId  }
-    DefinedTypesInstant, {@enum.value DefinedTypesInstant  }
-    DefinedTypesInteger, {@enum.value DefinedTypesInteger  }
-    DefinedTypesMarkdown, {@enum.value DefinedTypesMarkdown  }
-    DefinedTypesOid, {@enum.value DefinedTypesOid  }
-    DefinedTypesPositiveInt, {@enum.value DefinedTypesPositiveInt  }
-    DefinedTypesString, {@enum.value DefinedTypesString  }
-    DefinedTypesTime, {@enum.value DefinedTypesTime  }
-    DefinedTypesUnsignedInt, {@enum.value DefinedTypesUnsignedInt  }
-    DefinedTypesUri, {@enum.value DefinedTypesUri  }
-    DefinedTypesUuid, {@enum.value DefinedTypesUuid  }
-    DefinedTypesXhtml, {@enum.value DefinedTypesXhtml  }
-    DefinedTypesAccount, {@enum.value DefinedTypesAccount  }
-    DefinedTypesAllergyIntolerance, {@enum.value DefinedTypesAllergyIntolerance  }
-    DefinedTypesAppointment, {@enum.value DefinedTypesAppointment  }
-    DefinedTypesAppointmentResponse, {@enum.value DefinedTypesAppointmentResponse  }
-    DefinedTypesAuditEvent, {@enum.value DefinedTypesAuditEvent  }
-    DefinedTypesBasic, {@enum.value DefinedTypesBasic  }
-    DefinedTypesBinary, {@enum.value DefinedTypesBinary  }
-    DefinedTypesBodySite, {@enum.value DefinedTypesBodySite  }
-    DefinedTypesBundle, {@enum.value DefinedTypesBundle  }
-    DefinedTypesCarePlan, {@enum.value DefinedTypesCarePlan  }
-    DefinedTypesCareTeam, {@enum.value DefinedTypesCareTeam  }
-    DefinedTypesClaim, {@enum.value DefinedTypesClaim  }
-    DefinedTypesClaimResponse, {@enum.value DefinedTypesClaimResponse  }
-    DefinedTypesClinicalImpression, {@enum.value DefinedTypesClinicalImpression  }
-    DefinedTypesCodeSystem, {@enum.value DefinedTypesCodeSystem  }
-    DefinedTypesCommunication, {@enum.value DefinedTypesCommunication  }
-    DefinedTypesCommunicationRequest, {@enum.value DefinedTypesCommunicationRequest  }
-    DefinedTypesCompartmentDefinition, {@enum.value DefinedTypesCompartmentDefinition  }
-    DefinedTypesComposition, {@enum.value DefinedTypesComposition  }
-    DefinedTypesConceptMap, {@enum.value DefinedTypesConceptMap  }
-    DefinedTypesCondition, {@enum.value DefinedTypesCondition  }
-    DefinedTypesConformance, {@enum.value DefinedTypesConformance  }
-    DefinedTypesContract, {@enum.value DefinedTypesContract  }
-    DefinedTypesCoverage, {@enum.value DefinedTypesCoverage  }
-    DefinedTypesDataElement, {@enum.value DefinedTypesDataElement  }
-    DefinedTypesDecisionSupportRule, {@enum.value DefinedTypesDecisionSupportRule  }
-    DefinedTypesDecisionSupportServiceModule, {@enum.value DefinedTypesDecisionSupportServiceModule  }
-    DefinedTypesDetectedIssue, {@enum.value DefinedTypesDetectedIssue  }
-    DefinedTypesDevice, {@enum.value DefinedTypesDevice  }
-    DefinedTypesDeviceComponent, {@enum.value DefinedTypesDeviceComponent  }
-    DefinedTypesDeviceMetric, {@enum.value DefinedTypesDeviceMetric  }
-    DefinedTypesDeviceUseRequest, {@enum.value DefinedTypesDeviceUseRequest  }
-    DefinedTypesDeviceUseStatement, {@enum.value DefinedTypesDeviceUseStatement  }
-    DefinedTypesDiagnosticOrder, {@enum.value DefinedTypesDiagnosticOrder  }
-    DefinedTypesDiagnosticReport, {@enum.value DefinedTypesDiagnosticReport  }
-    DefinedTypesDocumentManifest, {@enum.value DefinedTypesDocumentManifest  }
-    DefinedTypesDocumentReference, {@enum.value DefinedTypesDocumentReference  }
-    DefinedTypesDomainResource, {@enum.value DefinedTypesDomainResource  }
-    DefinedTypesEligibilityRequest, {@enum.value DefinedTypesEligibilityRequest  }
-    DefinedTypesEligibilityResponse, {@enum.value DefinedTypesEligibilityResponse  }
-    DefinedTypesEncounter, {@enum.value DefinedTypesEncounter  }
-    DefinedTypesEnrollmentRequest, {@enum.value DefinedTypesEnrollmentRequest  }
-    DefinedTypesEnrollmentResponse, {@enum.value DefinedTypesEnrollmentResponse  }
-    DefinedTypesEpisodeOfCare, {@enum.value DefinedTypesEpisodeOfCare  }
-    DefinedTypesExpansionProfile, {@enum.value DefinedTypesExpansionProfile  }
-    DefinedTypesExplanationOfBenefit, {@enum.value DefinedTypesExplanationOfBenefit  }
-    DefinedTypesFamilyMemberHistory, {@enum.value DefinedTypesFamilyMemberHistory  }
-    DefinedTypesFlag, {@enum.value DefinedTypesFlag  }
-    DefinedTypesGoal, {@enum.value DefinedTypesGoal  }
-    DefinedTypesGroup, {@enum.value DefinedTypesGroup  }
-    DefinedTypesGuidanceResponse, {@enum.value DefinedTypesGuidanceResponse  }
-    DefinedTypesHealthcareService, {@enum.value DefinedTypesHealthcareService  }
-    DefinedTypesImagingExcerpt, {@enum.value DefinedTypesImagingExcerpt  }
-    DefinedTypesImagingObjectSelection, {@enum.value DefinedTypesImagingObjectSelection  }
-    DefinedTypesImagingStudy, {@enum.value DefinedTypesImagingStudy  }
-    DefinedTypesImmunization, {@enum.value DefinedTypesImmunization  }
-    DefinedTypesImmunizationRecommendation, {@enum.value DefinedTypesImmunizationRecommendation  }
-    DefinedTypesImplementationGuide, {@enum.value DefinedTypesImplementationGuide  }
-    DefinedTypesLibrary, {@enum.value DefinedTypesLibrary  }
-    DefinedTypesLinkage, {@enum.value DefinedTypesLinkage  }
-    DefinedTypesList, {@enum.value DefinedTypesList  }
-    DefinedTypesLocation, {@enum.value DefinedTypesLocation  }
-    DefinedTypesMeasure, {@enum.value DefinedTypesMeasure  }
-    DefinedTypesMeasureReport, {@enum.value DefinedTypesMeasureReport  }
-    DefinedTypesMedia, {@enum.value DefinedTypesMedia  }
-    DefinedTypesMedication, {@enum.value DefinedTypesMedication  }
-    DefinedTypesMedicationAdministration, {@enum.value DefinedTypesMedicationAdministration  }
-    DefinedTypesMedicationDispense, {@enum.value DefinedTypesMedicationDispense  }
-    DefinedTypesMedicationOrder, {@enum.value DefinedTypesMedicationOrder  }
-    DefinedTypesMedicationStatement, {@enum.value DefinedTypesMedicationStatement  }
-    DefinedTypesMessageHeader, {@enum.value DefinedTypesMessageHeader  }
-    DefinedTypesModuleDefinition, {@enum.value DefinedTypesModuleDefinition  }
-    DefinedTypesNamingSystem, {@enum.value DefinedTypesNamingSystem  }
-    DefinedTypesNutritionOrder, {@enum.value DefinedTypesNutritionOrder  }
-    DefinedTypesObservation, {@enum.value DefinedTypesObservation  }
-    DefinedTypesOperationDefinition, {@enum.value DefinedTypesOperationDefinition  }
-    DefinedTypesOperationOutcome, {@enum.value DefinedTypesOperationOutcome  }
-    DefinedTypesOrder, {@enum.value DefinedTypesOrder  }
-    DefinedTypesOrderResponse, {@enum.value DefinedTypesOrderResponse  }
-    DefinedTypesOrderSet, {@enum.value DefinedTypesOrderSet  }
-    DefinedTypesOrganization, {@enum.value DefinedTypesOrganization  }
-    DefinedTypesParameters, {@enum.value DefinedTypesParameters  }
-    DefinedTypesPatient, {@enum.value DefinedTypesPatient  }
-    DefinedTypesPaymentNotice, {@enum.value DefinedTypesPaymentNotice  }
-    DefinedTypesPaymentReconciliation, {@enum.value DefinedTypesPaymentReconciliation  }
-    DefinedTypesPerson, {@enum.value DefinedTypesPerson  }
-    DefinedTypesPractitioner, {@enum.value DefinedTypesPractitioner  }
-    DefinedTypesPractitionerRole, {@enum.value DefinedTypesPractitionerRole  }
-    DefinedTypesProcedure, {@enum.value DefinedTypesProcedure  }
-    DefinedTypesProcedureRequest, {@enum.value DefinedTypesProcedureRequest  }
-    DefinedTypesProcessRequest, {@enum.value DefinedTypesProcessRequest  }
-    DefinedTypesProcessResponse, {@enum.value DefinedTypesProcessResponse  }
-    DefinedTypesProtocol, {@enum.value DefinedTypesProtocol  }
-    DefinedTypesProvenance, {@enum.value DefinedTypesProvenance  }
-    DefinedTypesQuestionnaire, {@enum.value DefinedTypesQuestionnaire  }
-    DefinedTypesQuestionnaireResponse, {@enum.value DefinedTypesQuestionnaireResponse  }
-    DefinedTypesReferralRequest, {@enum.value DefinedTypesReferralRequest  }
-    DefinedTypesRelatedPerson, {@enum.value DefinedTypesRelatedPerson  }
-    DefinedTypesResource, {@enum.value DefinedTypesResource  }
-    DefinedTypesRiskAssessment, {@enum.value DefinedTypesRiskAssessment  }
-    DefinedTypesSchedule, {@enum.value DefinedTypesSchedule  }
-    DefinedTypesSearchParameter, {@enum.value DefinedTypesSearchParameter  }
-    DefinedTypesSequence, {@enum.value DefinedTypesSequence  }
-    DefinedTypesSlot, {@enum.value DefinedTypesSlot  }
-    DefinedTypesSpecimen, {@enum.value DefinedTypesSpecimen  }
-    DefinedTypesStructureDefinition, {@enum.value DefinedTypesStructureDefinition  }
-    DefinedTypesStructureMap, {@enum.value DefinedTypesStructureMap  }
-    DefinedTypesSubscription, {@enum.value DefinedTypesSubscription  }
-    DefinedTypesSubstance, {@enum.value DefinedTypesSubstance  }
-    DefinedTypesSupplyDelivery, {@enum.value DefinedTypesSupplyDelivery  }
-    DefinedTypesSupplyRequest, {@enum.value DefinedTypesSupplyRequest  }
-    DefinedTypesTask, {@enum.value DefinedTypesTask  }
-    DefinedTypesTestScript, {@enum.value DefinedTypesTestScript  }
-    DefinedTypesValueSet, {@enum.value DefinedTypesValueSet  }
-    DefinedTypesVisionPrescription); {@enum.value DefinedTypesVisionPrescription  }
-  TFhirDefinedTypesEnumList = set of TFhirDefinedTypesEnum;
-
   {@Enum TFhirNamingsystemTypeEnum
     Identifies the purpose of the naming system.
   }
@@ -2366,8 +2193,8 @@ Type
     MapTransformTranslate, {@enum.value MapTransformTranslate  }
     MapTransformReference, {@enum.value MapTransformReference  }
     MapTransformEvaluate,
-    MapTransformUuid,
     MapTransformPointer,
+    MapTransformUuid,
     MapTransformDateOp);
 
   TFhirMapTransformEnumList = set of TFhirMapTransformEnum;
@@ -13213,16 +13040,6 @@ Const
   SYSTEMS_TFhirMedicationStatementStatusEnum : Array[TFhirMedicationStatementStatusEnum] of String = ('', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status');
   CODES_TFhirResponseCodeEnum : Array[TFhirResponseCodeEnum] of String = ('', 'ok', 'transient-error', 'fatal-error');
   SYSTEMS_TFhirResponseCodeEnum : Array[TFhirResponseCodeEnum] of String = ('', 'http://hl7.org/fhir/response-code', 'http://hl7.org/fhir/response-code', 'http://hl7.org/fhir/response-code');
-  CODES_TFhirDefinedTypesEnum : Array[TFhirDefinedTypesEnum] of String = ('', 'ActionDefinition', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactPoint', 'Count', 'DataRequirement', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'ModuleMetadata', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 
-    'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportRule', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingExcerpt', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'ModuleDefinition', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 
-    'OperationOutcome', 'Order', 'OrderResponse', 'OrderSet', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Protocol', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription');
-  SYSTEMS_TFhirDefinedTypesEnum : Array[TFhirDefinedTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
-    'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirNamingsystemTypeEnum : Array[TFhirNamingsystemTypeEnum] of String = ('', 'codesystem', 'identifier', 'root');
   SYSTEMS_TFhirNamingsystemTypeEnum : Array[TFhirNamingsystemTypeEnum] of String = ('', 'http://hl7.org/fhir/namingsystem-type', 'http://hl7.org/fhir/namingsystem-type', 'http://hl7.org/fhir/namingsystem-type');
   CODES_TFhirNamingsystemIdentifierTypeEnum : Array[TFhirNamingsystemIdentifierTypeEnum] of String = ('', 'oid', 'uuid', 'uri', 'other');
@@ -13292,7 +13109,7 @@ Const
   SYSTEMS_TFhirMapContextTypeEnum : Array[TFhirMapContextTypeEnum] of String = ('', 'http://hl7.org/fhir/map-context-type', 'http://hl7.org/fhir/map-context-type');
   CODES_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'first', 'share', 'last');
   SYSTEMS_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode');
-  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'uuid', 'pointer', 'dateOp');
+  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'pointer', 'uuid', 'dateOp');
   SYSTEMS_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform');
   CODES_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'requested', 'active', 'error', 'off');
   SYSTEMS_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status');
@@ -13563,8 +13380,6 @@ Function TFhirMedicationStatementStatusEnumListAsInteger(aSet : TFhirMedicationS
 Function IntegerAsTFhirMedicationStatementStatusEnumList(i : integer) : TFhirMedicationStatementStatusEnumList; overload;
 Function TFhirResponseCodeEnumListAsInteger(aSet : TFhirResponseCodeEnumList) : Integer; overload;
 Function IntegerAsTFhirResponseCodeEnumList(i : integer) : TFhirResponseCodeEnumList; overload;
-Function TFhirDefinedTypesEnumListAsInteger(aSet : TFhirDefinedTypesEnumList) : Integer; overload;
-Function IntegerAsTFhirDefinedTypesEnumList(i : integer) : TFhirDefinedTypesEnumList; overload;
 Function TFhirNamingsystemTypeEnumListAsInteger(aSet : TFhirNamingsystemTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirNamingsystemTypeEnumList(i : integer) : TFhirNamingsystemTypeEnumList; overload;
 Function TFhirNamingsystemIdentifierTypeEnumListAsInteger(aSet : TFhirNamingsystemIdentifierTypeEnumList) : Integer; overload;
@@ -30630,7 +30445,7 @@ end;
 
 destructor TFhirElementDefinition.Destroy;
 begin
-    FPath.free;
+  FPath.free;
   FRepresentation.Free;
   FName.free;
   FLabel_.free;
@@ -35990,33 +35805,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirResponseCodeEnum) to high(TFhirResponseCodeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirDefinedTypesEnumListAsInteger(aSet : TFhirDefinedTypesEnumList) : Integer;
-var
-  a : TFhirDefinedTypesEnum;
-begin
-  result := 0;
-  for a := low(TFhirDefinedTypesEnum) to high(TFhirDefinedTypesEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirDefinedTypesEnumList(i : Integer) : TFhirDefinedTypesEnumList;
-var
-  aLoop : TFhirDefinedTypesEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirDefinedTypesEnum) to high(TFhirDefinedTypesEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

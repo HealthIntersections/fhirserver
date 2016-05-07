@@ -44,7 +44,7 @@ Uses
 
   MsXml, XmlBuilder, MsXmlParser, AdvXmlEntities, AdvJSON,
 
-  FHIRBase, FHIRResources, FHIRTypes, FHIRParser, FHIRProfileUtilities, FHIRPath, FHIRMetaModel, FHIRXhtml;
+  FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
 Type
   TNodeStack = class(TAdvObject)
@@ -130,7 +130,7 @@ Type
     FExtensionDomains: TStringList;
     FPathEngine : TFHIRExpressionEngine;
 
-    function LoadDoc(name: String; isFree: boolean = false): IXMLDomDocument2;
+//    function LoadDoc(name: String; isFree: boolean = false): IXMLDomDocument2;
 
     function rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; locStart, locEnd: TSourceLocation; path: String; thePass: boolean; msg: String): boolean; overload;
     function rule(ctxt : TFHIRValidatorContext; t: TFhirIssueTypeEnum; path: String; thePass: boolean; msg: String): boolean; overload;
@@ -255,7 +255,7 @@ Type
 implementation
 
 uses
-  FHIRParserBase, FHIRUtilities;
+  FHIRParserBase, FHIRUtilities, FHIRProfileUtilities;
 
 function nameMatches(name, tail: String): boolean;
 begin
@@ -952,8 +952,8 @@ begin
     end;
     if (profile <> nil) then
     begin
-      if (profile.BaseType <> DefinedTypesNull) then
-        type_ := CODES_TFhirDefinedTypesEnum[profile.baseType]
+      if (profile.BaseType <> '') then
+        type_ := profile.baseType
       else
         type_ := profile.name;
 
@@ -969,7 +969,7 @@ begin
         end;
       end;
 
-      result := rule(ctxt, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + CODES_TFhirDefinedTypesEnum[profile.baseType] +
+      result := rule(ctxt, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.baseType +
         '", but resource type was "' + resourceName + '"');
     end;
 
@@ -1275,7 +1275,7 @@ var
 begin
   result := '';
   for tc in types do
-    CommaAdd(result, CODES_TFhirDefinedTypesEnum[tc.code]);
+    CommaAdd(result, tc.code);
 end;
 
 function resolveNameReference(Snapshot: TFhirStructureDefinitionSnapshot; name: String): TFHIRElementDefinition;
@@ -1494,10 +1494,10 @@ begin
       begin
         t := '';
         td := nil;
-        if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> DefinedTypesNull) and (ei.definition.Type_List[0].code <> DefinedTypesElement) and
-          (ei.definition.Type_List[0].code <> definedTypesBackboneElement) then
-          t := CODES_TFhirDefinedTypesEnum[ei.definition.Type_List[0].code]
-        else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = DefinedTypesNull) then
+        if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code <> '') and (ei.definition.Type_List[0].code <> 'Element') and
+          (ei.definition.Type_List[0].code <> 'BackboneElement') then
+          t := ei.definition.Type_List[0].code
+        else if (ei.definition.Type_List.count = 1) and (ei.definition.Type_List[0].code = '') then
         begin
           prefix := tail(ei.definition.path);
           assert(prefix.endsWith('[x]'));
@@ -1510,12 +1510,12 @@ begin
           prefix := tail(ei.definition.path);
           prefix := prefix.substring(0, prefix.length - 3);
           for tc in ei.definition.Type_List do
-            if ((prefix + capitalize(CODES_TFhirDefinedTypesEnum[tc.code])) = ei.name) then
-              t := CODES_TFhirDefinedTypesEnum[tc.code];
+            if ((prefix + capitalize(tc.code)) = ei.name) then
+              t := tc.code;
           if (t = '') then
           begin
             trc := ei.definition.Type_List[0];
-            if (trc.code = DefinedTypesReference) then
+            if (trc.code = 'Reference') then
               t := 'Reference'
             else
             begin
@@ -1727,21 +1727,21 @@ begin
 end;
 
 
-function TFHIRValidator.LoadDoc(name : String; isFree : boolean) : IXMLDomDocument2;
-Var
-  LVariant: Variant;
-  buf : TAdvNameBuffer;
-Begin
-  buf := FContext.GetSourceByName(name);
-  LVariant := LoadMsXMLDomV(isfree);
-  Result := IUnknown(TVarData(LVariant).VDispatch) as IXMLDomDocument2;
-  result.async := false;
-  if isFree then
-    result.resolveExternals := true;
-  if not result.loadXML(TrimBof(buf.AsUnicode)) then
-    raise Exception.create('unable to parse XML because '+result.parseError.reason);
-end;
-
+//function TFHIRValidator.LoadDoc(name : String; isFree : boolean) : IXMLDomDocument2;
+//Var
+//  LVariant: Variant;
+//  buf : TAdvNameBuffer;
+//Begin
+//  buf := FContext.GetSourceByName(name);
+//  LVariant := LoadMsXMLDomV(isfree);
+//  Result := IUnknown(TVarData(LVariant).VDispatch) as IXMLDomDocument2;
+//  result.async := false;
+//  if isFree then
+//    result.resolveExternals := true;
+//  if not result.loadXML(TrimBof(buf.AsUnicode)) then
+//    raise Exception.create('unable to parse XML because '+result.parseError.reason);
+//end;
+//
 function TFHIRValidator.getCriteriaForDiscriminator(ctxt : TFHIRValidatorContext; path: String; ed: TFHIRElementDefinition; discriminator: String; profile: TFHIRStructureDefinition)
   : TFHIRElementDefinition;
 var
@@ -1765,12 +1765,12 @@ begin
       if (ed.Type_List[0].profileList.count > 0) then
       begin
         // need to do some special processing for reference here...
-        if (ed.Type_List[0].code = DefinedTypesReference) then
+        if (ed.Type_List[0].code = 'Reference') then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
         ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
       end
       else
-        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + CODES_TFhirDefinedTypesEnum[ed.Type_List[0].code]));
+        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
       ctxt.FOwned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
@@ -1860,7 +1860,7 @@ begin
     b := '';
     for ty in container.Type_List do
     begin
-      if (not ok) and (ty.code = DefinedTypesReference) then
+      if (not ok) and (ty.code = 'Reference') then
       begin
         // we validate as much as we can. First, can we infer a type from the profile?
         if (ty.profileList.count = 0) or (ty.profileList[0].value = 'http://hl7.org/fhir/StructureDefinition/Resource') then
@@ -1880,7 +1880,7 @@ begin
             ok := true; // suppress following check
         end;
       end;
-      if (not ok) and (ty.code = DefinedTypesNull) then
+      if (not ok) and (ty.code = '') then
       begin
         ok := true; // can refer to anything
       end;
@@ -2012,7 +2012,7 @@ begin
   else if (p.Kind = StructureDefinitionKindRESOURCE) then
     result := p.Snapshot.ElementList[0].path
   else
-    result := CODES_TFhirDefinedTypesEnum[p.Snapshot.ElementList[0].Type_List[0].code];
+    result := p.Snapshot.ElementList[0].Type_List[0].code;
   // end;
 end;
 
@@ -2469,7 +2469,7 @@ end;
 function isAbsolute(uri: String): boolean;
 begin
   result := (uri = '') or uri.startsWith('http:') or uri.startsWith('https:') or uri.startsWith('urn:uuid:') or uri.startsWith('urn:oid:') or uri.startsWith('urn:ietf:') or
-    uri.startsWith('urn:iso:') or isValidFHIRUrn(uri);
+    uri.startsWith('urn:iso:') or uri.startsWith('urn:std:') or isValidFHIRUrn(uri);
 end;
 
 procedure TFHIRValidator.checkIdentifier(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
@@ -2477,7 +2477,7 @@ var
   System: String;
 begin
   System := element.getNamedChildValue('system');
-  rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference');
+  rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Identifier.system must be an absolute reference, not a local reference ('+system+')');
 end;
 
 procedure TFHIRValidator.checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
@@ -2509,7 +2509,7 @@ begin
   System := element.getNamedChildValue('system');
   display := element.getNamedChildValue('display');
 
-  rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Coding.system must be an absolute reference, not a local reference');
+  rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Coding.system must be an absolute reference, not a local reference ('+system+')');
 
   if (System <> '') and (code <> '') then
   begin
@@ -3339,8 +3339,21 @@ begin
 end;
 
 procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; resource: TFhirResource; profile: TFHIRStructureDefinition);
+var
+  loader : TFHIRMMResourceLoader;
+  e : TFHIRMMElement;
 begin
-  raise Exception.Create('to do');
+  loader := TFHIRMMResourceLoader.create(FContext.Link);
+  try
+    e := loader.parse(resource);
+    try
+      validate(ctxt, e, profile);
+    finally
+      e.free;
+    end;
+  finally
+    loader.free;
+  end;
 end;
 
 procedure TFHIRValidator.validate(ctxt: TFHIRValidatorContext; resource: TFhirResource; profile: string);

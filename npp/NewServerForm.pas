@@ -125,7 +125,7 @@ var
 begin
   try
     clHooks.items.Clear;
-    client := TFhirClient.Create(edtServer.text, true);
+    client := TFhirClient.Create(nil, edtServer.text, true);
     try
       client.timeout := 5000;
       FConformance := client.conformance(false);
@@ -134,7 +134,7 @@ begin
     end;
     loadHooks;
   except
-    client := TFhirClient.Create(edtServer.text, false);
+    client := TFhirClient.Create(nil, edtServer.text, false);
     try
       client.timeout := 5000;
       FConformance := client.conformance(false);

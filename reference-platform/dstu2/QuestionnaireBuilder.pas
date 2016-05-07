@@ -543,7 +543,7 @@ end;
 
 function isPrimitive(t : TFhirElementDefinitionType) : Boolean; overload;
 begin
-  result := (t <> nil) and (StringArrayExistsSensitive(['string', 'code', 'boolean', 'integer', 'decimal', 'date', 'dateTime', 'instant', 'time', 'ResourceReference'], CODES_TFhirDefinedTypesEnum[t.code]));
+  result := (t <> nil) and (StringArrayExistsSensitive(['string', 'code', 'boolean', 'integer', 'decimal', 'date', 'dateTime', 'instant', 'time', 'ResourceReference'], t.code));
 end;
 
 function allTypesSame(types : TFhirElementDefinitionTypeList) : boolean;
@@ -552,9 +552,9 @@ var
   s : String;
 begin
   result := true;
-  s := CODES_TFhirDefinedTypesEnum[types[0].code];
+  s := types[0].code;
   for t in types do
-    if s <> CODES_TFhirDefinedTypesEnum[t.code] then
+    if s <> t.code then
       result := false;
 end;
 
@@ -579,12 +579,12 @@ begin
       result.tags['type'] := cc.code;
       if cc.system = 'http://hl7.org/fhir/resource-types' then
       begin
-        result.code := DefinedTypesReference;
+        result.code := 'Reference';
         result.profileList.Add(TFHIRString.create('http://hl7.org/fhir/Profile/'+cc.code));
       end
       else // cc.system = 'http://hl7.org/fhir/data-types'
       begin
-        result.codeElement := TFhirEnum.Create('', cc.codeElement.value);
+        result.codeElement := TFhirCode.Create(cc.codeElement.value);
       end;
       result.Link;
     finally
@@ -644,7 +644,7 @@ begin
             begin
               if a.value <> nil then
               begin
-                context.setProperty(d.name, convertType(a.value, CODES_TFhirDefinedTypesEnum[t.code], g.linkId));
+                context.setProperty(d.name, convertType(a.value, t.code, g.linkId));
                 result := true;
               end
               else
@@ -656,7 +656,7 @@ begin
             if t = nil then
               o := FFactory.makeByName(d.path)
             else
-              o := FFactory.makeByName(CODES_TFhirDefinedTypesEnum[t.code]);
+              o := FFactory.makeByName(t.code);
             try
               if processAnswerGroup(g, o, d) then
               begin
@@ -684,7 +684,7 @@ begin
         raise Exception.Create('not done yet - shouldn''t get here??');
       for a in q.answerList do
       begin
-        context.setProperty(d.name, convertType(a.value, CODES_TFhirDefinedTypesEnum[d.statedType.code], q.linkId));
+        context.setProperty(d.name, convertType(a.value, d.statedType.code, q.linkId));
         result := true;
       end;
     finally
@@ -834,7 +834,7 @@ var
 begin
   n := tail(child.Path);
   if not element.type_List.isEmpty then
-    t :=  CODES_TFhirDefinedTypesEnum[element.type_List[0].Code];
+    t :=  element.type_List[0].Code;
 
   // we don't generate questions for the base stuff in every element
 	if (t = 'Resource') and
@@ -862,42 +862,42 @@ begin
     begin
       if (t.profileList.Count > 0) then
         result.Add(t.Link)
-      else if (t.code = DefinedTypesNull) then
+      else if (t.code = '') then
       begin
-        result.Append.code := DefinedTypesboolean;
-        result.Append.code := DefinedTypesinteger;
-        result.Append.code := DefinedTypesdecimal;
-        result.Append.code := DefinedTypesbase64Binary;
-        result.Append.code := DefinedTypesinstant;
-        result.Append.code := DefinedTypesstring;
-        result.Append.code := DefinedTypesuri;
-        result.Append.code := DefinedTypesdate;
-        result.Append.code := DefinedTypesdateTime;
-        result.Append.code := DefinedTypestime;
-        result.Append.code := DefinedTypescode;
-        result.Append.code := DefinedTypesoid;
-        result.Append.code := DefinedTypesuuid;
-        result.Append.code := DefinedTypesid;
-        result.Append.code := DefinedTypesunsignedInt;
-        result.Append.code := DefinedTypespositiveInt;
-        result.Append.code := DefinedTypesmarkdown;
-        result.Append.code := DefinedTypesAnnotation;
-        result.Append.code := DefinedTypesAttachment;
-        result.Append.code := DefinedTypesIdentifier;
-        result.Append.code := DefinedTypesCodeableConcept;
-        result.Append.code := DefinedTypesCoding;
-        result.Append.code := DefinedTypesQuantity;
-        result.Append.code := DefinedTypesRange;
-        result.Append.code := DefinedTypesPeriod;
-        result.Append.code := DefinedTypesRatio;
-        result.Append.code := DefinedTypesSampledData;
-        result.Append.code := DefinedTypesSignature;
-        result.Append.code := DefinedTypesHumanName;
-        result.Append.code := DefinedTypesAddress;
-        result.Append.code := DefinedTypesContactPoint;
-        result.Append.code := DefinedTypesTiming;
-        result.Append.code := DefinedTypesReference;
-        result.Append.code := DefinedTypesMeta;
+        result.Append.code := 'boolean';
+        result.Append.code := 'integer';
+        result.Append.code := 'decimal';
+        result.Append.code := 'base64Binary';
+        result.Append.code := 'instant';
+        result.Append.code := 'string';
+        result.Append.code := 'uri';
+        result.Append.code := 'date';
+        result.Append.code := 'dateTime';
+        result.Append.code := 'time';
+        result.Append.code := 'code';
+        result.Append.code := 'oid';
+        result.Append.code := 'uuid';
+        result.Append.code := 'id';
+        result.Append.code := 'unsignedInt';
+        result.Append.code := 'positiveInt';
+        result.Append.code := 'markdown';
+        result.Append.code := 'Annotation';
+        result.Append.code := 'Attachment';
+        result.Append.code := 'Identifier';
+        result.Append.code := 'CodeableConcept';
+        result.Append.code := 'Coding';
+        result.Append.code := 'Quantity';
+        result.Append.code := 'Range';
+        result.Append.code := 'Period';
+        result.Append.code := 'Ratio';
+        result.Append.code := 'SampledData';
+        result.Append.code := 'Signature';
+        result.Append.code := 'HumanName';
+        result.Append.code := 'Address';
+        result.Append.code := 'ContactPoint';
+        result.Append.code := 'Timing';
+        result.Append.code := 'Reference';
+        result.Append.code := 'Meta';
       end
       else
         result.Add(t.Link);
@@ -947,7 +947,7 @@ begin
     for t in types do
     begin
       cc := vs.expansion.containsList.Append;
-      if (t.code = DefinedTypesReference) and (t.profile.startsWith('http://hl7.org/fhir/Profile/')) then
+      if (t.code = 'Reference') and (t.profile.startsWith('http://hl7.org/fhir/Profile/')) then
       begin
         cc.code := t.profile.Substring(28);
         cc.system := 'http://hl7.org/fhir/resource-types';
@@ -961,8 +961,8 @@ begin
       end
       else
       begin
-        cc.code := CODES_TFhirDefinedTypesEnum[t.code];
-        cc.display := CODES_TFhirDefinedTypesEnum[t.code];
+        cc.code := t.code;
+        cc.display := t.code;
         cc.system := 'http://hl7.org/fhir/data-types';
       end;
       t.Tags['code'] := cc.code;
@@ -983,7 +983,7 @@ function TQuestionnaireBuilder.instanceOf(t : TFhirElementDefinitionType; obj : 
 var
   url : String;
 begin
-  if t.code = DefinedTypesReference then
+  if t.code = 'Reference' then
   begin
     if not (obj is TFhirReference) then
       result := false
@@ -1001,7 +1001,7 @@ begin
         result := true;
     end;
   end
-  else if t.code = DefinedTypesQuantity then
+  else if t.code = 'Quantity' then
     result := obj is TFHIRQuantity
   else
     raise Exception.Create('Not Done Yet');
@@ -1032,7 +1032,7 @@ begin
 
       cc := TFHIRCoding.Create;
       q.answerList.append.value := cc;
-      if (t.code = DefinedTypesReference) and (t.profile.startsWith('http://hl7.org/fhir/Profile/')) then
+      if (t.code = 'Reference') and (t.profile.startsWith('http://hl7.org/fhir/Profile/')) then
       begin
         cc.code := t.profile.Substring(28);
         cc.system := 'http://hl7.org/fhir/resource-types';
@@ -1044,7 +1044,7 @@ begin
       end
       else
       begin
-        cc.code := CODES_TFhirDefinedTypesEnum[t.code];
+        cc.code := t.code;
         cc.system := 'http://hl7.org/fhir/data-types';
       end;
 
@@ -1091,7 +1091,7 @@ begin
   else
     group.setExtensionString(FLYOVER_REFERENCE, element.definition);
 
-  if (element.type_List.Count > 1) or (element.type_List[0].Code = DefinedTypesNull) then
+  if (element.type_List.Count > 1) or (element.type_List[0].Code = '') then
   begin
     types := expandTypeList(element.type_List);
     try
@@ -1122,62 +1122,62 @@ end;
 
 procedure TQuestionnaireBuilder.processDataType(profile : TFHirStructureDefinition; group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; t : TFhirElementDefinitionType; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
-  if (t.Code = DefinedTypescode) then
+  if (t.Code = 'code') then
     addCodeQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesstring) or (t.Code = DefinedTypesid) or (t.Code = DefinedTypesoid) then
+  else if (t.Code = 'string') or (t.Code = 'id') or (t.Code = 'oid') then
     addStringQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesuri) then
+  else if (t.Code = 'uri') then
     addUriQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesboolean) then
+  else if (t.Code = 'boolean') then
     addBooleanQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesdecimal) then
+  else if (t.Code = 'decimal') then
     addDecimalQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesdateTime) or (t.Code = DefinedTypesdate) then
+  else if (t.Code = 'dateTime') or (t.Code = 'date') then
     addDateTimeQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesinstant) then
+  else if (t.Code = 'instant') then
     addInstantQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypestime) then
+  else if (t.Code = 'time') then
     addTimeQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesCodeableConcept) then
+  else if (t.Code = 'CodeableConcept') then
     addCodeableConceptQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesPeriod) then
+  else if (t.Code = 'Period') then
     addPeriodQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesRatio) then
+  else if (t.Code = 'Ratio') then
     addRatioQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesHumanName) then
+  else if (t.Code = 'HumanName') then
     addHumanNameQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesAddress) then
+  else if (t.Code = 'Address') then
     addAddressQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesContactPoint) then
+  else if (t.Code = 'ContactPoint') then
     addContactQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesIdentifier) then
+  else if (t.Code = 'Identifier') then
     addIdentifierQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesinteger) then
+  else if (t.Code = 'integer') then
     addIntegerQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesCoding) then
+  else if (t.Code = 'Coding') then
     addCodingQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesQuantity) then
+  else if (t.Code = 'Quantity') then
     addQuantityQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesReference) then
+  else if (t.Code = 'Reference') then
     addReferenceQuestions(group, element, path, required, t.profile, answerGroups)
-  else if (t.Code = DefinedTypesDuration) then
+  else if (t.Code = 'Duration') then
     addDurationQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesbase64Binary) then
+  else if (t.Code = 'base64Binary') then
     addBinaryQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesAttachment) then
+  else if (t.Code = 'Attachment') then
     addAttachmentQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesAge) then
+  else if (t.Code = 'Age') then
     addAgeQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesRange) then
+  else if (t.Code = 'Range') then
     addRangeQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesSchedule) then
+  else if (t.Code = 'Schedule') then
     addScheduleQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesSampledData) then
+  else if (t.Code = 'SampledData') then
     addSampledDataQuestions(group, element, path, required, answerGroups)
-  else if (t.Code = DefinedTypesExtension) then
+  else if (t.Code = 'Extension') then
     addExtensionQuestions(profile, group, element, path, required, t.profile, answerGroups)
-  else if (t.Code <> DefinedTypesMeta) and (t.Code <> DefinedTypesNarrative) and (t.Code <> DefinedTypesResource) then
-    raise Exception.create('Unhandled Data Type: '+CODES_TFHIRDefinedTypesEnum[t.Code]+' on element '+element.Path);
+  else if (t.Code <> 'Meta') and (t.Code <> 'Narrative') and (t.Code <> 'Resource') then
+    raise Exception.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
 end;
 
 function isPrimitive(obj : TAdvObject) : boolean; overload;

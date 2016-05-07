@@ -41,7 +41,7 @@ uses
   IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, DateAndTime,
-  FHIRConstants, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
+  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
 
 Type
   EFHIRClientException = class (Exception)
@@ -70,6 +70,7 @@ Type
     FSmartToken: TSmartOnFhirAccessToken;
     FTimeout: cardinal;
     FUseIndy: boolean;
+    FWorker : TWorkerContext;
 
 //    FLastUpdated : TDateAndTime;
     procedure status(msg : String);
@@ -88,7 +89,7 @@ Type
     function exchangeIndy(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
     function exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
   public
-    constructor Create(url : String; json : boolean); overload;
+    constructor Create(worker : TWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
     property url : String read FUrl;
 
@@ -118,14 +119,6 @@ Type
 
   end;
 
-  TFHIRClientTests = class (TAdvObject)
-  private
-    class function LoadResource(filename : String) : TFHIRResource;
-    class procedure testClient(client : TFhirClient);
-  public
-    class procedure tests(url : String);
-  end;
-
 implementation
 
 uses
@@ -147,9 +140,10 @@ end;
 
 { TFhirClient }
 
-constructor TFhirClient.create(url: String; json : boolean);
+constructor TFhirClient.create(worker : TWorkerContext; url: String; json : boolean);
 begin
   Create;
+  FWorker := worker;
   FUrl := URL;
   FJson := json;
 
@@ -157,6 +151,7 @@ end;
 
 destructor TFhirClient.destroy;
 begin
+  FWorker.Free;
   FSmartToken.Free;
   ssl.Free;
   indy.free;
@@ -259,9 +254,9 @@ begin
   result := TBytesStream.create;
   try
     if Fjson then
-      comp := TFHIRJsonComposer.create('en')
+      comp := TFHIRJsonComposer.create(FWorker.link, 'en')
     else
-      comp := TFHIRXmlComposer.create('en');
+      comp := TFHIRXmlComposer.create(FWorker.link, 'en');
     try
       comp.Compose(result, resource, false, nil);
     finally
@@ -462,9 +457,9 @@ end;
 function TFhirClient.CreateParser(stream: TStream): TFHIRParser;
 begin
   if FJSon then
-    result := TFHIRJsonParser.create('en')
+    result := TFHIRJsonParser.create(FWorker.Link, 'en')
   else
-    result := TFHIRXmlParser.create('en');
+    result := TFHIRXmlParser.create(FWorker.Link, 'en');
   result.source := stream;
 end;
 
@@ -475,7 +470,7 @@ var
   i : integer;
 begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
-  status('Fetch History for '+PLURAL_CODES_TFhirResourceType[aType]);
+  status('Fetch History for '+CODES_TFhirResourceType[aType]);
   result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), get, nil) as TFhirBundle;
   try
     s := result.links['next'];
@@ -483,7 +478,7 @@ begin
     while AllRecords and (s <> '') do
     begin
       inc(i);
-      status('Fetch History for '+PLURAL_CODES_TFhirResourceType[aType]+' page '+inttostr(i));
+      status('Fetch History for '+CODES_TFhirResourceType[aType]+' page '+inttostr(i));
       feed := fetchResource(s, get, nil) as TFhirBundle;
       try
         result.entryList.AddAll(feed.entryList);
@@ -567,9 +562,9 @@ var
     begin
       removeBom(cnt);
       if FJson then
-        comp := TFHIRJsonParser.create('en')
+        comp := TFHIRJsonParser.create(FWorker.Link, 'en')
       else
-        comp := TFHIRXmlParser.create('en');
+        comp := TFHIRXmlParser.create(FWorker.Link, 'en');
       try
         comp.source := TBytesStream.create(http.response.AsBytes);
         comp.Parse;
@@ -705,9 +700,9 @@ begin
         begin
           removeBom(cnt);
           if FJson then
-            comp := TFHIRJsonParser.create('en')
+            comp := TFHIRJsonParser.create(FWorker.Link, 'en')
           else
-            comp := TFHIRXmlParser.create('en');
+            comp := TFHIRXmlParser.create(FWorker.Link, 'en');
           try
             comp.source := TStringStream.create(cnt);
             comp.Parse;
@@ -761,95 +756,6 @@ begin
     indy.Disconnect;
 end;
 
-
-{ TFHIRClientTests }
-
-class function TFHIRClientTests.LoadResource(filename: String): TFHIRResource;
-var
-  f : TFileStream;
-  prsr : TFHIRJsonParser;
-begin
-  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
-  try
-    prsr := TFHIRJsonParser.Create('en');
-    try
-      prsr.source := f;
-      prsr.parse;
-      result := prsr.resource.Link;
-    finally
-      prsr.Free;
-    end;
-  finally
-    f.Free;
-  end;
-end;
-
-class procedure TFHIRClientTests.testClient(client: TFhirClient);
-var
-  conf : TFHIRConformance;
-  patient : TFhirPatient;
-  id : string;
-  ok : boolean;
-begin
-  client.conformance(true).Free;
-  client.conformance(false).Free;
-  patient := LoadResource('C:\work\org.hl7.fhir.dstu2\build\publish\patient-example.json') as TFHIRPatient;
-  try
-    client.createResource(patient, id);
-  finally
-    patient.free
-  end;
-  patient := client.readResource(frtPatient, id) as TFHIRPatient;
-  try
-    patient.deceased := TFHIRDate.Create(NowUTC);
-    client.updateResource(patient);
-  finally
-    patient.free;
-  end;
-  ok := false;
-  client.deleteResource(frtPatient, id);
-  try
-    client.readResource(frtPatient, id).Free;
-  except
-    ok := true;
-  end;
-  if not ok then
-    raise Exception.Create('test failed');
-end;
-
-class procedure TFHIRClientTests.tests(url: String);
-var
-  client : TFhirClient;
-begin
-  client := TFhirClient.Create(url, true);
-  try
-    client.UseIndy := true;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirClient.Create(url, false);
-  try
-    client.UseIndy := true;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirClient.Create(url, true);
-  try
-    client.UseIndy := false;
-    testClient(client);
-  finally
-    client.free;
-  end;
-  client := TFhirClient.Create(url, false);
-  try
-    client.UseIndy := false;
-    testClient(client);
-  finally
-    client.free;
-  end;
-end;
 
 end.
 

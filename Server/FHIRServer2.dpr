@@ -299,7 +299,9 @@ uses
   FHIRMetaModel in '..\reference-platform\dstu2\FHIRMetaModel.pas',
   FHIRIndexInformation in '..\reference-platform\dstu2\FHIRIndexInformation.pas',
   FhirOpBase in '..\reference-platform\dstu2\FhirOpBase.pas',
-  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas';
+  FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas',
+  FHIRContext in '..\reference-platform\dstu2\FHIRContext.pas',
+  XmlPatch in '..\reference-platform\support\XmlPatch.pas';
 
 begin
   JclStartExceptionTracking;

@@ -39,7 +39,7 @@ uses
   SysUtils, Generics.Collections, EncdDecd,
   StringSupport, EncodeSupport,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRProfileUtilities, FHIRUtilities;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRUtilities;
 
 Const
   BooleanStrings : array [boolean] of String = ('false', 'true');
@@ -217,6 +217,9 @@ Type
   end;
 
 implementation
+
+uses
+  FHIRProfileUtilities;
 
 function tail(path: String): String;
 begin
@@ -779,7 +782,7 @@ begin
   result := false;
   if (child.type_List.Count = 1) then
   begin
-    t := CODES_TFHIRDefinedTypesEnum[child.type_List[0].code];
+    t := child.type_List[0].code;
     if (t.equals('Address')) or (t.equals('Reference')) then
       result := true;
   end
@@ -869,7 +872,7 @@ begin
   // we can tell if e is a primitive because it has types then
   if (e.type_List.isEmpty()) then
     result := false
-  else if (e.type_List.Count = 1) and (isBase(CODES_TFHIRDefinedTypesEnum[e.type_List[0].code])) then
+  else if (e.type_List.Count = 1) and (isBase(e.type_List[0].code)) then
     result := false
   else
     result := true;
@@ -1248,7 +1251,7 @@ begin
     result := true
   else if (child.type_List.Count = 1) then
   begin
-    t := CODES_TFHIRDefinedTypesEnum[child.type_List[0].code];
+    t := child.type_List[0].code;
     result := not((t = 'TFHIRAddress') or (t = 'Contact') or (t = 'Reference') or (t = 'Uri'));
   end
   else

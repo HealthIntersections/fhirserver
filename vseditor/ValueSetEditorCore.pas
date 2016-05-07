@@ -465,7 +465,7 @@ var
   rest : TFhirConformanceRestResource;
 begin
   result := false;
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -558,7 +558,7 @@ begin
   // current copy
   f := TFileStream.Create(Settings.ValuesetItemPath, fmCreate);
   try
-    c := TFHIRJsonComposer.Create('en');
+    c := TFHIRJsonComposer.Create(nil, 'en');
     try
       c.Compose(f, FValueSet, true);
     finally
@@ -676,9 +676,9 @@ begin
     f := TFileStream.create(Settings.valueSetFilename, fmCreate);
     try
       if Settings.FormatIsJson then
-        c := TFHIRJsonComposer.Create('en')
+        c := TFHIRJsonComposer.Create(nil, 'en')
       else
-        c := TFHIRXmlComposer.Create('en');
+        c := TFHIRXmlComposer.Create(nil, 'en');
       try
         c.Compose(f, FValueSet, true);
       finally
@@ -693,7 +693,7 @@ begin
     if (Settings.valueSetId = '') then
       raise Exception.Create('Cannot save to server as value set id has been lost');
 
-    client := TFhirClient.create(Settings.valueSetServer, true);
+    client := TFhirClient.create(nil, Settings.valueSetServer, true);
     try
       client.UseIndy := true;
       client.OnClientStatus := nil;
@@ -722,7 +722,7 @@ var
   id : String;
 begin
   FValueSet.date := NowLocal;
-  client := TFhirClient.create(Settings.WorkingServer, true);
+  client := TFhirClient.create(nil, Settings.WorkingServer, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -747,7 +747,7 @@ var
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := Event;
@@ -785,7 +785,7 @@ var
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := event;
@@ -832,7 +832,7 @@ var
   ct : TClosureTableRecord;
 begin
   ct := closures[name];
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -992,7 +992,7 @@ var
 begin
   f := TFileStream.Create(FSettings.ValuesetItemPath, fmOpenRead + fmShareDenyWrite);
   try
-    p := TFHIRJsonParser.Create('en');
+    p := TFHIRJsonParser.Create(nil, 'en');
     try
       p.source := f;
       p.Parse;
@@ -1043,7 +1043,7 @@ var
   rOut : TFHIRResource;
   feed : TFHIRBundle;
 begin
-  client := TFhirClient.create(FWorkingServer.FUrl, true);
+  client := TFhirClient.create(nil, FWorkingServer.FUrl, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1086,7 +1086,7 @@ var
   feed : TFHIRBundle;
 begin
   result := nil;
-  client := TFhirClient.create(FWorkingServer.url, true);
+  client := TFhirClient.create(nil, FWorkingServer.url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1298,7 +1298,7 @@ begin
   else
   begin
     // todo: make this a thread that waits
-    client := TFhirClient.create(FWorkingServer.FUrl, true);
+    client := TFhirClient.create(nil, FWorkingServer.FUrl, true);
     try
       client.UseIndy := true;
       client.OnClientStatus := nil;
@@ -1425,7 +1425,7 @@ begin
   else
   begin
     try
-      client := TFhirClient.create(FWorkingServer.URL, true);
+      client := TFhirClient.create(nil, FWorkingServer.URL, true);
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
@@ -1473,7 +1473,7 @@ begin
   else
   begin
     try
-      client := TFhirClient.create(FWorkingServer.URL, true);
+      client := TFhirClient.create(nil, FWorkingServer.URL, true);
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
@@ -1536,13 +1536,13 @@ begin
     f.Read(s[1], f.Size);
     f.Position := 0;
     if pos('<', s) = 0 then
-      p := TFHIRJsonParser.Create('en')
+      p := TFHIRJsonParser.Create(nil, 'en')
     else if pos('{', s) = 0 then
-      p := TFHIRXmlParser.Create('en')
+      p := TFHIRXmlParser.Create(nil, 'en')
     else if pos('<', s) < pos('{', s) then
-      p := TFHIRXmlParser.Create('en')
+      p := TFHIRXmlParser.Create(nil, 'en')
     else
-      p := TFHIRJsonParser.Create('en');
+      p := TFHIRJsonParser.Create(nil, 'en');
     try
       Settings.FormatIsJson := p is TFHIRJsonParser;
       p.source := f;
@@ -1563,7 +1563,7 @@ var
 begin
   Settings.mru('id:'+id+':'+FWorkingServer.URL);
   Settings.valueSetId := id;
-  client := TFhirClient.create(FWorkingServer.URL, true);
+  client := TFhirClient.create(nil, FWorkingServer.URL, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1595,7 +1595,7 @@ begin
 //      mem.Position := 0;
 //      mem.SaveToFile('c:\temp\test.web');
       mem.Position := 0;
-      p := MakeParser('en', ffUnspecified, mem, xppAllow);
+      p := MakeParser(nil, 'en', ffUnspecified, mem, xppAllow);
       try
         vs := p.resource as TFhirValueSet;
         Settings.valueSetServer := url;
@@ -2275,7 +2275,7 @@ begin
     ct.Name := s;
     ct.version := '0';
     ct.FFilename := IncludeTrailingBackslash(base)+'ct-'+ct.id+'.json';
-    client := TFhirClient.create(url, true);
+    client := TFhirClient.create(nil, url, true);
     try
       client.UseIndy := true;
       pin := TFhirParameters.Create;
@@ -2312,7 +2312,7 @@ var
 begin
   ct := closures[name];
   ct.FConcepts.Add(coding.link);
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -2352,7 +2352,7 @@ var
   ini : TIniFile;
   fn : String;
 begin
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -2445,7 +2445,7 @@ var
   rOut : TFHIRResource;
   feed : TFHIRBundle;
 begin
-  client := TFhirClient.create(FUrl, true);
+  client := TFhirClient.create(nil, FUrl, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -2510,7 +2510,7 @@ begin
   if FileExists(base+'list.json') then
   begin
     if assigned(event) then event(self, 'Load Cache');
-    json := TFHIRJsonParser.create('en');
+    json := TFHIRJsonParser.create(nil, 'en');
     try
       f := TFileStream.Create(base+'list.json', fmOpenRead + fmShareDenyWrite);
       try
@@ -2571,7 +2571,7 @@ begin
 
     f := TFileStream.Create(base+'list.json', fmCreate);
     try
-      json := TFHIRJsonComposer.Create('en');
+      json := TFHIRJsonComposer.Create(nil, 'en');
       try
         json.Compose(f, bnd, false);
       finally
@@ -2598,7 +2598,7 @@ begin
   begin
     f := TFileStream.Create(base+id+'.json', fmOpenRead + fmShareDenyWrite);
     try
-      json := TFHIRJsonParser.Create('en');
+      json := TFHIRJsonParser.Create(nil, 'en');
       try
         json.source := f;
         json.Parse;
@@ -2620,7 +2620,7 @@ var
   ct : TClosureTableRecord;
 begin
   ct := closures[name];
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -2661,7 +2661,7 @@ begin
     begin
       f := TFileStream.Create(base+id+'.json', fmCreate);
       try
-        json := TFHIRJsonComposer.Create('en');
+        json := TFHIRJsonComposer.Create(nil, 'en');
         try
           json.Compose(f, vs, false);
         finally
@@ -2715,7 +2715,7 @@ constructor TServerCodeSystem.create(uri, url, filename: String);
 begin
   Create;
   FSystem := uri;
-  FClient := TFhirClient.create(url, true);
+  FClient := TFhirClient.create(nil, url, true);
   Fclient.UseIndy := true;
   FCache := TAdvStringObjectMatch.create;
   FFilename := filename;
@@ -2862,6 +2862,7 @@ end;
 procedure TServerCodeSystem.Load;
 var
   json, o, d : TJsonObject;
+  n, n1 : TJsonNode;
   f : TAdvFile;
   item : TServerCodeSystemCacheItem;
 begin
@@ -2871,8 +2872,9 @@ begin
     f.OpenRead;
     json := TJSONParser.Parse(f);
     try
-      for o in json.vArr['items'] do
+      for n in json.vArr['items'] do
       begin
+        o := n as TJsonObject;
         item := TServerCodeSystemCacheItem.Create;
         try
           if o['ok'] = 'no' then
@@ -2880,8 +2882,11 @@ begin
           else
             item.status := cscsOK;
           item.message := o['msg'];
-          for d in o.vArr['displays'] do
+          for n1 in o.vArr['displays'] do
+          begin
+            d := n1 as TJsonObject;
             item.displays.Add(d['value']);
+          end;
           FCache.Add(o['code'], item.Link);
         finally
           item.Free;
@@ -3252,7 +3257,7 @@ var
 begin
   Settings.ServerURL := url;
 
-  client := TFhirClient.create(url, true);
+  client := TFhirClient.create(nil, url, true);
   try
     client.UseIndy := true;
     params := TAdvStringMatch.Create;

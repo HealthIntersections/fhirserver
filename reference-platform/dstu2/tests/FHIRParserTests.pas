@@ -36,17 +36,16 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel,
-  FHIRProfileUtilities, FHIRTestWorker;
+  FHIRContext, FHIRTestWorker, XmlTests, JsonTests;
 
 type
-  FHIRParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
+  FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
+  public
+    Constructor Create;
   end;
 
   [TextFixture]
   TFHIRParserTests = class (TObject)
-  private
   public
     [FHIRParserTestCase]
     procedure RoundTripTest(Filename: String);
@@ -68,19 +67,19 @@ var
   re : TFHIRMMElement;
   ctxt : TWorkerContext;
 begin
-  r := TFHIRXmlParser.parseFile('en', filename);
+  r := TFHIRXmlParser.parseFile(nil, 'en', filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRXmlComposer.composeFile(r, 'en', fn);
+      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRJsonComposer.composeFile(r, 'en', j1, true);
+    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, true);
   finally
     r.Free;
   end;
@@ -112,19 +111,19 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRJsonParser.parseFile('en', j2); // crossover too
+  r := TFHIRJsonParser.parseFile(nil, 'en', j2); // crossover too
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRJsonComposer.composeFile(r, 'en', fn);
+      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRXmlComposer.composeFile(r, 'en', x1);
+    TFHIRXmlComposer.composeFile(nil, r, 'en', x1);
   finally
     r.Free;
   end;
@@ -160,28 +159,9 @@ end;
 
 { FHIRParserTestCaseAttribute }
 
-function FHIRParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  sl : TStringlist;
-  sr : TSearchRec;
-  i : integer;
+constructor FHIRParserTestCaseAttribute.Create;
 begin
-  sl := TStringList.create;
-  try
-    if FindFirst(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples\*.xml', faAnyFile, SR) = 0 then
-    repeat
-      sl.Add(sr.Name);
-    until FindNext(SR) <> 0;
-    setLength(result, sl.Count);
-    for i := 0 to sl.Count - 1 do
-    begin
-      result[i].Name := sl[i];
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples\'+sl[i];
-    end;
-  finally
-    sl.Free;
-  end;
+  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples', '.xml');
 end;
 
 initialization

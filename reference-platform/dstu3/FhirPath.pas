@@ -3334,6 +3334,8 @@ begin
     raise EFHIRPath.create('No type provided in BuildToolPathEvaluator.ListChildTypesByName');
   if (item.equals('xhtml')) then
     exit;
+  if (item.equals('Custom')) then
+    exit;
   if (item.contains('.')) then
     url := 'http://hl7.org/fhir/StructureDefinition/'+item.substring(0, item.indexOf('.'))
   else

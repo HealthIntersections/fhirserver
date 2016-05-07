@@ -92,6 +92,7 @@ Type
     ffJson,{@enum.value ffJson JSON}
     ffJsonLD,{@enum.value ffJson JSON}
     ffTurtle, {@enum.value ffTurtle RDF using Turtle syntax}
+    ffText,
     ffXhtml); {@enum.value ffXhtml XHTML - only for retrieval from the server}
 
 
@@ -133,8 +134,8 @@ Const
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
     'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
-  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'JSON-LD', 'RDF/Turtle', 'XHTML');
-  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'application/ld+json', 'text/turtle; x-dialect=fhir', 'text/xhtml');
+  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'JSON-LD', 'RDF/Turtle', 'Text Representation', 'XHTML');
+  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'application/ld+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'text/xhtml');
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =
@@ -228,6 +229,7 @@ type
     function createPropertyList(bPrimitiveValues : boolean) : TFHIRPropertyList;
     procedure ListChildrenByName(name : string; list : TFHIRObjectList);
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
+    function makeProperty(propName : string): TFHIRObject; virtual;
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean;
     property Tag : TAdvObject read FTag write SetTag;
@@ -362,7 +364,7 @@ type
     function hasType(t : String) : boolean; overload;
     function hasType(tl : Array of String) : boolean; overload;
     function describe : String;
-    procedure getProperty(hash : integer; name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
+    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
 
   published
     {@member comments
@@ -670,6 +672,7 @@ type
     Constructor Create(uniqueId : Integer);
     Destructor Destroy; override;
 
+    function toString : String; override;
     function Link : TFHIRExpressionNode; overload;
     function checkName : boolean;
 
@@ -780,7 +783,7 @@ begin
   result := FCommentsStart;
 end;
 
-procedure TFHIRBase.getProperty(hash: integer; name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
+procedure TFHIRBase.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
 begin
   if checkValid then
     raise Exception.Create('Property '+name+' is not valid');
@@ -1343,6 +1346,11 @@ end;
 procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   // nothing to add here
+end;
+
+function TFHIRObject.makeProperty(propName: string): TFHIRObject;
+begin
+  raise Exception.Create('The property "'+propName+' is unknown, or cannot be made directly"');
 end;
 
 procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
@@ -2095,6 +2103,73 @@ begin
     enkFunction: result := inttostr(uniqueId)+': '+CODES_TFHIRPathFunctions[FFunctionId]+'()';
     enkConstant: result := inttostr(uniqueId)+': "'+FConstant+'"';
     enkGroup: result := inttostr(uniqueId)+': (Group)';
+  end;
+end;
+
+function TFHIRExpressionNode.toString: String;
+var
+  b : TStringBuilder;
+  first : boolean;
+  n : TFHIRExpressionNode;
+begin
+  b := TStringBuilder.create();
+  try
+		case kind of
+		enkName:
+      begin
+        b.append(name);
+      end;
+		enkFunction:
+      begin
+        if (FunctionId = pfItem) then
+          b.append('[')
+        else
+        begin
+          b.append(name);
+          b.append('(');
+        end;
+        first := true;
+        for n in parameters do
+        begin
+          if (first) then
+            first := false
+          else
+            b.append(', ');
+          b.append(n.toString());
+        end;
+        if (FunctionId = pfItem) then
+          b.append(']')
+        else
+          b.append(')');
+      end;
+		enkConstant:
+      begin
+    	  b.append(jsonEscape(constant, true));
+			end;
+		enkGroup:
+      begin
+  			b.append('(');
+	  		b.append(group.toString());
+		  	b.append(')');
+		  end;
+    end;
+
+		if (inner <> nil) then
+    begin
+			b.append('.');
+			b.append(inner.toString());
+		end;
+		if (operation <> popNull) then
+    begin
+			b.append(' ');
+			b.append(CODES_TFHIRPathOperation[operation]);
+			b.append(' ');
+			b.append(opNext.toString());
+		end;
+
+		result := b.toString();
+  finally
+    b.free;
   end;
 end;
 
