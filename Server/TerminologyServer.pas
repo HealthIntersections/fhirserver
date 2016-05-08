@@ -498,6 +498,8 @@ function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string;
 var
   vs : TFhirValueSet;
   cs : TFhirCodeSystem;
+  cp : TCodeSystemProvider;
+  lct : TCodeSystemProviderContext;
   def : TFhirCodeSystemConcept;
   d : String;
 begin
@@ -526,16 +528,35 @@ begin
   end
   else
   begin
-    cs := getCodeSystem(system);
-    try
-      if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, cs <> nil, 'Unknown Code System '+system) then
-      begin
-        def := getCodeDefinition(cs, code);
-        if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-          result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
+    cp := getProvider(system, true);
+    if cp <> nil then
+    begin
+      try
+        lct := cp.locate(code);
+        try
+          if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, lct <> nil, 'Unknown Code ('+system+'#'+code+')')) then
+            result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = cp.Display(lct)),
+            'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct)+'"');
+        finally
+          cp.Close(lct);
+        end;
+      finally
+        cp.Free;
       end;
-    finally
-      cs.free;
+    end
+    else
+    begin
+      cs := getCodeSystem(system);
+      try
+        if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, cs <> nil, 'Unknown Code System '+system) then
+        begin
+          def := getCodeDefinition(cs, code);
+          if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, def <> nil, 'Unknown Code ('+system+'#'+code+')')) then
+            result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = def.Display), 'Display for '+system+' code "'+code+'" should be "'+def.Display+'"');
+        end;
+      finally
+        cs.free;
+      end;
     end;
   end;
 end;

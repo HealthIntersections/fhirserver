@@ -212,7 +212,8 @@ type
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList;
     function ScanId(request : TFHIRRequest; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
     procedure FixXhtmlUrls(lang, base: String; ids: TFHIRTransactionEntryList; node: TFhirXHtmlNode);
-    procedure adjustReferences(te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList);
+    procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList);
+    function resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url : String) : String;
     function commitResource(request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry : TFHIRBundleEntry; i : integer; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRBundle) : boolean;
 
     procedure checkProposedContent(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
@@ -3282,8 +3283,8 @@ begin
 
     if ok then
     begin
-      response.HTTPCode := 202;
-      response.Message := 'Accepted';
+      response.HTTPCode := 200;
+      response.Message := 'OK';
       response.Body :=
     '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
@@ -3727,7 +3728,7 @@ begin
 end;
 
 
-procedure TFhirOperationManager.adjustReferences(te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList);
+procedure TFhirOperationManager.adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList);
 var
   refs : TFhirReferenceList;
   ref : TFhirReference;
@@ -3749,7 +3750,9 @@ begin
       ref := refs[i];
       url := fullResourceUri(base, ref);
 
-      if (isHistoryURL(url)) then
+      if url.contains('?') then
+        ref.reference := resolveConditionalURL(request, resp, ref.reference)
+      else if (isHistoryURL(url)) then
         splitHistoryUrl(url, vhist)
       else
         vHist := '';
@@ -3937,7 +3940,7 @@ begin
           entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
 
           if not entry.ignore and not entry.deleted then
-            adjustReferences(bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
+            adjustReferences(request, response, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.baseUrl, bundle.entryList[i], ids);
         end;
 
         // four pass: commit resources
@@ -3974,8 +3977,8 @@ begin
         finally
           bundle.free;
         end;
-        response.HTTPCode := 202;
-        response.Message := 'Accepted';
+        response.HTTPCode := 200;
+        response.Message := 'OK';
         response.bundle := resp.Link;
       finally
         ids.free;
@@ -4073,8 +4076,8 @@ begin
           end;
         end;
       end;
-      response.HTTPCode := 202;
-      response.Message := 'Accepted';
+      response.HTTPCode := 200;
+      response.Message := 'OK';
       response.bundle := resp.Link;
       writelnt('done');
     finally
@@ -5104,6 +5107,32 @@ begin
   end;
 end;
 
+
+function TFhirOperationManager.resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url: String): String;
+var
+  s : String;
+  parts : TArray<String>;
+  list : TMatchingResourceList;
+begin
+  for s in FRepository.Bases do
+    if url.StartsWith(s) then
+      url := url.Substring(s.Length);
+  if url.StartsWith('/') then
+    url := url.Substring(1);
+  parts := url.Split(['?']);
+
+  list := ResolveSearchId(parts[0], request.compartmentId, request.compartments, url, parts[1]);
+  try
+    if list.Count = 1 then
+      result := parts[0]+'/'+list[0].Name
+    else if list.Count > 1 then
+      raise ERestfulException.Create('TFhirOperationManager', 'resolveConditionalURL', 'Multiple matches found for '+url, 412, IssueTypeConflict)
+    else
+      raise ERestfulException.Create('TFhirOperationManager', 'resolveConditionalURL', 'No matches found for '+url, 404, IssueTypeConflict);
+  finally
+    list.Free;
+  end;
+end;
 
 procedure TFhirOperationManager.clear(a: TFhirResourceTypeSet);
 var

@@ -513,7 +513,6 @@ end;
 
 destructor TFHIRMMElement.Destroy;
 begin
-  writeln('free '+name);
   FComments.Free;
   FChildren.Free;
   FProperty.Free;
@@ -857,7 +856,7 @@ var
   t : String;
   all, ok : boolean;
 begin
-  if prop.isResource then
+  if (prop.isResource) and (statedType <> '') then
   begin
     sd := FContext.getStructure('http://hl7.org/fhir/StructureDefinition/'+statedType);
     ed := sd.snapshot.elementList[0];
