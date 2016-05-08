@@ -3847,7 +3847,7 @@ begin
   begin
     result := true;
     for i := 1 to length(current) do
-      result := result and (CharInSet(current[i], ['A'..'Z', 'a'..'z', '0'..'9', '[', ']']) or ((i = current.Length) and (current[i] = '*')));
+      result := result and (CharInSet(current[i], ['A'..'Z', 'a'..'z', '0'..'9', '_']) or ((i = current.Length) and (current[i] = '*')));
   end
   else
     result := false;

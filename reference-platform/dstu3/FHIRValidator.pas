@@ -1174,7 +1174,7 @@ begin
   if (ref <> nil) and (ref.getNamedChildValue('reference') <> '') then
   begin
     target := resolveInBundle(entries, ref.getNamedChildValue('reference'), fullUrl, type_, id);
-    rule(ctxt, IssueTypeINVALID, target.locStart, target.locEnd, stack.addToLiteralPath(['reference']), target <> nil,
+    rule(ctxt, IssueTypeINVALID, ref.locStart, ref.locEnd, stack.addToLiteralPath(['reference']), target <> nil,
       'Unable to resolve the target of the reference in the bundle (' + name + ')');
   end;
 end;
@@ -1206,7 +1206,7 @@ begin
     if (fullUrl <> '') and (fullUrl.endsWith(type_ + '/' + id)) then
       // fullUrl := complex
       u := fullUrl.substring((type_ + '/' + id).length) + ref;
-    parts := ref.split(['\\/']);
+    parts := ref.split(['/']);
     if (length(parts) >= 2) then
     begin
       t := parts[0];
@@ -1222,11 +1222,13 @@ begin
         if (u = '') then
         begin
           res := entry.getNamedChild('resource');
-          resource := res.children[0];
-          et := resource.Type_;
-          eid := resource.getNamedChildValue('id');
+          et := res.Type_;
+          eid := res.getNamedChildValue('id');
           if (t = et) and (i = eid) then
+          begin
             result := entry;
+            exit;
+          end;
         end;
       end;
     end;

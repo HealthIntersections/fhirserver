@@ -2247,7 +2247,10 @@ public class DelphiGenerator {
           getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', true, "+tn+", F"+getTitle(s)+".Link)){3};\r\n");
         if (e.getName().endsWith("[x]"))
           throw new Exception("Not done yet");
-        setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(propValue as "+tn+"){2}\r\n");
+        if (typeIsPrimitive(e.typeCode()))
+          setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(as"+tn.substring(5)+"(propValue)){2}\r\n");
+        else
+          setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(propValue as "+tn+"){2}\r\n");
         if (!e.typeCode().equals("Resource"))
           makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+getTitle(s)+".append(){2}\r\n");
 

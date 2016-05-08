@@ -118,6 +118,8 @@ function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
 function asTime(obj : TFHIRObject) : TFHIRTime;
 function asOid(obj : TFHIRObject) : TFHIROid;
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
+function asResource(obj : TFHIRObject) : TFHIRResource;
+function asExtension(obj : TFHIRObject) : TFHIRExtension;
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
@@ -390,6 +392,12 @@ type
     procedure AddParameter(name, value: string); overload;
     function AddParameter(name: String) : TFhirParametersParameter; overload;
     procedure AddParameter(p :  TFhirParametersParameter); overload;
+  end;
+
+  TFhirStrutureMapHelper = class helper for TFhirStructureMap
+  private
+  public
+    function targetType : String;
   end;
 
   TFhirResourceMetaHelper = class helper for TFhirMeta
@@ -3352,6 +3360,11 @@ begin
     result := TFHIRString.create(TFHIRMMElement(obj).value);
     obj.Free;
   end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRString.create(TFHIRBase(obj).primitiveValue);
+    obj.Free;
+  end
   else
   begin
     obj.Free;
@@ -3382,6 +3395,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUri.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRUri.create(TFHIRBase(obj).primitiveValue);
     obj.Free;
   end
   else
@@ -3567,6 +3585,29 @@ begin
   end;
 end;
 
+function asResource(obj : TFHIRObject) : TFHIRResource;
+begin
+  if obj is TFHIRResource then
+    result := obj as TFHIRResource
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+  end;
+end;
+
+
+function asExtension(obj : TFHIRObject) : TFHIRExtension;
+begin
+  if obj is TFHIRExtension then
+    result := obj as TFHIRExtension
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+  end;
+end;
+
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
@@ -3575,6 +3616,11 @@ begin
   else if obj is TFHIRCode then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
+    obj.Free;
+  end
+  else if obj is TFHIRString then
+  begin
+    result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRString(obj).value)], TFHIRString(obj).value);
     obj.Free;
   end
   else
@@ -3903,6 +3949,21 @@ begin
   for id in uniqueIdList do
     if (id.type_ = NamingSystemIdentifierTypeOID) and (id.value = oid) then
       exit(true);
+end;
+
+{ TFhirStrutureMapHelper }
+
+function TFhirStrutureMapHelper.targetType: String;
+var
+  input : TFhirStructureMapGroupInput;
+begin
+  result := '';
+  for input in groupList[0].inputList do
+    if input.mode = MapInputModeTarget then
+      if result = '' then
+        result := input.type_
+      else
+        raise Exception.Create('Multiple input types not accepted');
 end;
 
 end.

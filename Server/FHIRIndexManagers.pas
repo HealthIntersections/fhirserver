@@ -946,11 +946,11 @@ begin
                 else if match is TFhirContactPoint  then
                   index(resource.fhirType, key, 0, TFhirContactPoint(match), ndx.Name)
                 else if match is TFhirReference then
-                    index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-                else if match is TFhirReference then
                   index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
+                else if match is TFhirResource then
+                  // index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
                 else
-                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName);
                 end;
               SearchXpathUsagePhonetic:
                 begin
@@ -959,7 +959,7 @@ begin
                 else if match is TFhirHumanName then
                   index(resource.fhirType, key, 0, TFhirHumanName(match), '', ndx.Name)
                 else
-                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager');
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName);
                 end;
               SearchXpathUsageNearby:
                 begin

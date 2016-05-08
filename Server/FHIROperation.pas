@@ -1247,6 +1247,7 @@ begin
         response.Message := 'Created';
         response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
         response.Resource := request.Resource.Link;
+        response.LastModifiedDate := now;
 
         response.id := sId;
         response.versionId := '1';
@@ -4682,11 +4683,12 @@ var
   parser : TFHIRParser;
   s : TBytes;
   i, key : integer;
-  id : String;
+  id, ver : String;
   rtype : String;
   parts : TArray<String>;
   res : TFHIRResource;
 begin
+  ver := '';
   if url.StartsWith('#') then
   begin
     for res in source.containedList do
@@ -4709,13 +4711,23 @@ begin
       raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
     rType := parts[0];
     id := parts[1];
+  end else if (length(parts) = 4) and (parts[2] = '_history') then
+  begin
+    if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not FRepository.ValidatorContext.hasCustomResource(parts[0]) then
+      raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
+    rType := parts[0];
+    id := parts[1];
+    ver := parts[3];
   end
   else
     raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
 
   if FindResource(rtype, id, false, key, nil, nil, compartments) then
   begin
-    FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
+    if ver <> '' then
+      FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(key)+' and VersionId = '''+sqlwrapString(ver)+''''
+    else
+      FConnection.SQL := 'Select Secure, JsonContent from Versions where ResourceKey = '+inttostr(key)+' order by ResourceVersionKey desc';
     FConnection.Prepare;
     try
       FConnection.Execute;
@@ -6205,7 +6217,11 @@ begin
       if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
         manager.FRepository.validator.validate(ctxt, request.Source, request.PostFormat, profile)
       else
+      begin
+        if request.resource = nil then
+          request.resource := manager.GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
         manager.FRepository.validator.validate(ctxt, request.Resource, profile);
+      end;
       outcome := manager.FRepository.validator.describe(ctxt);
     finally
       ctxt.Free;
@@ -6573,15 +6589,15 @@ begin
   result := false;
 end;
 
-
-
-
 { TFhirGenerateDocumentOperation }
 
 procedure TFhirGenerateDocumentOperation.addResource(manager: TFhirOperationManager; secure : boolean; bundle: TFHIRBundle; source : TFHIRDomainResource; reference: TFhirReference; required: boolean; compartments : String);
 var
   res : TFHIRResource;
   needSecure : boolean;
+  entry : TFHIRBundleEntry;
+  exists : boolean;
+  url : String;
 begin
   if reference = nil then
     exit;
@@ -6595,7 +6611,19 @@ begin
           raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
       end
       else
-        bundle.entryList.Append.resource := res.Link
+      begin
+        url := manager.FRepository.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        exists := false;
+        for entry in bundle.entryList do
+          if entry.fullUrl = url then
+            exists := true;
+        if not exists then
+        begin
+          entry := bundle.entryList.Append;
+          entry.resource := res.Link;
+          entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        end;
+      end
     end
     else if required then
       raise Exception.Create('Unable to resolve reference '''+reference.reference+'''');
@@ -6644,6 +6672,7 @@ var
   composition : TFhirComposition;
   bundle : TFhirBundle;
   resourceKey : integer;
+  entry : TFhirBundleEntry;
   i, j : integer;
   needSecure : boolean;
 begin
@@ -6666,7 +6695,9 @@ begin
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := NowUTC;
 //            bundle.base := manager.FRepository.FormalURLPlain;
-            bundle.entryList.Append.resource := composition.Link;
+            entry := bundle.entryList.Append;
+            entry.resource := composition.Link;
+            entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/Composition/'+composition.id;
             addResource(manager, request.secure, bundle, composition, composition.subject, true, request.compartments);
             addSections(manager, request.secure, bundle, composition, composition.sectionList, request.compartments);
 
@@ -6680,11 +6711,22 @@ begin
                 addResource(manager, request.secure, bundle, composition, composition.eventList[i].detailList[j], false, request.compartments);
             addResource(manager, request.secure, bundle, composition, composition.encounter, false, request.compartments);
 
-            response.HTTPCode := 200;
-            response.Message := 'OK';
-            response.Body := '';
-            response.LastModifiedDate := now;
-            response.Resource := bundle.Link;
+            if request.Parameters.getvar('persist') = 'true' then
+            begin
+              request.ResourceName := bundle.FhirType;
+              request.CommandType := fcmdUpdate;
+              request.Id := bundle.id;
+              request.Resource := bundle.link;
+              manager.Execute(request, response, false);
+            end
+            else
+            begin
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+              response.Body := '';
+              response.LastModifiedDate := now;
+              response.Resource := bundle.Link;
+            end;
           finally
             bundle.Free;
           end;
@@ -8293,7 +8335,7 @@ begin
           if (map <> nil) then
           begin
             try
-              outcome := TFHIRCodeableConcept.Create;
+              outcome := manager.FFactory.makeByName(map.targetType);
               try
                 utils := TFHIRStructureMapUtilities.Create(manager.FRepository.Validator.Context.link, lib.Link, TServerTransformerServices.create(manager.FRepository.link));
                 try
@@ -8303,7 +8345,10 @@ begin
                     response.Message := 'OK';
                     response.Body := '';
                     response.LastModifiedDate := now;
-                    response.Resource := TFHIRCustomResource.createFromBase(manager.FRepository.ValidatorContext, outcome);
+                    if outcome is TFHIRResource then
+                      response.Resource := (outcome as TFHIRResource).link
+                    else
+                      response.Resource := TFHIRCustomResource.createFromBase(manager.FRepository.ValidatorContext, outcome);
                   except
                     on e : exception do
                       manager.check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);

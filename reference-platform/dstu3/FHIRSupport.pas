@@ -309,6 +309,7 @@ Type
     Function Link : TFHIRRequest; Overload;
 
     {!Script Hide}
+    function clone() : TFHIRRequest;
     Function Compose : String;
     procedure LoadParams(s : String); overload;
     procedure LoadParams(form : TMimeMessage); overload;
@@ -1125,6 +1126,21 @@ begin
     result := true
   else
     result := session.canWrite(resourceName);
+end;
+
+function TFHIRRequest.clone: TFHIRRequest;
+begin
+  result := TFHIRRequest.Create(FWorker.link, FOrigin, FCompartmentInformation.Link);
+  result.FFormat := FFormat;
+  result.FBaseUrl := FBaseUrl;
+  result.FLang := FLang;
+  result.FSession := FSession.Link;
+  result.FIp := FIp;
+  result.FCompartments := FCompartments;
+  result.FCompartmentId := FCompartmentId;
+  result.FSummary := FSummary;
+  result.FOrigin := FOrigin;
+  result.FSecure := FSecure;
 end;
 
 function TFHIRRequest.Compose: String;

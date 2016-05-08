@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-05-06T08:21:06+10:00
+// FHIR v1.4.0 generated 2016-05-08T03:05:30+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -2193,10 +2193,9 @@ Type
     MapTransformTranslate, {@enum.value MapTransformTranslate  }
     MapTransformReference, {@enum.value MapTransformReference  }
     MapTransformEvaluate,
-    MapTransformPointer,
     MapTransformUuid,
+    MapTransformPointer,
     MapTransformDateOp);
-
   TFhirMapTransformEnumList = set of TFhirMapTransformEnum;
 
   {@Enum TFhirSubscriptionStatusEnum
@@ -13109,7 +13108,7 @@ Const
   SYSTEMS_TFhirMapContextTypeEnum : Array[TFhirMapContextTypeEnum] of String = ('', 'http://hl7.org/fhir/map-context-type', 'http://hl7.org/fhir/map-context-type');
   CODES_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'first', 'share', 'last');
   SYSTEMS_TFhirMapListModeEnum : Array[TFhirMapListModeEnum] of String = ('', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode', 'http://hl7.org/fhir/map-list-mode');
-  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'pointer', 'uuid', 'dateOp');
+  CODES_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'create', 'copy', 'truncate', 'escape', 'cast', 'append', 'translate', 'reference', 'evaluate', 'uuid', 'pointer', 'dateOp');
   SYSTEMS_TFhirMapTransformEnum : Array[TFhirMapTransformEnum] of String = ('', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform', 'http://hl7.org/fhir/map-transform');
   CODES_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'requested', 'active', 'error', 'off');
   SYSTEMS_TFhirSubscriptionStatusEnum : Array[TFhirSubscriptionStatusEnum] of String = ('', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status', 'http://hl7.org/fhir/subscription-status');
@@ -19885,7 +19884,7 @@ procedure TFhirDataRequirementCodeFilter.setProperty(propName : string; propValu
 begin
   if (propName = 'path') then PathElement := asString(propValue){5a}
   else if (propName.startsWith('valueSet')) then ValueSet := propValue as TFhirType{4}
-  else if (propName = 'valueCode') then ValueCodeList.add(propValue as TFhirCode){2}
+  else if (propName = 'valueCode') then ValueCodeList.add(asCode(propValue)){2}
   else if (propName = 'valueCoding') then ValueCodingList.add(propValue as TFhirCoding){2}
   else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.add(propValue as TFhirCodeableConcept){2}
   else inherited;
@@ -20471,7 +20470,7 @@ procedure TFhirDataRequirement.setProperty(propName: string; propValue: TFHIRObj
 begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, propValue)
   else if (propName = 'profile') then Profile := propValue as TFhirReference{TFhirStructureDefinition}{4b}
-  else if (propName = 'mustSupport') then MustSupportList.add(propValue as TFhirString){2}
+  else if (propName = 'mustSupport') then MustSupportList.add(asString(propValue)){2}
   else if (propName = 'codeFilter') then CodeFilterList.add(propValue as TFhirDataRequirementCodeFilter){2}
   else if (propName = 'dateFilter') then DateFilterList.add(propValue as TFhirDataRequirementDateFilter){2}
   else inherited;
@@ -28111,7 +28110,7 @@ end;
 
 procedure TFhirTiming.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'event') then EventList.add(propValue as TFhirDateTime){2}
+  if (propName = 'event') then EventList.add(asDateTime(propValue)){2}
   else if (propName = 'repeat') then Repeat_ := propValue as TFhirTimingRepeat{4b}
   else if (propName = 'code') then Code := propValue as TFhirCodeableConcept{4b}
   else inherited;
@@ -28539,7 +28538,7 @@ end;
 
 procedure TFhirElementDefinitionSlicing.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'discriminator') then DiscriminatorList.add(propValue as TFhirString){2}
+  if (propName = 'discriminator') then DiscriminatorList.add(asString(propValue)){2}
   else if (propName = 'description') then DescriptionElement := asString(propValue){5a}
   else if (propName = 'ordered') then OrderedElement := asBoolean(propValue){5a}
   else if (propName = 'rules') then RulesElement := asEnum(SYSTEMS_TFhirResourceSlicingRulesEnum, CODES_TFhirResourceSlicingRulesEnum, propValue)
@@ -29176,7 +29175,7 @@ end;
 procedure TFhirElementDefinitionType.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'code') then CodeElement := asCode(propValue)
-  else if (propName = 'profile') then ProfileList.add(propValue as TFhirUri){2}
+  else if (propName = 'profile') then ProfileList.add(asUri(propValue)){2}
   else if (propName = 'aggregation') then FAggregation.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
   else if (propName = 'versioning') then VersioningElement := asEnum(SYSTEMS_TFhirReferenceVersionRulesEnum, CODES_TFhirReferenceVersionRulesEnum, propValue)
   else inherited;
@@ -30693,7 +30692,7 @@ begin
   else if (propName = 'definition') then DefinitionElement := asString(propValue){5a}
   else if (propName = 'comments') then CommentsElement := asString(propValue){5a}
   else if (propName = 'requirements') then RequirementsElement := asString(propValue){5a}
-  else if (propName = 'alias') then AliasList.add(propValue as TFhirString){2}
+  else if (propName = 'alias') then AliasList.add(asString(propValue)){2}
   else if (propName = 'min') then MinElement := asInteger(propValue){5a}
   else if (propName = 'max') then MaxElement := asString(propValue){5a}
   else if (propName = 'base') then Base := propValue as TFhirElementDefinitionBase{4b}
@@ -30707,7 +30706,7 @@ begin
   else if (propName.startsWith('minValue')) then MinValue := propValue as TFhirType{4}
   else if (propName.startsWith('maxValue')) then MaxValue := propValue as TFhirType{4}
   else if (propName = 'maxLength') then MaxLengthElement := asInteger(propValue){5a}
-  else if (propName = 'condition') then ConditionList.add(propValue as TFhirId){2}
+  else if (propName = 'condition') then ConditionList.add(asId(propValue)){2}
   else if (propName = 'constraint') then ConstraintList.add(propValue as TFhirElementDefinitionConstraint){2}
   else if (propName = 'mustSupport') then MustSupportElement := asBoolean(propValue){5a}
   else if (propName = 'isModifier') then IsModifierElement := asBoolean(propValue){5a}
@@ -31590,10 +31589,10 @@ procedure TFhirHumanName.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, propValue)
   else if (propName = 'text') then TextElement := asString(propValue){5a}
-  else if (propName = 'family') then FamilyList.add(propValue as TFhirString){2}
-  else if (propName = 'given') then GivenList.add(propValue as TFhirString){2}
-  else if (propName = 'prefix') then PrefixList.add(propValue as TFhirString){2}
-  else if (propName = 'suffix') then SuffixList.add(propValue as TFhirString){2}
+  else if (propName = 'family') then FamilyList.add(asString(propValue)){2}
+  else if (propName = 'given') then GivenList.add(asString(propValue)){2}
+  else if (propName = 'prefix') then PrefixList.add(asString(propValue)){2}
+  else if (propName = 'suffix') then SuffixList.add(asString(propValue)){2}
   else if (propName = 'period') then Period := propValue as TFhirPeriod{4b}
   else inherited;
 end;
@@ -32029,7 +32028,7 @@ begin
   if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirAddressUseEnum, CODES_TFhirAddressUseEnum, propValue)
   else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAddressTypeEnum, CODES_TFhirAddressTypeEnum, propValue)
   else if (propName = 'text') then TextElement := asString(propValue){5a}
-  else if (propName = 'line') then LineList.add(propValue as TFhirString){2}
+  else if (propName = 'line') then LineList.add(asString(propValue)){2}
   else if (propName = 'city') then CityElement := asString(propValue){5a}
   else if (propName = 'district') then DistrictElement := asString(propValue){5a}
   else if (propName = 'state') then StateElement := asString(propValue){5a}
@@ -32524,7 +32523,7 @@ procedure TFhirMeta.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'versionId') then VersionIdElement := asId(propValue){5a}
   else if (propName = 'lastUpdated') then LastUpdatedElement := asInstant(propValue){5a}
-  else if (propName = 'profile') then ProfileList.add(propValue as TFhirUri){2}
+  else if (propName = 'profile') then ProfileList.add(asUri(propValue)){2}
   else if (propName = 'security') then SecurityList.add(propValue as TFhirCoding){2}
   else if (propName = 'tag') then TagList.add(propValue as TFhirCoding){2}
   else inherited;

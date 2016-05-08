@@ -513,6 +513,7 @@ end;
 
 destructor TFHIRMMElement.Destroy;
 begin
+  writeln('free '+name);
   FComments.Free;
   FChildren.Free;
   FProperty.Free;
@@ -856,8 +857,17 @@ var
   t : String;
   all, ok : boolean;
 begin
-  ed := prop.Definition;
-  sd := prop.Structure.Link;
+  if prop.isResource then
+  begin
+    sd := FContext.getStructure('http://hl7.org/fhir/StructureDefinition/'+statedType);
+    ed := sd.snapshot.elementList[0];
+  end
+  else
+  begin
+    ed := prop.Definition;
+    sd := prop.Structure.Link;
+  end;
+
   children := FContext.getChildMap(sd, ed);
   try
     if (children.isEmpty()) then
@@ -2072,7 +2082,7 @@ var
   o : TFHIRObject;
   n : TFHIRMMElement;
 begin
-  properties := getChildProperties(context.Prop, context.Name, '');
+  properties := getChildProperties(context.Prop, context.Name, context.Type_);
   try
     for prop in properties do
     begin
@@ -2099,6 +2109,9 @@ begin
                 name := name.substring(0, name.length - 3)+capitalize(TFHIRBase(o).fhirType);
               n := TFHIRMMElement.create(name, prop.Link);
               context.getChildren().add(n);
+              // is this a resource boundary?
+              if prop.isResource then
+                n.type_ := TFHIRBase(o).fhirType;
               parseChildren(path+'.'+name, o as TFHIRBase, n);
             end;
           end;

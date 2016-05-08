@@ -964,9 +964,9 @@ begin
 
   for imp in map.importList do
   begin
-    impMap := Flib[imp.Value];
-    if (impMap = nil) then
+    if not FLib.containsKey(imp.value) then
       raise Exception.create('Unable to find map '+imp.Value);
+    impMap := Flib[imp.Value];
     for grp in impMap.GroupList do
     begin
       if (grp.Name = dependent.Name) then

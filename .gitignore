@@ -65,3 +65,6 @@ reference-platform/generator/workspace/.recommenders/
 reference-platform/generator/project/.settings/org.eclipse.jdt.core.prefs
 install/fhirquick.fbpbrk
 install/fhirquick.fbpInf
+install/fhirquick.fbl8
+Server/FHIRServer3_project.tvsconfig
+install/fhirquick.fb8lck

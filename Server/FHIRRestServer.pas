@@ -1918,7 +1918,7 @@ Begin
             begin
               oRequest.patchJson := TJsonParser.ParseNode(oPostStream) as TJsonArray
             end
-            else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/patch-ops-error+xml') then
+            else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/xml-patch+xml') then
             begin
               oRequest.patchXml := TMsXmlParser.parse(oPostStream).documentElement;
             end

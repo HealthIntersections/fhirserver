@@ -1356,7 +1356,7 @@ end;
 
 procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('The property "'+propName+' is unknown"');
+  raise Exception.Create('The property "'+propName+'" is unknown"');
 end;
 
 procedure TFHIRObject.SetTag(const Value: TAdvObject);
