@@ -570,6 +570,8 @@ var
   dummy : string;
   I: Integer;
 begin
+  result := -1;
+
   if (Index.Key = 0) then
     raise Exception.create('unknown index '+index.Name);
 

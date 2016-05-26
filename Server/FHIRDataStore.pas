@@ -236,11 +236,10 @@ constructor TFHIRDataStore.Create(DB: TKDBManager;
   SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer;
   ini: TIniFile; SCIMServer: TSCIMServer);
 var
-  i, ver: integer;
+  i : integer;
   conn: TKDBConnection;
   a: TFHIRResourceType;
   rn, fn : String;
-  dbi : TFHIRDatabaseInstaller;
   implGuides : TAdvStringSet;
   cfg : TFHIRResourceConfig;
 begin
@@ -415,7 +414,7 @@ begin
         writelnt('Load Store');
         LoadExistingResources(conn);
         writelnt('Check Definitions');
-  //      checkDefinitions();
+//        checkDefinitions();
         writelnt('Load Subscription Queue');
         FSubscriptionManager.LoadQueue(conn);
       end;
@@ -1299,7 +1298,6 @@ var
   s, sx : string;
   c, t : integer;
   fpe : TFHIRExpressionEngine;
-  l : TFHIRStructureDefinitionList;
   sd : TFhirStructureDefinition;
   ed: TFhirElementDefinition;
   inv : TFhirElementDefinitionConstraint;
@@ -1316,35 +1314,38 @@ begin
       if sd.constrainedType = '' then
       {$ENDIF}
 
-      for ed in sd.snapshot.elementList do
-        for inv in ed.constraintList do
-        begin
-          sx := {$IFDEF FHIR3} inv.expression {$ELSE} inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') {$ENDIF};
-          if (sx <> '') and not sx.contains('$parent') then
+      if sd.snapshot <> nil then
+      begin
+        for ed in sd.snapshot.elementList do
+          for inv in ed.constraintList do
           begin
-            inc(t);
-            try
-              expr := fpe.parse(sx);
+            sx := {$IFDEF FHIR3} inv.expression {$ELSE} inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') {$ENDIF};
+            if (sx <> '') and not sx.contains('$parent') then
+            begin
+              inc(t);
               try
-                if sd.kind = StructureDefinitionKindResource then
-                  td := fpe.check(nil, sd.id, ed.path, '', expr, false)
-                else
-                  td := fpe.check(nil, 'DomainResource', ed.path, '', expr, false);
+                expr := fpe.parse(sx);
                 try
-                  if (td.hasNoTypes) then
-                    s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
+                  if sd.kind = StructureDefinitionKindResource then
+                    td := fpe.check(nil, sd.id, ed.path, '', expr, false)
                   else
-                    inc(c);
+                    td := fpe.check(nil, 'DomainResource', ed.path, '', expr, false);
+                  try
+                    if (td.hasNoTypes) then
+                      s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): no possible result from '+sx + #13#10
+                    else
+                      inc(c);
+                  finally
+                    td.free;
+                  end;
                 finally
-                  td.free;
-                end;
-              finally
-                expr.Free;
+                  expr.Free;
 
+                end;
+              except
+                on e : Exception do
+                  s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): exception "'+e.message+'" ('+sx+')' + #13#10;
               end;
-            except
-              on e : Exception do
-                s := s + inv.key+' @ '+ed.path+' ('+sd.name+'): exception "'+e.message+'" ('+sx+')' + #13#10;
             end;
           end;
         end;
@@ -1852,7 +1853,7 @@ begin
     TFhirReference(resp.request).reference := 'Claim/' + claim.id;
     resp.outcome := RemittanceOutcomeComplete;
     resp.disposition := 'Automatic Response';
-    resp.paymentAmount := TFhirQuantity.Create;
+    resp.paymentAmount := TFhirMoney.Create;
     resp.paymentAmount.value := '0';
     resp.paymentAmount.unit_ := '$';
     resp.paymentAmount.system := 'urn:iso:std:4217';
@@ -1937,7 +1938,6 @@ var
   mem: TBytes;
   i: integer;
   cback: TKDBConnection;
-  url : String;
 begin
   FTerminologyServer.Loading := true;
   conn.SQL :=

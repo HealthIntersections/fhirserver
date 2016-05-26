@@ -59,7 +59,7 @@ Type
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
   public
-    Constructor Create();
+    Constructor Create; Override;
     Destructor Destroy; Override;
   end;
 
@@ -110,8 +110,8 @@ Type
     FOperationDescription : String;
     procedure SetErrors(const Value: TFhirOperationOutcomeIssueList);
   public
-    constructor create; override;
-    destructor destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
     property BPWarnings: TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
@@ -933,6 +933,7 @@ var
   result : boolean;
   stack1 : TNodeStack;
 begin
+  result := false;
   if resource = nil then
     resource := element;
 
@@ -1064,7 +1065,7 @@ var
   firstStack: TNodeStack;
   fullUrl: String;
   resource, res: TFHIRMMElement;
-  localStack, t: TNodeStack;
+  localStack : TNodeStack;
 begin
   entries := TAdvList<TFHIRMMElement>.Create();
   try
@@ -1174,14 +1175,14 @@ begin
   if (ref <> nil) and (ref.getNamedChildValue('reference') <> '') then
   begin
     target := resolveInBundle(entries, ref.getNamedChildValue('reference'), fullUrl, type_, id);
-    rule(ctxt, IssueTypeINVALID, target.locStart, target.locEnd, stack.addToLiteralPath(['reference']), target <> nil,
+    rule(ctxt, IssueTypeINVALID, ref.locStart, ref.locEnd, stack.addToLiteralPath(['reference']), target <> nil,
       'Unable to resolve the target of the reference in the bundle (' + name + ')');
   end;
 end;
 
 Function TFHIRValidator.resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
-  entry, res, resource: TFHIRMMElement;
+  entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
   parts: TArray<String>;
 begin
@@ -1206,7 +1207,7 @@ begin
     if (fullUrl <> '') and (fullUrl.endsWith(type_ + '/' + id)) then
       // fullUrl := complex
       u := fullUrl.substring((type_ + '/' + id).length) + ref;
-    parts := ref.split(['\\/']);
+    parts := ref.split(['/']);
     if (length(parts) >= 2) then
     begin
       t := parts[0];
@@ -1222,11 +1223,13 @@ begin
         if (u = '') then
         begin
           res := entry.getNamedChild('resource');
-          resource := res.children[0];
-          et := resource.Type_;
-          eid := resource.getNamedChildValue('id');
+          et := res.Type_;
+          eid := res.getNamedChildValue('id');
           if (t = et) and (i = eid) then
+          begin
             result := entry;
+            exit;
+          end;
         end;
       end;
     end;
@@ -2385,7 +2388,6 @@ end;
 procedure TFHIRValidator.checkInnerNames(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
 var
   node : TFhirXHtmlNode;
-  ns : String;
   attr : TFHIRAttribute;
 begin
   for node in list do

@@ -355,7 +355,7 @@ type
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
-    function FhirType : String; virtual;
+    function fhirType : String; virtual;
     function isPrimitive : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
@@ -443,7 +443,7 @@ type
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
     function primitiveValue : string; override;
-    function FhirType : String; override;
+    function fhirType : String; override;
     function NsDecl : String; virtual;
     {!script show}
 

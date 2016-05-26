@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-05-08T03:05:30+10:00
+// FHIR v1.4.0 generated 2016-05-24T21:00:19+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -59,7 +59,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -80,8 +80,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property code : String read FCode write FCode;
@@ -98,8 +98,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property language : String read FLanguage write FLanguage;
@@ -117,7 +117,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -127,6 +127,116 @@ Type
     property display : String read FDisplay write FDisplay;
     property property_List : TAdvList<TFHIRLookupOpProperty_> read FProperty_List;
     property designationList : TAdvList<TFHIRLookupOpDesignation> read FDesignationList;
+  end;
+
+  //Operation subsumes (Subsumption Testing)
+  TFHIRSubsumesOpRequest = class (TFHIROperationRequest)
+  private
+    FCodeSub : String;
+    FCodeSuper : String;
+    FSystem : String;
+    FVersion : String;
+    FCodingSub : TFhirCoding;
+    FCodingSuper : TFhirCoding;
+    procedure SetCodingSub(value : TFhirCoding);
+    procedure SetCodingSuper(value : TFhirCoding);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property codeSub : String read FCodeSub write FCodeSub;
+    property codeSuper : String read FCodeSuper write FCodeSuper;
+    property system : String read FSystem write FSystem;
+    property version : String read FVersion write FVersion;
+    property codingSub : TFhirCoding read FCodingSub write SetCodingSub;
+    property codingSuper : TFhirCoding read FCodingSuper write SetCodingSuper;
+  end;
+
+  TFHIRSubsumesOpResponse = class (TFHIROperationResponse)
+  private
+    FOutcome : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property outcome : String read FOutcome write FOutcome;
+  end;
+
+  //Operation infer (Performing inferencing based on a set of codes - e.g. a mix of composition and decomposition)
+  TFHIRInferOpConcept = class (TFHIROperationObject)
+  private
+    FProperty_ : String;
+    FCode : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property property_ : String read FProperty_ write FProperty_;
+    property code : String read FCode write FCode;
+  end;
+
+  TFHIRInferOpRequest = class (TFHIROperationRequest)
+  private
+    FSystem : String;
+    FVersion : String;
+    FConceptList : TAdvList<TFHIRInferOpConcept>;
+    FProperty_List : TList<String>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property system : String read FSystem write FSystem;
+    property version : String read FVersion write FVersion;
+    property conceptList : TAdvList<TFHIRInferOpConcept> read FConceptList;
+    property property_List : TList<String> read FProperty_List;
+  end;
+
+  TFHIRInferOpOutput = class (TFHIROperationObject)
+  private
+    FProperty_ : String;
+    FCode : String;
+    FDisplay : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property property_ : String read FProperty_ write FProperty_;
+    property code : String read FCode write FCode;
+    property display : String read FDisplay write FDisplay;
+  end;
+
+  TFHIRInferOpResponse = class (TFHIROperationResponse)
+  private
+    FMessage : String;
+    FOutputList : TAdvList<TFHIRInferOpOutput>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property message : String read FMessage write FMessage;
+    property outputList : TAdvList<TFHIRInferOpOutput> read FOutputList;
   end;
 
   //Operation expand (Value Set Expansion)
@@ -145,7 +255,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -167,7 +277,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -196,7 +306,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -222,7 +332,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -242,7 +352,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -259,7 +369,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -273,7 +383,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -287,7 +397,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -303,7 +413,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -318,7 +428,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -334,7 +444,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -349,7 +459,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -366,8 +476,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property token : String read FToken write FToken;
@@ -382,8 +492,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property label_ : String read FLabel_ write FLabel_;
@@ -398,8 +508,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property label_ : String read FLabel_ write FLabel_;
@@ -414,8 +524,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property label_ : String read FLabel_ write FLabel_;
@@ -434,8 +544,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property summary : String read FSummary write FSummary;
@@ -466,7 +576,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -491,8 +601,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property create_List : TAdvList<TFhirResource> read FCreate_List;
@@ -505,7 +615,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -520,7 +630,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -533,7 +643,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -549,8 +659,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property element : String read FElement write FElement;
@@ -562,17 +672,19 @@ Type
     FCode : String;
     FSystem : String;
     FVersion : String;
-    FValueSet : String;
+    FSource : String;
     FCoding : TFhirCoding;
     FCodeableConcept : TFhirCodeableConcept;
     FTarget : String;
+    FTargetsystem : String;
     FDependencyList : TAdvList<TFHIRTranslateOpDependency>;
+    FReverse : Boolean;
     procedure SetCoding(value : TFhirCoding);
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -580,11 +692,13 @@ Type
     property code : String read FCode write FCode;
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
-    property valueSet : String read FValueSet write FValueSet;
+    property source : String read FSource write FSource;
     property coding : TFhirCoding read FCoding write SetCoding;
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
     property target : String read FTarget write FTarget;
+    property targetsystem : String read FTargetsystem write FTargetsystem;
     property dependencyList : TAdvList<TFHIRTranslateOpDependency> read FDependencyList;
+    property reverse : Boolean read FReverse write FReverse;
   end;
 
   TFHIRTranslateOpProduct = class (TFHIROperationObject)
@@ -595,8 +709,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property element : String read FElement write FElement;
@@ -608,17 +722,19 @@ Type
     FEquivalence : String;
     FConcept : TFhirCoding;
     FProductList : TAdvList<TFHIRTranslateOpProduct>;
+    FSource : String;
     procedure SetConcept(value : TFhirCoding);
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property equivalence : String read FEquivalence write FEquivalence;
     property concept : TFhirCoding read FConcept write SetConcept;
     property productList : TAdvList<TFHIRTranslateOpProduct> read FProductList;
+    property source : String read FSource write FSource;
   end;
 
   TFHIRTranslateOpResponse = class (TFHIROperationResponse)
@@ -629,7 +745,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -648,7 +764,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -665,7 +781,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -711,7 +827,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -742,7 +858,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -756,7 +872,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -770,7 +886,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -786,7 +902,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -800,7 +916,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -824,7 +940,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -844,7 +960,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -862,7 +978,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -879,7 +995,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -911,7 +1027,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -934,7 +1050,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -961,7 +1077,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -987,7 +1103,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1010,7 +1126,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1032,7 +1148,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1051,7 +1167,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1069,7 +1185,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1086,7 +1202,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1102,7 +1218,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1118,7 +1234,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1131,7 +1247,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1146,7 +1262,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1159,7 +1275,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1172,7 +1288,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1184,7 +1300,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1199,7 +1315,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1212,7 +1328,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1225,7 +1341,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1237,7 +1353,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1250,7 +1366,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1262,7 +1378,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1275,7 +1391,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1287,7 +1403,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1300,7 +1416,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1312,7 +1428,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1325,7 +1441,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1337,7 +1453,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1353,8 +1469,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property name : String read FName write FName;
@@ -1367,7 +1483,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1380,7 +1496,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1393,7 +1509,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1408,8 +1524,8 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload;
-    constructor create(params : TFhirParametersParameter); overload;
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
     property name : String read FName write FName;
@@ -1422,7 +1538,7 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor create; overload; override;
+    constructor Create; overload; override;
     destructor Destroy; override;
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
@@ -1670,6 +1786,313 @@ end;
 function TFHIRLookupOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['name', 'version', 'display', 'property', 'designation'], name);
+end;
+
+procedure TFHIRSubsumesOpRequest.SetCodingSub(value : TFhirCoding);
+begin
+  FCodingSub.free;
+  FCodingSub := value;
+end;
+
+procedure TFHIRSubsumesOpRequest.SetCodingSuper(value : TFhirCoding);
+begin
+  FCodingSuper.free;
+  FCodingSuper := value;
+end;
+
+constructor TFHIRSubsumesOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRSubsumesOpRequest.load(params : TFHIRParameters);
+begin
+  FCodeSub := params.str['codeSub'];
+  FCodeSuper := params.str['codeSuper'];
+  FSystem := params.str['system'];
+  FVersion := params.str['version'];
+  FCodingSub := (params.param['codingSub'].value as TFhirCoding).Link; {ob.5d}
+  FCodingSuper := (params.param['codingSuper'].value as TFhirCoding).Link; {ob.5d}
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubsumesOpRequest.load(params : TParseMap);
+begin
+  FCodeSub := params.getVar('codeSub');
+  FCodeSuper := params.getVar('codeSuper');
+  FSystem := params.getVar('system');
+  FVersion := params.getVar('version');
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubsumesOpRequest.Destroy;
+begin
+  FCodingSub.free;
+  FCodingSuper.free;
+  inherited;
+end;
+
+function TFHIRSubsumesOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FCodeSub <> '') then
+      result.addParameter('codeSub', TFHIRString.create(FCodeSub));{oz.5f}
+    if (FCodeSuper <> '') then
+      result.addParameter('codeSuper', TFHIRString.create(FCodeSuper));{oz.5f}
+    if (FSystem <> '') then
+      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+    if (FVersion <> '') then
+      result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
+    if (FCodingSub <> nil) then
+      result.addParameter('codingSub', FCodingSub.Link);{oz.5d}
+    if (FCodingSuper <> nil) then
+      result.addParameter('codingSuper', FCodingSuper.Link);{oz.5d}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubsumesOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['codeSub', 'codeSuper', 'system', 'version', 'codingSub', 'codingSuper'], name);
+end;
+
+constructor TFHIRSubsumesOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRSubsumesOpResponse.load(params : TFHIRParameters);
+begin
+  FOutcome := params.str['outcome'];
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubsumesOpResponse.load(params : TParseMap);
+begin
+  FOutcome := params.getVar('outcome');
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubsumesOpResponse.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRSubsumesOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FOutcome <> '') then
+      result.addParameter('outcome', TFHIRString.create(FOutcome));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubsumesOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['outcome'], name);
+end;
+
+constructor TFHIRInferOpConcept.create;
+begin
+  inherited create();
+end;
+
+constructor TFHIRInferOpConcept.create(params : TFhirParametersParameter);
+begin
+  inherited create();
+  FProperty_ := params.str['property'];
+  FCode := params.str['code'];
+  loadExtensions(params);
+end;
+
+destructor TFHIRInferOpConcept.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRInferOpConcept.asParams(name : String) : TFhirParametersParameter;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FProperty_ <> '') then
+      result.addParameter('property', TFHIRString.create(FProperty_));{oz.5f}
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRInferOpConcept.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['property', 'code'], name);
+end;
+
+constructor TFHIRInferOpRequest.create;
+begin
+  inherited create();
+  FConceptList := TAdvList<TFHIRInferOpConcept>.create;
+  FProperty_List := TList<String>.create;
+end;
+
+procedure TFHIRInferOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  FSystem := params.str['system'];
+  FVersion := params.str['version'];
+  for p in params.parameterList do
+    if p.name = 'concept' then
+      FConceptList.Add(TFHIRInferOpConcept.create(p));{a}
+  for p in params.parameterList do
+    if p.name = 'property' then
+      FProperty_List.Add((p.value as TFhirCode).value);{ob.1}
+  loadExtensions(params);
+end;
+
+procedure TFHIRInferOpRequest.load(params : TParseMap);
+begin
+  FSystem := params.getVar('system');
+  FVersion := params.getVar('version');
+  loadExtensions(params);
+end;
+
+destructor TFHIRInferOpRequest.Destroy;
+begin
+  FConceptList.free;
+  FProperty_List.free;
+  inherited;
+end;
+
+function TFHIRInferOpRequest.asParams : TFhirParameters;
+var
+  v1 : TFHIRInferOpConcept;
+  v2 : String;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FSystem <> '') then
+      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+    if (FVersion <> '') then
+      result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
+    for v1 in FConceptList do
+      result.AddParameter(v1.asParams('concept'));
+    for v2 in FProperty_List do
+      result.AddParameter('property', TFhirCode.create(v2));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRInferOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['system', 'version', 'concept', 'property'], name);
+end;
+
+constructor TFHIRInferOpOutput.create;
+begin
+  inherited create();
+end;
+
+constructor TFHIRInferOpOutput.create(params : TFhirParametersParameter);
+begin
+  inherited create();
+  FProperty_ := params.str['property'];
+  FCode := params.str['code'];
+  FDisplay := params.str['display'];
+  loadExtensions(params);
+end;
+
+destructor TFHIRInferOpOutput.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRInferOpOutput.asParams(name : String) : TFhirParametersParameter;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FProperty_ <> '') then
+      result.addParameter('property', TFHIRString.create(FProperty_));{oz.5f}
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+    if (FDisplay <> '') then
+      result.addParameter('display', TFHIRString.create(FDisplay));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRInferOpOutput.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['property', 'code', 'display'], name);
+end;
+
+constructor TFHIRInferOpResponse.create;
+begin
+  inherited create();
+  FOutputList := TAdvList<TFHIRInferOpOutput>.create;
+end;
+
+procedure TFHIRInferOpResponse.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  FMessage := params.str['message'];
+  for p in params.parameterList do
+    if p.name = 'output' then
+      FOutputList.Add(TFHIRInferOpOutput.create(p));{a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRInferOpResponse.load(params : TParseMap);
+begin
+  FMessage := params.getVar('message');
+  loadExtensions(params);
+end;
+
+destructor TFHIRInferOpResponse.Destroy;
+begin
+  FOutputList.free;
+  inherited;
+end;
+
+function TFHIRInferOpResponse.asParams : TFhirParameters;
+var
+  v1 : TFHIRInferOpOutput;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FMessage <> '') then
+      result.addParameter('message', TFHIRString.create(FMessage));{oz.5f}
+    for v1 in FOutputList do
+      result.AddParameter(v1.asParams('output'));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRInferOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['message', 'output'], name);
 end;
 
 procedure TFHIRExpandOpRequest.SetValueSet(value : TFhirValueSet);
@@ -2922,13 +3345,15 @@ begin
   FCode := params.str['code'];
   FSystem := params.str['system'];
   FVersion := params.str['version'];
-  FValueSet := params.str['valueSet'];
+  FSource := params.str['source'];
   FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
   FTarget := params.str['target'];
+  FTargetsystem := params.str['targetsystem'];
   for p in params.parameterList do
     if p.name = 'dependency' then
       FDependencyList.Add(TFHIRTranslateOpDependency.create(p));{a}
+  FReverse := params.bool['reverse'];
   loadExtensions(params);
 end;
 
@@ -2937,8 +3362,10 @@ begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
-  FValueSet := params.getVar('valueSet');
+  FSource := params.getVar('source');
   FTarget := params.getVar('target');
+  FTargetsystem := params.getVar('targetsystem');
+  FReverse := StrToBool(params.getVar('reverse'));
   loadExtensions(params);
 end;
 
@@ -2962,16 +3389,19 @@ begin
       result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
-    if (FValueSet <> '') then
-      result.addParameter('valueSet', TFHIRString.create(FValueSet));{oz.5f}
+    if (FSource <> '') then
+      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);{oz.5d}
     if (FCodeableConcept <> nil) then
       result.addParameter('codeableConcept', FCodeableConcept.Link);{oz.5d}
     if (FTarget <> '') then
       result.addParameter('target', TFHIRString.create(FTarget));{oz.5f}
+    if (FTargetsystem <> '') then
+      result.addParameter('targetsystem', TFHIRString.create(FTargetsystem));{oz.5f}
     for v1 in FDependencyList do
       result.AddParameter(v1.asParams('dependency'));
+      result.addParameter('reverse', TFHIRBoolean.create(FReverse));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2981,7 +3411,7 @@ end;
 
 function TFHIRTranslateOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['code', 'system', 'version', 'valueSet', 'coding', 'codeableConcept', 'target', 'dependency'], name);
+  result := StringArrayExists(['code', 'system', 'version', 'source', 'coding', 'codeableConcept', 'target', 'targetsystem', 'dependency', 'reverse'], name);
 end;
 
 procedure TFHIRTranslateOpMatch.SetConcept(value : TFhirCoding);
@@ -3053,6 +3483,7 @@ begin
   for p in params.partList do
     if p.name = 'product' then
       FProductList.Add(TFHIRTranslateOpProduct.create(p));{a}
+  FSource := params.str['source'];
   loadExtensions(params);
 end;
 
@@ -3076,6 +3507,8 @@ begin
       result.addParameter('concept', FConcept.Link);{oz.5d}
     for v1 in FProductList do
       result.AddParameter(v1.asParams('product'));
+    if (FSource <> '') then
+      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -3085,7 +3518,7 @@ end;
 
 function TFHIRTranslateOpMatch.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['equivalence', 'concept', 'product'], name);
+  result := StringArrayExists(['equivalence', 'concept', 'product', 'source'], name);
 end;
 
 constructor TFHIRTranslateOpResponse.create;

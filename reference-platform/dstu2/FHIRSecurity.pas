@@ -169,8 +169,6 @@ end;
 var
   GID : integer;
 procedure TFHIRSecurityRights.init(worker : TWorkerContext);
-var
-  a : TFhirResourceType;
 begin
   GId := GId + 1;
   FId := inttostr(GID);

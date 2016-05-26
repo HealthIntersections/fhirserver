@@ -120,6 +120,7 @@ function asOid(obj : TFHIRObject) : TFHIROid;
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
 function asResource(obj : TFHIRObject) : TFHIRResource;
 function asExtension(obj : TFHIRObject) : TFHIRExtension;
+function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
@@ -436,6 +437,8 @@ type
     property system : String read GetSystem;
     function context : string;
     function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
+
+    function buildImplicitValueSet : TFhirValueSet;
   end;
 
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
@@ -480,6 +483,7 @@ function gen(t : TFhirType):String; overload;
 
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
+function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 
 implementation
 
@@ -3044,6 +3048,11 @@ begin
     result := e1.equalsShallow(e2);
 end;
 
+function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 { TFHIRStringListHelper }
 
 procedure TFHIRStringListHelper.add(s: String);
@@ -3348,6 +3357,27 @@ begin
   begin
     obj.Free;
     raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
+  end;
+end;
+
+function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
+begin
+  if obj is TFHIRMarkdown then
+    result := obj as TFHIRMarkdown
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRMarkdown.create(TFHIRBase(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
 
@@ -3772,6 +3802,24 @@ begin
         if (ext.value as TFHIRCode).value = code then
           parentList.Add(c.link);
     scanForSubsumes(parentList, c.conceptList, code);
+  end;
+end;
+
+function TFhirCodeSystemHelper.buildImplicitValueSet: TFhirValueSet;
+begin
+  result := TFhirValueSet.Create;
+  try
+    result.url := valueSet;
+    result.name := name;
+    result.identifier	:= identifier.Link;
+    result.status := status;
+    result.experimental := experimental;
+    result.date := date;
+    result.compose := TFhirValueSetCompose.Create;
+    result.compose.includeList.Append.system := url;
+    result.Link;
+  finally
+    result.Free;
   end;
 end;
 

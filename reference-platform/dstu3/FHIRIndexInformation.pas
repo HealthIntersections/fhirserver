@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-05-08T03:05:30+10:00
+// FHIR v1.4.0 generated 2016-05-24T21:00:19+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -67,6 +67,7 @@ Type
     procedure buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForConformance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDataElement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -85,6 +86,7 @@ Type
     procedure buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -376,19 +378,20 @@ begin
   indexes.add('CarePlan', 'activitycode', 'Detail type of activity', SearchParamTypeTOKEN, [], 'CarePlan.activity.detail.code', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activitydate', 'Specified date occurs within period specified by CarePlan.activity.timingSchedule', SearchParamTypeDATE, [], 'CarePlan.activity.detail.scheduled', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activityreference', 'Activity details defined in specific resource', SearchParamTypeREFERENCE, ['ReferralRequest', 'Appointment', 'ProcedureRequest', 'CommunicationRequest', 'Order', 'SupplyRequest', 'VisionPrescription', 'MedicationOrder', 'DeviceUseRequest', 'ProcessRequest', 'DiagnosticOrder', 'NutritionOrder'], 'CarePlan.activity.reference', SearchXpathUsageNormal);
+  indexes.add('CarePlan', 'careteam', 'Who''s involved in plan?', SearchParamTypeREFERENCE, ['CareTeam'], 'CarePlan.careTeam', SearchXpathUsageNormal);
+  indexes.add('CarePlan', 'category', 'Type of plan', SearchParamTypeTOKEN, [], 'CarePlan.category', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'condition', 'Health issues this plan addresses', SearchParamTypeREFERENCE, ['Condition'], 'CarePlan.addresses', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'date', 'Time period plan covers', SearchParamTypeDATE, [], 'CarePlan.period', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', SearchParamTypeREFERENCE, ['Goal'], 'CarePlan.goal', SearchXpathUsageNormal);
-  indexes.add('CarePlan', 'participant', 'Who is involved', SearchParamTypeREFERENCE, ['Patient', 'Organization', 'Practitioner', 'RelatedPerson'], 'CarePlan.participant.member', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'patient', 'Who care plan is for', SearchParamTypeREFERENCE, ['Patient'], 'CarePlan.subject', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'performer', 'Matches if the practitioner is listed as a performer in any of the "simple" activities.  (For performers of the detailed activities, chain through the activitydetail search parameter.)', SearchParamTypeREFERENCE, ['Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'CarePlan.activity.detail.performer', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'related', 'A combination of the type of relationship and the related plan', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'relatedcode', 'includes | replaces | fulfills', SearchParamTypeTOKEN, [], 'CarePlan.relatedPlan.code', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'relatedplan', 'Plan relationship exists with', SearchParamTypeREFERENCE, ['CarePlan'], 'CarePlan.relatedPlan.plan', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'subject', 'Who care plan is for', SearchParamTypeREFERENCE, ['Patient', 'Group'], 'CarePlan.subject', SearchXpathUsageNormal);
-  compartments.register(frtPatient, 'CarePlan', ['patient', 'participant', 'performer']);
-  compartments.register(frtRelatedPerson, 'CarePlan', ['participant', 'performer']);
-  compartments.register(frtPractitioner, 'CarePlan', ['participant', 'performer']);
+  compartments.register(frtPatient, 'CarePlan', ['patient', 'performer']);
+  compartments.register(frtRelatedPerson, 'CarePlan', ['performer']);
+  compartments.register(frtPractitioner, 'CarePlan', ['performer']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -560,7 +563,7 @@ begin
   indexes.add('CommunicationRequest', 'medium', 'A channel of communication', SearchParamTypeTOKEN, [], 'CommunicationRequest.medium', SearchXpathUsageNormal);
   indexes.add('CommunicationRequest', 'patient', 'Focus of message', SearchParamTypeREFERENCE, ['Patient'], 'CommunicationRequest.subject', SearchXpathUsageNormal);
   indexes.add('CommunicationRequest', 'priority', 'Message urgency', SearchParamTypeTOKEN, [], 'CommunicationRequest.priority', SearchXpathUsageNormal);
-  indexes.add('CommunicationRequest', 'recipient', 'Message recipient', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'CommunicationRequest.recipient', SearchXpathUsageNormal);
+  indexes.add('CommunicationRequest', 'recipient', 'Message recipient', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'Group', 'CareTeam', 'RelatedPerson'], 'CommunicationRequest.recipient', SearchXpathUsageNormal);
   indexes.add('CommunicationRequest', 'requested', 'When ordered or proposed', SearchParamTypeDATE, [], 'CommunicationRequest.requestedOn', SearchXpathUsageNormal);
   indexes.add('CommunicationRequest', 'requester', 'An individual who requested a communication', SearchParamTypeREFERENCE, ['Patient', 'Practitioner', 'RelatedPerson'], 'CommunicationRequest.requester', SearchXpathUsageNormal);
   indexes.add('CommunicationRequest', 'sender', 'Message sender', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'CommunicationRequest.sender', SearchXpathUsageNormal);
@@ -712,6 +715,29 @@ begin
   indexes.add('Conformance', 'supported-profile', 'Profiles for use cases supported', SearchParamTypeREFERENCE, ['StructureDefinition'], 'Conformance.profile', SearchXpathUsageNormal);
   indexes.add('Conformance', 'url', 'The uri that identifies the conformance statement', SearchParamTypeURI, [], 'Conformance.url', SearchXpathUsageNormal);
   indexes.add('Conformance', 'version', 'The version identifier of the conformance statement', SearchParamTypeTOKEN, [], 'Conformance.version', SearchXpathUsageNormal);
+end;
+
+procedure TFHIRIndexBuilder.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Consent', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Consent', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('Consent', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('Consent', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('Consent', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('Consent', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('Consent', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('Consent', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Consent', 'agent', 'Agent to the consent', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'Group', 'RelatedPerson'], 'Consent.agent.actor', SearchXpathUsageNormal);
+  indexes.add('Consent', 'applies', 'The effective date/time range of the consent', SearchParamTypeDATE, [], 'Consent.applies', SearchXpathUsageNormal);
+  indexes.add('Consent', 'authority', 'The authority of the consent', SearchParamTypeREFERENCE, ['Organization'], 'Consent.authority', SearchXpathUsageNormal);
+  indexes.add('Consent', 'domain', 'The domain of the consent', SearchParamTypeREFERENCE, ['Location'], 'Consent.domain', SearchXpathUsageNormal);
+  indexes.add('Consent', 'identifier', 'The identity of the consent', SearchParamTypeTOKEN, [], 'Consent.identifier', SearchXpathUsageNormal);
+  indexes.add('Consent', 'issued', 'The date/time the consent was issued', SearchParamTypeDATE, [], 'Consent.issued', SearchXpathUsageNormal);
+  indexes.add('Consent', 'patient', 'The identity of the patient of the consent', SearchParamTypeREFERENCE, ['Patient'], 'Consent.patient', SearchXpathUsageNormal);
+  indexes.add('Consent', 'status', 'The status of the consent', SearchParamTypeTOKEN, [], 'Consent.status', SearchXpathUsageNormal);
+  indexes.add('Consent', 'topic', 'The identity of the topic of the consent', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Consent.topic', SearchXpathUsageNormal);
+  indexes.add('Consent', 'type', 'The type of the consent', SearchParamTypeTOKEN, [], 'Consent.type', SearchXpathUsageNormal);
+  compartments.register(frtPatient, 'Consent', ['patient']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -957,7 +983,6 @@ begin
   indexes.add('DiagnosticOrder', 'item-status-date', 'A combination of item-past-status and item-date', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticOrder', 'orderer', 'Who ordered the test', SearchParamTypeREFERENCE, ['Practitioner'], 'DiagnosticOrder.orderer', SearchXpathUsageNormal);
   indexes.add('DiagnosticOrder', 'patient', 'Who and/or what test is about', SearchParamTypeREFERENCE, ['Patient'], 'DiagnosticOrder.subject', SearchXpathUsageNormal);
-  indexes.add('DiagnosticOrder', 'specimen', 'If the whole order relates to specific specimens', SearchParamTypeREFERENCE, ['Specimen'], 'DiagnosticOrder.specimen | DiagnosticOrder.item.specimen', SearchXpathUsageNormal);
   indexes.add('DiagnosticOrder', 'status', 'proposed | draft | planned | requested | received | accepted | in-progress | review | completed | cancelled | suspended | rejected | failed | entered-in-error', SearchParamTypeTOKEN, [], 'DiagnosticOrder.status', SearchXpathUsageNormal);
   indexes.add('DiagnosticOrder', 'subject', 'Who and/or what test is about', SearchParamTypeREFERENCE, ['Device', 'Patient', 'Location', 'Group'], 'DiagnosticOrder.subject', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'DiagnosticOrder', ['subject']);
@@ -1148,6 +1173,21 @@ begin
   compartments.register(frtEncounter, 'Encounter', ['{def}']);
   compartments.register(frtRelatedPerson, 'Encounter', ['participant']);
   compartments.register(frtPractitioner, 'Encounter', ['practitioner', 'participant']);
+end;
+
+procedure TFHIRIndexBuilder.buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('Endpoint', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('Endpoint', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Endpoint', 'organization', 'The organization that is exposing the endpoint', SearchParamTypeREFERENCE, ['Organization'], 'Endpoint.managingOrganization', SearchXpathUsageNormal);
+  indexes.add('Endpoint', 'payload-type', 'The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)', SearchParamTypeTOKEN, [], 'Endpoint.payloadType', SearchXpathUsageNormal);
+  indexes.add('Endpoint', 'status', 'The current status of the Endpoint (usually expected to be active)', SearchParamTypeTOKEN, [], 'Endpoint.status', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1681,13 +1721,14 @@ begin
   indexes.add('MedicationAdministration', 'identifier', 'Return administrations with this external identifier', SearchParamTypeTOKEN, [], 'MedicationAdministration.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'medication', 'Return administrations of this medication resource', SearchParamTypeREFERENCE, ['Medication'], 'MedicationAdministration.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'patient', 'The identity of a patient to list administrations  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationAdministration.patient', SearchXpathUsageNormal);
-  indexes.add('MedicationAdministration', 'practitioner', 'Who administered substance', SearchParamTypeREFERENCE, ['Patient', 'Practitioner', 'RelatedPerson'], 'MedicationAdministration.practitioner', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'performer', 'Who administered substance', SearchParamTypeREFERENCE, ['Patient', 'Practitioner', 'RelatedPerson'], 'MedicationAdministration.performer', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'prescription', 'The identity of a prescription to list administrations from', SearchParamTypeREFERENCE, ['MedicationOrder'], 'MedicationAdministration.prescription', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'status', 'MedicationAdministration event status (for example one of active/paused/completed/nullified)', SearchParamTypeTOKEN, [], 'MedicationAdministration.status', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'wasnotgiven', 'Administrations that were not made', SearchParamTypeTOKEN, [], 'MedicationAdministration.wasNotGiven', SearchXpathUsageNormal);
-  compartments.register(frtPatient, 'MedicationAdministration', ['patient']);
+  compartments.register(frtPatient, 'MedicationAdministration', ['patient', 'performer']);
   compartments.register(frtEncounter, 'MedicationAdministration', ['encounter']);
-  compartments.register(frtPractitioner, 'MedicationAdministration', ['practitioner']);
+  compartments.register(frtRelatedPerson, 'MedicationAdministration', ['performer']);
+  compartments.register(frtPractitioner, 'MedicationAdministration', ['performer']);
   compartments.register(frtDevice, 'MedicationAdministration', ['device']);
 end;
 
@@ -1734,7 +1775,7 @@ begin
   indexes.add('MedicationOrder', 'identifier', 'Return prescriptions with this external identifier', SearchParamTypeTOKEN, [], 'MedicationOrder.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'medication', 'Return administrations of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationOrder.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'patient', 'The identity of a patient to list orders  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationOrder.patient', SearchXpathUsageNormal);
-  indexes.add('MedicationOrder', 'prescriber', 'Who ordered the medication(s)', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationOrder.prescriber', SearchXpathUsageNormal);
+  indexes.add('MedicationOrder', 'prescriber', 'Who ordered the initial medication(s)', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationOrder.prescriber', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'status', 'Status of the prescription', SearchParamTypeTOKEN, [], 'MedicationOrder.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationOrder', ['patient']);
   compartments.register(frtEncounter, 'MedicationOrder', ['encounter']);
@@ -1865,19 +1906,14 @@ begin
   indexes.add('Observation', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Observation', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Observation', 'category', 'The classification of the type of observation', SearchParamTypeTOKEN, [], 'Observation.category', SearchXpathUsageNormal);
-  indexes.add('Observation', 'code', 'The code of the observation type', SearchParamTypeTOKEN, [], 'Observation.code', SearchXpathUsageNormal);
-  indexes.add('Observation', 'code-value-[x]', 'Both code and one of the value parameters', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-code', 'The component code of the observation type', SearchParamTypeTOKEN, [], 'Observation.component.code', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-code-value-[x]', 'Both component code and one of the component value parameters', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-data-absent-reason', 'The reason why the expected value in the element Observation.component.value[x] is missing.', SearchParamTypeTOKEN, [], 'Observation.component.dataAbsentReason', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-value-concept', 'The value of the component observation, if the value is a CodeableConcept', SearchParamTypeTOKEN, [], 'Observation.component.value.as(CodeableConcept)', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-value-quantity', 'The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', SearchParamTypeQUANTITY, [], 'Observation.component.value.as(Quantity)', SearchXpathUsageNormal);
-  indexes.add('Observation', 'component-value-string', 'The value of the component observation, if the value is a string, and also searches in CodeableConcept.text', SearchParamTypeSTRING, [], 'Observation.component.value.as(String)', SearchXpathUsageNormal);
-  indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', SearchParamTypeTOKEN, [], 'Observation.dataAbsentReason', SearchXpathUsageNormal);
+  indexes.add('Observation', 'code', 'The code of the observation type or component type', SearchParamTypeTOKEN, [], 'Observation.code | Observation.component.code', SearchXpathUsageNormal);
+  indexes.add('Observation', 'code-value-[x]', 'Code and value parameter pair', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
+  indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', SearchParamTypeTOKEN, [], 'Observation.dataAbsentReason | Observation.component.dataAbsentReason', SearchXpathUsageNormal);
   indexes.add('Observation', 'date', 'Obtained date/time. If the obtained element is a period, a date that falls in the period', SearchParamTypeDATE, [], 'Observation.effective', SearchXpathUsageNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', SearchParamTypeREFERENCE, ['Device', 'DeviceMetric'], 'Observation.device', SearchXpathUsageNormal);
   indexes.add('Observation', 'encounter', 'Healthcare event related to the observation', SearchParamTypeREFERENCE, ['Encounter'], 'Observation.encounter', SearchXpathUsageNormal);
   indexes.add('Observation', 'identifier', 'The unique id for a particular observation', SearchParamTypeTOKEN, [], 'Observation.identifier', SearchXpathUsageNormal);
+  indexes.add('Observation', 'method', 'The method used for the observation', SearchParamTypeTOKEN, [], 'Observation.method', SearchXpathUsageNormal);
   indexes.add('Observation', 'patient', 'The subject that the observation is about (if patient)', SearchParamTypeREFERENCE, ['Patient'], 'Observation.subject', SearchXpathUsageNormal);
   indexes.add('Observation', 'performer', 'Who performed the observation', SearchParamTypeREFERENCE, ['Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'Observation.performer', SearchXpathUsageNormal);
   indexes.add('Observation', 'related', 'Related Observations - search on related-type and related-target together', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
@@ -1886,10 +1922,10 @@ begin
   indexes.add('Observation', 'specimen', 'Specimen used for this observation', SearchParamTypeREFERENCE, ['Specimen'], 'Observation.specimen', SearchXpathUsageNormal);
   indexes.add('Observation', 'status', 'The status of the observation', SearchParamTypeTOKEN, [], 'Observation.status', SearchXpathUsageNormal);
   indexes.add('Observation', 'subject', 'The subject that the observation is about', SearchParamTypeREFERENCE, ['Device', 'Patient', 'Location', 'Group'], 'Observation.subject', SearchXpathUsageNormal);
-  indexes.add('Observation', 'value-concept', 'The value of the observation, if the value is a CodeableConcept', SearchParamTypeTOKEN, [], 'Observation.value.as(CodeableConcept)', SearchXpathUsageNormal);
+  indexes.add('Observation', 'value-concept', 'The value or component value of the observation, if the value is a CodeableConcept', SearchParamTypeTOKEN, [], 'Observation.value.as(CodeableConcept) | Observation.component.value.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('Observation', 'value-date', 'The value of the observation, if the value is a date or period of time', SearchParamTypeDATE, [], 'Observation.value.as(DateTime) | Observation.value.as(Period)', SearchXpathUsageNormal);
-  indexes.add('Observation', 'value-quantity', 'The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', SearchParamTypeQUANTITY, [], 'Observation.value.as(Quantity)', SearchXpathUsageNormal);
-  indexes.add('Observation', 'value-string', 'The value of the observation, if the value is a string, and also searches in CodeableConcept.text', SearchParamTypeSTRING, [], 'Observation.value.as(String)', SearchXpathUsageNormal);
+  indexes.add('Observation', 'value-quantity', 'The value or component value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)', SearchParamTypeQUANTITY, [], 'Observation.value.as(Quantity) | Observation.component.value.as(Quantity)', SearchXpathUsageNormal);
+  indexes.add('Observation', 'value-string', 'The value or component value of the observation, if the value is a string, and also searches in CodeableConcept.text', SearchParamTypeSTRING, [], 'Observation.value.as(String) | Observation.component.value.as(String)', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'Observation', ['subject', 'performer']);
   compartments.register(frtEncounter, 'Observation', ['encounter']);
   compartments.register(frtRelatedPerson, 'Observation', ['performer']);
@@ -2210,6 +2246,7 @@ begin
   indexes.add('Procedure', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Procedure', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Procedure', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Procedure', 'category', 'Classification of the procedure', SearchParamTypeTOKEN, [], 'Procedure.category', SearchXpathUsageNormal);
   indexes.add('Procedure', 'code', 'A code to identify a  procedure', SearchParamTypeTOKEN, [], 'Procedure.code', SearchXpathUsageNormal);
   indexes.add('Procedure', 'date', 'Date/Period the procedure was performed', SearchParamTypeDATE, [], 'Procedure.performed', SearchXpathUsageNormal);
   indexes.add('Procedure', 'encounter', 'The encounter associated with the procedure', SearchParamTypeREFERENCE, ['Encounter'], 'Procedure.encounter', SearchXpathUsageNormal);
@@ -2577,7 +2614,7 @@ begin
   indexes.add('StructureDefinition', 'experimental', 'If for testing purposes, not real usage', SearchParamTypeTOKEN, [], 'StructureDefinition.experimental', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'ext-context', 'Where the extension can be used in instances', SearchParamTypeSTRING, [], 'StructureDefinition.context', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'identifier', 'The identifier of the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.identifier', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'kind', 'datatype | resource | logical', SearchParamTypeTOKEN, [], 'StructureDefinition.kind', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'kind', 'primitive-type | complex-type | resource | logical', SearchParamTypeTOKEN, [], 'StructureDefinition.kind', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'name', 'Name of the profile', SearchParamTypeSTRING, [], 'StructureDefinition.name', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'path', 'A path that is constrained in the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.snapshot.element.path | StructureDefinition.differential.element.path', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'publisher', 'Name of the publisher of the profile', SearchParamTypeSTRING, [], 'StructureDefinition.publisher', SearchXpathUsageNormal);
@@ -2640,12 +2677,12 @@ begin
   indexes.add('Substance', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Substance', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Substance', 'category', 'The category of the substance', SearchParamTypeTOKEN, [], 'Substance.category', SearchXpathUsageNormal);
-  indexes.add('Substance', 'code', 'The code of the substance', SearchParamTypeTOKEN, [], 'Substance.code', SearchXpathUsageNormal);
+  indexes.add('Substance', 'code', 'The code of the substance or ingredient', SearchParamTypeTOKEN, [], 'Substance.code | Substance.ingredient.substance.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('Substance', 'container-identifier', 'Identifier of the package/container', SearchParamTypeTOKEN, [], 'Substance.instance.identifier', SearchXpathUsageNormal);
   indexes.add('Substance', 'expiry', 'Expiry date of package or container of substance', SearchParamTypeDATE, [], 'Substance.instance.expiry', SearchXpathUsageNormal);
   indexes.add('Substance', 'identifier', 'Unique identifier for the substance', SearchParamTypeTOKEN, [], 'Substance.identifier', SearchXpathUsageNormal);
   indexes.add('Substance', 'quantity', 'Amount of substance in the package', SearchParamTypeQUANTITY, [], 'Substance.instance.quantity', SearchXpathUsageNormal);
-  indexes.add('Substance', 'substance', 'A component of the substance', SearchParamTypeREFERENCE, ['Substance'], 'Substance.ingredient.substance', SearchXpathUsageNormal);
+  indexes.add('Substance', 'substance-reference', 'A component of the substance', SearchParamTypeREFERENCE, ['Substance'], 'Substance.ingredient.substance.as(Reference)', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2697,19 +2734,21 @@ begin
   indexes.add('Task', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Task', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Task', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Task', 'code', 'Search by task code', SearchParamTypeTOKEN, [], 'Task.code', SearchXpathUsageNormal);
   indexes.add('Task', 'created', 'Search by creation date', SearchParamTypeDATE, [], 'Task.created', SearchXpathUsageNormal);
-  indexes.add('Task', 'creator', 'Search by task creator', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'Task.creator', SearchXpathUsageNormal);
   indexes.add('Task', 'definition', 'Search by task definition', SearchParamTypeURI, [], 'Task.definition', SearchXpathUsageNormal);
-  indexes.add('Task', 'failure', 'Search by failure reason', SearchParamTypeTOKEN, [], 'Task.failureReason', SearchXpathUsageNormal);
+  indexes.add('Task', 'focus', 'Search by task focus', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.focus', SearchXpathUsageNormal);
   indexes.add('Task', 'identifier', 'Search for a task instance by its business identifier', SearchParamTypeTOKEN, [], 'Task.identifier', SearchXpathUsageNormal);
   indexes.add('Task', 'modified', 'Search by last modification date', SearchParamTypeDATE, [], 'Task.lastModified', SearchXpathUsageNormal);
   indexes.add('Task', 'owner', 'Search by task owner', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'Task.owner', SearchXpathUsageNormal);
   indexes.add('Task', 'parent', 'Search by parent task', SearchParamTypeREFERENCE, ['Task'], 'Task.parent', SearchXpathUsageNormal);
+  indexes.add('Task', 'patient', 'Search by patient', SearchParamTypeREFERENCE, ['Patient'], 'Task.for', SearchXpathUsageNormal);
   indexes.add('Task', 'performer', 'Search by recommended type of performer (e.g., Requester, Performer, Scheduler).', SearchParamTypeTOKEN, [], 'Task.performerType', SearchXpathUsageNormal);
   indexes.add('Task', 'priority', 'Search by task priority', SearchParamTypeTOKEN, [], 'Task.priority', SearchXpathUsageNormal);
+  indexes.add('Task', 'requester', 'Search by task requester', SearchParamTypeREFERENCE, ['Device', 'Organization', 'Patient', 'Practitioner', 'RelatedPerson'], 'Task.requester', SearchXpathUsageNormal);
+  indexes.add('Task', 'stage', 'Search by task stage', SearchParamTypeTOKEN, [], 'Task.stage', SearchXpathUsageNormal);
   indexes.add('Task', 'status', 'Search by task status', SearchParamTypeTOKEN, [], 'Task.status', SearchXpathUsageNormal);
-  indexes.add('Task', 'subject', 'Search by task subject', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.subject', SearchXpathUsageNormal);
-  indexes.add('Task', 'type', 'Search by task type', SearchParamTypeTOKEN, [], 'Task.type', SearchXpathUsageNormal);
+  indexes.add('Task', 'statusreason', 'Search by status reason', SearchParamTypeTOKEN, [], 'Task.statusReason', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2798,6 +2837,7 @@ begin
   buildIndexesForConceptMap(Indexes, compartments);
   buildIndexesForCondition(Indexes, compartments);
   buildIndexesForConformance(Indexes, compartments);
+  buildIndexesForConsent(Indexes, compartments);
   buildIndexesForContract(Indexes, compartments);
   buildIndexesForCoverage(Indexes, compartments);
   buildIndexesForDataElement(Indexes, compartments);
@@ -2816,6 +2856,7 @@ begin
   buildIndexesForEligibilityRequest(Indexes, compartments);
   buildIndexesForEligibilityResponse(Indexes, compartments);
   buildIndexesForEncounter(Indexes, compartments);
+  buildIndexesForEndpoint(Indexes, compartments);
   buildIndexesForEnrollmentRequest(Indexes, compartments);
   buildIndexesForEnrollmentResponse(Indexes, compartments);
   buildIndexesForEpisodeOfCare(Indexes, compartments);

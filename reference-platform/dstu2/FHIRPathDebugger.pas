@@ -41,7 +41,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, Vcl.ComCtrls, VirtualTrees, FHIRResources, FHIRBase, FHIRTypes, nppplugin, FHIRPath, FHIRProfileUtilities,
-  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics, pluginutilities;
+  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics, pluginutilities, FHIRContext;
 
 const
   UMSG = WM_USER + 1;
@@ -454,9 +454,9 @@ begin
   else
   begin
     if (FFormat = ffJson) then
-      comp := TFHIRJsonComposer.Create('en')
+      comp := TFHIRJsonComposer.Create(FServices.link, 'en')
     else
-      comp := TFHIRXmlComposer.Create('en');
+      comp := TFHIRXmlComposer.Create(FServices.link, 'en');
     try
       memo.Text := comp.Compose(name, obj, true)
     finally
@@ -470,9 +470,9 @@ var
   comp : TFHIRComposer;
 begin
   if (FFormat = ffJson) then
-    comp := TFHIRJsonComposer.Create('en')
+    comp := TFHIRJsonComposer.Create(FServices.link, 'en')
   else
-    comp := TFHIRXmlComposer.Create('en');
+    comp := TFHIRXmlComposer.Create(FServices.link, 'en');
   try
     if obj is TFHIRResource then
       memo.Text := comp.Compose(TFHIRResource(obj), true)

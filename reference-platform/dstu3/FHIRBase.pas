@@ -355,7 +355,7 @@ type
     function HasXmlCommentsStart : Boolean;
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
-    function FhirType : String; virtual;
+    function fhirType : String; virtual;
     function isPrimitive : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
@@ -443,7 +443,7 @@ type
     function allChildrenAreText : boolean;
     function isPrimitive : boolean; override;
     function primitiveValue : string; override;
-    function FhirType : String; override;
+    function fhirType : String; override;
     function NsDecl : String; virtual;
     {!script show}
 
@@ -615,7 +615,7 @@ const
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension');
 
 type
-  TFHIRTypeDetails = class (TAdvObject)
+  TfhirTypeDetails = class (TAdvObject)
   private
     id : integer;
     FTypes : TStringList;
@@ -624,17 +624,17 @@ type
     constructor create(status : TFHIRCollectionStatus; types : array of String);
     constructor createList(status : TFHIRCollectionStatus; types : TStringList);
     destructor Destroy; override;
-    function Link : TFHIRTypeDetails; overload;
+    function Link : TfhirTypeDetails; overload;
     procedure addType(n : String);
     procedure addTypes(n : TStringList); overload;
     procedure addTypes(types : array of String); overload;
     function hasType(types : array of String) : boolean; overload;
     function hasType(types : TStringList) : boolean; overload;
     function hasType(typeName : String) : boolean; overload;
-    procedure update(source : TFHIRTypeDetails);
-    function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
+    procedure update(source : TfhirTypeDetails);
+    function union(right : TfhirTypeDetails) : TfhirTypeDetails;
     function hasNoTypes() : boolean;
-    function toSingleton : TFHIRTypeDetails;
+    function toSingleton : TfhirTypeDetails;
     property types : TStringList read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
@@ -652,8 +652,8 @@ type
     FOperation : TFHIRPathOperation;
     FProximal : boolean;
     FOpNext: TFHIRExpressionNode;
-    FTypes : TFHIRTypeDetails;
-    FOpTypes : TFHIRTypeDetails;
+    FTypes : TfhirTypeDetails;
+    FOpTypes : TfhirTypeDetails;
     FKind: TFHIRExpressionNodeKind;
     FUniqueId : integer;
     FSourceLocationStart : TSourceLocation;
@@ -665,14 +665,14 @@ type
     procedure SetInner(const Value: TFHIRExpressionNode);
     procedure SetGroup(const Value: TFHIRExpressionNode);
     procedure SetFunctionId(const Value: TFHIRPathFunction);
-    procedure SetTypes(const Value: TFHIRTypeDetails);
-    procedure SetOpTypes(const Value: TFHIRTypeDetails);
+    procedure SetTypes(const Value: TfhirTypeDetails);
+    procedure SetOpTypes(const Value: TfhirTypeDetails);
     procedure write(b : TStringBuilder);
   public
     Constructor Create(uniqueId : Integer);
     Destructor Destroy; override;
 
-    function toString : String; override;
+    function ToString : String; override;
     function Link : TFHIRExpressionNode; overload;
     function checkName : boolean;
 
@@ -700,8 +700,8 @@ type
     property Operation : TFHIRPathOperation read FOperation write FOperation;
     property Proximal : boolean read FProximal write FProximal;
     property OpNext : TFHIRExpressionNode read FOpNext write SetOpNext;
-    property Types : TFHIRTypeDetails read FTypes write SetTypes;
-    property OpTypes : TFHIRTypeDetails read FOpTypes write SetOpTypes;
+    property Types : TfhirTypeDetails read FTypes write SetTypes;
+    property OpTypes : TfhirTypeDetails read FOpTypes write SetOpTypes;
   end;
 
 
@@ -717,7 +717,7 @@ Uses
   StringSupport,
   FHIRUtilities,
   FHIRXhtml,
-  FHIRTypes,
+  fhirTypes,
   FHIRResources,
   FHIRPath;
 
@@ -750,7 +750,7 @@ end;
 
 function TFHIRBase.describe: String;
 begin
-  result := FhirType;
+  result := fhirType;
   if isPrimitive then
     result := result + ': '+primitiveValue;
 end;
@@ -772,9 +772,9 @@ begin
   result := other <> nil;
 end;
 
-function TFHIRBase.FhirType: String;
+function TFHIRBase.fhirType: String;
 begin
-  raise Exception.Create('"FhirType" is not overridden in '+className);
+  raise Exception.Create('"fhirType" is not overridden in '+className);
 end;
 
 function TFHIRBase.GetCommentsStart: TAdvStringList;
@@ -819,7 +819,7 @@ end;
 
 function TFHIRBase.hasType(t: String): boolean;
 begin
-  result := t = FhirType;
+  result := t = fhirType;
 end;
 
 function TFHIRBase.hasPrimitiveValue: boolean;
@@ -1168,7 +1168,7 @@ begin
   inherited;
 end;
 
-function TFhirXHtmlNode.FhirType: String;
+function TFhirXHtmlNode.fhirType: String;
 begin
   result := 'xhtml';
 end;
@@ -2091,7 +2091,7 @@ begin
   FOpNext := Value;
 end;
 
-procedure TFHIRExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
+procedure TFHIRExpressionNode.SetTypes(const Value: TfhirTypeDetails);
 begin
   FTypes.Free;
   FTypes := Value;
@@ -2220,7 +2220,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
+procedure TFHIRExpressionNode.SetOpTypes(const Value: TfhirTypeDetails);
 begin
   FOpTypes.Free;
   FOpTypes := Value;
@@ -2239,12 +2239,12 @@ begin
 end;
 
 
-{ TFHIRTypeDetails }
+{ TfhirTypeDetails }
 
 var
   gc : integer = 0;
 
-constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
+constructor TfhirTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
 begin
   inherited Create;
   FTypes := TStringList.create;
@@ -2255,7 +2255,7 @@ begin
   id := gc;
 end;
 
-constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
+constructor TfhirTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
 begin
   inherited Create;
   FTypes := TStringList.create;
@@ -2266,20 +2266,20 @@ begin
   id := gc;
 end;
 
-destructor TFHIRTypeDetails.Destroy;
+destructor TfhirTypeDetails.Destroy;
 begin
   FTypes.Free;
   inherited;
 end;
 
-procedure TFHIRTypeDetails.addType(n: String);
+procedure TfhirTypeDetails.addType(n: String);
 begin
   if (n <> '') then
     if not hasType(n) then
       FTypes.add(n);
 end;
 
-procedure TFHIRTypeDetails.addTypes(n: TStringList);
+procedure TfhirTypeDetails.addTypes(n: TStringList);
 var
   t : String;
 begin
@@ -2287,7 +2287,7 @@ begin
     addType(t);
 end;
 
-procedure TFHIRTypeDetails.addTypes(types: array of String);
+procedure TfhirTypeDetails.addTypes(types: array of String);
 var
   t : String;
 begin
@@ -2295,17 +2295,17 @@ begin
     addType(t);
 end;
 
-function TFHIRTypeDetails.describe: String;
+function TfhirTypeDetails.describe: String;
 begin
   result := FTypes.commaText;
 end;
 
-function TFHIRTypeDetails.hasNoTypes: boolean;
+function TfhirTypeDetails.hasNoTypes: boolean;
 begin
   result := FTypes.count = 0;
 end;
 
-function TFHIRTypeDetails.hasType(types: TStringList): boolean;
+function TfhirTypeDetails.hasType(types: TStringList): boolean;
 var
   t : String;
 begin
@@ -2315,17 +2315,17 @@ begin
       exit(true);
 end;
 
-function TFHIRTypeDetails.hasType(typeName: String): boolean;
+function TfhirTypeDetails.hasType(typeName: String): boolean;
 begin
   result := FTypes.indexOf(typeName) > -1;
 end;
 
-function TFHIRTypeDetails.Link: TFHIRTypeDetails;
+function TfhirTypeDetails.Link: TfhirTypeDetails;
 begin
-  result := TFHIRTypeDetails(inherited Link);
+  result := TfhirTypeDetails(inherited Link);
 end;
 
-function TFHIRTypeDetails.hasType(types: array of String): boolean;
+function TfhirTypeDetails.hasType(types: array of String): boolean;
 var
   t : String;
 begin
@@ -2335,14 +2335,14 @@ begin
       exit(true);
 end;
 
-function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
+function TfhirTypeDetails.toSingleton: TfhirTypeDetails;
 begin
-  result := TFHIRTypeDetails.createList(csSINGLETON, FTypes);
+  result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
 end;
 
-function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
+function TfhirTypeDetails.union(right: TfhirTypeDetails): TfhirTypeDetails;
 begin
-  result := TFHIRTypeDetails.createList(csNULL, FTypes);
+  result := TfhirTypeDetails.createList(csNULL, FTypes);
   if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
     result.FcollectionStatus := csUNORDERED
   else
@@ -2351,7 +2351,7 @@ begin
   result.addTypes(right.types);
 end;
 
-procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
+procedure TfhirTypeDetails.update(source: TfhirTypeDetails);
 begin
   addTypes(source.types);
   if (FcollectionStatus = csNULL) then

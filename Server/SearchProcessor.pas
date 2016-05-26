@@ -278,8 +278,8 @@ var
   parts: TArray<String>;
   targets : TArray<String>;
   i : integer;
-  a : String;
 begin
+  i := 0;
   // _id is a special case
   if (name = '_id') or (name = 'id') then  //  ?? what's this? or (FIndexer.GetTypeByName(types, name) = SearchParamTypeToken) then
     result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'

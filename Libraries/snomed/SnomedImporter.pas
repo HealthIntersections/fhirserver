@@ -1595,12 +1595,7 @@ var
   conc : TConcept;
   refs, vals : TCardinalArray;
   ndx : Cardinal;
-  iDesc : Cardinal;
-  id : UInt64;
-  date : Word;
-  concept, module, kind, valueses, irefsets, values : Cardinal;
-  iDummy : Cardinal;
-  flags : byte;
+  values : Cardinal;
 begin
     Progress('#13 Importing Reference Sets');
     if FDirectoryReferenceSets <> '' Then
@@ -1843,7 +1838,7 @@ End;
 procedure TSnomedImporter.LoadReferenceSet(sFile: String);
 var
   s : TBytes;
-  i, iId, iTime, iActive, iModule, iRefSetId, iRefComp : Integer;
+  i, iId, iTime, iActive, iModule, iRefSetId, iRefComp, l, c : Integer;
   sActive, sRefSetId, sRefComp : String;
   iRef : UInt64;
 
@@ -1886,7 +1881,7 @@ begin
   s := LoadFile(sFile);
   iCursor := 0;
   // figure out what kind of reference set this is
-  iCursor := Next(13) + 2;
+  iCursor := Next(13) + 1;
   sActive := ascopy(s, 1, iCursor);
   if sActive.contains('map') then
     exit;
@@ -1894,8 +1889,11 @@ begin
   SetLength(values, length(types)*2);
   SetLength(sVals, length(types));
 
+  l := Length(s);
+  c := 0;
   While iCursor < Length(s) Do
   Begin
+    inc(c);
     iId := Next(9);
     iTime := Next(9);
     iActive := Next(9);
@@ -1904,12 +1902,18 @@ begin
     iRefComp := Next(9);
     if length(types) > 0 then
     begin
-      for i := 0 to length(types) - 1 do
+      for i := 0 to length(types) - 2 do
         offsets[i] := Next(9);
+      offsets[length(types) - 1] := Next(13);
       iCursor := offsets[length(types) - 1];
     end
     else
-      iCursor := Next(13);
+    begin
+      if (s[iCursor] <> 13) then
+        iCursor := Next(13)
+      else
+        iCursor := iRefComp;
+    end;
 
     sActive := ascopy(s, iTime+1, iActive - (iTime + 1));
     sRefSetId := ascopy(s, iModule+1, iRefSetId - (iModule + 1));

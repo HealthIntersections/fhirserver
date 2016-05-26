@@ -513,7 +513,7 @@ begin
         action.process.execute
         begin
           captureoutput = true
-          description = z
+          description = Sign
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -561,6 +561,7 @@ begin
           autoupdateskew = true
           checkfilesizes = false
           connectionname = HealthIntersections2
+          description = "FTP Upload [ HealthIntersections2 ] [ FHIRServer.exe ]"
           detailedlogging = false
           enabletimeout = false
           filespec = FHIRServer3.exe
@@ -569,7 +570,7 @@ begin
           id = {616E5E3D-0227-428E-ABAE-E5FE924B32D3}
           localdir = C:\\work\\fhirserver\\Exec
           recursive = false
-          remotefile = public_html/FhirServer/FHIRServer3.exe
+          remotefile = public_html/FhirServer/FHIRServer.exe
           retryifuploadfails = true
           serverclockskew = 0
           throttlespeed = 128

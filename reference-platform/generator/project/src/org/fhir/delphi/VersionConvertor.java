@@ -2873,8 +2873,6 @@ public class VersionConvertor {
 			tgt.addSupport(convertReference(t));
 		for (org.hl7.fhir.dstu2.model.CarePlan.CarePlanRelatedPlanComponent t : src.getRelatedPlan())
 			tgt.addRelatedPlan(convertCarePlanRelatedPlanComponent(t));
-		for (org.hl7.fhir.dstu2.model.CarePlan.CarePlanParticipantComponent t : src.getParticipant())
-			tgt.addParticipant(convertCarePlanParticipantComponent(t));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getGoal())
 			tgt.addGoal(convertReference(t));
 		for (org.hl7.fhir.dstu2.model.CarePlan.CarePlanActivityComponent t : src.getActivity())
@@ -2906,8 +2904,6 @@ public class VersionConvertor {
 			tgt.addSupport(convertReference(t));
 		for (org.hl7.fhir.dstu3.model.CarePlan.CarePlanRelatedPlanComponent t : src.getRelatedPlan())
 			tgt.addRelatedPlan(convertCarePlanRelatedPlanComponent(t));
-		for (org.hl7.fhir.dstu3.model.CarePlan.CarePlanParticipantComponent t : src.getParticipant())
-			tgt.addParticipant(convertCarePlanParticipantComponent(t));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getGoal())
 			tgt.addGoal(convertReference(t));
 		for (org.hl7.fhir.dstu3.model.CarePlan.CarePlanActivityComponent t : src.getActivity())
@@ -2984,25 +2980,6 @@ public class VersionConvertor {
 		}
 	}
 
-	public static org.hl7.fhir.dstu3.model.CarePlan.CarePlanParticipantComponent convertCarePlanParticipantComponent(org.hl7.fhir.dstu2.model.CarePlan.CarePlanParticipantComponent src) {
-		if (src == null)
-			return null;
-		org.hl7.fhir.dstu3.model.CarePlan.CarePlanParticipantComponent tgt = new org.hl7.fhir.dstu3.model.CarePlan.CarePlanParticipantComponent();
-		copyBackboneElement(src, tgt);
-		tgt.setRole(convertCodeableConcept(src.getRole()));
-		tgt.setMember(convertReference(src.getMember()));
-		return tgt;
-	}
-
-	public static org.hl7.fhir.dstu2.model.CarePlan.CarePlanParticipantComponent convertCarePlanParticipantComponent(org.hl7.fhir.dstu3.model.CarePlan.CarePlanParticipantComponent src) {
-		if (src == null)
-			return null;
-		org.hl7.fhir.dstu2.model.CarePlan.CarePlanParticipantComponent tgt = new org.hl7.fhir.dstu2.model.CarePlan.CarePlanParticipantComponent();
-		copyBackboneElement(src, tgt);
-		tgt.setRole(convertCodeableConcept(src.getRole()));
-		tgt.setMember(convertReference(src.getMember()));
-		return tgt;
-	}
 
 	public static org.hl7.fhir.dstu3.model.CarePlan.CarePlanActivityComponent convertCarePlanActivityComponent(org.hl7.fhir.dstu2.model.CarePlan.CarePlanActivityComponent src) {
 		if (src == null)
@@ -4697,7 +4674,6 @@ public class VersionConvertor {
 			tgt.addEvidence(convertConditionEvidenceComponent(t));
 		for (org.hl7.fhir.dstu2.model.CodeableConcept t : src.getBodySite())
 			tgt.addBodySite(convertCodeableConcept(t));
-		tgt.setNotes(src.getNotes());
 		return tgt;
 	}
 
@@ -4724,7 +4700,6 @@ public class VersionConvertor {
 			tgt.addEvidence(convertConditionEvidenceComponent(t));
 		for (org.hl7.fhir.dstu3.model.CodeableConcept t : src.getBodySite())
 			tgt.addBodySite(convertCodeableConcept(t));
-		tgt.setNotes(src.getNotes());
 		return tgt;
 	}
 
@@ -6686,8 +6661,6 @@ public class VersionConvertor {
 			tgt.addReason(convertCodeableConcept(t));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getSupportingInformation())
 			tgt.addSupportingInformation(convertReference(t));
-		for (org.hl7.fhir.dstu2.model.Reference t : src.getSpecimen())
-			tgt.addSpecimen(convertReference(t));
 		tgt.setStatus(convertDiagnosticOrderStatus(src.getStatus()));
 		tgt.setPriority(convertDiagnosticOrderPriority(src.getPriority()));
 		for (org.hl7.fhir.dstu2.model.DiagnosticOrder.DiagnosticOrderEventComponent t : src.getEvent())
@@ -6713,8 +6686,6 @@ public class VersionConvertor {
 			tgt.addReason(convertCodeableConcept(t));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getSupportingInformation())
 			tgt.addSupportingInformation(convertReference(t));
-		for (org.hl7.fhir.dstu3.model.Reference t : src.getSpecimen())
-			tgt.addSpecimen(convertReference(t));
 		tgt.setStatus(convertDiagnosticOrderStatus(src.getStatus()));
 		tgt.setPriority(convertDiagnosticOrderPriority(src.getPriority()));
 		for (org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderEventComponent t : src.getEvent())
@@ -6823,8 +6794,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent tgt = new org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setCode(convertCodeableConcept(src.getCode()));
-		for (org.hl7.fhir.dstu2.model.Reference t : src.getSpecimen())
-			tgt.addSpecimen(convertReference(t));
 		tgt.setBodySite(convertCodeableConcept(src.getBodySite()));
 		tgt.setStatus(convertDiagnosticOrderStatus(src.getStatus()));
 		for (org.hl7.fhir.dstu2.model.DiagnosticOrder.DiagnosticOrderEventComponent t : src.getEvent())
@@ -6838,8 +6807,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu2.model.DiagnosticOrder.DiagnosticOrderItemComponent tgt = new org.hl7.fhir.dstu2.model.DiagnosticOrder.DiagnosticOrderItemComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setCode(convertCodeableConcept(src.getCode()));
-		for (org.hl7.fhir.dstu3.model.Reference t : src.getSpecimen())
-			tgt.addSpecimen(convertReference(t));
 		tgt.setBodySite(convertCodeableConcept(src.getBodySite()));
 		tgt.setStatus(convertDiagnosticOrderStatus(src.getStatus()));
 		for (org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderEventComponent t : src.getEvent())
@@ -6861,7 +6828,6 @@ public class VersionConvertor {
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setEffective(convertType(src.getEffective()));
 		tgt.setIssued(src.getIssued());
-		tgt.setPerformer(convertReference(src.getPerformer()));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getRequest())
 			tgt.addRequest(convertReference(t));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getSpecimen())
@@ -6894,7 +6860,6 @@ public class VersionConvertor {
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setEffective(convertType(src.getEffective()));
 		tgt.setIssued(src.getIssued());
-		tgt.setPerformer(convertReference(src.getPerformer()));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getRequest())
 			tgt.addRequest(convertReference(t));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getSpecimen())
@@ -8693,7 +8658,6 @@ public class VersionConvertor {
 		tgt.setStatus(convertGoalStatus(src.getStatus()));
 		tgt.setStatusDate(src.getStatusDate());
 		tgt.setStatusReason(convertCodeableConcept(src.getStatusReason()));
-		tgt.setAuthor(convertReference(src.getAuthor()));
 		tgt.setPriority(convertCodeableConcept(src.getPriority()));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getAddresses())
 			tgt.addAddresses(convertReference(t));
@@ -8720,7 +8684,6 @@ public class VersionConvertor {
 		tgt.setStatus(convertGoalStatus(src.getStatus()));
 		tgt.setStatusDate(src.getStatusDate());
 		tgt.setStatusReason(convertCodeableConcept(src.getStatusReason()));
-		tgt.setAuthor(convertReference(src.getAuthor()));
 		tgt.setPriority(convertCodeableConcept(src.getPriority()));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getAddresses())
 			tgt.addAddresses(convertReference(t));
@@ -10268,7 +10231,6 @@ public class VersionConvertor {
 		tgt.setPatient(convertReference(src.getPatient()));
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setEffectiveTime(convertType(src.getEffectiveTime()));
-		tgt.setPractitioner(convertReference(src.getPractitioner()));
 		tgt.setPrescription(convertReference(src.getPrescription()));
 		tgt.setWasNotGiven(src.getWasNotGiven());
 		for (org.hl7.fhir.dstu2.model.CodeableConcept t : src.getReasonNotGiven())
@@ -10293,7 +10255,6 @@ public class VersionConvertor {
 		tgt.setPatient(convertReference(src.getPatient()));
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setEffectiveTime(convertType(src.getEffectiveTime()));
-		tgt.setPractitioner(convertReference(src.getPractitioner()));
 		tgt.setPrescription(convertReference(src.getPrescription()));
 		tgt.setWasNotGiven(src.getWasNotGiven());
 		for (org.hl7.fhir.dstu3.model.CodeableConcept t : src.getReasonNotGiven())
@@ -10342,8 +10303,7 @@ public class VersionConvertor {
 		tgt.setSite(convertType(src.getSite()));
 		tgt.setRoute(convertCodeableConcept(src.getRoute()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
-		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
-		tgt.setRate(convertType(src.getRate()));
+		tgt.setDose(convertSimpleQuantity(src.getQuantity()));
 		return tgt;
 	}
 
@@ -10356,7 +10316,7 @@ public class VersionConvertor {
 		tgt.setSite(convertType(src.getSite()));
 		tgt.setRoute(convertCodeableConcept(src.getRoute()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
-		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
+		tgt.setQuantity(convertSimpleQuantity(src.getDose()));
 		tgt.setRate(convertType(src.getRate()));
 		return tgt;
 	}
@@ -10445,7 +10405,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu3.model.MedicationDispense.MedicationDispenseDosageInstructionComponent tgt = new org.hl7.fhir.dstu3.model.MedicationDispense.MedicationDispenseDosageInstructionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setText(src.getText());
-		tgt.setAdditionalInstructions(convertCodeableConcept(src.getAdditionalInstructions()));
 		tgt.setTiming(convertTiming(src.getTiming()));
 		tgt.setAsNeeded(convertType(src.getAsNeeded()));
 		tgt.setSite(convertType(src.getSite()));
@@ -10463,7 +10422,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu2.model.MedicationDispense.MedicationDispenseDosageInstructionComponent tgt = new org.hl7.fhir.dstu2.model.MedicationDispense.MedicationDispenseDosageInstructionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setText(src.getText());
-		tgt.setAdditionalInstructions(convertCodeableConcept(src.getAdditionalInstructions()));
 		tgt.setTiming(convertTiming(src.getTiming()));
 		tgt.setAsNeeded(convertType(src.getAsNeeded()));
 		tgt.setSite(convertType(src.getSite()));
@@ -10514,8 +10472,6 @@ public class VersionConvertor {
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setDateWritten(src.getDateWritten());
 		tgt.setPrescriber(convertReference(src.getPrescriber()));
-		tgt.setDateEnded(src.getDateEnded());
-		tgt.setReasonEnded(convertCodeableConcept(src.getReasonEnded()));
 		for (org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderDosageInstructionComponent t : src.getDosageInstruction())
 			tgt.addDosageInstruction(convertMedicationOrderDosageInstructionComponent(t));
 		tgt.setDispenseRequest(convertMedicationOrderDispenseRequestComponent(src.getDispenseRequest()));
@@ -10537,8 +10493,6 @@ public class VersionConvertor {
 		tgt.setEncounter(convertReference(src.getEncounter()));
 		tgt.setDateWritten(src.getDateWritten());
 		tgt.setPrescriber(convertReference(src.getPrescriber()));
-		tgt.setDateEnded(src.getDateEnded());
-		tgt.setReasonEnded(convertCodeableConcept(src.getReasonEnded()));
 		for (org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent t : src.getDosageInstruction())
 			tgt.addDosageInstruction(convertMedicationOrderDosageInstructionComponent(t));
 		tgt.setDispenseRequest(convertMedicationOrderDispenseRequestComponent(src.getDispenseRequest()));
@@ -10581,7 +10535,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent tgt = new org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setText(src.getText());
-		tgt.setAdditionalInstructions(convertCodeableConcept(src.getAdditionalInstructions()));
 		tgt.setTiming(convertTiming(src.getTiming()));
 		tgt.setAsNeeded(convertType(src.getAsNeeded()));
 		tgt.setSite(convertType(src.getSite()));
@@ -10599,7 +10552,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderDosageInstructionComponent tgt = new org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderDosageInstructionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setText(src.getText());
-		tgt.setAdditionalInstructions(convertCodeableConcept(src.getAdditionalInstructions()));
 		tgt.setTiming(convertTiming(src.getTiming()));
 		tgt.setAsNeeded(convertType(src.getAsNeeded()));
 		tgt.setSite(convertType(src.getSite()));
@@ -10616,7 +10568,6 @@ public class VersionConvertor {
 			return null;
 		org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDispenseRequestComponent tgt = new org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDispenseRequestComponent();
 		copyBackboneElement(src, tgt);
-		tgt.setMedication(convertType(src.getMedication()));
 		tgt.setValidityPeriod(convertPeriod(src.getValidityPeriod()));
 		tgt.setNumberOfRepeatsAllowed(src.getNumberOfRepeatsAllowed());
 		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
@@ -10629,7 +10580,6 @@ public class VersionConvertor {
 			return null;
 		org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderDispenseRequestComponent tgt = new org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderDispenseRequestComponent();
 		copyBackboneElement(src, tgt);
-		tgt.setMedication(convertType(src.getMedication()));
 		tgt.setValidityPeriod(convertPeriod(src.getValidityPeriod()));
 		tgt.setNumberOfRepeatsAllowed(src.getNumberOfRepeatsAllowed());
 		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
@@ -10642,7 +10592,6 @@ public class VersionConvertor {
 			return null;
 		org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderSubstitutionComponent tgt = new org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderSubstitutionComponent();
 		copyBackboneElement(src, tgt);
-		tgt.setType(convertCodeableConcept(src.getType()));
 		tgt.setReason(convertCodeableConcept(src.getReason()));
 		return tgt;
 	}
@@ -10652,7 +10601,6 @@ public class VersionConvertor {
 			return null;
 		org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderSubstitutionComponent tgt = new org.hl7.fhir.dstu2.model.MedicationOrder.MedicationOrderSubstitutionComponent();
 		copyBackboneElement(src, tgt);
-		tgt.setType(convertCodeableConcept(src.getType()));
 		tgt.setReason(convertCodeableConcept(src.getReason()));
 		return tgt;
 	}
@@ -10671,7 +10619,6 @@ public class VersionConvertor {
 		tgt.setWasNotTaken(src.getWasNotTaken());
 		for (org.hl7.fhir.dstu2.model.CodeableConcept t : src.getReasonNotTaken())
 			tgt.addReasonNotTaken(convertCodeableConcept(t));
-		tgt.setReasonForUse(convertType(src.getReasonForUse()));
 		tgt.setEffective(convertType(src.getEffective()));
 		for (org.hl7.fhir.dstu2.model.Reference t : src.getSupportingInformation())
 			tgt.addSupportingInformation(convertReference(t));
@@ -10695,7 +10642,6 @@ public class VersionConvertor {
 		tgt.setWasNotTaken(src.getWasNotTaken());
 		for (org.hl7.fhir.dstu3.model.CodeableConcept t : src.getReasonNotTaken())
 			tgt.addReasonNotTaken(convertCodeableConcept(t));
-		tgt.setReasonForUse(convertType(src.getReasonForUse()));
 		tgt.setEffective(convertType(src.getEffective()));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getSupportingInformation())
 			tgt.addSupportingInformation(convertReference(t));
@@ -10740,7 +10686,7 @@ public class VersionConvertor {
 		tgt.setSite(convertType(src.getSite()));
 		tgt.setRoute(convertCodeableConcept(src.getRoute()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
-		tgt.setQuantity(convertType(src.getQuantity()));
+		tgt.setDose(convertType(src.getQuantity()));
 		tgt.setRate(convertType(src.getRate()));
 		tgt.setMaxDosePerPeriod(convertRatio(src.getMaxDosePerPeriod()));
 		return tgt;
@@ -10757,7 +10703,7 @@ public class VersionConvertor {
 		tgt.setSite(convertType(src.getSite()));
 		tgt.setRoute(convertCodeableConcept(src.getRoute()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
-		tgt.setQuantity(convertType(src.getQuantity()));
+		tgt.setQuantity(convertType(src.getDose()));
 		tgt.setRate(convertType(src.getRate()));
 		tgt.setMaxDosePerPeriod(convertRatio(src.getMaxDosePerPeriod()));
 		return tgt;
@@ -11292,7 +11238,6 @@ public class VersionConvertor {
 		for (org.hl7.fhir.dstu2.model.Identifier t : src.getIdentifier())
 			tgt.addIdentifier(convertIdentifier(t));
 		tgt.setStatus(convertObservationStatus(src.getStatus()));
-		tgt.setCategory(convertCodeableConcept(src.getCategory()));
 		tgt.setCode(convertCodeableConcept(src.getCode()));
 		tgt.setSubject(convertReference(src.getSubject()));
 		tgt.setEncounter(convertReference(src.getEncounter()));
@@ -11325,7 +11270,6 @@ public class VersionConvertor {
 		for (org.hl7.fhir.dstu3.model.Identifier t : src.getIdentifier())
 			tgt.addIdentifier(convertIdentifier(t));
 		tgt.setStatus(convertObservationStatus(src.getStatus()));
-		tgt.setCategory(convertCodeableConcept(src.getCategory()));
 		tgt.setCode(convertCodeableConcept(src.getCode()));
 		tgt.setSubject(convertReference(src.getSubject()));
 		tgt.setEncounter(convertReference(src.getEncounter()));
@@ -11387,7 +11331,6 @@ public class VersionConvertor {
 		copyBackboneElement(src, tgt);
 		tgt.setLow(convertSimpleQuantity(src.getLow()));
 		tgt.setHigh(convertSimpleQuantity(src.getHigh()));
-		tgt.setMeaning(convertCodeableConcept(src.getMeaning()));
 		tgt.setAge(convertRange(src.getAge()));
 		tgt.setText(src.getText());
 		return tgt;
@@ -11400,7 +11343,6 @@ public class VersionConvertor {
 		copyBackboneElement(src, tgt);
 		tgt.setLow(convertSimpleQuantity(src.getLow()));
 		tgt.setHigh(convertSimpleQuantity(src.getHigh()));
-		tgt.setMeaning(convertCodeableConcept(src.getMeaning()));
 		tgt.setAge(convertRange(src.getAge()));
 		tgt.setText(src.getText());
 		return tgt;
@@ -13630,8 +13572,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu3.model.Specimen.SpecimenCollectionComponent tgt = new org.hl7.fhir.dstu3.model.Specimen.SpecimenCollectionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setCollector(convertReference(src.getCollector()));
-		for (org.hl7.fhir.dstu2.model.StringType t : src.getComment())
-			tgt.setComment(t.getValue());
 		tgt.setCollected(convertType(src.getCollected()));
 		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
@@ -13645,7 +13585,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu2.model.Specimen.SpecimenCollectionComponent tgt = new org.hl7.fhir.dstu2.model.Specimen.SpecimenCollectionComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setCollector(convertReference(src.getCollector()));
-	  tgt.addComment(src.getComment());
 		tgt.setCollected(convertType(src.getCollected()));
 		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
 		tgt.setMethod(convertCodeableConcept(src.getMethod()));
@@ -13787,7 +13726,7 @@ public class VersionConvertor {
 		if (src == null)
 			return null;
 		switch (src) {
-		case DATATYPE: return org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind.DATATYPE;
+		case DATATYPE: return org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind.COMPLEXTYPE;
 		case RESOURCE: return org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind.RESOURCE;
 		case LOGICAL: return org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind.LOGICAL;
 		default: return org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind.NULL;
@@ -13798,7 +13737,8 @@ public class VersionConvertor {
 		if (src == null)
 			return null;
 		switch (src) {
-		case DATATYPE: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.DATATYPE;
+    case PRIMITIVETYPE: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.DATATYPE;
+    case COMPLEXTYPE: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.DATATYPE;
 		case RESOURCE: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.RESOURCE;
 		case LOGICAL: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.LOGICAL;
 		default: return org.hl7.fhir.dstu2.model.StructureDefinition.StructureDefinitionKind.NULL;
@@ -14097,7 +14037,6 @@ public class VersionConvertor {
 		org.hl7.fhir.dstu2.model.Substance.SubstanceIngredientComponent tgt = new org.hl7.fhir.dstu2.model.Substance.SubstanceIngredientComponent();
 		copyBackboneElement(src, tgt);
 		tgt.setQuantity(convertRatio(src.getQuantity()));
-		tgt.setSubstance(convertReference(src.getSubstance()));
 		return tgt;
 	}
 
@@ -14131,7 +14070,6 @@ public class VersionConvertor {
 		tgt.setPatient(convertReference(src.getPatient()));
 		tgt.setType(convertCodeableConcept(src.getType()));
 		tgt.setQuantity(convertSimpleQuantity(src.getQuantity()));
-		tgt.setSuppliedItem(convertReference(src.getSuppliedItem()));
 		tgt.setSupplier(convertReference(src.getSupplier()));
 		tgt.setWhenPrepared(convertPeriod(src.getWhenPrepared()));
 		tgt.setTime(src.getTime());
@@ -14193,7 +14131,6 @@ public class VersionConvertor {
 		tgt.setIdentifier(convertIdentifier(src.getIdentifier()));
 		tgt.setStatus(convertSupplyRequestStatus(src.getStatus()));
 		tgt.setKind(convertCodeableConcept(src.getKind()));
-		tgt.setOrderedItem(convertReference(src.getOrderedItem()));
 		for (org.hl7.fhir.dstu3.model.Reference t : src.getSupplier())
 			tgt.addSupplier(convertReference(t));
 		tgt.setReason(convertType(src.getReason()));

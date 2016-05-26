@@ -294,8 +294,6 @@ Type
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
-    function GetBundle: TFhirBundle;
-    procedure SetBundle(const Value: TFhirBundle);
     procedure SetProvenance(const Value: TFhirProvenance);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
@@ -308,6 +306,7 @@ Type
     Function Link : TFHIRRequest; Overload;
 
     {!Script Hide}
+    function clone() : TFHIRRequest;
     Function Compose : String;
     procedure LoadParams(s : String); overload;
     procedure LoadParams(form : TMimeMessage); overload;
@@ -1126,6 +1125,21 @@ begin
     result := session.canWrite(resourceName);
 end;
 
+function TFHIRRequest.clone: TFHIRRequest;
+begin
+  result := TFHIRRequest.Create(FWorker.link, FOrigin, FCompartmentInformation.Link);
+  result.FFormat := FFormat;
+  result.FBaseUrl := FBaseUrl;
+  result.FLang := FLang;
+  result.FSession := FSession.Link;
+  result.FIp := FIp;
+  result.FCompartments := FCompartments;
+  result.FCompartmentId := FCompartmentId;
+  result.FSummary := FSummary;
+  result.FOrigin := FOrigin;
+  result.FSecure := FSecure;
+end;
+
 function TFHIRRequest.Compose: String;
 var
   comp : TFHIRXmlComposer;
@@ -1182,13 +1196,6 @@ begin
   FForm.Free;
   FParams.Free;
   inherited;
-end;
-
-function TFHIRRequest.GetBundle: TFhirBundle;
-begin
-  if not (Resource is TFHIRBundle) then
-    raise Exception.Create('Found a '+resource.FhirType+' expecting a Bundle');
-  result := Resource as TFhirBundle;
 end;
 
 function TFHIRRequest.Link: TFHIRRequest;
@@ -1279,11 +1286,6 @@ begin
   FIfModifiedSince := 0;
   FIfNoneExist := '';
   FSummary := soFull;
-end;
-
-procedure TFHIRRequest.SetBundle(const Value: TFhirBundle);
-begin
-  setresource(value);
 end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);

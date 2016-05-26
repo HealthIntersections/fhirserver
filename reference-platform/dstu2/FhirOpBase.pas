@@ -57,7 +57,7 @@ type
     FExtensions : TAdvList<TFHIROpExtension>;
     function GetExtensions: TAdvList<TFHIROpExtension>;
   protected
-    function IsKnownName(name : String) : boolean; overload; virtual;
+    function isKnownName(name : String) : boolean; overload; virtual;
     procedure loadExtensions(params : TFHIRParameters); overload;
     procedure loadExtensions(params : TParseMap); overload;
     procedure loadExtensions(params : TFhirParametersParameter); overload;

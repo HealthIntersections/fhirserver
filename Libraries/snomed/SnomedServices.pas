@@ -399,6 +399,8 @@ operations
 
   TSnomedServices = class (TCodeSystemProvider)
   Private
+    FEdition : String;
+    FVersion : String;
     FActiveRoots : UInt64Array;
     FInactiveRoots : UInt64Array;
     FIs_a_Index, FPreferredTerm : Cardinal;
@@ -501,7 +503,7 @@ operations
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function buildValueSet(id : String) : TFhirValueSet;
+    function buildValueSet(url : String) : TFhirValueSet;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
@@ -1080,6 +1082,7 @@ var
   oFile : Tfilestream;
   oread : TReader;
   i : Integer;
+  s : TArray<String>;
   function readBytes : TBytes;
   begin
     SetLength(result, oRead.ReadInteger);
@@ -1098,6 +1101,10 @@ begin
         raise ESnomedServices.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
+      s := VersionUri.split(['/']);
+      FEdition := s[4];
+      FVersion := s[6];
+
       FStrings.FMaster := ReadBytes;
       FStrings.FLength := Length(FStrings.FMaster);
       FRefs.FMaster := ReadBytes;
@@ -1719,7 +1726,7 @@ begin
       begin
         values := Refs.GetReferences(valueses); // get the list of all value lists
         values := Refs.GetReferences(values[0]); // get the first value set
-        if (iFlag and MASK_DESC_STATUS = FLAG_Active) and (values[0] = FPreferredTerm) then
+        if (length(values) > 0) and (iFlag and MASK_DESC_STATUS = FLAG_Active) and (values[0] = FPreferredTerm) then
           exit(v);
       end
       else if ((result = '') or (length(result) > length(v))) and (iFlag and MASK_DESC_STATUS = FLAG_Active) And (Length(iList) > 0) Then
@@ -2374,19 +2381,30 @@ begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
 
-function TSnomedServices.buildValueSet(id : String): TFhirValueSet;
+function TSnomedServices.buildValueSet(url : String): TFhirValueSet;
 var
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
   cc : TFhirValueSetComposeIncludeConcept;
   i : integer;
   code, iDummy : Cardinal;
+  id : String;
 begin
-  if id = 'http://snomed.info/sct?fhir_vs=refset' then
+  // is this a correct reference?
+  if (url.StartsWith('http://snomed.info/sct?fhir_vs=')) then
+    id := url.Substring(url.IndexOf('?'))
+  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'?fhir_vs=')) then
+    id := url.Substring(url.IndexOf('?'))
+  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'/version/'+FVersion+'?fhir_vs=')) then
+    id := url.Substring(url.IndexOf('?'))
+  else
+    exit(nil);
+
+  if id = '?fhir_vs=refset' then
   begin
     result := TFhirValueSet.Create;
     try
-      result.url := id;
+      result.url := url;
       result.status := ConformanceResourceStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set List';
@@ -2407,11 +2425,11 @@ begin
       result.free;
     end;
   end
-  else if id = 'http://snomed.info/sct?fhir_vs' then
+  else if id = '?fhir_vs' then
   begin
     result := TFhirValueSet.Create;
     try
-      result.url := id;
+      result.url := url;
       result.status := ConformanceResourceStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
@@ -2425,15 +2443,15 @@ begin
       result.free;
     end;
   end
-  else if id.StartsWith('http://snomed.info/sct?fhir_vs=refset/') And ReferenceSetExists(id.Substring(38)) then
+  else if id.StartsWith('?fhir_vs=refset/') And ReferenceSetExists(id.Substring(16)) then
   begin
     result := TFhirValueSet.Create;
     try
-      result.url := id;
+      result.url := url;
       result.status := ConformanceResourceStatusActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Reference Set '+id.Substring(38);
-      result.description := GetDisplayName(id.Substring(38), '');
+      result.name := 'SNOMED CT Reference Set '+id.Substring(16);
+      result.description := GetDisplayName(id.Substring(16), '');
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2441,21 +2459,21 @@ begin
       filt := inc.filterList.Append;
       filt.property_ := 'concept';
       filt.op := FilterOperatorIn;
-      filt.value := id.Substring(38);
+      filt.value := id.Substring(16);
       result.link;
     finally
       result.free;
     end;
   end
-  else if id.StartsWith('http://snomed.info/sct?fhir_vs=isa/') And ConceptExists(id.Substring(35)) then
+  else if id.StartsWith('?fhir_vs=isa/') And ConceptExists(id.Substring(13)) then
   begin
     result := TFhirValueSet.Create;
     try
-      result.url := id;
+      result.url := url;
       result.status := ConformanceResourceStatusActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Concept '+id.Substring(35)+' and descendents';
-      result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(35), '');
+      result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendents';
+      result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -2463,7 +2481,7 @@ begin
       filt := inc.filterList.Append;
       filt.property_ := 'concept';
       filt.op := FilterOperatorIsA;
-      filt.value := id.Substring(35);
+      filt.value := id.Substring(13);
       result.link;
     finally
       result.free;

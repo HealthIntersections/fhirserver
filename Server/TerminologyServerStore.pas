@@ -120,7 +120,8 @@ Type
   private
     FLoading : boolean;
     FLoinc : TLOINCServices;
-    FSnomed : TSnomedServices;
+    FSnomed : TAdvList<TSnomedServices>;
+    FDefSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
     FNciMeta : TNciMetaServices;
@@ -144,6 +145,7 @@ Type
     FValueSetsByURL : TAdvMap<TFHIRValueSet>; // by canonical url
     FCodeSystemsById : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
     FCodeSystemsByUrl : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
+    FCodeSystemsByVsUrl : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
 
     FBaseValueSets : TAdvMap<TFHIRValueSet>; // value sets out of the specification - these can be overriden, but they never go away
     FBaseCodeSystems : TAdvMap<TFHIRCodeSystem>; // value sets out of the specification - these can be overriden, but they never go away
@@ -159,7 +161,7 @@ Type
     procedure BuildStems(list : TFhirCodeSystemConceptList);
 
     procedure SetLoinc(const Value: TLOINCServices);
-    procedure SetSnomed(const Value: TSnomedServices);
+    procedure SetDefSnomed(const Value: TSnomedServices);
     procedure SetUcum(const Value: TUcumServices);
     procedure SetRxNorm(const Value: TRxNormServices);
     procedure SetNciMeta(const Value: TNciMetaServices);
@@ -184,7 +186,8 @@ Type
     Function Link : TTerminologyServerStore; overload;
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
-    Property Snomed : TSnomedServices read FSnomed write SetSnomed;
+    Property Snomed : TAdvList<TSnomedServices> read FSnomed;
+    Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
     Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
@@ -204,9 +207,11 @@ Type
     function getValueSetByUrl(url : String) : TFHIRValueSet;
     function getValueSetById(id : String) : TFHIRValueSet;
     function getCodeSystemById(id : String) : TFHIRCodeSystem;
+    function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystem;
     function getCodeSystem(url : String) : TFHIRCodeSystem;
     function hasCodeSystem(url : String) : Boolean;
     function getConceptMapById(id : String) : TLoadedConceptMap;
+    function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
 
     // publishing access
     function GetCodeSystemList : TFHIRCodeSystemList;
@@ -305,7 +310,7 @@ Type
 
 function TAllCodeSystemsProvider.TotalCount : integer;
 begin
-  result := FStore.Snomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount;
+  result := FStore.DefSnomed.TotalCount + FStore.Loinc.TotalCount + FActCode.TotalCount + FStore.Unii.TotalCount;
   if FStore.RxNorm <> nil then
     result := result + FStore.RxNorm.TotalCount;
   if FStore.NciMeta <> nil then
@@ -336,7 +341,7 @@ begin
     c := context as TAllCodeSystemsProviderContext;
     case c.source of
       acssLoinc : result := FStore.Loinc.System(c.context);
-      acssSnomed : result := FStore.Snomed.System(c.context);
+      acssSnomed : result := FStore.DefSnomed.System(c.context);
       acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.System(c.context) else result := '??';
       acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.System(c.context) else result := '??';
       acssUnii : result := FStore.Unii.System(c.context);
@@ -361,7 +366,7 @@ begin
       ctxt.NciMeta := FStore.NciMeta.getPrepContext;
     ctxt.unii := nil;
     ctxt.loinc := FStore.Loinc.getPrepContext;
-    ctxt.snomed := FStore.Snomed.getPrepContext;
+    ctxt.snomed := FStore.DefSnomed.getPrepContext;
     ctxt.actcode := Factcode.getPrepContext;
     result := ctxt.link;
   finally
@@ -389,7 +394,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.IsAbstract(c.context);
-    acssSnomed : result := FStore.Snomed.IsAbstract(c.context);
+    acssSnomed : result := FStore.DefSnomed.IsAbstract(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.IsAbstract(c.context) else result := false;
     acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.IsAbstract(c.context) else result := false;
     acssUnii : result := FStore.Unii.IsAbstract(c.context);
@@ -404,7 +409,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Code(c.context);
-    acssSnomed : result := FStore.Snomed.Code(c.context);
+    acssSnomed : result := FStore.DefSnomed.Code(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
     acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Code(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Code(c.context);
@@ -426,7 +431,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Display(c.context)+' (LOINC: '+FStore.Loinc.Code(c.context)+')';
-    acssSnomed : result := FStore.Snomed.Display(c.context)+' (S-CT: '+FStore.Snomed.Code(c.context)+')';
+    acssSnomed : result := FStore.DefSnomed.Display(c.context)+' (S-CT: '+FStore.DefSnomed.Code(c.context)+')';
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Display(c.context)+' (RxN: '+FStore.RxNorm.Code(c.context)+')' else result := '';
     acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Display(c.context)+' (RxN: '+FStore.NciMeta.Code(c.context)+')' else result := '';
     acssUnii : result := FStore.Unii.Display(c.context)+' (Unii: '+FStore.Unii.Code(c.context)+')';
@@ -441,7 +446,7 @@ begin
   c := context as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : result := FStore.Loinc.Definition(c.context);
-    acssSnomed : result := FStore.Snomed.Definition(c.context);
+    acssSnomed : result := FStore.DefSnomed.Definition(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
     acssNciMeta : if FStore.NciMeta <> nil then result := FStore.NciMeta.Definition(c.context) else result := '??';
     acssUnii : result := FStore.Unii.Definition(c.context);
@@ -479,7 +484,7 @@ begin
       if FStore.NciMeta <> nil then
         ctxt.NciMeta := FStore.NciMeta.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).NciMeta, sort);
       ctxt.unii := nil; // FStore.Unii.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).unii, sort);
-      ctxt.snomed := FStore.snomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
+      ctxt.snomed := FStore.Defsnomed.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).snomed, sort);
       ctxt.loinc := FStore.loinc.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).loinc, sort);
       ctxt.actcode := FActCode.searchFilter(filter, TAllCodeSystemsProviderFilterPreparationContext(prep).actcode, sort);
       result := ctxt.Link;
@@ -502,7 +507,7 @@ begin
   if (ctxt <> nil) then
   begin
     FStore.Loinc.prepare(ctxt.loinc);
-    FStore.Snomed.prepare(ctxt.snomed);
+    FStore.DefSnomed.prepare(ctxt.snomed);
     if FStore.RxNorm <> nil then
       FStore.RxNorm.prepare(ctxt.rxnorm);
     if FStore.NciMeta <> nil then
@@ -528,7 +533,7 @@ begin
     c := TAllCodeSystemsProviderFilter(ctxt);
     result := true;
     if not c.snomedDone then
-      c.snomedDone := not FStore.Snomed.FilterMore(c.snomed);
+      c.snomedDone := not FStore.DefSnomed.FilterMore(c.snomed);
     if c.snomedDone then
     begin
       if not c.actcodeDone then
@@ -574,7 +579,7 @@ begin
     if not d.snomedDone then
     begin
       c.source := acssSnomed;
-      c.context := FStore.Snomed.FilterConcept(d.snomed);
+      c.context := FStore.DefSnomed.FilterConcept(d.snomed);
     end
     else if not d.actCodeDone then
     begin
@@ -626,7 +631,7 @@ begin
     FStore.NciMeta.Close(c.NciMeta);
   FStore.unii.Close(c.unii);
   FStore.Loinc.Close(c.loinc);
-  FStore.Snomed.Close(c.snomed);
+  FStore.DefSnomed.Close(c.snomed);
   FActCode.Close(c.actcode);
   ctxt.free;
 end;
@@ -644,7 +649,7 @@ begin
       FStore.NciMeta.Close(c.NciMeta);
     FStore.Unii.Close(c.unii);
     FStore.Loinc.Close(c.loinc);
-    FStore.Snomed.Close(c.snomed);
+    FStore.DefSnomed.Close(c.snomed);
     FActCode.Close(c.actcode);
   end;
   ctxt.free;
@@ -657,7 +662,7 @@ begin
   c := ctxt as TAllCodeSystemsProviderContext;
   case c.source of
     acssLoinc : FStore.Loinc.Close(c.context);
-    acssSnomed : FStore.Snomed.Close(c.context);
+    acssSnomed : FStore.DefSnomed.Close(c.context);
     acssRxNorm : if FStore.RxNorm <> nil then FStore.RxNorm.Close(c.context);
     acssNciMeta : if FStore.NciMeta <> nil then FStore.NciMeta.Close(c.context);
     acssUnii : FStore.Unii.Close(c.context);
@@ -763,6 +768,7 @@ begin
   FValueSetsByURL := TAdvMap<TFhirValueSet>.create;
   FCodeSystemsById := TAdvMap<TFhirCodeSystem>.create;
   FCodeSystemsByUrl := TAdvMap<TFhirCodeSystem>.create;
+  FCodeSystemsByVsUrl := TAdvMap<TFhirCodeSystem>.create;
   FBaseValueSets := TAdvMap<TFhirValueSet>.create;
   FBaseCodeSystems := TAdvMap<TFHIRCodeSystem>.create;
 
@@ -770,6 +776,7 @@ begin
   FConceptMapsById := TAdvMap<TLoadedConceptMap>.create;
   FConceptMapsByURL := TAdvMap<TLoadedConceptMap>.create;
 
+  FSnomed := TAdvList<TSnomedServices>.create;
   p := TIETFLanguageCodeServices.Create;
   FProviderClasses.Add(p.system(nil), p);
   p := TUriServices.Create();
@@ -812,12 +819,14 @@ procedure TTerminologyServerStore.declareCodeSystems(list : TFhirResourceList);
     if count <> 0 then
       cs.count := inttostr(count);
   end;
+var
+  sn : TSnomedServices;
 begin
   if FLoinc <> nil then
     addCodeSystem('LOINC', 'loinc', FLoinc.system(nil), FLoinc.version(nil), FLoinc.ChildCount(nil));
-  if FSnomed <> nil then
-    addCodeSystem('SNOMED CT', 'sct', FSnomed.system(nil), FSnomed.version(nil), FSnomed.ChildCount(nil));
-  if FSnomed <> nil then
+  for sn in FSnomed do
+    addCodeSystem('SNOMED CT', 'sct', sn.system(nil), sn.version(nil), sn.ChildCount(nil));
+  if FUcum <> nil then
     addCodeSystem('Ucum', 'ucum', FUcum.system(nil), FUcum.version(nil), FUcum.ChildCount(nil));
   if FRxNorm <> nil then
     addCodeSystem('RxNorm', 'rxnorm', FRxNorm.system(nil), FRxNorm.version(nil), 0);
@@ -856,6 +865,7 @@ begin
   FValueSetsByURL.Free;
   FCodeSystemsById.Free;
   FCodeSystemsByUrl.Free;
+  FCodeSystemsByVsUrl.Free;
   FBaseValueSets.Free;
   FBaseCodeSystems.Free;
 
@@ -866,6 +876,7 @@ begin
   FProviderClasses.Free;
 
   FLoinc.free;
+  FDefSnomed.Free;
   FSnomed.free;
   FUnii.Free;
   FCvx.Free;
@@ -971,14 +982,14 @@ begin
     FProviderClasses.add(FCvx.system(nil), FCvx.Link);
 end;
 
-procedure TTerminologyServerStore.SetSnomed(const Value: TSnomedServices);
+procedure TTerminologyServerStore.SetDefSnomed(const Value: TSnomedServices);
 begin
-  if FSnomed <> nil then
-    FProviderClasses.Remove(FSnomed.system(nil));
-  FSnomed.Free;
-  FSnomed := Value;
-  if FSnomed <> nil then
-    FProviderClasses.add(FSnomed.system(nil), FSnomed.Link);
+  if FDefSnomed <> nil then
+    FProviderClasses.Remove(FDefSnomed.system(nil));
+  FDefSnomed.Free;
+  FDefSnomed := Value;
+  if FDefSnomed <> nil then
+    FProviderClasses.add(FDefSnomed.system(nil), FDefSnomed.Link);
 end;
 
 procedure TTerminologyServerStore.SetUcum(const Value: TUcumServices);
@@ -1058,6 +1069,8 @@ begin
       FCodeSystemsById.AddOrSetValue(cs.id, cs.Link);
       FCodeSystemsByUrl.AddOrSetValue(cs.url, cs.Link);
       FBaseCodeSystems.AddOrSetValue(cs.url, cs.Link);
+      if cs.valueSet <> '' then
+        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
       BuildStems(cs.conceptList);
     end
     {$ENDIF}
@@ -1116,6 +1129,8 @@ begin
       cs := TFHIRCodeSystem(resource);
       FCodeSystemsById.AddOrSetValue(cs.id, cs.Link);
       FCodeSystemsByUrl.AddOrSetValue(cs.url, cs.Link);
+      if cs.valueSet <> '' then
+        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
       BuildStems(cs.conceptList);
     end
     {$ENDIF}
@@ -1128,11 +1143,8 @@ begin
           cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
         if cm.Resource.target is TFHIRReference then
           cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-        if (cm.Source <> nil) and (cm.Target <> nil) then
-        begin
-          FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
-          FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
-        end;
+        FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
+        FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
       finally
         cm.Free;
       end;
@@ -1190,12 +1202,16 @@ begin
         cs1 := FBaseCodeSystems[cs.url];
         FCodeSystemsByUrl.Remove(cs.url);
         FCodeSystemsById.Remove(cs.id);
+        if cs.valueSet <> '' then
+          FCodeSystemsByVsUrl.remove(cs.valueSet);
         // add the base one back if we are dropping a value set that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
         if cs1 <> nil then
         begin
           FCodeSystemsById.AddOrSetValue(cs1.id, cs1.Link);
           FCodeSystemsByUrl.AddOrSetValue(cs1.url, cs1.Link);
+          if cs1.valueSet <> '' then
+            FCodeSystemsByVsUrl.AddOrSetValue(cs1.valueSet, cs1.Link);
         end;
       end;
     end
@@ -1277,6 +1293,19 @@ begin
   end;
 end;
 
+function TTerminologyServerStore.getCodeSystemByValueSet(vs: String): TFHIRCodeSystem;
+begin
+  FLock.Lock('getValueSetByUrl');
+  try
+    if FCodeSystemsByVsUrl.TryGetValue(vs, result) then
+      result.Link
+    else
+      result := nil;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TTerminologyServerStore.GetCodeSystemList: TFHIRCodeSystemList;
 var
   vs : TFHIRCodeSystem;
@@ -1305,6 +1334,25 @@ begin
       result := FConceptMapsById[id].Link
     else
       result := nil;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.getConceptMapBySrcTgt(src, tgt: String): TLoadedConceptMap;
+var
+  lcm : TLoadedConceptMap;
+begin
+  result := nil;
+  FLock.Lock('getValueSetByUrl');
+  try
+    for lcm in FConceptMapsById.Values do
+      if (lcm.Resource.source is TFhirUri) and (TFhirUri(lcm.Resource.source).value = src) and
+         (lcm.Resource.target is TFhirUri) and (TFhirUri(lcm.Resource.target).value = src) then
+      begin
+        result := lcm.Link;
+        break;
+      end
   finally
     FLock.Unlock;
   end;
@@ -1384,6 +1432,8 @@ end;
 
 
 procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
+var
+  sn : TSnomedServices;
 begin
   if FLoinc = nil then
     b.append('<li>LOINC: not loaded</li>')
@@ -1391,10 +1441,10 @@ begin
     b.append('<li>LOINC: '+FLoinc.version(nil)+' ('+inttostr(FLoinc.UseCount)+' uses)');
 
 
-  if FSnomed = nil then
+  if FSnomed.Count = 0 then
     b.append('<li>Snomed: not loaded</li>')
-  else
-    b.append('<li>Snomed: '+FSnomed.version(nil)+' ('+inttostr(FSnomed.UseCount)+' uses)');
+  else for sn in FSnomed do
+    b.append('<li>Snomed: '+sn.version(nil)+' ('+inttostr(sn.UseCount)+' uses)');
 
   if FUcum = nil then
     b.append('<li>Ucum: not loaded</li>')
@@ -1551,8 +1601,8 @@ begin
   result := false;
   if (uri1 <> uri2) then
     result := false // todo later - check that concept maps
-  else if (snomed <> nil) and (uri1 = Snomed.system(nil)) then
-    result := Snomed.Subsumes(code1, code2)
+  else if (snomed <> nil) and (uri1 = DefSnomed.system(nil)) then
+    result := DefSnomed.Subsumes(code1, code2)
   else
   begin
     prov := getProvider(uri1, true);
@@ -1855,7 +1905,7 @@ begin
     code := doLocate(FVs.codeSystem.conceptList, value);
     try
       if code = nil then
-        raise Exception.Create('Unable to locate code '+value)
+        raise ETerminologyError.Create('Unable to locate code '+value)
       else
       begin
         result := TFhirCodeSystemProviderFilterContext.create;
@@ -1882,7 +1932,7 @@ begin
           code := doLocate(FVs.codeSystem.conceptList, value);
           try
             if code = nil then
-              raise Exception.Create('Unable to locate code '+value)
+              raise ETerminologyError.Create('Unable to locate code '+value)
             else
               TFhirCodeSystemProviderFilterContext(result).Add(code.context.Link, 0);
           finally

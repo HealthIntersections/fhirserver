@@ -267,7 +267,6 @@ type
     function opIs(left, right : TFHIRBaseList) : TFHIRBaseList;
     function opAs(left, right : TFHIRBaseList) : TFHIRBaseList;
 
-    function areDistinct(a1, a2: array of TFHIRBaseList): boolean;
     function contains(list: TFHIRBaseList; item: TFHIRBase): boolean;
     function isAbstractType(list: TFHIRElementDefinitionTypeList): boolean;
 
@@ -951,27 +950,6 @@ end;
 function TFHIRExpressionEngine.funcCount(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 begin
   result := TFHIRBaseList.Create(TFhirInteger.Create(inttostr(focus.Count)));
-end;
-
-function TFHIRExpressionEngine.areDistinct(a1, a2 : array of TFHIRBaseList) : boolean;
-var
-  i : integer;
-  res : TFHIRBaseList;
-begin
-  result := false;
-  for i := 0 to length(a1) - 1 do
-  begin
-    res := opEquals(a1[i], a2[i]);
-    try
-      if not convertToBoolean(res) then
-      begin
-        result := true;
-        exit;
-      end;
-    finally
-      res.Free;
-    end;
-  end;
 end;
 
 function TFHIRExpressionEngine.funcDescendents(context: TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
@@ -2562,7 +2540,7 @@ end;
 
 function TFHIRExpressionEngine.executeType(focus: String; exp: TFHIRExpressionNode; atEntry : boolean): TFHIRTypeDetails;
 begin
-  if (atEntry and isUpper(exp.Name[1])) and (focus = exp.Name) then
+  if (atEntry and exp.Name[1].IsUpper) and (focus = exp.Name) then
     result := TFHIRTypeDetails.create(csSINGLETON, [focus])
   else
   begin

@@ -638,7 +638,7 @@ Begin
     cValue := Result[iStr];
 
     if cValue = '+' then
-      bytes[iStr] := 32 // ' '
+      bytes[iBytes] := 32 // ' '
     else If (iStr <= Length(Result) - 2) and (cValue = '%') Then
     Begin
       bytes[iBytes] := DecodeHexadecimal(AnsiChar(Result[iStr + 1]), AnsiChar(Result[iStr + 2]));

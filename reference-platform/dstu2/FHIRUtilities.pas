@@ -118,6 +118,8 @@ function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
 function asTime(obj : TFHIRObject) : TFHIRTime;
 function asOid(obj : TFHIRObject) : TFHIROid;
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
+function asResource(obj : TFHIRObject) : TFHIRResource;
+function asExtension(obj : TFHIRObject) : TFHIRExtension;
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
@@ -3353,6 +3355,11 @@ begin
     result := TFHIRString.create(TFHIRMMElement(obj).value);
     obj.Free;
   end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRString.create(TFHIRBase(obj).primitiveValue);
+    obj.Free;
+  end
   else
   begin
     obj.Free;
@@ -3383,6 +3390,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUri.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRUri.create(TFHIRBase(obj).primitiveValue);
     obj.Free;
   end
   else
@@ -3568,6 +3580,29 @@ begin
   end;
 end;
 
+function asResource(obj : TFHIRObject) : TFHIRResource;
+begin
+  if obj is TFHIRResource then
+    result := obj as TFHIRResource
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+  end;
+end;
+
+
+function asExtension(obj : TFHIRObject) : TFHIRExtension;
+begin
+  if obj is TFHIRExtension then
+    result := obj as TFHIRExtension
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
+  end;
+end;
+
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 begin
@@ -3576,6 +3611,11 @@ begin
   else if obj is TFHIRCode then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
+    obj.Free;
+  end
+  else if obj is TFHIRString then
+  begin
+    result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRString(obj).value)], TFHIRString(obj).value);
     obj.Free;
   end
   else
@@ -3734,6 +3774,8 @@ begin
     scanForSubsumes(parentList, c.conceptList, code);
   end;
 end;
+
+
 
 function TFhirValueSetCodeSystemHelper.getChildren(concept: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConceptList;
 var

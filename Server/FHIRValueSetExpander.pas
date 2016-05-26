@@ -421,9 +421,9 @@ begin
       begin
         if cs.isNotClosed(filter) then
           if cs.SpecialEnumeration <> '' then
-            raise ETerminologyError.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+            raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
           else
-            raise ETerminologyError.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly');
+            raise ETooCostly.create('The code System "'+cs.system(nil)+'" has a grammar, and cannot be enumerated directly');
 
         if (cs.TotalCount > FLimit) and not (Fprofile.limitedExpansion) then
           raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');

@@ -295,8 +295,6 @@ Type
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
-    function GetBundle: TFhirBundle;
-    procedure SetBundle(const Value: TFhirBundle);
     procedure SetProvenance(const Value: TFhirProvenance);
     procedure processParams;
     procedure SetForm(const Value: TMimeMessage);
@@ -1201,13 +1199,6 @@ begin
   inherited;
 end;
 
-function TFHIRRequest.GetBundle: TFhirBundle;
-begin
-  if not (Resource is TFHIRBundle) then
-    raise Exception.Create('Found a '+resource.FhirType+' expecting a Bundle');
-  result := Resource as TFhirBundle;
-end;
-
 function TFHIRRequest.Link: TFHIRRequest;
 begin
   result := TFHIRRequest(Inherited Link);
@@ -1296,11 +1287,6 @@ begin
   FIfModifiedSince := 0;
   FIfNoneExist := '';
   FSummary := soFull;
-end;
-
-procedure TFHIRRequest.SetBundle(const Value: TFhirBundle);
-begin
-  setresource(value);
 end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);

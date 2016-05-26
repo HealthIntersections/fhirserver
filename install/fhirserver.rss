@@ -3,11 +3,23 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.53 2016-05-17 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.53.exe</link>
+			<description>DSTU3. 2016-05-17 (v1.0.53): Australian terminology services connectathon</description>
+		</item>
+<item><title>FHIRServer release 1.0.52 2016-05-16 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.52.exe</link>
+			<description>DSTU3. 2016-05-16 (v1.0.52): updates POST Montreal meeting</description>
+		</item>
+		<item><title>FHIRServer release 1.0.51 2016-05-09 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.51.exe</link>
+			<description>DSTU3. 2016-05-09 (v1.0.51): update to current STU3 build POST Montreal connectathon</description>
+		</item>
 		<item><title>FHIRServer release 1.0.50 2016-05-07 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.50.exe</link>
 			<description>DSTU3. 2016-05-07 (v1.0.50): implement XML patch</description>
 		</item>
-<item><title>FHIRServer release 1.0.49 2016-05-05 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.49 2016-05-05 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.49.exe</link>
 			<description>DSTU3. 2016-05-05 (v1.0.49): fix bug in code lookup</description>
 		</item>

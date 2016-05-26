@@ -10,7 +10,7 @@ uses
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
   CountryCodeServices, AreaCodeServices,
-  FHIRValueSetChecker, ClosureManager,
+  FHIRValueSetChecker, ClosureManager, ServerAdaptations,
   TerminologyServerStore;
 
 Type
@@ -30,7 +30,8 @@ Type
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TKDBConnection);
     procedure processConcept(ConceptKey : integer; URL, Code : String; conn2, conn3 : TKDBConnection);
     function isOkTarget(cm: TLoadedConceptMap; vs: TFHIRValueSet): boolean;
-    function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean;
+    function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean; overload;
+    function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean; overload;
     procedure LoadClosures;
   protected
     procedure invalidateVS(id : String); override;
@@ -58,6 +59,7 @@ Type
     procedure lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
     function validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters; overload;
+    function translate(cm : TLoadedConceptMap; coding : TFhirCoding) : TFHIRParameters; overload;
     function translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
     function translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters; overload;
     Function MakeChecker(uri : string) : TValueSetChecker;
@@ -81,6 +83,7 @@ implementation
 
 uses
   SystemService,
+  FHIRConstants,
   USStateCodeServices,
   FHIRValueSetExpander;
 
@@ -90,6 +93,7 @@ uses
 constructor TTerminologyServer.Create(db : TKDBManager);
 begin
   inherited;
+  NCTSAssertion(FHIR_GENERATED_VERSION = '1.4.0', 'CSA-1', 'Version must be 1.4.0');
   FExpansions := TAdvStringObjectMatch.create;
   FExpansions.PreventDuplicates;
   FDependencies := TAdvStringObjectMatch.create;
@@ -109,6 +113,7 @@ procedure TTerminologyServer.load(ini : TIniFile);
 var
   fn : string;
   p : TCodeSystemProvider;
+  sn: TSnomedServices;
 begin
   writelnt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
@@ -137,8 +142,10 @@ begin
   if fn <> '' then
   begin
     writelnt('Load Snomed from '+fn);
-    Snomed := TSnomedServices.Create;
-    Snomed.Load(fn);
+    sn := TSnomedServices.Create;
+    snomed.Add(sn);
+    sn.Load(fn);
+    DefSnomed := sn.Link;
     writelnt(' - done');
   end;
   fn := ini.ReadString('loinc', 'cache', '');
@@ -412,16 +419,43 @@ end;
 
 
 function TTerminologyServer.isKnownValueSet(id: String; out vs: TFHIRValueSet): Boolean;
+var
+  cs : TFHIRCodeSystem;
+  sn : TSnomedServices;
 begin
   vs := nil;
   if id.StartsWith('http://snomed.info/') then
-    vs := Snomed.buildValueSet(id)
+  begin
+    vs := DefSnomed.buildValueSet(id);
+    if (vs = nil) then
+    begin
+      for sn in Snomed do
+      begin
+        vs := sn.buildValueSet(id);
+        if (vs <> nil) then
+          break;
+      end;
+    end;
+  end
   else if id.StartsWith('http://loinc.org/vs/LP') or id.StartsWith('http://loinc.org/vs/LL') then
     vs := Loinc.buildValueSet(id)
   else if id = 'http://loinc.org/vs' then
     vs := Loinc.buildValueSet('')
   else if id = ANY_CODE_VS then
-    vs := makeAnyValueSet;
+    vs := makeAnyValueSet
+  else
+  begin
+    cs := getCodeSystemByValueSet(id);
+    if (cs <> nil) then
+    begin
+      try
+        vs := cs.buildImplicitValueSet;
+      finally
+        cs.Free;
+      end;
+    end;
+  end;
+
   result := vs <> nil;
 end;
 
@@ -506,11 +540,11 @@ begin
   result := false;
   if (system = 'http://hl7.org/fhir/sid/icd-10') then
     result := true// nothing for now....
-  else if system.StartsWith('http://snomed.info/sct') and (Snomed <> nil) then
+  else if (system = 'http://snomed.info/sct') and (DefSnomed <> nil) then
   begin
-    if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, Snomed.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
+    if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, DefSnomed.IsValidConcept(code), 'The SNOMED-CT term "'+code+'" is unknown') then
     begin
-      d := Snomed.GetDisplayName(code, '');
+      d := DefSnomed.GetDisplayName(code, '');
       result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = d), 'Display for SNOMED-CT term "'+code+'" should be "'+d+'"');
     end;
   end
@@ -672,6 +706,19 @@ begin
   end;
 end;
 
+function TTerminologyServer.isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out match: TFhirConceptMapElement): boolean;
+var
+  em : TFhirConceptMapElement;
+begin
+  result := false;
+  for em in cm.Resource.elementList do
+    if (em.system = coding.system) and (em.code = coding.code) then
+    begin
+      result := true;
+      match := em;
+    end;
+end;
+
 function TTerminologyServer.isOkTarget(cm : TLoadedConceptMap; vs : TFHIRValueSet) : boolean;
 begin
   if cm.Target <> nil then
@@ -707,6 +754,7 @@ var
   em : TFhirConceptMapElement;
   map : TFhirConceptMapElementTarget;
   outcome : TFhirCoding;
+  found : boolean;
 begin
   result := nil;
   op := TFhirOperationOutcome.Create;
@@ -730,6 +778,8 @@ begin
         p.Free;
       end;
 
+      found := false;
+      result := TFhirParameters.create;
       list := GetConceptMapList;
       try
         for i := 0 to list.Count - 1 do
@@ -737,12 +787,13 @@ begin
           cm := list[i];
           if isOkTarget(cm, target) and isOkSource(cm, source, coding, em) then
           begin
+            found := true;
             if em.targetList.Count = 0 then
               raise Exception.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
             map := em.targetList[0]; // todo: choose amongst dependencies
-            result := TFhirParameters.create;
             if (map.equivalence in [ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
             begin
+              found := true;
               result.AddParameter('result', true);
               outcome := TFhirCoding.Create;
               result.AddParameter('outcome', outcome);
@@ -762,6 +813,12 @@ begin
       finally
         list.Free;
       end;
+
+      if not found then
+      begin
+        result.AddParameter('result', false);
+        result.AddParameter('message', 'no match found');
+      end;
     except
       on e : exception do
       begin
@@ -777,7 +834,10 @@ end;
 
 function TTerminologyServer.translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters;
 begin
-  raise Exception.Create('Not done yet');
+  if coded.codingList.count = 1 then
+    result := translate(source, coded.codingList[0], target)
+  else
+    raise Exception.Create('Not done yet');
 end;
 
 function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;
@@ -1048,6 +1108,83 @@ begin
     result := b.ToString;
   finally
     b.Free;
+  end;
+end;
+
+function TTerminologyServer.translate(cm: TLoadedConceptMap; coding: TFhirCoding): TFHIRParameters;
+var
+  op : TFHIROperationOutcome;
+  list : TLoadedConceptMapList;
+  i : integer;
+  p : TFhirParameters;
+  em : TFhirConceptMapElement;
+  map : TFhirConceptMapElementTarget;
+  outcome : TFhirCoding;
+  found : boolean;
+begin
+  result := nil;
+  op := TFhirOperationOutcome.Create;
+  try
+    try
+      if not checkCode(op, '', coding.code, coding.system, coding.display) then
+        raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
+
+//      // check to see whether the coding is already in the target value set, and if so, just return it
+//      p := validate(target, coding, false);
+//      try
+//        if TFhirBoolean(p.NamedParameter['result']).value then
+//        begin
+//          result := TFhirParameters.create;
+//          result.AddParameter('result', true);
+//          result.AddParameter('outcome', coding.Link);
+//          result.AddParameter('equivalence', TFhirCode.Create('equal'));
+//          exit;
+//        end;
+//      finally
+//        p.Free;
+//      end;
+
+      found := false;
+      result := TFhirParameters.create;
+      if isOkSource(cm, coding, em) then
+      begin
+      found := true;
+      if em.targetList.Count = 0 then
+        raise Exception.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
+      map := em.targetList[0]; // todo: choose amongst dependencies
+      if (map.equivalence in [ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
+      begin
+        found := true;
+        result.AddParameter('result', true);
+        outcome := TFhirCoding.Create;
+        result.AddParameter('outcome', outcome);
+        outcome.system := map.system;
+        outcome.code := map.code;
+      end
+      else
+      begin
+        result.AddParameter('result', false);
+      end;
+      result.AddParameter('equivalence', TFHIRCode.Create(map.equivalenceElement.value));
+      if (map.commentsElement <> nil) then
+        result.AddParameter('message', map.commentsElement.Link);
+      end;
+
+      if not found then
+      begin
+        result.AddParameter('result', false);
+        result.AddParameter('message', 'no match found');
+      end;
+    except
+      on e : exception do
+      begin
+        result := TFHIRParameters.create;
+        result.AddParameter('result', false);
+        result.AddParameter('message', e.message);
+      end;
+    end;
+  finally
+    op.Free;
   end;
 end;
 

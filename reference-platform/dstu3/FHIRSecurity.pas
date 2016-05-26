@@ -170,8 +170,6 @@ end;
 var
   GID : integer;
 procedure TFHIRSecurityRights.init(worker : TWorkerContext);
-var
-  a : TFhirResourceType;
 begin
   GId := GId + 1;
   FId := inttostr(GID);
@@ -219,6 +217,8 @@ end;
 
 function TFHIRSecurityRights.canRead(resourceName : String): boolean;
 begin
+  if (self = nil) or (FReadAllowed = nil) then
+    raise Exception.Create('Error Message');
   result := FReadAllowed.contains(resourceName);
 end;
 

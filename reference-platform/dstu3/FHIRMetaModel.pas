@@ -123,7 +123,7 @@ type
     function hasComments : boolean;
     function hasValue : boolean;
     function hasIndex : boolean;
-    procedure getChildrenByName(name : String; children : TFHIRObjectList); override;
+    procedure GetChildrenByName(name : String; children : TFHIRObjectList); override;
     function getNamedChild(name : String) : TFHIRMMElement;
     procedure getNamedChildren(name : String; list : TAdvList<TFHIRMMElement>);
     function getNamedChildValue(name : String) : string;
@@ -223,11 +223,11 @@ type
     procedure parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
     procedure parseResource(path : String; obj: TJsonObject; context : TFHIRMMElement);
 
-    procedure compose(e : TFHIRMMElement); overload;
-    procedure compose(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement); overload;
+    procedure composeElement(e : TFHIRMMElement); overload;
+    procedure composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement); overload;
     procedure composeList(path : String; list : TFHIRObjectList);
     procedure primitiveValue(name : String; item : TFHIRMMElement);
-    procedure compose(path : String; element : TFHIRMMElement); overload;
+    procedure composeElement(path : String; element : TFHIRMMElement); overload;
 
   public
     function parse(stream : TStream) : TFHIRMMElement; overload; override;
@@ -242,6 +242,7 @@ type
   public
     function parse(r : TFHIRResource) : TFHIRMMElement; overload;
     function parse(r : TFHIRBase) : TFHIRMMElement; overload;
+    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload;
   end;
 
   TFHIRCustomResource = class (TFHIRResource)
@@ -1871,14 +1872,14 @@ begin
     json.Stream := stream.Link;
     json.Start;
     json.HasWhitespace := pretty;
-    compose(e);
+    composeElement(e);
     json.Finish;
   finally
     json.free;
   end;
 end;
 
-procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement);
+procedure TFHIRMMJsonParser.composeElement(e : TFHIRMMElement);
 var
   done : TAdvStringSet;
   child : TFHIRMMElement;
@@ -1888,18 +1889,18 @@ begin
   try
     {no-comments composeComments(e); }
     for child in e.Children do
-      compose(e.Name, e, done, child);
+      composeElement(e.Name, e, done, child);
   finally
     done.free;
   end;
 end;
 
-procedure TFHIRMMJsonParser.compose(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement);
+procedure TFHIRMMJsonParser.composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement);
 var
   list : TFHIRObjectList;
 begin
   if (child.special = fseBundleEntry) or not child.Prop.isList() then // for specials, ignore the cardinality of the stated type 
-    compose(path, child)
+    composeElement(path, child)
   else if not (done.contains(child.Name)) then
   begin
     done.add(child.Name);
@@ -1969,7 +1970,7 @@ begin
         done := TAdvStringSet.create;
         try
           for child in item.Children do
-            compose(path+'.'+name+'[]', item, done, child);
+            composeElement(path+'.'+name+'[]', item, done, child);
         finally
           done.free;
         end;
@@ -1992,7 +1993,7 @@ begin
     json.value(name, item.Value);
 end;
 
-procedure TFHIRMMJsonParser.compose(path : String; element : TFHIRMMElement);
+procedure TFHIRMMJsonParser.composeElement(path : String; element : TFHIRMMElement);
 var
   name : string;
   done : TAdvStringSet;
@@ -2014,7 +2015,7 @@ begin
     done := TAdvStringSet.create;
     try
       for child in element.Children do
-        compose(path+'.'+element.Name, element, done, child);
+        composeElement(path+'.'+element.Name, element, done, child);
     finally
       done.free;
     end;
@@ -2046,6 +2047,11 @@ begin
   finally
     result.free;
   end;
+end;
+
+procedure TFHIRMMResourceLoader.compose(e: TFHIRMMElement; stream: TStream; pretty: boolean; base: String);
+begin
+  raise Exception.create('not implemented');
 end;
 
 function TFHIRMMResourceLoader.parse(r: TFHIRBase): TFHIRMMElement;

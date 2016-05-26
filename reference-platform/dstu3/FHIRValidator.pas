@@ -59,7 +59,7 @@ Type
     function push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
     function addToLiteralPath(path: Array of String): String;
   public
-    Constructor Create();
+    Constructor Create; Override;
     Destructor Destroy; Override;
   end;
 
@@ -110,8 +110,8 @@ Type
     FOperationDescription : String;
     procedure SetErrors(const Value: TFhirOperationOutcomeIssueList);
   public
-    constructor create; override;
-    destructor destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     property CheckDisplay : TCheckDisplayOption read FCheckDisplay write FCheckDisplay;
     property BPWarnings: TBestPracticeWarningLevel read FBPWarnings write FBPWarnings;
@@ -933,6 +933,7 @@ var
   result : boolean;
   stack1 : TNodeStack;
 begin
+  result := false;
   if resource = nil then
     resource := element;
 
@@ -1064,7 +1065,7 @@ var
   firstStack: TNodeStack;
   fullUrl: String;
   resource, res: TFHIRMMElement;
-  localStack, t: TNodeStack;
+  localStack : TNodeStack;
 begin
   entries := TAdvList<TFHIRMMElement>.Create();
   try
@@ -1181,7 +1182,7 @@ end;
 
 Function TFHIRValidator.resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
-  entry, res, resource: TFHIRMMElement;
+  entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
   parts: TArray<String>;
 begin
@@ -2390,7 +2391,6 @@ end;
 procedure TFHIRValidator.checkInnerNames(ctxt : TFHIRValidatorContext; e: TFHIRMMElement; path: String; list : TFhirXHtmlNodeList);
 var
   node : TFhirXHtmlNode;
-  ns : String;
   attr : TFHIRAttribute;
 begin
   for node in list do

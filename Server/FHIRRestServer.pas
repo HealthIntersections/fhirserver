@@ -95,7 +95,7 @@ Type
     FErrors : TStringList;
     procedure SetManager(const Value: TCDSHooksManager);
   public
-    constructor create; Override;
+    constructor Create; Override;
     Destructor Destroy; Override;
     property manager : TCDSHooksManager read FManager write SetManager;
     property Errors : TStringList read FErrors;
@@ -106,7 +106,6 @@ Type
   Private
     FIni : TIniFile;
     FLock : TCriticalSection;
-    FLastTrack : integer;
 
     FPort : Integer;
     FSSLPort : Integer;
@@ -296,7 +295,6 @@ Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : Stri
 var
   s, txu : String;
   ts : TStringList;
-  i : integer;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
@@ -595,8 +593,8 @@ Begin
     FSSLServer.IOHandler := FIOHandler;
     FIOHandler.SSLOptions.Method := sslvSSLv23;
     // SSL v3 / TLS 1 required for older versions of DotNet
-    FIOHandler.SSLOptions.SSLVersions := [sslvSSLv3, sslvTLSv1, sslvTLSv1_2];
-    FIOHandler.SSLOptions.CipherList := 'ALL:!SSLv2:!DES';
+    FIOHandler.SSLOptions.SSLVersions := [sslvSSLv3, {$IFNDEF NCTS}sslvTLSv1, {$endif} sslvTLSv1_2];
+    FIOHandler.SSLOptions.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
@@ -1258,7 +1256,6 @@ var
   r : TFHIRResource;
   s : String;
   comp : TFHIRComposer;
-  i : integer;
 begin
   result := 0;
 
@@ -1325,7 +1322,6 @@ var
   s, typ, id, ver : String;
   p : TParseMap;
   prsr : TFHIRParser;
-  i : integer;
 begin
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1556,7 +1552,6 @@ var
   q : TFhirQuestionnaire;
   s, j : String;
   json : TFHIRJsonComposer;
-  i : integer;
 begin
   result := 0;
 

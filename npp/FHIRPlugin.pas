@@ -46,7 +46,7 @@ uses
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes,
-  FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt;
+  FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt, ClosureManagerFrm;
 
 const
   INDIC_INFORMATION = 21;
@@ -150,6 +150,7 @@ type
     procedure FuncServerValidate;
     procedure FuncNarrative;
     procedure FuncDisconnect;
+    procedure FuncTerminologyTools;
 
     procedure reset;
     procedure SetSelection(start, stop : integer);
@@ -185,6 +186,7 @@ procedure _FuncServerValidate; cdecl;
 procedure _FuncNarrative; cdecl;
 procedure _FuncDisconnect; cdecl;
 procedure _FuncDebug; cdecl;
+procedure _FuncTerminologyTools; cdecl;
 
 var
   FNpp: TFHIRPlugin;
@@ -243,6 +245,8 @@ begin
   self.AddFuncItem('&POST resource to new ID', _FuncPOST);
   self.AddFuncItem('POST resource as a &Transaction', _FuncTransaction);
   self.AddFuncItem('Validate &resource on server', _FuncServerValidate);
+  self.AddFuncItem('-', Nil);
+  self.AddFuncItem('T&x Tools', _FuncTerminologyTools);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Confi&gure Tools', _FuncSettings);
   self.AddFuncItem('Vie&w Toolbox', _FuncToolbox);
@@ -376,6 +380,11 @@ begin
       s := s + 'exception: '+e.Message;
   end;
   ShowMessage(s);
+end;
+
+procedure _FuncTerminologyTools;
+begin
+  FNpp.FuncTerminologyTools;
 end;
 
 function TFHIRPlugin.connected: boolean;
@@ -1058,6 +1067,16 @@ begin
   end
   else
     ShowMessage('This does not appear to be valid FHIR content');
+end;
+
+procedure TFHIRPlugin.FuncTerminologyTools;
+begin
+  ClosureManagerForm := TClosureManagerForm.Create(self);
+  try
+    ClosureManagerForm.ShowModal;
+  finally
+    FreeAndNil(ClosureManagerForm)
+  end;
 end;
 
 procedure TFHIRPlugin.FuncToolbox;

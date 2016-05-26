@@ -171,7 +171,7 @@ Type
     function GetFormat: TFHIRFormat; override;
   Public
     procedure Parse; Overload; Override;
-    procedure Parse(obj : TJsonObject); Overload; Virtual;
+    procedure Parse(obj : TJsonObject); Reintroduce; Overload; Virtual;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
     class function ParseFragment(worker : TWorkerContext; fragment, type_, lang : String) : TFHIRBase; overload;
     class function ParseFile(worker : TWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
@@ -241,7 +241,7 @@ Type
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFhirDomainResource; value : TFhirResource); overload;
     Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFHIRElement; value : TFhirResource); overload;
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); overload; override;
-    procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRExpressionNode); overload; virtual;
+    procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRExpressionNode); reintroduce; overload; virtual;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase); virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); override;
@@ -276,7 +276,7 @@ Type
 //    Procedure ComposeExtension(json : TJSONWriter; name : String; extension : TFhirExtension; noObj : boolean = false); virtual;
 //    Procedure ComposeBinary(json : TJSONWriter; binary : TFhirBinary);
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRBaseList; types : TAdvStringSet; isPretty : Boolean); overload; override;
-    procedure ComposeExpression(json: TJSONWriter; expr : TFHIRExpressionNode); overload; virtual;
+    procedure ComposeExpression(json: TJSONWriter; expr : TFHIRExpressionNode); reintroduce; overload; virtual;
     procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRBase); virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRBaseList; isPretty : Boolean); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRBase; isPretty : Boolean); override;
@@ -2697,7 +2697,6 @@ var
   ttl : TRDFGenerator;
   section : TRDFSection;
   subject : TRDFSubject;
-  this : TRDFComplex;
   b : TStringBuilder;
   bytes : TBytes;
 begin
@@ -2796,7 +2795,6 @@ end;
 
 procedure TFHIRTextParser.Parse;
 begin
-  raise Exception.Create('Unable to process text content - unrecognised');
 end;
 
 

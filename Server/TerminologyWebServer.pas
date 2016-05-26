@@ -835,7 +835,7 @@ var
   html : THtmlPublisher;
   analysis : TSnomedAnalysis;
 begin
-  FServer.Snomed.RecordUse;
+  FServer.DefSnomed.RecordUse;
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
     response.ContentType := 'text/xml';
@@ -846,13 +846,13 @@ begin
       on e : Exception do
       begin
         response.ResponseNo := 500;
-        response.ContentText := '<snomed version="'+FServer.snomed.VersionDate+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
+        response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
       end;
     end;
   end
   else if request.Document.StartsWith('/snomed/analysis/')  then
   begin
-    analysis := TSnomedAnalysis.create(FServer.Snomed.Link);
+    analysis := TSnomedAnalysis.create(FServer.DefSnomed.Link);
     try
       response.ContentText := analysis.generate;
       response.ResponseNo := 200;
@@ -867,7 +867,7 @@ begin
 
     try
       html := THtmlPublisher.Create;
-      pub := TSnomedPublisher.create(FServer.Snomed, FFHIRPath);
+      pub := TSnomedPublisher.create(FServer.DefSnomed, FFHIRPath);
       try
         html.Version := SERVER_VERSION;
         html.BaseURL := '/snomed/doco/';
@@ -947,12 +947,12 @@ begin
   writelnt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
-    if FServer.Snomed.IsValidConcept(code) then
+    if FServer.DefSnomed.IsValidConcept(code) then
     begin
-      result := '<snomed version="'+FServer.Snomed.VersionDate+'" type="concept" concept="'+code+'" display="'+EncodeXml(FServer.Snomed.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="concept" concept="'+code+'" display="'+EncodeXml(FServer.DefSnomed.GetDisplayName(code, ''), xmlAttribute)+'">';
       sl := TStringList.Create;
       try
-        FServer.Snomed.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
+        FServer.DefSnomed.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
         for s in sl do
           result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
       finally
@@ -960,12 +960,12 @@ begin
       end;
       result := result + '</snomed>';
     end
-    else if FServer.Snomed.IsValidDescription(code, id, s) then
+    else if FServer.DefSnomed.IsValidDescription(code, id, s) then
     begin
-      result := '<snomed version="'+FServer.Snomed.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
+      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
       sl := TStringList.Create;
       try
-        FServer.Snomed.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
+        FServer.DefSnomed.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
         for s in sl do
           result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
       finally
@@ -974,14 +974,14 @@ begin
       result := result + '</snomed>';
     end
     else
-      result := '<snomed version="'+FServer.Snomed.VersionDate+'" description="Snomed ID '+code+' not known"/>';
+      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" description="Snomed ID '+code+' not known"/>';
   end
   else
   begin
-    exp := TSnomedExpressionParser.Parse(FServer.Snomed, code);
+    exp := TSnomedExpressionParser.Parse(FServer.DefSnomed, code);
     try
-      result := '<snomed version="'+FServer.Snomed.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(FServer.Snomed, exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
-      EncodeXml(TSnomedExpressionParser.Render(FServer.Snomed, exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(TSnomedExpressionParser.Display(FServer.Snomed, exp), xmlAttribute)+'" ok="true"/>';
+      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(FServer.DefSnomed, exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
+      EncodeXml(TSnomedExpressionParser.Render(FServer.DefSnomed, exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(TSnomedExpressionParser.Display(FServer.DefSnomed, exp), xmlAttribute)+'" ok="true"/>';
     finally
       exp.Free;
     end;

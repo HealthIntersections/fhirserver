@@ -17,6 +17,7 @@ import org.hl7.fhir.dstu3.model.SearchParameter;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.dstu3.model.StructureDefinition;
 import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.dstu3.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.dstu3.utils.ToolingExtensions;
 import org.hl7.fhir.utilities.Utilities;
@@ -126,7 +127,9 @@ public class DefinitionsLoader3 {
       }
       Map<String, TypeDefn> map = getTypesMapForName(def, type.getName());
       type.getTypes().clear();
-      if (map == def.getInfrastructure() && !Utilities.existsInList(sd.getId(), "Narrative", "Extension")) {
+      if (sd.hasBaseDefinition() && sd.getBaseDefinition().startsWith("http://hl7.org/fhir/StructureDefinition/"))
+        type.getTypes().add(new TypeRef(sd.getBaseDefinition().substring(40)));
+      else if (map == def.getInfrastructure() && !Utilities.existsInList(sd.getId(), "Narrative", "Extension")) {
         if (!sd.getId().equals("Element"))
          type.getTypes().add(new TypeRef("Element"));
       } else if (Utilities.existsInList(sd.getId(), "Meta")) {
@@ -181,7 +184,7 @@ public class DefinitionsLoader3 {
   }
 
   private static boolean isPrimitive(StructureDefinition sd) {
-    return Utilities.existsInList(sd.getId(), "boolean", "integer", "decimal", "base64Binary", "instant", "string", "uri", "date", "dateTime", "time", "code", "oid", "uuid", "id", "unsignedInt", "positiveInt", "markdown");
+    return sd.getKind() == StructureDefinitionKind.PRIMITIVETYPE || Utilities.existsInList(sd.getId(), "boolean", "integer", "decimal", "base64Binary", "instant", "string", "uri", "date", "dateTime", "time", "code", "oid", "uuid", "id", "unsignedInt", "positiveInt", "markdown");
   }
 
 

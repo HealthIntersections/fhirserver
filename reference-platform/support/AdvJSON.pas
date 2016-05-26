@@ -224,7 +224,7 @@ Type
 
     function unescape(s : String) : String;
   public
-    constructor Create;
+    constructor Create; override;
     Destructor Destroy; Override;
     procedure execute(focus : TJsonNode; path : string; terminalExtensions : boolean);
 
@@ -1317,7 +1317,7 @@ begin
   while not ((ItemType = jpitEnd) or (root and (ItemType = jpitEof))) do
   begin
     if obj.FProperties.ContainsKey(itemName) then
-      raise Exception.Create('DuplicateKey: '+itemName);
+      raise Exception.Create('DuplicateKey: '+itemName+' at '+obj.path);
 
     case ItemType of
       jpitObject:
@@ -2215,7 +2215,6 @@ end;
 procedure TJsonPatchEngine.applyAddInner(path : String; value : TJsonNode);
 var
   query : TJsonPointerQuery;
-  index : integer;
 begin
   query := TJsonPointerQuery.create;
   try
@@ -2270,7 +2269,6 @@ procedure TJsonPatchEngine.applyReplace(patchOp: TJsonObject; path : String);
 var
   value : TJsonNode;
   query : TJsonPointerQuery;
-  index : integer;
 begin
   value := patchOp.properties['value'];
   if value = nil then
@@ -2311,7 +2309,7 @@ end;
 procedure TJsonPatchEngine.applyCopy(patchOp: TJsonObject; path : String);
 var
   from : string;
-  qFrom, qPath : TJsonPointerQuery;
+  qFrom : TJsonPointerQuery;
 begin
   from := patchOp['from'];
   if from = '' then
@@ -2329,7 +2327,7 @@ end;
 procedure TJsonPatchEngine.applyMove(patchOp: TJsonObject; path : String);
 var
   from : string;
-  qFrom, qPath : TJsonPointerQuery;
+  qFrom : TJsonPointerQuery;
   focus : TJsonNode;
 begin
   from := patchOp['from'];

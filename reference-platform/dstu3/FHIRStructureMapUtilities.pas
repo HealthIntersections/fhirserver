@@ -58,6 +58,7 @@ type
    	fpe : TFHIRExpressionEngine;
   	FLib : TAdvMap<TFHIRStructureMap>;
   	FServices : TTransformerServices;
+    procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderImports(b : TStringBuilder; map : TFHIRStructureMap);
     procedure renderGroup(b : TStringBuilder; g : TFHIRStructureMapGroup);
@@ -66,6 +67,7 @@ type
     procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
     procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget);
     procedure renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
+    procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
 
     function fromEnum(s : String; codes : Array of String) : integer;
     function readPrefix(prefixes : TDictionary<String, String>; lexer : TFHIRPathLexer) : String;
@@ -100,7 +102,8 @@ type
 
   	property Lib : TAdvMap<TFHIRStructureMap> read FLib;
 
-    function render(map : TFHIRStructureMap) : String;
+    function render(map : TFHIRStructureMap) : String; overload;
+    function render(map : TFHIRConceptMap) : String; overload;
 	  function parse(text : String) : TFHIRStructureMap;
     procedure transform(appInfo : TAdvObject; source : TFHIRBase; map : TFHIRStructureMap; target : TFHIRBase);
   end;
@@ -142,6 +145,7 @@ begin
 		b.append(jsonEscape(map.Name, true));
 		b.append('"'#13#10#13#10);
 
+    renderContained(b, map);
 		renderUses(b, map);
 		renderImports(b, map);
 		for g in map.groupList do
@@ -410,6 +414,153 @@ begin
   end;
 end;
 
+function TFHIRStructureMapUtilities.render(map: TFHIRConceptMap): String;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.create();
+  try
+    renderConceptMap(b, map);
+		result := b.toString();
+  finally
+    b.free;
+	end;
+end;
+
+procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
+const
+  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
+var
+  prefixes : TDictionary<String, String>;
+  e : TFhirConceptMapElement;
+  t : TFhirConceptMapElementTarget;
+  d : TFhirConceptMapElementTargetDependsOn;
+  s : String;
+  f : boolean;
+  procedure seeSystem(base, url : String);
+  var
+    i : integer;
+  begin
+    if not prefixes.ContainsKey(url) then
+    begin
+      if not prefixes.ContainsValue(base) then
+        prefixes.Add(url, base)
+      else
+      begin
+        i := 1;
+        while prefixes.ContainsValue(base+inttostr(i)) do
+          inc(i);
+        prefixes.Add(url, base+inttostr(i));
+      end;
+    end;
+  end;
+  procedure app(system, code : String);
+  begin
+    b.append(prefixes[system]);
+    b.append(':');
+    if code.Contains(' ') then
+      b.append('"'+jsonEscape(code, true)+'"')
+    else
+      b.append(jsonEscape(code, false));
+  end;
+begin
+  prefixes := TDictionary<String, String>.create;
+  try
+    b.append('conceptmap "');
+    b.append(map.Url);
+    b.append('" = "');
+    b.append(jsonEscape(map.Name, true));
+    b.append('" {'#13#10#13#10);
+
+    if (map.source is TFhirUri) then
+    begin
+      b.Append('source "');
+      b.append(jsonEscape(TFhirUri(map.source).value, true));
+      b.append('"'#13#10);
+    end;
+    if (map.target is TFhirUri) then
+    begin
+      b.Append('target "');
+      b.append(jsonEscape(TFhirUri(map.target).value, true));
+      b.append('"'#13#10);
+    end;
+
+    // first pass: determine prefixes:
+    for e in map.elementList do
+    begin
+      seeSystem('s', e.system);
+      for t in e.targetList do
+      begin
+        seeSystem('t', t.system);
+        for d in t.dependsOnList do
+         seeSystem('d', d.system);
+        for d in t.productList do
+         seeSystem('p', d.system);
+      end;
+    end;
+    for s in prefixes.Keys do
+    begin
+      b.Append('prefix "');
+      b.append(prefixes[s]);
+      b.Append(' = "');
+      b.append(jsonEscape(s, true));
+      b.append('"'#13#10);
+    end;
+    b.append(#13#10);
+
+    // now render
+    for e in map.elementList do
+    begin
+      for t in e.targetList do
+      begin
+        app(e.system, e.code);
+        b.Append(' ');
+        if (t.dependsOnList.Count > 0) then
+        begin
+          b.Append('[');
+          f := true;
+          for d in t.dependsOnList do
+          begin
+            if f then f := false else b.Append(', ');
+            app(d.system, d.code);
+          end;
+          b.Append(']');
+        end;
+        b.Append(CHARS_EQUIVALENCE[t.equivalence]);
+        b.Append(' ');
+        if (t.code <> '') then
+        begin
+          app(t.system, t.code);
+          if (t.productList.Count > 0) then
+          begin
+            b.Append('[');
+            f := true;
+            for d in t.productList do
+            begin
+              if f then f := false else b.Append(', ');
+              app(d.system, d.code);
+            end;
+            b.Append(']');
+          end;
+        end;
+        b.Append(#13#10);
+      end;
+    end;
+    b.append('}'#13#10);
+  finally
+    prefixes.Free;
+  end;
+end;
+
+procedure TFHIRStructureMapUtilities.renderContained(b: TStringBuilder; map: TFHIRStructureMap);
+var
+  r : TFHIRResource;
+begin
+  for r in map.containedList do
+    if r is TFhirConceptMap then
+      renderConceptMap(b, r as TFhirConceptMap);
+end;
+
 procedure TFHIRStructureMapUtilities.renderDoco(b : TStringBuilder; doco : String);
 begin
   if (doco <> '') then
@@ -432,6 +583,7 @@ begin
 		result := TFHIRStructureMap.Create;
     try
       result.Url := lexer.readConstant('url');
+      result.id := result.url.Substring(result.url.LastIndexOf('/')+1);
       lexer.token('=');
       result.Name := lexer.readConstant('name');
       lexer.skipComments();

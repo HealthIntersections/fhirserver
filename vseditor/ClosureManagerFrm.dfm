@@ -106,9 +106,10 @@ object ClosureManagerForm: TClosureManagerForm
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 480
     object TabSheet1: TTabSheet
       Caption = 'Grid'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 281
       ExplicitHeight = 165
       object grid: TStringGrid
@@ -146,8 +147,6 @@ object ClosureManagerForm: TClosureManagerForm
       Margins.Bottom = 0
       Caption = 'Lists'
       ImageIndex = 1
-      ExplicitWidth = 281
-      ExplicitHeight = 165
       object Splitter1: TSplitter
         Left = 403
         Top = 0
@@ -164,7 +163,6 @@ object ClosureManagerForm: TClosureManagerForm
         Caption = 'Panel2'
         ParentBackground = False
         TabOrder = 0
-        ExplicitHeight = 487
         object Panel4: TPanel
           Left = 1
           Top = 1
@@ -184,10 +182,6 @@ object ClosureManagerForm: TClosureManagerForm
           Align = alClient
           ItemHeight = 13
           TabOrder = 1
-          ExplicitLeft = 180
-          ExplicitTop = 88
-          ExplicitWidth = 121
-          ExplicitHeight = 97
         end
       end
       object Panel3: TPanel
@@ -199,10 +193,6 @@ object ClosureManagerForm: TClosureManagerForm
         Caption = 'Panel3'
         ParentBackground = False
         TabOrder = 1
-        ExplicitLeft = 526
-        ExplicitTop = 150
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         object Panel5: TPanel
           Left = 1
           Top = 1
@@ -213,8 +203,6 @@ object ClosureManagerForm: TClosureManagerForm
           Caption = '  Closures'
           ParentBackground = False
           TabOrder = 0
-          ExplicitLeft = 2
-          ExplicitTop = 3
         end
         object lbClosures: TListBox
           Left = 1
@@ -224,10 +212,6 @@ object ClosureManagerForm: TClosureManagerForm
           Align = alClient
           ItemHeight = 13
           TabOrder = 1
-          ExplicitLeft = 116
-          ExplicitTop = 68
-          ExplicitWidth = 121
-          ExplicitHeight = 97
         end
       end
     end

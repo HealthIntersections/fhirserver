@@ -514,6 +514,8 @@ public class ElementDefn {
       types.add(tr);
     } else {
       for (org.hl7.fhir.dstu3.model.ElementDefinition.TypeRefComponent t : ed.getType()) {
+        if (t.getCode() == null)
+          throw new Error("no code on "+ed.getPath());
         if (t.getCode().equals("Reference") && t.hasProfile()) {
           String ref = t.getProfile().get(0).getValue().substring(40);
           if (ref.equals("Resource"))

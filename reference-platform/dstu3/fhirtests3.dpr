@@ -243,7 +243,7 @@ begin
   CoInitialize(nil);
   s := ExtractFilePath(Paramstr(0));
   IdOpenSSLSetLibPath(s);
-  GBasePath := 'C:\work\org.hl7.fhir.2016May';
+  GBasePath := 'C:\work\org.hl7.fhir';
   RunRegisteredTests;
   TTestingWorkerContext.closeUp;
 end.

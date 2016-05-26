@@ -224,47 +224,49 @@ const
   {$ELSE}
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
-    tcOther,
-    tcFinancial , // frtAccount
-    tcClinical , // frtAllergyIntolerance
-    tcSchedule , // frtAppointment
-    tcSchedule , // frtAppointmentResponse
-    tcAudit , // frtAuditEvent
-    tcOther , // frtBasic
-    tcDocuments , // frtBinary
-    tcOther , // frtBodySite
-    tcOther , // frtBundle
-    tcClinical , // frtCarePlan
-    tcClinical , // frtCareTeam
-    tcFinancial , // frtClaim
-    tcFinancial , // frtClaimResponse
-    tcClinical , // frtClinicalImpression
-    tcOther , // frtCodeSystem
-    tcOther , // frtCommunication
-    tcOther , // frtCommunicationRequest
-    tcOther , // frtCompartmentDefinition
-    tcDocuments , // frtComposition
-    tcOther , // frtConceptMap
-    tcClinical , // frtCondition
-    tcOther , // frtConformance
-    tcFinancial , // frtContract
-    tcFinancial , // frtCoverage
-    tcOther , // frtDataElement
-    tcOther , // frtDecisionSupportRule
-    tcOther , // frtDecisionSupportServiceModule
-    tcClinical,  // frtDetectedIssue
-    tcOther , // frtDevice
-    tcOther , // frtDeviceComponent
-    tcOther , // frtDeviceMetric
-    tcOther , // frtDeviceUseRequest
-    tcClinical, // frtDeviceUseStatement
-    tcOther , // frtDiagnosticOrder
-    tcClinical, // frtDiagnosticReport
-    tcDocuments , // frtDocumentManifest
-    tcDocuments, // frtDocumentReference
-    tcFinancial , // frtEligibilityRequest
-    tcFinancial, // frtEligibilityResponse
-    tcSchedule , // frtEncounter
+    tcOther, // frtNull
+    tcFinancial , // frtAccount - frtAccount
+    tcClinical , // frtAllergyIntolerance - frtAllergyIntolerance
+    tcSchedule , // frtAppointment - frtAppointment
+    tcSchedule , // frtAppointmentResponse - frtAppointmentResponse
+    tcAudit , // frtAuditEvent - frtAuditEvent
+    tcOther , // frtBasic - frtBasic
+    tcDocuments , // frtBinary - frtBinary
+    tcOther , // frtBodySite - frtBodySite
+    tcOther , // frtBundle - frtBundle
+    tcClinical , // frtCarePlan - frtCarePlan
+    tcClinical , // frtCareTeam - frtCareTeam
+    tcFinancial , // frtClaim - frtClaim
+    tcFinancial , // frtClaimResponse - frtClaimResponse
+    tcClinical , // frtClinicalImpression - frtClinicalImpression
+    tcOther , // frtCodeSystem - frtCodeSystem
+    tcOther , // frtCommunication - frtCommunication
+    tcOther , // frtCommunicationRequest - frtCommunicationRequest
+    tcOther , // frtCompartmentDefinition - frtCompartmentDefinition
+    tcDocuments , // frtComposition - frtComposition
+    tcOther , // frtConceptMap - frtConceptMap
+    tcClinical , // frtCondition - frtCondition
+    tcOther , // frtConformance - frtConformance
+    tcOther, // frtConsent
+    tcFinancial , // frtContract - frtContract
+    tcFinancial , // frtCoverage - frtCoverage
+    tcOther , // frtDataElement - frtDataElement
+    tcOther , // frtDecisionSupportRule - frtDecisionSupportRule
+    tcOther , // frtDecisionSupportServiceModule - frtDecisionSupportServiceModule
+    tcClinical,  // frtDetectedIssue - frtDetectedIssue
+    tcOther , // frtDevice - frtDevice
+    tcOther , // frtDeviceComponent - frtDeviceComponent
+    tcOther , // frtDeviceMetric - frtDeviceMetric
+    tcOther , // frtDeviceUseRequest - frtDeviceUseRequest
+    tcClinical, // frtDeviceUseStatement - frtDeviceUseStatement
+    tcOther , // frtDiagnosticOrder - frtDiagnosticOrder
+    tcClinical, // frtDiagnosticReport - frtDiagnosticReport
+    tcDocuments , // frtDocumentManifest - frtDocumentManifest
+    tcDocuments, // frtDocumentReference - frtDocumentReference
+    tcFinancial , // frtEligibilityRequest - frtEligibilityRequest
+    tcFinancial, // frtEligibilityResponse - frtEligibilityResponse
+    tcSchedule , // frtEncounter - frtEncounter
+    tcOther, // frtEndpoint
     tcFinancial, // frtEnrollmentRequest
     tcFinancial , // frtEnrollmentResponse
     tcSchedule, // frtEpisodeOfCare

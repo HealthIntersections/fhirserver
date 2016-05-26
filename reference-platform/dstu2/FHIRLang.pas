@@ -41,6 +41,9 @@ function GetFhirMessage(id, lang, def : String):String; overload;
 
 procedure LoadMessages;
 
+var
+  FHIRExeModuleName : String;
+
 implementation
 
 {$R FHIRTranslations.res}
@@ -96,7 +99,7 @@ var
 begin
   LRes := TAfsResourceVolume.create;
   try
-    LHnd := LRes.Open('FHIR_Translations,#10', amRead, asRead);
+    LHnd := LRes.Open(FHIRExeModuleName, 'FHIR_Translations,#10', amRead, asRead);
     try
       SetLength(result, LRes.GetSize(LHnd));
       LRes.Read(LHnd, result[0], length(result));

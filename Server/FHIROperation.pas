@@ -582,6 +582,7 @@ type
 implementation
 
 uses
+  TerminologyServerStore,
   SystemService;
 
 function booleanToSQL(b : boolean): string;
@@ -1418,7 +1419,6 @@ var
   id : String;
   i : integer;
   since, prior : TDateTime;
-  a : TFhirResourceType;
   rn : String;
 begin
   // todo: restrict to readable resources
@@ -1929,7 +1929,6 @@ procedure TFhirOperationManager.ProcessMPISearch(typekey : integer; session : TF
 var
   mpi : TMPISearchProcessor;
   s : String;
-  csql : String;
 begin
   if (session = nil) then
     raise Exception.Create('no session?');
@@ -1978,7 +1977,6 @@ var
   p : TArray<String>;
   sel : TStringList;
   key2, i: integer;
-  t1 : TFhirResourceType;
   type_ : string;
 begin
   if ((_includes = '') and (_reverseIncludes = '')) or (keys.count = 0) then
@@ -2605,10 +2603,6 @@ function TFhirOperationManager.ExecuteValidation(request: TFHIRRequest; response
 var
   outcome : TFhirOperationOutcome;
   i : integer;
-  buffer : TAdvBuffer;
-  mem : TAdvMemoryStream;
-  xml : TFHIRComposer;
-  vcl : TVclStream;
   ctxt : TFHIRValidatorContext;
 begin
   try
@@ -2966,7 +2960,6 @@ var
   needsSecure : boolean;
   crs : TAdvList<TFHIRCustomResourceInformation>;
   cr : TFHIRCustomResourceInformation;
-  key : integer;
   sp : TFhirSearchParameter;
 begin
   crs := TAdvList<TFHIRCustomResourceInformation>.create;
@@ -3003,7 +2996,6 @@ var
   res : TFHIRResource;
   sd : TFhirStructureDefinition;
   list : TAdvList<TFhirSearchParameter>;
-  sr : TFhirSearchParameter;
   cr : TFHIRCustomResourceInformation;
   needsSecure : boolean;
 begin
@@ -3433,7 +3425,7 @@ end;
 function TFhirOperationManager.scanId(request : TFHIRRequest; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
 var
   id : TFHIRTransactionEntry;
-  i, k : integer;
+  k : integer;
   sId, s, b : String;
   sParts : TArray<String>;
   baseok : boolean;
@@ -4117,7 +4109,6 @@ end;
 function typeForReference(ref : String) : String;
 var
   list : TArray<String>;
-  i : integer;
 begin
   list := ref.Split(['/']);
   result := list[0];
@@ -6189,10 +6180,6 @@ type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
   outcome : TFhirOperationOutcome;
   i : integer;
-  buffer : TAdvBuffer;
-  mem : TAdvMemoryStream;
-  xml : TFHIRComposer;
-  vcl : TVclStream;
   profileId : String;
   profile : TFHirStructureDefinition;
   opDesc : string;
@@ -6927,7 +6914,7 @@ end;
 
 procedure TFhirConceptMapTranslationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
-  vsS, vsT : TFHIRValueSet;
+  cm : TLoadedConceptMap;
 //  op : TFhirOperationOutcome;
 //  resourceKey : integer;
   coded : TFhirCodeableConcept;
@@ -6940,49 +6927,39 @@ begin
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
-      if (request.id = '') then // or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments)) then
-      begin
         params := makeParams(request);
         try
-          vsS := nil;
-          vsT := nil;
+          // we have to find the right concept map
+          // it doesn't matter whether the value sets are actually defined or not
+          if request.id <> '' then
+            cm := manager.FRepository.TerminologyServer.getConceptMapById(request.id)
+          else
+            cm := manager.FRepository.TerminologyServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
+          if cm = nil then
+            raise Exception.Create('Unable to find concept map to use');
           try
-            // first, we have to identify the value sets
-            if params.hasParameter('valueset') then
-              if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['valueset'], vsS) then
-                vsS := manager.GetResourceByUrl(frtValueSet, params.str['valueset'], params.str['version'], needSecure) as TFhirValueSet;
-            if params.hasParameter('target') then
-              if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['target'], vsS) then
-                vsS := manager.GetResourceByUrl(frtValueSet, params.str['target'], params.str['targetversion'], needSecure) as TFhirValueSet;
-            if vst = nil then
-              raise Exception.Create('Unable to find target value set (not provided by id, identifier, or directly)');
-
+            // ok, now we need to find the source code to validate
             coded := nil;
+            if params.hasParameter('coding') then
+            begin
+              coded := TFhirCodeableConcept.Create;
+              coded.codingList.add(LoadDTFromParam(request.Context, params.str['coding'], request.lang, 'coding', TFhirCoding) as TFhirCoding)
+            end
+            else if params.hasParameter('codeableConcept') then
+              coded := LoadDTFromParam(request.Context, params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
+            else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
+            begin
+              coded := TFhirCodeableConcept.Create;
+              coding := coded.codingList.Append;
+              coding.system := params.str['system'];
+              coding.version := params.str['version'];
+              coding.code := params.str['code'];
+              coding.display := params.str['display'];
+            end
+            else
+              raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
             try
-              // ok, now we need to find the source code to validate
-              if params.hasParameter('coding') then
-              begin
-                coded := TFhirCodeableConcept.Create;
-                coded.codingList.add(LoadDTFromParam(request.Context, params.str['coding'], request.lang, 'coding', TFhirCoding) as TFhirCoding)
-              end
-              else if params.hasParameter('codeableConcept') then
-                coded := LoadDTFromParam(request.Context, params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
-              else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
-              begin
-                coded := TFhirCodeableConcept.Create;
-                coding := coded.codingList.Append;
-                coding.system := params.str['system'];
-                coding.version := params.str['version'];
-                coding.code := params.str['code'];
-                coding.display := params.str['display'];
-              end
-              else
-                raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
-              vsS.checkNoImplicitRules('ConceptMapTranslation', 'Source ValueSet');
-              vsS.checkNoModifiers('ConceptMapTranslation', 'Source ValueSet');
-              vsT.checkNoImplicitRules('ConceptMapTranslation', 'Target ValueSet');
-              vsT.checkNoModifiers('ConceptMapTranslation', 'Target ValueSet');
-              response.resource := manager.FRepository.TerminologyServer.translate(vsS, coded, vsT);
+              response.resource := manager.FRepository.TerminologyServer.translate(cm, coded.codingList[0]);
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
@@ -6991,13 +6968,11 @@ begin
               coded.Free;
             end;
           finally
-            vsS.free;
-            vsT.free;
+            cm.free;
           end;
         finally
           params.free;
         end;
-      end;
     end;
     manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
