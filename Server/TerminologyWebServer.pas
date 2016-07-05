@@ -82,6 +82,7 @@ Type
 implementation
 
 uses
+  FHIRLog,
   SystemService,
   FHIRParser;
 
@@ -688,7 +689,7 @@ end;
 //  ts : TStringList;
 //  i: Integer;}
 //begin
-//{  writelnt('Tx: CS By Name '+Id);
+//{  logt('Tx: CS By Name '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
@@ -718,7 +719,7 @@ end;
 //  ts : TStringList;
 //  i: Integer; }
 //begin
-//{  writelnt('Tx: CS By URL '+Id);
+//{  logt('Tx: CS By URL '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetCodeSystemList;
 //  try
@@ -749,7 +750,7 @@ end;
 //  i: Integer;
 //  }
 //begin
-//{  writelnt('Tx: VS By Name '+Id);
+//{  logt('Tx: VS By Name '+Id);
 //  ts := TStringList.Create;
 //  list := FServer.GetValueSetList;
 //  try
@@ -781,7 +782,7 @@ end;
 ////  xml : TFHIRXmlComposer;
 ////  s : TStringStream;
 //begin
-//{  writelnt('Tx: VS By URL '+Id);
+//{  logt('Tx: VS By URL '+Id);
 //  html.Header('Terminology Server');
 //  html.Heading(2, 'Value Sets (By URL)');
 //  if (id <> '') then
@@ -863,7 +864,7 @@ begin
   else if request.Document.StartsWith('/snomed/doco/')  then
   begin
     code := request.UnparsedParams;
-    writelnt('Snomed Doco: '+code);
+    logt('Snomed Doco: '+code);
 
     try
       html := THtmlPublisher.Create;
@@ -891,7 +892,7 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    writelnt('miss: '+request.Document);
+    logt('miss: '+request.Document);
   end;
 end;
 
@@ -905,7 +906,7 @@ begin
   if request.Document.StartsWith('/loinc/doco/')  then
   begin
     code := request.UnparsedParams;
-    writelnt('Loinc Doco: '+code);
+    logt('Loinc Doco: '+code);
 
     try
       html := THtmlPublisher.Create;
@@ -933,7 +934,7 @@ begin
   begin
     response.ResponseNo := 404;
     response.ContentText := 'Document '+request.Document+' not found';
-    writelnt('miss: '+request.Document);
+    logt('miss: '+request.Document);
   end;
 end;
 
@@ -944,7 +945,7 @@ var
   id : UInt64;
   exp : TSnomedExpression;
 begin
-  writelnt('Snomed: '+code);
+  logt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
     if FServer.DefSnomed.IsValidConcept(code) then

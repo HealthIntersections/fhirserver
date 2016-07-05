@@ -209,7 +209,7 @@ Type
 implementation
 
 uses
-  SystemService,
+  FHIRLog, SystemService,
   FHIROperation, SearchProcessor;
 
 { TFHIRRepository }
@@ -404,18 +404,20 @@ begin
         FValidatorContext.TerminologyServer := TerminologyServer.Link;
 
         // the order here is important: specification resources must be loaded prior to stored resources
-        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.xml.zip';
+        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'definitions.json.zip';
         if not FileExists(fn) then
-          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.xml.zip';
-        writelnt('Load Validation Pack from ' + fn);
+          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.json.zip';
+        if not FileExists(fn) then
+          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.json.zip';
+        logt('Load Validation Pack from ' + fn);
         FValidatorContext.LoadFromDefinitions(fn);
-        writelnt('Load Custom Resources');
+        logt('Load Custom Resources');
         LoadCustomResources(implGuides);
-        writelnt('Load Store');
+        logt('Load Store');
         LoadExistingResources(conn);
-        writelnt('Check Definitions');
+        logt('Check Definitions');
 //        checkDefinitions();
-        writelnt('Load Subscription Queue');
+        logt('Load Subscription Queue');
         FSubscriptionManager.LoadQueue(conn);
       end;
       conn.Release;
@@ -1103,6 +1105,35 @@ begin
 end;
 
 procedure TFHIRDataStore.RegisterConsentRecord(session: TFhirSession);
+{$IFNDEF FHIR2CM}
+var
+  pc: TFhirConsent;
+begin
+  pc := TFhirConsent.Create;
+  try
+    pc.dateTime := NowUTC;
+    pc.period := TFHIRPeriod.Create;
+    pc.period.start := pc.dateTime.Link;
+    pc.period.end_ := TDateAndTime.CreateUTC(session.expires);
+    pc.status := ConsentStatusActive;
+    // todo: patient:
+    QueueResource(pc, pc.dateTime);
+    with pc.actorList.append do
+    begin
+      role := TFhirCodeableConcept.Create;
+      with role.codingList.Append do
+      begin
+        system := 'http://hl7.org/fhir/v3/ParticipationType';
+        code := 'PRCP';
+      end;
+      reference := TFHIRReference.Create;
+      reference.display := 'Server Host';
+      reference.reference := 'Device/this-server';
+    end;
+  finally
+    pc.Free;
+  end;
+{$ELSE}
 var
   ct: TFhirContract;
   s: String;
@@ -1130,12 +1161,9 @@ begin
     with ct.actorList.append do
     begin
       roleList.append.text := 'Server Host';
-      {$IFDEF FHIR2}
+      {$IFNDEF FHIR2CM}
       entity := TFhirReference.Create;
       entity.reference := 'Device/this-server';
-      {$ELSE}
-      actor := TFhirReference.Create;
-      actor.reference := 'Device/this-server';
       {$ENDIF}
     end;
     for s in session.scopes.Split([' ']) do
@@ -1148,6 +1176,7 @@ begin
   finally
     ct.free;
   end;
+{$ENDIF}
 end;
 
 procedure TFHIRDataStore.RegisterAuditEvent(session: TFhirSession; ip: String);
@@ -1851,13 +1880,13 @@ begin
     end;
     resp.request := TFhirReference.Create;
     TFhirReference(resp.request).reference := 'Claim/' + claim.id;
-    resp.outcome := RemittanceOutcomeComplete;
+//    resp.outcome := RemittanceOutcomeComplete;
     resp.disposition := 'Automatic Response';
-    resp.paymentAmount := TFhirMoney.Create;
-    resp.paymentAmount.value := '0';
-    resp.paymentAmount.unit_ := '$';
-    resp.paymentAmount.system := 'urn:iso:std:4217';
-    resp.paymentAmount.code := 'USD';
+//    resp.paymentAmount := {$IFDEF FHIR2}TFHIRQuantity{$ELSE}TFhirMoney{$ENDIF}.Create;
+//    resp.paymentAmount.value := '0';
+//    resp.paymentAmount.unit_ := '$';
+//    resp.paymentAmount.system := 'urn:iso:std:4217';
+//    resp.paymentAmount.code := 'USD';
     result := resp.Link;
   finally
     resp.free;

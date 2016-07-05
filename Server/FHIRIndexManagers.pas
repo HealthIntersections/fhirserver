@@ -519,7 +519,7 @@ begin
   result := nil;
   while (result = nil) and (i < Count) do
   begin
-    if SameText(item[i].name, name) and (item[i].FResourceType = atype) then
+    if SameText(item[i].name, name) and SameText(item[i].FResourceType, atype) then
       result := item[i];
     inc(i);
   end;
@@ -951,8 +951,8 @@ begin
                   index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
                 else if match is TFhirResource then
                   // index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-                else
-                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName);
+                else if not (match is TFHIRAttachment) then
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
                 end;
               SearchXpathUsagePhonetic:
                 begin
@@ -961,7 +961,7 @@ begin
                 else if match is TFhirHumanName then
                   index(resource.fhirType, key, 0, TFhirHumanName(match), '', ndx.Name)
                 else
-                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName);
+                  raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
                 end;
               SearchXpathUsageNearby:
                 begin
@@ -1711,9 +1711,7 @@ begin
   FSpaces.FDB.BindString('id', id);
   FSpaces.FDB.Execute;
   if FSpaces.FDB.FetchNext then
-    FCompartments.add(key, FSpaces.FDB.ColIntegerByName['ResourceTypeKey'], FSpaces.FDB.ColIntegerByName['ResourceKey'], id)
-  else
-    FCompartments.add(key, 0, 0, id);
+    FCompartments.add(key, FSpaces.FDB.ColIntegerByName['ResourceTypeKey'], FSpaces.FDB.ColIntegerByName['ResourceKey'], id);
   FSpaces.FDB.Terminate;
 end;
 

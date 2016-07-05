@@ -7,11 +7,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.53 (FHIR Version 1.4.0.8321)
+AppVerName=1.0.59 (FHIR Version 1.4.0.8531)
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.53
+OutputBaseFilename=fhirserver3-1.0.60
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -82,9 +82,9 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
-Source: "C:\work\org.hl7.fhir.2016May\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip,*.asp"
-Source: "C:\work\org.hl7.fhir.2016May\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
-Source: "C:\work\org.hl7.fhir.2016May\build\publish\validation-min.xml.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
+Source: "C:\work\org.hl7.fhir\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip,*.asp"
+Source: "C:\work\org.hl7.fhir\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.xml.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"

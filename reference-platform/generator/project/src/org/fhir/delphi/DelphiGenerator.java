@@ -1352,7 +1352,7 @@ public class DelphiGenerator {
       StringBuilder con = new StringBuilder();
       StringBuilder conS = new StringBuilder();
       def.append("  {@Enum "+tn+"\r\n");
-      def.append("    "+makeDocoSafe(cd.getDefinition())+"\r\n");
+      def.append("    "+makeDocoSafe(cd.getDefinition())+" from "+e.getBinding().getUri()+"\r\n");
       def.append("  }\r\n");
       def.append("  "+tn+" = (\r\n");
       int cl = 0;

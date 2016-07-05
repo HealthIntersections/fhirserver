@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.4.0 generated 2016-05-24T21:00:19+10:00
+// FHIR v1.4.0 generated 2016-06-20T16:35:25+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -623,6 +623,61 @@ Type
     property decisionList : TAdvList<TFHIRCdsHookOpDecision> read FDecisionList;
   end;
 
+  //Operation apply (Apply)
+  TFHIRApplyOpRequest = class (TFHIROperationRequest)
+  private
+    FPatient : TFhirReference;
+    FEncounter : TFhirReference;
+    FPractitioner : TFhirReference;
+    FOrganization : TFhirReference;
+    FUserType : TFhirCodeableConcept;
+    FUserLanguage : TFhirCodeableConcept;
+    FUserTaskContext : TFhirCodeableConcept;
+    FSetting : TFhirCodeableConcept;
+    FSettingContext : TFhirCodeableConcept;
+    procedure SetPatient(value : TFhirReference);
+    procedure SetEncounter(value : TFhirReference);
+    procedure SetPractitioner(value : TFhirReference);
+    procedure SetOrganization(value : TFhirReference);
+    procedure SetUserType(value : TFhirCodeableConcept);
+    procedure SetUserLanguage(value : TFhirCodeableConcept);
+    procedure SetUserTaskContext(value : TFhirCodeableConcept);
+    procedure SetSetting(value : TFhirCodeableConcept);
+    procedure SetSettingContext(value : TFhirCodeableConcept);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property patient : TFhirReference read FPatient write SetPatient;
+    property encounter : TFhirReference read FEncounter write SetEncounter;
+    property practitioner : TFhirReference read FPractitioner write SetPractitioner;
+    property organization : TFhirReference read FOrganization write SetOrganization;
+    property userType : TFhirCodeableConcept read FUserType write SetUserType;
+    property userLanguage : TFhirCodeableConcept read FUserLanguage write SetUserLanguage;
+    property userTaskContext : TFhirCodeableConcept read FUserTaskContext write SetUserTaskContext;
+    property setting : TFhirCodeableConcept read FSetting write SetSetting;
+    property settingContext : TFhirCodeableConcept read FSettingContext write SetSettingContext;
+  end;
+
+  TFHIRApplyOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirResource;
+    procedure SetReturn(value : TFhirResource);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirResource read FReturn write SetReturn;
+  end;
+
   //Operation document (Generate a Document)
   TFHIRDocumentOpRequest = class (TFHIROperationRequest)
   private
@@ -1001,6 +1056,41 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirBundle read FReturn write SetReturn;
+  end;
+
+  //Operation stats (Observation Statistics)
+  TFHIRStatsOpRequest = class (TFHIROperationRequest)
+  private
+    FPatient : String;
+    FCode : String;
+    FDuration : String;
+    FParamsList : TList<String>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property patient : String read FPatient write FPatient;
+    property code : String read FCode write FCode;
+    property duration : String read FDuration write FDuration;
+    property paramsList : TList<String> read FParamsList;
+  end;
+
+  TFHIRStatsOpResponse = class (TFHIROperationResponse)
+  private
+    FObsList : TAdvList<TFhirObservation>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property obsList : TAdvList<TFhirObservation> read FObsList;
   end;
 
   //Operation place (Place)
@@ -3199,6 +3289,178 @@ begin
   result := StringArrayExists(['decision'], name);
 end;
 
+procedure TFHIRApplyOpRequest.SetPatient(value : TFhirReference);
+begin
+  FPatient.free;
+  FPatient := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetEncounter(value : TFhirReference);
+begin
+  FEncounter.free;
+  FEncounter := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetPractitioner(value : TFhirReference);
+begin
+  FPractitioner.free;
+  FPractitioner := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetOrganization(value : TFhirReference);
+begin
+  FOrganization.free;
+  FOrganization := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetUserType(value : TFhirCodeableConcept);
+begin
+  FUserType.free;
+  FUserType := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetUserLanguage(value : TFhirCodeableConcept);
+begin
+  FUserLanguage.free;
+  FUserLanguage := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetUserTaskContext(value : TFhirCodeableConcept);
+begin
+  FUserTaskContext.free;
+  FUserTaskContext := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetSetting(value : TFhirCodeableConcept);
+begin
+  FSetting.free;
+  FSetting := value;
+end;
+
+procedure TFHIRApplyOpRequest.SetSettingContext(value : TFhirCodeableConcept);
+begin
+  FSettingContext.free;
+  FSettingContext := value;
+end;
+
+constructor TFHIRApplyOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRApplyOpRequest.load(params : TFHIRParameters);
+begin
+  FPatient := (params.param['patient'].value as TFhirReference).Link; {ob.5d}
+  FEncounter := (params.param['encounter'].value as TFhirReference).Link; {ob.5d}
+  FPractitioner := (params.param['practitioner'].value as TFhirReference).Link; {ob.5d}
+  FOrganization := (params.param['organization'].value as TFhirReference).Link; {ob.5d}
+  FUserType := (params.param['userType'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FUserLanguage := (params.param['userLanguage'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FUserTaskContext := (params.param['userTaskContext'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FSetting := (params.param['setting'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FSettingContext := (params.param['settingContext'].value as TFhirCodeableConcept).Link; {ob.5d}
+  loadExtensions(params);
+end;
+
+procedure TFHIRApplyOpRequest.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRApplyOpRequest.Destroy;
+begin
+  FPatient.free;
+  FEncounter.free;
+  FPractitioner.free;
+  FOrganization.free;
+  FUserType.free;
+  FUserLanguage.free;
+  FUserTaskContext.free;
+  FSetting.free;
+  FSettingContext.free;
+  inherited;
+end;
+
+function TFHIRApplyOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FPatient <> nil) then
+      result.addParameter('patient', FPatient.Link);{oz.5d}
+    if (FEncounter <> nil) then
+      result.addParameter('encounter', FEncounter.Link);{oz.5d}
+    if (FPractitioner <> nil) then
+      result.addParameter('practitioner', FPractitioner.Link);{oz.5d}
+    if (FOrganization <> nil) then
+      result.addParameter('organization', FOrganization.Link);{oz.5d}
+    if (FUserType <> nil) then
+      result.addParameter('userType', FUserType.Link);{oz.5d}
+    if (FUserLanguage <> nil) then
+      result.addParameter('userLanguage', FUserLanguage.Link);{oz.5d}
+    if (FUserTaskContext <> nil) then
+      result.addParameter('userTaskContext', FUserTaskContext.Link);{oz.5d}
+    if (FSetting <> nil) then
+      result.addParameter('setting', FSetting.Link);{oz.5d}
+    if (FSettingContext <> nil) then
+      result.addParameter('settingContext', FSettingContext.Link);{oz.5d}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRApplyOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['patient', 'encounter', 'practitioner', 'organization', 'userType', 'userLanguage', 'userTaskContext', 'setting', 'settingContext'], name);
+end;
+
+procedure TFHIRApplyOpResponse.SetReturn(value : TFhirResource);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+constructor TFHIRApplyOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRApplyOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirResource).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRApplyOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRApplyOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+
+function TFHIRApplyOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRApplyOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return'], name);
+end;
+
 constructor TFHIRDocumentOpRequest.create;
 begin
   inherited create();
@@ -4318,6 +4580,112 @@ end;
 function TFHIRProcessMessageOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
+end;
+
+constructor TFHIRStatsOpRequest.create;
+begin
+  inherited create();
+  FParamsList := TList<String>.create;
+end;
+
+procedure TFHIRStatsOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  FPatient := params.str['patient'];
+  FCode := params.str['code'];
+  FDuration := params.str['duration'];
+  for p in params.parameterList do
+    if p.name = 'params' then
+      FParamsList.Add((p.value as TFhirCode).value);{ob.1}
+  loadExtensions(params);
+end;
+
+procedure TFHIRStatsOpRequest.load(params : TParseMap);
+begin
+  FPatient := params.getVar('patient');
+  FCode := params.getVar('code');
+  FDuration := params.getVar('duration');
+  loadExtensions(params);
+end;
+
+destructor TFHIRStatsOpRequest.Destroy;
+begin
+  FParamsList.free;
+  inherited;
+end;
+
+function TFHIRStatsOpRequest.asParams : TFhirParameters;
+var
+  v1 : String;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FPatient <> '') then
+      result.addParameter('patient', TFHIRString.create(FPatient));{oz.5f}
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+    if (FDuration <> '') then
+      result.addParameter('duration', TFHIRString.create(FDuration));{oz.5f}
+    for v1 in FParamsList do
+      result.AddParameter('params', TFhirCode.create(v1));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRStatsOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['patient', 'code', 'duration', 'params'], name);
+end;
+
+constructor TFHIRStatsOpResponse.create;
+begin
+  inherited create();
+  FObsList := TAdvList<TFhirObservation>.create;
+end;
+
+procedure TFHIRStatsOpResponse.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  for p in params.parameterList do
+    if p.name = 'obs' then
+      FObsList.Add((p.resource as TFhirObservation).Link);{ob.2}
+  loadExtensions(params);
+end;
+
+procedure TFHIRStatsOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRStatsOpResponse.Destroy;
+begin
+  FObsList.free;
+  inherited;
+end;
+
+function TFHIRStatsOpResponse.asParams : TFhirParameters;
+var
+  v1 : TFhirObservation;
+begin
+  result := TFHIRParameters.create;
+  try
+    for v1 in FObsList do
+      result.AddParameter('obs', v1.Link);
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRStatsOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['obs'], name);
 end;
 
 procedure TFHIRPlaceOpRequest.SetPatient(value : TFhirReference);

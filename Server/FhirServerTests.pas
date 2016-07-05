@@ -307,7 +307,7 @@ begin
   except
     on e: Exception do
     begin
-      writelnt(e.Message);
+      logt(e.Message);
       ExitCode := 1;
     end;
   end;

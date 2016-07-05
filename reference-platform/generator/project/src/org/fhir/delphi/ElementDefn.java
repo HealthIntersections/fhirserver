@@ -562,6 +562,7 @@ public class ElementDefn {
       ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
       if (vs == null)
         throw new Error("Value Set "+b.getValueSetReference().getReference()+" not found, referenced from "+path);
+      bs.setUri(vs.getUrl());
       bs.loadFromExpansion(vs);
       bs.setName(vs.getName().replace(" ", ""));
       bs.setReference(urlTail(vs.getUrl()));
@@ -581,6 +582,7 @@ public class ElementDefn {
       if (vs == null)
         throw new Error("Unable to find value set "+b.getValueSetReference().getReference());
       bs.loadFromExpansion(vs);
+      bs.setUri(vs.getUrl());
       bs.setName(vs.getName().replace(" ", ""));
       bs.setReference(urlTail(vs.getUrl()));
     } else if (b.hasValueSetUriType()) {

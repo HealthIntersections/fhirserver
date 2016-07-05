@@ -226,7 +226,7 @@ Implementation
 Uses
   Windows, Registry,
 
-  SystemService,
+  FHIRLog, SystemService,
 
   FileSupport,
   FaceBookSupport;
@@ -309,11 +309,11 @@ Begin
   if (FSpecPath = '') or (FSpecPath = '\') then
     FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
   FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
-  writelnt('Load User Sub-system');
+  logt('Load User Sub-system');
   FSCIMServer := TSCIMServer.Create(db.link, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
 
-  writelnt('Load & Cache Store: ');
+  logt('Load & Cache Store: ');
   FOwnerName := Fini.readString('admin', 'ownername', '');
   if FOwnerName = '' then
     FOwnerName := 'Health Intersections';
@@ -342,7 +342,7 @@ Begin
     else
       s := FIni.ReadString('web', 'secure', '');
   end;
-  writelnt(inttostr(FFhirStore.TotalResourceCount)+' resources');
+  logt(inttostr(FFhirStore.TotalResourceCount)+' resources');
   FFhirStore.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort);
   FFhirStore.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FSSLPort);
   FFhirStore.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FPort)+ FBasePath;
@@ -387,22 +387,22 @@ Begin
 
 
   if (FPort <> 0) and (FSSLPort <> 0) then
-    writelnt('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
+    logt('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
   else if (FPort <> 0) then
-    writelnt('Web Server: http = '+inttostr(FPort))
+    logt('Web Server: http = '+inttostr(FPort))
   else if (FSSLPort <> 0) then
-    writelnt('Web Server: https = '+inttostr(FSSLPort))
+    logt('Web Server: https = '+inttostr(FSSLPort))
   else
-    writelnt('Web Server not configued');
+    logt('Web Server not configued');
 
   if (FBasePath <> '') and (FSecurePath <> '') then
-    writelnt(' ...paths: open = '+FBasePath+', secure = '+FSecurePath)
+    logt(' ...paths: open = '+FBasePath+', secure = '+FSecurePath)
   else if (FPort <> 0) then
-    writelnt(' ...paths: open = '+FBasePath)
+    logt(' ...paths: open = '+FBasePath)
   else if (FSSLPort <> 0) then
-    writelnt(' ...paths: secure = '+FSecurePath)
+    logt(' ...paths: secure = '+FSecurePath)
   else
-    writelnt(' ...paths: <none>');
+    logt(' ...paths: <none>');
 
 //  FAuthRequired := FIni.ReadString('fhir', 'oauth-secure', '') = '1';
 //  FAppSecrets := FIni.ReadString('fhir', 'oauth-secrets', '');
@@ -784,7 +784,7 @@ begin
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document '+request.Document+' not found';
-      writelnt('miss: '+request.Document);
+      logt('miss: '+request.Document);
     end;
   finally
     MarkExit(AContext);
@@ -899,7 +899,7 @@ begin
     begin
       response.ResponseNo := 404;
       response.ContentText := 'Document '+request.Document+' not found';
-      writelnt('miss: '+request.Document);
+      logt('miss: '+request.Document);
     end;
   finally
     markExit(AContext);
@@ -2020,6 +2020,7 @@ begin
         try
           p.source := TBytesStream.create(rdr.parts[i].AsBytes);
           p.AllowUnknownContent := true;
+        writeln('parse: '+rdr.Parts[i].name);
           p.Parse;
           if  p.resource is TFhirBundle then
           begin
@@ -2258,9 +2259,9 @@ begin
     FLock.Unlock;
   end;
   if request.session = nil then // during OAuth only
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
+    logt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
   else
-    writelnt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
+    logt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -2359,7 +2360,7 @@ var
   b : TStringBuilder;
   pol : String;
 begin
-  writelnt('home page: '+session.scopes);
+  logt('home page: '+session.scopes);
   counts := TStringList.create;
   try
     for a in FFhirStore.ValidatorContext.allResourceNames do
@@ -2986,10 +2987,10 @@ var
   s, n : String;
 begin
 //  if variables = nil then
-//    writelnt('rpf 1: '+named+' '+path+' 0')
+//    logt('rpf 1: '+named+' '+path+' 0')
 //  else
-//    writelnt('rpf 1: '+named+' '+path+' '+inttostr(variables.Count));
-  writelnt('script: '+named);
+//    logt('rpf 1: '+named+' '+path+' '+inttostr(variables.Count));
+  logt('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
@@ -3028,7 +3029,7 @@ end;
 
 procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path: String);
 begin
-  writelnt('file: '+stated);
+  logt('file: '+stated);
   response.Expires := now + 1;
   response.ContentStream := TFileStream.Create(path, fmOpenRead);
   response.FreeContentStream := true;
@@ -3157,7 +3158,7 @@ begin
   finally
     b.Free;
   end;
-  writelnt(doc.documentElement.namespaceURI +', '+doc.documentElement.nodeName);
+  logt(doc.documentElement.namespaceURI +', '+doc.documentElement.nodeName);
 
   v := CreateOLEObject('MSXML2.FreeThreadedDOMDocument.6.0');
   src := IUnknown(TVarData(v).VDispatch) as IXMLDomDocument2;

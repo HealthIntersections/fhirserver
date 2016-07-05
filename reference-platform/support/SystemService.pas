@@ -83,9 +83,6 @@ type
 var
   GService : TSystemService = nil; // there can only be one....
 
-procedure writelnt(s : String);
-procedure writet(s : String);
-
 implementation
 
 uses
@@ -93,7 +90,8 @@ uses
   ServiceController,
   StringSupport,
   kCritSct,
-  SysUtils;
+  SysUtils,
+  FHIRLog;
 
 const
   ASSERT_UNIT = 'SystemService';
@@ -152,7 +150,7 @@ end;
 
 procedure TSystemService.dump;
 begin
-  writelnt(DumpLocks);
+  logt(DumpLocks);
 end;
 
 function DebugCtrlC(dwCtrlType : DWORD) :BOOL;
@@ -174,7 +172,7 @@ begin
   InternalExecute;
   if FTellUser and (FStopReason <> '') then
     begin
-    writelnt('stop because '+FStopReason);
+    logt('stop because '+FStopReason);
     write('press Enter to close');
     readln;
     end;
@@ -272,7 +270,7 @@ begin
       begin
       if FDebugMode then
         begin
-        writelnt('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
+        logt('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
         write('press Enter to close');
         Readln;
         end
@@ -397,7 +395,7 @@ begin
     on e:exception do
       begin
       LCanRun := false;
-      writelnt('Exception in Service Execution: '+e.message+' ['+e.classname+']');
+      logt('Exception in Service Execution: '+e.message+' ['+e.classname+']');
       write('press Enter to close');
       Readln;
       end;
@@ -418,9 +416,9 @@ var
 begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
-  writelnt('Install Service '+FDisplayName);
-  writelnt('================'+StringPadRight('', '=', length(FDisplayName)));
-  writelnt('');
+  logt('Install Service '+FDisplayName);
+  logt('================'+StringPadRight('', '=', length(FDisplayName)));
+  logt('');
   if CanInstall then
     begin
     Write('Registering Service '+FDisplayName+'...   ');
@@ -430,7 +428,7 @@ begin
     finally
       LSvcMan.free;
     end;
-    writelnt('Done');
+    logt('Done');
     end;
 end;
 
@@ -455,7 +453,7 @@ begin
   finally
     LSvcMan.free;
   end;
-  writelnt('Done');
+  logt('Done');
 end;
 
 procedure TSystemService.CommandSend;
@@ -488,7 +486,7 @@ begin
   finally
     LSvcMan.free;
   end;
-  writelnt('Done');
+  logt('Done');
 end;
 
 procedure TSystemService.CommandStart;
@@ -507,7 +505,7 @@ begin
     try
       if LSvc.ServiceIsRunning then
         begin
-        writelnt('   Service is not stopped');
+        logt('   Service is not stopped');
         write('press Enter to close');
         readln;
         end
@@ -522,11 +520,11 @@ begin
         until (LSvc.ServiceIsRunning) or (i = 20);
         if LSvc.ServiceIsRunning then
           begin
-          writelnt('   Done');
+          logt('   Done');
           end
         else
           begin
-          writelnt('   Service could not be started');
+          logt('   Service could not be started');
           write('press Enter to close');
           readln;
           end;
@@ -547,20 +545,20 @@ var
 begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
-  writelnt('Status for Service '+FDisplayName);
-  writelnt('==================='+StringPadRight('', '=', length(FDisplayName)));
-  writelnt('');
+  logt('Status for Service '+FDisplayName);
+  logt('==================='+StringPadRight('', '=', length(FDisplayName)));
+  logt('');
   LSvcMan := TServiceManagerHandle.create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
       if LSvc.ServiceIsRunning then
         begin
-        writelnt('Service is running');
+        logt('Service is running');
         end
       else
        begin
-       writelnt('Service is not running');
+       logt('Service is not running');
        end;
     finally
       LSvc.free;
@@ -569,7 +567,7 @@ begin
     LSvcMan.free;
   end;
   writeln;
-  writelnt('Press Enter to close');
+  logt('Press Enter to close');
   readln;
 end;
 
@@ -589,7 +587,7 @@ begin
     try
       if not LSvc.ServiceIsRunning then
         begin
-        writelnt('   Service is already stopped');
+        logt('   Service is already stopped');
         write('press Enter to close');
         readln;
         end
@@ -604,11 +602,11 @@ begin
         until (not LSvc.ServiceIsRunning) or (i = 20);
         if not LSvc.ServiceIsRunning then
           begin
-          writelnt('   Done');
+          logt('   Done');
           end
         else
           begin
-          writelnt('   Service could not be stopped');
+          logt('   Service could not be stopped');
           write('press Enter to close');
           readln;
           end;
@@ -631,40 +629,6 @@ end;
 procedure TSystemService.ContainedStop;
 begin
   DoStop;
-end;
-
-var
-  lastday : integer = 0;
-  starttime : TDateTime = 0;
-
-procedure writelnt(s : String);
-var
-  today : integer;
-begin
-  if starttime = 0 then
-    starttime := now;
-  today := trunc(now);
-  if today <> lastday then
-  begin
-    System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
-    lastDay := today;
-  end;
-
-  System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
-end;
-
-procedure writet(s : String);
-var
-  today : integer;
-begin
-  today := trunc(now);
-  if today <> lastday then
-  begin
-    System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
-    lastDay := today;
-  end;
-
-  System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
 end;
 
 end.

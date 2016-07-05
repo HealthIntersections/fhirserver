@@ -69,6 +69,7 @@ type
     procedure renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
     procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
 
+    function getGroup(map : TFHIRConceptMap; source, target : String) : TFHIRConceptMapGroup;
     function fromEnum(s : String; codes : Array of String) : integer;
     function readPrefix(prefixes : TDictionary<String, String>; lexer : TFHIRPathLexer) : String;
     function readEquivalence(lexer : TFHIRPathLexer) : TFhirConceptMapEquivalenceEnum;
@@ -432,9 +433,10 @@ const
   CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
   prefixes : TDictionary<String, String>;
-  e : TFhirConceptMapElement;
-  t : TFhirConceptMapElementTarget;
-  d : TFhirConceptMapElementTargetDependsOn;
+  g : TFhirConceptMapGroup;
+  e : TFhirConceptMapGroupElement;
+  t : TFhirConceptMapGroupElementTarget;
+  d : TFhirConceptMapGroupElementTargetDependsOn;
   s : String;
   f : boolean;
   procedure seeSystem(base, url : String);
@@ -486,18 +488,19 @@ begin
     end;
 
     // first pass: determine prefixes:
-    for e in map.elementList do
-    begin
-      seeSystem('s', e.system);
-      for t in e.targetList do
+    for g in map.groupList do
+      for e in g.elementList do
       begin
-        seeSystem('t', t.system);
-        for d in t.dependsOnList do
-         seeSystem('d', d.system);
-        for d in t.productList do
-         seeSystem('p', d.system);
+        seeSystem('s', g.source);
+        for t in e.targetList do
+        begin
+          seeSystem('t', g.target);
+          for d in t.dependsOnList do
+           seeSystem('d', d.system);
+          for d in t.productList do
+           seeSystem('p', d.system);
+        end;
       end;
-    end;
     for s in prefixes.Keys do
     begin
       b.Append('prefix "');
@@ -509,43 +512,44 @@ begin
     b.append(#13#10);
 
     // now render
-    for e in map.elementList do
-    begin
-      for t in e.targetList do
+    for g in map.groupList do
+      for e in g.elementList do
       begin
-        app(e.system, e.code);
-        b.Append(' ');
-        if (t.dependsOnList.Count > 0) then
+        for t in e.targetList do
         begin
-          b.Append('[');
-          f := true;
-          for d in t.dependsOnList do
-          begin
-            if f then f := false else b.Append(', ');
-            app(d.system, d.code);
-          end;
-          b.Append(']');
-        end;
-        b.Append(CHARS_EQUIVALENCE[t.equivalence]);
-        b.Append(' ');
-        if (t.code <> '') then
-        begin
-          app(t.system, t.code);
-          if (t.productList.Count > 0) then
+          app(g.source, e.code);
+          b.Append(' ');
+          if (t.dependsOnList.Count > 0) then
           begin
             b.Append('[');
             f := true;
-            for d in t.productList do
+            for d in t.dependsOnList do
             begin
               if f then f := false else b.Append(', ');
               app(d.system, d.code);
             end;
             b.Append(']');
           end;
+          b.Append(CHARS_EQUIVALENCE[t.equivalence]);
+          b.Append(' ');
+          if (t.code <> '') then
+          begin
+            app(g.target, t.code);
+            if (t.productList.Count > 0) then
+            begin
+              b.Append('[');
+              f := true;
+              for d in t.productList do
+              begin
+                if f then f := false else b.Append(', ');
+                app(d.system, d.code);
+              end;
+              b.Append(']');
+            end;
+          end;
+          b.Append(#13#10);
         end;
-        b.Append(#13#10);
       end;
-    end;
     b.append('}'#13#10);
   finally
     prefixes.Free;
@@ -620,8 +624,11 @@ var
   map : TFhirConceptMap;
   id, n, v : String;
   prefixes : TDictionary<String, String>;
-  e : TFhirConceptMapElement;
-  tgt : TFhirConceptMapElementTarget;
+  g : TFhirConceptMapGroup;
+  e : TFhirConceptMapGroupElement;
+  tgt : TFhirConceptMapGroupElementTarget;
+  vs, vc, vt : String;
+  eq : TFhirConceptMapEquivalenceEnum;
 begin
   lexer.token('conceptmap');
   map := TFhirConceptMap.create;
@@ -648,15 +655,21 @@ begin
     end;
     while (not lexer.hasToken('}')) do
     begin
-      e := map.elementList.Append;
-      e.System := readPrefix(prefixes, lexer);
+      vs := readPrefix(prefixes, lexer);
       lexer.token(':');
-      e.Code := lexer.take();
+      vc := lexer.take();
+      eq := readEquivalence(lexer);
+      if (tgt.Equivalence <> ConceptMapEquivalenceUNMATCHED) then
+        vt := readPrefix(prefixes, lexer)
+      else
+        vt := '';
+
+      e := getGroup(map, vs, vt).elementList.Append;
+      e.Code := vc;
       tgt := e.targetList.Append;
-      tgt.Equivalence := readEquivalence(lexer);
+      tgt.Equivalence := eq;
       if (tgt.Equivalence <> ConceptMapEquivalenceUNMATCHED) then
       begin
-        tgt.System := readPrefix(prefixes, lexer);
         lexer.token(':');
         tgt.Code := lexer.take();
       end;
@@ -1178,6 +1191,19 @@ begin
 end;
 
 
+function TFHIRStructureMapUtilities.getGroup(map: TFHIRConceptMap; source, target: String): TFHIRConceptMapGroup;
+var
+  g : TFHIRConceptMapGroup;
+begin
+  for g in map.groupList do
+    if (g.source = source) and (g.target = target) then
+      exit(g);
+  g := map.groupList.Append;
+  g.source := source;
+  g.target := target;
+  exit(g);
+end;
+
 function TFHIRStructureMapUtilities.analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
 var
   b, r : TFhirBase;
@@ -1416,9 +1442,10 @@ var
   cmap : TFhirConceptMap;
   r : TFHIRResource;
   done : boolean;
-  list : TAdvList<TFhirConceptMapElement>;
-  e : TFhirConceptMapElement;
-  tgt : TFhirConceptMapElementTarget;
+  list : TAdvList<TFhirConceptMapGroupElement>;
+  g : TFhirConceptMapGroup;
+  e : TFhirConceptMapGroupElement;
+  tgt : TFhirConceptMapGroupElementTarget;
 begin
   b := TAdvList<TFHIRBase>.create;
   src := TFHIRCoding.create;
@@ -1485,15 +1512,16 @@ begin
         end
         else
         begin
-          list := TAdvList<TFhirConceptMapElement>.create;
+          list := TAdvList<TFhirConceptMapGroupElement>.create;
           try
-            for e in cmap.ElementList do
-            begin
-              if (src.System = '') and (src.code = e.code) then
-                list.add(e.Link)
-              else if (src.system <> '') and (src.System = e.System) and (src.code = e.code) then
-                list.add(e.Link);
-            end;
+            for g in cmap.GroupList do
+              for e in g.ElementList do
+              begin
+                if (src.System = '') and (src.code = e.code) then
+                  list.add(e.Link)
+                else if (src.system <> '') and (src.System = g.source) and (src.code = e.code) then
+                  list.add(e.Link);
+              end;
             if (list.count = 0) then
               done := true
             else if (list[0].TargetList.count = 0) then
@@ -1514,7 +1542,7 @@ begin
                     done := true;
                     outcome := TFHIRCoding.Create;
                     outcome.code := tgt.code;
-                    outcome.system := tgt.System;
+                    outcome.system := g.Target;
                   end;
                 end
                 else if (tgt.equivalence = ConceptMapEquivalenceUNMATCHED) then

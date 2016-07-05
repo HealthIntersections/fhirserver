@@ -40,7 +40,7 @@ public class DefinitionsLoader2 {
       else if (entry.getResource() instanceof Conformance) 
         processConformance(def, (Conformance) entry.getResource());
       else if (entry.getResource() instanceof OperationDefinition)
-        def.getOperations().add(VersionConvertor.convertOperationDefinition((OperationDefinition) entry.getResource())); 
+        def.getOperations().add(new VersionConvertor(null).convertOperationDefinition((OperationDefinition) entry.getResource())); 
       else
         System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
     }

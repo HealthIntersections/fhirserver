@@ -3,11 +3,47 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.60 2016-06-24 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.60.exe</link>
+			<description>DSTU3. 2016-06-24 (v1.0.60): change return type when initialising closure table</description>
+		</item>
+<item><title>FHIRServer release 1.0.59 2016-06-22 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.59.exe</link>
+			<description>DSTU3. 2016-06-22 (v1.0.59): fix that expansion logic is ignoring the modifier extension http://hl7.org/fhir/StructureDefinition/codesystem-subsumes</description>
+		</item>
+		<item><title>FHIRServer release 1.0.59 2016-06-22 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.59.exe</link>
+			<description>DSTU2. 2016-06-22 (v1.0.59): fix that expansion logic is ignoring the modifier extension http://hl7.org/fhir/StructureDefinition/codesystem-subsumes</description>
+		</item>
+		<item><title>FHIRServer release 1.0.58 2016-06-05 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.58.exe</link>
+			<description>DSTU3. 2016-06-05 (v1.0.58): fis sql error with included resources</description>
+		</item>
+		<item><title>FHIRServer release 1.0.58 2016-06-05 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.58.exe</link>
+			<description>DSTU2. 2016-06-05 (v1.0.58): fis sql error with included resources</description>
+		</item>
+		<item><title>FHIRServer release 1.0.57 2016-06-03 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.57.exe</link>
+			<description>DSTU2. 2016-06-03 (v1.0.57): replace bad build</description>
+		</item>
+		<item><title>FHIRServer release 1.0.56 2016-06-03 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.56.exe</link>
+			<description>DSTU3. 2016-06-03 (v1.0.56): replace bad build</description>
+		</item>
+		<item><title>FHIRServer release 1.0.55 2016-05-28 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.55.exe</link>
+			<description>DSTU2. 2016-05-28 (v1.0.55): fix validation error in DSTU2 resource definitions</description>
+		</item>
+		<item><title>FHIRServer release 1.0.54 2016-05-26 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.54.exe</link>
+			<description>DSTU3. 2016-05-26 (v1.0.54): updat for Chinese language bug</description>
+		</item>
 		<item><title>FHIRServer release 1.0.53 2016-05-17 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.53.exe</link>
 			<description>DSTU3. 2016-05-17 (v1.0.53): Australian terminology services connectathon</description>
 		</item>
-<item><title>FHIRServer release 1.0.52 2016-05-16 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.52 2016-05-16 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.52.exe</link>
 			<description>DSTU3. 2016-05-16 (v1.0.52): updates POST Montreal meeting</description>
 		</item>

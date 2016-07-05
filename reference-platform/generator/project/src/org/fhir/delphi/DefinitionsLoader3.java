@@ -20,6 +20,7 @@ import org.hl7.fhir.dstu3.model.ValueSet;
 import org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.dstu3.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.dstu3.utils.ToolingExtensions;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.utilities.Utilities;
 
 public class DefinitionsLoader3 {
@@ -79,14 +80,14 @@ public class DefinitionsLoader3 {
     def.getCompartments().add(c);
   }
    
-  private void processConformance(Definitions def, Conformance resource) {
+  private void processConformance(Definitions def, Conformance resource) throws FHIRException {
     def.setVersion(resource.getFhirVersion());
-    def.setGenDate(VersionConvertor.convertDateTime(resource.getDateElement()));
+    def.setGenDate(new VersionConvertor(null).convertDateTime(resource.getDateElement()));
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), VersionConvertor.convertSearchParamType(sp.getType()), 
-        sp.getTarget(), VersionConvertor.convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), new VersionConvertor(null).convertSearchParamType(sp.getType()), 
+        sp.getTarget(), new VersionConvertor(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 
@@ -124,6 +125,12 @@ public class DefinitionsLoader3 {
         ElementDefn ed = new ElementDefn();
         ed.loadFrom(sd.getDifferential().getElement().get(i), sd, vsmap);
         type.getElementForPath(parentPath(ed.getPath()), def, "build", true).getElements().add(ed);
+        
+        // work around a signficant change in STU3
+        if (ed.getPath().equals("Element.id")) {
+          ed.getTypes().clear();
+          ed.getTypes().add(new TypeRef().setName("id"));
+        }
       }
       Map<String, TypeDefn> map = getTypesMapForName(def, type.getName());
       type.getTypes().clear();

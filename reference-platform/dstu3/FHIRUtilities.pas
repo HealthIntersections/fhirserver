@@ -317,7 +317,7 @@ type
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
   public
-    function conceptList : TFhirConceptMapElementList;
+//    function conceptList : TFhirConceptMapElementList;
     function context : string;
     function sourceDesc: String;
     function targetDesc: String;
@@ -2116,11 +2116,11 @@ end;
 
 { TFhirConceptMapHelper }
 
-function TFhirConceptMapHelper.conceptList: TFhirConceptMapElementList;
-begin
-  result := elementList;
-end;
-
+//function TFhirConceptMapHelper.conceptList: TFhirConceptMapElementList;
+//begin
+//  result := elementList;
+//end;
+//
 function TFhirConceptMapHelper.context: string;
 var
   i: Integer;

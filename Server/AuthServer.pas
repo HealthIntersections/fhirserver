@@ -116,7 +116,7 @@ type
 implementation
 
 uses
-  SystemService;
+  FHIRLog, SystemService;
 
 const
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'Other');
@@ -226,6 +226,7 @@ const
     (
     tcOther, // frtNull
     tcFinancial , // frtAccount - frtAccount
+    tcOther, // ActivityDefinition
     tcClinical , // frtAllergyIntolerance - frtAllergyIntolerance
     tcSchedule , // frtAppointment - frtAppointment
     tcSchedule , // frtAppointmentResponse - frtAppointmentResponse
@@ -278,8 +279,7 @@ const
     tcOther , // frtGroup
     tcClinical , // frtGuidanceResponse
     tcSchedule , // frtHealthcareService
-    tcData, // frtImagingExcept
-    tcData, // frtImagingObjectSelection
+    tcData, // frtImagingManifest
     tcData , // frtImagingStudy
     tcMeds , // frtImmunization
     tcMeds , // frtImmunizationRecommendation
@@ -312,6 +312,7 @@ const
     tcFinancial , // frtPaymentNotice
     tcFinancial , // frtPaymentReconciliation
     tcOther , // frtPerson
+    tcOther , // frtPlanDefinition
     tcOther , // frtPractitioner
     tcOther , // frtPractitionerRole
     tcClinical , // frtProcedure
@@ -337,10 +338,11 @@ const
     tcOther , // frtSupplyDelivery,
     tcOther , // frtSupplyRequest,
     tcOther , // frtTask,
-    tcOther , // frtTestScript,
+    tcOther{$IFNDEF FHIR2CM} , // frtTestScript,
     tcOther , // frtValueSet,
     tcClinical,// frtVisionPrescription,
-    tcOther ); // frtCustom
+    tcOther {$ENDIF}); // frtCustom
+
   {$ENDIF}
 
 
@@ -916,7 +918,7 @@ procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPReque
 var
   params : TParseMap;
 begin
-  writelnt('Auth: '+request.Document);
+  logt('Auth: '+request.Document);
   try
     // cors
     response.CustomHeaders.add('Access-Control-Allow-Origin: *');
@@ -954,7 +956,7 @@ begin
   except
     on e : Exception do
     begin
-      writelnt('Auth Exception: '+e.Message);
+      logt('Auth Exception: '+e.Message);
       recordStack(e);
       raise;
     end;

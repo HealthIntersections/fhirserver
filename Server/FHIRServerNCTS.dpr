@@ -284,7 +284,7 @@ uses
   FHIRConstants in '..\reference-platform\dstuAu\FHIRConstants.pas',
   FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
   FHIRLang in '..\reference-platform\dstu3\FHIRLang.pas',
-  FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',
+  FHIRUtilities in '..\reference-platform\dstuAu\FHIRUtilities.pas',
   FHIRClient in '..\reference-platform\dstu3\FHIRClient.pas',
   FHIRValidator in '..\reference-platform\dstu3\FHIRValidator.pas',
   ClosureManager in 'ClosureManager.pas',
@@ -301,7 +301,6 @@ uses
   FHIRIndexInformation in '..\reference-platform\dstuAu\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
-  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas';
 

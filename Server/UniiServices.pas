@@ -78,6 +78,7 @@ Procedure ImportUnii(filename : String; dbm : TKDBManager);
 implementation
 
 uses
+  FHIRLog,
   SystemService;
 
 { TUniiServices }
@@ -173,7 +174,7 @@ var
   key, last, lastDesc : integer;
   db : TKDBConnection;
 begin
-  writelnt('Inport UNII from '+filename);
+  logt('Inport UNII from '+filename);
   db := dbm.GetConnection('unii');
   try
     last := 0;

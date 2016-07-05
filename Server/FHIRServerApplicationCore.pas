@@ -84,7 +84,7 @@ procedure ExecuteFhirServer;
 implementation
 
 uses
-  JclDebug;
+  FHIRLog, JclDebug;
 
 procedure CauseException;
 begin
@@ -109,11 +109,12 @@ begin
     if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
       dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
+
     if JclExceptionTrackingActive then
-      writelnt('FHIR Service '+SERVER_VERSION+' (DSTU2). Using ini file '+iniName+' with stack dumps on')
+      logt('FHIR Service '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+'). Using ini file '+iniName+' with stack dumps on')
     else
-      writelnt('FHIR Service '+SERVER_VERSION+' (DSTU2). Using ini file '+iniName+' (no stack dumps)');
-    dispName := dispName + ' '+SERVER_VERSION+' (DSTU2)';
+      logt('FHIR Service '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+'). Using ini file '+iniName+' (no stack dumps)');
+    dispName := dispName + ' '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+')';
 
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
@@ -137,6 +138,12 @@ begin
           svc.LoadByProfile(fn, true)
         else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
           svc.Load(fn);
+      end
+      else if FindCmdLineSwitch('txdirect') then
+      begin
+        svc.UninstallDatabase;
+        svc.InstallDatabase;
+        svc.DebugExecute;
       end
       else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
         svc.LoadByProfile(fn, false)
@@ -190,7 +197,7 @@ begin
   except
     on e : Exception do
     begin
-      Writeln(E.ClassName, ': ', E.Message+#13#10#13#10+ExceptionStack(e));
+      logt(E.ClassName+ ': '+E.Message+#13#10#13#10+ExceptionStack(e));
       raise;
     end;
   end;
@@ -249,29 +256,29 @@ begin
   except
     on e : Exception do
     begin
-      writelnt(E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
+      logt(E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
       raise;
     end;
   end;
-  writelnt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
+  logt('started ('+inttostr((GetTickCount - FStartTime) div 1000)+'secs)');
 end;
 
 procedure TFHIRService.DoStop;
 begin
   try
-    writelnt('stop: '+StopReason);
+    logt('stop: '+StopReason);
     StopRestServer;
     UnloadTerminologies;
   except
     on e : Exception do
-      Writelnt(E.ClassName + ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
+      logt(E.ClassName + ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
   end;
 end;
 
 procedure TFHIRService.dump;
 begin
   inherited;
-  writelnt(KDBManagers.Dump);
+  logt(KDBManagers.Dump);
 end;
 
 procedure TFHIRService.ExecuteTests(all : boolean);
@@ -294,20 +301,20 @@ begin
     FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
-    writelnt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
+    logt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
     FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
       FIni.ReadString('database', 'server', ''), dbn,
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end
   else if FIni.ReadString('database', 'type', '') = 'mysql' then
   begin
-    writelnt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
+    logt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
     raise Exception.Create('Not Done Yet');
     // principally because of text indexing, but also because I don't know how to connect to a mysql server in an open source way
   end
   else
   begin
-    writelnt('Database not configured');
+    logt('Database not configured');
     raise Exception.Create('Database Access not configured');
   end;
   if not noCheck then
@@ -322,7 +329,7 @@ begin
           ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
           if (ver <> ServerDBVersion) then
           begin
-            writelnt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
+            logt('Upgrade Database from version '+inttostr(ver)+' to '+inttostr(ServerDBVersion));
             dbi := TFHIRDatabaseInstaller.create(conn, '');
             try
               dbi.upgrade(ver);
@@ -353,7 +360,7 @@ begin
   FWebSource := FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, '');
   if FWebSource = '' then
     FWebSource := FIni.ReadString('fhir', 'source', '');
-  writelnt('Using FHIR Specification at '+FWebSource);
+  logt('Using FHIR Specification at '+FWebSource);
 
   if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.info') then
     raise Exception.Create('FHIR Publication not found at '+FWebSource);
@@ -363,7 +370,7 @@ begin
     if s <> FHIR_GENERATED_VERSION then
       raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_VERSION+', found "'+ini.ReadString('FHIR', 'version', '')+'"')
     else
-      writelnt('Version ok ('+s+')');
+      logt('Version ok ('+s+')');
   finally
     ini.Free;
   end;
@@ -382,14 +389,14 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
-  writelnt('Load database from '+fn);
+  logt('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
     FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil);
   finally
     f.Free;
   end;
-  writelnt('done');
+  logt('done');
 
   FTerminologyServer.BuildIndexes(true);
 
@@ -412,7 +419,7 @@ begin
     if init then
     begin
       fn := ini.ReadString('control', 'load', '');
-      writelnt('Load database from '+fn);
+      logt('Load database from '+fn);
       f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', ini);
@@ -426,7 +433,7 @@ begin
       if (fn <> '') then
       begin
         repeat
-          writelnt('Load '+fn);
+          logt('Load '+fn);
           f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
           try
             FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini);
@@ -436,7 +443,7 @@ begin
         until ini.ReadInteger('process', 'start', -1) = -1;
       end;
     end;
-    writelnt('done');
+    logt('done');
     FTerminologyServer.BuildIndexes(true);
     DoStop;
   finally
@@ -462,7 +469,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
-  writelnt('index database');
+  logt('index database');
   FTerminologyServer.BuildIndexes(true);
   DoStop;
 end;
@@ -473,7 +480,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
-  writelnt('validate resources');
+  logt('validate resources');
   FWebServer.DataStore.RunValidation;
   DoStop;
 end;
@@ -517,7 +524,7 @@ begin
 
   if FDb = nil then
     ConnectToDatabase;
-  writelnt('mount database');
+  logt('mount database');
   scim := TSCIMServer.Create(FDB.Link, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('setup');
@@ -534,11 +541,11 @@ begin
       scim.DefineAnonymousUser(conn);
       scim.DefineAdminUser(conn, un, pw, em);
       conn.Release;
-      writelnt('done');
+      logt('done');
     except
        on e:exception do
        begin
-         writelnt('Error: '+e.Message);
+         logt('Error: '+e.Message);
          conn.Error(e);
          recordStack(e);
          raise;
@@ -556,7 +563,7 @@ var
 begin
   if FDb = nil then
     ConnectToDatabase(true);
-  writelnt('unmount database');
+  logt('unmount database');
   conn := FDb.GetConnection('setup');
   try
     db := TFHIRDatabaseInstaller.create(conn, '');
@@ -566,11 +573,11 @@ begin
       db.free;
     end;
     conn.Release;
-    writelnt('done');
+    logt('done');
   except
      on e:exception do
      begin
-       writelnt('Error: '+e.Message);
+       logt('Error: '+e.Message);
        conn.Error(e);
        recordStack(e);
        raise;

@@ -2032,7 +2032,7 @@ end;
 function TFHIRExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$this', '$resource'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource', '$context'], name)
   else
     result := true;
 end;

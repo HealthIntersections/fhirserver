@@ -140,6 +140,11 @@ type
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
   TFhirProfileStructureElementDefinitionBinding = TFhirElementDefinitionBinding;
+  TFhirConceptMapGroup = TFhirConceptMap;
+  TFhirConceptMapGroupList = TFhirConceptMap;
+  TFhirConceptMapGroupElement = TFhirConceptMapElement;
+  TFhirConceptMapGroupElementTarget = TFhirConceptMapElementTarget;
+  TFhirConceptMapGroupElementTargetList = TFhirConceptMapElementTargetList;
 
   TResourceWithReference = class (TAdvObject)
   private
@@ -281,6 +286,7 @@ type
   public
     function context : string;
     function source : string;
+    function conceptList : TFhirValueSetCodeSystemConceptList;
   end;
 
   TFHIROperationOutcomeHelper = class helper (TFHIRDomainResourceHelper) for TFhirOperationOutcome
@@ -317,6 +323,7 @@ type
     function context : string;
     function sourceDesc: String;
     function targetDesc: String;
+    function groupList : TFhirConceptMap;
   end;
 
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
@@ -2120,6 +2127,11 @@ begin
     result := result + gen(useContextList[i]);
 end;
 
+function TFhirConceptMapHelper.groupList: TFhirConceptMap;
+begin
+  result := self;
+end;
+
 function TFhirConceptMapHelper.sourceDesc: String;
 begin
   if source = nil then
@@ -2819,6 +2831,11 @@ begin
 end;
 
 { TFhirValueSetHelper }
+
+function TFhirValueSetHelper.conceptList: TFhirValueSetCodeSystemConceptList;
+begin
+  result := codeSystem.conceptList;
+end;
 
 function TFhirValueSetHelper.context: string;
 var

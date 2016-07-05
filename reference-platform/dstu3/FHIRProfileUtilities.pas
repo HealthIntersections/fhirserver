@@ -1616,7 +1616,7 @@ var
   i : integer;
   mem : TAdvMemoryStream;
   vcl : TVclStream;
-  xml : TFHIRXmlParser;
+  fp : TFHIRParser;
 begin
   // read the zip, loading the resources we need
   b := TAdvBuffer.create;
@@ -1633,7 +1633,7 @@ begin
         begin
           if StringArrayExists(['.xsd', '.xsl', '.xslt', '.sch'], ExtractFileExt(r.Parts[i].Name)) then
             // ignore
-          else if ExtractFileExt(r.Parts[i].Name) = '.xml' then
+          else if (ExtractFileExt(r.Parts[i].Name) = '.xml') or (ExtractFileExt(r.Parts[i].Name) = '.json') then
           begin
             mem := TAdvMemoryStream.create;
             try
@@ -1641,16 +1641,20 @@ begin
               vcl := TVCLStream.create;
               try
                 vcl.Stream := mem.link;
-                xml := TFHIRXmlParser.create(self.link, 'en');
+                if ExtractFileExt(r.Parts[i].Name) = '.json' then
+                  fp := TFHIRJsonParser.create(self.link, 'en')
+                else
+                  fp := TFHIRXmlParser.create(self.link, 'en');
                 try
-                  xml.source := vcl;
-                  xml.Parse;
-                  if xml.resource is TFhirBundle then
-                    Load(xml.resource as TFhirBundle)
+                  fp.IgnoreHtml := true;
+                  fp.source := vcl;
+                  fp.Parse;
+                  if fp.resource is TFhirBundle then
+                    Load(fp.resource as TFhirBundle)
                   else
-                    SeeResource(xml.resource);
+                    SeeResource(fp.resource);
                 finally
-                  xml.free;
+                  fp.free;
                 end;
               finally
                 vcl.free;

@@ -27,7 +27,7 @@ Type
     procedure SetSource(const Value: TFhirValueSet);
     procedure SetTarget(const Value: TFhirValueSet);
 
-    function HasTranslation(list : TFhirConceptMapELementList; system, code : String; out maps : TFhirConceptMapElementTargetList) : boolean; overload;
+    function HasTranslation(list : TFhirConceptMapGroupList; system, code : String; out maps : TFhirConceptMapGroupElementTargetList) : boolean; overload;
   public
     Destructor Destroy; override;
     function Link : TLoadedConceptMap; overload;
@@ -35,7 +35,7 @@ Type
     Property Resource : TFhirConceptMap read FResource write SetResource;
     Property Target : TFhirValueSet read FTarget write SetTarget;
 
-    function HasTranslation(system, code : String; out maps : TFhirConceptMapElementTargetList) : boolean; overload;
+    function HasTranslation(system, code : String; out maps : TFhirConceptMapGroupElementTargetList) : boolean; overload;
   end;
 
   TLoadedConceptMapList = class (TAdvObjectList)
@@ -82,6 +82,7 @@ Type
     FVs : TFhirCodeSystem;
     function doLocate(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemProviderContext;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptList; filter : TSearchFilterText);
+    procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
   public
     constructor Create(vs : TFhirCodeSystem); overload;
     destructor Destroy; override;
@@ -1640,11 +1641,18 @@ begin
 end;
 
 function TFhirCodeSystemProvider.ChildCount(context: TCodeSystemProviderContext): integer;
+var
+  ex : TFhirExtension;
 begin
   if context = nil then
     result := FVs.codeSystem.conceptList.count
   else
+  begin
     result := TFhirCodeSystemProviderContext(context).context.conceptList.count;
+    for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensionList do
+      if ex.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes' then
+        inc(result);
+  end;
 end;
 
 procedure TFhirCodeSystemProvider.Close(ctxt: TCodeSystemProviderContext);
@@ -1738,11 +1746,29 @@ begin
   end;end;
 
 function TFhirCodeSystemProvider.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+var
+  ex : TFhirExtension;
+  code : String;
 begin
   if context = nil then
     result := TFhirCodeSystemProviderContext.create(FVs.codeSystem.conceptList[ndx])
   else
-    result := TFhirCodeSystemProviderContext.create(TFhirCodeSystemProviderContext(context).context.conceptList[ndx]);
+  begin
+    if (ndx < TFhirCodeSystemProviderContext(context).context.conceptList.Count) then
+      result := TFhirCodeSystemProviderContext.create(TFhirCodeSystemProviderContext(context).context.conceptList[ndx])
+    else
+    begin
+      ndx := ndx - TFhirCodeSystemProviderContext(context).context.conceptList.count;
+      for ex in TFhirCodeSystemProviderContext(context).context.modifierExtensionList do
+        if (ndx = 0) then
+        begin
+          code := TFHIRCode(ex.value).value;
+          exit(doLocate(FVs.conceptList, code));
+        end
+        else if ex.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes' then
+          dec(ndx);
+    end;
+  end;
 end;
 
 function TFhirCodeSystemProvider.Display(context: TCodeSystemProviderContext): string;
@@ -1885,13 +1911,25 @@ begin
   ctxt.Free;
 end;
 
-procedure iterateCodes(base : TFhirCodeSystemConcept; list : TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConcept; list : TFhirCodeSystemProviderFilterContext);
 var
   i : integer;
+  ex: TFhirExtension;
+  ctxt : TCodeSystemProviderContext;
 begin
   list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);
+  for ex in base.modifierExtensionList do
+    if ex.url = 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes' then
+    begin
+     ctxt := doLocate(FVs.conceptList, TFHIRCode(ex.value).value);
+     try
+       list.Add(TFhirCodeSystemProviderContext(ctxt).context.Link, 0);
+     finally
+       Close(ctxt);
+     end;
+    end;
 end;
 
 function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -2023,9 +2061,9 @@ begin
   inherited;
 end;
 
-function TLoadedConceptMap.HasTranslation(system, code : String; out maps : TFhirConceptMapElementTargetList): boolean;
+function TLoadedConceptMap.HasTranslation(system, code : String; out maps : TFhirConceptMapGroupElementTargetList): boolean;
 begin
-  result := HasTranslation(Resource.conceptList, system, code, maps);
+  result := HasTranslation(Resource.groupList, system, code, maps);
 end;
 
 function TLoadedConceptMap.Link: TLoadedConceptMap;
@@ -2033,22 +2071,29 @@ begin
   result := TLoadedConceptMap(inherited Link);
 end;
 
-function TLoadedConceptMap.HasTranslation(list : TFhirConceptMapELementList; system, code : String; out maps : TFhirConceptMapElementTargetList): boolean;
+function TLoadedConceptMap.HasTranslation(list : TFhirConceptMapGroupList; system, code : String; out maps : TFhirConceptMapGroupElementTargetList): boolean;
 var
   i : integer;
-  c : TFhirConceptMapElement;
+  g : TFhirConceptMapGroup;
+  c : TFhirConceptMapGroupElement;
 begin
   result := false;
-  for i := 0 to list.Count - 1 do
-  begin
-    c := list[i];
-    if (c.system = system) and (c.code = code) then
+  {$IFDEF FHIR2CM}
+    for c in g.elementList do
     begin
-      maps := c.targetList.Link;
-      result := true;
-      exit;
+      if (c.system = system) and (c.code = code) then
+  {$ELSE}
+  for g in list do
+    for c in g.elementList do
+    begin
+      if (g.source = system) and (c.code = code) then
+  {$ENDIF}
+      begin
+        maps := c.targetList.Link;
+        result := true;
+        exit;
+      end;
     end;
-  end;
 end;
 
 procedure TLoadedConceptMap.SetResource(const Value: TFhirConceptMap);

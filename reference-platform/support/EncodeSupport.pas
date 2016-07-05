@@ -481,7 +481,7 @@ Begin
       End;
 
       // Only need to encode &quot; and &apos; in XML attributes...
-    Else if ord(cValue) > 255 then
+    Else if false {ord(cValue) > 255} then
       Begin
         Delete(Result, iLoop, 1);
         Insert('&#x' + IntToHex(Ord(cValue), 4) + ';', Result, iLoop);

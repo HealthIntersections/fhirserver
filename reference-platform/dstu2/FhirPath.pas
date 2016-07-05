@@ -2986,7 +2986,7 @@ begin
       result.Name := lexer.take;
       result.SourceLocationEnd := lexer.FCurrentLocation;
       if not result.checkName then
-        raise lexer.error('Found '+lexer.current+' expecting a valid token name');
+        raise lexer.error('Found '+result.name+' expecting a valid token name');
       if (lexer.current = '(') then
       begin
         if not StringArrayExistsSensitive(CODES_TFHIRPathFunctions, result.Name) then

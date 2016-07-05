@@ -303,7 +303,8 @@ uses
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
   FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
-  XmlPatch in '..\reference-platform\support\XmlPatch.pas';
+  XmlPatch in '..\reference-platform\support\XmlPatch.pas',
+  FHIRLog in 'FHIRLog.pas';
 
 begin
   JclStartExceptionTracking;

@@ -77,6 +77,7 @@ Type
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
     FWorker : TWorkerContext;
+    FIgnoreHtml: Boolean;
     procedure SetResource(const Value: TFhirResource);
     procedure start;
     procedure checkTimeOut;
@@ -102,6 +103,7 @@ Type
     property KeepLineNumbers : boolean read FKeepLineNumbers write FKeepLineNumbers;
     property timeLimit : Cardinal read FTimeLimit write FTimeLimit;
     property Format : TFHIRFormat read GetFormat;
+    property IgnoreHtml : Boolean read FIgnoreHtml write FIgnoreHtml;
   end;
 
   TFHIRParserClass = class of TFHIRParser;
@@ -370,7 +372,6 @@ uses
   FHIRParser,
   FHIRUtilities,
   FHIRProfileUtilities,
-  FHIRStructureMapUtilities,
   FHIRMetaModel;
 
 Function TFHIRXmlParserBase.LoadXml(stream : TStream) : IXmlDomDocument2;
@@ -517,7 +518,10 @@ end;
 
 function TFHIRJsonParserBase.ParseXHtmlNode(path, value : String): TFhirXHtmlNode;
 begin
-  result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], value);
+  if FIgnoreHtml then
+    result := nil
+  else
+    result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], value);
 end;
 
 
@@ -526,7 +530,10 @@ function TFHIRXmlParserBase.ParseXHtmlNode(element: IXmlDomElement; path : Strin
 begin
   if not AllowUnknownContent and (element.namespaceURI <> XHTML_NS) Then
     XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [element.namespaceURI]));
-  result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
+  if FIgnoreHtml then
+    result := nil
+  else
+    result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
 end;
 
 
@@ -2797,19 +2804,8 @@ end;
 procedure TFHIRTextParser.Parse;
 var
   s : String;
-  util : TFHIRStructureMapUtilities;
 begin
   s := StreamToString(source, TEncoding.UTF8);
-  if s.StartsWith('map ') then
-  begin
-    util := TFHIRStructureMapUtilities.create(FWorker.Link as TWorkerContext, nil, nil);
-    try
-      resource := util.parse(s)
-    finally
-      util.Free;
-    end;
-  end
-  else
     raise Exception.Create('Unable to process text content - unrecognised');
 end;
 
@@ -2817,28 +2813,8 @@ end;
 { TFHIRTextComposer }
 
 procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
-var
-  utils : TFHIRStructureMapUtilities;
 begin
   case oResource.ResourceType of
-    frtStructureMap :
-      begin
-        utils := TFHIRStructureMapUtilities.create(FWorker.Link, nil, nil);
-        try
-          StringToStream(utils.render(oResource as TFHirStructureMap), stream, TEncoding.UTF8);
-        finally
-          utils.free;
-        end;
-      end;
-    frtConceptMap :
-      begin
-        utils := TFHIRStructureMapUtilities.create(FWorker.Link, nil, nil);
-        try
-          StringToStream(utils.render(oResource as TFHirConceptMap), stream, TEncoding.UTF8);
-        finally
-          utils.free;
-        end;
-      end;
     frtOperationOutcome : StringToStream(render(oResource as TFHIROperationOutcome), stream, TEncoding.UTF8);
   else
     raise Exception.Create('Text format not supported for '+oResource.fhirtype);

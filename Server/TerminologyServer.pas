@@ -30,8 +30,8 @@ Type
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TKDBConnection);
     procedure processConcept(ConceptKey : integer; URL, Code : String; conn2, conn3 : TKDBConnection);
     function isOkTarget(cm: TLoadedConceptMap; vs: TFHIRValueSet): boolean;
-    function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean; overload;
-    function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out match : TFhirConceptMapElement): boolean; overload;
+    function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
+    function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
     procedure LoadClosures;
   protected
     procedure invalidateVS(id : String); override;
@@ -67,7 +67,7 @@ Type
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
 
     // closures
-    procedure InitClosure(name : String);
+    function InitClosure(name : String) : String;
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
 
@@ -83,6 +83,7 @@ implementation
 
 uses
   SystemService,
+  FHIRLog,
   FHIRConstants,
   USStateCodeServices,
   FHIRValueSetExpander;
@@ -115,25 +116,25 @@ var
   p : TCodeSystemProvider;
   sn: TSnomedServices;
 begin
-  writelnt('Load DB Terminologies');
+  logt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
   Cvx := TCvxServices.Create(Fdb.Link);
   CountryCode := TCountryCodeServices.Create(Fdb.Link);
   AreaCode := TAreaCodeServices.Create(Fdb);
   p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);
-  writelnt(' - done');
+  logt(' - done');
 
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
-    writelnt('Connect to RxNorm');
+    logt('Connect to RxNorm');
     RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 0, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
   end;
   if ini.ReadString('NciMeta', 'database', '') <> '' then
   begin
-    writelnt('Connect to NciMeta');
+    logt('Connect to NciMeta');
     NciMeta := TNciMetaServices.Create(TKDBOdbcDirect.create('ncimeta', 100, 0, 'SQL Server Native Client 11.0',
         Ini.ReadString('database', 'server', ''), Ini.ReadString('NciMeta', 'database', ''),
         Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
@@ -141,28 +142,28 @@ begin
   fn := ini.ReadString('snomed', 'cache', '');
   if fn <> '' then
   begin
-    writelnt('Load Snomed from '+fn);
+    logt('Load Snomed from '+fn);
     sn := TSnomedServices.Create;
     snomed.Add(sn);
     sn.Load(fn);
     DefSnomed := sn.Link;
-    writelnt(' - done');
+    logt(' - done');
   end;
   fn := ini.ReadString('loinc', 'cache', '');
   if fn <> '' then
   begin
-    writelnt('Load Loinc from '+fn);
+    logt('Load Loinc from '+fn);
     Loinc := TLoincServices.Create;
     Loinc.Load(fn);
-    writelnt(' - done');
+    logt(' - done');
   end;
   fn := ini.ReadString('ucum', 'source', '');
   if fn = '' then
     raise Exception.Create('Unable to start because [ucum] source= is not specified in the ini file');
-  writelnt('Load Ucum from '+fn);
+  logt('Load Ucum from '+fn);
   Ucum := TUcumServices.Create;
   Ucum.Import(fn);
-  writelnt(' - done');
+  logt(' - done');
   LoadClosures;
 end;
 
@@ -449,7 +450,7 @@ begin
     if (cs <> nil) then
     begin
       try
-        vs := cs.buildImplicitValueSet;
+        vs := {$IFDEF FHIR2}cs.link; {$ELSE} cs.buildImplicitValueSet {$ENDIF};
       finally
         cs.Free;
       end;
@@ -676,7 +677,7 @@ begin
     getCodeView(c, response);
 end;
 
-procedure TTerminologyServer.InitClosure(name: String);
+function TTerminologyServer.InitClosure(name: String) : String;
 var
   conn : TKDBConnection;
   closure : TClosureManager;
@@ -704,19 +705,28 @@ begin
       raise;
     end;
   end;
+  result := '0';
 end;
 
-function TTerminologyServer.isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out match: TFhirConceptMapElement): boolean;
+function TTerminologyServer.isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match: TFhirConceptMapGroupElement): boolean;
 var
-  em : TFhirConceptMapElement;
+  g : TFhirConceptMapGroup;
+  em : TFhirConceptMapGroupElement;
 begin
   result := false;
-  for em in cm.Resource.elementList do
-    if (em.system = coding.system) and (em.code = coding.code) then
-    begin
-      result := true;
-      match := em;
-    end;
+  {$IFDEF FHIR2CM}
+    for em in cm.resource.elementList do
+      if (em.system = coding.system) and (em.code = coding.code) then
+  {$ELSE}
+  for g in cm.Resource.groupList do
+    for em in g.elementList do
+      if (g.source = coding.system) and (em.code = coding.code) then
+  {$ENDIF}
+      begin
+        result := true;
+        match := em;
+        group := g;
+      end;
 end;
 
 function TTerminologyServer.isOkTarget(cm : TLoadedConceptMap; vs : TFHIRValueSet) : boolean;
@@ -728,18 +738,26 @@ begin
   // todo: or it might be ok to use this value set if it's a subset of the specified one?
 end;
 
-function TTerminologyServer.isOkSource(cm : TLoadedConceptMap; vs : TFHIRValueSet; coding : TFHIRCoding; out match : TFhirConceptMapElement) : boolean;
+function TTerminologyServer.isOkSource(cm : TLoadedConceptMap; vs : TFHIRValueSet; coding : TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement) : boolean;
 var
-  em : TFhirConceptMapElement;
+  g : TFhirConceptMapGroup;
+  em : TFhirConceptMapGroupElement;
 begin
   result := false;
   if (vs = nil) or ((cm.source <> nil) and (cm.Source.url = vs.url)) then
   begin
-    for em in cm.Resource.elementList do
-      if (em.system = coding.system) and (em.code = coding.code) then
+    {$IFDEF FHIR2CM}
+      for em in cm.Resource.elementList do
+        if (em.system = coding.system) and (em.code = coding.code) then
+    {$ELSE}
+    for g in cm.Resource.groupList do
+      for em in g.elementList do
+        if (g.source = coding.system) and (em.code = coding.code) then
+    {$ENDIF}
       begin
         result := true;
         match := em;
+        group := g;
       end;
   end;
 end;
@@ -751,8 +769,9 @@ var
   i : integer;
   cm : TLoadedConceptMap;
   p : TFhirParameters;
-  em : TFhirConceptMapElement;
-  map : TFhirConceptMapElementTarget;
+  g : TFhirConceptMapGroup;
+  em : TFhirConceptMapGroupElement;
+  map : TFhirConceptMapGroupElementTarget;
   outcome : TFhirCoding;
   found : boolean;
 begin
@@ -785,7 +804,7 @@ begin
         for i := 0 to list.Count - 1 do
         begin
           cm := list[i];
-          if isOkTarget(cm, target) and isOkSource(cm, source, coding, em) then
+          if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
           begin
             found := true;
             if em.targetList.Count = 0 then
@@ -797,7 +816,11 @@ begin
               result.AddParameter('result', true);
               outcome := TFhirCoding.Create;
               result.AddParameter('outcome', outcome);
+              {$IFDEF FHIR2CM}
               outcome.system := map.system;
+              {$ELSE}
+              outcome.system := g.target;
+              {$ENDIF}
               outcome.code := map.code;
             end
             else
@@ -935,7 +958,7 @@ begin
 
         // first, update value set member information
         BackgroundThreadStatus := 'BI: Updating ValueSet Members';
-        if (prog) then Writet('Updating ValueSet Members');
+        if (prog) then logtn('Updating ValueSet Members');
         conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
         conn1.Prepare;
         conn1.Execute;
@@ -951,7 +974,7 @@ begin
         if (prog) then Writeln;
 
         // second, for each concept that needs indexing, check it's value set information
-        if (prog) then Writet('Indexing Concepts');
+        if (prog) then logtn('Indexing Concepts');
         BackgroundThreadStatus := 'BI: Indexing Concepts';
         conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
         conn1.Prepare;
@@ -968,7 +991,7 @@ begin
         if (prog) then Writeln;
 
         // last, for each entry in the closure entry table that needs closureing, do it
-        if (prog) then Writet('Generating Closures');
+        if (prog) then logtn('Generating Closures');
         BackgroundThreadStatus := 'BI: Generating Closures';
         conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
            'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
@@ -984,7 +1007,7 @@ begin
         conn1.Terminate;
         if (prog) then Writeln;
 
-        if (prog) then Writelnt('Done');
+        if (prog) then logt('Done');
         BackgroundThreadStatus := 'BI: ';
         conn3.Release;
       except
@@ -1117,8 +1140,9 @@ var
   list : TLoadedConceptMapList;
   i : integer;
   p : TFhirParameters;
-  em : TFhirConceptMapElement;
-  map : TFhirConceptMapElementTarget;
+  g : TFhirConceptMapGroup;
+  em : TFhirConceptMapGroupElement;
+  map : TFhirConceptMapGroupElementTarget;
   outcome : TFhirCoding;
   found : boolean;
 begin
@@ -1146,7 +1170,7 @@ begin
 
       found := false;
       result := TFhirParameters.create;
-      if isOkSource(cm, coding, em) then
+      if isOkSource(cm, coding, g, em) then
       begin
       found := true;
       if em.targetList.Count = 0 then
@@ -1158,7 +1182,11 @@ begin
         result.AddParameter('result', true);
         outcome := TFhirCoding.Create;
         result.AddParameter('outcome', outcome);
+        {$IFDEF FHIR2CM}
         outcome.system := map.system;
+        {$ELSE}
+        outcome.system := g.target;
+        {$ENDIF}
         outcome.code := map.code;
       end
       else

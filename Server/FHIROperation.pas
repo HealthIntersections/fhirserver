@@ -54,7 +54,9 @@ uses
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
   {$IFDEF FHIR3}
+  {$IFNDEF FHIR2CM}
   FHIRStructureMapUtilities,
+  {$ENDIF}
   {$ENDIF}
   ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
@@ -540,7 +542,7 @@ type
     function formalURL : String; override;
   end;
 
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2CM}
   TServerTransformerServices = class (TTransformerServices)
   private
     FRepository : TFHIRDataStore;
@@ -553,7 +555,9 @@ type
     function translate(appInfo : TAdvObject; src : TFHIRCoding; conceptMapUrl : String) : TFHIRCoding; override;
     procedure log(s : String); override;
   end;
+  {$ENDIF}
 
+  {$IFNDEF FHIR2CM}
   TFhirTransformOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -565,7 +569,9 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+  {$ENDIF}
 
+  {$IFDEF FHIR3}
   TFhirActivateOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -582,6 +588,7 @@ type
 implementation
 
 uses
+  FHIRLog,
   TerminologyServerStore,
   SystemService;
 
@@ -627,8 +634,10 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.create);
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2CM}
   FOperations.add(TFhirTransformOperation.create);
+  {$ENDIF}
+  {$IFDEF FHIR3}
   FOperations.add(TFhirActivateOperation.create);
   {$ENDIF}
 end;
@@ -1997,7 +2006,7 @@ begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(Repository.ResConfig[p[2]].key)+')');
         end
         else
-          sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+'))');
+          sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[0])+'))');
       end
       else
         raise Exception.Create('Unable to process include '+s);
@@ -3820,9 +3829,9 @@ var
   ne : TFhirBundleEntry;
 begin
   if (entry.request <> nil) then
-    writelnt(inttostr(i)+': '+entry.request.methodElement.value+' '+id.summary)
+    logt(inttostr(i)+': '+entry.request.methodElement.value+' '+id.summary)
   else
-    writelnt(inttostr(i)+': '+id.summary);
+    logt(inttostr(i)+': '+id.summary);
 
   request.Id := id.id;
   if entry.resource <> nil then
@@ -4071,7 +4080,7 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.bundle := resp.Link;
-      writelnt('done');
+      logt('done');
     finally
       req.free;
       resp.free;
@@ -7622,7 +7631,7 @@ end;
 
 procedure TFhirConceptMapClosureOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
-  params, res : TFhirParameters;
+  params : TFhirParameters;
   p : TFhirParametersParameter;
   n, v : String;
   cm : TClosureManager;
@@ -7640,7 +7649,6 @@ begin
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
-      res := TFHIRParameters.Create;
       params := makeParams(request);
       cm := nil;
       map := nil;
@@ -7651,12 +7659,18 @@ begin
           v := params.str['version'];
           if (v = '') and not params.hasParameter('concept') then
           begin
-            manager.FRepository.TerminologyServer.InitClosure(n);
-            res.AddParameter('outcome', true);
+            v := manager.FRepository.TerminologyServer.InitClosure(n);
+            map := TFhirConceptMap.Create;
+            response.resource := map.Link;
+            map.id := NewGuidId;
+            map.version := v;
+            map.status := ConformanceResourceStatusActive;
+            map.experimental := true; // for now
+            map.date := NowUTC;
+            map.name := 'Closure Table '+n+' initialized';
             response.HTTPCode := 200;
             response.Message := 'OK';
             response.Body := '';
-            response.resource := res.Link;
           end
           else
           begin
@@ -7702,7 +7716,6 @@ begin
         end;
       finally
         params.free;
-        res.free;
         cm.Free;
         map.Free;
       end;
@@ -7735,12 +7748,12 @@ end;
 
 function TFhirConceptMapClosureOperation.owningResource: TFhirResourceType;
 begin
-  result := frtConceptMap;
+  result := frtNull;
 end;
 
 function TFhirConceptMapClosureOperation.Types: TFhirResourceTypeSet;
 begin
-  result := [frtConceptMap];
+  result := [frtNull];
 end;
 
 { TFhirSuggestKeyWordsOperation }
@@ -8280,7 +8293,7 @@ begin
 end;
 
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2CM}
 { TFhirTransformOperation }
 
 function TFhirTransformOperation.CreateDefinition(base: String): TFHIROperationDefinition;
@@ -8440,6 +8453,10 @@ function TServerTransformerServices.translate(appInfo: TAdvObject; src: TFHIRCod
 begin
   raise Exception.Create('Not Done Yet');
 end;
+
+{$ENDIF}
+
+{$IFDEF FHIR3}
 
 { TFhirActivateOperation }
 
