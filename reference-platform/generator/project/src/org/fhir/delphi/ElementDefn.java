@@ -517,7 +517,7 @@ public class ElementDefn {
         if (t.getCode() == null)
           throw new Error("no code on "+ed.getPath());
         if (t.getCode().equals("Reference") && t.hasProfile()) {
-          String ref = t.getProfile().get(0).getValue().substring(40);
+          String ref = t.getProfile().substring(40);
           if (ref.equals("Resource"))
             ref = "Any";
           if (types.size() > 0 && types.get(types.size() -1).getName().equals("Reference")) {

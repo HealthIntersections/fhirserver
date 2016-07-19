@@ -1176,7 +1176,7 @@ begin
       if em.targetList.Count = 0 then
         raise Exception.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.system);
       map := em.targetList[0]; // todo: choose amongst dependencies
-      if (map.equivalence in [ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
+      if (map.equivalence in [ConceptMapEquivalenceNull, ConceptMapEquivalenceEquivalent, ConceptMapEquivalenceEqual, ConceptMapEquivalenceWider, ConceptMapEquivalenceSubsumes, ConceptMapEquivalenceNarrower, ConceptMapEquivalenceSpecializes, ConceptMapEquivalenceInexact]) then
       begin
         found := true;
         result.AddParameter('result', true);
@@ -1193,7 +1193,10 @@ begin
       begin
         result.AddParameter('result', false);
       end;
-      result.AddParameter('equivalence', TFHIRCode.Create(map.equivalenceElement.value));
+      if (map.equivalenceElement = nil) then
+        result.AddParameter('equivalence', TFHIRCode.Create('equivalent'))
+      else
+        result.AddParameter('equivalence', TFHIRCode.Create(map.equivalenceElement.value));
       if (map.commentsElement <> nil) then
         result.AddParameter('message', map.commentsElement.Link);
       end;

@@ -1109,29 +1109,38 @@ procedure TFHIRDataStore.RegisterConsentRecord(session: TFhirSession);
 var
   pc: TFhirConsent;
 begin
-  pc := TFhirConsent.Create;
-  try
-    pc.dateTime := NowUTC;
-    pc.period := TFHIRPeriod.Create;
-    pc.period.start := pc.dateTime.Link;
-    pc.period.end_ := TDateAndTime.CreateUTC(session.expires);
-    pc.status := ConsentStatusActive;
-    // todo: patient:
-    QueueResource(pc, pc.dateTime);
-    with pc.actorList.append do
-    begin
-      role := TFhirCodeableConcept.Create;
-      with role.codingList.Append do
+  if session.PatientList.Count = 1 then
+  begin
+    pc := TFhirConsent.Create;
+    try
+      pc.status := ConsentStatusActive;
+      with pc.categoryList.Append.codingList.append do
       begin
-        system := 'http://hl7.org/fhir/v3/ParticipationType';
-        code := 'PRCP';
+        system := 'http://hl7.org/fhir/consentcategorycodes';
+        code := 'smart-on-fhir';
       end;
-      reference := TFHIRReference.Create;
-      reference.display := 'Server Host';
-      reference.reference := 'Device/this-server';
+      pc.dateTime := NowUTC;
+      pc.period := TFHIRPeriod.Create;
+      pc.period.start := pc.dateTime.Link;
+      pc.period.end_ := TDateAndTime.CreateUTC(session.expires);
+      pc.patient := TFHIRReference.Create;
+      pc.patient.reference := 'Patient/'+session.PatientList[0];
+      // todo: do we have a reference for the consentor?
+      // todo: do we have an identity for the organization?
+  //    for
+  //
+  //    with pc.except_List.Append do
+  //    begin
+  //      type_ := ConsentExceptTypePermit;
+  //      action := TFHIRCodeableConcept.Create;
+  //      action.codingList.add(TFHIRCoding.Create('http://hl7.org/fhir/consentaction', 'read')));
+  //    end;
+  //  finally
+  //
+  //  end;
+    finally
+      pc.Free;
     end;
-  finally
-    pc.Free;
   end;
 {$ELSE}
 var

@@ -201,13 +201,6 @@ type
     procedure checkNoModifiers(place, role : String);
   end;
 
-  TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
-  private
-    function GetProfile: String;
-  public
-    property profile : String read GetProfile;
-  end;
-
   TFhirElementDefinitionHelper = class helper for TFhirElementDefinition
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
@@ -2922,15 +2915,6 @@ begin
 end;
 
 
-{ TFhirElementDefinitionTypeHelper }
-
-function TFhirElementDefinitionTypeHelper.GetProfile: String;
-begin
-  if profileList.Count = 1 then
-    result := profileList[0].value
-  else
-    result := '';
-end;
 
 {*
  * Given a Structure, navigate to the element given by the path and return the direct children of that element
@@ -3712,10 +3696,7 @@ begin
   for edt in type_List do
     if SameText(edt.code, t) then
     begin
-      if edt.profileList.Count > 0 then
-        profile := edt.profileList[0].value
-      else
-        profile := '';
+      profile := edt.profile;
       exit(true);
     end;
 end;
@@ -3811,7 +3792,7 @@ begin
   try
     result.url := valueSet;
     result.name := name;
-    result.identifier	:= identifier.Link;
+    result.identifierList.Add(identifier.Link);
     result.status := status;
     result.experimental := experimental;
     result.date := date;

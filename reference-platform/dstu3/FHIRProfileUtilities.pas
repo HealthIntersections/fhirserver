@@ -242,8 +242,8 @@ begin
     s := d.Path.substring(d.Path.lastIndexOf('.')+1)
   else
     s := d.Path;
-  if (d.type_List.Count > 0) and (d.type_List[0].profileList.Count > 0) then
-    result := '.' + s + '['+d.type_List[0].profileList[0].value+']'
+  if (d.type_List.Count > 0) and (d.type_List[0].profile <> '') then
+    result := '.' + s + '['+d.type_List[0].profile+']'
   else
     result := '.' + s;
 end;
@@ -347,9 +347,9 @@ begin
       begin // one matching element in the differential
         log(cpath+': single match in the differential at '+inttostr(diffCursor));
         template := nil;
-        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profileList.count > 0) and (diffMatches[0].type_List[0].Code <> 'Reference') then
+        if (diffMatches[0].type_List.Count = 1) and (diffMatches[0].type_List[0].profile <> '') and (diffMatches[0].type_List[0].Code <> 'Reference') then
         begin
-          p := diffMatches[0].type_List[0].profileList[0].value;
+          p := diffMatches[0].type_List[0].profile;
           sd := context.fetchResource(frtStructureDefinition, p) as TFhirStructureDefinition;
           try
             if (sd <> nil) then
@@ -798,20 +798,17 @@ begin
   if profile.snapshot = nil then
     raise Exception.Create('Unsuitable profile for creating a resource - no snapshot');
 
-  if profile.BaseType <> '' then
-    path := profile.baseType
-  else
-    path := profile.name;
+  path := profile.type_;
   estack := TAdvList<TFhirElementDefinition>.create;
   try
     result := CreateResourceByName(path);
     try
       populate(profile, result, profile.snapshot.elementList[0], estack);
-      if profile.baseType <> '' then
+      if profile.baseDefinition <> '' then
       begin
         if result.meta = nil then
           result.meta := TFhirMeta.Create;
-        result.meta.profileList.Append.value := profile.url;
+        result.meta.profileList.Add(TFHIRUri.Create(profile.url));
       end;
 
       result.Link;
@@ -841,8 +838,8 @@ end;
 function TProfileUtilities.getProfileForDataType(type_ : TFhirElementDefinitionType) : TFHIRStructureDefinition;
 begin
   result := nil;
-  if (type_.profileList.Count > 0) then
-    result := context.fetchResource(frtStructureDefinition, type_.profileList[0].StringValue) as TFhirStructureDefinition;
+  if (type_.profile <> '') then
+    result := context.fetchResource(frtStructureDefinition, type_.profile) as TFhirStructureDefinition;
   if (result = nil) then
     result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
   if (result = nil) then
@@ -865,8 +862,8 @@ begin
       else
         b.append(', ');
       b.append(type_.code);
-      if (type_.profileList.count > 1) then
-        b.append('{'+type_.profileList[0].StringValue+'}');
+      if (type_.profile <> '') then
+        b.append('{'+type_.profile+'}');
     end;
     result := b.toString();
   finally
@@ -927,11 +924,8 @@ begin
       TFHIRReference(defn.binding.valueSet).reference := url+TFHIRReference(defn.binding.valueSet).reference;
     for t in defn.type_List do
     begin
-      for tp in t.profileList do
-      begin
-        if (tp.value.startsWith('#')) then
-          tp.value := url+tp.value;
-      end;
+      if t.profile.startsWith('#') then
+        t.profile := url+t.profile;
     end;
   end;
   result := element;

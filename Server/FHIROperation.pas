@@ -971,7 +971,9 @@ begin
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
+    {$IFNDEF FHIR3}
     oConf.restList[0].transactionMode := TransactionModeBoth;
+    {$ENDIF}
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
 
@@ -6956,7 +6958,7 @@ begin
             end
             else if params.hasParameter('codeableConcept') then
               coded := LoadDTFromParam(request.Context, params.str['codeableConcept'], request.lang, 'codeableConcept', TFhirCodeableConcept) as TFhirCodeableConcept
-            else if request.Parameters.VarExists('code') and request.Parameters.VarExists('system') then
+            else if params.hasParameter('code') and params.hasParameter('system') then
             begin
               coded := TFhirCodeableConcept.Create;
               coding := coded.codingList.Append;
@@ -6966,7 +6968,7 @@ begin
               coding.display := params.str['display'];
             end
             else
-              raise Exception.Create('Unable to find code to validate (coding | codeableConcept | code');
+              raise Exception.Create('Unable to find code to translate (coding | codeableConcept | code');
             try
               response.resource := manager.FRepository.TerminologyServer.translate(cm, coded.codingList[0]);
               response.HTTPCode := 200;
@@ -7078,8 +7080,8 @@ begin
         end
         else
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, 'http://hl7.org/fhir/StructureDefinition/'+sdBase.baseType, sdBase) then
-            raise Exception.Create('Implicit base type "'+sdBase.baseType+'" not found');
+          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
+            raise Exception.Create('Implicit base definition "'+sdBase.baseDefinition+'" not found');
         end;
 
         op := TFhirOperationOutcome.Create;
@@ -7675,7 +7677,7 @@ begin
           else
           begin
             if not manager.FRepository.TerminologyServer.UseClosure(n, cm) then
-              errorResp(404, StringFormat('closure name ''%s'' not known', [request.ResourceName+':'+request.Id]))
+              errorResp(404, StringFormat('closure name ''%s'' not known', [n]))
             else if (v <> '') and params.hasParameter('concept') then
              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
             else if (v <> '') and not StringIsInteger32(v) then

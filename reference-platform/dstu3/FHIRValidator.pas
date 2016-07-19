@@ -953,10 +953,7 @@ begin
     end;
     if (profile <> nil) then
     begin
-      if (profile.BaseType <> '') and (profile.derivation = TypeDerivationRuleConstraint) then
-        type_ := profile.baseType
-      else
-        type_ := profile.name;
+      type_ := profile.Type_;
 
       // special case: we have a bundle, and the profile is not for a bundle. We'll try the first entry instead
       if (type_ = resourceName) and (resourceName = 'Bundle') then
@@ -970,7 +967,7 @@ begin
         end;
       end;
 
-      result := rule(ctxt, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.baseType +
+      result := rule(ctxt, IssueTypeINVALID, nullLoc, nullLoc, stack.addToLiteralPath(resourceName), type_ = resourceName, 'Specified profile type was "' + profile.type_ +
         '", but resource type was "' + resourceName + '"');
     end;
 
@@ -1768,12 +1765,12 @@ begin
         raise Exception.Create('Error in profile for ' + path + ' no children, no type');
       if (ed.Type_List.count > 1) then
         raise Exception.Create('Error in profile for ' + path + ' multiple types defined in slice discriminator');
-      if (ed.Type_List[0].profileList.count > 0) then
+      if (ed.Type_List[0].profile <> '') then
       begin
         // need to do some special processing for reference here...
         if (ed.Type_List[0].code = 'Reference') then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
-        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profileList[0].value));
+        ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profile));
       end
       else
         ty := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
@@ -1869,11 +1866,11 @@ begin
       if (not ok) and (ty.code = 'Reference') then
       begin
         // we validate as much as we can. First, can we infer a type from the profile?
-        if (ty.profileList.count = 0) or (ty.profileList[0].value = 'http://hl7.org/fhir/StructureDefinition/Resource') then
+        if (ty.profile = '') or (ty.profile = 'http://hl7.org/fhir/StructureDefinition/Resource') then
           ok := true
         else
         begin
-          pr := ty.profileList[0].value;
+          pr := ty.profile;
           bt := getBaseType(ctxt, profile, pr);
           if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, path, bt <> '', 'Unable to resolve the profile reference "' + pr + '"')) then
           begin

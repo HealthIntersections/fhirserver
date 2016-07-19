@@ -2055,6 +2055,8 @@ public class DelphiGenerator {
       } else 
       {
         tn = "TFhir"+path+getTitle(e.getName());
+        if (tn.equals("TFhirPractitionerRole") && !Utilities.noString(path))
+          tn = "TFhirPractitionerRoleComp";
         strucs.add(e);
         typeNames.put(e,  tn);
         for (ElementDefn c : e.getElements()) {
@@ -2998,7 +3000,7 @@ public class DelphiGenerator {
 
   private String getElementName(String name) {
     name = name.replace("[x]", "").replace("[type]", "value");
-    if (GeneratorUtils.isDelphiReservedWord(name))
+    if (GeneratorUtils.isDelphiReservedWord(name) || name.equals("fScore"))
       return name+"_";
     else
       return name;

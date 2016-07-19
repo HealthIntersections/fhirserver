@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hl7.fhir.convertors.VersionConvertor;
 import org.hl7.fhir.dstu3.formats.XmlParser;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
@@ -100,6 +101,8 @@ public class DefinitionsLoader3 {
     TypeDefn type = new TypeDefn();
     type.loadFrom(sd.getDifferential().getElement().get(0), sd, vsmap);
     rd.setRoot(type);
+    if (sd.hasBaseDefinition())
+      type.getTypes().add(new TypeRef(sd.getBaseDefinition().substring(40)));
     for (int i = 1; i < sd.getDifferential().getElement().size(); i++) { 
       ElementDefn ed = new ElementDefn();
       ed.loadFrom(sd.getDifferential().getElement().get(i), sd, vsmap);
@@ -159,14 +162,14 @@ public class DefinitionsLoader3 {
 
   private static DefinedCode makePrimitive(StructureDefinition sd) {
     System.out.println("type "+sd.getId());
-    if (!sd.getBaseType().equals("Element")) {
+    if (!sd.getBaseDefinition().equals("http://hl7.org/fhir/StructureDefinition/Element")) {
       DefinedStringPattern dsp = new DefinedStringPattern();
       dsp.setCode(sd.getId());
       dsp.setDefinition(removeprefix(sd.getDescription()));
       dsp.setComment(sd.getSnapshot().getElement().get(0).getComments());
       dsp.setSchema(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_XML_TYPE));
       dsp.setJsonType(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_JSON_TYPE));
-      dsp.setBase(sd.getBaseType());
+      dsp.setBase(sd.getBaseDefinition().substring(40));
       return dsp;
     } else {
       PrimitiveType pt = new PrimitiveType();

@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hl7.fhir.convertors.VersionConvertor;
 import org.hl7.fhir.dstu2.formats.XmlParser;
 import org.hl7.fhir.dstu2.model.Bundle;
 import org.hl7.fhir.dstu2.model.Bundle.BundleEntryComponent;

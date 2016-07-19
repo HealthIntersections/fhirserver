@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "update to current STU3 build POST Montreal connectathon"
+        as.returnvalue = "fix that expansion logic is ignoring the modifier extension http://hl7.org/fhir/StructureDefinition/codesystem-subsumes"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -85,7 +85,6 @@ begin
         failifvariablenotdefined = true
         failifvariablenotininifile = true
         id = {25828604-726F-4115-89FB-03799A67707B}
-        ignorefailure = true
         ignorefilenotfound = false
         inifile = C:\\work\\org.hl7.fhir.dstu2\\build\\publish\\version.info
         sectionname = FHIR
@@ -111,7 +110,6 @@ begin
         failifvariablenotdefined = true
         failifvariablenotininifile = true
         id = {ABC38458-9A84-45F8-A2DD-4396E14C1F74}
-        ignorefailure = true
         ignorefilenotfound = false
         inifile = C:\\work\\org.hl7.fhir\\build\\publish\\version.info
         sectionname = FHIR
@@ -311,7 +309,7 @@ begin
           logoutput = true
           logprocessparameters = true
           params = "-j -e C:\\work\\fhirserver\\Exec\\FhirServer2.map"
-          programname = C:\\tools\\MakeJclDbg.exe
+          programname = C:\\tools\\jcl\\MakeJclDbg.exe
           redirectstderr = true
           returncodecomparator = rcEqualTo
           returncodetocheck = 0
@@ -489,6 +487,7 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServer3.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -509,6 +508,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
           description = "Compile the Server (DSTU3)"
+          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -615,6 +615,7 @@ begin
         begin
           captureoutput = true
           description = "Add Map (3)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -639,6 +640,7 @@ begin
         begin
           captureoutput = true
           description = "Sign the Server (64)"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -665,6 +667,7 @@ begin
           allowcreate = false
           deleteifblank = false
           description = "Set AppVerName in Inno Script"
+          enabled = false
           id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
           inifile = C:\\work\\fhirserver\\install\\install3.iss
           newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion3%)"

@@ -563,7 +563,7 @@ begin
       if cc.system = 'http://hl7.org/fhir/resource-types' then
       begin
         result.code := 'Reference';
-        result.profileList.Add(TFHIRString.create('http://hl7.org/fhir/Profile/'+cc.code));
+        result.profile := 'http://hl7.org/fhir/Profile/'+cc.code;
       end
       else // cc.system = 'http://hl7.org/fhir/data-types'
       begin
@@ -841,7 +841,7 @@ begin
   try
     for t in types do
     begin
-      if (t.profileList.Count > 0) then
+      if (t.profile <> '') then
         result.Add(t.Link)
       else if (t.code = '') then
       begin
