@@ -988,7 +988,7 @@ begin
        'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
       for a in FRepository.ValidatorContext.allResourceNames do
       begin
-        if FRepository.ResConfig[a].Supported and (a <> 'MessageHeader') then
+        if FRepository.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
         begin
           if a = 'Binary' then
             html.append('<tr><td>'+a+'</td>'+

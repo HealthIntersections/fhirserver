@@ -301,7 +301,8 @@ uses
   FhirOpBase in '..\reference-platform\dstu2\FhirOpBase.pas',
   FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas',
   FHIRContext in '..\reference-platform\dstu2\FHIRContext.pas',
-  XmlPatch in '..\reference-platform\support\XmlPatch.pas';
+  XmlPatch in '..\reference-platform\support\XmlPatch.pas',
+  FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas';
 
 begin
   JclStartExceptionTracking;

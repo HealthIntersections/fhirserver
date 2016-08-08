@@ -7,11 +7,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.59 (FHIR Version 1.0.2.7475)
+AppVerName=1.0.62 (FHIR Version 1.0.2.7475)
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver2-1.0.59
+OutputBaseFilename=fhirserver2-1.0.62
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -84,7 +84,7 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip"
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.xml.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
+Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"

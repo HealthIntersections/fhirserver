@@ -807,6 +807,7 @@ procedure TJSONLexer.Next;
 var
   ch : Char;
   hex : String;
+  exp : boolean;
 begin
   FLastLocationBWS := FLocation;
   repeat
@@ -868,9 +869,12 @@ begin
       Begin
       FLexType := jltNumber;
       FValue := '';
-      while More and CharInSet(ch, ['0'..'9', '.', '-']) do
+      exp := false;
+      while More and (CharInSet(ch, ['0'..'9', '.', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
       Begin
         FValue := FValue + ch;
+        if (ch = 'e') or (ch = 'E') then
+        exp := true;
         ch := getNextChar;
       End;
       push(ch);

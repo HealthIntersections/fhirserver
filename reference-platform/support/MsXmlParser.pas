@@ -479,9 +479,9 @@ end;
 
 class function TMsXmlParser.ParseString(const sSource: String; locations : TAdvList<TSourceLocationObject>): IXMLDomDocument2;
 var
-  oMem : TStringStream;
+  oMem : TBytesStream;
 begin
-  oMem := TStringStream.Create(sSource);
+  oMem := TBytesStream.Create(TEncoding.UTF8.GetBytes(sSource));
   try
     result := Parse(oMem, locations);
   Finally

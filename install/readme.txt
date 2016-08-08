@@ -13,11 +13,11 @@ One the installation is complete you must do the following things:
   - Define an admin user in the ini file [adminuser] section
   - generally review other settings
 (2) possibly edit auth.ini to configure oauth relationships etc
-(3) initialise the database: 
-      run fhirserver.exe -mount -password yourpassword 
-
-  or, if this is an upgrade from an older version of fhirserver: 
-      run fhirserver.exe -remount -password yourpassword
+(3) initialise the database, run: 
+      fhirserver.exe -mount -password yourpassword -load {app}\load
+      
+  or, if this is an upgrade from an older version of fhirserver, run: 
+      fhirserver.exe -remount -password yourpassword -load {app}\load
 
 Note: you do not need to run SSL, but if you want to, you need to use openSSL 
 to create or get valid certificates (public / privsate key in DER format, 
@@ -51,7 +51,7 @@ options:
 -title ["display name"]. the title of the service, for -install, -start, -stop, -remove, and also for -debug. Default is FHIR Server (DSTU2)
 -unii [filename]. Use with -mnount, -remount, to load the unii codes from unii.txt, when installing (get unii.txt from unii distribution)
 -profile [filename]. Not used at this time
--load [filename]. Load the database with a set of resources from a zip file. Usually this would be spec/examples.zip
+-load [folder]. Load the database with a set of resources from prebuilt examples. The folder must contain a load.ini file 
 -sver [string]. Use with -snomed-rf1 or -snomed-rf2 to specify the release URL (required)
 -lver [string]. Use with -loinc to specify the version of LOINC being imported (required)
 -password [pword]. Use with -mount of -remount to specify the password of the administrator account (required)

@@ -3,11 +3,39 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.65 2016-08-08 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.65.exe</link>
+			<description>DSTU3. 2016-08-08 (v1.0.65): Fix for removing spec from server (again)</description>
+		</item>
+<item><title>FHIRServer release 1.0.64 2016-08-08 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.64.exe</link>
+			<description>DSTU3. 2016-08-08 (v1.0.64): Fix for removing spec from server</description>
+		</item>
+		<item><title>FHIRServer release 1.0.63 2016-08-08 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.63.exe</link>
+			<description>DSTU3. 2016-08-08 (v1.0.63): update for DSTU 3 ballot reloaction of IGs</description>
+		</item>
+		<item><title>FHIRServer release 1.0.62 2016-07-24 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.62.exe</link>
+			<description>DSTU3. 2016-07-24 (v1.0.62): update for DSTU 3 freeze</description>
+		</item>
+		<item><title>FHIRServer release 1.0.62 2016-07-24 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.62.exe</link>
+			<description>DSTU2. 2016-07-24 (v1.0.62): update for DSTU 3 freeze</description>
+		</item>
+		<item><title>FHIRServer release 1.0.61 2016-07-19 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.61.exe</link>
+			<description>DSTU3. 2016-07-19 (v1.0.61): Start of STU3 QA Freeze period (update STU3 and many minor bug fixes)</description>
+		</item>
+		<item><title>FHIRServer release 1.0.61 2016-07-19 (DSTU2)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.61.exe</link>
+			<description>DSTU2. 2016-07-19 (v1.0.61): Start of STU3 QA Freeze period (update STU3 and many minor bug fixes)</description>
+		</item>
 		<item><title>FHIRServer release 1.0.60 2016-06-24 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.60.exe</link>
 			<description>DSTU3. 2016-06-24 (v1.0.60): change return type when initialising closure table</description>
 		</item>
-<item><title>FHIRServer release 1.0.59 2016-06-22 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.59 2016-06-22 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.59.exe</link>
 			<description>DSTU3. 2016-06-22 (v1.0.59): fix that expansion logic is ignoring the modifier extension http://hl7.org/fhir/StructureDefinition/codesystem-subsumes</description>
 		</item>

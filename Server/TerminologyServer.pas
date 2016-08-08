@@ -213,7 +213,7 @@ begin
     ctxt := provider.locate(coding.code);
     try
       if ctxt = nil then
-        raise Exception.Create('Unable to find code '+coding.code+' in '+s);
+        raise Exception.Create('Unable to find code '+coding.code+' in '+coding.system+' version '+s);
 
       if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
       begin

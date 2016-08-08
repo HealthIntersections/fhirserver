@@ -3159,7 +3159,7 @@ public class DelphiGenerator {
     impl2.append("end;\r\n\r\n");
     impl2.append("function TFhir"+tn+".fhirType : string;\r\n");
     impl2.append("begin\r\n");
-    impl2.append("  result := '"+t.getCode()+"';\r\n");
+    impl2.append("  result := '"+(t.getCode().equals("enum") ? "code" : t.getCode())+"';\r\n");
     impl2.append("end;\r\n\r\n");
 
     if (!derived) {

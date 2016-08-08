@@ -60,7 +60,6 @@ Type
     procedure StopRestServer;
     procedure UnloadTerminologies;
     procedure CloseDatabase;
-    procedure CheckWebSource;
     function dbExists : Boolean;
     procedure validate;
   protected
@@ -210,7 +209,6 @@ begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
   FIni := TIniFile.Create(AIniName);
-  CheckWebSource;
 end;
 
 function TFHIRService.dbExists: Boolean;
@@ -352,43 +350,39 @@ begin
   end;
 end;
 
-procedure TFHIRService.CheckWebSource;
-var
-  ini : TIniFile;
-  s : String;
-begin
-  FWebSource := FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, '');
-  if FWebSource = '' then
-    FWebSource := FIni.ReadString('fhir', 'source', '');
-  logt('Using FHIR Specification at '+FWebSource);
-
-  if not FileExists(IncludeTrailingPathDelimiter(FWebSource)+'version.info') then
-    raise Exception.Create('FHIR Publication not found at '+FWebSource);
-  ini := TIniFile.Create(IncludeTrailingPathDelimiter(FWebSource)+'version.info');
-  try
-    s := ini.ReadString('FHIR', 'version', '');
-    if s <> FHIR_GENERATED_VERSION then
-      raise Exception.Create('FHIR Publication version mismatch: expected '+FHIR_GENERATED_VERSION+', found "'+ini.ReadString('FHIR', 'version', '')+'"')
-    else
-      logt('Version ok ('+s+')');
-  finally
-    ini.Free;
-  end;
-end;
 
 procedure TFHIRService.CloseDatabase;
 begin
   FDB.Free;
 end;
 
+function Locate(s, fn : String; first : boolean) : String;
+begin
+  result := s;
+  if FolderExists(result) then
+    if first then
+      result := IncludeTrailingBackslash(s)+'examples-json.zip'
+    else
+      result := IncludeTrailingBackslash(s)+'examples.json.zip';
+  if not FileExists(result) then
+    result := IncludeTrailingBackslash(ExtractFilePath(fn))+s;
+  if not FileExists(result) then
+    raise Exception.Create('Unable to find file '+s);
+end;
+
 procedure TFHIRService.Load(fn: String);
 var
   f : TFileStream;
+  st : TStringList;
+  s, src : String;
+  first : boolean;
+  ini : TIniFile;
 begin
   FNotServing := true;
   if FDb = nil then
     ConnectToDatabase;
   CanStart;
+  {$IFDEF FHIR2}
   logt('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
@@ -396,6 +390,43 @@ begin
   finally
     f.Free;
   end;
+  {$ELSE}
+  if FolderExists(fn) then
+    fn := IncludeTrailingBackslash(fn)+'load.ini';
+  logt('Load database from sources listed in '+fn);
+  if not FileExists(fn) then
+    raise Exception.Create('Load Ini file '+fn+' not found');
+  ini := TIniFile.Create(fn);
+  st := TStringList.Create;
+  try
+    ini.ReadSection('files', st);
+    first := true;
+    for s in st do
+    begin
+      logt('Check file '+s);
+      src := locate(s, fn, first);
+      first := false;
+    end;
+
+    first := true;
+    for s in st do
+    begin
+      logt('Load file '+s);
+      src := locate(s, fn, first);
+      f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
+      try
+        FWebServer.Transaction(f, first, src, ini.ReadString('files', s, ''), nil);
+      finally
+        f.Free;
+      end;
+      first := false;
+    end;
+  finally
+    st.Free;
+    ini.Free;
+  end;
+
+  {$ENDIF}
   logt('done');
 
   FTerminologyServer.BuildIndexes(true);

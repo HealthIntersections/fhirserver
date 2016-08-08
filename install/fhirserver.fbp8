@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix that expansion logic is ignoring the modifier extension http://hl7.org/fhir/StructureDefinition/codesystem-subsumes"
+        as.returnvalue = "testing new build"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -223,16 +223,16 @@ begin
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
-          versioninfokeys = "CompanyName=" +
-                            "FileDescription=" +
-                            "FileVersion=0.0.0.0" +
-                            "InternalName=" +
-                            "LegalCopyright=" +
-                            "LegalTrademarks=" +
-                            "OriginalFilename=" +
-                            "ProductName=" +
-                            "ProductVersion=0.0.0.0" +
-                            "Comments=" +
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
                             ""
           warningsaserror = false
           workaroundd5bug = false
@@ -244,11 +244,11 @@ begin
             assertions = false
             assignableconst = false
             booleval = false
-            compilerwarnings = "-w-UNSAFE_TYPE=0" +
-                               "-w-UNSAFE_CODE=0" +
-                               "-w-UNSAFE_CAST=0" +
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
                                ""
-            conditionals = FHIR2
+            conditionals = FHIR2;FHIR2CM
             consoleapp = false
             debuginfo = false
             definitionsonly = true
@@ -287,7 +287,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;
             unitoutputdir = C:\\work\\fhirserver\\Exec\\Temp
             usedebugdcu = false
             usepackages = false
@@ -406,7 +406,7 @@ begin
         action.ftp.connect
         begin
           connecttimeoutinsec = 0
-          cookie = q3B4xMWDXfAo74OHdw==
+          cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
           ftpconnectionname = HealthIntersections1
@@ -459,9 +459,9 @@ begin
           insertatxpath = /rss/channel/link
           nodename = item
           nodetext = "" +
-                     "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU2)</title>" +
-                     "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.%BuildCount%.exe</link>" +
-                     "      <description>DSTU2. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                     "      <title\>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU2)</title\>" +
+                     "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver2-1.0.%BuildCount%.exe</link\>" +
+                     "      <description\>DSTU2. %BuildDate% (v1.0.%BuildCount%): %purpose%</description\>" +
                      ""
           parentxpath = /rss/channel
           parserver = HighestMSXML
@@ -487,7 +487,6 @@ begin
         begin
           deletehidden = false
           deletereadonly = false
-          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServer3.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -508,7 +507,6 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Seattle
           description = "Compile the Server (DSTU3)"
-          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -540,16 +538,16 @@ begin
           useprojectsettings = []
           usepropertyset = false
           useversionfromdof = false
-          versioninfokeys = "CompanyName=" +
-                            "FileDescription=" +
-                            "FileVersion=0.0.0.0" +
-                            "InternalName=" +
-                            "LegalCopyright=" +
-                            "LegalTrademarks=" +
-                            "OriginalFilename=" +
-                            "ProductName=" +
-                            "ProductVersion=0.0.0.0" +
-                            "Comments=" +
+          versioninfokeys = "CompanyName\=" +
+                            "FileDescription\=" +
+                            "FileVersion\=0.0.0.0" +
+                            "InternalName\=" +
+                            "LegalCopyright\=" +
+                            "LegalTrademarks\=" +
+                            "OriginalFilename\=" +
+                            "ProductName\=" +
+                            "ProductVersion\=0.0.0.0" +
+                            "Comments\=" +
                             ""
           warningsaserror = false
           workaroundd5bug = false
@@ -561,9 +559,9 @@ begin
             assertions = false
             assignableconst = false
             booleval = false
-            compilerwarnings = "-w-UNSAFE_TYPE=0" +
-                               "-w-UNSAFE_CODE=0" +
-                               "-w-UNSAFE_CAST=0" +
+            compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                               "-w-UNSAFE_CODE\=0" +
+                               "-w-UNSAFE_CAST\=0" +
                                ""
             conditionals = FHIR3
             consoleapp = false
@@ -604,7 +602,7 @@ begin
             stackframes = false
             stringchecks = true
             typedpointers = false
-            unitaliases = WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+            unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;
             unitoutputdir = C:\\work\\fhirserver\\Exec\\Temp
             usedebugdcu = false
             usepackages = false
@@ -615,7 +613,6 @@ begin
         begin
           captureoutput = true
           description = "Add Map (3)"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -640,7 +637,6 @@ begin
         begin
           captureoutput = true
           description = "Sign the Server (64)"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -667,19 +663,12 @@ begin
           allowcreate = false
           deleteifblank = false
           description = "Set AppVerName in Inno Script"
-          enabled = false
           id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
           inifile = C:\\work\\fhirserver\\install\\install3.iss
           newvalue = "1.0.%BuildCount% (FHIR Version %FhirVersion3%)"
           section = Setup
           valuename = AppVerName
           valuetype = vtString
-        end
-        action.build.stop
-        begin
-          buildresult = false
-          enabled = false
-          id = {29832D1A-DB92-478F-A528-46C94A0F30E1}
         end
         action.ini.write
         begin
@@ -729,10 +718,16 @@ begin
           useerrordialogmonitor = false
           waitforcompletion = true
         end
+        action.build.stop
+        begin
+          buildresult = false
+          enabled = false
+          id = {29832D1A-DB92-478F-A528-46C94A0F30E1}
+        end
         action.ftp.connect
         begin
           connecttimeoutinsec = 0
-          cookie = q3B4xMWDXfAo74OHdw==
+          cookie = q3B4xMWDXfAo74OHdw\=\=
           detailedlogging = false
           enablekeepalives = false
           ftpconnectionname = HealthIntersections2
@@ -785,9 +780,9 @@ begin
           insertatxpath = /rss/channel/link
           nodename = item
           nodetext = "" +
-                     "      <title>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU3)</title>" +
-                     "      <link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.%BuildCount%.exe</link>" +
-                     "      <description>DSTU3. %BuildDate% (v1.0.%BuildCount%): %purpose%</description>" +
+                     "      <title\>FHIRServer release 1.0.%BuildCount% %BuildDate% (DSTU3)</title\>" +
+                     "      <link\>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.%BuildCount%.exe</link\>" +
+                     "      <description\>DSTU3. %BuildDate% (v1.0.%BuildCount%): %purpose%</description\>" +
                      ""
           parentxpath = /rss/channel
           parserver = HighestMSXML
@@ -819,7 +814,7 @@ begin
       action.ftp.connect
       begin
         connecttimeoutinsec = 0
-        cookie = q3B4xMWDXfAo74OHdw==
+        cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
         ftpconnectionname = HealthIntersections3

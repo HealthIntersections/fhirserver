@@ -275,7 +275,7 @@ uses
   SmartOnFhirUtilities in '..\reference-platform\dstu3\SmartOnFhirUtilities.pas',
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
-  FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
+  FHIRProfileUtilities in '..\reference-platform\dstuAu\FHIRProfileUtilities.pas',
   FHIRBase in '..\reference-platform\dstu3\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\dstuAu\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstuAu\FHIRResources.pas',
@@ -286,7 +286,7 @@ uses
   FHIRLang in '..\reference-platform\dstu3\FHIRLang.pas',
   FHIRUtilities in '..\reference-platform\dstuAu\FHIRUtilities.pas',
   FHIRClient in '..\reference-platform\dstu3\FHIRClient.pas',
-  FHIRValidator in '..\reference-platform\dstu3\FHIRValidator.pas',
+  FHIRValidator in '..\reference-platform\dstuAu\FHIRValidator.pas',
   ClosureManager in 'ClosureManager.pas',
   CDSHooksUtilities in '..\reference-platform\dstu3\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
@@ -302,7 +302,8 @@ uses
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
-  XmlPatch in '..\reference-platform\support\XmlPatch.pas';
+  XmlPatch in '..\reference-platform\support\XmlPatch.pas',
+  FHIRAuthMap in '..\reference-platform\dstuAu\FHIRAuthMap.pas';
 
 begin
   JclStartExceptionTracking;

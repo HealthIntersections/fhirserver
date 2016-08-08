@@ -65,6 +65,12 @@ const
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
+  {$IFDEF FHIR3}
+  FHIR_SPEC_URL = 'http://hl7-fhir.github.io/';
+  {$ELSE}
+  FHIR_SPEC_URL = 'http://hl7.org/fhir';
+  {$ENDIF}
+
 Type
   TFHIRParser = class abstract (TFHIRObject)
   private
@@ -2212,7 +2218,7 @@ begin
 '		<div class="container">  <!-- container -->'+#13#10+
 '			<div class="inner-wrapper">'+#13#10+
 '				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
 '        </span>'+#13#10+
 '        </p>'+#13#10+
 '			</div>  <!-- /inner-wrapper -->'+#13#10+
@@ -2272,7 +2278,7 @@ begin
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
   '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
+  '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
 
   if (session <> nil)  then
   begin

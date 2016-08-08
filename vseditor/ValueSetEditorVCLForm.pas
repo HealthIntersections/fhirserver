@@ -10,7 +10,7 @@ uses
   ValueSetEditorCore, ValueSetEditorRegisterServerForm, Vcl.Menus, Vcl.Buttons,
   Vcl.ImgList, VirtualStringTreeComboBox, StringSupport, Vcl.Imaging.pngimage,
   Vcl.OleCtrls, SHDocVw, ServerChooser, Vcl.ToolWin, LookAheadUnit, ValueSetEditorAbout,
-  ServerOperationForm, System.ImageList, ClosureManagerFrm;
+  ServerOperationForm, System.ImageList;
 
 Const
   NAME_INFORMATION = 'Value Set Information';
@@ -209,7 +209,6 @@ type
     Label31: TLabel;
     Label32: TLabel;
     OpenfromURL2: TMenuItem;
-    ClosureManager1: TMenuItem;
     Panel5: TPanel;
     webMRU: TWebBrowser;
     Label33: TLabel;
@@ -342,7 +341,6 @@ type
     procedure btnNewExcludeClick(Sender: TObject);
     procedure Servers1Click(Sender: TObject);
     procedure OpenfromURL2Click(Sender: TObject);
-    procedure ClosureManager1Click(Sender: TObject);
     procedure btnManageServersClick(Sender: TObject);
   private
     { Private declarations }
@@ -925,11 +923,6 @@ begin
   end;
 end;
 
-procedure TValueSetEditorForm.ClosureManager1Click(Sender: TObject);
-begin
-  ClosureManagerForm.Context := Context.Link;
-  ClosureManagerForm.ShowModal;
-end;
 
 procedure TValueSetEditorForm.ContextStateChange(sender: TObject);
 begin

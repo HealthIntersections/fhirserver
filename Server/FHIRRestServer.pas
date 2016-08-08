@@ -117,8 +117,7 @@ Type
     FBasePath : String;
     FSecurePath : String;
     FHost : String;
-    FSpecPath : String;
-    FAltPath : String;
+    FSourcePath : String;
     FName : String;
     FPlainServer : TIdHTTPServer;
     FSSLServer : TIdHTTPServer;
@@ -170,7 +169,6 @@ Type
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 
-    function SpecFile(path : String) : String;
     function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
     Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
@@ -305,12 +303,9 @@ Begin
   FPatientViewServers := TDictionary<String, String>.create;
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
 
-  FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source'+FHIR_GENERATED_VERSION, ''));
-  if (FSpecPath = '') or (FSpecPath = '\') then
-    FSpecPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'source', ''));
-  FAltPath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'other', ''));
+  FSourcePath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'web', ''));
   logt('Load User Sub-system');
-  FSCIMServer := TSCIMServer.Create(db.link, FAltPath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
+  FSCIMServer := TSCIMServer.Create(db.link, FSourcePath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
 
   logt('Load & Cache Store: ');
@@ -331,7 +326,7 @@ Begin
   FSSLPassword := FIni.ReadString('web', 'certpword', '');
   FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
 
-  FFhirStore := TFHIRDataStore.Create(db.Link, FSpecPath, FAltPath, terminologyServer, FINi, FSCIMServer.Link);
+  FFhirStore := TFHIRDataStore.Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link);
   FFhirStore.ownername := FOwnerName;
   FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
 
@@ -360,7 +355,7 @@ Begin
     txu := 'http://'+FHost
   else
     txu := 'http://'+FHost+':'+inttostr(FPort);
-  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FFhirStore.ValidatorContext.Link, txu, FBasePath+'/', FAltPath, ReturnProcessedFile);
+  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FFhirStore.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
 
   if FIni.SectionExists('patient-view') then
   begin
@@ -375,7 +370,7 @@ Begin
   end;
   if FIni.readString('web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
-  FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FAltPath, FHost, inttostr(FSSLPort), FSCIMServer.Link);
+  FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FSourcePath, FHost, inttostr(FSSLPort), FSCIMServer.Link);
   FAuthServer.FHIRStore := FFhirStore.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
@@ -750,14 +745,12 @@ begin
     if c > -1 then
       FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
-    if FileExists(SpecFile(request.Document)) then
-      ReturnSpecFile(response, request.Document, SpecFile(request.Document))
-    else if FileExists(AltFile(request.Document)) then
+    if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
       ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
-  //  else if FileExists(FAltPath+ExtractFileName(request.Document.replace('/', '\'))) then
-  //    ReturnSpecFile(response, request.Document, FAltPath+ExtractFileName(request.Document.replace('/', '\')))
+  //  else if FileExists(FSourcePath+ExtractFileName(request.Document.replace('/', '\'))) then
+  //    ReturnSpecFile(response, request.Document, FSourcePath+ExtractFileName(request.Document.replace('/', '\')))
   //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
   //    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
     else if request.document = FBasePath+'/.well-known/openid-configuration' then
@@ -822,23 +815,13 @@ var
 begin
   for i := 0 to conf.restList.Count - 1 do
     PopulateConformanceAuth(conf.restList[i]);
-
-
-
 end;
 
-function TFhirWebServer.SpecFile(path : String) : String;
-begin
-  if path.StartsWith('/') then
-    result := FSpecPath+path.Substring(1).Replace('/', '\')
-  else
-    result := '';
-end;
 
 function TFhirWebServer.AltFile(path : String) : String;
 begin
   if path.StartsWith('/') then
-    result := FAltPath+path.Substring(1).Replace('/', '\')
+    result := FSourcePath+path.Substring(1).Replace('/', '\')
   else
     result := '';
 end;
@@ -869,14 +852,12 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
-    else if FileExists(SpecFile(request.Document)) then
-      ReturnSpecFile(response, request.Document, SpecFile(request.Document))
     else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
       ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
-  //  else if FileExists(IncludeTrailingPathDelimiter(FAltPath)+request.Document) then
-  //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FAltPath)+request.Document)
+  //  else if FileExists(IncludeTrailingPathDelimiter(FSourcePath)+request.Document) then
+  //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FSourcePath)+request.Document)
   //  else if FileExists(AltFile(ExtractFileName(request.Document))) then
   //    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
     else if request.document = FBasePath+'/.well-known/openid-configuration' then
@@ -1225,7 +1206,7 @@ begin
             FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
-          s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+          s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
           FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
@@ -1394,7 +1375,7 @@ begin
             FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
-          s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+          s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
           FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
@@ -1445,7 +1426,7 @@ begin
   end;
 
 
-  s := FileToString(FAltPath+'patient.html', TEncoding.UTF8);
+  s := FileToString(FSourcePath+'patient.html', TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%hookid%]', hookid, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
@@ -1530,7 +1511,7 @@ begin
   questionnaire := GetResource(request.Session, 'Questionnaire', request.Lang, id, ver, '') as TFHirQuestionnaire;
   try
     // convert to xhtml
-    s := transform1(questionnaire, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', false);
+    s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', false);
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION));
@@ -1577,7 +1558,7 @@ begin
         raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.reference.Substring(1)+'"');
 
       // convert to xhtml
-      s := transform1(q, request.Lang, FAltPath+'QuestionnaireToHTML.xslt', true);
+      s := transform1(q, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
       qa.questionnaire.reference := 'Questionnaire/'+qa.questionnaire.reference.Substring(1);
@@ -2993,6 +2974,7 @@ begin
   logt('script: '+named);
   s := FileToString(path, TEncoding.UTF8);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
+  s := s.Replace('[%specurl%]', FHIR_SPEC_URL, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);

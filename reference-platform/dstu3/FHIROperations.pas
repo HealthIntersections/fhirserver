@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.5.0 generated 2016-07-19T06:18:28+10:00
+// FHIR v1.5.0 generated 2016-08-07T16:35:30+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -250,6 +250,14 @@ Type
     FDate : TDateAndTime;
     FOffset : String;
     FCount : String;
+    FIncludeDesignations : Boolean;
+    FIncludeDefinition : Boolean;
+    FIncludeInactive : Boolean;
+    FExcludeNested : Boolean;
+    FExcludeNotForUI : Boolean;
+    FExcludePostCoordinated : Boolean;
+    FDisplayLanguage : String;
+    FLimitedExpansion : Boolean;
     procedure SetValueSet(value : TFhirValueSet);
     procedure SetDate(value : TDateAndTime);
   protected
@@ -268,6 +276,14 @@ Type
     property date : TDateAndTime read FDate write SetDate;
     property offset : String read FOffset write FOffset;
     property count : String read FCount write FCount;
+    property includeDesignations : Boolean read FIncludeDesignations write FIncludeDesignations;
+    property includeDefinition : Boolean read FIncludeDefinition write FIncludeDefinition;
+    property includeInactive : Boolean read FIncludeInactive write FIncludeInactive;
+    property excludeNested : Boolean read FExcludeNested write FExcludeNested;
+    property excludeNotForUI : Boolean read FExcludeNotForUI write FExcludeNotForUI;
+    property excludePostCoordinated : Boolean read FExcludePostCoordinated write FExcludePostCoordinated;
+    property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
+    property limitedExpansion : Boolean read FLimitedExpansion write FLimitedExpansion;
   end;
 
   TFHIRExpandOpResponse = class (TFHIROperationResponse)
@@ -2380,6 +2396,14 @@ begin
   FDate := (params.param['date'].value as TFHIRDateTime).value;
   FOffset := params.str['offset'];
   FCount := params.str['count'];
+  FIncludeDesignations := params.bool['includeDesignations'];
+  FIncludeDefinition := params.bool['includeDefinition'];
+  FIncludeInactive := params.bool['includeInactive'];
+  FExcludeNested := params.bool['excludeNested'];
+  FExcludeNotForUI := params.bool['excludeNotForUI'];
+  FExcludePostCoordinated := params.bool['excludePostCoordinated'];
+  FDisplayLanguage := params.str['displayLanguage'];
+  FLimitedExpansion := params.bool['limitedExpansion'];
   loadExtensions(params);
 end;
 
@@ -2391,6 +2415,14 @@ begin
   FProfile := params.getVar('profile');
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
+  FIncludeDesignations := StrToBool(params.getVar('includeDesignations'));
+  FIncludeDefinition := StrToBool(params.getVar('includeDefinition'));
+  FIncludeInactive := StrToBool(params.getVar('includeInactive'));
+  FExcludeNested := StrToBool(params.getVar('excludeNested'));
+  FExcludeNotForUI := StrToBool(params.getVar('excludeNotForUI'));
+  FExcludePostCoordinated := StrToBool(params.getVar('excludePostCoordinated'));
+  FDisplayLanguage := params.getVar('displayLanguage');
+  FLimitedExpansion := StrToBool(params.getVar('limitedExpansion'));
   loadExtensions(params);
 end;
 
@@ -2421,6 +2453,15 @@ begin
       result.addParameter('offset', TFHIRString.create(FOffset));{oz.5f}
     if (FCount <> '') then
       result.addParameter('count', TFHIRString.create(FCount));{oz.5f}
+      result.addParameter('includeDesignations', TFHIRBoolean.create(FIncludeDesignations));{oz.5f}
+      result.addParameter('includeDefinition', TFHIRBoolean.create(FIncludeDefinition));{oz.5f}
+      result.addParameter('includeInactive', TFHIRBoolean.create(FIncludeInactive));{oz.5f}
+      result.addParameter('excludeNested', TFHIRBoolean.create(FExcludeNested));{oz.5f}
+      result.addParameter('excludeNotForUI', TFHIRBoolean.create(FExcludeNotForUI));{oz.5f}
+      result.addParameter('excludePostCoordinated', TFHIRBoolean.create(FExcludePostCoordinated));{oz.5f}
+    if (FDisplayLanguage <> '') then
+      result.addParameter('displayLanguage', TFHIRString.create(FDisplayLanguage));{oz.5f}
+      result.addParameter('limitedExpansion', TFHIRBoolean.create(FLimitedExpansion));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2430,7 +2471,7 @@ end;
 
 function TFHIRExpandOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count'], name);
+  result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'includeInactive', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
 end;
 
 procedure TFHIRExpandOpResponse.SetReturn(value : TFhirValueSet);

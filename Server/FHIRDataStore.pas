@@ -74,7 +74,6 @@ Type
     FDB: TKDBManager;
     FSCIMServer: TSCIMServer;
     FTerminologyServer: TTerminologyServer;
-    FSourceFolder: String;
     // folder in which the FHIR specification itself is found
     FSessions: TStringList;
     FTags: TFHIRTagList;
@@ -104,6 +103,7 @@ Type
     FOwnerName: String;
     FSubscriptionManager: TSubscriptionManager;
     FQuestionnaireCache: TQuestionnaireCache;
+    FAppFolder : String;
     {$IFDEF FHIR3}
     FMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
@@ -132,7 +132,7 @@ Type
 
     procedure loadCustomResources(guides : TAdvStringSet);
   public
-    constructor Create(DB: TKDBManager; SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer);
+    constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer);
     Destructor Destroy; Override;
     Function Link: TFHIRDataStore; virtual;
     procedure CloseAll;
@@ -212,6 +212,14 @@ uses
   FHIRLog, SystemService,
   FHIROperation, SearchProcessor;
 
+function chooseFile(fReal, fDev : String) : String;
+begin
+  if FileExists(fDev) then
+    result := fDev
+  else
+    result := fReal;
+end;
+
 { TFHIRRepository }
 
 procedure TFHIRDataStore.CloseAll;
@@ -233,7 +241,7 @@ begin
 end;
 
 constructor TFHIRDataStore.Create(DB: TKDBManager;
-  SourceFolder, WebFolder: String; TerminologyServer: TTerminologyServer;
+  AppFolder: String; TerminologyServer: TTerminologyServer;
   ini: TIniFile; SCIMServer: TSCIMServer);
 var
   i : integer;
@@ -248,6 +256,7 @@ begin
   FIndexes := TFHIRIndexInformation.create;
   FBases := TStringList.Create;
   FBases.add('http://localhost/');
+  FAppFolder := AppFolder;
   FResConfig := TAdvMap<TFHIRResourceConfig>.create;
   for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
   begin
@@ -257,7 +266,6 @@ begin
     FResConfig.Add(cfg.name,  cfg);
   end;
   FDB := DB;
-  FSourceFolder := SourceFolder;
   FSessions := TStringList.Create;
   FTags := TFHIRTagList.Create;
   FLock := TCriticalSection.Create('fhir-store');
@@ -404,11 +412,12 @@ begin
         FValidatorContext.TerminologyServer := TerminologyServer.Link;
 
         // the order here is important: specification resources must be loaded prior to stored resources
-        fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'definitions.json.zip';
-        if not FileExists(fn) then
-          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation-min.json.zip';
-        if not FileExists(fn) then
-          fn := IncludeTrailingPathDelimiter(FSourceFolder) + 'validation.json.zip';
+        {$IFDEF FHIR3}
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
+        {$ELSE}
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
+        {$ENDIF}
+
         logt('Load Validation Pack from ' + fn);
         FValidatorContext.LoadFromDefinitions(fn);
         logt('Load Custom Resources');

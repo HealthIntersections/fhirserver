@@ -7,17 +7,17 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.59 (FHIR Version 1.4.0.8531)
+AppVerName=1.0.65 (FHIR Version 1.5.0.9510)
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.60
+OutputBaseFilename=fhirserver3-1.0.65
 Compression=lzma2/ultra64
 
 ; 64 bit
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
-                     
+
 ; we will be creating a service so we do need this privilege
 PrivilegesRequired=admin
 AllowUNCPath=no
@@ -81,10 +81,16 @@ Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
-Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
-Source: "C:\work\org.hl7.fhir\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip,*.asp"
-Source: "C:\work\org.hl7.fhir\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.xml.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
+Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
+
+; Spec & IGs
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip"; DestDir: {app}\web; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip"; DestDir: {app}\load; DestName: fhir.json.zip; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip"; DestDir: {app}\load; DestName: daf.json.zip; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\sdc2\website\examples.json.zip"; DestDir: {app}\load; DestName: sdc.json.zip; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip"; DestDir: {app}\load; DestName: ccda.json.zip; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load.ini"; DestDir: {app}\load; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
@@ -98,8 +104,7 @@ Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   Des
 Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion
 
 [INI]
-Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "source"; String: "{app}\spec"
-Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "other";  String: "{app}\web"
+Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
 Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
@@ -108,7 +113,6 @@ Filename: "{app}\fhirserver.ini"; Section: "web";  Key: "clients";  String: "{ap
 [Icons]
 Name: "{group}\FHIR Server";        Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
 Name: "{group}\Ini File";           Filename: "{app}\fhirserver.ini";         
-Name: "{group}\FHIR Specification"; Filename: "{app}\web\index.html";         
 
 [Code]
 const
@@ -756,7 +760,7 @@ var
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
 
-         
+
 Procedure LookupUser(Sender : TObject);
 begin
   MsgBox('not done yet. sorry', mbError, MB_OK);

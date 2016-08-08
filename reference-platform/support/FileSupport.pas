@@ -79,6 +79,7 @@ Function PathExcludeExtension(Const sFilename : String) : String; Overload;
 Function PathFilename(Const sFilename : String) : String; Overload;
 Function PathTitle(Const sFilename : String) : String; Overload;
 Function PathExtension(Const sFilename : String) : String; Overload;
+Function FolderExists(Const sFolder : String) : Boolean;
 
 Function FileTimeToDateTime(Const Value : TFileTime) : TDateTime;
 Function DateTimeToFileTime(Const Value : TDateTime) : TFileTime;
@@ -449,6 +450,16 @@ Begin
   Finally
     FileHandleClose(aHandle);
   End;
+End;
+
+
+Function FolderExists(Const sFolder : String) : Boolean;
+Var
+  iCode : Cardinal;
+Begin
+  iCode := GetFileAttributes(PChar(sFolder));
+
+  Result := (iCode <> High(Cardinal)) And (FILE_ATTRIBUTE_DIRECTORY And iCode <> 0);
 End;
 
 

@@ -820,7 +820,7 @@ begin
   ndx := FInfo.FIndexes.getByName(aType, name);
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name+' on type '+aType);
-  if not (ndx.SearchType in [SearchParamTypeToken]) then //todo: fix up text
+  if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
   concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);

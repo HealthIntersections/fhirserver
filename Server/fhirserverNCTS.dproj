@@ -333,7 +333,7 @@
         <DCCReference Include="..\reference-platform\dstu3\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstuAu\FHIRProfileUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\dstuAu\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstuAu\FHIRResources.pas"/>
@@ -344,7 +344,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\dstuAu\FHIRUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRClient.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRValidator.pas"/>
+        <DCCReference Include="..\reference-platform\dstuAu\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
@@ -361,6 +361,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRXhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
+        <DCCReference Include="..\reference-platform\dstuAu\FHIRAuthMap.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -430,7 +431,7 @@
                 </DeployFile>
                 <DeployFile LocalName="win64_3\Debug\FHIRServerNCTS.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
-                        <RemoteName>FHIRServerNCTS.rsm</RemoteName>
+                        <RemoteName>fhirserverNCTS.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -442,7 +443,7 @@
                 </DeployFile>
                 <DeployFile LocalName="win64_3\Debug\FHIRServerNCTS.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
-                        <RemoteName>FHIRServerNCTS.exe</RemoteName>
+                        <RemoteName>fhirserverNCTS.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

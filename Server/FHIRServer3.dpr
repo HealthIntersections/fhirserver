@@ -304,7 +304,8 @@ uses
   FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
-  FHIRLog in 'FHIRLog.pas';
+  FHIRLog in 'FHIRLog.pas',
+  FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas';
 
 begin
   JclStartExceptionTracking;

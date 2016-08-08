@@ -134,7 +134,7 @@ begin
   s := s.toLower;
   for sd in TFHIRPluginValidatorContext(FContext).Profiles.ProfilesByURL.Values do
     if (sd.kind = StructureDefinitionKindResource) and ((edtFilter.Text = '') or sd.name.ToLower.Contains(s)) then
-      if sd.baseType = '' then
+      if sd.type_ = '' then
         lbResources.Items.AddObject(sd.name, sd)
       else
         lbProfiles.Items.AddObject(sd.name, sd)

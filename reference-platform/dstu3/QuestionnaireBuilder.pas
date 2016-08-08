@@ -563,7 +563,11 @@ begin
       if cc.system = 'http://hl7.org/fhir/resource-types' then
       begin
         result.code := 'Reference';
+        {$IFDEF FHIR2CM}
+        result.profileList.add(TFhirUri.Create('http://hl7.org/fhir/Profile/'+cc.code));
+        {$ELSE}
         result.profile := 'http://hl7.org/fhir/Profile/'+cc.code;
+        {$ENDIF}
       end
       else // cc.system = 'http://hl7.org/fhir/data-types'
       begin

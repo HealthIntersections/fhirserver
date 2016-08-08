@@ -124,7 +124,8 @@ uses
   InternetFetcher in '..\support\InternetFetcher.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
   XmlTests in '..\support\Tests\XmlTests.pas',
-  XmlPatch in '..\support\XmlPatch.pas';
+  XmlPatch in '..\support\XmlPatch.pas',
+  FluentPathTests in 'FluentPathTests.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);
