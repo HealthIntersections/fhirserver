@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.5.0 generated 2016-08-07T16:35:30+10:00
+// FHIR v1.6.0 generated 2016-08-11T09:29:41+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -1594,17 +1594,17 @@ Type
     spMedicationDispense__text, {@enum.value "_text" spMedicationDispense__text Search on the narrative of the resource }
     spMedicationDispense_Code, {@enum.value "code" spMedicationDispense_Code Return dispenses of this medicine code }
     spMedicationDispense_Destination, {@enum.value "destination" spMedicationDispense_Destination Return dispenses that should be sent to a specific destination }
-    spMedicationDispense_Dispenser, {@enum.value "dispenser" spMedicationDispense_Dispenser Return all dispenses performed by a specific individual }
+    spMedicationDispense_Dispenser, {@enum.value "dispenser" spMedicationDispense_Dispenser Return dispenses performed by a specific individual }
     spMedicationDispense_Identifier, {@enum.value "identifier" spMedicationDispense_Identifier Return dispenses with this external identifier }
     spMedicationDispense_Medication, {@enum.value "medication" spMedicationDispense_Medication Return dispenses of this medicine resource }
     spMedicationDispense_Patient, {@enum.value "patient" spMedicationDispense_Patient The identity of a patient to list dispenses  for }
     spMedicationDispense_Prescription, {@enum.value "prescription" spMedicationDispense_Prescription The identity of a prescription to list dispenses from }
-    spMedicationDispense_Receiver, {@enum.value "receiver" spMedicationDispense_Receiver Who collected the medication }
-    spMedicationDispense_Responsibleparty, {@enum.value "responsibleparty" spMedicationDispense_Responsibleparty Return all dispenses with the specified responsible party }
-    spMedicationDispense_Status, {@enum.value "status" spMedicationDispense_Status Status of the dispense }
-    spMedicationDispense_Type, {@enum.value "type" spMedicationDispense_Type Return all dispenses of a specific type }
-    spMedicationDispense_Whenhandedover, {@enum.value "whenhandedover" spMedicationDispense_Whenhandedover Date when medication handed over to patient (outpatient setting), or supplied to ward or clinic (inpatient setting) }
-    spMedicationDispense_Whenprepared); {@enum.value "whenprepared" spMedicationDispense_Whenprepared Date when medication prepared }
+    spMedicationDispense_Receiver, {@enum.value "receiver" spMedicationDispense_Receiver The identity of a receiver to list dispenses for }
+    spMedicationDispense_Responsibleparty, {@enum.value "responsibleparty" spMedicationDispense_Responsibleparty Return dispenses with the specified responsible party }
+    spMedicationDispense_Status, {@enum.value "status" spMedicationDispense_Status Return dispenses with a specified dispense status }
+    spMedicationDispense_Type, {@enum.value "type" spMedicationDispense_Type Return dispenses of a specific type }
+    spMedicationDispense_Whenhandedover, {@enum.value "whenhandedover" spMedicationDispense_Whenhandedover Returns dispenses handed over on this date }
+    spMedicationDispense_Whenprepared); {@enum.value "whenprepared" spMedicationDispense_Whenprepared Returns dispenses prepared on this date }
 
   {@Enum TSearchParamsMedicationOrder
     Search Parameters for MedicationOrder
@@ -1618,13 +1618,13 @@ Type
     spMedicationOrder__security, {@enum.value "_security" spMedicationOrder__security Security Labels applied to this resource }
     spMedicationOrder__tag, {@enum.value "_tag" spMedicationOrder__tag Tags applied to this resource }
     spMedicationOrder__text, {@enum.value "_text" spMedicationOrder__text Search on the narrative of the resource }
-    spMedicationOrder_Code, {@enum.value "code" spMedicationOrder_Code Return administrations of this medication code }
+    spMedicationOrder_Code, {@enum.value "code" spMedicationOrder_Code Return prescriptions of this medication code }
     spMedicationOrder_Datewritten, {@enum.value "datewritten" spMedicationOrder_Datewritten Return prescriptions written on this date }
     spMedicationOrder_Encounter, {@enum.value "encounter" spMedicationOrder_Encounter Return prescriptions with this encounter identifier }
     spMedicationOrder_Identifier, {@enum.value "identifier" spMedicationOrder_Identifier Return prescriptions with this external identifier }
-    spMedicationOrder_Medication, {@enum.value "medication" spMedicationOrder_Medication Return administrations of this medication reference }
+    spMedicationOrder_Medication, {@enum.value "medication" spMedicationOrder_Medication Return prescriptions of this medication reference }
     spMedicationOrder_Patient, {@enum.value "patient" spMedicationOrder_Patient The identity of a patient to list orders  for }
-    spMedicationOrder_Prescriber, {@enum.value "prescriber" spMedicationOrder_Prescriber Who ordered the initial medication(s) }
+    spMedicationOrder_Prescriber, {@enum.value "prescriber" spMedicationOrder_Prescriber Returns prescriptions prescribed by this prescriber }
     spMedicationOrder_Status); {@enum.value "status" spMedicationOrder_Status Status of the prescription }
 
   {@Enum TSearchParamsMedicationStatement
@@ -1639,10 +1639,10 @@ Type
     spMedicationStatement__security, {@enum.value "_security" spMedicationStatement__security Security Labels applied to this resource }
     spMedicationStatement__tag, {@enum.value "_tag" spMedicationStatement__tag Tags applied to this resource }
     spMedicationStatement__text, {@enum.value "_text" spMedicationStatement__text Search on the narrative of the resource }
-    spMedicationStatement_Code, {@enum.value "code" spMedicationStatement_Code Return administrations of this medication code }
+    spMedicationStatement_Code, {@enum.value "code" spMedicationStatement_Code Return statements of this medication code }
     spMedicationStatement_Effective, {@enum.value "effective" spMedicationStatement_Effective Date when patient was taking (or not taking) the medication }
     spMedicationStatement_Identifier, {@enum.value "identifier" spMedicationStatement_Identifier Return statements with this external identifier }
-    spMedicationStatement_Medication, {@enum.value "medication" spMedicationStatement_Medication Return administrations of this medication reference }
+    spMedicationStatement_Medication, {@enum.value "medication" spMedicationStatement_Medication Return statements of this medication reference }
     spMedicationStatement_Patient, {@enum.value "patient" spMedicationStatement_Patient The identity of a patient to list statements  for }
     spMedicationStatement_Source, {@enum.value "source" spMedicationStatement_Source Who the information in the statement came from }
     spMedicationStatement_Status); {@enum.value "status" spMedicationStatement_Status Return statements that match the given status }
@@ -3133,9 +3133,9 @@ Const
   CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'name', 'publisher', 'testscript-capability', 'url', 'use-context');
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'description', 'expansion', 'identifier', 'name', 'publisher', 'reference', 'status', 'url', 'version');
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
-  FHIR_GENERATED_VERSION = '1.5.0';
+  FHIR_GENERATED_VERSION = '1.6.0';
 
-  FHIR_GENERATED_DATE = '2016-08-07T16:35:30+10:00';
+  FHIR_GENERATED_DATE = '2016-08-11T09:29:41+10:00';
 
 
 

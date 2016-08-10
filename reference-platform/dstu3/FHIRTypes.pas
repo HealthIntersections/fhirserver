@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.5.0 generated 2016-08-07T16:35:30+10:00
+// FHIR v1.6.0 generated 2016-08-11T09:29:41+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -1844,7 +1844,7 @@ Type
   TFhirDigitalMediaTypeEnumList = set of TFhirDigitalMediaTypeEnum;
 
   {@Enum TFhirMedicationDispenseStatusEnum
-    A code specifying the state of the dispense event. from http://hl7.org/fhir/ValueSet/medication-dispense-status
+    A coded concept specifying the state of the dispense event. from http://hl7.org/fhir/ValueSet/medication-dispense-status
   }
   TFhirMedicationDispenseStatusEnum = (
     MedicationDispenseStatusNull,  {@enum.value MedicationDispenseStatusNull Value is missing from Instance }
@@ -1856,7 +1856,7 @@ Type
   TFhirMedicationDispenseStatusEnumList = set of TFhirMedicationDispenseStatusEnum;
 
   {@Enum TFhirMedicationOrderStatusEnum
-    A code specifying the state of the prescribing event. Describes the lifecycle of the prescription. from http://hl7.org/fhir/ValueSet/medication-order-status
+    A coded concept specifying the state of the prescribing event. Describes the lifecycle of the prescription. from http://hl7.org/fhir/ValueSet/medication-order-status
   }
   TFhirMedicationOrderStatusEnum = (
     MedicationOrderStatusNull,  {@enum.value MedicationOrderStatusNull Value is missing from Instance }
@@ -1869,7 +1869,7 @@ Type
   TFhirMedicationOrderStatusEnumList = set of TFhirMedicationOrderStatusEnum;
 
   {@Enum TFhirMedicationStatementStatusEnum
-    A set of codes indicating the current status of a MedicationStatement. from http://hl7.org/fhir/ValueSet/medication-statement-status
+    A coded concept indicating the current status of a MedicationStatement. from http://hl7.org/fhir/ValueSet/medication-statement-status
   }
   TFhirMedicationStatementStatusEnum = (
     MedicationStatementStatusNull,  {@enum.value MedicationStatementStatusNull Value is missing from Instance }
@@ -14314,7 +14314,7 @@ end;
 procedure TFhirDateTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  if (bPrimitiveValues and (FValue <> nil)) then
+  if (bPrimitiveValues) then
     oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.toString));
 end;
 

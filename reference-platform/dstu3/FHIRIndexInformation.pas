@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.5.0 generated 2016-08-07T16:35:30+10:00
+// FHIR v1.6.0 generated 2016-08-11T09:29:41+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -1755,17 +1755,17 @@ begin
   indexes.add('MedicationDispense', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'code', 'Return dispenses of this medicine code', SearchParamTypeTOKEN, [], 'MedicationDispense.medication.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'destination', 'Return dispenses that should be sent to a specific destination', SearchParamTypeREFERENCE, ['Location'], 'MedicationDispense.destination', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'dispenser', 'Return all dispenses performed by a specific individual', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationDispense.dispenser', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'dispenser', 'Return dispenses performed by a specific individual', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationDispense.dispenser', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'identifier', 'Return dispenses with this external identifier', SearchParamTypeTOKEN, [], 'MedicationDispense.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'medication', 'Return dispenses of this medicine resource', SearchParamTypeREFERENCE, ['Medication'], 'MedicationDispense.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'patient', 'The identity of a patient to list dispenses  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationDispense.patient', SearchXpathUsageNormal);
   indexes.add('MedicationDispense', 'prescription', 'The identity of a prescription to list dispenses from', SearchParamTypeREFERENCE, ['MedicationOrder'], 'MedicationDispense.authorizingPrescription', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'receiver', 'Who collected the medication', SearchParamTypeREFERENCE, ['Practitioner', 'Patient'], 'MedicationDispense.receiver', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'responsibleparty', 'Return all dispenses with the specified responsible party', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationDispense.substitution.responsibleParty', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'status', 'Status of the dispense', SearchParamTypeTOKEN, [], 'MedicationDispense.status', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'type', 'Return all dispenses of a specific type', SearchParamTypeTOKEN, [], 'MedicationDispense.type', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'whenhandedover', 'Date when medication handed over to patient (outpatient setting), or supplied to ward or clinic (inpatient setting)', SearchParamTypeDATE, [], 'MedicationDispense.whenHandedOver', SearchXpathUsageNormal);
-  indexes.add('MedicationDispense', 'whenprepared', 'Date when medication prepared', SearchParamTypeDATE, [], 'MedicationDispense.whenPrepared', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'receiver', 'The identity of a receiver to list dispenses for', SearchParamTypeREFERENCE, ['Practitioner', 'Patient'], 'MedicationDispense.receiver', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'responsibleparty', 'Return dispenses with the specified responsible party', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationDispense.substitution.responsibleParty', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'status', 'Return dispenses with a specified dispense status', SearchParamTypeTOKEN, [], 'MedicationDispense.status', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'type', 'Return dispenses of a specific type', SearchParamTypeTOKEN, [], 'MedicationDispense.type', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'whenhandedover', 'Returns dispenses handed over on this date', SearchParamTypeDATE, [], 'MedicationDispense.whenHandedOver', SearchXpathUsageNormal);
+  indexes.add('MedicationDispense', 'whenprepared', 'Returns dispenses prepared on this date', SearchParamTypeDATE, [], 'MedicationDispense.whenPrepared', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationDispense', ['patient']);
   compartments.register(frtPractitioner, 'MedicationDispense', ['dispenser', 'receiver', 'responsibleparty']);
 end;
@@ -1780,13 +1780,13 @@ begin
   indexes.add('MedicationOrder', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('MedicationOrder', 'code', 'Return administrations of this medication code', SearchParamTypeTOKEN, [], 'MedicationOrder.medication.as(CodeableConcept)', SearchXpathUsageNormal);
+  indexes.add('MedicationOrder', 'code', 'Return prescriptions of this medication code', SearchParamTypeTOKEN, [], 'MedicationOrder.medication.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'datewritten', 'Return prescriptions written on this date', SearchParamTypeDATE, [], 'MedicationOrder.dateWritten', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'encounter', 'Return prescriptions with this encounter identifier', SearchParamTypeREFERENCE, ['Encounter'], 'MedicationOrder.encounter', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'identifier', 'Return prescriptions with this external identifier', SearchParamTypeTOKEN, [], 'MedicationOrder.identifier', SearchXpathUsageNormal);
-  indexes.add('MedicationOrder', 'medication', 'Return administrations of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationOrder.medication.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('MedicationOrder', 'medication', 'Return prescriptions of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationOrder.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'patient', 'The identity of a patient to list orders  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationOrder.patient', SearchXpathUsageNormal);
-  indexes.add('MedicationOrder', 'prescriber', 'Who ordered the initial medication(s)', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationOrder.prescriber', SearchXpathUsageNormal);
+  indexes.add('MedicationOrder', 'prescriber', 'Returns prescriptions prescribed by this prescriber', SearchParamTypeREFERENCE, ['Practitioner'], 'MedicationOrder.prescriber', SearchXpathUsageNormal);
   indexes.add('MedicationOrder', 'status', 'Status of the prescription', SearchParamTypeTOKEN, [], 'MedicationOrder.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationOrder', ['patient']);
   compartments.register(frtEncounter, 'MedicationOrder', ['encounter']);
@@ -1803,10 +1803,10 @@ begin
   indexes.add('MedicationStatement', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('MedicationStatement', 'code', 'Return administrations of this medication code', SearchParamTypeTOKEN, [], 'MedicationStatement.medication.as(CodeableConcept)', SearchXpathUsageNormal);
+  indexes.add('MedicationStatement', 'code', 'Return statements of this medication code', SearchParamTypeTOKEN, [], 'MedicationStatement.medication.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'effective', 'Date when patient was taking (or not taking) the medication', SearchParamTypeDATE, [], 'MedicationStatement.effective', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'identifier', 'Return statements with this external identifier', SearchParamTypeTOKEN, [], 'MedicationStatement.identifier', SearchXpathUsageNormal);
-  indexes.add('MedicationStatement', 'medication', 'Return administrations of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationStatement.medication.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('MedicationStatement', 'medication', 'Return statements of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationStatement.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'patient', 'The identity of a patient to list statements  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationStatement.patient', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'source', 'Who the information in the statement came from', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'MedicationStatement.informationSource', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'status', 'Return statements that match the given status', SearchParamTypeTOKEN, [], 'MedicationStatement.status', SearchXpathUsageNormal);
