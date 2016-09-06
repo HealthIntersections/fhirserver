@@ -41,6 +41,8 @@ uses
 
 
 type
+  TFHIRMMSpecialElement = (fsecNil, fsecCONTAINED, fsecBUNDLE_ENTRY, fsecBUNDLE_OUTCOME, fsecPARAMETER);
+
   TFHIRMMProperty = class (TAdvObject)
   private
     FContext : TWorkerContext;
@@ -60,18 +62,52 @@ type
     property name : string read GetName;
 
     function getType : string; overload;
+    function typeCode : String;
     function getType(elementName : String) : string; overload;
     function hasType(elementName : String) : boolean;
-    function isPrimitive(elementName : String) : boolean;
+    function isPrimitive(name : String) : boolean;
     function isResource : boolean;
     function isList : boolean;
     function getScopedPropertyName : String;
     function getNamespace : string;
     function IsLogicalAndHasPrimitiveValue(name : String) : boolean;
     function isChoice : boolean;
+
+    function getChildProperties(elementName, statedType : String): TAdvList<TFHIRMMProperty>; overload;
+    function getChildProperties(type_ : TFHIRTypeDetails) : TAdvList<TFHIRMMProperty>; overload;
+    function getChild(elementName, childName : String) : TFHIRMMProperty; overload;
+    function getChild(name : String; type_ : TFHIRTypeDetails) : TFHIRMMProperty; overload;
+
+    function specialElementClass : TFHIRMMSpecialElement;
   end;
 
-  TFHIRMMSpecialElement = (fseNil, fseContained, fseBundleEntry);
+  TFHIRMMElement = class;
+
+  TProfileUsage = class (TAdvObject)
+  private
+    FIsChecked: boolean;
+    FDefn: TFHIRStructureDefinition;
+    procedure SetDefn(const Value: TFHIRStructureDefinition);
+  public
+    destructor Destroy; override;
+    function Link : TProfileUsage; overload;
+    property checked : boolean read FIsChecked write FIsChecked;
+    property defn : TFHIRStructureDefinition read FDefn write SetDefn;
+  end;
+
+  TProfileUsages = class (TAdvObject)
+  private
+    FEntries : TAdvList<TProfileUsage>;
+    FIsProcessed: boolean;
+    function GetIsEmpty: boolean;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure addProfile(sd : TFHIRStructureDefinition);
+    property isProcessed : boolean read FisProcessed write FisProcessed;
+    property isEmpty : boolean read GetIsEmpty;
+    property entries : TAdvList<TProfileUsage> read FEntries;
+  end;
 
    {* This class represents the reference model of FHIR
    *
@@ -88,15 +124,22 @@ type
   	FIndex : integer;
   	FChildren : TAdvList<TFHIRMMElement>;
 	  FProperty : TFHIRMMProperty;
+	  FElementProperty : TFHIRMMProperty; // this is used when special is set to true - it tracks the underlying element property which is used in a few places
     FlocStart: TSourceLocation;
     FlocEnd: TSourceLocation;
     FSpecial : TFHIRMMSpecialElement;
-    FXhtml : TFhirXHtmlNode;
+    FXhtml : TFhirXHtmlNode; // if this is populated, then value will also hold the string representation
+
+    // validation support
+    FProfiles : TProfileUsages;
 
     function GetType: String;
     function GetChildren: TAdvList<TFHIRMMElement>;
     function GetComments: TStringList;
     procedure SetXhtml(const Value: TFhirXHtmlNode);
+    function GetProfiles: TProfileUsages;
+  protected
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create(name : String); overload;
     constructor Create(name : String; prop : TFHIRMMProperty); overload;
@@ -104,7 +147,7 @@ type
     Destructor Destroy; override;
 
     function link : TFHIRMMElement; overload;
-    procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement);
+    procedure updateProperty(prop : TFHIRMMProperty; special : TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
 
     property name : String read FName;
     property type_ : String read GetType write FType;
@@ -112,11 +155,14 @@ type
     property children : TAdvList<TFHIRMMElement> read GetChildren;
     property comments : TStringList read GetComments;
     property prop : TFHIRMMProperty read FProperty;
+    property elementProp : TFHIRMMProperty read FElementProperty;
     property index : integer read FIndex write FIndex;
     property special : TFHIRMMSpecialElement read FSpecial;
     property LocStart : TSourceLocation read FLocStart;
     property LocEnd : TSourceLocation read FLocEnd;
     property xhtml : TFhirXHtmlNode read FXhtml write SetXhtml;
+    property profiles : TProfileUsages read GetProfiles;
+
 
 
     function hasChildren : boolean;
@@ -124,6 +170,7 @@ type
     function hasValue : boolean;
     function hasIndex : boolean;
     procedure GetChildrenByName(name : String; children : TFHIRObjectList); override;
+    procedure getNamedChildrenWithWildcard(name : String; children : TAdvList<TFHIRMMElement>);
     function getNamedChild(name : String) : TFHIRMMElement;
     procedure getNamedChildren(name : String; list : TAdvList<TFHIRMMElement>);
     function getNamedChildValue(name : String) : string;
@@ -131,14 +178,18 @@ type
     procedure numberChildren;
 
     function getChildValue(name : String) : string;
+    procedure SetChildValue(name, value : String);
     function hasType : boolean;
     function markLocation(start, end_ : TSourceLocation) : TFHIRMMElement;
 
     function isPrimitive : boolean; override;
+    function isResource : boolean;
     function hasPrimitiveValue : boolean; override;
     function fhirType : String; override;
     function primitiveValue : String; override;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); override;
+   	procedure listChildren(list : TAdvList<TFHIRMMProperty>);
+    function isEmpty : boolean;
   end;
 
   TFHIRValidationPolicy = (fvpNONE, fvpQUICK, fvpEVERYTHING);
@@ -196,7 +247,7 @@ type
     function isText(prop : TFHIRMMProperty) : boolean;
 
     procedure parseChildren(path : String; node : IXMLDomElement; context : TFHIRMMElement);
-    procedure parseResource(s : String; container : IXMLDomElement; parent : TFHIRMMElement);
+    procedure parseResource(s : String; container : IXMLDomElement; parent : TFHIRMMElement; elementProperty : TFHIRMMProperty);
 
     procedure composeElement(xml : TXmlBuilder; element : TFHIRMMElement; elementName : String);
   public
@@ -214,14 +265,14 @@ type
     json : TJSONWriter;
 
     procedure checkObject(obj : TJsonObject; path : String);
-    {no-comments procedure reapComments(obj : TJsonObject; context : TFHIRMMElement); }
+    procedure reapComments(obj : TJsonObject; context : TFHIRMMElement);
   	procedure parseChildren(path : String; obj : TJsonObject; context : TFHIRMMElement; hasResourceType : boolean);
 
     procedure parseChildComplex(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
     procedure parseChildComplexInstance(path : String; obj: TJsonObject; context : TFHIRMMElement; prop : TFHIRMMProperty; name : String; e : TJsonNode);
     procedure parseChildPrimitive(path : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String);
     procedure parseChildPrimitiveInstance(npath : String; obj: TJsonObject; context : TFHIRMMElement; processed : TAdvStringSet; prop : TFHIRMMProperty; name : String; main, fork : TJsonNode);
-    procedure parseResource(path : String; obj: TJsonObject; context : TFHIRMMElement);
+    procedure parseResource(path : String; obj: TJsonObject; parent : TFHIRMMElement; elementProperty : TFHIRMMProperty);
 
     procedure composeElement(e : TFHIRMMElement); overload;
     procedure composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement); overload;
@@ -318,6 +369,34 @@ begin
   result := TFHIRMMProperty(inherited link);
 end;
 
+function TFHIRMMProperty.specialElementClass: TFHIRMMSpecialElement;
+begin
+  if (structure.id = 'Parameters') then
+    result := fsecPARAMETER
+  else if (structure.id = 'Bundle') and (getName() = 'resource') then
+    result := fsecBUNDLE_ENTRY
+  else if (structure.id = 'Bundle') and (getName() = 'outcome') then
+    result := fsecBUNDLE_OUTCOME
+  else if (getName() = 'contained') then
+    result := fsecCONTAINED
+  else
+    raise DefinitionException.create('Unknown resource containing a native resource: '+definition.Id);
+end;
+
+function TFHIRMMProperty.typeCode: String;
+var
+  tr : TFHIRElementDefinitionType;
+begin
+  result := '';
+  for tr in definition.type_List do
+  begin
+    if result <> '' then
+      result := result + '|';
+    result := result + tr.code;
+  end;
+
+end;
+
 function TFHIRMMProperty.GetName: string;
 begin
   result := definition.Path.substring(definition.Path.lastIndexOf('.')+1);
@@ -342,10 +421,28 @@ end;
 
 function TFHIRMMProperty.getType(elementName: String): string;
 var
-  t, name, tail : String;
-  all : boolean;
+  t, name, tail, s : String;
+  all  : boolean;
   tr : TFhirElementDefinitionType;
+  ed, d : TFhirElementDefinition;
 begin
+  if (not definition.path.contains('.')) then
+      exit(definition.path);
+  ed := definition;
+  if (definition.ContentReference <> '') then
+  begin
+    if (not definition.contentReference.startsWith('#')) then
+        raise Exception.create('not handled yet');
+    ed := nil;
+    s := definition.ContentReference.substring(1);
+    for d in structure.snapshot.elementList do
+    begin
+      if (d.Id <> '') and (d.Id = s) then
+        ed := d;
+    end;
+    if (ed = nil) then
+      raise Exception.create('Unable to resolve '+definition.contentReference+' at '+definition.path+' on '+structure.Url);
+  end;
   if (definition.type_List.count() = 0) then
     result := ''
   else if (definition.type_list.count() > 1) then
@@ -414,14 +511,25 @@ begin
 end;
 
 
-function TFHIRMMProperty.isPrimitive(elementName : String): boolean;
+function TFHIRMMProperty.isPrimitive(name : String): boolean;
+var
+  sd : TFHIRStructureDefinition;
 begin
-	result := isPrimitiveType(getType(elementName));
+  sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+name));
+  try
+    result := (sd <> nil) and (sd.Kind = StructureDefinitionKindPRIMITIVETYPE);
+  finally
+    sd.free;
+  end;
 end;
+
 
 function TFHIRMMProperty.isResource: boolean;
 begin
-  result := (definition.type_list.count() = 1) and ((definition.type_list[0].Code = 'Resource') or (definition.type_list[0].Code = 'DomainResource'));
+  if (definition.type_List.count > 0) then
+    result := (definition.type_list.count = 1) and (('Resource' = definition.Type_List[0].Code) or ('DomainResource' = definition.Type_list[0].Code))
+  else
+    result := not definition.Path.contains('.') and (structure.Kind = StructureDefinitionKindRESOURCE);
 end;
 
 function TFHIRMMProperty.isList: boolean;
@@ -434,8 +542,8 @@ var
   sd : TFhirStructureDefinition;
   ed : TFhirElementDefinition;
 begin
-  if (FcanBePrimitive <> 0) then
-    result := FcanBePrimitive > 0;
+//  if (FcanBePrimitive <> 0) then
+//    result := FcanBePrimitive > 0;
 
   FcanBePrimitive := -1;
   if (structure.Kind <> StructureDefinitionKindLOGICAL) then
@@ -443,15 +551,21 @@ begin
   if (not hasType(name)) then
     exit(false);
   sd := context.getStructure(structure.Url.substring(0, structure.Url.lastIndexOf('/')+1)+getType(name));
-  if (sd = nil) or (sd.Kind <> StructureDefinitionKindLOGICAL) then
-    exit(false);
-  for ed in sd.Snapshot.elementList do
-    if (ed.Path = sd.Id+'.value') and (ed.type_List.count = 1) and isPrimitive(ed.type_List[0].Code) then
-    begin
-      FcanBePrimitive := 1;
+  try
+    if (sd <> nil) and (sd.Kind = StructureDefinitionKindPRIMITIVETYPE) then
       exit(true);
-    end;
-  result := false;
+    if (sd = nil) or (sd.Kind <> StructureDefinitionKindLOGICAL) then
+      exit(false);
+    for ed in sd.Snapshot.elementList do
+      if (ed.Path = sd.Id+'.value') and (ed.type_List.count = 1) and isPrimitive(ed.type_List[0].Code) then
+      begin
+        FcanBePrimitive := 1;
+        exit(true);
+      end;
+    result := false;
+  finally
+    sd.free;
+  end;
 end;
 
 function TFHIRMMProperty.getScopedPropertyName: String;
@@ -484,6 +598,154 @@ begin
   end;
 end;
 
+function TFHIRMMProperty.getChildProperties(elementName, statedType : String): TAdvList<TFHIRMMProperty>;
+var
+  ed, child : TFHIRElementDefinition;
+  sd : TFHIRStructureDefinition;
+  children : TFHIRElementDefinitionList;
+  t : String;
+  all, ok : boolean;
+  tr : TFhirElementDefinitionType;
+begin
+  ed := definition;
+  sd := structure;
+  children := getChildMap(sd, ed);
+  try
+    if (children.isEmpty()) then
+    begin
+      // ok, find the right definitions
+      t := '';
+      if (ed.Type_List.count = 1) then
+        t := ed.type_list[0].Code
+      else if (ed.type_list.count = 0) then
+        raise DefinitionException.create('types == 0, and no children found')
+      else
+      begin
+        t := ed.type_list[0].code;
+        all := true;
+        for tr in ed.type_list do
+        begin
+          if (tr.Code <> t) then
+          begin
+            all := false;
+            break;
+          end;
+        end;
+        if (not all) then
+        begin
+          // ok, it's polymorphic
+          if (PropertyRepresentationTYPEATTR in ed.Representation) then
+          begin
+            t := statedType;
+            if (t = '') and ed.hasExtension('http://hl7.org/fhir/StructureDefinition/elementdefinition-defaulttype') then
+              t := ed.getExtensionString('http://hl7.org/fhir/StructureDefinition/elementdefinition-defaulttype');
+            ok := false;
+            for tr in ed.type_list do
+              if (tr.Code = t) then
+                ok := true;
+             if (not ok) then
+               raise DefinitionException.create('Type "'+t+'" is not an acceptable type for "'+elementName+'" on property '+definition.path);
+          end
+          else
+          begin
+            t := elementName.substring(tail(ed.path).length - 3);
+            if (isPrimitive(lowFirst(t))) then
+              t := lowFirst(t);
+          end;
+        end;
+      end;
+      if ('xhtml' <> t) then
+      begin
+        sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+        try
+          if (sd = nil) then
+              raise DefinitionException.create('Unable to find class "'+t+'" for name "'+elementName+'" on property '+definition.path);
+          children.free;
+          children := getChildMap(sd, sd.snapshot.elementList[0]);
+        finally
+          sd.free;
+        end;
+      end;
+    end;
+    result := TAdvList<TFHIRMMProperty>.create;
+    for child in children do
+      result.add(TFHIRMMProperty.create(context.Link, child.Link, sd.Link));
+  finally
+    children.free;
+  end;
+end;
+
+function TFHIRMMProperty.getChildProperties(type_ : TFHIRTypeDetails) : TAdvList<TFHIRMMProperty>;
+var
+  ed, child : TFHIRElementDefinition;
+  children : TFHIRElementDefinitionList;
+  sd : TFHIRStructureDefinition;
+  t : string;
+  all : boolean;
+  tr : TFhirElementDefinitionType;
+begin
+  ed := definition;
+  sd := structure;
+  children := getChildMap(sd, ed);
+  try
+    if (children.isEmpty()) then
+    begin
+      // ok, find the right definitions
+      t := '';
+      if (ed.Type_List.count = 1) then
+        t := ed.type_list[0].Code
+      else if (ed.type_list.count = 0) then
+        raise DefinitionException.create('types == 0, and no children found')
+      else
+      begin
+        t := ed.type_list[0].code;
+        all := true;
+        for tr in ed.type_list do
+        begin
+          if (tr.Code <> t) then
+          begin
+            all := false;
+            break;
+          end;
+        end;
+      end;
+      if (not all) then
+        t := type_.type_;
+    end;
+    if ('xhtml' <> t) then
+    begin
+      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t));
+      if (sd = nil) then
+          raise DefinitionException.create('Unable to find class "'+t+'" for name "'+ed.path+'" on property '+definition.path);
+        children := getChildMap(sd, sd.snapshot.elementList[0]);
+    end;
+    result := TAdvList<TFHIRMMProperty>.create;
+    for child in children do
+      result.add(TFHIRMMProperty.create(context.Link, child.Link, sd.Link));
+  finally
+    children.free;
+  end;
+end;
+
+function TFHIRMMProperty.getChild(elementName, childName : String) : TFHIRMMProperty;
+var
+  p : TFHIRMMProperty;
+begin
+  result := nil;
+  for p in getChildProperties(elementName, null) do
+    if p.name = childName then
+      exit(p);
+end;
+
+function TFHIRMMProperty.getChild(name : String; type_ : TFHIRTypeDetails) : TFHIRMMProperty;
+var
+  p : TFHIRMMProperty;
+begin
+  result := nil;
+  for p in getChildProperties(name, null) do
+    if (p.Name = name) or (p.Name = name+'[x]') then
+      exit(p);
+end;
 
 { TFHIRMMElement }
 
@@ -517,14 +779,18 @@ begin
   FComments.Free;
   FChildren.Free;
   FProperty.Free;
+  FElementProperty.Free;
   FXhtml.Free;
+  FProfiles.Free;
   inherited;
 end;
 
-procedure TFHIRMMElement.updateProperty(prop: TFHIRMMProperty; special: TFHIRMMSpecialElement);
+procedure TFHIRMMElement.updateProperty(prop: TFHIRMMProperty; special: TFHIRMMSpecialElement; elementProp : TFHIRMMProperty);
 begin
   FProperty.Free;
   FProperty := prop;
+  FElementProperty.Free;
+  FElementProperty := elementProp;
   FSpecial := special;
 end;
 
@@ -637,10 +903,13 @@ end;
 procedure TFHIRMMElement.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
 var
   child : TFHIRMMElement;
+  tn : String;
 begin
-// 	if isPrimitive() and (name = 'value') and (value <> '') then
-//  		String tn = getType();
-//  		throw new Error("not done yet");
+  if isPrimitive and (name = 'value') and (value <> '') then
+  begin
+    tn := getType();
+    raise DefinitionException.create('not done yet');
+  end;
 
   if FChildren <> nil then
   begin
@@ -654,17 +923,34 @@ begin
   end;
 end;
 
+function TFHIRMMElement.isEmpty: boolean;
+var
+  next : TFHIRMMElement;
+begin
+  if (value <> '') then
+    exit(false);
+  for next in getChildren() do
+    if (not next.isEmpty()) then
+      exit(false);
+  result := true;
+end;
+
 function TFHIRMMElement.isPrimitive: boolean;
 begin
   if (Ftype <> '') then
     result := isPrimitiveType(Ftype)
   else
-   result := prop.isPrimitive(name);
+    result := prop.isPrimitive(prop.getType(name));
+end;
+
+function TFHIRMMElement.isResource: boolean;
+begin
+  result := Prop.isResource;
 end;
 
 function TFHIRMMElement.hasPrimitiveValue: boolean;
 begin
-  result := prop.isPrimitive(name) or prop.IsLogicalAndHasPrimitiveValue(name);
+  result := prop.isPrimitive(prop.getType(name)) or prop.IsLogicalAndHasPrimitiveValue(name);
 end;
 
 function TFHIRMMElement.primitiveValue: String;
@@ -713,6 +999,18 @@ begin
         list.add(c.link);
 end;
 
+procedure TFHIRMMElement.getNamedChildrenWithWildcard(name: String; children: TAdvList<TFHIRMMElement>);
+var
+  start : String;
+  child : TFHIRMMElement;
+begin
+  start := name.substring(0, name.length - 3);
+  if (children <> nil) then
+    for child in children do
+      if (child.Name.startsWith(start)) then
+        children.add(child);
+end;
+
 function TFHIRMMElement.getNamedChildValue(name: String): string;
 var
   child : TFHIRMMElement;
@@ -722,6 +1020,13 @@ begin
     result := ''
   else
     result := child.value;
+end;
+
+function TFHIRMMElement.GetProfiles: TProfileUsages;
+begin
+  if FProfiles = nil then
+    FProfiles := TProfileUsages.Create;
+  result := FProfiles;
 end;
 
 function TFHIRMMElement.hasComments: boolean;
@@ -734,6 +1039,55 @@ begin
   result := TFHIRMMElement(inherited Link);
 end;
 
+procedure TFHIRMMElement.listChildren(list: TAdvList<TFHIRMMProperty>);
+begin
+
+end;
+
+procedure TFHIRMMElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+var
+  props : TAdvList<TFHIRMMProperty>;
+  p : TFHIRMMProperty;
+  list : TFHIRObjectList;
+  child : TFHIRMMElement;
+begin
+  inherited;
+  props := FProperty.getChildProperties(Name, FType);
+  try
+    for p in props do
+      if p.isList then
+      begin
+        list := TFHIRObjectList.create;
+        try
+          if (children <> nil) then
+            for child in children do
+              if (child.Name = p.name) then
+                list.add(child.Link);
+          oList.add(TFHIRProperty.create(self, p.name, p.typeCode, p.isList, nil, list.link));
+        finally
+          list.free;
+        end;
+      end
+      else
+        oList.add(TFHIRProperty.create(self, p.name, p.typeCode, p.isList, nil, getNamedChild(p.name).Link));
+  finally
+    props.free;
+  end;
+end;
+
+procedure TFHIRMMElement.SetChildValue(name, value: String);
+var
+  child : TFHIRMMElement;
+begin
+  for child in getchildren do
+    if (name = child.Name) then
+    begin
+      if (not child.isPrimitive()) then
+        raise DefinitionException('Cannot set a value of a non-primitive type ('+name+' on '+self.name+')');
+      child.Value := value;
+    end;
+  raise DefinitionException.create('not done yet');
+end;
 
 procedure TFHIRMMElement.SetXhtml(const Value: TFhirXHtmlNode);
 begin
@@ -824,7 +1178,7 @@ begin
     logError(line, col, name, IssueTypeSTRUCTURE, 'This cannot be parsed as a FHIR object (no name)', IssueSeverityFATAL);
     exit(nil);
   end;
-  result := FContext.getStructure(ns, name);
+  result := FContext.getStructure(ns, name).Link;
   if result = nil then
     logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown namespace/name "'+ns+'::'+name+'")', IssueSeverityFATAL);
 end;
@@ -841,7 +1195,7 @@ begin
   end;
 	for sd in Fcontext.allStructures do
     if (name = sd.Id) then
-      exit(sd);
+      exit(sd.Link);
   logError(line, col, name, IssueTypeSTRUCTURE, 'This does not appear to be a FHIR resource (unknown name "'+name+'")', IssueSeverityFATAL);
   result := nil;
 end;
@@ -1096,14 +1450,19 @@ begin
   path := '/'+pathPrefix(ns)+name;
 
   sd := getDefinition(line(element), col(element), ns, name);
-  if (sd = nil) then
-    exit(nil);
-  result := TFHIRMMElement.create(element.baseName, TFHIRMMProperty.create(Fcontext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
-  checkElement(element, path, result.Prop);
-  result.markLocation(start(element), end_(element));
-  result.type_ := element.baseName;
-  parseChildren(path, element, result);
-  result.numberChildren();
+  try
+    if (sd = nil) then
+      exit(nil);
+    result := nil;
+    result := TFHIRMMElement.create(element.baseName, TFHIRMMProperty.create(Fcontext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
+    checkElement(element, path, result.Prop);
+    result.markLocation(start(element), end_(element));
+    result.type_ := element.baseName;
+    parseChildren(path, element, result);
+    result.numberChildren();
+  finally
+    sd.free;
+  end;
 end;
 
 function TFHIRMMXmlParser.parse(element : IXMLDomElement; sd : TFhirStructureDefinition) : TFHIRMMElement;
@@ -1299,7 +1658,7 @@ begin
             if (ok) then
             begin
               if (prop.isResource()) then
-                parseResource(npath, e, n)
+                parseResource(npath, e, n, prop)
               else
                 parseChildren(npath, e, n);
             end;
@@ -1377,7 +1736,7 @@ begin
     raise Exception.create('Unknown Data format "'+fmt+'"');
 end;
 
-procedure TFHIRMMXmlParser.parseResource(s : String; container : IXMLDomElement; parent : TFHIRMMElement);
+procedure TFHIRMMXmlParser.parseResource(s : String; container : IXMLDomElement; parent : TFHIRMMElement; elementProperty : TFHIRMMProperty);
 var
   res : IXMLDOMElement;
   name : String;
@@ -1386,14 +1745,15 @@ begin
   res := TMsXmlParser.FirstChild(container);
   name := res.baseName;
   sd := Fcontext.getStructure('http://hl7.org/fhir/StructureDefinition/'+name);
-  if (sd = nil) then
-    raise Exception.create('Contained resource does not appear to be a FHIR resource (unknown name "'+res.baseName+'")');
-  if parent.Prop.Name = 'contained' then
-    parent.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].Link, sd), fseContained)
-  else
-    parent.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].Link, sd), fseBundleEntry);
-  parent.Type_ := name;
-  parseChildren(res.baseName, res, parent);
+  try
+    if (sd = nil) then
+      raise Exception.create('Contained resource does not appear to be a FHIR resource (unknown name "'+res.baseName+'")');
+    parent.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].Link, sd.Link), parent.prop.specialElementClass, elementProperty.Link);
+    parent.Type_ := name;
+    parseChildren(res.baseName, res, parent);
+  finally
+    sd.free;
+  end;
 end;
 
 
@@ -1506,14 +1866,13 @@ begin
   end
   else
   begin
-
     for child in element.Children do
     begin
       if (isAttr(child.Prop)) then
         xml.AddAttribute(child.Name, child.Value);
     end;
     xml.open(elementName);
-    if element.special <> fsenil then
+    if element.special <> fsecNil then
       xml.open(element.type_);
     for child in element.Children do
     begin
@@ -1522,7 +1881,7 @@ begin
       else if (not isAttr(child.prop)) then
         composeElement(xml, child, child.Name);
     end;
-    if element.special <> fsenil then
+    if element.special <> fsecNil then
       xml.close(element.type_);
     xml.close(elementName);
   end;
@@ -1568,18 +1927,22 @@ begin
   path := '/'+name;
 
   sd := getDefinition(obj.LocationStart.Line, obj.LocationStart.Col, name);
-  if (sd = nil) then
-    exit(nil);
-  result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
   try
-    checkObject(obj, path);
-    result.markLocation(obj.LocationStart, obj.LocationEnd);
-    result.Type_ := name;
-    parseChildren(path, obj, result, true);
-    result.numberChildren();
-    result.link;
+    if (sd = nil) then
+      exit(nil);
+    result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
+    try
+      checkObject(obj, path);
+      result.markLocation(obj.LocationStart, obj.LocationEnd);
+      result.Type_ := name;
+      parseChildren(path, obj, result, true);
+      result.numberChildren();
+      result.link;
+    finally
+      result.free;
+    end;
   finally
-    result.free;
+    sd.free;
   end;
 end;
 
@@ -1599,13 +1962,13 @@ var
   tr : TFHIRElementDefinitionType;
   ename, name : String;
 begin
-  //no-comments reapComments(obj, context);
+  reapComments(obj, context);
   properties := getChildProperties(context.Prop, context.Name, '');
   processed := TAdvStringSet.create;
   try
     if (hasResourceType) then
       processed.add('resourceType');
-    {no-comments processed.add('fhir_comments'); }
+    processed.add('fhir_comments');
 
     // note that we do not trouble ourselves to maintain the wire format order here - we don"t even know what it was anyway
     // first pass: process the properties
@@ -1627,7 +1990,7 @@ begin
           end;
         end;
       end
-      else if (prop.isPrimitive('')) then
+      else if (prop.isPrimitive(prop.getType(''))) then
       begin
         parseChildPrimitive(path, obj, context, processed, prop, prop.Name);
       end
@@ -1684,7 +2047,7 @@ begin
     checkObject(child, path);
     context.getChildren().add(n);
     if (prop.isResource()) then
-      parseResource(path, child, n)
+      parseResource(path, child, n, prop)
     else
       parseChildren(path, child, n, false);
   end
@@ -1814,7 +2177,7 @@ begin
 end;
 
 
-procedure TFHIRMMJsonParser.parseResource(path : String; obj: TJsonObject; context : TFHIRMMElement);
+procedure TFHIRMMJsonParser.parseResource(path : String; obj: TJsonObject; parent : TFHIRMMElement; elementProperty : TFHIRMMProperty);
 var
   name : String;
   sd : TFHIRStructureDefinition;
@@ -1827,19 +2190,20 @@ begin
 
   name := obj.str['resourceType'];
   sd := getDefinition(obj.LocationStart.Line, obj.LocationStart.Col, name);
-  if (sd <> nil) then
-  begin
-    if context.prop.name = 'contained' then
-      context.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].link, sd.Link), fseContained)
-    else
-      context.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].link, sd.Link), fseBundleEntry);
-    context.Type_ := name;
-    parseChildren(path, obj, context, true);
+  try
+    if (sd <> nil) then
+    begin
+      parent.updateProperty(TFHIRMMProperty.create(Fcontext.Link, sd.Snapshot.ElementList[0].Link, sd.Link), parent.prop.specialElementClass, elementProperty.Link);
+      parent.Type_ := name;
+      parseChildren(path, obj, parent, true);
+    end;
+  finally
+    sd.free;
   end;
 end;
 
 
-{procedure TFHIRMMJsonParser.reapComments(obj : TJsonObject; context : TFHIRMMElement);
+procedure TFHIRMMJsonParser.reapComments(obj : TJsonObject; context : TFHIRMMElement);
 var
   arr : TJsonArray;
   i : integer;
@@ -1851,7 +2215,7 @@ begin
       context.getComments().add((arr.Item[i] as TJsonString).value);
   end;
 end;
-}
+
 procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);
 var
   oStream : TAdvVCLStream;
@@ -1898,8 +2262,14 @@ end;
 procedure TFHIRMMJsonParser.composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement);
 var
   list : TFHIRObjectList;
+  islist: boolean;
 begin
-  if (child.special = fseBundleEntry) or not child.Prop.isList() then // for specials, ignore the cardinality of the stated type 
+  if child.elementProp <> nil then
+    isList := child.elementProp.isList()
+  else
+    isList := child.prop.isList();
+
+  if not islist then // for specials, ignore the cardinality of the stated type
     composeElement(path, child)
   else if not (done.contains(child.Name)) then
   begin
@@ -2006,11 +2376,10 @@ begin
       primitiveValue(name, element);
     name := '_'+name;
   end;
-  if (element.hasChildren()) {no-comments or (element.hasComments())} then
+  if (element.hasChildren()) then
   begin
     json.ValueObject(name);
-    {no-comments composeComments(element);}
-    if (element.Prop.isResource()) then
+    if (element.isResource()) then
       json.value('resourceType', element.Type_);
     done := TAdvStringSet.create;
     try
@@ -2037,15 +2406,18 @@ begin
   sd := getDefinition(-1, -1, name);
   if (sd = nil) then
     raise Exception.create('Unable to find definition for '+name);
-
-  result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
   try
-    result.Type_ := name;
-    parseChildren(path, r, result);
-    result.numberChildren();
-    result.link;
+    result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
+    try
+      result.Type_ := name;
+      parseChildren(path, r, result);
+      result.numberChildren();
+      result.link;
+    finally
+      result.free;
+    end;
   finally
-    result.free;
+    sd.free;
   end;
 end;
 
@@ -2063,17 +2435,21 @@ begin
   path := name;
 
   sd := getDefinition(-1, -1, name);
-  if (sd = nil) then
-    raise Exception.create('Unable to find definition for '+name);
-
-  result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
   try
-    result.Type_ := name;
-    parseChildren(path, r, result);
-    result.numberChildren();
-    result.link;
+    if (sd = nil) then
+      raise Exception.create('Unable to find definition for '+name);
+
+    result := TFHIRMMElement.create(name, TFHIRMMProperty.create(FContext.link, sd.Snapshot.ElementList[0].Link, sd.Link));
+    try
+      result.Type_ := name;
+      parseChildren(path, r, result);
+      result.numberChildren();
+      result.link;
+    finally
+      result.free;
+    end;
   finally
-    result.free;
+    sd.free;
   end;
 end;
 
@@ -2231,6 +2607,62 @@ end;
 procedure TFHIRCustomResource.setProperty(propName: string; propValue: TFHIRObject);
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.setProperty');
+end;
+
+
+{ TProfileUsages }
+
+constructor TProfileUsages.create;
+begin
+  inherited;
+  FEntries := TAdvList<TProfileUsage>.create;
+end;
+
+destructor TProfileUsages.destroy;
+begin
+  FEntries.Free;
+  inherited;
+end;
+
+procedure TProfileUsages.addProfile(sd: TFHIRStructureDefinition);
+var
+  pu : TProfileUsage;
+begin
+  for pu in FEntries do
+    if pu.defn = sd then
+      exit;
+
+  pu := TProfileUsage.create;
+  try
+    pu.defn := sd.link;
+    FEntries.add(pu.link);
+  finally
+    pu.free;
+  end;
+end;
+
+function TProfileUsages.GetIsEmpty: boolean;
+begin
+  result := FEntries.Count = 0;
+end;
+
+{ TProfileUsage }
+
+destructor TProfileUsage.Destroy;
+begin
+  FDefn.free;
+  inherited;
+end;
+
+function TProfileUsage.Link: TProfileUsage;
+begin
+  result := TProfileUsage(Inherited link);
+end;
+
+procedure TProfileUsage.SetDefn(const Value: TFHIRStructureDefinition);
+begin
+  FDefn.free;
+  FDefn := Value;
 end;
 
 end.

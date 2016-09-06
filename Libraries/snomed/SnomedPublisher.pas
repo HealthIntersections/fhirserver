@@ -673,11 +673,11 @@ Begin
 
     if iRefSet = 0 then
     begin
-      html.AddTextPlain(inttostr(length(alldesc))+' descendents. ');
+      html.AddTextPlain(inttostr(length(alldesc))+' descendants. ');
       children := length(alldesc);
       types := 0;
       if children > 0 then
-        html.AddTextPlain('Search Descendents: ');
+        html.AddTextPlain('Search Descendants: ');
     End
     else
     Begin
@@ -1673,7 +1673,7 @@ Begin
     html.StartParagraph;
     html.AddText('Children', true, false);
     allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
-    html.AddTextPlain(' ('+inttostr(length(alldesc))+' descendents in all)');
+    html.AddTextPlain(' ('+inttostr(length(alldesc))+' descendants in all)');
     html.EndParagraph;
 
     html.StartList(false);

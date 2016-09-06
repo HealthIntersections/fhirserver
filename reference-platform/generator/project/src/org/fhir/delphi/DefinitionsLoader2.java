@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hl7.fhir.convertors.VersionConvertor;
+import org.hl7.fhir.convertors.VersionConvertor_10_20;
 import org.hl7.fhir.dstu2.formats.XmlParser;
 import org.hl7.fhir.dstu2.model.Bundle;
 import org.hl7.fhir.dstu2.model.Bundle.BundleEntryComponent;
@@ -41,7 +41,7 @@ public class DefinitionsLoader2 {
       else if (entry.getResource() instanceof Conformance) 
         processConformance(def, (Conformance) entry.getResource());
       else if (entry.getResource() instanceof OperationDefinition)
-        def.getOperations().add(new VersionConvertor(null).convertOperationDefinition((OperationDefinition) entry.getResource())); 
+        def.getOperations().add(new VersionConvertor_10_20(null).convertOperationDefinition((OperationDefinition) entry.getResource())); 
       else
         System.out.println("unhandled entry in resources: "+entry.getResource().fhirType());
     }

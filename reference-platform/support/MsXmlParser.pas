@@ -672,7 +672,7 @@ end;
 
 procedure TMsXmlSaxHandler.startElement(sourceLocation : TSourceLocation; uri, localname: string; attrs: IVBSAXAttributes);
 begin
-  // override in descendents
+  // override in descendants
 end;
 
 procedure TMsXmlSaxHandler.startElement(var uri, localname, qname: widestring; const attrs: IVBSAXAttributes);
@@ -689,7 +689,7 @@ end;
 
 procedure TMsXmlSaxHandler.text(chars: String; sourceLocation : TSourceLocation);
 begin
-  // for descendents
+  // for descendants
 end;
 
 procedure TMsXmlSaxHandler._Set_documentLocator(const locator: IVBSAXLocator);

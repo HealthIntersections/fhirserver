@@ -497,7 +497,7 @@ public class ElementDefn {
     }
   }
 
-  public void loadFrom(org.hl7.fhir.dstu3.model.ElementDefinition ed, org.hl7.fhir.dstu3.model.StructureDefinition sd, Map<String, org.hl7.fhir.dstu3.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.dstu3.exceptions.FHIRException {
+  public void loadFrom(org.hl7.fhir.dstu3.model.ElementDefinition ed, org.hl7.fhir.dstu3.model.StructureDefinition sd, Map<String, org.hl7.fhir.dstu3.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.exceptions.FHIRException {
     path = ed.getPath();
     name = Utilities.oidTail(ed.getPath());
     shortDefn = ed.getShort();
@@ -572,7 +572,7 @@ public class ElementDefn {
     return bs;
   }
 
-  private BindingSpecification convert(org.hl7.fhir.dstu3.model.ElementDefinition.ElementDefinitionBindingComponent b, Map<String, org.hl7.fhir.dstu3.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.dstu3.exceptions.FHIRException {
+  private BindingSpecification convert(org.hl7.fhir.dstu3.model.ElementDefinition.ElementDefinitionBindingComponent b, Map<String, org.hl7.fhir.dstu3.model.ValueSet> vsmap) throws FHIRException, org.hl7.fhir.exceptions.FHIRException {
     BindingSpecification bs = new BindingSpecification(null, declaredTypeName, false);
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());

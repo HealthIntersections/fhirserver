@@ -232,7 +232,7 @@ type
     function funcReplaceMatches(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcReplace(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcChildren(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
-    function funcDescendents(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcDescendants(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcMemberOf(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcToday(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
@@ -407,7 +407,7 @@ begin
     pfReplace: checkParamCount(lexer, location, exp, 2);
     pfLength: checkParamCount(lexer, location, exp, 0);
     pfChildren: checkParamCount(lexer, location, exp, 0);
-    pfDescendents: checkParamCount(lexer, location, exp, 0);
+    pfDescendants: checkParamCount(lexer, location, exp, 0);
     pfMemberOf: checkParamCount(lexer, location, exp, 1);
     pfTrace: checkParamCount(lexer, location, exp, 1);
     pfToday: checkParamCount(lexer, location, exp, 0);
@@ -439,15 +439,6 @@ begin
     result := '';
 end;
 
-function isPrimitive(sd : TFhirStructureDefinition) : boolean;
-var
-  ed : TFHIRElementDefinition;
-begin
-  result := false;
-  for ed in sd.snapshot.elementList do
-    if (ed.path = sd.name+'.value') and (PropertyRepresentationXmlAttr in ed.representation) then
-      exit(true);
-end;
 
 constructor TFHIRExpressionEngine.create(context: TWorkerContext);
 var
@@ -464,7 +455,7 @@ begin
       {$IFDEF FHIR3}
       if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
         allTypes.add(sd.id);
-      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and isPrimitive(sd) then
+      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
         primitiveTypes.add(sd.id);
       {$ELSE}
       raise Exception.Create('Debug this');
@@ -952,7 +943,7 @@ begin
   result := TFHIRBaseList.Create(TFhirInteger.Create(inttostr(focus.Count)));
 end;
 
-function TFHIRExpressionEngine.funcDescendents(context: TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
+function TFHIRExpressionEngine.funcDescendants(context: TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
   item : TFHIRBase;
 begin
@@ -2591,7 +2582,7 @@ begin
     pfReplace : result := funcReplace(context, focus, exp);
     pfLength : result := funcLength(context, focus, exp);
     pfChildren : result := funcChildren(context, focus, exp);
-    pfDescendents : result := funcDescendents(context, focus, exp);
+    pfDescendants : result := funcDescendants(context, focus, exp);
     pfMemberOf : result := funcMemberOf(context, focus, exp);
     pfTrace : result := funcTrace(context, focus, exp);
     pfToday : result := funcToday(context, focus, exp);
@@ -2829,7 +2820,7 @@ begin
         end;
       pfChildren :
         result := childTypes(focus, '*');
-      pfDescendents :
+      pfDescendants :
         result := childTypes(focus, '**');
       pfMemberOf :
         begin

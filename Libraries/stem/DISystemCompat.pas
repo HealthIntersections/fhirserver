@@ -1,7 +1,7 @@
 {-------------------------------------------------------------------------------
-
- Copyright (c) 1999-2013 Ralf Junker, The Delphi Inspiration
- Internet: http://www.yunqa.de/delphi/
+ 
+ Copyright (c) 1999-2016 Ralf Junker, Yunqa
+ Internet: http://www.yunqa.de
  E-Mail:   delphi@yunqa.de
 
 -------------------------------------------------------------------------------}
@@ -94,8 +94,10 @@ function UnicodeToUtf8(
   Source: PWideChar;
   SourceChars: Cardinal): Cardinal; overload;
 
-function Utf8Decode(const s: Utf8String): WideString; {$IFDEF SUPPORTS_DEPRECATED}deprecated; {$ENDIF}
-function Utf8Encode(const WS: WideString): Utf8String;
+function Utf8Decode(
+  const s: Utf8String): WideString; {$IFDEF SUPPORTS_DEPRECATED}deprecated; {$ENDIF}
+function Utf8Encode(
+  const WS: WideString): Utf8String;
 
 function Utf8ToUnicode(
   Dest: PWideChar;
@@ -121,7 +123,7 @@ const
 
 type
 
-   UInt64 = 0..High(Int64);
+  UInt64 = 0..High(Int64);
 
   {$ENDIF ~COMPILE_9_UP}
 
@@ -143,8 +145,8 @@ function StringRefCount(const s: UnicodeString): Integer; overload; {$IFDEF SUPP
 function Utf8ToString(const s: RawByteString): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
 function Utf8ToString(const s: PAnsiChar): UnicodeString; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}overload;
 
-function UTF8ToUnicodeString(const s: RawByteString): UnicodeString; overload;
-function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
+function Utf8ToUnicodeString(const s: RawByteString): UnicodeString; overload;
+function Utf8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
 
 {$ENDIF ~COMPILER_12_UP}
 
@@ -174,6 +176,12 @@ function UCS4StringToUnicodeString(
 
 {$IFNDEF COMPILER_15_UP}
 
+type
+
+  PNativeInt = ^NativeInt;
+
+  PNativeUInt = ^NativeUInt;
+
 function IsRelativePath(
   const Path: string): Boolean; {$IFDEF SUPPORTS_INLINE}inline; {$ENDIF}
 
@@ -188,11 +196,40 @@ function IsRelativePathW(
 {$IFNDEF COMPILER_17_UP}
 
 type
+
   MarshaledAString = PAnsiChar;
 
-  {$ENDIF ~COMPILER_17_UP}
+function AtomicIncrement(
+  var Target: Cardinal): Cardinal; overload;
 
-  {$ENDIF FPC}
+function AtomicIncrement(
+  var Target: Integer): Integer; overload;
+
+function AtomicIncrement(
+  var Target: Cardinal;
+  Increment: Cardinal): Cardinal; overload;
+
+function AtomicIncrement(
+  var Target: Integer;
+  Increment: Integer): Integer; overload;
+
+function AtomicDecrement(
+  var Target: Integer): Integer; overload;
+
+function AtomicDecrement(
+  var Target: Cardinal): Cardinal; overload;
+
+function AtomicDecrement(
+  var Target: Integer;
+  Decrement: Integer): Integer; overload;
+
+function AtomicDecrement(
+  var Target: Cardinal;
+  Decrement: Cardinal): Cardinal; overload;
+
+{$ENDIF ~COMPILER_17_UP}
+
+{$ENDIF FPC}
 
 type
 
@@ -435,15 +472,15 @@ end;
 
 function Utf8ToString(const s: RawByteString): UnicodeString;
 begin
-  Result := UTF8ToUnicodeString(s);
+  Result := Utf8ToUnicodeString(s);
 end;
 
 function Utf8ToString(const s: PAnsiChar): UnicodeString;
 begin
-  Result := UTF8ToUnicodeString(s);
+  Result := Utf8ToUnicodeString(s);
 end;
 
-function UTF8ToUnicodeString(const s: RawByteString): UnicodeString;
+function Utf8ToUnicodeString(const s: RawByteString): UnicodeString;
 var
   l: Cardinal;
 begin
@@ -462,7 +499,7 @@ begin
   Result := '';
 end;
 
-function UTF8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
+function Utf8ToUnicodeString(const s: PAnsiChar): UnicodeString; overload;
 var
   l: Integer;
 begin
@@ -547,6 +584,158 @@ begin
 end;
 
 {$ENDIF ~COMPILER_15_UP}
+
+{$IFNDEF COMPILER_17_UP}
+
+function AtomicIncrement(var Target: Cardinal): Cardinal; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, 1
+  LOCK XADD [ECX], EAX
+  INC EAX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV EAX, 1
+  LOCK XADD [RCX], EAX
+  INC EAX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicIncrement(var Target: Integer): Integer; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, 1
+  LOCK XADD [ECX], EAX
+  INC EAX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV  EAX, 1
+  LOCK XADD [RCX], EAX
+  INC EAX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicIncrement(var Target: Cardinal; Increment: Cardinal): Cardinal; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, EDX
+  LOCK XADD [ECX], EAX
+  ADD EAX, EDX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV EAX, EDX
+  LOCK XADD [RCX], EAX
+  ADD EAX, EDX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicIncrement(var Target: Integer; Increment: Integer): Integer; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, EDX
+  LOCK XADD [ECX], EAX
+  ADD EAX, EDX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV EAX, EDX
+  LOCK XADD [RCX], EAX
+  ADD EAX, EDX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicDecrement(var Target: Integer): Integer; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, -1
+  LOCK XADD [ECX], EAX
+  DEC EAX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV EAX, -1
+  LOCK XADD [RCX], EAX
+  DEC EAX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicDecrement(var Target: Cardinal): Cardinal; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  MOV EAX, -1
+  LOCK XADD [ECX], EAX
+  DEC EAX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  MOV EAX, -1
+  LOCK XADD [RCX], EAX
+  DEC EAX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicDecrement(var Target: Integer; Decrement: Integer): Integer; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  NEG EDX
+  MOV EAX, EDX
+  LOCK XADD [ECX], EAX
+  ADD EAX, EDX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  NEG EDX
+  MOV EAX, EDX
+  LOCK XADD [RCX], EAX
+  ADD EAX, EDX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+function AtomicDecrement(var Target: Cardinal; Decrement: Cardinal): Cardinal; overload;
+{$IFDEF CPUX86}
+asm
+  MOV ECX, EAX
+  NEG EDX
+  MOV EAX, EDX
+  LOCK XADD [ECX], EAX
+  ADD EAX, EDX
+end;
+{$ELSE CPUX86}
+{$IFDEF CPUX64}
+asm
+  NEG EDX
+  MOV EAX, EDX
+  LOCK XADD [RCX], EAX
+  ADD EAX, EDX
+end;
+{$ENDIF CPUX64}
+{$ENDIF CPUX86}
+
+{$ENDIF ~COMPILER_17_UP}
 
 {$ENDIF FPC}
 

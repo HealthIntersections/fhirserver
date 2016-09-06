@@ -226,7 +226,7 @@ Type
   //   parents as a cardinal index of cardinal indexes
   //   inbounds as a cardinal index of cardinal indexes
   //   outbounds as a cardinal index of cardinal indexes
-  //   descendents (closure) as either 0 - not indexed, $FFFFFFFF - no children, or index of cardinals = all descendents
+  //   descendants (closure) as either 0 - not indexed, $FFFFFFFF - no children, or index of cardinals = all descendants
   //   depth as a byte
   //   stems as a cardinal index of stems
   //   effective date as a word
@@ -393,7 +393,7 @@ operations
     ndx : integer;
     matches : TMatchArray;
     members : TSnomedReferenceSetMemberArray;
-    descendents : TCardinalArray;
+    descendants : TCardinalArray;
   end;
 
 
@@ -461,7 +461,7 @@ operations
     Function GetDescRefsets(iDesc : Cardinal) : TRefSetMemberEntryArray;
     Function GetConceptRefsets(iDesc : Cardinal) : TRefSetMemberEntryArray;
     Function CheckLangSet(sTerm : String) : Cardinal;
-    function GetConceptDescendents(index : Cardinal) : TCardinalArray;
+    function GetConceptDescendants(index : Cardinal) : TCardinalArray;
     Function GetPN(iDescriptions : TCardinalArray) : String;
     Function GetFSN(iDescriptions : TCardinalArray) : String;
     function GetPNForConcept(iIndex: Cardinal): String;
@@ -1981,7 +1981,7 @@ begin
   End
 end;
 
-function TSnomedServices.GetConceptDescendents(index: Cardinal): TCardinalArray;
+function TSnomedServices.GetConceptDescendants(index: Cardinal): TCardinalArray;
 begin
   result := FRefs.GetReferences(FConcept.GetAllDesc(index));
 end;
@@ -2472,7 +2472,7 @@ begin
       result.url := url;
       result.status := ConformanceResourceStatusActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendents';
+      result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
@@ -2824,7 +2824,7 @@ begin
   try
     if not Concept.FindConcept(id, index) then
       raise ESnomedServices.Create('The Snomed Concept '+inttostr(id)+' was not known');
-    res.descendents := GetConceptDescendents(index);
+    res.descendants := GetConceptDescendants(index);
     result := TSnomedFilterContext(res.link);
   finally
     res.Free;
@@ -2868,7 +2868,7 @@ begin
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
     result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).Members[TSnomedFilterContext(ctxt).ndx-1].Ref)
   else
-    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendents[TSnomedFilterContext(ctxt).ndx-1]);
+    result := TCodeSystemProviderContext(TSnomedFilterContext(ctxt).descendants[TSnomedFilterContext(ctxt).ndx-1]);
 end;
 
 function TSnomedServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
@@ -2878,7 +2878,7 @@ begin
   if Length(TSnomedFilterContext(ctxt).members) > 0 then
     result := FindMember(TSnomedFilterContext(ctxt).Members, Cardinal(concept), index)
   else
-    result := FindCardinalInArray(TSnomedFilterContext(ctxt).descendents, Cardinal(concept), index)
+    result := FindCardinalInArray(TSnomedFilterContext(ctxt).descendants, Cardinal(concept), index)
 end;
 
 function TSnomedServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -2889,7 +2889,7 @@ begin
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).members)
   else
-    result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).descendents);
+    result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).descendants);
 end;
 
 function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;

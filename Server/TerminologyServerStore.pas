@@ -1428,7 +1428,7 @@ begin
   end;
 
   if (result = nil) and not noException then
-    raise ETerminologySetup.create('unable to provide support for code system '+system);
+    raise ETerminologySetup.create('Unable to provide support for code system '+system);
 end;
 
 

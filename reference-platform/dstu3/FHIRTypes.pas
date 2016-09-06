@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.6.0 generated 2016-08-11T09:29:41+10:00
+// FHIR v1.7.0 generated 2016-09-03T10:56:09+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -14108,7 +14108,10 @@ end;
 
 function TFhirDate.AsStringValue : string;
 begin
-  result := FValue.asXml;
+  if (FValue = nil) then
+    result := ''
+  else
+    result := FValue.asXml;
 end;
 
 function TFhirDate.equalsDeep(other : TFHIRBase) : boolean; 
@@ -14326,7 +14329,10 @@ end;
 
 function TFhirDateTime.AsStringValue : string;
 begin
-  result := FValue.asXml;
+  if (FValue = nil) then
+    result := ''
+  else
+    result := FValue.asXml;
 end;
 
 function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean; 
@@ -15192,7 +15198,10 @@ end;
 
 function TFhirInstant.AsStringValue : string;
 begin
-  result := FValue.asXml;
+  if (FValue = nil) then
+    result := ''
+  else
+    result := FValue.asXml;
 end;
 
 function TFhirInstant.equalsDeep(other : TFHIRBase) : boolean; 

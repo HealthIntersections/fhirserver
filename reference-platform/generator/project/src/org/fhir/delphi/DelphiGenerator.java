@@ -1838,6 +1838,7 @@ public class DelphiGenerator {
         if (!var) 
           prsrImpl.append("var\r\n");
         prsrImpl.append("  ext : boolean;\r\n");
+        prsrImpl.append("  val : boolean;\r\n");
       }
       prsrImpl.append(
           "begin\r\n");
@@ -1907,6 +1908,7 @@ public class DelphiGenerator {
       if (!var) 
         prsrImpl.append("var\r\n");
       prsrImpl.append("  ext : boolean;\r\n");
+      prsrImpl.append("  val : boolean;\r\n");
     }
     
     if (category == ClassCategory.Resource)
@@ -1971,6 +1973,7 @@ public class DelphiGenerator {
       prsrImpl.append("  i : integer;\r\n");
     if (s.contains("ext := ")) {
       prsrImpl.append("  ext : boolean;\r\n");
+      prsrImpl.append("  val : boolean;\r\n");
     }
     prsrImpl.append(
         "begin\r\n"+
@@ -2263,14 +2266,20 @@ public class DelphiGenerator {
         workingComposerJ.append("  if (SummaryOption in ["+sumSet+"]) and (elem."+s+obj+".Count > 0) then\r\n");
         workingComposerJ.append(
             "  begin\r\n"+
-                "    json.valueArray('"+e.getName()+"');\r\n"+
+                "    val := false;\r\n"+    
                 "    ext := false;\r\n"+    
                 "    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
                 "    begin\r\n"+
-                "      ext := ext or ((elem."+s+obj+"[i].id <> '') or (elem."+s+obj+"[i].hasExtensionList) {no-comments or (elem."+s+obj+"[i].hasComments) });\r\n"+
-                "      ComposeEnumValue(json, '', elem."+s+obj+"[i], CODES_"+tn+", true);\r\n"+
+                "      val := val or (elem."+s+obj+"[i].hasPrimitiveValue);\r\n"+
+                "      ext := ext or ((elem."+s+obj+"[i].id <> '') or (elem."+s+obj+"[i].hasExtensionList));\r\n"+
                 "    end;\r\n"+
-                "    json.FinishArray;\r\n"+
+                "    if val then\r\n"+
+                "    begin\r\n"+
+                "      json.valueArray('"+e.getName()+"');\r\n"+
+                "      for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
+                "        ComposeEnumValue(json, '', elem."+s+obj+"[i], CODES_"+tn+", true);\r\n"+
+                "      json.FinishArray;\r\n"+
+                "    end;\r\n"+
                 "    if ext then\r\n"+
                 "    begin\r\n"+
                 "      json.valueArray('_"+e.getName()+"');\r\n"+
@@ -2363,14 +2372,20 @@ public class DelphiGenerator {
         if (typeIsPrimitive(e.typeCode())) 
           workingComposerJ.append(
               "  begin\r\n"+
-                  "    json.valueArray('"+e.getName()+"');\r\n"+
                   "    ext := false;\r\n"+    
+                  "    val := false;\r\n"+    
                   "    for i := 0 to elem."+s+".Count - 1 do\r\n"+
                   "    begin\r\n"+
                   "      ext := ext or ((elem."+s+"[i].id <> '') or (elem."+s+"[i].hasExtensionList) {no-comments or (elem."+s+"[i].hasComments)});\r\n"+
-                  "      "+srlsdJ+"Value(json, '',"+srls.replace("#", "elem."+s+"[i]")+", true);\r\n"+
+                  "      val := val or (elem."+s+"[i].hasPrimitiveValue);\r\n"+
                   "    end;\r\n"+
-                  "    json.FinishArray;\r\n"+
+                  "    if val then\r\n"+
+                  "    begin\r\n"+
+                  "      json.valueArray('"+e.getName()+"');\r\n"+
+                  "      for i := 0 to elem."+s+".Count - 1 do\r\n"+
+                  "        "+srlsdJ+"Value(json, '',"+srls.replace("#", "elem."+s+"[i]")+", true);\r\n"+
+                  "      json.FinishArray;\r\n"+
+                  "    end;\r\n"+
                   "    if ext then\r\n"+
                   "    begin\r\n"+
                   "      json.valueArray('_"+e.getName()+"');\r\n"+
@@ -3197,11 +3212,17 @@ public class DelphiGenerator {
         impl2.append("  result := LCBooleanToString(FValue);\r\n");
       else if (pn.equals("TBytes"))
         impl2.append("  if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));\r\n");
-      else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") )
-        impl2.append("  result := FValue.asXml;\r\n");
-      else if (!pn.equals("String"))
-        impl2.append("  result := FValue.toString;\r\n");
-      else 
+      else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") ) {
+        impl2.append("  if (FValue = nil) then\r\n");
+        impl2.append("    result := ''\r\n");
+        impl2.append("  else\r\n");
+        impl2.append("    result := FValue.asXml;\r\n");
+      } else if (!pn.equals("String")) {
+        impl2.append("  if (FValue = nil) then\r\n");
+        impl2.append("    result := ''\r\n");
+        impl2.append("  else\r\n");
+        impl2.append("    result := FValue.toString;\r\n");
+      } else 
         impl2.append("  result := FValue;\r\n");
       impl2.append("end;\r\n\r\n");
       generatePrimitiveEquals(t, "TFhir"+tn, impl2);
@@ -3410,16 +3431,17 @@ public class DelphiGenerator {
       if (pn.equals("Boolean"))
         prsrImpl.append("  if (value = nil) then\r\n");
       else if (!pn.equals("String"))
-        prsrImpl.append("  if (value = nil) or (value.value = nil) then\r\n");
+        prsrImpl.append("  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then\r\n");
       else 
         prsrImpl.append("  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then\r\n");
       prsrImpl.append("    exit;\r\n");
       prsrImpl.append("  composeElementAttributes(xml, value);\r\n");
-      if (pn.equals("Boolean"))
+      if (pn.equals("Boolean")) {
         prsrImpl.append("  attribute(xml, 'value', LCBooleanToString(value.value));\r\n");
-      else if (!pn.equals("String"))
-        prsrImpl.append("  attribute(xml, 'value', asString(value.value));\r\n");
-      else
+      } else if (!pn.equals("String")) {
+        prsrImpl.append("  if (value.value <> nil) then\r\n");
+        prsrImpl.append("    attribute(xml, 'value', asString(value.value));\r\n");
+      } else
         prsrImpl.append("  attribute(xml, 'value', value.value);\r\n");
       prsrImpl.append("  xml.open(name);\r\n");
       prsrImpl.append("  composeElementChildren(xml, value);\r\n");

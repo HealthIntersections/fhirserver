@@ -107,7 +107,7 @@ begin
     begin
       FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
       if FSnomed.GetConceptId(iWork3) = '116680003' then
-        raise Exception.Create('Concept '+id+' has no descendents but it does ');
+        raise Exception.Create('Concept '+id+' has no descendants but it does ');
     end;
   end;
 

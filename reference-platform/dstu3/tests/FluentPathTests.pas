@@ -48,7 +48,7 @@ var
   gn, s : String;
   v : OleVariant;
 begin
-  tests := TMsXmlParser.Parse('C:\work\fluentpath\spec\tests-fhir-r3.xml');
+  tests := TMsXmlParser.Parse('C:\work\fluentpath\tests\stu3\tests-fhir-r3.xml');
 
   group := TMsXmlParser.FirstChild(tests.documentElement);
   i := 0;
@@ -156,7 +156,7 @@ begin
             p.Free;
           end;
 
-          engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false);
+          engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false).free;
         end;
         outcome := engine.evaluate(nil, res, res, node);
         Assert.IsTrue(not fail, StringFormat('Expected exception parsing %s', [expression]));
@@ -200,6 +200,7 @@ begin
       node.Free;
     end;
   finally
+    res.free;
     outcome.free;
   end;
 end;

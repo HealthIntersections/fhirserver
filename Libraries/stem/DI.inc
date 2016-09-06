@@ -100,14 +100,6 @@
 
   This option is only available for the DIRegEx source code. }
 
-{.$DEFINE DI_No_RegEx_Range_Checking}// Default: Off
-{ Defining DI_No_RegEx_Range_Checking will suppress generation of code which
-  checks for ranges errors. No error messages will be thrown in case of
-  violations. Enabeling DI_No_RegEx_Range_Checking generates faster and smaller
-  code.
-
-  This option is only available for the DIRegEx source code. }
-
 { ---------------------------------------------------------------------------- }
 { DIUnicode                                                                    }
 { ---------------------------------------------------------------------------- }

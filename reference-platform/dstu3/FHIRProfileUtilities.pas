@@ -38,7 +38,7 @@ interface
 
 uses
   SysUtils, Classes,
-  StringSupport, kCritSct,
+  StringSupport, kCritSct, TextUtilities,
   AdvObjects, AdvGenerics, AdvStringMatches, AdvBuffers, ADvMemories,
   AdvObjectLists, AdvNameBuffers,
   AdvFiles, AdvVclStreams, AdvZipReaders, AdvZipParts,
@@ -65,6 +65,7 @@ Type
     destructor Destroy; override;
     function Link : TProfileManager; overload;
 
+    procedure dump;
     procedure SeeProfile(key : Integer; profile : TFHirStructureDefinition);
     procedure DropProfile(aType: TFhirResourceType; id : String);
     procedure loadFromFeed(feed : TFHIRBundle);
@@ -1492,6 +1493,7 @@ end;
 
 function TBaseWorkerContext.allStructures: TAdvMap<TFHIRStructureDefinition>.TValueCollection;
 begin
+  FProfiles.dump();
   result := FProfiles.ProfilesByURL.Values;
 end;
 
@@ -1513,11 +1515,13 @@ end;
 
 function TBaseWorkerContext.fetchResource(t: TFhirResourceType; url: String): TFhirResource;
 begin
+  FProfiles.dump();
   case t of
     frtStructureDefinition : result := FProfiles.ProfileByURL[url];
   else
     result := nil;
   end;
+  FProfiles.dump();
 end;
 
 function TBaseWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
@@ -1826,8 +1830,12 @@ begin
 end;
 
 destructor TProfileManager.Destroy;
+var
+  sd : TFHIRStructureDefinition;
 begin
   FProfilesById.free;
+  for sd in FProfilesByURL.Values do
+    System.Writeln(sd.url+': '+inttostr(sd.AdvObjectReferenceCount));
   FProfilesByURL.free;
   lock.Free;
   inherited;
@@ -1981,6 +1989,24 @@ begin
   finally
     lock.Unlock;
   end;
+end;
+
+procedure TProfileManager.dump;
+//var
+//  sd : TFHIRStructureDefinition;
+//  b : TStringBuilder;
+begin
+//  b := TStringBuilder.Create;
+//  try
+//    for sd in FProfilesByURL.Values do
+//    begin
+//      b.append(sd.url+': '+inttostr(sd.AdvObjectReferenceCount));
+//      b.Append(#13#10);
+//    end;
+//    StringToFile(b.ToString, 'c:\temp\diump.txt', TEncoding.UTF8);
+//  finally
+//    b.Free;
+//  end;
 end;
 
 { TProfileDefinition }

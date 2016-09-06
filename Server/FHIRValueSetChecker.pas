@@ -301,9 +301,9 @@ function TValueSetChecker.check(code: TFhirCodeableConcept; abstractOk : boolean
   function Summary(code: TFhirCodeableConcept) : String;
   begin
     if (code.codingList.Count = 1) then
-      result := 'The code provided is not '
+      result := 'The code provided ('+summarise(code)+') is not '
     else
-      result := 'None of the codes provided are ';
+      result := 'None of the codes provided ('+summarise(code)+') are ';
   end;
 var
   list : TStringList;
@@ -330,6 +330,7 @@ begin
         codelist := codelist + cc;
         v := check(code.codingList[i].system, code.codingList[i].code, abstractOk, list);
         ok.value := ok.value or v;
+
         if (v) then
         begin
           if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) < 0) then
@@ -342,13 +343,19 @@ begin
           prov := FStore.getProvider(code.codingList[i].system, true);
           try
            if (prov = nil) then
-             result.AddParameter('message', 'The system "'+code.codingList[i].system+'" is not known')
+           begin
+             result.AddParameter('message', 'The system "'+code.codingList[i].system+'" is not known');
+             result.AddParameter('cause', 'unknown');
+           end
            else
            begin
              ctxt := prov.locate(code.codingList[i].code);
              try
                if ctxt = nil then
-                 result.AddParameter('message', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system)
+               begin
+                 result.AddParameter('message', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system);
+                 result.AddParameter('cause', 'invalid');
+               end
                else
                begin
                  prov.Displays(ctxt, list);
@@ -369,7 +376,6 @@ begin
           result.AddParameter('message', Summary(code) +' valid')
         else
           result.AddParameter('message', Summary(code) +' valid in the value set '+fvs.name);
-
     finally
       list.Free;
     end;

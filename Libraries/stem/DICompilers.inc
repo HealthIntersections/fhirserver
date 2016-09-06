@@ -18,19 +18,23 @@
 
   DEPRECATED_SYSUTILS_ANSISTRINGS  AnsiString functions from SysUtils are deprecated and moved to System.AnsiStrings (D18+)
 
-  HAS_UNIT_RTLCONSTS               Unit RTLConsts exists (D6+/BCB6+/FPC)
-  HAS_UNIT_TYPES                   Unit Types exists (D6+/BCB6+/FPC)
   HAS_UNITSCOPE                    Unit scope names are prepended to unit names in the VCL-FMX-RTL libraries.
+
+  HAS_UNIT_RTLCONSTS               Unit RTLConsts exists (D6+/BCB6+/FPC)
+  HAS_UNIT_PNGIMAGE                Unit PngImage exists (D12+)
   HAS_UNIT_SYSTEM_UITYPES          Unit System.UITypes is available (D16+)
+  HAS_UNIT_TYPES                   Unit Types exists (D6+/BCB6+/FPC)
   HAS_UNIT_VARIANTS                Unit Variants exists (D6+/BCB6+/FPC)
 
   SUPPORTS_COMPILETIME_MESSAGES    Compiler supports the MESSAGE directive
   SUPPORTS_DEFAULTPARAMS           Compiler supports default parameters (D4+/BCB4+)
   SUPPORTS_DEPRECATED              Compiler supports the deprecated directive (D6+/BCB6+)
+  SUPPORTS_DEPRECATED_DETAILS      Compiler supports additional text for the deprecated directive (D12+)
   SUPPORTS_DEPRECATED_WARNINGS     Compiler supports deprecated warnings (D6+/BCB6+)
   SUPPORTS_DEPRECATED_TYPES        Compiler supports deprecated warnings following type declarations (??? TODO ???)
   SUPPORTS_ENUMVALUE               Compiler supports assigning ordinalities to values of enums (D6+/BCB6+)
   SUPPORTS_FOR_IN                  Compiler supports for in loops (D9+)
+  SUPPORTS_GENERICS                Compiler supports generic implementations (D11.NET, D12+)
   SUPPORTS_INLINE                  Compiler supports the inline directive (D9+/FPC)
   SUPPORTS_INT64                   Compiler supports the Int64 type (D4+/BCB4+)
   SUPPORTS_LONGWORD                Compiler supports the LongWord type (unsigned 32 bit) (D4+/BCB4+)
@@ -251,43 +255,53 @@
 
   {$IFDEF VER270} // RAD Studio XE6
     {$IFDEF BCB}
-      {$DEFINE BCB_19}
+      {$DEFINE BCB_20}
     {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_19}
+      {$DEFINE DELPHI_20}
     {$ENDIF BCB}
-    {$DEFINE COMPILER_19}
-  {$ENDIF VER260}
+    {$DEFINE COMPILER_20}
+  {$ENDIF VER270}
 
   {$IFDEF VER280} // RAD Studio XE7
     {$IFDEF BCB}
-      {$DEFINE BCB_19}
+      {$DEFINE BCB_21}
     {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_19}
+      {$DEFINE DELPHI_21}
     {$ENDIF BCB}
-    {$DEFINE COMPILER_19}
-  {$ENDIF VER260}
+    {$DEFINE COMPILER_21}
+  {$ENDIF VER280}
 
   {$IFDEF VER290} // RAD Studio XE8
     {$IFDEF BCB}
-      {$DEFINE BCB_19}
+      {$DEFINE BCB_22}
     {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_19}
+      {$DEFINE DELPHI_22}
     {$ENDIF BCB}
-    {$DEFINE COMPILER_19}
-  {$ENDIF VER260}
+    {$DEFINE COMPILER_22}
+  {$ENDIF VER290}
 
-  {$IFDEF VER300} // RAD Studio XE8
+  {$IFDEF VER300} // RAD Studio 10 Seattle
     {$IFDEF BCB}
-      {$DEFINE BCB_19}
+      {$DEFINE BCB_23}
     {$ELSE}
       {$DEFINE DELPHI}
-      {$DEFINE DELPHI_19}
+      {$DEFINE DELPHI_23}
     {$ENDIF BCB}
-    {$DEFINE COMPILER_19}
+    {$DEFINE COMPILER_23}
   {$ENDIF VER300}
+
+  {$IFDEF VER310} // RAD Studio 10.1 Berlin
+    {$IFDEF BCB}
+      {$DEFINE BCB_24}
+    {$ELSE}
+      {$DEFINE DELPHI}
+      {$DEFINE DELPHI_24}
+    {$ENDIF BCB}
+    {$DEFINE COMPILER_24}
+  {$ENDIF VER310}
 
   // CLR - DotNet
 
@@ -332,6 +346,11 @@
 
   // DELPHI_X_UP from DELPHI_X mappings
 
+  {$IFDEF DELPHI_24} {$DEFINE DELPHI_24_UP} {$ENDIF}
+  {$IFDEF DELPHI_23} {$DEFINE DELPHI_23_UP} {$ENDIF}
+  {$IFDEF DELPHI_22} {$DEFINE DELPHI_22_UP} {$ENDIF}
+  {$IFDEF DELPHI_21} {$DEFINE DELPHI_21_UP} {$ENDIF}
+  {$IFDEF DELPHI_20} {$DEFINE DELPHI_20_UP} {$ENDIF}
   {$IFDEF DELPHI_19} {$DEFINE DELPHI_19_UP} {$ENDIF}
   {$IFDEF DELPHI_18} {$DEFINE DELPHI_18_UP} {$ENDIF}
   {$IFDEF DELPHI_17} {$DEFINE DELPHI_17_UP} {$ENDIF}
@@ -353,6 +372,11 @@
 
   // DELPHI_X_UP from DELPHI_X_UP mappings
 
+  {$IFDEF DELPHI_24_UP} {$DEFINE DELPHI_23_UP} {$ENDIF}
+  {$IFDEF DELPHI_23_UP} {$DEFINE DELPHI_22_UP} {$ENDIF}
+  {$IFDEF DELPHI_22_UP} {$DEFINE DELPHI_21_UP} {$ENDIF}
+  {$IFDEF DELPHI_21_UP} {$DEFINE DELPHI_20_UP} {$ENDIF}
+  {$IFDEF DELPHI_20_UP} {$DEFINE DELPHI_19_UP} {$ENDIF}
   {$IFDEF DELPHI_19_UP} {$DEFINE DELPHI_18_UP} {$ENDIF}
   {$IFDEF DELPHI_18_UP} {$DEFINE DELPHI_17_UP} {$ENDIF}
   {$IFDEF DELPHI_17_UP} {$DEFINE DELPHI_16_UP} {$ENDIF}
@@ -373,6 +397,11 @@
 
   // BCB_X_UP from BCB_X mappings
 
+  {$IFDEF BCB_24} {$DEFINE BCB_24_UP} {$ENDIF}
+  {$IFDEF BCB_23} {$DEFINE BCB_23_UP} {$ENDIF}
+  {$IFDEF BCB_22} {$DEFINE BCB_22_UP} {$ENDIF}
+  {$IFDEF BCB_21} {$DEFINE BCB_21_UP} {$ENDIF}
+  {$IFDEF BCB_20} {$DEFINE BCB_20_UP} {$ENDIF}
   {$IFDEF BCB_19} {$DEFINE BCB_19_UP} {$ENDIF}
   {$IFDEF BCB_18} {$DEFINE BCB_18_UP} {$ENDIF}
   {$IFDEF BCB_17} {$DEFINE BCB_17_UP} {$ENDIF}
@@ -390,6 +419,11 @@
 
   // BCBX_UP from BCBX_UP mappings
 
+  {$IFDEF BCB_24_UP} {$DEFINE BCB_23_UP} {$ENDIF}
+  {$IFDEF BCB_23_UP} {$DEFINE BCB_22_UP} {$ENDIF}
+  {$IFDEF BCB_22_UP} {$DEFINE BCB_21_UP} {$ENDIF}
+  {$IFDEF BCB_21_UP} {$DEFINE BCB_20_UP} {$ENDIF}
+  {$IFDEF BCB_20_UP} {$DEFINE BCB_19_UP} {$ENDIF}
   {$IFDEF BCB_19_UP} {$DEFINE BCB_18_UP} {$ENDIF}
   {$IFDEF BCB_18_UP} {$DEFINE BCB_17_UP} {$ENDIF}
   {$IFDEF BCB_17_UP} {$DEFINE BCB_16_UP} {$ENDIF}
@@ -406,6 +440,11 @@
 
   // COMPILER_X_UP from COMPILER_X mappings
 
+  {$IFDEF COMPILER_24} {$DEFINE COMPILER_24_UP} {$ENDIF}
+  {$IFDEF COMPILER_23} {$DEFINE COMPILER_23_UP} {$ENDIF}
+  {$IFDEF COMPILER_22} {$DEFINE COMPILER_22_UP} {$ENDIF}
+  {$IFDEF COMPILER_21} {$DEFINE COMPILER_21_UP} {$ENDIF}
+  {$IFDEF COMPILER_20} {$DEFINE COMPILER_20_UP} {$ENDIF}
   {$IFDEF COMPILER_19} {$DEFINE COMPILER_19_UP} {$ENDIF}
   {$IFDEF COMPILER_18} {$DEFINE COMPILER_18_UP} {$ENDIF}
   {$IFDEF COMPILER_17} {$DEFINE COMPILER_17_UP} {$ENDIF}
@@ -428,6 +467,11 @@
 
   // COMPIlER_X_UP from COMPILER_X_UP mappings
 
+  {$IFDEF COMPILER_24_UP} {$DEFINE COMPILER_23_UP} {$ENDIF}
+  {$IFDEF COMPILER_23_UP} {$DEFINE COMPILER_22_UP} {$ENDIF}
+  {$IFDEF COMPILER_22_UP} {$DEFINE COMPILER_21_UP} {$ENDIF}
+  {$IFDEF COMPILER_21_UP} {$DEFINE COMPILER_20_UP} {$ENDIF}
+  {$IFDEF COMPILER_20_UP} {$DEFINE COMPILER_19_UP} {$ENDIF}
   {$IFDEF COMPILER_19_UP} {$DEFINE COMPILER_18_UP} {$ENDIF}
   {$IFDEF COMPILER_18_UP} {$DEFINE COMPILER_17_UP} {$ENDIF}
   {$IFDEF COMPILER_17_UP} {$DEFINE COMPILER_16_UP} {$ENDIF}
@@ -489,6 +533,9 @@
 
   {$IFDEF COMPILER_12_UP}
     {$DEFINE HAS_UNIT_ANSISTRINGS}
+    {$DEFINE HAS_UNIT_PNGIMAGE}
+    {$DEFINE SUPPORTS_DEPRECATED_DETAILS}
+    {$DEFINE SUPPORTS_GENERICS}
     {$IFNDEF CLR}
       {$DEFINE SUPPORTS_UNICODE_STRING}
     {$ENDIF CLR}

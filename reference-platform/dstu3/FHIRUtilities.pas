@@ -47,6 +47,8 @@ uses
 Type
   ETooCostly = class (Exception);
   EUnsafeOperation = class (Exception);
+  DefinitionException = class (Exception);
+
 
 const
   MIN_DATE = DATETIME_MIN;
@@ -87,7 +89,8 @@ function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : S
 function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
-function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList;
+function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList; overload;
+function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
 function CreateResourceByName(name : String) : TFhirResource;
 function CreateTypeByName(name : String) : TFhirElement;
 function CreateBasicChildren(element : TFhirElement; exCoding : TFHIRCoding) : TFhirElement;
@@ -456,6 +459,9 @@ function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
 function TryZDecompressBytes(const s: TBytes): TBytes;
 
+function summarise(coding : TFHIRCoding):String; overload;
+function summarise(code : TFhirCodeableConcept):String; overload;
+
 function gen(coding : TFHIRCoding):String; overload;
 function gen(code : TFhirCodeableConcept):String; overload;
 function gen(ref : TFhirReference) : String; overload;
@@ -481,9 +487,12 @@ function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; 
 implementation
 
 uses
+ {$IFDEF STACK_DUMPS}
   JclDebug,
+  {$ENDIF}
   FHIRMetaModel;
 
+{$IFDEF STACK_DUMPS}
 function dumpStack : String;
 var
   st : TJclStackInfoList;
@@ -507,6 +516,7 @@ begin
   else
     result := '';
 end;
+{$ENDIF}
 
 
 function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
@@ -945,6 +955,37 @@ begin
   else
     result := '';
 end;
+
+function summarise(coding : TFHIRCoding):String; overload;
+begin
+  if (coding = nil) then
+     result := ''
+  else
+    result := coding.system+'#'+coding.Code;
+end;
+
+function summarise(code : TFhirCodeableConcept):String; overload;
+var
+  c : TFHIRCoding;
+begin
+  if (code = nil) then
+    result := ''
+  else
+  begin
+    result := '';
+    for c in code.codingList do
+      if result <> '' then
+        result := result +', '+summarise(c)
+      else
+        result := summarise(c);
+    if (code.text <> '') then
+      if result <> '' then
+        result := result +', ('+code.text+')'
+      else
+        result := '('+code.text+')';
+  end;
+end;
+
 
 function gen(ref : TFhirReference) : String;
 begin
@@ -1678,7 +1719,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1723,7 +1766,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1751,7 +1796,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1779,7 +1826,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -2914,6 +2963,36 @@ begin
     raise Exception.Create('Type '+t.className+' not handled yet');
 end;
 
+
+function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
+var
+  e : TFHIRElementDefinition;
+  index : integer;
+begin
+  if (element.contentReference <> '') then
+  begin
+    for e in profile.snapshot.elementList do
+      if (element.ContentReference = '#'+e.id) then
+        exit(getChildMap(profile, e));
+      raise DefinitionException.create('Unable to resolve name reference '+element.contentReference+' at path '+element.path);
+  end
+  else
+  begin
+    result := TFHIRElementDefinitionList.create;
+    for index := profile.snapshot.elementList.indexOf(element) + 1 to profile.snapshot.elementList.count - 1 do
+    begin
+      e := profile.snapshot.elementList[index];
+      if (e.path.startsWith(element.path + '.')) then
+      begin
+        // We only want direct children, not all descendants
+        if (not e.path.substring(element.path.length+1).contains('.')) then
+          result.add(e.link);
+      end
+      else
+        break;
+    end;
+  end;
+end;
 
 
 {*

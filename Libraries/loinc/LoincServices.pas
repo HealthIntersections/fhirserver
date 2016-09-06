@@ -67,7 +67,7 @@ type
   //   the second structure is a list of lists of word or cardinal references.
   //   the third structure is a list of concepts. each concept has a ref0ernce to a name and a contained list of references which are either children
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
-  //   the fifth structure is the multi-axial heirarchy - parent, children, descendents, concepts, and descendent concepts
+  //   the fifth structure is the multi-axial heirarchy - parent, children, descendants, concepts, and descendent concepts
 
   // 1. a list of strings
   //   each entry in the String starts with a byte length, and then the series of characters (2 bytes)
@@ -233,7 +233,7 @@ Type
 //    code : Cardinal;
 //    text : Cardinal;
 //    children : Cardinal;
-//    descendents : Cardinal;
+//    descendants : Cardinal;
 //    concepts : Cardinal;
 //    descendentconcepts : Cardinal;
 //  End;
@@ -244,11 +244,11 @@ Type
     FBuilder : TAdvBytesBuilder;
   Public
     Function FindCode(sCode : String; var iIndex : Cardinal; Strings : TLoincStrings) : Boolean;
-    Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal);
+    Procedure GetEntry(iIndex: Cardinal; var code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal);
 
     // we presume that the Codes are registered in order
     Procedure StartBuild;
-    Function AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts : Cardinal) : Cardinal;
+    Function AddEntry(code, text, parent, children, descendants, concepts, descendentConcepts : Cardinal) : Cardinal;
     Procedure DoneBuild;
 
     // this needs to be called after Done Build
@@ -1130,13 +1130,13 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
   Procedure CheckEntry(const words : TSearchWordArray; var iCount : Integer; index : Integer);
   var
     i, j : cardinal;
-    code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+    code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
     r1 : Double;
     Desc : TCardinalArray;
     matches : integer;
     ok : boolean;
   Begin
-    Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    Entries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
     r1 := 0;
     Desc := Refs.GetCardinals(stems);
     matches := 0;
@@ -1527,7 +1527,7 @@ end;
 function TLOINCServices.buildValueSet(id: String): TFhirValueSet;
 var
   index : cardinal;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
   answers : TCardinalArray;
   inc : TFhirValueSetComposeInclude;
   filt :  TFhirValueSetComposeIncludeFilter;
@@ -1555,7 +1555,7 @@ begin
   end
   else if (id.StartsWith('http://loinc.org/vs/') and FEntries.FindCode(id.Substring(20), index, FDesc)) then
   begin
-    FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    FEntries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
 
     result := TFhirValueSet.Create;
     try
@@ -1830,7 +1830,7 @@ function TLoincServices.FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: St
 var
   index : Cardinal;
   aChildren, c : LoincServices.TCardinalArray;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
   s : String;
 begin
   result := THolder.create;
@@ -1845,7 +1845,7 @@ begin
       StringSplit(value, ',', s, value);
       if (FEntries.FindCode(s, index, FDesc)) then
       begin
-        FEntries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+        FEntries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
         if transitive then
           c := Refs.getCardinals(descendentConcepts)
         else
@@ -1956,13 +1956,13 @@ begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
 
-function TLOINCHeirarchyEntryList.AddEntry(code, text, parent, children, descendents, concepts, descendentConcepts: Cardinal): Cardinal;
+function TLOINCHeirarchyEntryList.AddEntry(code, text, parent, children, descendants, concepts, descendentConcepts: Cardinal): Cardinal;
 begin
   Result := FBuilder.Length div 32;
   FBuilder.AddCardinal(code);
   FBuilder.AddCardinal(text);
   FBuilder.AddCardinal(children);
-  FBuilder.AddCardinal(descendents);
+  FBuilder.AddCardinal(descendants);
   FBuilder.AddCardinal(concepts);
   FBuilder.AddCardinal(descendentConcepts);
   FBuilder.AddCardinal(parent);
@@ -2015,14 +2015,14 @@ begin
   End;
 end;
 
-procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal);
+procedure TLOINCHeirarchyEntryList.GetEntry(iIndex: Cardinal; var code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal);
 begin
   if iIndex > (Length(FMaster) div 32) Then
     Raise Exception.Create('Attempt to access invalid LOINC Entry index');
   Move(FMaster[(iIndex*32)+0], code, 4);
   Move(FMaster[(iIndex*32)+4], text, 4);
   Move(FMaster[(iIndex*32)+8], children, 4);
-  Move(FMaster[(iIndex*32)+12], descendents, 4);
+  Move(FMaster[(iIndex*32)+12], descendants, 4);
   Move(FMaster[(iIndex*32)+16], concepts, 4);
   Move(FMaster[(iIndex*32)+20], descendentConcepts, 4);
   Move(FMaster[(iIndex*32)+24], parent, 4);
@@ -2062,7 +2062,7 @@ end;
 
 function TLOINCAnswersList.FindCode(sCode: String; var iIndex: Cardinal; Strings: TLoincStrings): Boolean;
 var
-  L, H, I, d : Cardinal;
+  L, H, I, d : integer;
   C: Integer;
   s : String;
 begin
@@ -2076,6 +2076,8 @@ begin
     while L <= H do
     begin
       I := (L + H) shr 1;
+      if (i * 12) > length(FMaster) - 4 then
+        writeln('err');
       Move(FMaster[i*12], d, 4);
       s := Strings.GetEntry(d);
       C := AnsiCompareStr(s, sCode);

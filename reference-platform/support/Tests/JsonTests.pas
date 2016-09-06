@@ -44,6 +44,9 @@ function CheckJsonIsSame(filename1, filename2 : String; var msg : string) : bool
 
 implementation
 
+uses
+  IdGlobalProtocols, TextUtilities, ShellSupport, XmlTests;
+
 { TJsonTests }
 
 procedure TJsonTests.TestCustomDoc;
@@ -69,7 +72,7 @@ var
   json : TJsonObject;
   f : TFileStream;
 begin
-  f := TFileStream.Create('C:\temp\test.json', fmopenRead + fmShareDenyWrite);
+  f := TFileStream.Create('C:\work\fhirserver\tests\test.json', fmopenRead + fmShareDenyWrite);
   try
     json := TJSONParser.Parse(f);
     try
@@ -284,8 +287,9 @@ var
 begin
   result := compareJson(filename1, filename2, msg);
 {$IFDEF DIFF}
-  if not result then
+  if not result and showdiff then
   begin
+    showdiff := false;
     j1 := TJSONParser.ParseFile(filename1);
     j2 := TJSONParser.ParseFile(filename2);
     try
@@ -295,7 +299,7 @@ begin
       StringToFile(TJsonWriter.writeObjectStr(j1, true), f1, TEncoding.UTF8);
       StringToFile(TJsonWriter.writeObjectStr(j2, true), f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
-      ShellExecute(0, 'open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), PChar(ExtractFilePath(f1)), SW_MAXIMIZE);
+      ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
     finally
       j2.Free;
       j1.Free;

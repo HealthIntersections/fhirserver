@@ -722,7 +722,7 @@ type
   TFHIRPathFunction = (
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
     pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
-    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendents,
+    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension);
 
   TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup);
@@ -736,11 +736,11 @@ const
   CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = (
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
     'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
-    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendents',
+    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension');
 
 type
-  TfhirTypeDetails = class (TAdvObject)
+  TFHIRTypeDetails = class (TAdvObject)
   private
     id : integer;
     FTypes : TStringList;
@@ -763,6 +763,7 @@ type
     property types : TStringList read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
+    function type_ : String;
   end;
 
   TFHIRExpressionNode = class (TAdvObject)
@@ -2463,6 +2464,11 @@ end;
 function TfhirTypeDetails.toSingleton: TfhirTypeDetails;
 begin
   result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
+end;
+
+function TfhirTypeDetails.type_: String;
+begin
+
 end;
 
 function TfhirTypeDetails.union(right: TfhirTypeDetails): TfhirTypeDetails;

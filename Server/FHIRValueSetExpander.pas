@@ -52,7 +52,7 @@ Type
     FProfile : TFhirExpansionProfile;
 
     FStore : TTerminologyServer;
-    procedure processCodeAndDescendents(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
+    procedure processCodeAndDescendants(doDelete : boolean; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; cs : TCodeSystemProvider; context : TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 
     procedure handleDefine(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; source : TFhirCodeSystem2; defines : TFhirCodeSystemConceptList; filter : TSearchFilterText; params : TFhirValueSetExpansionParameterList);
     procedure importValueSet(list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; uri : String; filter : TSearchFilterText; dependencies : TStringList; params : TFhirValueSetExpansionParameterList; var notClosed : boolean);
@@ -361,7 +361,7 @@ var
   param : TFhirValueSetExpansionParameter;
 begin
   if (uri = '') then
-    raise Exception.create('unable to find value set with no identity');
+    raise ETerminologyError.create('unable to find value set with no identity');
 
   dep := TStringList.Create;
   try
@@ -428,7 +428,7 @@ begin
         if (cs.TotalCount > FLimit) and not (Fprofile.limitedExpansion) then
           raise ETooCostly.create('Too many codes to display (>'+inttostr(FLimit)+') (A text filter may reduce the number of codes in the expansion)');
         for i := 0 to cs.ChildCount(nil) - 1 do
-          processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(nil, i), params)
+          processCodeAndDescendants(doDelete, list, map, cs, cs.getcontext(nil, i), params)
       end
       else
       begin
@@ -516,7 +516,7 @@ begin
   end;
 end;
 
-procedure TFHIRValueSetExpander.processCodeAndDescendents(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
+procedure TFHIRValueSetExpander.processCodeAndDescendants(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cs: TCodeSystemProvider; context: TCodeSystemProviderContext; params : TFhirValueSetExpansionParameterList);
 var
   i : integer;
   param : TFhirValueSetExpansionParameter;
@@ -531,7 +531,7 @@ begin
   if not cs.IsAbstract(context) then
     processCode(doDelete, list, map, cs.system(context), '', cs.Code(context), cs.Display(context), cs.definition(context), nil);
   for i := 0 to cs.ChildCount(context) - 1 do
-    processCodeAndDescendents(doDelete, list, map, cs, cs.getcontext(context, i), nil);
+    processCodeAndDescendants(doDelete, list, map, cs, cs.getcontext(context, i), nil);
 end;
 
 

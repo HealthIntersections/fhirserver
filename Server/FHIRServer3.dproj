@@ -116,7 +116,7 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>FHIRServer3_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>-xremount -xtxdirect -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\20160430&quot; -sver &quot;http://snomed.info/sct/32506021000036107/version/20160430&quot; -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.54&quot; -lver 2.54 -load C:\work\fhirserver\install\local-load.ini -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
+        <Debugger_RunParams>-xremount -xtxdirect -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\20160430&quot; -sver &quot;http://snomed.info/sct/32506021000036107/version/20160430&quot; -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.56&quot; -lver 2.56 -load C:\work\fhirserver\install\local-load.ini -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>

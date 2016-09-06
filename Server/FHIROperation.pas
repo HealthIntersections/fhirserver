@@ -6324,7 +6324,7 @@ var
   coded : TFhirCodeableConcept;
   coding : TFhirCoding;
   abstractOk : boolean;
-  params : TFhirParameters;
+  params, pout : TFhirParameters;
   needSecure : boolean;
 begin
   try
@@ -6415,7 +6415,19 @@ begin
                 vs.checkNoModifiers('ValueSetValidation', 'ValueSet');
               end;
 
-              response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, abstractOk);
+
+              try
+                response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, abstractOk);
+              except
+                on e : Exception do
+                begin
+                  pout := TFHIRParameters.create;
+                  response.resource := pout;
+                  pout.AddParameter('result', false);
+                  pout.AddParameter('message', e.Message);
+                  pout.AddParameter('cause', 'unknown');
+                end;
+              end;
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';

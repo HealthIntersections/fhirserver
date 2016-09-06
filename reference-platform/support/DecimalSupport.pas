@@ -1124,19 +1124,16 @@ end;
 
 class Function TSmartDecimalHelper.valueOf(value : String) : TSmartDecimal;
 begin
-  ZeroMemory(@result, sizeof(TSmartDecimal));
   result.SetValue(value);
 end;
 
 class Function TSmartDecimalHelper.valueOf(value : Integer) : TSmartDecimal;
 begin
-  ZeroMemory(@result, sizeof(TSmartDecimal));
   result.SetValue(inttostr(value));
 end;
 
 class Function TSmartDecimalHelper.valueOf(value : int64) : TSmartDecimal;
 begin
-  ZeroMemory(@result, sizeof(TSmartDecimal));
   result.SetValue(inttostr(value));
 end;
 

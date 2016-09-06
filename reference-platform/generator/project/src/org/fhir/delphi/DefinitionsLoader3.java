@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hl7.fhir.convertors.VersionConvertor;
+import org.hl7.fhir.convertors.VersionConvertor_10_20;
 import org.hl7.fhir.dstu3.formats.XmlParser;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
@@ -83,12 +83,12 @@ public class DefinitionsLoader3 {
    
   private void processConformance(Definitions def, Conformance resource) throws FHIRException {
     def.setVersion(resource.getFhirVersion());
-    def.setGenDate(new VersionConvertor(null).convertDateTime(resource.getDateElement()));
+    def.setGenDate(new VersionConvertor_10_20(null).convertDateTime(resource.getDateElement()));
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), new VersionConvertor(null).convertSearchParamType(sp.getType()), 
-        sp.getTarget(), new VersionConvertor(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), new VersionConvertor_10_20(null).convertSearchParamType(sp.getType()), 
+        sp.getTarget(), new VersionConvertor_10_20(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 

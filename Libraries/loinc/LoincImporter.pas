@@ -78,7 +78,7 @@ Type
     FText : String;
     FParent : THeirarchyEntry;
     FChildren : THeirarchyEntryList;
-    FDescendents : THeirarchyEntryList;
+    FDescendants : THeirarchyEntryList;
     FConcepts : TCodeList;
     FDescendentConcepts : TCodeList;
   public
@@ -328,7 +328,7 @@ End;
 
 procedure TLoincImporter.StoreHeirarchyEntry(entry: THeirarchyEntry);
 var
-  parent, children, descendents, concepts, descendentConcepts: Cardinal;
+  parent, children, descendants, concepts, descendentConcepts: Cardinal;
   refs : TCardinalArray;
   i : integer;
 begin
@@ -337,10 +337,10 @@ begin
     refs[i] := entry.FChildren[i].index;
   children := FRefs.AddCardinals(refs);
 
-  setLength(refs, entry.FDescendents.Count);
-  for i := 0 to entry.FDescendents.Count - 1 do
-    refs[i] := entry.FDescendents[i].index;
-  descendents := FRefs.AddCardinals(refs);
+  setLength(refs, entry.FDescendants.Count);
+  for i := 0 to entry.FDescendants.Count - 1 do
+    refs[i] := entry.FDescendants[i].index;
+  descendants := FRefs.AddCardinals(refs);
 
   setLength(refs, entry.FConcepts.Count);
   entry.FConcepts.SortedByCode;
@@ -359,56 +359,56 @@ begin
   else
     parent := NO_PARENT;
 
-  if FEntries.AddEntry(AddDescription(entry.FCode), AddDescription(entry.FText), parent, children, descendents, concepts, descendentConcepts) <> entry.index then
+  if FEntries.AddEntry(AddDescription(entry.FCode), AddDescription(entry.FText), parent, children, descendants, concepts, descendentConcepts) <> entry.index then
     raise Exception.Create('Out of order');
 end;
 
 Const
   FLD_LOINC_NUM =                             0;
-  FLD_COMPONENT =                             1;
-  FLD_PROPERTY =                              2;
-  FLD_TIME_ASPCT =                            3;
-  FLD_SYSTEM =                                4;
-  FLD_SCALE_TYP =                             5;
-  FLD_METHOD_TYP =                            6;
-  FLD_CLASS =                                 7;
-  FLD_SOURCE =                                8;
-  FLD_VersionLastChanged =                    9;
-  FLD_CHNG_TYPE =                             10;
-  FLD_DefinitionDescription =                 11;
-  FLD_STATUS =                                12;
-  FLD_CONSUMER_NAME =                         13;
-  FLD_CLASSTYPE =                             14;
-  FLD_FORMULA =                               15;
-  FLD_SPECIES =                               16;
-  FLD_EXMPL_ANSWERS =                         17;
-  FLD_SURVEY_QUEST_TEXT =                     18;
-  FLD_SURVEY_QUEST_SRC =                      19;
-  FLD_UNITSREQUIRED =                         20;
-  FLD_SUBMITTED_UNITS =                       21;
-  FLD_RELATEDNAMES2 =                         22;
-  FLD_SHORTNAME =                             23;
-  FLD_ORDER_OBS =                             24;
-  FLD_CDISC_COMMON_TESTS =                    25;
-  FLD_HL7_FIELD_SUBFIELD_ID =                 26;
-  FLD_EXTERNAL_COPYRIGHT_NOTICE =             27;
-  FLD_EXAMPLE_UNITS =                         28;
-  FLD_LONG_COMMON_NAME =                      29;
-  FLD_UnitsAndRange =                         30;
-  FLD_DOCUMENT_SECTION =                      31;
-  FLD_EXAMPLE_UCUM_UNITS =                    32;
-  FLD_EXAMPLE_SI_UCUM_UNITS =                 33;
-  FLD_STATUS_REASON =                         34;
-  FLD_STATUS_TEXT =                           35;
-  FLD_CHANGE_REASON_PUBLIC =                  36;
-  FLD_COMMON_TEST_RANK =                      37;
-  FLD_COMMON_ORDER_RANK =                     38;
-  FLD_COMMON_SI_TEST_RANK =                   39;
-  FLD_HL7_ATTACHMENT_STRUCTURE =              30;
-  FLD_EXTERNAL_COPYRIGHT_LINK =               41;
-  FLD_PanelType =                             42;
-  FLD_AskAtOrderEntry =                       43;
-  FLD_AssociatedObservations =                44;
+  FLD_COMPONENT =                             FLD_LOINC_NUM + 1;
+  FLD_PROPERTY =                              FLD_COMPONENT + 1;
+  FLD_TIME_ASPCT =                            FLD_PROPERTY + 1;
+  FLD_SYSTEM =                                FLD_TIME_ASPCT + 1;
+  FLD_SCALE_TYP =                             FLD_SYSTEM + 1;
+  FLD_METHOD_TYP =                            FLD_SCALE_TYP + 1;
+  FLD_CLASS =                                 FLD_METHOD_TYP + 1;
+//  FLD_SOURCE =                                8; removed as of 2.56
+  FLD_VersionLastChanged =                    FLD_CLASS + 1;
+  FLD_CHNG_TYPE =                             FLD_VersionLastChanged + 1;
+  FLD_DefinitionDescription =                 FLD_CHNG_TYPE + 1;
+  FLD_STATUS =                                FLD_DefinitionDescription + 1;
+  FLD_CONSUMER_NAME =                         FLD_STATUS + 1;
+  FLD_CLASSTYPE =                             FLD_CONSUMER_NAME + 1;
+  FLD_FORMULA =                               FLD_CLASSTYPE + 1;
+  FLD_SPECIES =                               FLD_FORMULA + 1;
+  FLD_EXMPL_ANSWERS =                         FLD_SPECIES + 1;
+  FLD_SURVEY_QUEST_TEXT =                     FLD_EXMPL_ANSWERS + 1;
+  FLD_SURVEY_QUEST_SRC =                      FLD_SURVEY_QUEST_TEXT + 1;
+  FLD_UNITSREQUIRED =                         FLD_SURVEY_QUEST_SRC + 1;
+  FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
+  FLD_RELATEDNAMES2 =                         FLD_SUBMITTED_UNITS + 1;
+  FLD_SHORTNAME =                             FLD_RELATEDNAMES2 + 1;
+  FLD_ORDER_OBS =                             FLD_SHORTNAME + 1;
+  FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
+  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_CDISC_COMMON_TESTS + 1;
+  FLD_EXTERNAL_COPYRIGHT_NOTICE =             FLD_HL7_FIELD_SUBFIELD_ID + 1;
+  FLD_EXAMPLE_UNITS =                         FLD_EXTERNAL_COPYRIGHT_NOTICE + 1;
+  FLD_LONG_COMMON_NAME =                      FLD_EXAMPLE_UNITS + 1;
+  FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
+  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
+  FLD_EXAMPLE_UCUM_UNITS =                    FLD_DOCUMENT_SECTION + 1;
+  FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
+  FLD_STATUS_REASON =                         FLD_EXAMPLE_SI_UCUM_UNITS + 1;
+  FLD_STATUS_TEXT =                           FLD_STATUS_REASON + 1;
+  FLD_CHANGE_REASON_PUBLIC =                  FLD_STATUS_TEXT + 1;
+  FLD_COMMON_TEST_RANK =                      FLD_CHANGE_REASON_PUBLIC + 1;
+  FLD_COMMON_ORDER_RANK =                     FLD_COMMON_TEST_RANK + 1;
+  FLD_COMMON_SI_TEST_RANK =                   FLD_COMMON_ORDER_RANK + 1;
+  FLD_HL7_ATTACHMENT_STRUCTURE =              FLD_COMMON_SI_TEST_RANK + 1;
+  FLD_EXTERNAL_COPYRIGHT_LINK =               FLD_HL7_ATTACHMENT_STRUCTURE + 1;
+  FLD_PanelType =                             FLD_EXTERNAL_COPYRIGHT_LINK + 1;
+  FLD_AskAtOrderEntry =                       FLD_PanelType + 1;
+  FLD_AssociatedObservations =                FLD_AskAtOrderEntry + 1;
 
 
 Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
@@ -445,6 +445,7 @@ var
   st, st2 : TStringList;
   answerlist : TAnswerList;
   answer : TAnswer;
+  s : String;
 begin
   result := 0;
   iLength := 0;
@@ -540,10 +541,13 @@ begin
             else
               oSubsets[lsi3rdParty].add(oCode.Link);
 
-              if not StringIsInteger32(items[FLD_CLASSTYPE]) then
-                raise Exception.Create('Error');
+            s := items[FLD_CLASSTYPE];
+            if s = '' then
+              s := '1';
+            if not StringIsInteger32(s) then
+              raise Exception.Create('Error');
 
-            case StrToInt(items[FLD_CLASSTYPE]) of
+            case StrToInt(s) of
              2: begin
                 oCode.Flags := oCode.Flags + FLAGS_CLIN;
                 oSubsets[lsiTypeClinical].add(oCode.Link);
@@ -1086,7 +1090,7 @@ begin
         parent := entry.FParent;
         while (parent <> nil) do
         begin
-          parent.FDescendents.Add(entry.Link);
+          parent.FDescendants.Add(entry.Link);
           parent := parent.FParent;
         end;
       end;
@@ -1206,7 +1210,7 @@ constructor THeirarchyEntry.Create;
 begin
   inherited;
   FChildren := THeirarchyEntryList.create;
-  FDescendents := THeirarchyEntryList.create;
+  FDescendants := THeirarchyEntryList.create;
   FConcepts := TCodeList.Create;
   FDescendentConcepts := TCodeList.Create;
 end;
@@ -1215,7 +1219,7 @@ destructor THeirarchyEntry.Destroy;
 begin
   FConcepts.Free;
   FChildren.free;
-  FDescendents.free;
+  FDescendants.free;
   FDescendentConcepts.free;
   inherited;
 end;

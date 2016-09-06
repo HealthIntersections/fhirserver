@@ -3,11 +3,31 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.70 2016-08-26 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.70.exe</link>
+			<description>DSTU3. 2016-08-26 (v1.0.70): change way unsupported code system validation problems are reqported</description>
+		</item>
+<item><title>FHIRServer release 1.0.69 2016-08-25 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.69.exe</link>
+			<description>DSTU3. 2016-08-25 (v1.0.69): fix bug in server code validation</description>
+		</item>
+		<item><title>FHIRServer release 1.0.68 2016-08-25 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.68.exe</link>
+			<description>DSTU3. 2016-08-25 (v1.0.68): change validation return codes</description>
+		</item>
+		<item><title>FHIRServer release 1.0.67 2016-08-11 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.67.exe</link>
+			<description>DSTU3. 2016-08-11 (v1.0.67): fix for acess violation that accidently slipped through</description>
+		</item>
+		<item><title>FHIRServer release 1.0.66 2016-08-11 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.66.exe</link>
+			<description>DSTU3. 2016-08-11 (v1.0.66): upgrade STU3 server to v1.6.0 (Baltimore Connectathon version)</description>
+		</item>
 		<item><title>FHIRServer release 1.0.65 2016-08-08 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.65.exe</link>
 			<description>DSTU3. 2016-08-08 (v1.0.65): Fix for removing spec from server (again)</description>
 		</item>
-<item><title>FHIRServer release 1.0.64 2016-08-08 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.64 2016-08-08 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.64.exe</link>
 			<description>DSTU3. 2016-08-08 (v1.0.64): Fix for removing spec from server</description>
 		</item>

@@ -219,7 +219,7 @@ type
     procedure CacheBlob(ACol: Integer; ABlob: TMemoryStream);
     procedure KeepBoundObj(sName : String; AObj : TObject);
 
-    // worker routines for descendents to override
+    // worker routines for descendants to override
     procedure StartTransactV; virtual; abstract;
     procedure CommitV; virtual; abstract;
     procedure RollbackV; virtual; abstract;

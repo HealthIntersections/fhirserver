@@ -185,9 +185,9 @@ end;
 procedure TloincPublisher.PublishHeirarchyEntry(sCode: String; iStart : Integer; const sPrefix: String; html: THTMLPublisher);
   procedure AddParent(p : Cardinal);
   var
-    code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+    code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal;
   begin
-    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
     if (parent <> NO_PARENT) then
     begin
       AddParent(parent);
@@ -197,7 +197,7 @@ procedure TloincPublisher.PublishHeirarchyEntry(sCode: String; iStart : Integer;
   end;
 
 var
-  index, code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+  index, code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal;
   stext : string;
   arr : TCardinalArray;
   i, iTotal : integer;
@@ -211,7 +211,7 @@ begin
   index := FLoinc.findMAConcept(sCode);
   if index = 0 then
     raise Exception.Create('Unknown Malti-axial code '+sCode);
-  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
   stext := FLoinc.Desc.GetEntry(text);
   arr := FLoinc.Refs.GetCardinals(children);
   if (length(arr) = 0) then
@@ -245,7 +245,7 @@ begin
 
     for I := 0 to Length(arr) - 1 do
     begin
-      FLoinc.Entries.GetEntry(arr[i], code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+      FLoinc.Entries.GetEntry(arr[i], code, text, parent, children, descendants, concepts, descendentConcepts, stems);
       html.StartTableRow;
       html.AddTableCellURL(FLoinc.Desc.GetEntry(code),sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
       html.AddTableCell(FLoinc.Desc.GetEntry(text));
@@ -259,7 +259,7 @@ begin
   end;
 
   // reset descendentConcepts:
-  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+  FLoinc.Entries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
   arr := FLoinc.Refs.GetCardinals(descendentConcepts);
   if (length(arr) > 0) then
   begin
@@ -337,7 +337,7 @@ end;
 procedure TloincPublisher.PublishHeirarchyRoot(const sPrefix: String; html: THTMLPublisher);
 var
   i : integer;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
 begin
   html.StartTable(true);
   html.StartTableRow;
@@ -349,7 +349,7 @@ begin
 
   for I := 0 to Length(FLoinc.HeirarchyRoots) - 1 do
   begin
-    FLoinc.Entries.GetEntry(FLoinc.HeirarchyRoots[i], code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    FLoinc.Entries.GetEntry(FLoinc.HeirarchyRoots[i], code, text, parent, children, descendants, concepts, descendentConcepts, stems);
 
     html.StartTableRow;
     html.AddTableCellURL(FLoinc.Desc.GetEntry(code),sPrefix+'macode='+FLoinc.Desc.GetEntry(code));
@@ -845,9 +845,9 @@ Type
 procedure TloincPublisher.PublishSearch(const sPrefix, sText: String; iStart: Integer; all : boolean; html: THTMLPublisher);
   procedure AddParent(p : Cardinal);
   var
-    code, text, parent, children, descendents, concepts, descendentConcepts, stems : Cardinal;
+    code, text, parent, children, descendants, concepts, descendentConcepts, stems : Cardinal;
   begin
-    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+    FLoinc.Entries.GetEntry(p, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
     if (parent <> NO_PARENT) then
     begin
       AddParent(parent);
@@ -868,7 +868,7 @@ var
   sCode1 : String;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
-  code, text, parent, children, descendents, concepts, descendentConcepts, stems: Cardinal;
+  code, text, parent, children, descendants, concepts, descendentConcepts, stems: Cardinal;
 begin
   Lock.Lock;
   Try
@@ -921,7 +921,7 @@ begin
     end
     else
     begin
-      FLoinc.Entries.GetEntry(a[i].index, code, text, parent, children, descendents, concepts, descendentConcepts, stems);
+      FLoinc.Entries.GetEntry(a[i].index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
       sCode1 := FLoinc.Desc.GetEntry(code);
       html.AddTableCellURL(sCode1, sPrefix + 'macode='+sCode1);
       html.AddTableCell(FLoinc.Desc.GetEntry(text));

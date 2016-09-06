@@ -38,6 +38,9 @@ Type
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
 
+var
+  showdiff : boolean = true;
+
 implementation
 
 uses
@@ -258,8 +261,9 @@ var
 begin
   result := compareXML(filename1, filename2, msg);
 {$IFDEF DIFF}
-  if not result then
+  if not result and showdiff then
   begin
+    showdiff := false;
     x1 := FileToString(filename1 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
     x2 := FileToString(filename2 {$IFDEF UNICODE}, TEncoding.UTF8 {$ENDIF});
     x1 := MakeXmlPretty(x1);
