@@ -85,6 +85,8 @@ type
   public
     destructor Destroy; override;
 
+    function calc(const s: String): String;
+
     function Stem(const s: Utf8String): Utf8String; overload;
 
     procedure Stem(var p: PUtf8Char; var l: Integer); overload;
@@ -1091,6 +1093,11 @@ begin
         Exit;
       end;
   Assert(False);
+end;
+
+function TYuStemmer_8.calc(const s: String): String;
+begin
+  result := String(Stem(UTF8String(s)));
 end;
 
 function GetStemmer_16(const Name: UnicodeString): TYuStemmer_16;

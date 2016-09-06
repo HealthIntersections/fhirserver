@@ -133,6 +133,7 @@ Type
   public
     constructor create; overload; override;
     constructor create(profile : String); overload;
+    constructor create(profile : TFHIRStructureDefinition); overload;
     destructor Destroy; override;
   end;
 
@@ -3644,6 +3645,12 @@ constructor TValidationProfileSet.create(profile: String);
 begin
   Create;
   FCanonical.add(profile);
+end;
+
+constructor TValidationProfileSet.create(profile: TFHIRStructureDefinition);
+begin
+  Create;
+  FDefinitions.add(profile.link);
 end;
 
 destructor TValidationProfileSet.Destroy;

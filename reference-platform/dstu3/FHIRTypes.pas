@@ -14097,7 +14097,8 @@ procedure TFhirDate.ListProperties(oList: TFHIRPropertyList; bInheritedPropertie
 begin
   inherited;
   if (bPrimitiveValues) then
-    oList.add(TFHIRProperty.create(self, 'value', 'date', false, nil, FValue.toString));
+    if (FValue <> nil) then
+      oList.add(TFHIRProperty.create(self, 'value', 'date', false, nil, FValue.toString));
 end;
 
 procedure TFhirDate.Assign(oSource : TAdvObject);
@@ -14318,7 +14319,8 @@ procedure TFhirDateTime.ListProperties(oList: TFHIRPropertyList; bInheritedPrope
 begin
   inherited;
   if (bPrimitiveValues) then
-    oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.toString));
+    if (FValue <> nil) then
+      oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.toString));
 end;
 
 procedure TFhirDateTime.Assign(oSource : TAdvObject);
@@ -15187,7 +15189,8 @@ procedure TFhirInstant.ListProperties(oList: TFHIRPropertyList; bInheritedProper
 begin
   inherited;
   if (bPrimitiveValues) then
-    oList.add(TFHIRProperty.create(self, 'value', 'instant', false, nil, FValue.toString));
+    if (FValue <> nil) then
+      oList.add(TFHIRProperty.create(self, 'value', 'instant', false, nil, FValue.toString));
 end;
 
 procedure TFhirInstant.Assign(oSource : TAdvObject);

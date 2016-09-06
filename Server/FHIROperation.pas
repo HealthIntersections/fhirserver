@@ -6193,6 +6193,7 @@ var
   i : integer;
   profileId : String;
   profile : TFHirStructureDefinition;
+  profiles : TValidationProfileSet;
   opDesc : string;
   result : boolean;
   needSecure : boolean;
@@ -6242,12 +6243,24 @@ begin
       ctxt.ResourceIdRule := risOptional;
       ctxt.OperationDescription := opDesc;
       if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
-        manager.FRepository.validator.validate(ctxt, request.Source, request.PostFormat, profile)
+      begin
+        profiles := TValidationProfileSet.create(profile);
+        try
+          manager.FRepository.validator.validate(ctxt, request.Source, request.PostFormat, profiles)
+        finally
+          profiles.Free;
+        end;
+      end
       else
       begin
         if request.resource = nil then
           request.resource := manager.GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
-        manager.FRepository.validator.validate(ctxt, request.Resource, profile);
+        profiles := TValidationProfileSet.create(profile);
+        try
+          manager.FRepository.validator.validate(ctxt, request.Resource, profiles);
+        finally
+          profiles.Free;
+        end;
       end;
       outcome := manager.FRepository.validator.describe(ctxt);
     finally
