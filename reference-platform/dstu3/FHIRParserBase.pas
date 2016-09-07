@@ -709,7 +709,7 @@ end;
 
 function TFHIRXmlComposerBase.MimeType: String;
 begin
-  result := 'application/xml+fhir; charset=UTF-8';
+  result := 'application/fhir+xml; charset=UTF-8';
 end;
 
 procedure TFHIRXmlComposerBase.commentsStart(xml: TXmlBuilder; value: TFhirBase);
@@ -945,7 +945,7 @@ end;
 
 function TFHIRJsonComposerBase.MimeType: String;
 begin
- result := 'application/json+fhir; charset=UTF-8';
+ result := 'application/fhir+json';
 end;
 
 
@@ -2335,7 +2335,7 @@ end;
 
 function TFHIRComposer.ResourceMediaType: String;
 begin
-  result := 'application/xml+fhir; charset=UTF-8';
+  result := 'application/fhir+xml';
 end;
 
 function URLTail(s : String):String;

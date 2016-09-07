@@ -28,6 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{
+Change the FHIR mime type to application/fhir+xml|json instead of application/xml|json+fhir (breaking change, for conformance to W3C+IETF rules)
+Add new uses for the Prefer header (return OperationOutcome, and manage behavior related to unknown / unsupported search parameters
+Deprecate use of the OPTIONS command to retrieve the conformance statement
+Add support for conditional references to the transaction interaction
+Add reverse chaining
+}
 Interface
 
 Uses
@@ -1805,7 +1812,7 @@ Begin
 
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
-    if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsInsensitive(sContentAccept, 'json') Then
+    if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsSensitive(sContentAccept, 'application/fhir+json') or StringExistsInsensitive(sContentAccept, 'json') Then
       oResponse.Format := ffJson
     else if StringExistsSensitive(sContentAccept, 'text/xml') Then
       oResponse.Format := ffXML
@@ -1816,6 +1823,8 @@ Begin
     else if StringExistsSensitive(sContentAccept, 'text/turtle') Then
       oResponse.Format := ffTurtle
     else if StringExistsSensitive(sContentAccept, 'application/xml') Then
+      oResponse.Format := ffXML
+    else if StringExistsSensitive(sContentAccept, 'application/fhir+xml') Then
       oResponse.Format := ffXML
     else if StringExistsInsensitive(sContentAccept, 'xml') Then
       oResponse.Format := ffXML
@@ -2710,9 +2719,9 @@ begin
         sContent := BytesAsString(oPart.Content.AsBytes);
         result := TStringStream.create(oPart.Content.AsBytes); // trim
         if StringStartsWith(sContent, '<', false) then
-          sContentType := 'application/xml'
+          sContentType := 'application/fhir+xml'
         else if StringStartsWith(sContent, '{', false) then
-          sContentType := 'application/json'
+          sContentType := 'application/fhir+json'
         else
           raise exception.create('unable to determine encoding type for '+sContent);
       end;

@@ -3605,20 +3605,7 @@ begin
 end;
 
 destructor TFHIRValidatorContext.destroy;
-var
-  o : TAdvObject;
-  i : integer;
-begin
-  for i := 0 to FOwned.Count - 1 do
   begin
-    o := FOwned[i];
-    if (o is TFhirStructureDefinition) then
-      System.writeln(o.className+'('+TFhirStructureDefinition(o).url+'): '+inttostr(o.AdvObjectReferenceCount))
-    else
-      System.writeln(o.className+': '+inttostr(o.AdvObjectReferenceCount));
-  end;
-
-
   FOwned.Free;
   FErrors.Free;
   inherited;

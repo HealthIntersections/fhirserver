@@ -9,9 +9,6 @@
         <Projects Include="Server\FHIRServer2.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Server\fhirserverNCTS.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
@@ -52,15 +49,6 @@
     </Target>
     <Target Name="FHIRServer2:Make">
         <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="fhirserverNCTS">
-        <MSBuild Projects="Server\fhirserverNCTS.dproj"/>
-    </Target>
-    <Target Name="fhirserverNCTS:Clean">
-        <MSBuild Projects="Server\fhirserverNCTS.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirserverNCTS:Make">
-        <MSBuild Projects="Server\fhirserverNCTS.dproj" Targets="Make"/>
     </Target>
     <Target Name="fhirnpp">
         <MSBuild Projects="npp\fhirnpp.dproj"/>
@@ -108,13 +96,13 @@
         <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServer3;FHIRServer2;fhirserverNCTS;fhirnpp;ValueSetEditor;dstu1;fhirtests3;fhirtests2"/>
+        <CallTarget Targets="FHIRServer3;FHIRServer2;fhirnpp;ValueSetEditor;dstu1;fhirtests3;fhirtests2"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServer3:Clean;FHIRServer2:Clean;fhirserverNCTS:Clean;fhirnpp:Clean;ValueSetEditor:Clean;dstu1:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
+        <CallTarget Targets="FHIRServer3:Clean;FHIRServer2:Clean;fhirnpp:Clean;ValueSetEditor:Clean;dstu1:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServer3:Make;FHIRServer2:Make;fhirserverNCTS:Make;fhirnpp:Make;ValueSetEditor:Make;dstu1:Make;fhirtests3:Make;fhirtests2:Make"/>
+        <CallTarget Targets="FHIRServer3:Make;FHIRServer2:Make;fhirnpp:Make;ValueSetEditor:Make;dstu1:Make;fhirtests3:Make;fhirtests2:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

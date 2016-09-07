@@ -65,6 +65,12 @@ const
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
+  {$IFDEF FHIR3}
+  FHIR_SPEC_URL = 'http://hl7-fhir.github.io/';
+  {$ELSE}
+  FHIR_SPEC_URL = 'http://hl7.org/fhir';
+  {$ENDIF}
+
 Type
   TFHIRParser = class abstract (TFHIRObject)
   private
@@ -77,6 +83,7 @@ Type
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
     FWorker : TWorkerContext;
+    FIgnoreHtml: Boolean;
     procedure SetResource(const Value: TFhirResource);
     procedure start;
     procedure checkTimeOut;
@@ -101,6 +108,7 @@ Type
     property KeepLineNumbers : boolean read FKeepLineNumbers write FKeepLineNumbers;
     property timeLimit : Cardinal read FTimeLimit write FTimeLimit;
     property Format : TFHIRFormat read GetFormat;
+    property IgnoreHtml : Boolean read FIgnoreHtml write FIgnoreHtml;
   end;
 
   TFHIRParserClass = class of TFHIRParser;
@@ -516,6 +524,9 @@ end;
 
 function TFHIRJsonParserBase.ParseXHtmlNode(path, value : String): TFhirXHtmlNode;
 begin
+  if FIgnoreHtml then
+    result := nil
+  else
   result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], value);
 end;
 
@@ -525,6 +536,9 @@ function TFHIRXmlParserBase.ParseXHtmlNode(element: IXmlDomElement; path : Strin
 begin
   if not AllowUnknownContent and (element.namespaceURI <> XHTML_NS) Then
     XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [element.namespaceURI]));
+  if FIgnoreHtml then
+    result := nil
+  else
   result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
 end;
 
@@ -2204,7 +2218,7 @@ begin
 '		<div class="container">  <!-- container -->'+#13#10+
 '			<div class="inner-wrapper">'+#13#10+
 '				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="/index.html" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
 '        </span>'+#13#10+
 '        </p>'+#13#10+
 '			</div>  <!-- /inner-wrapper -->'+#13#10+
@@ -2264,7 +2278,7 @@ begin
   '  &nbsp;|&nbsp;'#13#10+
   '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
   '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="/index.html" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
+  '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
 
   if (session <> nil)  then
   begin
@@ -2794,7 +2808,11 @@ begin
 end;
 
 procedure TFHIRTextParser.Parse;
+var
+  s : String;
 begin
+  s := StreamToString(source, TEncoding.UTF8);
+    raise Exception.Create('Unable to process text content - unrecognised');
 end;
 
 

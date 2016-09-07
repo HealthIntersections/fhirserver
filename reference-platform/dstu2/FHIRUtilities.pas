@@ -47,6 +47,8 @@ uses
 Type
   ETooCostly = class (Exception);
   EUnsafeOperation = class (Exception);
+  DefinitionException = class (Exception);
+
 
 const
   MIN_DATE = DATETIME_MIN;
@@ -120,6 +122,7 @@ function asOid(obj : TFHIRObject) : TFHIROid;
 function asInteger(obj : TFHIRObject) : TFHIRInteger;
 function asResource(obj : TFHIRObject) : TFHIRResource;
 function asExtension(obj : TFHIRObject) : TFHIRExtension;
+function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
@@ -462,6 +465,9 @@ function ZCompressBytes(const s: TBytes): TBytes;
 function ZDecompressBytes(const s: TBytes): TBytes;
 function TryZDecompressBytes(const s: TBytes): TBytes;
 
+function summarise(coding : TFHIRCoding):String; overload;
+function summarise(code : TFhirCodeableConcept):String; overload;
+
 function gen(coding : TFHIRCoding):String; overload;
 function gen(code : TFhirCodeableConcept):String; overload;
 function gen(ref : TFhirReference) : String; overload;
@@ -482,13 +488,17 @@ function gen(t : TFhirType):String; overload;
 
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
+function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 
 implementation
 
 uses
+  {$IFDEF STACK_DUMPS}
   JclDebug,
+  {$ENDIF}
   FHIRMetaModel;
 
+  {$IFDEF STACK_DUMPS}
 function dumpStack : String;
 var
   st : TJclStackInfoList;
@@ -512,6 +522,7 @@ begin
   else
     result := '';
 end;
+  {$ENDIF}
 
 
 function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
@@ -951,6 +962,37 @@ begin
   else
     result := '';
 end;
+
+function summarise(coding : TFHIRCoding):String; overload;
+begin
+  if (coding = nil) then
+     result := ''
+  else
+    result := coding.system+'#'+coding.Code;
+end;
+
+function summarise(code : TFhirCodeableConcept):String; overload;
+var
+  c : TFHIRCoding;
+begin
+  if (code = nil) then
+    result := ''
+  else
+  begin
+    result := '';
+    for c in code.codingList do
+      if result <> '' then
+        result := result +', '+summarise(c)
+      else
+        result := summarise(c);
+    if (code.text <> '') then
+      if result <> '' then
+        result := result +', ('+code.text+')'
+      else
+        result := '('+code.text+')';
+  end;
+end;
+
 
 function gen(ref : TFhirReference) : String;
 begin
@@ -1666,7 +1708,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1711,7 +1755,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1739,7 +1785,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -1767,7 +1815,9 @@ begin
       issue.code := typeCode;
       issue.details := TFHIRCodeableConcept.create;
       issue.details.text := msg;
+      {$IFDEF STACK_DUMPS}
       issue.diagnostics := dumpStack;
+      {$ENDIF}
       if (path <> '') then
         issue.locationList.Append.value := path;
       ex := issue.ExtensionList.Append;
@@ -3056,6 +3106,11 @@ begin
     result := e1.equalsShallow(e2);
 end;
 
+function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 { TFHIRStringListHelper }
 
 procedure TFHIRStringListHelper.add(s: String);
@@ -3360,6 +3415,27 @@ begin
   begin
     obj.Free;
     raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
+  end;
+end;
+
+function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
+begin
+  if obj is TFHIRMarkdown then
+    result := obj as TFHIRMarkdown
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  begin
+    result := TFHIRMarkdown.create(TFHIRBase(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
 

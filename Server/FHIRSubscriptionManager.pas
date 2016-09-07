@@ -630,9 +630,9 @@ var
 begin
   b := TMemoryStream.Create;
   try
-    if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/xml') then
+    if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
       comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
-    else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/json') then
+    else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
       comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
     else
       raise Exception.Create('unknown payload type '+subst.channel.payload);

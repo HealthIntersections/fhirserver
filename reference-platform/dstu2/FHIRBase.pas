@@ -597,7 +597,7 @@ type
   TFHIRPathFunction = (
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
     pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
-    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendents,
+    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension);
 
   TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup);
@@ -611,7 +611,7 @@ const
   CODES_TFHIRPathFunctions : array [TFHIRPathFunction] of String = (
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
     'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
-    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendents',
+    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension');
 
 type
@@ -638,6 +638,7 @@ type
     property types : TStringList read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
+    function type_ : String;
   end;
 
   TFHIRExpressionNode = class (TAdvObject)
@@ -771,9 +772,9 @@ begin
   result := other <> nil;
 end;
 
-function TFHIRBase.FhirType: String;
+function TFHIRBase.fhirType: String;
 begin
-  raise Exception.Create('"FhirType" is not overridden in '+className);
+  raise Exception.Create('"fhirType" is not overridden in '+className);
 end;
 
 function TFHIRBase.GetCommentsStart: TAdvStringList;
@@ -818,7 +819,7 @@ end;
 
 function TFHIRBase.hasType(t: String): boolean;
 begin
-  result := t = FhirType;
+  result := t = fhirType;
 end;
 
 function TFHIRBase.hasPrimitiveValue: boolean;
@@ -1355,7 +1356,7 @@ end;
 
 procedure TFHIRObject.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  raise Exception.Create('The property "'+propName+' is unknown"');
+  raise Exception.Create('The property "'+propName+'" is unknown"');
 end;
 
 procedure TFHIRObject.SetTag(const Value: TAdvObject);
@@ -2032,7 +2033,7 @@ end;
 function TFHIRExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$this', '$resource', '$context'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource'], name)
   else
     result := true;
 end;
@@ -2336,7 +2337,12 @@ end;
 
 function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
 begin
-  result := TFHIRTypeDetails.createList(csSINGLETON, FTypes);
+  result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
+end;
+
+function TfhirTypeDetails.type_: String;
+begin
+
 end;
 
 function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;

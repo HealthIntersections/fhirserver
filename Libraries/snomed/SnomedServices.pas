@@ -2655,8 +2655,8 @@ var
   Descriptions : TCardinalArray;
   Parents : TCardinalArray;
   i, group : integer;
-  d : TFHIRLookupOpDesignation;
   {$IFDEF FHIR3}
+  d : TFHIRLookupOpDesignation;
   p : TFHIRLookupOpProperty_;
   {$ENDIF}
   did : UInt64;
@@ -2679,6 +2679,7 @@ begin
     for i := Low(Descriptions) To High(Descriptions) Do
     Begin
       Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, refsets, valueses, Flags);
+      {$IFDEF FHIR3}
       if flags and MASK_DESC_STATUS = Flag_Active Then
       Begin
         d := TFHIRLookupOpDesignation.create;
@@ -2697,6 +2698,7 @@ begin
           d.use.display := GetDescType(Flags);
         end;
       End;
+      {$ENDIF}
     End;
   End;
 

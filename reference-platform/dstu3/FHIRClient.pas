@@ -592,13 +592,13 @@ var
 begin
   if FJson then
 begin
-    http.RequestType := 'application/json+fhir; charset=utf-8';
-    http.ResponseType := 'application/json+fhir; charset=utf-8';
+    http.RequestType := 'application/fhir+json; charset=utf-8';
+    http.ResponseType := 'application/fhir+json; charset=utf-8';
   end
   else
   begin
-    http.RequestType := 'application/xml+fhir; charset=utf-8';
-    http.ResponseType := 'application/xml+fhir; charset=utf-8';
+    http.RequestType := 'application/fhir+xml; charset=utf-8';
+    http.ResponseType := 'application/fhir+xml; charset=utf-8';
   end;
   if ct <> '' then
     http.RequestType := ct;
@@ -663,13 +663,13 @@ var
 begin
   if FJson then
   begin
-    indy.Request.ContentType := 'application/json+fhir; charset=utf-8';
-    indy.Request.Accept := 'application/json+fhir; charset=utf-8';
+    indy.Request.ContentType := 'application/fhir+json; charset=utf-8';
+    indy.Request.Accept := 'application/fhir+json; charset=utf-8';
   end
   else
   begin
-    indy.Request.ContentType := 'application/xml+fhir; charset=utf-8';
-    indy.Request.Accept := 'application/xml+fhir; charset=utf-8';
+    indy.Request.ContentType := 'application/fhir+xml; charset=utf-8';
+    indy.Request.Accept := 'application/fhir+xml; charset=utf-8';
   end;
   if ct <> '' then
     indy.Request.ContentType := ct;

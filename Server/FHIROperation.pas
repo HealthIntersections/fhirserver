@@ -961,8 +961,13 @@ begin
       FOnPopulateConformance(self, oConf);
 
     oConf.acceptUnknown := UnknownContentCodeBoth;
+    {$IFDEF FHIR3}
+    oConf.formatList.Append.value := 'application/fhir+xml';
+    oConf.formatList.Append.value := 'application/fhir+json';
+    {$ELSE}
     oConf.formatList.Append.value := 'application/xml+fhir';
     oConf.formatList.Append.value := 'application/json+fhir';
+    {$ENDIF}
 
     oConf.fhirVersion := FHIR_GENERATED_VERSION;
     oConf.restList.add(TFhirConformanceRest.Create);

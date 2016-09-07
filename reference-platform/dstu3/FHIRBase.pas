@@ -13,132 +13,7 @@ are permitted provided that the following conditions are met:
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
  * Neither the name of HL7 nor the names of its contributors may be used to
-   endorse or promote products derived from this so<?xml version="1.0" encoding="UTF-8"?>
-<Patient
-    xmlns="http://hl7.org/fhir">
-    <id value="example"/>
-    <meta>
-        <versionId value="1"/>
-        <lastUpdated value="2016-05-27T03:01:04Z"/>
-    </meta>
-    <text>
-        <status value="generated"/>
-        <div
-            xmlns="http://www.w3.org/1999/xhtml">
-            <table>
-                <tbody>
-                    <tr>
-                        <td>Name</td>
-                        <td>Peter James
-                            <b>Chalmers</b> ("Jim")
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Address</td>
-                        <td>534 Erewhon, Pleasantville, Vic, 3999</td>
-                    </tr>
-                    <tr>
-                        <td>Contacts</td>
-                        <td>Home: unknown. Work: (03) 5555 6473</td>
-                    </tr>
-                    <tr>
-                        <td>Id</td>
-                        <td>MRN: 12345 (Acme Healthcare)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </text>
-    <!--   MRN assigned by ACME healthcare on 6-May 2001   -->
-    <identifier>
-        <use value="usual"/>
-        <type>
-            <coding>
-                <system value="http://hl7.org/fhir/v2/0203"/>
-                <code value="MR"/>
-            </coding>
-        </type>
-        <system value="urn:oid:1.2.36.146.595.217.0.1"/>
-        <value value="12345"/>
-        <period>
-            <start value="2001-05-06"/>
-        </period>
-        <assigner>
-            <display value="Acme Healthcare"/>
-        </assigner>
-    </identifier>
-    <active value="true"/>
-    <!--   Peter James Chalmers, but called "Jim"   -->
-    <name>
-        <use value="official"/>
-        <family value="Chalmers"/>
-        <given value="Peter"/>
-        <given value="James"/>
-    </name>
-    <name>
-        <use value="usual"/>
-        <given value="Jim"/>
-    </name>
-    <telecom>
-        <use value="home"/>
-        <!--   home communication details aren't known   -->
-    </telecom>
-    <telecom>
-        <system value="phone"/>
-        <value value="(03) 5555 6473"/>
-        <use value="work"/>
-    </telecom>
-    <!--   use FHIR code system for male / female   -->
-    <gender value="male"/>
-    <birthDate value="1974-12-25">
-        <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
-            <valueDateTime value="1974-12-25T14:35:45-05:00"/>
-        </extension>
-    </birthDate>
-    <deceasedBoolean value="false"/>
-    <address>
-        <use value="home"/>
-        <type value="both"/>
-        <line value="534 Erewhon St"/>
-        <city value="PleasantVille"/>
-        <district value="Rainbow"/>
-        <state value="Vic"/>
-        <postalCode value="3999"/>
-        <period>
-            <start value="1974-12-25"/>
-        </period>
-    </address>
-    <contact>
-        <relationship>
-            <coding>
-                <system value="http://hl7.org/fhir/patient-contact-relationship"/>
-                <code value="partner"/>
-            </coding>
-        </relationship>
-        <name>
-            <family value="du">
-                <!--   the "du" part is a family name prefix (VV in iso 21090)   -->
-                <extension url="http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier">
-                    <valueCode value="VV"/>
-                </extension>
-            </family>
-            <family value="Marché"/>
-            <given value="Bénédicte"/>
-        </name>
-        <telecom>
-            <system value="phone"/>
-            <value value="+33 (237) 998327"/>
-        </telecom>
-        <gender value="female"/>
-        <period>
-            <!--   The contact relationship started in 2012   -->
-            <start value="2012"/>
-        </period>
-    </contact>
-    <managingOrganization>
-        <reference value="Organization/1"/>
-    </managingOrganization>
-</Patient>ftware without specific
+   endorse or promote products derived from this software without specific
    prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
@@ -749,17 +624,17 @@ type
     constructor create(status : TFHIRCollectionStatus; types : array of String);
     constructor createList(status : TFHIRCollectionStatus; types : TStringList);
     destructor Destroy; override;
-    function Link : TfhirTypeDetails; overload;
+    function Link : TFHIRTypeDetails; overload;
     procedure addType(n : String);
     procedure addTypes(n : TStringList); overload;
     procedure addTypes(types : array of String); overload;
     function hasType(types : array of String) : boolean; overload;
     function hasType(types : TStringList) : boolean; overload;
     function hasType(typeName : String) : boolean; overload;
-    procedure update(source : TfhirTypeDetails);
-    function union(right : TfhirTypeDetails) : TfhirTypeDetails;
+    procedure update(source : TFHIRTypeDetails);
+    function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function hasNoTypes() : boolean;
-    function toSingleton : TfhirTypeDetails;
+    function toSingleton : TFHIRTypeDetails;
     property types : TStringList read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
@@ -778,8 +653,8 @@ type
     FOperation : TFHIRPathOperation;
     FProximal : boolean;
     FOpNext: TFHIRExpressionNode;
-    FTypes : TfhirTypeDetails;
-    FOpTypes : TfhirTypeDetails;
+    FTypes : TFHIRTypeDetails;
+    FOpTypes : TFHIRTypeDetails;
     FKind: TFHIRExpressionNodeKind;
     FUniqueId : integer;
     FSourceLocationStart : TSourceLocation;
@@ -791,14 +666,14 @@ type
     procedure SetInner(const Value: TFHIRExpressionNode);
     procedure SetGroup(const Value: TFHIRExpressionNode);
     procedure SetFunctionId(const Value: TFHIRPathFunction);
-    procedure SetTypes(const Value: TfhirTypeDetails);
-    procedure SetOpTypes(const Value: TfhirTypeDetails);
+    procedure SetTypes(const Value: TFHIRTypeDetails);
+    procedure SetOpTypes(const Value: TFHIRTypeDetails);
     procedure write(b : TStringBuilder);
   public
     Constructor Create(uniqueId : Integer);
     Destructor Destroy; override;
 
-    function ToString : String; override;
+    function toString : String; override;
     function Link : TFHIRExpressionNode; overload;
     function checkName : boolean;
 
@@ -826,8 +701,8 @@ type
     property Operation : TFHIRPathOperation read FOperation write FOperation;
     property Proximal : boolean read FProximal write FProximal;
     property OpNext : TFHIRExpressionNode read FOpNext write SetOpNext;
-    property Types : TfhirTypeDetails read FTypes write SetTypes;
-    property OpTypes : TfhirTypeDetails read FOpTypes write SetOpTypes;
+    property Types : TFHIRTypeDetails read FTypes write SetTypes;
+    property OpTypes : TFHIRTypeDetails read FOpTypes write SetOpTypes;
   end;
 
 
@@ -843,7 +718,7 @@ Uses
   StringSupport,
   FHIRUtilities,
   FHIRXhtml,
-  fhirTypes,
+  FHIRTypes,
   FHIRResources,
   FHIRPath;
 
@@ -876,7 +751,7 @@ end;
 
 function TFHIRBase.describe: String;
 begin
-  result := fhirType;
+  result := FhirType;
   if isPrimitive then
     result := result + ': '+primitiveValue;
 end;
@@ -1294,7 +1169,7 @@ begin
   inherited;
 end;
 
-function TFhirXHtmlNode.fhirType: String;
+function TFhirXHtmlNode.FhirType: String;
 begin
   result := 'xhtml';
 end;
@@ -2217,7 +2092,7 @@ begin
   FOpNext := Value;
 end;
 
-procedure TFHIRExpressionNode.SetTypes(const Value: TfhirTypeDetails);
+procedure TFHIRExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
 begin
   FTypes.Free;
   FTypes := Value;
@@ -2346,7 +2221,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNode.SetOpTypes(const Value: TfhirTypeDetails);
+procedure TFHIRExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
 begin
   FOpTypes.Free;
   FOpTypes := Value;
@@ -2365,12 +2240,12 @@ begin
 end;
 
 
-{ TfhirTypeDetails }
+{ TFHIRTypeDetails }
 
 var
   gc : integer = 0;
 
-constructor TfhirTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
+constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
 begin
   inherited Create;
   FTypes := TStringList.create;
@@ -2381,7 +2256,7 @@ begin
   id := gc;
 end;
 
-constructor TfhirTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
+constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
 begin
   inherited Create;
   FTypes := TStringList.create;
@@ -2392,20 +2267,20 @@ begin
   id := gc;
 end;
 
-destructor TfhirTypeDetails.Destroy;
+destructor TFHIRTypeDetails.Destroy;
 begin
   FTypes.Free;
   inherited;
 end;
 
-procedure TfhirTypeDetails.addType(n: String);
+procedure TFHIRTypeDetails.addType(n: String);
 begin
   if (n <> '') then
     if not hasType(n) then
       FTypes.add(n);
 end;
 
-procedure TfhirTypeDetails.addTypes(n: TStringList);
+procedure TFHIRTypeDetails.addTypes(n: TStringList);
 var
   t : String;
 begin
@@ -2413,7 +2288,7 @@ begin
     addType(t);
 end;
 
-procedure TfhirTypeDetails.addTypes(types: array of String);
+procedure TFHIRTypeDetails.addTypes(types: array of String);
 var
   t : String;
 begin
@@ -2421,17 +2296,17 @@ begin
     addType(t);
 end;
 
-function TfhirTypeDetails.describe: String;
+function TFHIRTypeDetails.describe: String;
 begin
   result := FTypes.commaText;
 end;
 
-function TfhirTypeDetails.hasNoTypes: boolean;
+function TFHIRTypeDetails.hasNoTypes: boolean;
 begin
   result := FTypes.count = 0;
 end;
 
-function TfhirTypeDetails.hasType(types: TStringList): boolean;
+function TFHIRTypeDetails.hasType(types: TStringList): boolean;
 var
   t : String;
 begin
@@ -2441,17 +2316,17 @@ begin
       exit(true);
 end;
 
-function TfhirTypeDetails.hasType(typeName: String): boolean;
+function TFHIRTypeDetails.hasType(typeName: String): boolean;
 begin
   result := FTypes.indexOf(typeName) > -1;
 end;
 
-function TfhirTypeDetails.Link: TfhirTypeDetails;
+function TFHIRTypeDetails.Link: TFHIRTypeDetails;
 begin
-  result := TfhirTypeDetails(inherited Link);
+  result := TFHIRTypeDetails(inherited Link);
 end;
 
-function TfhirTypeDetails.hasType(types: array of String): boolean;
+function TFHIRTypeDetails.hasType(types: array of String): boolean;
 var
   t : String;
 begin
@@ -2461,7 +2336,7 @@ begin
       exit(true);
 end;
 
-function TfhirTypeDetails.toSingleton: TfhirTypeDetails;
+function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
 begin
   result := TfhirTypeDetails.createList(csSINGLETON, FTypes);
 end;
@@ -2471,9 +2346,9 @@ begin
 
 end;
 
-function TfhirTypeDetails.union(right: TfhirTypeDetails): TfhirTypeDetails;
+function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
 begin
-  result := TfhirTypeDetails.createList(csNULL, FTypes);
+  result := TFHIRTypeDetails.createList(csNULL, FTypes);
   if (right.FcollectionStatus in [csUNORDERED, csUNORDERED]) then
     result.FcollectionStatus := csUNORDERED
   else
@@ -2482,7 +2357,7 @@ begin
   result.addTypes(right.types);
 end;
 
-procedure TfhirTypeDetails.update(source: TfhirTypeDetails);
+procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
 begin
   addTypes(source.types);
   if (FcollectionStatus = csNULL) then

@@ -9,7 +9,7 @@ uses
   FHIRTests,
   DecimalTests in '..\support\tests\DecimalTests.pas',
   JWTTests in '..\Support\tests\JWTTests.pas',
-  FHIRPathTests in 'tests\FHIRPathTests.pas',
+  FluentPathTests in 'tests\FluentPathTests.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   FHIRConstants,
   FHIRParser,

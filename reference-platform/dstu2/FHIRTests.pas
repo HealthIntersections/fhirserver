@@ -37,7 +37,6 @@ interface
 uses
   DecimalTests,
   JWTTests,
-  FHIRPathTests,
   FHIRValidatorTests;
 
 implementation
