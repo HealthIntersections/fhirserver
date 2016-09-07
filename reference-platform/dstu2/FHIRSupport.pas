@@ -291,6 +291,7 @@ Type
     FPatchXml: IXMLDOMElement;
     FrequestId: String;
     FCustom : TFHIRCustomResourceInformation;
+    FStrictSearch: boolean;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -457,6 +458,7 @@ Type
     Property Origin : TFHIRRequestOrigin read FOrigin;
 
     property requestId : String read FrequestId write FrequestId;
+    property strictSearch : boolean read FStrictSearch write FStrictSearch;
   End;
 
   {@Class TFHIRResponse
@@ -493,9 +495,11 @@ Type
     Flink_list : TFhirBundleLinkList;
     FOrigin: String;
     FId: String;
+    FOutcome: TFHIROperationOutcome;
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
+    procedure SetOutcome(const Value: TFHIROperationOutcome);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -540,6 +544,8 @@ Type
     }
     Property Resource : TFhirResource read FResource write SetResource;
     Property Bundle : TFhirBundle read GetBundle write SetBundle;
+
+    Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
 
     {@member Format
       The format for the response, if known and identified (xml, or json). Derived
@@ -869,9 +875,7 @@ begin
   sType := NextSegment(sURL);
   if (sType = '') Then
   begin
-    if sCommand = 'OPTIONS' then
-      CommandType := fcmdConformanceStmt
-    else if (sCommand = 'POST') then
+    if (sCommand = 'POST') then
     begin
       if form <> nil then
       begin
@@ -897,8 +901,6 @@ begin
         CommandType := fcmdUnknown;
     end
   end
-  else if (sCommand = 'OPTIONS') then
-    CommandType := fcmdNull
   else if (sType = '_web') then // special
   begin
     if sCommand <> 'POST' then
@@ -1374,6 +1376,7 @@ end;
 
 destructor TFHIRResponse.Destroy;
 begin
+  FOutcome.Free;
   Flink_list.Free;
   FTags.free;
   FResource.Free;
@@ -1393,6 +1396,12 @@ end;
 procedure TFHIRResponse.SetBundle(const Value: TFhirBundle);
 begin
   SetResource(value);
+end;
+
+procedure TFHIRResponse.SetOutcome(const Value: TFHIROperationOutcome);
+begin
+  FOutcome.Free;
+  FOutcome := Value;
 end;
 
 procedure TFHIRResponse.SetResource(const Value: TFhirResource);

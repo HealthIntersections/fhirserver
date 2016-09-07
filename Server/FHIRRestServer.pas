@@ -28,13 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{
-Change the FHIR mime type to application/fhir+xml|json instead of application/xml|json+fhir (breaking change, for conformance to W3C+IETF rules)
-Add new uses for the Prefer header (return OperationOutcome, and manage behavior related to unknown / unsupported search parameters
-Deprecate use of the OPTIONS command to retrieve the conformance statement
-Add support for conditional references to the transaction interaction
-Add reverse chaining
-}
 Interface
 
 Uses
@@ -852,9 +845,9 @@ begin
       response.ResponseNo := 200;
       response.ContentText := 'ok';
       response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
       response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
   //  response.CustomHeaders.add('Access-Control-Expose-Headers: *');
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
@@ -998,9 +991,9 @@ Begin
         try
           try
             response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-  //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+  //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
             response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-            response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+            response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
   //          response.CustomHeaders.add('Access-Control-Expose-Headers: *');
             if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
               response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
@@ -1030,6 +1023,7 @@ Begin
                 oRequest.IfNoneMatch := processIfMatch(request.RawHeaders.Values['If-None-Match']);
                 oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
                 oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
+                oRequest.strictSearch := request.RawHeaders.Values['Prefer'] = 'handling=strict';
 
                 noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('nohttperr')) or StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
                 ReadTags(request.RawHeaders.Values['Category'], oRequest);
@@ -1050,10 +1044,18 @@ Begin
                 end
                 else if oRequest.CommandType = fcmdUnknown then
                 begin
-                  response.ResponseNo := 200;
-                  response.ContentType := 'text/html; charset=UTF-8';
-                  response.FreeContentStream := true;
-                  response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
+                  if oResponse.Format = ffXhtml then
+                  begin
+                    response.ResponseNo := 200;
+                    response.ContentType := 'text/html; charset=UTF-8';
+                    response.FreeContentStream := true;
+                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.compartments, lang, sHost, path, oRequest.Session, secure));
+                  end
+                  else
+                  begin
+                    response.ResponseNo := 404;
+                    response.ContentText := 'Document '+request.Document+' not found';
+                  end;
                 end
                 else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) Then
                 begin
@@ -2080,25 +2082,31 @@ var
   ownsStream : boolean;
   comp : TIdCompressorZLib;
   body : boolean;
+  res : TFHIRResource;
 begin
   gzip := false;
   response.ResponseNo := oResponse.HTTPCode;
   response.ContentType := oResponse.ContentType;
+  res := oResponse.resource;
+  if (res = nil) then
+    res := oResponse.outcome;
   body := (request.Command = 'GET') or (request.RawHeaders.Values['Prefer'] <> 'return=minimal') or (oResponse.Format = ffXhtml);
+  if body and (request.RawHeaders.Values['Prefer'] = 'return=OperationOutcome') and (oResponse.outcome <> nil) then
+    res := oResponse.outcome;
 
   stream := TMemoryStream.create;
   try
     ownsStream := true;
-    if oResponse.Resource <> nil then
+    if res <> nil then
     Begin
       if body then
       begin
-        if oResponse.Resource is TFhirBinary then
+        if res is TFhirBinary then
         begin
-          if (Length(TFhirBinary(oResponse.Resource).content) > 0) and (body) then
-            stream.Write(TFhirBinary(oResponse.Resource).content[0], Length(TFhirBinary(oResponse.Resource).content));
+          if (Length(TFhirBinary(res).content) > 0) and (body) then
+            stream.Write(TFhirBinary(res).content[0], Length(TFhirBinary(res).content));
           stream.Position := 0;
-          response.ContentType := TFhirBinary(oResponse.Resource).ContentType;
+          response.ContentType := TFhirBinary(res).ContentType;
           if StrToBoolDef(orequest.Parameters.GetVar('no-attachment'), false) then
             response.ContentDisposition := 'attachment;';
           response.Expires := Now + 0.25;
@@ -2126,21 +2134,21 @@ begin
             oComp := TFHIRXmlComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
           else if oResponse.format = ffText then
             oComp := TFHIRTextComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
-          else if (oResponse.Format = ffTurtle) or (oResponse.Resource._source_format = ffTurtle) then
+          else if (oResponse.Format = ffTurtle) or (res._source_format = ffTurtle) then
           begin
             oComp := TFHIRRDFComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang);
             TFHIRRDFComposer(oComp).RDFFormat := rdfTurtle;
-            if (oResponse.Resource <> nil) and (oResponse.Resource.id <> '') then
-              TFHIRRDFComposer(oComp).URL :=  oRequest.baseUrl+'/'+CODES_TFhirResourceType[oResponse.Resource.ResourceType]+'/'+oResponse.Resource.id;
+            if (res <> nil) and (res.id <> '') then
+              TFHIRRDFComposer(oComp).URL :=  oRequest.baseUrl+'/'+CODES_TFhirResourceType[res.ResourceType]+'/'+res.id;
           end
-          else if oResponse.Resource._source_format = ffJson then
+          else if res._source_format = ffJson then
             oComp := TFHIRJsonComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
           else
             oComp := TFHIRXmlComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang);
           try
             response.ContentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
-            oComp.Compose(stream, oResponse.resource, pretty, oresponse.link_List);
+            oComp.Compose(stream, res, pretty, oresponse.link_List);
           finally
             oComp.Free;
           end;

@@ -185,11 +185,11 @@ type
 
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean;
-    function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; var reverse : boolean): boolean;
-    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean):String;
+    function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
+    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
-    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean);
-    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean);
+    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+    procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource;
@@ -1587,7 +1587,7 @@ begin
   try
     if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
     begin
-      ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, reverse);
+      ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, reverse);
       if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), IssueTypeProcessing) then
         link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
     end
@@ -1831,7 +1831,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; var reverse : boolean): boolean;
+function TFhirOperationManager.FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
 begin
   // todo: check sesseion...
   if sId = '' then
@@ -1867,7 +1867,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean):String;
+function TFhirOperationManager.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
 var
   id : string;
 begin
@@ -1876,15 +1876,15 @@ begin
   if params.VarExists('_query') and (params.getVar('_query') <> '') then
   begin
     if (params.getVar('_query') = 'mpi') and (aType = 'Patient') then
-      ProcessMPISearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus, reverse)
+      ProcessMPISearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus, strict, reverse)
     else
       raise exception.create('The query "'+params.getVar('_query')+'" is not known');
   end
   else
-    ProcessDefaultSearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus, reverse);
+    ProcessDefaultSearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus, strict, reverse);
 end;
 
-procedure TFhirOperationManager.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean);
+procedure TFhirOperationManager.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
 var
   sp : TSearchProcessor;
   s : String;
@@ -1897,6 +1897,7 @@ begin
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
   sp := TSearchProcessor.create(FRepository.ResConfig.Link);
   try
+    sp.strict := strict;
     sp.typekey := typekey;
     sp.type_ := aType;
     sp.compartmentId := compartmentId;
@@ -1941,7 +1942,7 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; var reverse : boolean);
+procedure TFhirOperationManager.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
 var
   mpi : TMPISearchProcessor;
   s : String;
@@ -2104,10 +2105,10 @@ begin
           bundle.meta.lastUpdated := NowUTC;
 
           summaryStatus := request.Summary;
-          if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, reverse) then
+          if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, summaryStatus, reverse);
+            id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
@@ -2617,7 +2618,6 @@ end;
 
 function TFhirOperationManager.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc : String) : boolean;
 var
-  outcome : TFhirOperationOutcome;
   i : integer;
   ctxt : TFHIRValidatorContext;
 begin
@@ -2627,7 +2627,7 @@ begin
 
     if request.resourceName = 'Binary' then
     begin
-      outcome := TFhirOperationOutcome.create;
+      response.outcome := TFhirOperationOutcome.create;
     end
     else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
     begin
@@ -2636,7 +2636,7 @@ begin
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
         FRepository.validator.validate(ctxt, request.Source, request.PostFormat, nil);
-        outcome := FRepository.validator.describe(ctxt);
+        response.outcome := FRepository.validator.describe(ctxt);
       finally
         ctxt.Free;
       end;
@@ -2648,20 +2648,22 @@ begin
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
         FRepository.validator.validate(ctxt, request.Resource, nil);
-        outcome := FRepository.validator.describe(ctxt);
+        response.outcome := FRepository.validator.describe(ctxt);
       finally
         ctxt.Free;
       end;
     end;
 
-    response.Resource := outcome;
     result := true;
-    for i := 0 to outcome.issueList.count - 1 do
-      result := result and (outcome.issueList[i].severity in [IssueSeverityInformation, IssueSeverityWarning]);
+    for i := 0 to response.outcome.issueList.count - 1 do
+      result := result and (response.outcome.issueList[i].severity in [IssueSeverityInformation, IssueSeverityWarning]);
     if result then
       response.HTTPCode := 200
     else
+    begin
       response.HTTPCode := 400;
+      response.Resource := response.outcome.Link;
+    end;
     if request.ResourceEnum <> frtAuditEvent then
       AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
@@ -6549,10 +6551,10 @@ begin
         params := TParseMap.Create('');
         try
 //          bundle.base := request.baseUrl;
-          if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, reverse) then
+          if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary, reverse);
+            id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary, request.strictSearch, reverse);
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
           manager.chooseField(response.Format, wantsummary, field, prsr, needsObject);

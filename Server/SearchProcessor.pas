@@ -48,6 +48,7 @@ type
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
     FReverse: boolean;
+    FStrict : boolean;
 
     function processValueSetMembership(vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
@@ -102,6 +103,7 @@ type
     property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
     property reverse : boolean read FReverse write FReverse;
+    property strict : boolean read FStrict write FStrict;
   end;
 
 
@@ -141,6 +143,11 @@ begin
 end;
 
 
+function knownParam(name : String) : boolean;
+begin
+  result := StringArrayExistsSensitive(['_id', '_lastUpdated', '_tag', '_profile', '_security', '_text', '_content', '_list', '_has', '_type', '_query', '_sort', '_count', '_include', '_revinclude', '_summary', '_elements', '_contained', '_containedType'], name);
+end;
+
 { TSearchProcessor }
 
 procedure TSearchProcessor.Build;
@@ -178,7 +185,9 @@ begin
         handled := false;
         filter := filter + processParam([type_], params.VarName(i), ts[j], false, first, handled);
         if handled then
-          link_ := link_ + '&'+params.VarName(i)+'='+EncodeMIME(ts[j]);
+          link_ := link_ + '&'+params.VarName(i)+'='+EncodeMIME(ts[j])
+        else if strict and not (knownParam(params.VarName(i))) then
+          Raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [params.VarName(i)]));
       end;
     end;
   finally
@@ -1263,6 +1272,7 @@ constructor TSearchProcessor.create(ResConfig: TADvMap<TFHIRResourceConfig>);
 begin
   Inherited Create;
   FResConfig := ResConfig;
+  FStrict := false;
 end;
 
 destructor TSearchProcessor.Destroy;
