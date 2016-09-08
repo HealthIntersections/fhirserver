@@ -36,7 +36,8 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Soap.EncdDecd,
+  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
+
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
 
@@ -78,6 +79,7 @@ function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
 procedure RemoveBOM(var s : String);
 function isAbsoluteUrl(s: String): boolean;
+function languageMatches(spec, possible : String) : boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
@@ -300,6 +302,12 @@ type
     function source : string;
   end;
 
+  TFhirValueSetExpansionHelper = class helper for TFhirValueSetExpansion
+  public
+    procedure AddParam(name, value : String); overload;
+    procedure AddParam(name : String; value : boolean); overload;
+  end;
+
   TFHIROperationOutcomeHelper = class helper (TFHIRDomainResourceHelper) for TFhirOperationOutcome
   public
     function rule(level : TFhirIssueSeverityEnum; source : String; typeCode : TFhirIssueTypeEnum; path : string; test : boolean; msg : string) : boolean;
@@ -483,6 +491,7 @@ function gen(t : TFhirType):String; overload;
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
+function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
 implementation
 
@@ -3953,7 +3962,8 @@ end;
 
 function TFhirExpansionProfileHelper.hash: String;
 begin
- result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion);
+ result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion)+BooleanToString(includeDesignations)+BooleanToString(includeInactive)+
+   BooleanToString(excludeNested)+BooleanToString(excludeNotForUI)+BooleanToString(excludePostCoordinated)+displayLanguage;
 end;
 
 {$ELSE}
@@ -4072,6 +4082,39 @@ begin
         result := input.type_
       else
         raise Exception.Create('Multiple input types not accepted');
+end;
+
+{ TFhirValueSetExpansionHelper }
+
+procedure TFhirValueSetExpansionHelper.AddParam(name, value: String);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirString.Create(value);
+end;
+
+procedure TFhirValueSetExpansionHelper.AddParam(name: String; value: boolean);
+var
+  p : TFhirValueSetExpansionParameter;
+begin
+  p := parameterList.Append;
+  p.name := name;
+  p.value := TFhirBoolean.Create(value);
+end;
+
+function languageMatches(spec, possible : String) : boolean;
+begin
+  result := spec = possible; // todo: make this better
+end;
+
+function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+begin
+  if (props = nil) or (props.Count = 0) then
+    result := def
+  else
+    result := props.Contains(name);
 end;
 
 end.

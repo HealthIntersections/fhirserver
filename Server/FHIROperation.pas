@@ -30,17 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-{
-todo:
 
-Grahame, I see you don't respond to either of the following:
-http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/350
-http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/@350
-
-cross resource search
-ucum search
-
-}
 
 uses
   SysUtils, Classes,
@@ -346,6 +336,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirSubsumesOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
   TFhirValueSetValidationOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -639,6 +641,7 @@ begin
   {$ENDIF}
   {$IFDEF FHIR3}
   FOperations.add(TFhirActivateOperation.create);
+  FOperations.add(TFhirSubsumesOperation.create);
   {$ENDIF}
 end;
 
@@ -981,6 +984,10 @@ begin
     {$ENDIF}
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
+
+    {$IFDEF FHIR3}
+    oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
+    {$ENDIF}
 
     FRepository.TerminologyServer.declareSystems(oConf);
     if assigned(FOnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
@@ -5949,25 +5956,56 @@ end;
 function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params: TFhirParameters): TFHIRExpansionProfile;
 var
   needSecure : boolean;
+  exp : TFhirExpansionProfile;
 begin
   {$IFDEF FHIR3}
-  if (params.str['profile'] = '') then
-    result := TFhirExpansionProfile.Create
-  else if params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details' then
-  begin
-    result := TFhirExpansionProfile.Create;
-    result.includeDefinition := false;
-  end
-  else if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-    result := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', needSecure) as TFhirExpansionProfile
+  if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
+    exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', needSecure) as TFhirExpansionProfile
+  else if params.str['profile'] <> '' then
+    exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
   else
-    result := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile;
-  {$ELSE}
-  result := TFhirExpansionProfile.Create;
-  result.includeDefinition := (params.str['profile'] <> 'http://www.healthintersections.com.au/fhir/expansion/no-details');
   {$ENDIF}
-  if params.hasParameter('_incomplete') then
-    result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
+    exp := nil;
+
+  try
+   if exp = nil then
+     result := TFhirExpansionProfile.Create
+   else
+     result := exp.Clone;
+   try
+     if params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details' then
+       result.includeDefinition := true;
+     if (params.str['_incomplete'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
+     if (params.str['limitedExpansion'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
+     if (params.str['displayLanguage'] <> '') then
+       result.displayLanguage := params.str['displayLanguage'];
+     if (params.str['includeDesignations'] <> '') then
+       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
+     if (params.str['includeDefinition'] <> '') then
+       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
+     if (params.str['includeInactive'] <> '') then
+       //  result.includeInactive := StrToBoolDef(params.str['includeInactive'], false);
+       raise ETerminologyError.Create('The terminology server does not presently support inactive codes');
+     if (params.str['excludeNested'] <> '') then
+       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
+     if (params.str['excludeNotForUI'] <> '') then
+       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
+     if (params.str['excludePostCoordinated'] <> '') then
+       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
+     {$IFDEF FHIR3}
+     if (result.url = '') then
+       result.url := params.str['profile'];
+     {$ENDIF}
+
+     result.Link;
+   finally
+     result.free;
+   end;
+  finally
+    exp.free;
+  end;
 end;
 
 function TFhirExpandValueSetOperation.CreateDefinition(base : String): TFHIROperationDefinition;
@@ -6166,6 +6204,114 @@ begin
 end;
 
 function TFhirLookupCodeSystemOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+{ TFhirSubsumesSystemOperation }
+
+function TFhirSubsumesOperation.Name: String;
+begin
+  result := 'subsumes';
+end;
+
+function TFhirSubsumesOperation.owningResource: TFhirResourceType;
+begin
+  result := frtCodeSystem;
+end;
+
+function TFhirSubsumesOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtCodeSystem];
+end;
+
+function TFhirSubsumesOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirSubsumesOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  req : TFHIRSubsumesOpRequest;
+  resp : TFHIRSubsumesOpResponse;
+  resourceKey : integer;
+  cs : TFhirCodeSystem;
+  cacheId : string;
+  needSecure : boolean;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    begin
+      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments)) then
+      begin
+        req := TFHIRSubsumesOpRequest.create();
+        try
+          if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
+            req.load(request.Resource as TFHIRParameters)
+          else
+            req.load(request.Parameters);
+
+          // first, we have to identify the Code System
+          if request.Id <> '' then // and it must exist, because of the check above
+            cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
+          else if req.system <> '' then
+            cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, needSecure) as TFhirCodeSystem
+          else
+            raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
+
+          cacheId := cs.url;
+          if (req.codingA = nil) and (req.codeA <> '') then
+            req.codingA := TFhirCoding.Create(cs.url, req.codeA);
+          if (req.codingB = nil) and (req.codeB <> '') then
+            req.codingB := TFhirCoding.Create(cs.url, req.codeB);
+          if req.codingA = nil then
+            raise Exception.Create('No codeA or codingA parameter found');
+          if req.codingB = nil then
+            raise Exception.Create('No codeB or codingB parameter found');
+
+          response.Body := '';
+          response.LastModifiedDate := now;
+          resp := TFHIRSubsumesOpResponse.Create;
+          try
+            try
+              resp.outcome := manager.FRepository.TerminologyServer.subsumes(cs, req.codingA, req.codingB);
+              response.Resource := resp.asParams;
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+            except
+              on e : Exception do
+              begin
+                response.HTTPCode := 400;
+                response.Message := 'Error';
+                response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeCodeInvalid);
+              end;
+            end;
+          finally
+            resp.Free;
+          end;
+        finally
+          req.Free;
+        end;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirSubsumesOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-subsumes';
+end;
+
+function TFhirSubsumesOperation.isWrite: boolean;
 begin
   result := false;
 end;

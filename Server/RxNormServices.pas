@@ -3,12 +3,12 @@ unit RxNormServices;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   StringSupport,
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   YuStemmer, DateAndTime,
   KDBManager,
-  FHIRTypes, FHIRResources, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, FHIROperations, CDSHooksUtilities,
   TerminologyServices;
 
 type
@@ -58,15 +58,15 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
 //    function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -80,6 +80,8 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    //function subsumes(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -248,7 +250,7 @@ begin
   result := '';
 end;
 
-function TUMLSServices.getDisplay(code : String):String;
+function TUMLSServices.getDisplay(code : String; lang : String):String;
 var
   qry : TKDBConnection;
 begin
@@ -276,9 +278,9 @@ begin
   result := TUMLSPrep.Create;
 end;
 
-procedure TUMLSServices.Displays(code : String; list : TStringList);
+procedure TUMLSServices.Displays(code : String; list : TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -372,15 +374,20 @@ begin
   inherited;
 end;
 
-function TUMLSServices.Display(context : TCodeSystemProviderContext) : string;
+function TUMLSServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
   result := TUMLSConcept(context).FDisplay;
 end;
 
-procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUMLSServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Display(context));
+  list.Add(Display(context, lang));
   list.AddStrings(TUMLSConcept(context).FOthers);
+end;
+
+procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+begin
+  // todo
 end;
 
 function TUMLSServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

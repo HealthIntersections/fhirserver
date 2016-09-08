@@ -208,7 +208,7 @@ Type
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
   Public
-    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
+    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; loadStore : boolean);
     Destructor Destroy; Override;
 
     Procedure Start(active : boolean);
@@ -289,7 +289,7 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer);
+Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; loadStore : boolean);
 var
   s, txu : String;
   ts : TStringList;
@@ -326,7 +326,7 @@ Begin
   FSSLPassword := FIni.ReadString('web', 'certpword', '');
   FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
 
-  FFhirStore := TFHIRDataStore.Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link);
+  FFhirStore := TFHIRDataStore.Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link, loadStore);
   FFhirStore.ownername := FOwnerName;
   FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
 

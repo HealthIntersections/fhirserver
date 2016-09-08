@@ -84,8 +84,8 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Spec & IGs
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip"; DestDir: {app}\web; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip"; DestDir: {app}\load; DestName: fhir.json.zip; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish.2016Sep\definitions.json.zip"; DestDir: {app}\web; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish.2016Sep\examples-json.zip"; DestDir: {app}\load; DestName: fhir.json.zip; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip"; DestDir: {app}\load; DestName: daf.json.zip; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip"; DestDir: {app}\load; DestName: sdc.json.zip; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Flags: ignoreversion

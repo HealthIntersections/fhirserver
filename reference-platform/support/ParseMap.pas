@@ -95,6 +95,7 @@ constructor TMultiValList.Create;
 begin
   inherited Create;
   FItemList := TStringList.Create;
+  FItemList.CaseSensitive := false;
 end;
 
 destructor TMultiValList.Destroy;
@@ -123,7 +124,7 @@ var
 begin
   if not retrieveNameIndex(itemname, tempint) then
     begin
-    itemname := lowercase(itemname);
+    itemname := itemname;
     vallist := TStringList.Create;
     FItemList.AddObject(itemname, vallist);
     end
@@ -181,12 +182,10 @@ begin
     end;
 end;
 
-function TMultiValList.retrieveNameIndex(itemname: String;
-  var itemnum: Integer): Boolean;
-var 
+function TMultiValList.retrieveNameIndex(itemname: String; var itemnum: Integer): Boolean;
+var
   i: Integer;
 begin
-  itemname := lowercase(itemname);
   Result := False;
 
   i := FItemList.indexOf(itemname);

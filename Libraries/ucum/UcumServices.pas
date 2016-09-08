@@ -209,13 +209,13 @@ Type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -230,6 +230,7 @@ Type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
+    //function subsumes(codeA, codeB : String) : String; override;
   End;
 
   TUcumServiceList = class (TAdvObjectList)
@@ -821,25 +822,25 @@ begin
   result := nil;
 end;
 
-function TUcumServices.Display(context: TCodeSystemProviderContext): string;
+function TUcumServices.Display(context: TCodeSystemProviderContext; lang : String): string;
 begin
   if context = nil then
     result := ''
   else
-    result := getDisplay(TUCUMCodeHolder(context).code);
+    result := getDisplay(TUCUMCodeHolder(context).code, lang);
 end;
 
-procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
   list.Add(Code(context));
 end;
 
-procedure TUcumServices.Displays(code: String; list: TStringList);
+procedure TUcumServices.Displays(code: String; list: TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
-function TUcumServices.getDisplay(code: String): String;
+function TUcumServices.getDisplay(code: String; lang : String): String;
 var
   cc : TFhirValueSetComposeIncludeConcept;
 begin

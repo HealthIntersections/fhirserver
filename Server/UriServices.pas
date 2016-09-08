@@ -27,15 +27,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -79,7 +79,7 @@ begin
   result := '';
 end;
 
-function TUriServices.getDisplay(code : String):String;
+function TUriServices.getDisplay(code : String; lang : String):String;
 begin
   result := '';
 end;
@@ -89,7 +89,7 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-procedure TUriServices.Displays(code : String; list : TStringList);
+procedure TUriServices.Displays(code : String; list : TStringList; lang : String);
 begin
 end;
 
@@ -109,12 +109,12 @@ begin
   result := '';
 end;
 
-function TUriServices.Display(context : TCodeSystemProviderContext) : string;
+function TUriServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
   result := '';
 end;
 
-procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUriServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
 end;
 

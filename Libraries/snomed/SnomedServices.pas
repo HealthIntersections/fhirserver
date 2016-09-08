@@ -488,13 +488,13 @@ operations
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -509,6 +509,7 @@ operations
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    function subsumesTest(codeA, codeB : String) : String; overload; override;
 
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
   End;
@@ -2031,6 +2032,28 @@ begin
   end;
 end;
 
+function TSnomedServices.SubsumesTest(codeA, codeB: String): String;
+var
+  iId : UInt64;
+  indexA, indexB : cardinal;
+begin
+
+  iId := StrToUInt64Def(codeA, 0);
+  if not Concept.FindConcept(iId, indexA) Then
+    raise ESnomedServices.create('unable to find code '+codeA+' in '+system(nil));
+  iId := StrToUInt64Def(codeB, 0);
+  if not Concept.FindConcept(iId, indexB) Then
+    raise ESnomedServices.create('unable to find code '+codeB+' in '+system(nil));
+
+  if Subsumes(indexA, indexB) then
+    result := 'subsumes'
+  else if Subsumes(indexB, indexA) then
+    result := 'subsumed-by'
+  else
+    result := 'not-subsumed';
+end;
+
+
 { TSnomedRelationshipList }
 
 procedure TSnomedRelationshipList.StartBuild;
@@ -2632,14 +2655,14 @@ begin
 End;
 *)
 
-function TSnomedServices.Display(context: TCodeSystemProviderContext): string;
+function TSnomedServices.Display(context: TCodeSystemProviderContext; lang : String): string;
 begin
   result := GetDisplayName(Cardinal(context), 0);
 end;
 
-procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  Displays(Code(context), list);
+  Displays(Code(context), list, lang);
 end;
 
 procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse);
@@ -2660,19 +2683,12 @@ var
   p : TFHIRLookupOpProperty_;
   {$ENDIF}
   did : UInt64;
-  function hasProp(name : String; def : boolean) : boolean;
-  begin
-    if (props = nil) or (props.Count = 0) then
-      result := def
-    else
-      result := props.Contains(name);
-  end;
 begin
   SetLength(inbounds, 0);
   Concept.GetConcept(Cardinal(ctxt), Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Inbounds := Refs.GetReferences(InboundIndex);
 
-  if hasProp('designation', true) then
+  if hasProp(props, 'designation', true) then
   begin
     // descriptions
     Descriptions := Refs.GetReferences(DescriptionIndex);
@@ -2702,7 +2718,7 @@ begin
     End;
   End;
 
-  if hasProp('parent', true) then
+  if hasProp(props, 'parent', true) then
   begin
     // parents:
     if ParentIndex <> 0 Then
@@ -2725,7 +2741,7 @@ begin
     end;
   end;
 
-  if hasProp('child', true) then
+  if hasProp(props, 'child', true) then
   begin
     // children: (inbound relationships with type is-a)
     For i := 0 to High(Inbounds) Do
@@ -2749,7 +2765,7 @@ begin
   End;
 end;
 
-procedure TSnomedServices.Displays(code: String; list: TStringList);
+procedure TSnomedServices.Displays(code: String; list: TStringList; lang : String);
 var
   ctxt : TAdvObject;
 begin
@@ -2760,7 +2776,7 @@ begin
     ListDisplayNames(list, Cardinal(ctxt), 0, $FF);
 end;
 
-function TSnomedServices.getDisplay(code: String): String;
+function TSnomedServices.getDisplay(code: String; lang : String): String;
 var
   ctxt : TCodeSystemProviderContext;
 begin
@@ -2769,7 +2785,7 @@ begin
     if (ctxt = nil) then
       raise ESnomedServices.create('Unable to find '+code+' in '+system(nil))
     else
-      result := Display(ctxt);
+      result := Display(ctxt, lang);
   finally
     Close(ctxt);
   end;

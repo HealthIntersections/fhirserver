@@ -52,8 +52,9 @@ Type
     FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
     FWebSource : String;
-    FNotServing : boolean;
 
+    FNotServing : boolean;
+    FLoadStore : boolean;
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -118,6 +119,7 @@ begin
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
+      svc.FLoadStore := not FindCmdLineSwitch('noload');
       if FindCmdLineSwitch('mount') then
       begin
         svc.InstallDatabase;
@@ -189,7 +191,9 @@ begin
        ImportUnii(fn, svc.Fdb)
       end
       else
+      begin
         svc.Execute;
+      end;
     finally
       svc.Free;
     end;
@@ -518,7 +522,7 @@ end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer);
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, FLoadStore);
   FWebServer.Start(not FNotServing);
   FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload')
 end;

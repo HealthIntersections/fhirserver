@@ -117,7 +117,7 @@ begin
   b.Append('">');
   b.Append(id);
   b.Append('</a></b> ');
-  b.Append(EncodeXML(fsnomed.getDisplay(id), xmlText));
+  b.Append(EncodeXML(fsnomed.getDisplay(id, ''), xmlText));
   b.append('.');
   b.Append(inttostr(length(alldesc)));
   b.AppendLine(' rows</td></tr>');

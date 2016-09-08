@@ -62,16 +62,16 @@ Type
     function system(context : TCodeSystemProviderContext) : String; virtual; abstract;
     function version(context : TCodeSystemProviderContext) : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
-    function getDisplay(code : String):String; virtual; abstract;
+    function getDisplay(code : String; lang : String):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
     function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext) : string; virtual; abstract;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; virtual; abstract;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); overload; virtual; abstract;
-    procedure Displays(code : String; list : TStringList); overload; virtual; abstract;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); overload; virtual; abstract;
+    procedure Displays(code : String; list : TStringList; lang : String); overload; virtual; abstract;
     function doesFilter(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
@@ -84,6 +84,7 @@ Type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
     procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); virtual;
+    function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); virtual;
@@ -155,6 +156,11 @@ end;
 function TCodeSystemProvider.SpecialEnumeration: String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
+begin
+  raise Exception.Create('Subsumption Testing is not supported for system '+system(nil));
 end;
 
 function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;

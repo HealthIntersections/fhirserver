@@ -24,15 +24,15 @@ type
     function ChildCount(context : TCodeSystemProviderContext) : integer; override;
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -97,7 +97,7 @@ begin
   result := '';
 end;
 
-function TCountryCodeServices.getDisplay(code : String):String;
+function TCountryCodeServices.getDisplay(code : String; lang : String):String;
 begin
   result := FCodes[code];
 end;
@@ -107,9 +107,9 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-procedure TCountryCodeServices.Displays(code : String; list : TStringList);
+procedure TCountryCodeServices.Displays(code : String; list : TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -126,7 +126,7 @@ end;
 
 function TCountryCodeServices.Definition(context: TCodeSystemProviderContext): string;
 begin
-  result := Display(context);
+  result := Display(context,'');
 end;
 
 destructor TCountryCodeServices.Destroy;
@@ -135,14 +135,14 @@ begin
   inherited;
 end;
 
-function TCountryCodeServices.Display(context : TCodeSystemProviderContext) : string;
+function TCountryCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
   result := FCodes.ValueByIndex[integer(context)-1];
 end;
 
-procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Display(context));
+  list.Add(Display(context, ''));
 end;
 
 function TCountryCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

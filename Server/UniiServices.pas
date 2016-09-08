@@ -46,15 +46,15 @@ type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function system(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -130,7 +130,7 @@ begin
   result := '';
 end;
 
-function TUniiServices.getDisplay(code : String):String;
+function TUniiServices.getDisplay(code : String; lang : String):String;
 var
   qry : TKDBConnection;
 begin
@@ -159,9 +159,9 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-procedure TUniiServices.Displays(code : String; list : TStringList);
+procedure TUniiServices.Displays(code : String; list : TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
 Procedure ImportUnii(filename : String; dbm : TKDBManager);
@@ -295,14 +295,14 @@ begin
   inherited;
 end;
 
-function TUniiServices.Display(context : TCodeSystemProviderContext) : string;
+function TUniiServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
   result := TUniiConcept(context).FDisplay;
 end;
 
-procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUniiServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Display(context));
+  list.Add(Display(context, lang));
   list.AddStrings(TUniiConcept(context).FOthers);
 end;
 

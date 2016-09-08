@@ -213,7 +213,7 @@ begin
         else
           try
             result := abstractOk or not cs.IsAbstract(ctxt);
-            cs.Displays(ctxt, displays);
+            cs.Displays(ctxt, displays, '');
           finally
             cs.Close(ctxt);
           end;
@@ -358,7 +358,7 @@ begin
                end
                else
                begin
-                 prov.Displays(ctxt, list);
+                 prov.Displays(ctxt, list, '');
                  if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) = -1) then
                    result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc)
                end;
@@ -416,7 +416,7 @@ begin
       result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
       if result then
       begin
-        cs.displays(loc, displays);
+        cs.displays(loc, displays, '');
         exit;
       end;
     finally
@@ -431,7 +431,7 @@ begin
       if Loc <> nil then
       begin
         cs.close(loc);
-        cs.displays(code, displays);
+        cs.displays(code, displays, '');
         result := (abstractOk or not cs.IsAbstract(loc));
         exit;
       end;
@@ -455,7 +455,7 @@ begin
         try
           result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
           if result then
-            cs.displays(loc, displays);
+            cs.displays(loc, displays, '');
         finally
           cs.Close(loc);
         end;
@@ -471,7 +471,7 @@ begin
             try
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if result then
-                cs.displays(loc, displays);
+                cs.displays(loc, displays, '');
             finally
               cs.Close(loc);
             end;
@@ -483,7 +483,7 @@ begin
             try
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if result then
-                cs.displays(loc, displays);
+                cs.displays(loc, displays, '');
             finally
               cs.Close(loc);
             end;

@@ -227,7 +227,7 @@ begin
         {$ENDIF}
       end;
       if (hasProp('display', true)) then
-        resp.display := provider.Display(ctxt);
+        resp.display := provider.Display(ctxt, '');
       provider.extendLookup(ctxt, props, resp);
     finally
       provider.Close(ctxt);
@@ -570,8 +570,8 @@ begin
         lct := cp.locate(code);
         try
           if (op.error('InstanceValidator', IssueTypeCodeInvalid, path, lct <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-            result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = cp.Display(lct)),
-            'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct)+'"');
+            result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = cp.Display(lct, '')),
+            'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, '')+'"');
         finally
           cp.Close(lct);
         end;
@@ -646,7 +646,7 @@ begin
   provider := getProvider(system, true);
   if provider <> nil then
   try
-    result := provider.getDisplay(code);
+    result := provider.getDisplay(code, '');
   finally
     provider.Free;
   end;

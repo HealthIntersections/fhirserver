@@ -36,15 +36,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -57,6 +57,7 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    function subsumesTest(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
@@ -114,7 +115,7 @@ begin
   result := '';
 end;
 
-function TUSStateCodeServices.getDisplay(code : String):String;
+function TUSStateCodeServices.getDisplay(code : String; lang : String):String;
 var
   qry : TKDBConnection;
 begin
@@ -142,9 +143,9 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-procedure TUSStateCodeServices.Displays(code : String; list : TStringList);
+procedure TUSStateCodeServices.Displays(code : String; list : TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -201,14 +202,14 @@ begin
   inherited;
 end;
 
-function TUSStateCodeServices.Display(context : TCodeSystemProviderContext) : string;
+function TUSStateCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
   result := TUSStateCodeConcept(context).FDisplay;
 end;
 
-procedure TUSStateCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TUSStateCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Display(context));
+  list.Add(Display(context, lang));
 end;
 
 function TUSStateCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -255,6 +256,11 @@ end;
 function TUSStateCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
   raise Exception.Create('not done yet');
+end;
+
+function TUSStateCodeServices.subsumesTest(codeA, codeB: String): String;
+begin
+  result := 'not-subsumed';
 end;
 
 function TUSStateCodeServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;

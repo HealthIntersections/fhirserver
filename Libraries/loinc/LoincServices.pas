@@ -31,11 +31,11 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   StringSupport, FileSupport, BytesSupport,
   AdvObjects, AdvObjectLists,
   regexpr, YuStemmer,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
   TerminologyServices, DateAndTime;
 
 {axes
@@ -350,13 +350,13 @@ Type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -371,6 +371,8 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    //function subsumes(codeA, codeB : String) : String; override;
 
   End;
 
@@ -1646,7 +1648,7 @@ begin
     CodeList.GetInformation(integer(context)-1, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 end;
 
-function TLoincServices.Display(context: TCodeSystemProviderContext): string;
+function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
 var
   index : integer;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
@@ -1662,12 +1664,163 @@ begin
   result := Desc.GetEntry(iDescription);
 end;
 
-procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
   GetDisplaysByName(Code(context), list);
 end;
 
-procedure TLoincServices.Displays(code: String; list: TStringList);
+procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+var
+  index, i : integer;
+  iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
+  iEntry : Cardinal;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iFlags : Byte;
+  s : String;
+  iRefs : TCardinalArray;
+  {$IFDEF FHIR3}
+  p : TFHIRLookupOpProperty_;
+  d : TFHIRLookupOpDesignation;
+  {$ENDIF}
+begin
+  index := integer(ctxt)-1;
+  if index < CodeList.Count then
+  begin
+    CodeList.GetInformation(index, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+
+  {$IFDEF FHIR3}
+    if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'COMPONENT';
+      p.description := GetConceptDesc(iComponent);
+    End;
+    if hasProp(props, 'PROPERTY', true) and (iProperty <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'PROPERTY';
+      p.description := GetConceptDesc(iProperty);
+    End;
+    if hasProp(props, 'TIME_ASPCT', true) and (iTimeAspect <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'TIME_ASPCT';
+      p.description := GetConceptDesc(iTimeAspect);
+    End;
+    if hasProp(props, 'SYSTEM', true) and (iSystem <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'SYSTEM';
+      p.description := GetConceptDesc(iSystem);
+    End;
+    if hasProp(props, 'SCALE_TYP', true) and (iScale <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'SCALE_TYP';
+      p.description := GetConceptDesc(iScale);
+    End;
+    if hasProp(props, 'METHOD_TYP', true) and (iMethod <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'METHOD_TYP';
+      p.description := GetConceptDesc(iMethod);
+    End;
+    if hasProp(props, 'CLASS', true) and (iClass <> 0) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'CLASS';
+      p.description := GetConceptDesc(iClass);
+    End;
+    if hasProp(props, 'CLASSTYPE', true) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'CLASSTYPE';
+      if iFlags and FLAGS_CLIN > 0 Then
+        p.description := 'Clinical'
+      Else if iFlags and FLAGS_ATT > 0 Then
+        p.description := 'Attachment'
+      Else if iFlags and FLAGS_SURV > 0 Then
+        p.description := 'Survey'
+      Else
+        p.description := 'Lab';
+    end;
+
+    if hasProp(props, 'STATUS', true) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'STATUS';
+      if iFlags and FLAGS_HOLD > 0 Then
+        p.description := 'Not yet final'
+      Else
+        p.description := 'Final';
+    end;
+
+    if hasProp(props, 'Root', true) Then
+    Begin
+      if iFlags and FLAGS_ROOT > 0 Then
+      Begin
+        p := TFHIRLookupOpProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'Root';
+        p.description := 'This is a root of a set';
+      End;
+    end;
+
+    if hasProp(props, 'UNITSREQUIRED', true) Then
+    Begin
+      if iFlags and FLAGS_UNITS > 0 Then
+      Begin
+        p := TFHIRLookupOpProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'UNITSREQUIRED';
+        p.description := 'Units are required';
+      End;
+    end;
+
+    if hasProp(props, 'ORDER_OBS', true) Then
+    Begin
+      p := TFHIRLookupOpProperty_.create;
+      resp.property_List.Add(p);
+      p.code := 'ORDER_OBS';
+      if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
+        p.description := 'Both'
+      Else if iFlags and FLAGS_ORDER > 0 Then
+        p.description := 'Order'
+      Else if iFlags and FLAGS_OBS > 0 Then
+        p.description := 'Observation'
+      else
+        p.description := 'Neither';
+    end;
+
+    if iOtherNames <> 0 Then
+    Begin
+      iRefs := Refs.GetCardinals(iOtherNames);
+      for i := Low(iRefs) To High(iRefs) Do
+        if iRefs[i] <> 0 Then
+        begin
+          d := TFHIRLookupOpDesignation.create;
+          resp.designationList.Add(d);
+          d.value := Desc.GetEntry(iRefs[i]);
+          d.use := TFHIRCoding.Create;
+          d.use.system := 'http://snomed.info/sct';
+          d.use.code := '446211000124102';
+          d.use.display := 'Alias name';
+        End;
+    End;
+    {$ENDIF}
+  End;
+end;
+
+procedure TLoincServices.Displays(code: String; list: TStringList; lang : String);
 begin
   GetDisplaysByName(code, list);
 end;
@@ -1678,7 +1831,7 @@ begin
   result := '';
 end;
 
-function TLoincServices.getDisplay(code: String): String;
+function TLoincServices.getDisplay(code: String; lang : String): String;
 begin
   result := GetDisplayByName(code);
   if result = '' then

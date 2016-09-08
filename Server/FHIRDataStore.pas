@@ -132,7 +132,7 @@ Type
 
     procedure loadCustomResources(guides : TAdvStringSet);
   public
-    constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer);
+    constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer; loadStore : boolean);
     Destructor Destroy; Override;
     Function Link: TFHIRDataStore; virtual;
     procedure CloseAll;
@@ -240,9 +240,7 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB: TKDBManager;
-  AppFolder: String; TerminologyServer: TTerminologyServer;
-  ini: TIniFile; SCIMServer: TSCIMServer);
+constructor TFHIRDataStore.Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer; loadStore : boolean);
 var
   i : integer;
   conn: TKDBConnection;
@@ -420,12 +418,15 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         FValidatorContext.LoadFromDefinitions(fn);
-        logt('Load Custom Resources');
-        LoadCustomResources(implGuides);
-        logt('Load Store');
-        LoadExistingResources(conn);
-        logt('Check Definitions');
-//        checkDefinitions();
+        if loadStore then
+        begin
+          logt('Load Custom Resources');
+          LoadCustomResources(implGuides);
+          logt('Load Store');
+          LoadExistingResources(conn);
+          logt('Check Definitions');
+  //        checkDefinitions();
+        end;
         logt('Load Subscription Queue');
         FSubscriptionManager.LoadQueue(conn);
       end;
@@ -2039,7 +2040,7 @@ begin
     prov := FTerminologyServer.getProvider(system);
     try
       if prov <> nil then
-        result := prov.getDisplay(code);
+        result := prov.getDisplay(code, '');
     finally
       prov.free;
     end;

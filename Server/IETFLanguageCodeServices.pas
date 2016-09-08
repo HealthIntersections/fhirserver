@@ -37,15 +37,15 @@ type
     function system(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String):String; override;
+    function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext) : string; override;
-    procedure Displays(code : String; list : TStringList); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList); override;
+    function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
+    procedure Displays(code : String; list : TStringList; lang : String); override;
+    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; lang : String); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
@@ -107,7 +107,7 @@ begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.getDisplay(code : String):String;
+function TIETFLanguageCodeServices.getDisplay(code : String; lang : String):String;
 var
   parts : TArray<String>;
 begin
@@ -127,9 +127,9 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList);
+procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList; lang : String);
 begin
-  list.Add(getDisplay(code));
+  list.Add(getDisplay(code, lang));
 end;
 
 
@@ -582,14 +582,14 @@ begin
   inherited;
 end;
 
-function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext) : string;
+function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := getDisplay(TIETFLanguageCodeConcept(context).code);
+  result := getDisplay(TIETFLanguageCodeConcept(context).code, lang);
 end;
 
-procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList);
+procedure TIETFLanguageCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  list.Add(Display(context));
+  list.Add(Display(context, lang));
 end;
 
 function TIETFLanguageCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
