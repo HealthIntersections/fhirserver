@@ -111,9 +111,10 @@ begin
     iniName := iniName.replace('.dstu', '.dev');
 
     if JclExceptionTrackingActive then
-      logt('FHIR Service '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+'). Using ini file '+iniName+' with stack dumps on')
+      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
     else
-      logt('FHIR Service '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+'). Using ini file '+iniName+' (no stack dumps)');
+      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
+    logt('FHIR Version '+FHIR_GENERATED_VERSION);
     dispName := dispName + ' '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+')';
 
 
@@ -522,9 +523,13 @@ end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
+  logt('a');
   FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, FLoadStore);
+  logt('b');
   FWebServer.Start(not FNotServing);
-  FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload')
+  logt('c');
+  FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload');
+  logt('d');
 end;
 
 procedure TFHIRService.InstallDatabase;

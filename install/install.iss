@@ -6,12 +6,12 @@
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
-AppName=Health Intersections FHIR Server (DEV)
-AppVerName=1.0.72 (FHIR Version 1.7.0.9802)
+AppName=Health Intersections FHIR Server
+AppVerName=1.0.77
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.72
+OutputBaseFilename=fhirserver3-1.0.77
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -56,9 +56,12 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.txt
 ;  {store}\data - terminology caches
 
 [Types]
-Name: "normal";   Description: "Normal Installation"; Flags: iscustom;
+Name: "fhir3";   Description: "Install STU3 Version"
+Name: "fhir2";   Description: "Install DSTU2 Version"
 
 [Components]
+Name: "r2";   Description: "DSTU2 Components"; Types: fhir2
+Name: "r3";   Description: "STU3 Components"; Types: fhir3
 
 [Tasks]
 ; Core related tasks
@@ -74,7 +77,8 @@ Source: "C:\work\fhirserver\install\readme.txt";                      DestDir: "
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable files
-Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
@@ -84,13 +88,15 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Spec & IGs
-Source: "C:\work\org.hl7.fhir\build\publish.2016Sep\definitions.json.zip"; DestDir: {app}\web; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish.2016Sep\examples-json.zip"; DestDir: {app}\load; DestName: fhir.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip"; DestDir: {app}\load; DestName: daf.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip"; DestDir: {app}\load; DestName: sdc.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip"; DestDir: {app}\load; DestName: ccda.json.zip; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load.ini"; DestDir: {app}\load; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";              DestDir: "{app}\spec";                          Components: r2; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";   DestDir: "{app}\spec";                          Components: r2; Flags: ignoreversion  
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";            DestDir: {app}\web;                             Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";               DestDir: {app}\load; DestName: fhir.json.zip;   Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip";    DestDir: {app}\load; DestName: daf.json.zip;    Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip";    DestDir: {app}\load; DestName: sdc.json.zip;    Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";   DestDir: {app}\load; DestName: ccda.json.zip;   Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load.ini";                                DestDir: {app}\load;                            Components: r3; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
@@ -106,9 +112,9 @@ Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    Des
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum"; Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
+Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
-Filename: "{app}\fhirserver.ini"; Section: "web";  Key: "clients";  String: "{app}\auth.ini"
+Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
 
 [Icons]
 Name: "{group}\FHIR Server";        Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    

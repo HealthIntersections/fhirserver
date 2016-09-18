@@ -36,18 +36,11 @@ POSSIBILITY OF SUCH DAMAGE.
 {
 todo:
 Add reverse chaining
-terminology service updates
 Grahame, I see you don't respond to either of the following:
  http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/350
  http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/@350
 cross resource search
 ucum search
-
-terminology service changes:
-  * add instantiates
-  * support for new overriding parameters on expansion operation
-  * support for properties in look up
-  * add $subsumes operation
 
 }
 

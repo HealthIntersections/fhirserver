@@ -3,11 +3,31 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.77 2016-09-18</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.77.exe</link>
+			<description>2016-09-18 (v1.0.77): fix instal bug</description>
+		</item>
+<item><title>FHIRServer release 1.0.76 2016-09-18</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.76.exe</link>
+			<description>2016-09-18 (v1.0.76): Combiine DSTU2 and STU3 versions to a single install + fix bug accepting value sets</description>
+		</item>
+		<item><title>FHIRServer release 1.0.75 2016-09-18 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.75.exe</link>
+			<description>DSTU3. 2016-09-18 (v1.0.75): fix duplicate value sets</description>
+		</item>
+		<item><title>FHIRServer release 1.0.74 2016-09-18 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.74.exe</link>
+			<description>DSTU3. 2016-09-18 (v1.0.74): fix validation bugs</description>
+		</item>
+		<item><title>FHIRServer release 1.0.73 2016-09-09 (DSTU3)</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.73.exe</link>
+			<description>DSTU3. 2016-09-09 (v1.0.73): updates for terminology server</description>
+		</item>
 		<item><title>FHIRServer release 1.0.72 2016-09-07 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.72.exe</link>
 			<description>DSTU3. 2016-09-07 (v1.0.72): fix back to 1.6.0, and make restful API changes for 1.6.0</description>
 		</item>
-<item><title>FHIRServer release 1.0.71 2016-09-06 (DSTU3)</title>
+		<item><title>FHIRServer release 1.0.71 2016-09-06 (DSTU3)</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.71.exe</link>
 			<description>DSTU3. 2016-09-06 (v1.0.71): Overhaul to fix parsers, fluentpath, and validaition for STU3</description>
 		</item>

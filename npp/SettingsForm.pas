@@ -208,8 +208,16 @@ begin
 end;
 
 procedure TSettingForm.SpeedButton1Click(Sender: TObject);
+var
+  od : TFileOpenDialog;
 begin
-  showmessage('not done yet');
+  od := TFileOpenDialog.Create(nil);
+  try
+    if od.Execute then
+      edtFile.Text := od.FileName;
+  finally
+    od.Free;
+  end;
 end;
 
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);

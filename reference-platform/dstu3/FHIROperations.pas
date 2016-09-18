@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.6.0 generated 2016-09-07T10:56:17+10:00
+// FHIR v1.7.0 generated 2016-09-18T03:48:47+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1881,9 +1881,9 @@ begin
   result := TFHIRParameters.create;
   try
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FCoding <> nil) then
@@ -1929,7 +1929,7 @@ begin
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     if (FValue <> '') then
       result.addParameter('value', TFHIRString.create(FValue));{oz.5f}
     if (FDescription <> '') then
@@ -1978,7 +1978,7 @@ begin
   try
     result.name := name;
     if (FLanguage <> '') then
-      result.addParameter('language', TFHIRString.create(FLanguage));{oz.5f}
+      result.addParameter('language', TFHIRCode.create(FLanguage));{oz.5f}
     if (FUse <> nil) then
       result.addParameter('use', FUse.Link);{oz.5d}
     if (FValue <> '') then
@@ -2111,11 +2111,11 @@ begin
   result := TFHIRParameters.create;
   try
     if (FCodeA <> '') then
-      result.addParameter('codeA', TFHIRString.create(FCodeA));{oz.5f}
+      result.addParameter('codeA', TFHIRCode.create(FCodeA));{oz.5f}
     if (FCodeB <> '') then
-      result.addParameter('codeB', TFHIRString.create(FCodeB));{oz.5f}
+      result.addParameter('codeB', TFHIRCode.create(FCodeB));{oz.5f}
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FCodingA <> nil) then
@@ -2161,7 +2161,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FOutcome <> '') then
-      result.addParameter('outcome', TFHIRString.create(FOutcome));{oz.5f}
+      result.addParameter('outcome', TFHIRCode.create(FOutcome));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2198,9 +2198,9 @@ begin
   try
     result.name := name;
     if (FProperty_ <> '') then
-      result.addParameter('property', TFHIRString.create(FProperty_));{oz.5f}
+      result.addParameter('property', TFHIRCode.create(FProperty_));{oz.5f}
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2257,7 +2257,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     for v1 in FConceptList do
@@ -2301,9 +2301,9 @@ begin
   try
     result.name := name;
     if (FProperty_ <> '') then
-      result.addParameter('property', TFHIRString.create(FProperty_));{oz.5f}
+      result.addParameter('property', TFHIRCode.create(FProperty_));{oz.5f}
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     if (FDisplay <> '') then
       result.addParameter('display', TFHIRString.create(FDisplay));{oz.5f}
     writeExtensions(result);
@@ -2438,21 +2438,21 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FValueSet <> nil) then
       result.addParameter('valueSet', FValueSet.Link);{oz.5a}
     if (FContext <> '') then
-      result.addParameter('context', TFHIRString.create(FContext));{oz.5f}
+      result.addParameter('context', TFHIRUri.create(FContext));{oz.5f}
     if (FFilter <> '') then
       result.addParameter('filter', TFHIRString.create(FFilter));{oz.5f}
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRString.create(FProfile));{oz.5f}
+      result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
     if (FDate <> nil) then
       result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
     if (FOffset <> '') then
-      result.addParameter('offset', TFHIRString.create(FOffset));{oz.5f}
+      result.addParameter('offset', TFHIRInteger.create(FOffset));{oz.5f}
     if (FCount <> '') then
-      result.addParameter('count', TFHIRString.create(FCount));{oz.5f}
+      result.addParameter('count', TFHIRInteger.create(FCount));{oz.5f}
       result.addParameter('includeDesignations', TFHIRBoolean.create(FIncludeDesignations));{oz.5f}
       result.addParameter('includeDefinition', TFHIRBoolean.create(FIncludeDefinition));{oz.5f}
       result.addParameter('includeInactive', TFHIRBoolean.create(FIncludeInactive));{oz.5f}
@@ -2460,7 +2460,7 @@ begin
       result.addParameter('excludeNotForUI', TFHIRBoolean.create(FExcludeNotForUI));{oz.5f}
       result.addParameter('excludePostCoordinated', TFHIRBoolean.create(FExcludePostCoordinated));{oz.5f}
     if (FDisplayLanguage <> '') then
-      result.addParameter('displayLanguage', TFHIRString.create(FDisplayLanguage));{oz.5f}
+      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));{oz.5f}
       result.addParameter('limitedExpansion', TFHIRBoolean.create(FLimitedExpansion));{oz.5f}
     writeExtensions(result);
     result.link;
@@ -2591,15 +2591,15 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FContext <> '') then
-      result.addParameter('context', TFHIRString.create(FContext));{oz.5f}
+      result.addParameter('context', TFHIRUri.create(FContext));{oz.5f}
     if (FValueSet <> nil) then
       result.addParameter('valueSet', FValueSet.Link);{oz.5a}
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FDisplay <> '') then
@@ -2709,9 +2709,9 @@ begin
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);{oz.5a}
     if (FMode <> '') then
-      result.addParameter('mode', TFHIRString.create(FMode));{oz.5f}
+      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRString.create(FProfile));{oz.5f}
+      result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -3071,7 +3071,7 @@ begin
     if (FScope <> '') then
       result.addParameter('scope', TFHIRString.create(FScope));{oz.5f}
     if (FExpires <> '') then
-      result.addParameter('expires', TFHIRString.create(FExpires));{oz.5f}
+      result.addParameter('expires', TFHIRInteger.create(FExpires));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -3122,7 +3122,7 @@ begin
     if (FLabel_ <> '') then
       result.addParameter('label', TFHIRString.create(FLabel_));{oz.5f}
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRString.create(FUrl));{oz.5f}
+      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -3224,7 +3224,7 @@ begin
     if (FLabel_ <> '') then
       result.addParameter('label', TFHIRString.create(FLabel_));{oz.5f}
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRString.create(FUrl));{oz.5f}
+      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -3285,7 +3285,7 @@ begin
     if (FDetail <> '') then
       result.addParameter('detail', TFHIRString.create(FDetail));{oz.5f}
     if (FIndicator <> '') then
-      result.addParameter('indicator', TFHIRString.create(FIndicator));{oz.5f}
+      result.addParameter('indicator', TFHIRCode.create(FIndicator));{oz.5f}
     if (FSource <> nil) then
       result.addParameter(FSource.asParams('source'));{oz.5c}
     for v1 in FSuggestionList do
@@ -3368,17 +3368,17 @@ begin
     if (FActivityInstance <> '') then
       result.addParameter('activityInstance', TFHIRString.create(FActivityInstance));{oz.5f}
     if (FFhirServer <> '') then
-      result.addParameter('fhirServer', TFHIRString.create(FFhirServer));{oz.5f}
+      result.addParameter('fhirServer', TFHIRUri.create(FFhirServer));{oz.5f}
     if (FOauth <> nil) then
       result.addParameter(FOauth.asParams('oauth'));{oz.5c}
     if (FRedirect <> '') then
-      result.addParameter('redirect', TFHIRString.create(FRedirect));{oz.5f}
+      result.addParameter('redirect', TFHIRUri.create(FRedirect));{oz.5f}
     if (FUser <> '') then
       result.addParameter('user', TFHIRString.create(FUser));{oz.5f}
     if (FPatient <> '') then
-      result.addParameter('patient', TFHIRString.create(FPatient));{oz.5f}
+      result.addParameter('patient', TFHIRId.create(FPatient));{oz.5f}
     if (FEncounter <> '') then
-      result.addParameter('encounter', TFHIRString.create(FEncounter));{oz.5f}
+      result.addParameter('encounter', TFHIRId.create(FEncounter));{oz.5f}
     for v1 in FContextList do
       result.AddParameter('context', v1.Link);
     if (FPreFetchData <> nil) then
@@ -3870,7 +3870,7 @@ begin
   try
     result.name := name;
     if (FElement <> '') then
-      result.addParameter('element', TFHIRString.create(FElement));{oz.5f}
+      result.addParameter('element', TFHIRUri.create(FElement));{oz.5f}
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);{oz.5d}
     writeExtensions(result);
@@ -3937,21 +3937,21 @@ begin
   result := TFHIRParameters.create;
   try
     if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRString.create(FSystem));{oz.5f}
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FSource <> '') then
-      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
+      result.addParameter('source', TFHIRUri.create(FSource));{oz.5f}
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);{oz.5d}
     if (FCodeableConcept <> nil) then
       result.addParameter('codeableConcept', FCodeableConcept.Link);{oz.5d}
     if (FTarget <> '') then
-      result.addParameter('target', TFHIRString.create(FTarget));{oz.5f}
+      result.addParameter('target', TFHIRUri.create(FTarget));{oz.5f}
     if (FTargetsystem <> '') then
-      result.addParameter('targetsystem', TFHIRString.create(FTargetsystem));{oz.5f}
+      result.addParameter('targetsystem', TFHIRUri.create(FTargetsystem));{oz.5f}
     for v1 in FDependencyList do
       result.AddParameter(v1.asParams('dependency'));
       result.addParameter('reverse', TFHIRBoolean.create(FReverse));{oz.5f}
@@ -4004,7 +4004,7 @@ begin
   try
     result.name := name;
     if (FElement <> '') then
-      result.addParameter('element', TFHIRString.create(FElement));{oz.5f}
+      result.addParameter('element', TFHIRUri.create(FElement));{oz.5f}
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);{oz.5d}
     writeExtensions(result);
@@ -4055,13 +4055,13 @@ begin
   try
     result.name := name;
     if (FEquivalence <> '') then
-      result.addParameter('equivalence', TFHIRString.create(FEquivalence));{oz.5f}
+      result.addParameter('equivalence', TFHIRCode.create(FEquivalence));{oz.5f}
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);{oz.5d}
     for v1 in FProductList do
       result.AddParameter(v1.asParams('product'));
     if (FSource <> '') then
-      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
+      result.addParameter('source', TFHIRUri.create(FSource));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -4170,7 +4170,7 @@ begin
     for v1 in FConceptList do
       result.AddParameter('concept', v1.Link);
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
+      result.addParameter('version', TFHIRId.create(FVersion));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -4265,7 +4265,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FServer <> '') then
-      result.addParameter('server', TFHIRString.create(FServer));{oz.5f}
+      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
     for v1 in FResourceList do
       result.AddParameter('resource', TFhirCode.create(v1));
     writeExtensions(result);
@@ -4363,9 +4363,9 @@ begin
   result := TFHIRParameters.create;
   try
     if (FServer <> '') then
-      result.addParameter('server', TFHIRString.create(FServer));{oz.5f}
+      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
     if (FClient <> '') then
-      result.addParameter('client', TFHIRString.create(FClient));{oz.5f}
+      result.addParameter('client', TFHIRUri.create(FClient));{oz.5f}
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);{oz.5a}
     writeExtensions(result);
@@ -4487,11 +4487,11 @@ begin
   result := TFHIRParameters.create;
   try
     if (FLeft <> '') then
-      result.addParameter('left', TFHIRString.create(FLeft));{oz.5f}
+      result.addParameter('left', TFHIRUri.create(FLeft));{oz.5f}
     if (FRight <> '') then
-      result.addParameter('right', TFHIRString.create(FRight));{oz.5f}
+      result.addParameter('right', TFHIRUri.create(FRight));{oz.5f}
     if (FMode <> '') then
-      result.addParameter('mode', TFHIRString.create(FMode));{oz.5f}
+      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -4696,7 +4696,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FRequestId <> '') then
-      result.addParameter('requestId', TFHIRString.create(FRequestId));{oz.5f}
+      result.addParameter('requestId', TFHIRId.create(FRequestId));{oz.5f}
     if (FEvaluateAtDateTime <> nil) then
       result.addParameter('evaluateAtDateTime', TFHIRDateTime.create(FEvaluateAtDateTime));{oz.5e}
     if (FInputParameters <> nil) then
@@ -4898,9 +4898,9 @@ begin
   result := TFHIRParameters.create;
   try
     if (FPatient <> '') then
-      result.addParameter('patient', TFHIRString.create(FPatient));{oz.5f}
+      result.addParameter('patient', TFHIRId.create(FPatient));{oz.5f}
     if (FName <> '') then
-      result.addParameter('name', TFHIRString.create(FName));{oz.5f}
+      result.addParameter('name', TFHIRCode.create(FName));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -5030,7 +5030,7 @@ begin
     if (FMeasure <> nil) then
       result.addParameter('measure', FMeasure.Link);{oz.5d}
     if (FReportType <> '') then
-      result.addParameter('reportType', TFHIRString.create(FReportType));{oz.5f}
+      result.addParameter('reportType', TFHIRCode.create(FReportType));{oz.5f}
     if (FPatient <> nil) then
       result.addParameter('patient', FPatient.Link);{oz.5d}
     if (FPractitioner <> nil) then
@@ -5135,7 +5135,7 @@ begin
       result.addParameter('content', FContent.Link);{oz.5a}
       result.addParameter('async', TFHIRBoolean.create(FAsync));{oz.5f}
     if (FResponseUrl <> '') then
-      result.addParameter('response-url', TFHIRString.create(FResponseUrl));{oz.5f}
+      result.addParameter('response-url', TFHIRUri.create(FResponseUrl));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -5234,11 +5234,11 @@ begin
   result := TFHIRParameters.create;
   try
     if (FPatient <> '') then
-      result.addParameter('patient', TFHIRString.create(FPatient));{oz.5f}
+      result.addParameter('patient', TFHIRId.create(FPatient));{oz.5f}
     if (FCode <> '') then
       result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
     if (FDuration <> '') then
-      result.addParameter('duration', TFHIRString.create(FDuration));{oz.5f}
+      result.addParameter('duration', TFHIRDecimal.create(FDuration));{oz.5f}
     for v1 in FParamsList do
       result.AddParameter('params', TFhirCode.create(v1));
     writeExtensions(result);
@@ -5377,7 +5377,7 @@ begin
     if (FUserid <> '') then
       result.addParameter('userid', TFHIRString.create(FUserid));{oz.5f}
     if (FCount <> '') then
-      result.addParameter('count', TFHIRString.create(FCount));{oz.5f}
+      result.addParameter('count', TFHIRInteger.create(FCount));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -5498,7 +5498,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FQuestionnaire <> nil) then
       result.addParameter('questionnaire', FQuestionnaire.Link);{oz.5a}
     if (FQuestionnaireRef <> nil) then
@@ -5630,7 +5630,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FQuestionnaire <> nil) then
       result.addParameter('questionnaire', FQuestionnaire.Link);{oz.5a}
     if (FQuestionnaireRef <> nil) then
@@ -5685,7 +5685,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FForm <> '') then
-      result.addParameter('form', TFHIRString.create(FForm));{oz.5f}
+      result.addParameter('form', TFHIRUri.create(FForm));{oz.5f}
     if (FIssues <> nil) then
       result.addParameter('issues', FIssues.Link);{oz.5a}
     writeExtensions(result);
@@ -5754,7 +5754,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FQuestionnaire <> nil) then
       result.addParameter('questionnaire', FQuestionnaire.Link);{oz.5a}
     if (FQuestionnaireRef <> nil) then
@@ -5863,11 +5863,11 @@ begin
   result := TFHIRParameters.create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRString.create(FIdentifier));{oz.5f}
+      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FProfile <> '') then
       result.addParameter('profile', TFHIRString.create(FProfile));{oz.5f}
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRString.create(FUrl));{oz.5f}
+      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
       result.addParameter('supportedOnly', TFHIRBoolean.create(FSupportedOnly));{oz.5f}
     writeExtensions(result);
     result.link;
@@ -5962,7 +5962,7 @@ begin
   result := TFHIRParameters.create;
   try
     if (FSource <> '') then
-      result.addParameter('source', TFHIRString.create(FSource));{oz.5f}
+      result.addParameter('source', TFHIRUri.create(FSource));{oz.5f}
     if (FContent <> nil) then
       result.addParameter('content', FContent.Link);{oz.5a}
     writeExtensions(result);

@@ -369,7 +369,7 @@ public class DelphiGenerator {
             params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+".create(F"+Utilities.capitalize(pn)+"));{oz.5e}\r\n");
             create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType())+").value;\r\n");
           } else {
-            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+pt+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
+            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
               screate.append("  F"+Utilities.capitalize(pn)+" := StrToBool(params.getVar('"+p.getName()+"'));\r\n");

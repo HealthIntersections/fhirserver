@@ -127,7 +127,7 @@ Type
     FSCIMServer : TSCIMServer;
     FTotalCount : cardinal;
     FRestCount : cardinal;
-    FStartTime : integer;
+    FStartTime : cardinal;
     FTotalTime : cardinal;
     FRestTime : cardinal;
 

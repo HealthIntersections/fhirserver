@@ -47,6 +47,8 @@ Uses
   FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
 Type
+  EDiscriminatorException = class (Exception);
+
   TNodeStack = class(TAdvObject)
   private
     parent: TNodeStack;
@@ -354,6 +356,7 @@ begin
   logicalPaths := TStringList.Create;
   self.element := element;
   literalPath := element.Name;
+  logicalPaths.add(literalPath);
 end;
 
 destructor TNodeStack.Destroy;
@@ -1927,7 +1930,7 @@ begin
       end;
       inc(index);
     end;
-    raise Exception.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
+    raise EDiscriminatorException.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
   finally
     childDefinitions.Free;
   end;

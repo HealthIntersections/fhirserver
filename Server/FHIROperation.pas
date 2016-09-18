@@ -336,6 +336,7 @@ type
     function formalURL : String; override;
   end;
 
+{$IFDEF FHIR3}
   TFhirSubsumesOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -347,6 +348,7 @@ type
     procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+{$ENDIF}
 
   TFhirValueSetValidationOperation = class (TFHIROperation)
   protected
@@ -2120,7 +2122,7 @@ begin
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
 
-          base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/_search?';
+          base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
           if response.Format <> ffUnspecified then
             base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
           bundle.link_List.AddRelRef('self', base+link);
@@ -2640,6 +2642,7 @@ begin
     begin
       ctxt := TFHIRValidatorContext.Create;
       try
+        ctxt.IsAnyExtensionsAllowed := true;
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
         FRepository.validator.validate(ctxt, request.Source, request.PostFormat, nil);
@@ -2652,6 +2655,7 @@ begin
     begin
       ctxt := TFHIRValidatorContext.Create;
       try
+        ctxt.IsAnyExtensionsAllowed := true;
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
         FRepository.validator.validate(ctxt, request.Resource, nil);
@@ -5899,6 +5903,7 @@ begin
         ctxt := TFHIRValidatorContext.Create;
         try
           ctxt.ResourceIdRule := risOptional;
+          ctxt.IsAnyExtensionsAllowed := true;
           ctxt.OperationDescription := 'Produce Questionnaire';
           manager.FRepository.validator.validate(ctxt, response.Resource);
           op := manager.FRepository.validator.describe(ctxt);
@@ -6208,6 +6213,7 @@ begin
   result := false;
 end;
 
+{$IFDEF FHIR3}
 { TFhirSubsumesSystemOperation }
 
 function TFhirSubsumesOperation.Name: String;
@@ -6315,6 +6321,7 @@ function TFhirSubsumesOperation.isWrite: boolean;
 begin
   result := false;
 end;
+{$ENDIF}
 
 { TFhirValidationOperation }
 
@@ -6394,6 +6401,7 @@ begin
     ctxt := TFHIRValidatorContext.Create;
     try
       ctxt.ResourceIdRule := risOptional;
+      ctxt.IsAnyExtensionsAllowed := true;
       ctxt.OperationDescription := opDesc;
       if (request.Source <> nil) and not (request.Resource is TFhirParameters) then
       begin

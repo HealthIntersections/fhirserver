@@ -186,7 +186,7 @@ Type
     FBackgroundThreadStatus : String;
 
     procedure UpdateConceptMaps;
-    procedure BuildStems(cs : TFhirCodeSystem);
+    procedure BuildStems(cs : TFhirValueSetCodeSystem);
 
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
@@ -704,7 +704,7 @@ end;
 
 { TTerminologyServerStore }
 
-procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystem);
+procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
   function stems(c : TFhirCodeSystemConcept) : TConceptAdornment;
   var
     s, t : String;
@@ -1177,7 +1177,7 @@ begin
       begin
         FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
         FCodeSystemsByid.AddOrSetValue(vs.id, vs.Link);
-        BuildStems(vs.codeSystem.conceptList);
+        BuildStems(vs.codeSystem);
       end;
       {$ENDIF}
       UpdateConceptMaps;
@@ -1315,12 +1315,32 @@ begin
   assert(FLock.LockedToMe);
   for cm in FConceptMapsById.values do
   begin
-    cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
-    if (cm.Source = nil) then
-      cm.Source := getValueSetById(TFhirReference(cm.Resource.source).reference);
-    cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-    if (cm.Target = nil) then
-      cm.Target := getValueSetById(TFhirReference(cm.Resource.target).reference);
+    if cm.Resource.source = nil then
+      cm.source := nil
+    else
+    begin
+      if cm.Resource.source is TFHIRUri then
+        cm.Source := getValueSetByUrl(TFhirUri(cm.Resource.source).value)
+      else
+      begin
+        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
+        if (cm.Source = nil) then
+          cm.Source := getValueSetById(TFhirReference(cm.Resource.source).reference);
+      end;
+    end;
+    if cm.Resource.target = nil then
+      cm.Target := nil
+    else
+    begin
+      if cm.Resource.target is TFHIRUri then
+        cm.Target := getValueSetByUrl(TFhirUri(cm.Resource.target).value)
+      else
+      begin
+        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        if (cm.Target = nil) then
+          cm.Target := getValueSetById(TFhirReference(cm.Resource.target).reference);
+      end;
+    end;
   end;
 end;
 
@@ -1685,7 +1705,8 @@ constructor TFhirCodeSystemProvider.create(vs: TFhirCodeSystem);
 begin
   Create;
   FVs := vs;
-  Fmap := TCodeSystemAdornment(FVs.Tag).FMap;
+  if (FVs.tag <> nil) then
+    Fmap := TCodeSystemAdornment(FVs.Tag).FMap;
 end;
 
 function TFhirCodeSystemProvider.Definition(context: TCodeSystemProviderContext): string;
@@ -1971,7 +1992,9 @@ function TFhirCodeSystemProvider.LocateCode(code : String) : TFhirCodeSystemConc
     end;
   end;
 begin
-  if (FMap <> nil) then
+  if (FMap = nil) then
+    result := locCode(FVs.conceptList)
+  else if (FMap.ContainsKey(code)) then
     result := FMap[code]
   else
     result := locCode(FVs.conceptList);

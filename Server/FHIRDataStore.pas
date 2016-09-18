@@ -919,13 +919,18 @@ function TFHIRDataStore.getTypeForKey(key: integer): String;
 var
   a: TFHIRResourceConfig;
 begin
-  result := '';
-  for a in FResConfig.Values do
-    if a.key = key then
-    begin
-      result := a.Name;
-      exit;
-    end;
+  FLock.Lock('getTypeForKey');
+  try
+    result := '';
+    for a in FResConfig.Values do
+      if a.key = key then
+      begin
+        result := a.Name;
+        exit;
+      end;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 function TFHIRDataStore.isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean;
@@ -1436,7 +1441,12 @@ end;
 
 function TFHIRDataStore.ResourceTypeKeyForName(name: String): integer;
 begin
-  result := FResConfig[name].key;
+  FLock.Lock('ResourceTypeKeyForName');
+  try
+    result := FResConfig[name].key;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TFHIRDataStore.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TAdvBuffer; b : TStringBuilder);

@@ -3353,18 +3353,26 @@ var
   p : TFHIRMMParserBase;
   element : TFHIRMMElement;
 begin
-  p := TFHIRMMManager.makeParser(context, format);
+  if (profiles = nil) then
+    profiles := TValidationProfileSet.create
+  else
+    profiles.link;
   try
-    p.setupValidation(fvpEVERYTHING, ctxt.FErrors.Link);
-    element := p.parse(source);
+    p := TFHIRMMManager.makeParser(context, format);
     try
-      if (element <> nil) then
-        validate(ctxt, element, profiles);
+      p.setupValidation(fvpEVERYTHING, ctxt.FErrors.Link);
+      element := p.parse(source);
+      try
+        if (element <> nil) then
+          validate(ctxt, element, profiles);
+      finally
+        element.Free;
+      end;
     finally
-      element.Free;
+      p.Free;
     end;
   finally
-    p.Free;
+    profiles.free;
   end;
 end;
 

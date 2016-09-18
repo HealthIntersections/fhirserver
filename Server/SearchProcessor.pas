@@ -159,7 +159,10 @@ var
   ts : TStringList;
 begin
   if typekey = 0 then
-    filter := 'Ids.MasterResourceKey is null'
+  begin
+    filter := 'Ids.MasterResourceKey is null';
+    type_ := '*';
+  end
   else
     filter := 'Ids.MasterResourceKey is null and Ids.ResourceTypeKey = '+inttostr(typekey);
 
