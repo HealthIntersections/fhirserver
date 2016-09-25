@@ -105,6 +105,8 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <Debugger_RunParams>-debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot;</Debugger_RunParams>
+        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_3\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -116,7 +118,6 @@
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <Icon_MainIcon>FHIRServer3_Icon.ico</Icon_MainIcon>
-        <Debugger_RunParams>-xremount -xnoload -xtxdirect -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\sct-au\20160430&quot; -sver &quot;http://snomed.info/sct/32506021000036107/version/20160430&quot; -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.56&quot; -lver 2.56 -load C:\work\fhirserver\install\local-load.ini -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
     </PropertyGroup>
@@ -449,7 +450,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -763,16 +773,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

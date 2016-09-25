@@ -143,6 +143,10 @@ begin
     table := result.text.div_.AddTag('table').setAttribute('class', 'grid');
   end;
 
+  result.status := source.status;
+  if result.status = ConformanceResourceStatusNull then
+    result.status := ConformanceResourceStatusDraft;
+
   if (result.expansion <> nil) then
     exit; // just return the expansion
 

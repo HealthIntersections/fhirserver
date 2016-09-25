@@ -1,17 +1,13 @@
-; todo: spellchecking
-; todo: test v1 upgrade. Test evaluation certificate
-; todo: mysql license
-
 [Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.77
+AppVerName=1.0.81
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.77
+OutputBaseFilename=fhirserver3-1.0.81
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -46,7 +42,7 @@ VersionInfoVersion=0.0.0.1
 
 ; dialog support
 LicenseFile=C:\work\fhirserver\license
-InfoBeforeFile=C:\work\fhirserver\install\readme.txt
+InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 
 ; directories
 ;  {app}  - executable, ini file
@@ -66,14 +62,20 @@ Name: "r3";   Description: "STU3 Components"; Types: fhir3
 [Tasks]
 ; Core related tasks
 Name: svcInst;   Description: "Install FHIR Server as a Service"
+Name: svcInst\start;   Description: "Start FHIR Server after Installation"
 Name: firewall;  Description: "Allow FHIR Server through the Firewall"
+Name: sct; Description: "Import SNOMED CT (Requires RF2 Snapshot, ~1hr)"; Flags: unchecked
+Name: db; Description: "Initialize Data Base"
+Name: db\pop; Description: "Populate Data Base (~30min)"
 
 [Files]
+; installer support
+Source: "C:\work\fhirserver\install\installer.dll";               Flags: dontcopy;
 
 ; root documentation files
 Source: "C:\work\fhirserver\license";                                 DestDir: "{app}";            Flags: ignoreversion;      DestName: "license.txt";
 Source: "C:\work\fhirserver\readme.md";                               DestDir: "{app}";            Flags: ignoreversion;      DestName: "readme.txt";
-Source: "C:\work\fhirserver\install\readme.txt";                      DestDir: "{app}";            Flags: ignoreversion;      DestName: "post-install.txt";
+Source: "C:\work\fhirserver\install\readme.rtf";                      DestDir: "{app}";            Flags: ignoreversion;      DestName: "documentation.rtf";
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable files
@@ -88,9 +90,9 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Spec & IGs
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";              DestDir: "{app}\spec";                          Components: r2; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";   DestDir: "{app}\spec";                          Components: r2; Flags: ignoreversion  
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";            DestDir: {app}\web;                             Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";              DestDir: "{app}\load";                          Components: r2; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";   DestDir: "{app}"; DestName: validation.json.zip;   Components: r2; Flags: ignoreversion  
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";            DestDir: {app};                             Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";               DestDir: {app}\load; DestName: fhir.json.zip;   Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip";    DestDir: {app}\load; DestName: daf.json.zip;    Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip";    DestDir: {app}\load; DestName: sdc.json.zip;    Components: r3; Flags: ignoreversion
@@ -112,7 +114,7 @@ Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    Des
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
 Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc.cache"
-Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "cache";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
+Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
 
@@ -124,7 +126,40 @@ Name: "{group}\Ini File";           Filename: "{app}\fhirserver.ini";
 const
   MB_ICONINFORMATION = $40;
 
+var
+  ServicePage : TInputQueryWizardPage;
+  cbxStartup : TNewComboBox;
+
+  ConnectionPage : TInputQueryWizardPage;
+
+  WebPage : TWizardPage;
+  webHostName : TNewEdit;
+  webOpenPort : TNewEdit;
+  webOpenPath : TNewEdit;
+  webSecurePort : TNewEdit;
+  webSecurePath : TNewEdit;
+  certFile : TNewEdit;
+  caCertFile : TNewEdit;
+  certPWord : TNewEdit;
+  webpop : boolean;
+
+  AdminPage : TInputQueryWizardPage;
+  SctPage : TInputDirWizardPage;
+  cbxModule : TNewComboBox;
+  sctVersion : TNewEdit;
+  ConfigPage : TInputOptionWizardPage;
+
+  SctInstallPage : TOutputProgressWizardPage;
+  LoadInstallPage : TOutputProgressWizardPage;
+
 // ------ Interfaces ---------------------------------------------------------------------------------
+type
+  TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
+
+Function MyDllGetString(name : pansichar) : pansichar; external 'MyDllGetString@files:installer.dll stdcall setuponly';
+Function MyDllCheckDatabase(Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
+Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallSnomed@files:installer.dll stdcall setuponly';
+Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
 
 type
   _SERVICE_STATUS = record
@@ -340,11 +375,11 @@ begin
   try
     SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
     if SCMHandle = 0 then
-      RaiseException('OpenSCManager@SimpleCreateService: ' + AServiceName + ' ' +SysErrorMessage(DLLGetLastError));
+      RaiseException('OpenSCManager@SimpleUpdateService: ' + AServiceName + ' ' +SysErrorMessage(DLLGetLastError));
     try
       ServiceHandle := OpenService(SCMHandle, AServiceName, SERVICE_ALL_ACCESS);
       if ServiceHandle = 0 then
-        RaiseException('OpenService@SimpleStartService: ' + AServiceName + ' ' + SysErrorMessage(DLLGetLastError));
+        RaiseException('OpenService@SimpleUpdateService: ' + AServiceName + ' ' + SysErrorMessage(DLLGetLastError));
       if QueryServiceConfig(ServiceHandle, lpServiceConfig, 294, pcbBytesNeeded) Then
         result := ChangeServiceConfig(ServiceHandle, lpServiceConfig.dwServiceType, AStartType, lpServiceConfig.dwErrorControl, AFileName,
                       '', 0, '', AUser, APassword, '') <> 0;
@@ -762,10 +797,6 @@ end;
 
 // ------ Wizard -------------------------------------------------------------------------------------
 
-var
-  ServicePage : TInputQueryWizardPage;
-  cbxStartup : TNewComboBox;
-
 
 Procedure LookupUser(Sender : TObject);
 begin
@@ -825,11 +856,11 @@ Begin
 
   lbl := TLabel.Create(ServicePage);
   lbl.Caption := 'Start Up Type:';
-  lbl.Top := 130;
+  lbl.Top := 190;
   lbl.Parent := ServicePage.Surface;
 
   cbxStartup := TNewComboBox.Create(ServicePage);
-  cbxStartup.Top := 145;
+  cbxStartup.Top := 216;
   cbxStartup.Width := ServicePage.SurfaceWidth;
   cbxStartup.Parent := ServicePage.Surface;
   cbxStartup.Style := csDropDownList;
@@ -850,12 +881,25 @@ Begin
 End;
 
 
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  if (PageID = SctPage.Id) Then
+    result := not IsTaskSelected('sct')
+  else if (PageID = AdminPage.Id) or (PageID = ConfigPage.Id) Then
+    result := not IsTaskSelected('db')
+  else
+    result := false;
+end;
+
+
 function NextButtonClick(CurPageID: Integer): Boolean;
 var
   s : String;
+  p : integer;
 begin
   if (CurpageID = ServicePage.Id) Then
   Begin
+    // check service page entries
     if (ServicePage.Values[0] <> '') or (ServicePage.Values[1] <> '') Then
     Begin
       if not CheckLogin Then
@@ -866,7 +910,153 @@ begin
     End
     Else
       result := true;
+    // populate the next page
+    if (not webpop) then
+    begin
+      ConnectionPage.values[0] := GetIniString('database', 'server', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      ConnectionPage.values[1] := GetIniString('database', 'database', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      ConnectionPage.values[2] := GetIniString('database', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      ConnectionPage.values[3] := GetIniString('database', 'password', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webHostName.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webOpenPort.Text := GetIniString('web', 'base', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webOpenPath.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webSecurePort.Text := GetIniString('web', 'https', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webSecurePath.Text := GetIniString('web', 'secure', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      certFile.Text := GetIniString('web', 'certname', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      caCertFile.Text := GetIniString('web', 'cacertname', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      certPWord.Text := GetIniString('web', 'certpword', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      AdminPage.Values[0] := GetIniString('admin', 'email', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      AdminPage.Values[1] := GetIniString('admin', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webpop := true;
+    end;
   End
+  Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
+  begin
+    if IsComponentSelected('r3') then
+      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.7.0')
+    else
+      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
+    result := s = '';
+    if not result then
+      if (s = 'dbi') then
+      begin
+        if (isTaskSelected('db')) then
+          result := true
+        else
+          MsgBox('The database must be initialized because the FHIRServer tables were not found. Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
+      end
+      else if (s = 'dbv') then
+      begin
+        if (isTaskSelected('db')) then
+          result := true
+        else
+          MsgBox('The database must be reinitialized because the FHIR version has changed. Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
+      end
+      else
+        MsgBox(s, mbError, MB_OK); 
+  end
+  Else if (WebPage <> Nil) And (CurPageID = WebPage.ID) then
+  begin
+    result := false;
+    if (webHostName.Text = '') then
+    begin
+      MsgBox('A web host name must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (webOpenPort.Text <> '') then
+    begin
+      p := StrToIntDef(webOpenPort.Text, 0);
+      if (p <= 0) or (p > 32760) then
+      begin
+        MsgBox('Insecure Port is illegal', mbError, MB_OK);
+        exit;
+      end;
+      if (webOpenPath.Text = '') then
+      begin
+        MsgBox('Insecure Path must be provided', mbError, MB_OK);
+        exit;
+      end;
+     end
+    else if (webSecurePort.Text <> '') then
+    begin
+      p := StrToIntDef(webSecurePort.Text, 0);
+      if (p <= 0) or (p > 32760) then
+      begin
+        MsgBox('Secure Port is illegal', mbError, MB_OK);
+        exit;
+      end;
+      if (webSecurePath.Text = '') then
+      begin
+        MsgBox('Secure Path must be provided', mbError, MB_OK);
+        exit;
+      end;
+      if (certFile.Text = '') then
+      begin
+        MsgBox('A certificate file is required. If you need to generate one, you can use openSSL', mbError, MB_OK);
+        exit;
+      end;
+      if (caCertFile.Text = '') then
+      begin
+        MsgBox('A CA certificate file is required', mbError, MB_OK);
+        exit;
+      end;
+      if (certPWord.Text = '') then
+      begin
+        MsgBox('A certificate password is required', mbError, MB_OK);
+        exit;
+      end;
+    end
+    else
+    begin
+      MsgBox('Must provide either a secure or an insecure port', mbError, MB_OK);
+      exit;
+    end;
+    Result := True;
+  end
+  Else if (SctPage <> Nil) And (CurPageID = SctPage.ID) then
+  begin
+    Result := true;
+    if not DirExists(SctPage.Values[0]) then
+    begin
+      Result := false;
+      MsgBox('SNOMED CT source not found', mbError, MB_OK);
+    end;
+    if (sctVersion.Text = '') or (length(sctVersion.Text) <> 8) or (StrToIntDef(sctVersion.Text, 0) = 0) then
+    begin
+      Result := false;
+      MsgBox('SNOMED CT version required, with format YYYYMMDD', mbError, MB_OK);
+    end;
+  end
+  Else if (AdminPage <> Nil) And (CurPageID = AdminPage.ID) then
+  begin
+    result := false;
+    if (AdminPage.Values[0] = '') then
+    begin
+      MsgBox('A email address must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[1] = '') then
+    begin
+      MsgBox('A username must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[2] = '') then
+    begin
+      MsgBox('A password must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[3] = '') then
+    begin
+      MsgBox('A confirmation password must be provided', mbError, MB_OK);
+      exit;
+    end;
+    if (AdminPage.Values[2] <> AdminPage.Values[3]) then
+    begin
+      MsgBox('Passwords do not match', mbError, MB_OK);
+      exit;
+    end;
+    Result := True;
+  end
   Else
     Result := True;
 end;
@@ -879,13 +1069,236 @@ Begin
   result := ((ver.ProductType = VER_NT_DOMAIN_CONTROLLER) or (ver.ProductType = VER_NT_SERVER)) and (ver.Major >= 6);
 End;
 
-procedure InitializeWizard();
+// ----- Snomed CT Config  -------------------------------------------------------------------
+
+Procedure InstallSctPage;
+var
+  lbl : TLabel;
+begin
+  SctPage := CreateInputDirPage(wpSelectTasks, 'Load Snomed CT', 'Provide SNOMED CT Details', 'Select a directory that contains the RF2 snapshot', false, '');  
+  SctPage.Add('');
+
+  lbl := TLabel.Create(SctPage);
+  lbl.Caption := 'Module:';
+  lbl.Top := 80;
+  lbl.Parent := SctPage.Surface;
+
+  cbxModule := TNewComboBox.Create(SctPage);
+  cbxModule.Top := 110;
+  cbxModule.Width := SctPage.SurfaceWidth;
+  cbxModule.Parent := SctPage.Surface;
+  cbxModule.Style := csDropDownList;
+  cbxModule.Items.Add('International');
+  cbxModule.Items.Add('US');
+  cbxModule.Items.Add('Australia');
+  cbxModule.Items.Add('Spanish');
+  cbxModule.Items.Add('Denmark');
+  cbxModule.Items.Add('Netherlands');
+  cbxModule.Items.Add('Sweden');
+  cbxModule.Items.Add('UK');
+  cbxModule.ItemIndex := 0;
+
+  lbl := TLabel.Create(SctPage);
+  lbl.Caption := 'Version (YYYYMMDD):';
+  lbl.Top := 180;
+  lbl.Parent := SctPage.Surface;
+  sctVersion := TNewEdit.Create(SctPage);
+  sctVersion.Parent := SctPage.Surface;
+  sctVersion.Width := SctPage.SurfaceWidth;
+  sctVersion.Top := 210;
+  sctVersion.Left := 0;
+  sctVersion.Text := '';
+  
+  lbl := TLabel.Create(SctPage);
+  lbl.Caption := 'Importing generally takes ~1hr. If loading fails, you can continue the install, and load SNOMED CT later. Also, you can load additional modules later.';
+  lbl.Top := 260;
+  lbl.Parent := SctPage.Surface;
+end;
+
+// ----- Web Server Config  -------------------------------------------------------------------
+
+Procedure WebServerPage;
+var
+  lbl : TLabel;
 Begin
-  CreateServiceUserPage;
+  WebPage := CreateCustomPage(wpSelectTasks, 'Web Server Configuration', 'Configure the web server');
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Host Name (FQDN):';
+  lbl.Top := 4;
+  lbl.Parent := WebPage.Surface;
+  webHostName := TNewEdit.Create(WebPage);
+  webHostName.Parent := WebPage.Surface;
+  webHostName.Width := 450;
+  webHostName.Top := 0;
+  webHostName.Left := 160;
+  webHostName.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'HTTP (unsecure access)';
+  lbl.Top := 50;
+  lbl.Left := 0;
+  lbl.Font.Style := [fsBold];
+  lbl.Parent := WebPage.Surface;
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Port (def: 80)';
+  lbl.Top := 78;
+  lbl.Left := 10;
+  lbl.Parent := WebPage.Surface;
+  webOpenPort := TNewEdit.Create(WebPage);
+  webOpenPort.Parent := WebPage.Surface;
+  webOpenPort.Width := 60;
+  webOpenPort.Top := 74;
+  webOpenPort.Left := 120;
+  webOpenPort.Text := '80';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Path (e.g. /open)';
+  lbl.Top := 78;
+  lbl.Left := 200;
+  lbl.Parent := WebPage.Surface;
+  webOpenPath := TNewEdit.Create(WebPage);
+  webOpenPath.Parent := WebPage.Surface;
+  webOpenPath.Width := 280;
+  webOpenPath.Top := 74;
+  webOpenPath.Left := 330;
+  webOpenPath.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'HTTPS (SSL access)';
+  lbl.Top := 130;
+  lbl.Left := 00;
+  lbl.Font.Style := [fsBold];
+  lbl.Parent := WebPage.Surface;
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Port (def: 80)';
+  lbl.Top := 158;
+  lbl.Left := 10;
+  lbl.Parent := WebPage.Surface;
+  webSecurePort := TNewEdit.Create(WebPage);
+  webSecurePort.Parent := WebPage.Surface;
+  webSecurePort.Width := 60;
+  webSecurePort.Top := 154;
+  webSecurePort.Left := 120;
+  webSecurePort.Text := '443';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Path (e.g. /secure)';
+  lbl.Top := 158;
+  lbl.Left := 200;
+  lbl.Parent := WebPage.Surface;
+  webSecurePath := TNewEdit.Create(WebPage);
+  webSecurePath.Parent := WebPage.Surface;
+  webSecurePath.Width := 280;
+  webSecurePath.Top := 154;
+  webSecurePath.Left := 330;
+  webSecurePath.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Cert File';
+  lbl.Top := 200;
+  lbl.Left := 10;
+  lbl.Parent := WebPage.Surface;
+
+  certFile := TNewEdit.Create(WebPage);
+  certFile.Parent := WebPage.Surface;
+  certFile.Width := 480;
+  certFile.Top := 196;
+  certFile.Left := 130;
+  certFile.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'CA Cert File';
+  lbl.Top := 230;
+  lbl.Left := 10;
+  lbl.Parent := WebPage.Surface;
+  caCertFile := TNewEdit.Create(WebPage);
+  caCertFile.Parent := WebPage.Surface;
+  caCertFile.Width := 480;
+  caCertFile.Top := 226;
+  caCertFile.Left := 130;
+  caCertFile.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Cert Password';
+  lbl.Top := 260;
+  lbl.Left := 10;
+  lbl.Parent := WebPage.Surface;
+  certPWord := TNewEdit.Create(WebPage);
+  certPWord.Parent := WebPage.Surface;
+  certPWord.Width := 480;
+  certPWord.Top := 256;
+  certPWord.Left := 130;
+  certPWord.Text := '';
+
+  lbl := TLabel.Create(WebPage);
+  lbl.Caption := 'Use openSSL to generate the certificates and get them counter signed'
+  lbl.Top := 305;
+  lbl.Left := 0;
+  lbl.Width := WebPage.Surface.Width;
+  lbl.Autosize := false;
+  lbl.WordWrap := true;
+  lbl.Height := 60;
+  lbl.Parent := WebPage.Surface;
 End;
 
+// ----- Database -----------------------------------------------------------------------------
+
+Procedure CreateConnectionPage;
+var
+  lbl : TLabel;
+  btn : TButton;
+  s : string;
+  sl : TStringList;
+  i : integer;
+Begin
+  ConnectionPage := CreateInputQueryPage(wpSelectTasks, 'Database Location', 'Select the location of the SQL Server database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPage.add('Server', false);
+  ConnectionPage.add('Database', false);
+  ConnectionPage.add('UserName', false);
+  ConnectionPage.add('Password', true);
+end;
+
+Procedure CreateAdminPage;
+Begin
+  AdminPage := CreateInputQueryPage(wpSelectTasks, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
+  AdminPage.Add('Email:', False);
+  AdminPage.Add('Username', False);
+  AdminPage.Add('Password', True);
+  AdminPage.Add('Password Confirmation', True);
+end;
+
+Procedure CreateConfigPage;
+Begin
+  ConfigPage := CreateInputOptionPage(wpSelectTasks, 'Configuration', 'Default Security Configuration', 
+    'Choose the Basic Security Profile (or leave it as ''closed'' and configure directly after install)', true, false);
+  ConfigPage.Add('Open Access (any user, including anonymous, can perform any operation)');
+  ConfigPage.Add('Closed Access (all users must be authenticated)');
+  ConfigPage.Add('Read Only (anonymous users can only read/search)');
+  ConfigPage.Add('Terminology Server (terminology resources only, any user can read)');
+  ConfigPage.values[0] := true;
+end;
+
+Procedure CreatePostInstallPage;
+Begin
+  SctInstallPage := CreateOutputProgressPage('SNOMED CT', 'Load SNOMED CT (~1hr)');
+  LoadInstallPage := CreateOutputProgressPage('Initialize Database', '');
+End;
 
 // ------ Installation Logic -------------------------------------------------------------------------
+
+procedure InitializeWizard();
+Begin
+  CreateConfigPage;
+  CreateAdminPage;
+  CreateConnectionPage;
+  InstallSctPage;
+  WebServerPage;
+  CreateServiceUserPage;
+
+  CreatePostInstallPage;
+End;
 
 Function DetermineStartMode : Integer;
 Begin
@@ -905,22 +1318,177 @@ begin
     result := 0;
 end;
 
+type
+  TMyGUID = record
+    D1: LongWord;
+    D2: Word;
+    D3: Word;
+    D4: array[0..7] of Byte;
+  end;
+
+function CoCreateGuid(var Guid:TMyGuid):integer;
+ external 'CoCreateGuid@ole32.dll stdcall';
+
+function inttohex(l:longword; digits:integer):string;
+var hexchars:string;
+begin
+ hexchars:='0123456789ABCDEF';
+ setlength(result,digits);
+ while (digits>0) do begin
+  result[digits]:=hexchars[l mod 16+1];
+  l:=l div 16;
+  digits:=digits-1;
+ end;
+end;
+
+function GetGuid():string;
+var Guid:TMyGuid;
+begin
+  if CoCreateGuid(Guid)=0 then begin
+  result:='{'+IntToHex(Guid.D1,8)+'-'+
+           IntToHex(Guid.D2,4)+'-'+
+           IntToHex(Guid.D3,4)+'-'+
+           IntToHex(Guid.D4[0],2)+IntToHex(Guid.D4[1],2)+'-'+
+           IntToHex(Guid.D4[2],2)+IntToHex(Guid.D4[3],2)+
+           IntToHex(Guid.D4[4],2)+IntToHex(Guid.D4[5],2)+
+           IntToHex(Guid.D4[6],2)+IntToHex(Guid.D4[7],2)+
+           '}';
+  end else
+    result:='{00000000-0000-0000-0000-000000000000}';
+end;
+
+procedure ConfigureIni;
+begin
+  if webpop then
+  begin
+    SetIniString('web', 'host', webHostName.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'base', webOpenPort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'host', webOpenPath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'https', webSecurePort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'secure', webSecurePath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'certname', certFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'cacertname', caCertFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'certpword', certPWord.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+
+    SetIniString('database', 'server',   ConnectionPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('database', 'database', ConnectionPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('database', 'username', ConnectionPage.Values[2], ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('database', 'password', ConnectionPage.Values[3], ExpandConstant('{app}')+'\fhirserver.ini');
+
+    SetIniString('scim', 'salt', GetGuid, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('admin', 'email', AdminPage.Values[0], ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('admin', 'username', AdminPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
+  end;
+end;
+
+var
+  dll : longint;
+
+procedure SctCallback(IntParam: Integer; StrParam: WideString);
+begin
+  SctInstallPage.SetProgress(intparam, 100);
+  SctInstallPage.SetText(StrParam, '');
+end;
+
+function getSnomedModule : String;
+begin
+  case cbxModule.itemindex of 
+    0 { International } : result := '900000000000207008';
+    1 { US } :  result := '731000124108';
+    2 { Australia } : result := '32506021000036107';
+    3 { Spanish } : result := '449081005';
+    4 { Denmark } : result := '554471000005108';
+    5 { Netherlands } : result := '11000146104';
+    6 { Sweden } : result := '45991000052106';
+    7 { UK } : result := '999000041000000102';
+  end;
+end;
+
+procedure LoadSnomed;
+var 
+  module, dest, ver, msg : String;
+begin
+  module := getSnomedModule;
+  dest := ExpandConstant('{app}')+'\snomed_'+module+'_'+sctVersion.text+'.cache';
+  SctInstallPage.SetText('Loading Snomed...', '');
+  SctInstallPage.SetProgress(0, 100);
+  SctInstallPage.Show;
+  try
+    msg := MyDllInstallSnomed(ExpandConstant('{app}')+'\fhirserver.exe', SctPage.values[0], dest, 'http://snomed.info/sct/'+module+'/version/'+sctVersion.text, @SctCallback);
+    if msg <> '' then
+      MsgBox('Loading SNOMED CT failed (but the rest of the installation is not affected): '+msg, mbError, MB_OK);
+  finally
+    SctInstallPage.Hide;
+  end;
+  SetIniString('snomed', 'cache', dest, ExpandConstant('{app}')+'\fhirserver.ini');
+end;
+
+procedure InitCallback(IntParam: Integer; StrParam: WideString);
+begin
+  LoadInstallPage.SetProgress(intparam, 100);
+  LoadInstallPage.SetText(StrParam, '');
+end;
+
+procedure InitialiseDatabase(load : boolean);
+var 
+  pw, msg : String;
+  done : boolean;
+begin
+  LoadInstallPage.SetText('Creating Database...', '');
+  LoadInstallPage.SetProgress(0, 100);
+  LoadInstallPage.Show;
+  try
+    repeat
+      done := true;
+      pw := AdminPage.Values[2];
+      if (load) then
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\fhirserver.exe', ExpandConstant('{app}')+'\fhirserver.ini', pw, ExpandConstant('{app}')+'\load\load.ini', @InitCallback)
+      else
+        msg := MyDllInstallDatabase(ExpandConstant('{app}')+'\loader.dll', ExpandConstant('{app}')+'\fhirserver.ini', pw, '', @InitCallback);
+      if msg <> '' then
+        done := MsgBox('Initializing the database failed : '+msg+#13#10+'Try again?', mbError, MB_YESNO) = mrNo;
+    until done;
+  finally
+    LoadInstallPage.Hide;
+  end;
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   mode : Longword;
   s : String;
   noauto : integer;
+  disp : string;
 Begin
   if (CurStep = ssInstall) Then
   Begin
-    if ServiceExists('HL7Connect') Then
-      SimpleStopService('HL7Connect', true, true);
+    if ServiceExists('FHIRServer') Then
+      SimpleStopService('FHIRServer', true, true);
   End;
 
   if (CurStep = ssPostInstall)  Then
   Begin
     If IsTaskSelected('firewall') Then
       SetFirewallException('Fhir Server', ExpandConstant('{app}')+'\FHIRServer.exe');
+    ConfigureIni;
+    if IsTaskSelected('sct') Then
+      LoadSnomed;
+    if IsTaskSelected('db') Then
+       InitialiseDatabase(isTaskSelected('db\pop'));                                                        
+    if IsTaskSelected('svcInst') Then
+    begin
+      if IsComponentSelected('r2') then
+        disp := 'FHIR Server DSTU2'
+      else
+        disp := 'FHIR Server STU3';
+      if ServiceExists('FHIRServer') then
+        SimpleDeleteService('FHIRServer');
+        
+      if not SimpleCreateService('FHIRServer', disp, ExpandConstant('{app}')+'\FHIRServer.exe', DetermineStartMode, ServicePage.Values[0], ServicePage.Values[1], false, false) then
+        MsgBox('Unable to Register FHIRServer Service', mbError, MB_OK)
+      else if IsTaskSelected('svcInst\start') Then
+        SimpleStartService('FHIRServer', false, false);
+    end;
   End;
 End;
 
@@ -938,3 +1506,4 @@ Begin
     RemoveFirewallException(ExpandConstant('{app}')+'FHIRServer.exe');
   End;
 End;
+

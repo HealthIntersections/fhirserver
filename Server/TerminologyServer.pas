@@ -714,7 +714,7 @@ var
   em : TFhirConceptMapGroupElement;
 begin
   result := false;
-  {$IFDEF FHIR2CM}
+  {$IFDEF FHIR2}
     for em in cm.resource.elementList do
       if (em.system = coding.system) and (em.code = coding.code) then
   {$ELSE}
@@ -746,7 +746,7 @@ begin
   result := false;
   if (vs = nil) or ((cm.source <> nil) and (cm.Source.url = vs.url)) then
   begin
-    {$IFDEF FHIR2CM}
+    {$IFDEF FHIR2}
       for em in cm.Resource.elementList do
         if (em.system = coding.system) and (em.code = coding.code) then
     {$ELSE}
@@ -816,7 +816,7 @@ begin
               result.AddParameter('result', true);
               outcome := TFhirCoding.Create;
               result.AddParameter('outcome', outcome);
-              {$IFDEF FHIR2CM}
+              {$IFDEF FHIR2}
               outcome.system := map.system;
               {$ELSE}
               outcome.system := g.target;
@@ -1182,7 +1182,7 @@ begin
         result.AddParameter('result', true);
         outcome := TFhirCoding.Create;
         result.AddParameter('outcome', outcome);
-        {$IFDEF FHIR2CM}
+        {$IFDEF FHIR2}
         outcome.system := map.system;
         {$ELSE}
         outcome.system := g.target;

@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-09-18T03:48:47+10:00
+// FHIR v1.7.0 generated 2016-09-23T05:40:22+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -166,6 +166,7 @@ Type
     AllTypesXhtml, {@enum.value AllTypesXhtml  }
     AllTypesAccount, {@enum.value AllTypesAccount  }
     AllTypesActivityDefinition, {@enum.value AllTypesActivityDefinition  }
+    AllTypesActivityGroup, {@enum.value AllTypesActivityGroup  }
     AllTypesAllergyIntolerance, {@enum.value AllTypesAllergyIntolerance  }
     AllTypesAppointment, {@enum.value AllTypesAppointment  }
     AllTypesAppointmentResponse, {@enum.value AllTypesAppointmentResponse  }
@@ -264,6 +265,7 @@ Type
     AllTypesSchedule, {@enum.value AllTypesSchedule  }
     AllTypesSearchParameter, {@enum.value AllTypesSearchParameter  }
     AllTypesSequence, {@enum.value AllTypesSequence  }
+    AllTypesServiceDefinition, {@enum.value AllTypesServiceDefinition  }
     AllTypesSlot, {@enum.value AllTypesSlot  }
     AllTypesSpecimen, {@enum.value AllTypesSpecimen  }
     AllTypesStructureDefinition, {@enum.value AllTypesStructureDefinition  }
@@ -505,6 +507,76 @@ Type
     ActionParticipantTypePractitioner, {@enum.value ActionParticipantTypePractitioner  }
     ActionParticipantTypeRelatedPerson); {@enum.value ActionParticipantTypeRelatedPerson  }
   TFhirActionParticipantTypeEnumList = set of TFhirActionParticipantTypeEnum;
+
+  {@Enum TFhirActionRelationshipTypeEnum
+    Defines the types of relationships between actions from http://hl7.org/fhir/ValueSet/action-relationship-type
+  }
+  TFhirActionRelationshipTypeEnum = (
+    ActionRelationshipTypeNull,  {@enum.value ActionRelationshipTypeNull Value is missing from Instance }
+    ActionRelationshipTypeBefore, {@enum.value ActionRelationshipTypeBefore  }
+    ActionRelationshipTypeAfter, {@enum.value ActionRelationshipTypeAfter  }
+    ActionRelationshipTypeConcurrent); {@enum.value ActionRelationshipTypeConcurrent  }
+  TFhirActionRelationshipTypeEnumList = set of TFhirActionRelationshipTypeEnum;
+
+  {@Enum TFhirActionRelationshipAnchorEnum
+    Defines possible anchors for the relationship between actions from http://hl7.org/fhir/ValueSet/action-relationship-anchor
+  }
+  TFhirActionRelationshipAnchorEnum = (
+    ActionRelationshipAnchorNull,  {@enum.value ActionRelationshipAnchorNull Value is missing from Instance }
+    ActionRelationshipAnchorStart, {@enum.value ActionRelationshipAnchorStart  }
+    ActionRelationshipAnchorEnd); {@enum.value ActionRelationshipAnchorEnd  }
+  TFhirActionRelationshipAnchorEnumList = set of TFhirActionRelationshipAnchorEnum;
+
+  {@Enum TFhirActionGroupingBehaviorEnum
+    Defines organization behavior of a group from http://hl7.org/fhir/ValueSet/action-grouping-behavior
+  }
+  TFhirActionGroupingBehaviorEnum = (
+    ActionGroupingBehaviorNull,  {@enum.value ActionGroupingBehaviorNull Value is missing from Instance }
+    ActionGroupingBehaviorVisualGroup, {@enum.value ActionGroupingBehaviorVisualGroup  }
+    ActionGroupingBehaviorLogicalGroup, {@enum.value ActionGroupingBehaviorLogicalGroup  }
+    ActionGroupingBehaviorSentenceGroup); {@enum.value ActionGroupingBehaviorSentenceGroup  }
+  TFhirActionGroupingBehaviorEnumList = set of TFhirActionGroupingBehaviorEnum;
+
+  {@Enum TFhirActionSelectionBehaviorEnum
+    Defines selection behavior of a group from http://hl7.org/fhir/ValueSet/action-selection-behavior
+  }
+  TFhirActionSelectionBehaviorEnum = (
+    ActionSelectionBehaviorNull,  {@enum.value ActionSelectionBehaviorNull Value is missing from Instance }
+    ActionSelectionBehaviorAny, {@enum.value ActionSelectionBehaviorAny  }
+    ActionSelectionBehaviorAll, {@enum.value ActionSelectionBehaviorAll  }
+    ActionSelectionBehaviorAllOrNone, {@enum.value ActionSelectionBehaviorAllOrNone  }
+    ActionSelectionBehaviorExactlyOne, {@enum.value ActionSelectionBehaviorExactlyOne  }
+    ActionSelectionBehaviorAtMostOne, {@enum.value ActionSelectionBehaviorAtMostOne  }
+    ActionSelectionBehaviorOneOrMore); {@enum.value ActionSelectionBehaviorOneOrMore  }
+  TFhirActionSelectionBehaviorEnumList = set of TFhirActionSelectionBehaviorEnum;
+
+  {@Enum TFhirActionRequiredBehaviorEnum
+    Defines requiredness behavior for selecting an action or an action group from http://hl7.org/fhir/ValueSet/action-required-behavior
+  }
+  TFhirActionRequiredBehaviorEnum = (
+    ActionRequiredBehaviorNull,  {@enum.value ActionRequiredBehaviorNull Value is missing from Instance }
+    ActionRequiredBehaviorMust, {@enum.value ActionRequiredBehaviorMust  }
+    ActionRequiredBehaviorCould, {@enum.value ActionRequiredBehaviorCould  }
+    ActionRequiredBehaviorMustUnlessDocumented); {@enum.value ActionRequiredBehaviorMustUnlessDocumented  }
+  TFhirActionRequiredBehaviorEnumList = set of TFhirActionRequiredBehaviorEnum;
+
+  {@Enum TFhirActionPrecheckBehaviorEnum
+    Defines selection frequency behavior for an action or group from http://hl7.org/fhir/ValueSet/action-precheck-behavior
+  }
+  TFhirActionPrecheckBehaviorEnum = (
+    ActionPrecheckBehaviorNull,  {@enum.value ActionPrecheckBehaviorNull Value is missing from Instance }
+    ActionPrecheckBehaviorYes, {@enum.value ActionPrecheckBehaviorYes  }
+    ActionPrecheckBehaviorNo); {@enum.value ActionPrecheckBehaviorNo  }
+  TFhirActionPrecheckBehaviorEnumList = set of TFhirActionPrecheckBehaviorEnum;
+
+  {@Enum TFhirActionCardinalityBehaviorEnum
+    Defines behavior for an action or a group for how many times that item may be repeated from http://hl7.org/fhir/ValueSet/action-cardinality-behavior
+  }
+  TFhirActionCardinalityBehaviorEnum = (
+    ActionCardinalityBehaviorNull,  {@enum.value ActionCardinalityBehaviorNull Value is missing from Instance }
+    ActionCardinalityBehaviorSingle, {@enum.value ActionCardinalityBehaviorSingle  }
+    ActionCardinalityBehaviorMultiple); {@enum.value ActionCardinalityBehaviorMultiple  }
+  TFhirActionCardinalityBehaviorEnumList = set of TFhirActionCardinalityBehaviorEnum;
 
   {@Enum TFhirAllergyIntoleranceStatusEnum
     Assertion about certainty associated with a propensity, or potential risk, of a reaction to the identified substance. from http://hl7.org/fhir/ValueSet/allergy-intolerance-status
@@ -862,6 +934,7 @@ Type
     ResourceTypesNull,  {@enum.value ResourceTypesNull Value is missing from Instance }
     ResourceTypesAccount, {@enum.value ResourceTypesAccount  }
     ResourceTypesActivityDefinition, {@enum.value ResourceTypesActivityDefinition  }
+    ResourceTypesActivityGroup, {@enum.value ResourceTypesActivityGroup  }
     ResourceTypesAllergyIntolerance, {@enum.value ResourceTypesAllergyIntolerance  }
     ResourceTypesAppointment, {@enum.value ResourceTypesAppointment  }
     ResourceTypesAppointmentResponse, {@enum.value ResourceTypesAppointmentResponse  }
@@ -960,6 +1033,7 @@ Type
     ResourceTypesSchedule, {@enum.value ResourceTypesSchedule  }
     ResourceTypesSearchParameter, {@enum.value ResourceTypesSearchParameter  }
     ResourceTypesSequence, {@enum.value ResourceTypesSequence  }
+    ResourceTypesServiceDefinition, {@enum.value ResourceTypesServiceDefinition  }
     ResourceTypesSlot, {@enum.value ResourceTypesSlot  }
     ResourceTypesSpecimen, {@enum.value ResourceTypesSpecimen  }
     ResourceTypesStructureDefinition, {@enum.value ResourceTypesStructureDefinition  }
@@ -1134,6 +1208,18 @@ Type
     ConditionalDeleteStatusSingle, {@enum.value ConditionalDeleteStatusSingle  }
     ConditionalDeleteStatusMultiple); {@enum.value ConditionalDeleteStatusMultiple  }
   TFhirConditionalDeleteStatusEnumList = set of TFhirConditionalDeleteStatusEnum;
+
+  {@Enum TFhirReferenceHandlingPolicyEnum
+    A set of flags that defines how references are supported from http://hl7.org/fhir/ValueSet/reference-handling-policy
+  }
+  TFhirReferenceHandlingPolicyEnum = (
+    ReferenceHandlingPolicyNull,  {@enum.value ReferenceHandlingPolicyNull Value is missing from Instance }
+    ReferenceHandlingPolicyLiteral, {@enum.value ReferenceHandlingPolicyLiteral  }
+    ReferenceHandlingPolicyLogical, {@enum.value ReferenceHandlingPolicyLogical  }
+    ReferenceHandlingPolicyResolves, {@enum.value ReferenceHandlingPolicyResolves  }
+    ReferenceHandlingPolicyEnforced, {@enum.value ReferenceHandlingPolicyEnforced  }
+    ReferenceHandlingPolicyLocal); {@enum.value ReferenceHandlingPolicyLocal  }
+  TFhirReferenceHandlingPolicyEnumList = set of TFhirReferenceHandlingPolicyEnum;
 
   {@Enum TFhirSearchParamTypeEnum
     Data types allowed to be used for search parameters. from http://hl7.org/fhir/ValueSet/search-param-type
@@ -1597,76 +1683,6 @@ Type
     GuidanceResponseStatusInProgress, {@enum.value GuidanceResponseStatusInProgress  }
     GuidanceResponseStatusFailure); {@enum.value GuidanceResponseStatusFailure  }
   TFhirGuidanceResponseStatusEnumList = set of TFhirGuidanceResponseStatusEnum;
-
-  {@Enum TFhirActionRelationshipTypeEnum
-    Defines the types of relationships between actions from http://hl7.org/fhir/ValueSet/action-relationship-type
-  }
-  TFhirActionRelationshipTypeEnum = (
-    ActionRelationshipTypeNull,  {@enum.value ActionRelationshipTypeNull Value is missing from Instance }
-    ActionRelationshipTypeBefore, {@enum.value ActionRelationshipTypeBefore  }
-    ActionRelationshipTypeAfter, {@enum.value ActionRelationshipTypeAfter  }
-    ActionRelationshipTypeConcurrent); {@enum.value ActionRelationshipTypeConcurrent  }
-  TFhirActionRelationshipTypeEnumList = set of TFhirActionRelationshipTypeEnum;
-
-  {@Enum TFhirActionRelationshipAnchorEnum
-    Defines possible anchors for the relationship between actions from http://hl7.org/fhir/ValueSet/action-relationship-anchor
-  }
-  TFhirActionRelationshipAnchorEnum = (
-    ActionRelationshipAnchorNull,  {@enum.value ActionRelationshipAnchorNull Value is missing from Instance }
-    ActionRelationshipAnchorStart, {@enum.value ActionRelationshipAnchorStart  }
-    ActionRelationshipAnchorEnd); {@enum.value ActionRelationshipAnchorEnd  }
-  TFhirActionRelationshipAnchorEnumList = set of TFhirActionRelationshipAnchorEnum;
-
-  {@Enum TFhirActionGroupingBehaviorEnum
-    Defines organization behavior of a group from http://hl7.org/fhir/ValueSet/action-grouping-behavior
-  }
-  TFhirActionGroupingBehaviorEnum = (
-    ActionGroupingBehaviorNull,  {@enum.value ActionGroupingBehaviorNull Value is missing from Instance }
-    ActionGroupingBehaviorVisualGroup, {@enum.value ActionGroupingBehaviorVisualGroup  }
-    ActionGroupingBehaviorLogicalGroup, {@enum.value ActionGroupingBehaviorLogicalGroup  }
-    ActionGroupingBehaviorSentenceGroup); {@enum.value ActionGroupingBehaviorSentenceGroup  }
-  TFhirActionGroupingBehaviorEnumList = set of TFhirActionGroupingBehaviorEnum;
-
-  {@Enum TFhirActionSelectionBehaviorEnum
-    Defines selection behavior of a group from http://hl7.org/fhir/ValueSet/action-selection-behavior
-  }
-  TFhirActionSelectionBehaviorEnum = (
-    ActionSelectionBehaviorNull,  {@enum.value ActionSelectionBehaviorNull Value is missing from Instance }
-    ActionSelectionBehaviorAny, {@enum.value ActionSelectionBehaviorAny  }
-    ActionSelectionBehaviorAll, {@enum.value ActionSelectionBehaviorAll  }
-    ActionSelectionBehaviorAllOrNone, {@enum.value ActionSelectionBehaviorAllOrNone  }
-    ActionSelectionBehaviorExactlyOne, {@enum.value ActionSelectionBehaviorExactlyOne  }
-    ActionSelectionBehaviorAtMostOne, {@enum.value ActionSelectionBehaviorAtMostOne  }
-    ActionSelectionBehaviorOneOrMore); {@enum.value ActionSelectionBehaviorOneOrMore  }
-  TFhirActionSelectionBehaviorEnumList = set of TFhirActionSelectionBehaviorEnum;
-
-  {@Enum TFhirActionRequiredBehaviorEnum
-    Defines requiredness behavior for selecting an action or an action group from http://hl7.org/fhir/ValueSet/action-required-behavior
-  }
-  TFhirActionRequiredBehaviorEnum = (
-    ActionRequiredBehaviorNull,  {@enum.value ActionRequiredBehaviorNull Value is missing from Instance }
-    ActionRequiredBehaviorMust, {@enum.value ActionRequiredBehaviorMust  }
-    ActionRequiredBehaviorCould, {@enum.value ActionRequiredBehaviorCould  }
-    ActionRequiredBehaviorMustUnlessDocumented); {@enum.value ActionRequiredBehaviorMustUnlessDocumented  }
-  TFhirActionRequiredBehaviorEnumList = set of TFhirActionRequiredBehaviorEnum;
-
-  {@Enum TFhirActionPrecheckBehaviorEnum
-    Defines selection frequency behavior for an action or group from http://hl7.org/fhir/ValueSet/action-precheck-behavior
-  }
-  TFhirActionPrecheckBehaviorEnum = (
-    ActionPrecheckBehaviorNull,  {@enum.value ActionPrecheckBehaviorNull Value is missing from Instance }
-    ActionPrecheckBehaviorYes, {@enum.value ActionPrecheckBehaviorYes  }
-    ActionPrecheckBehaviorNo); {@enum.value ActionPrecheckBehaviorNo  }
-  TFhirActionPrecheckBehaviorEnumList = set of TFhirActionPrecheckBehaviorEnum;
-
-  {@Enum TFhirActionCardinalityBehaviorEnum
-    Defines behavior for an action or a group for how many times that item may be repeated from http://hl7.org/fhir/ValueSet/action-cardinality-behavior
-  }
-  TFhirActionCardinalityBehaviorEnum = (
-    ActionCardinalityBehaviorNull,  {@enum.value ActionCardinalityBehaviorNull Value is missing from Instance }
-    ActionCardinalityBehaviorSingle, {@enum.value ActionCardinalityBehaviorSingle  }
-    ActionCardinalityBehaviorMultiple); {@enum.value ActionCardinalityBehaviorMultiple  }
-  TFhirActionCardinalityBehaviorEnumList = set of TFhirActionCardinalityBehaviorEnum;
 
   {@Enum TFhirDaysOfWeekEnum
     The days of the week. from http://hl7.org/fhir/ValueSet/days-of-week
@@ -5847,10 +5863,12 @@ Type
   TFhirReference = class (TFhirType)
   private
     FReference : TFhirString;
+    FIdentifier : TFhirIdentifier;
     FDisplay : TFhirString;
     Procedure SetReference(value : TFhirString);
     Function GetReferenceST : String;
     Procedure SetReferenceST(value : String);
+    Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetDisplay(value : TFhirString);
     Function GetDisplayST : String;
     Procedure SetDisplayST(value : String);
@@ -5879,6 +5897,15 @@ Type
       A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources.
     }
     property referenceElement : TFhirString read FReference write SetReference;
+
+    {@member identifier
+      Typed access to An identifier for the other resource. This is used when there is no way to reference the other resource directly, either because the entity is not available through a FHIR server, or because there is no way for the author of the resource to convert a known identifier to an actual location. (defined for API consistency)
+    }
+    property identifier : TFhirIdentifier read FIdentifier write SetIdentifier;
+    {@member identifierElement
+      An identifier for the other resource. This is used when there is no way to reference the other resource directly, either because the entity is not available through a FHIR server, or because there is no way for the author of the resource to convert a known identifier to an actual location.
+    }
+    property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
 
     {@member display
       Typed access to Plain text narrative that identifies the resource in addition to the resource reference.
@@ -12539,16 +12566,16 @@ Const
   SYSTEMS_TFhirQuantityComparatorEnum : Array[TFhirQuantityComparatorEnum] of String = ('', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator');
   CODES_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'author', 'editor', 'reviewer', 'endorser');
   SYSTEMS_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type');
-  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedResource', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 
-    'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 
-    'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
+  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedResource', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 
+    'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 
+    'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
   SYSTEMS_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
     'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
   CODES_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'usual', 'official', 'temp', 'secondary');
   SYSTEMS_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use');
   CODES_TFhirOperationParameterUseEnum : Array[TFhirOperationParameterUseEnum] of String = ('', 'in', 'out');
@@ -12587,6 +12614,20 @@ Const
   SYSTEMS_TFhirActivityDefinitionCategoryEnum : Array[TFhirActivityDefinitionCategoryEnum] of String = ('', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
   SYSTEMS_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type');
+  CODES_TFhirActionRelationshipTypeEnum : Array[TFhirActionRelationshipTypeEnum] of String = ('', 'before', 'after', 'concurrent');
+  SYSTEMS_TFhirActionRelationshipTypeEnum : Array[TFhirActionRelationshipTypeEnum] of String = ('', 'http://hl7.org/fhir/action-relationship-type', 'http://hl7.org/fhir/action-relationship-type', 'http://hl7.org/fhir/action-relationship-type');
+  CODES_TFhirActionRelationshipAnchorEnum : Array[TFhirActionRelationshipAnchorEnum] of String = ('', 'start', 'end');
+  SYSTEMS_TFhirActionRelationshipAnchorEnum : Array[TFhirActionRelationshipAnchorEnum] of String = ('', 'http://hl7.org/fhir/action-relationship-anchor', 'http://hl7.org/fhir/action-relationship-anchor');
+  CODES_TFhirActionGroupingBehaviorEnum : Array[TFhirActionGroupingBehaviorEnum] of String = ('', 'visual-group', 'logical-group', 'sentence-group');
+  SYSTEMS_TFhirActionGroupingBehaviorEnum : Array[TFhirActionGroupingBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-grouping-behavior', 'http://hl7.org/fhir/action-grouping-behavior', 'http://hl7.org/fhir/action-grouping-behavior');
+  CODES_TFhirActionSelectionBehaviorEnum : Array[TFhirActionSelectionBehaviorEnum] of String = ('', 'any', 'all', 'all-or-none', 'exactly-one', 'at-most-one', 'one-or-more');
+  SYSTEMS_TFhirActionSelectionBehaviorEnum : Array[TFhirActionSelectionBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior');
+  CODES_TFhirActionRequiredBehaviorEnum : Array[TFhirActionRequiredBehaviorEnum] of String = ('', 'must', 'could', 'must-unless-documented');
+  SYSTEMS_TFhirActionRequiredBehaviorEnum : Array[TFhirActionRequiredBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-required-behavior', 'http://hl7.org/fhir/action-required-behavior', 'http://hl7.org/fhir/action-required-behavior');
+  CODES_TFhirActionPrecheckBehaviorEnum : Array[TFhirActionPrecheckBehaviorEnum] of String = ('', 'yes', 'no');
+  SYSTEMS_TFhirActionPrecheckBehaviorEnum : Array[TFhirActionPrecheckBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-precheck-behavior', 'http://hl7.org/fhir/action-precheck-behavior');
+  CODES_TFhirActionCardinalityBehaviorEnum : Array[TFhirActionCardinalityBehaviorEnum] of String = ('', 'single', 'multiple');
+  SYSTEMS_TFhirActionCardinalityBehaviorEnum : Array[TFhirActionCardinalityBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-cardinality-behavior', 'http://hl7.org/fhir/action-cardinality-behavior');
   CODES_TFhirAllergyIntoleranceStatusEnum : Array[TFhirAllergyIntoleranceStatusEnum] of String = ('', 'active', 'active-confirmed', 'inactive', 'resolved', 'refuted', 'entered-in-error');
   SYSTEMS_TFhirAllergyIntoleranceStatusEnum : Array[TFhirAllergyIntoleranceStatusEnum] of String = ('', 'http://hl7.org/fhir/allergy-intolerance-status', 'http://hl7.org/fhir/allergy-intolerance-status', 'http://hl7.org/fhir/allergy-intolerance-status', 'http://hl7.org/fhir/allergy-intolerance-status', 'http://hl7.org/fhir/allergy-intolerance-status', 'http://hl7.org/fhir/allergy-intolerance-status');
   CODES_TFhirAllergyIntoleranceTypeEnum : Array[TFhirAllergyIntoleranceTypeEnum] of String = ('', 'allergy', 'intolerance');
@@ -12647,13 +12688,13 @@ Const
   SYSTEMS_TFhirCommunicationRequestStatusEnum : Array[TFhirCommunicationRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status');
   CODES_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'Patient', 'Encounter', 'RelatedPerson', 'Practitioner', 'Device');
   SYSTEMS_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type');
-  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 
-    'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription');
+  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 
+    'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription');
   SYSTEMS_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'preliminary', 'final', 'amended', 'entered-in-error');
   SYSTEMS_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status');
   CODES_TFhirV3ConfidentialityClassificationEnum : Array[TFhirV3ConfidentialityClassificationEnum] of String = ('', 'U', 'L', 'M', 'N', 'R', 'V');
@@ -12682,6 +12723,8 @@ Const
   SYSTEMS_TFhirConditionalReadStatusEnum : Array[TFhirConditionalReadStatusEnum] of String = ('', 'http://hl7.org/fhir/conditional-read-status', 'http://hl7.org/fhir/conditional-read-status', 'http://hl7.org/fhir/conditional-read-status', 'http://hl7.org/fhir/conditional-read-status');
   CODES_TFhirConditionalDeleteStatusEnum : Array[TFhirConditionalDeleteStatusEnum] of String = ('', 'not-supported', 'single', 'multiple');
   SYSTEMS_TFhirConditionalDeleteStatusEnum : Array[TFhirConditionalDeleteStatusEnum] of String = ('', 'http://hl7.org/fhir/conditional-delete-status', 'http://hl7.org/fhir/conditional-delete-status', 'http://hl7.org/fhir/conditional-delete-status');
+  CODES_TFhirReferenceHandlingPolicyEnum : Array[TFhirReferenceHandlingPolicyEnum] of String = ('', 'literal', 'logical', 'resolves', 'enforced', 'local');
+  SYSTEMS_TFhirReferenceHandlingPolicyEnum : Array[TFhirReferenceHandlingPolicyEnum] of String = ('', 'http://hl7.org/fhir/reference-handling-policy', 'http://hl7.org/fhir/reference-handling-policy', 'http://hl7.org/fhir/reference-handling-policy', 'http://hl7.org/fhir/reference-handling-policy', 'http://hl7.org/fhir/reference-handling-policy');
   CODES_TFhirSearchParamTypeEnum : Array[TFhirSearchParamTypeEnum] of String = ('', 'number', 'date', 'string', 'token', 'reference', 'composite', 'quantity', 'uri');
   SYSTEMS_TFhirSearchParamTypeEnum : Array[TFhirSearchParamTypeEnum] of String = ('', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type', 'http://hl7.org/fhir/search-param-type');
   CODES_TFhirSearchModifierCodeEnum : Array[TFhirSearchModifierCodeEnum] of String = ('', 'missing', 'exact', 'contains', 'not', 'text', 'in', 'not-in', 'below', 'above', 'type');
@@ -12760,20 +12803,6 @@ Const
   SYSTEMS_TFhirGroupTypeEnum : Array[TFhirGroupTypeEnum] of String = ('', 'http://hl7.org/fhir/group-type', 'http://hl7.org/fhir/group-type', 'http://hl7.org/fhir/group-type', 'http://hl7.org/fhir/group-type', 'http://hl7.org/fhir/group-type', 'http://hl7.org/fhir/group-type');
   CODES_TFhirGuidanceResponseStatusEnum : Array[TFhirGuidanceResponseStatusEnum] of String = ('', 'success', 'data-requested', 'data-required', 'in-progress', 'failure');
   SYSTEMS_TFhirGuidanceResponseStatusEnum : Array[TFhirGuidanceResponseStatusEnum] of String = ('', 'http://hl7.org/fhir/guidance-response-status', 'http://hl7.org/fhir/guidance-response-status', 'http://hl7.org/fhir/guidance-response-status', 'http://hl7.org/fhir/guidance-response-status', 'http://hl7.org/fhir/guidance-response-status');
-  CODES_TFhirActionRelationshipTypeEnum : Array[TFhirActionRelationshipTypeEnum] of String = ('', 'before', 'after', 'concurrent');
-  SYSTEMS_TFhirActionRelationshipTypeEnum : Array[TFhirActionRelationshipTypeEnum] of String = ('', 'http://hl7.org/fhir/action-relationship-type', 'http://hl7.org/fhir/action-relationship-type', 'http://hl7.org/fhir/action-relationship-type');
-  CODES_TFhirActionRelationshipAnchorEnum : Array[TFhirActionRelationshipAnchorEnum] of String = ('', 'start', 'end');
-  SYSTEMS_TFhirActionRelationshipAnchorEnum : Array[TFhirActionRelationshipAnchorEnum] of String = ('', 'http://hl7.org/fhir/action-relationship-anchor', 'http://hl7.org/fhir/action-relationship-anchor');
-  CODES_TFhirActionGroupingBehaviorEnum : Array[TFhirActionGroupingBehaviorEnum] of String = ('', 'visual-group', 'logical-group', 'sentence-group');
-  SYSTEMS_TFhirActionGroupingBehaviorEnum : Array[TFhirActionGroupingBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-grouping-behavior', 'http://hl7.org/fhir/action-grouping-behavior', 'http://hl7.org/fhir/action-grouping-behavior');
-  CODES_TFhirActionSelectionBehaviorEnum : Array[TFhirActionSelectionBehaviorEnum] of String = ('', 'any', 'all', 'all-or-none', 'exactly-one', 'at-most-one', 'one-or-more');
-  SYSTEMS_TFhirActionSelectionBehaviorEnum : Array[TFhirActionSelectionBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior', 'http://hl7.org/fhir/action-selection-behavior');
-  CODES_TFhirActionRequiredBehaviorEnum : Array[TFhirActionRequiredBehaviorEnum] of String = ('', 'must', 'could', 'must-unless-documented');
-  SYSTEMS_TFhirActionRequiredBehaviorEnum : Array[TFhirActionRequiredBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-required-behavior', 'http://hl7.org/fhir/action-required-behavior', 'http://hl7.org/fhir/action-required-behavior');
-  CODES_TFhirActionPrecheckBehaviorEnum : Array[TFhirActionPrecheckBehaviorEnum] of String = ('', 'yes', 'no');
-  SYSTEMS_TFhirActionPrecheckBehaviorEnum : Array[TFhirActionPrecheckBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-precheck-behavior', 'http://hl7.org/fhir/action-precheck-behavior');
-  CODES_TFhirActionCardinalityBehaviorEnum : Array[TFhirActionCardinalityBehaviorEnum] of String = ('', 'single', 'multiple');
-  SYSTEMS_TFhirActionCardinalityBehaviorEnum : Array[TFhirActionCardinalityBehaviorEnum] of String = ('', 'http://hl7.org/fhir/action-cardinality-behavior', 'http://hl7.org/fhir/action-cardinality-behavior');
   CODES_TFhirDaysOfWeekEnum : Array[TFhirDaysOfWeekEnum] of String = ('', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
   SYSTEMS_TFhirDaysOfWeekEnum : Array[TFhirDaysOfWeekEnum] of String = ('', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week', 'http://hl7.org/fhir/days-of-week');
   CODES_TFhirInstanceAvailabilityEnum : Array[TFhirInstanceAvailabilityEnum] of String = ('', 'ONLINE', 'OFFLINE', 'NEARLINE', 'UNAVAILABLE');
@@ -12960,6 +12989,20 @@ Function TFhirActivityDefinitionCategoryEnumListAsInteger(aSet : TFhirActivityDe
 Function IntegerAsTFhirActivityDefinitionCategoryEnumList(i : integer) : TFhirActivityDefinitionCategoryEnumList; overload;
 Function TFhirActionParticipantTypeEnumListAsInteger(aSet : TFhirActionParticipantTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirActionParticipantTypeEnumList(i : integer) : TFhirActionParticipantTypeEnumList; overload;
+Function TFhirActionRelationshipTypeEnumListAsInteger(aSet : TFhirActionRelationshipTypeEnumList) : Integer; overload;
+Function IntegerAsTFhirActionRelationshipTypeEnumList(i : integer) : TFhirActionRelationshipTypeEnumList; overload;
+Function TFhirActionRelationshipAnchorEnumListAsInteger(aSet : TFhirActionRelationshipAnchorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionRelationshipAnchorEnumList(i : integer) : TFhirActionRelationshipAnchorEnumList; overload;
+Function TFhirActionGroupingBehaviorEnumListAsInteger(aSet : TFhirActionGroupingBehaviorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionGroupingBehaviorEnumList(i : integer) : TFhirActionGroupingBehaviorEnumList; overload;
+Function TFhirActionSelectionBehaviorEnumListAsInteger(aSet : TFhirActionSelectionBehaviorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionSelectionBehaviorEnumList(i : integer) : TFhirActionSelectionBehaviorEnumList; overload;
+Function TFhirActionRequiredBehaviorEnumListAsInteger(aSet : TFhirActionRequiredBehaviorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionRequiredBehaviorEnumList(i : integer) : TFhirActionRequiredBehaviorEnumList; overload;
+Function TFhirActionPrecheckBehaviorEnumListAsInteger(aSet : TFhirActionPrecheckBehaviorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionPrecheckBehaviorEnumList(i : integer) : TFhirActionPrecheckBehaviorEnumList; overload;
+Function TFhirActionCardinalityBehaviorEnumListAsInteger(aSet : TFhirActionCardinalityBehaviorEnumList) : Integer; overload;
+Function IntegerAsTFhirActionCardinalityBehaviorEnumList(i : integer) : TFhirActionCardinalityBehaviorEnumList; overload;
 Function TFhirAllergyIntoleranceStatusEnumListAsInteger(aSet : TFhirAllergyIntoleranceStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirAllergyIntoleranceStatusEnumList(i : integer) : TFhirAllergyIntoleranceStatusEnumList; overload;
 Function TFhirAllergyIntoleranceTypeEnumListAsInteger(aSet : TFhirAllergyIntoleranceTypeEnumList) : Integer; overload;
@@ -13050,6 +13093,8 @@ Function TFhirConditionalReadStatusEnumListAsInteger(aSet : TFhirConditionalRead
 Function IntegerAsTFhirConditionalReadStatusEnumList(i : integer) : TFhirConditionalReadStatusEnumList; overload;
 Function TFhirConditionalDeleteStatusEnumListAsInteger(aSet : TFhirConditionalDeleteStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirConditionalDeleteStatusEnumList(i : integer) : TFhirConditionalDeleteStatusEnumList; overload;
+Function TFhirReferenceHandlingPolicyEnumListAsInteger(aSet : TFhirReferenceHandlingPolicyEnumList) : Integer; overload;
+Function IntegerAsTFhirReferenceHandlingPolicyEnumList(i : integer) : TFhirReferenceHandlingPolicyEnumList; overload;
 Function TFhirSearchParamTypeEnumListAsInteger(aSet : TFhirSearchParamTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirSearchParamTypeEnumList(i : integer) : TFhirSearchParamTypeEnumList; overload;
 Function TFhirSearchModifierCodeEnumListAsInteger(aSet : TFhirSearchModifierCodeEnumList) : Integer; overload;
@@ -13128,20 +13173,6 @@ Function TFhirGroupTypeEnumListAsInteger(aSet : TFhirGroupTypeEnumList) : Intege
 Function IntegerAsTFhirGroupTypeEnumList(i : integer) : TFhirGroupTypeEnumList; overload;
 Function TFhirGuidanceResponseStatusEnumListAsInteger(aSet : TFhirGuidanceResponseStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirGuidanceResponseStatusEnumList(i : integer) : TFhirGuidanceResponseStatusEnumList; overload;
-Function TFhirActionRelationshipTypeEnumListAsInteger(aSet : TFhirActionRelationshipTypeEnumList) : Integer; overload;
-Function IntegerAsTFhirActionRelationshipTypeEnumList(i : integer) : TFhirActionRelationshipTypeEnumList; overload;
-Function TFhirActionRelationshipAnchorEnumListAsInteger(aSet : TFhirActionRelationshipAnchorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionRelationshipAnchorEnumList(i : integer) : TFhirActionRelationshipAnchorEnumList; overload;
-Function TFhirActionGroupingBehaviorEnumListAsInteger(aSet : TFhirActionGroupingBehaviorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionGroupingBehaviorEnumList(i : integer) : TFhirActionGroupingBehaviorEnumList; overload;
-Function TFhirActionSelectionBehaviorEnumListAsInteger(aSet : TFhirActionSelectionBehaviorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionSelectionBehaviorEnumList(i : integer) : TFhirActionSelectionBehaviorEnumList; overload;
-Function TFhirActionRequiredBehaviorEnumListAsInteger(aSet : TFhirActionRequiredBehaviorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionRequiredBehaviorEnumList(i : integer) : TFhirActionRequiredBehaviorEnumList; overload;
-Function TFhirActionPrecheckBehaviorEnumListAsInteger(aSet : TFhirActionPrecheckBehaviorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionPrecheckBehaviorEnumList(i : integer) : TFhirActionPrecheckBehaviorEnumList; overload;
-Function TFhirActionCardinalityBehaviorEnumListAsInteger(aSet : TFhirActionCardinalityBehaviorEnumList) : Integer; overload;
-Function IntegerAsTFhirActionCardinalityBehaviorEnumList(i : integer) : TFhirActionCardinalityBehaviorEnumList; overload;
 Function TFhirDaysOfWeekEnumListAsInteger(aSet : TFhirDaysOfWeekEnumList) : Integer; overload;
 Function IntegerAsTFhirDaysOfWeekEnumList(i : integer) : TFhirDaysOfWeekEnumList; overload;
 Function TFhirInstanceAvailabilityEnumListAsInteger(aSet : TFhirInstanceAvailabilityEnumList) : Integer; overload;
@@ -18473,6 +18504,7 @@ end;
 destructor TFhirReference.Destroy;
 begin
   FReference.free;
+  FIdentifier.free;
   FDisplay.free;
   inherited;
 end;
@@ -18481,6 +18513,7 @@ procedure TFhirReference.Assign(oSource : TAdvObject);
 begin
   inherited;
   referenceElement := TFhirReference(oSource).referenceElement.Clone;
+  identifier := TFhirReference(oSource).identifier.Clone;
   displayElement := TFhirReference(oSource).displayElement.Clone;
 end;
 
@@ -18489,6 +18522,8 @@ begin
   inherited;
   if (child_name = 'reference') Then
      list.add(FReference.Link);
+  if (child_name = 'identifier') Then
+     list.add(FIdentifier.Link);
   if (child_name = 'display') Then
      list.add(FDisplay.Link);
 end;
@@ -18497,19 +18532,22 @@ procedure TFhirReference.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'reference', 'string', false, TFhirString, FReference.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
   oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));{2}
 end;
 
 procedure TFhirReference.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'reference') then ReferenceElement := asString(propValue){5a}
+  else if (propName = 'identifier') then Identifier := propValue as TFhirIdentifier{4b}
   else if (propName = 'display') then DisplayElement := asString(propValue){5a}
   else inherited;
 end;
 
 function TFhirReference.makeProperty(propName: string) : TFHIRObject;
 begin
-  result := inherited makeProperty(propName);
+  if (propName = 'identifier') then begin Identifier := TFhirIdentifier.create(); result := Identifier; end{4b}
+  else result := inherited makeProperty(propName);
 end;
 
 function TFhirReference.fhirType : string;
@@ -18528,7 +18566,8 @@ begin
   else
   begin
     o := TFhirReference(other);
-    result := compareDeep(referenceElement, o.referenceElement, true) and compareDeep(displayElement, o.displayElement, true);
+    result := compareDeep(referenceElement, o.referenceElement, true) and compareDeep(identifierElement, o.identifierElement, true) and 
+      compareDeep(displayElement, o.displayElement, true);
   end;
 end;
 
@@ -18583,6 +18622,12 @@ begin
   end
   else if FReference <> nil then
     FReference.value := '';
+end;
+
+Procedure TFhirReference.SetIdentifier(value : TFhirIdentifier);
+begin
+  FIdentifier.free;
+  FIdentifier := value;
 end;
 
 Procedure TFhirReference.SetDisplay(value : TFhirString);
@@ -32085,6 +32130,195 @@ begin
  end;
 
 
+function TFhirActionRelationshipTypeEnumListAsInteger(aSet : TFhirActionRelationshipTypeEnumList) : Integer;
+var
+  a : TFhirActionRelationshipTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionRelationshipTypeEnum) to high(TFhirActionRelationshipTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionRelationshipTypeEnumList(i : Integer) : TFhirActionRelationshipTypeEnumList;
+var
+  aLoop : TFhirActionRelationshipTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionRelationshipTypeEnum) to high(TFhirActionRelationshipTypeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionRelationshipAnchorEnumListAsInteger(aSet : TFhirActionRelationshipAnchorEnumList) : Integer;
+var
+  a : TFhirActionRelationshipAnchorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionRelationshipAnchorEnum) to high(TFhirActionRelationshipAnchorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionRelationshipAnchorEnumList(i : Integer) : TFhirActionRelationshipAnchorEnumList;
+var
+  aLoop : TFhirActionRelationshipAnchorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionRelationshipAnchorEnum) to high(TFhirActionRelationshipAnchorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionGroupingBehaviorEnumListAsInteger(aSet : TFhirActionGroupingBehaviorEnumList) : Integer;
+var
+  a : TFhirActionGroupingBehaviorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionGroupingBehaviorEnum) to high(TFhirActionGroupingBehaviorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionGroupingBehaviorEnumList(i : Integer) : TFhirActionGroupingBehaviorEnumList;
+var
+  aLoop : TFhirActionGroupingBehaviorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionGroupingBehaviorEnum) to high(TFhirActionGroupingBehaviorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionSelectionBehaviorEnumListAsInteger(aSet : TFhirActionSelectionBehaviorEnumList) : Integer;
+var
+  a : TFhirActionSelectionBehaviorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionSelectionBehaviorEnum) to high(TFhirActionSelectionBehaviorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionSelectionBehaviorEnumList(i : Integer) : TFhirActionSelectionBehaviorEnumList;
+var
+  aLoop : TFhirActionSelectionBehaviorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionSelectionBehaviorEnum) to high(TFhirActionSelectionBehaviorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionRequiredBehaviorEnumListAsInteger(aSet : TFhirActionRequiredBehaviorEnumList) : Integer;
+var
+  a : TFhirActionRequiredBehaviorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionRequiredBehaviorEnum) to high(TFhirActionRequiredBehaviorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionRequiredBehaviorEnumList(i : Integer) : TFhirActionRequiredBehaviorEnumList;
+var
+  aLoop : TFhirActionRequiredBehaviorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionRequiredBehaviorEnum) to high(TFhirActionRequiredBehaviorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionPrecheckBehaviorEnumListAsInteger(aSet : TFhirActionPrecheckBehaviorEnumList) : Integer;
+var
+  a : TFhirActionPrecheckBehaviorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionPrecheckBehaviorEnum) to high(TFhirActionPrecheckBehaviorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionPrecheckBehaviorEnumList(i : Integer) : TFhirActionPrecheckBehaviorEnumList;
+var
+  aLoop : TFhirActionPrecheckBehaviorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionPrecheckBehaviorEnum) to high(TFhirActionPrecheckBehaviorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirActionCardinalityBehaviorEnumListAsInteger(aSet : TFhirActionCardinalityBehaviorEnumList) : Integer;
+var
+  a : TFhirActionCardinalityBehaviorEnum;
+begin
+  result := 0;
+  for a := low(TFhirActionCardinalityBehaviorEnum) to high(TFhirActionCardinalityBehaviorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirActionCardinalityBehaviorEnumList(i : Integer) : TFhirActionCardinalityBehaviorEnumList;
+var
+  aLoop : TFhirActionCardinalityBehaviorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirActionCardinalityBehaviorEnum) to high(TFhirActionCardinalityBehaviorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirAllergyIntoleranceStatusEnumListAsInteger(aSet : TFhirAllergyIntoleranceStatusEnumList) : Integer;
 var
   a : TFhirAllergyIntoleranceStatusEnum;
@@ -33300,6 +33534,33 @@ begin
  end;
 
 
+function TFhirReferenceHandlingPolicyEnumListAsInteger(aSet : TFhirReferenceHandlingPolicyEnumList) : Integer;
+var
+  a : TFhirReferenceHandlingPolicyEnum;
+begin
+  result := 0;
+  for a := low(TFhirReferenceHandlingPolicyEnum) to high(TFhirReferenceHandlingPolicyEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirReferenceHandlingPolicyEnumList(i : Integer) : TFhirReferenceHandlingPolicyEnumList;
+var
+  aLoop : TFhirReferenceHandlingPolicyEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirReferenceHandlingPolicyEnum) to high(TFhirReferenceHandlingPolicyEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirSearchParamTypeEnumListAsInteger(aSet : TFhirSearchParamTypeEnumList) : Integer;
 var
   a : TFhirSearchParamTypeEnum;
@@ -34345,195 +34606,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirGuidanceResponseStatusEnum) to high(TFhirGuidanceResponseStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionRelationshipTypeEnumListAsInteger(aSet : TFhirActionRelationshipTypeEnumList) : Integer;
-var
-  a : TFhirActionRelationshipTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionRelationshipTypeEnum) to high(TFhirActionRelationshipTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionRelationshipTypeEnumList(i : Integer) : TFhirActionRelationshipTypeEnumList;
-var
-  aLoop : TFhirActionRelationshipTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionRelationshipTypeEnum) to high(TFhirActionRelationshipTypeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionRelationshipAnchorEnumListAsInteger(aSet : TFhirActionRelationshipAnchorEnumList) : Integer;
-var
-  a : TFhirActionRelationshipAnchorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionRelationshipAnchorEnum) to high(TFhirActionRelationshipAnchorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionRelationshipAnchorEnumList(i : Integer) : TFhirActionRelationshipAnchorEnumList;
-var
-  aLoop : TFhirActionRelationshipAnchorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionRelationshipAnchorEnum) to high(TFhirActionRelationshipAnchorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionGroupingBehaviorEnumListAsInteger(aSet : TFhirActionGroupingBehaviorEnumList) : Integer;
-var
-  a : TFhirActionGroupingBehaviorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionGroupingBehaviorEnum) to high(TFhirActionGroupingBehaviorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionGroupingBehaviorEnumList(i : Integer) : TFhirActionGroupingBehaviorEnumList;
-var
-  aLoop : TFhirActionGroupingBehaviorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionGroupingBehaviorEnum) to high(TFhirActionGroupingBehaviorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionSelectionBehaviorEnumListAsInteger(aSet : TFhirActionSelectionBehaviorEnumList) : Integer;
-var
-  a : TFhirActionSelectionBehaviorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionSelectionBehaviorEnum) to high(TFhirActionSelectionBehaviorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionSelectionBehaviorEnumList(i : Integer) : TFhirActionSelectionBehaviorEnumList;
-var
-  aLoop : TFhirActionSelectionBehaviorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionSelectionBehaviorEnum) to high(TFhirActionSelectionBehaviorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionRequiredBehaviorEnumListAsInteger(aSet : TFhirActionRequiredBehaviorEnumList) : Integer;
-var
-  a : TFhirActionRequiredBehaviorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionRequiredBehaviorEnum) to high(TFhirActionRequiredBehaviorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionRequiredBehaviorEnumList(i : Integer) : TFhirActionRequiredBehaviorEnumList;
-var
-  aLoop : TFhirActionRequiredBehaviorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionRequiredBehaviorEnum) to high(TFhirActionRequiredBehaviorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionPrecheckBehaviorEnumListAsInteger(aSet : TFhirActionPrecheckBehaviorEnumList) : Integer;
-var
-  a : TFhirActionPrecheckBehaviorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionPrecheckBehaviorEnum) to high(TFhirActionPrecheckBehaviorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionPrecheckBehaviorEnumList(i : Integer) : TFhirActionPrecheckBehaviorEnumList;
-var
-  aLoop : TFhirActionPrecheckBehaviorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionPrecheckBehaviorEnum) to high(TFhirActionPrecheckBehaviorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirActionCardinalityBehaviorEnumListAsInteger(aSet : TFhirActionCardinalityBehaviorEnumList) : Integer;
-var
-  a : TFhirActionCardinalityBehaviorEnum;
-begin
-  result := 0;
-  for a := low(TFhirActionCardinalityBehaviorEnum) to high(TFhirActionCardinalityBehaviorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirActionCardinalityBehaviorEnumList(i : Integer) : TFhirActionCardinalityBehaviorEnumList;
-var
-  aLoop : TFhirActionCardinalityBehaviorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirActionCardinalityBehaviorEnum) to high(TFhirActionCardinalityBehaviorEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

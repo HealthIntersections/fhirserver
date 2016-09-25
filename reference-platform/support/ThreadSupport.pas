@@ -37,6 +37,7 @@ Uses
 
 
 Type
+  TInstallerCallback = procedure(IntParam: Integer; StrParam: String) of object;
   TThreadID = Cardinal;
   TThreadHandle = THandle;
 

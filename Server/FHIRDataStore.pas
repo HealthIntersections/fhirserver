@@ -590,33 +590,38 @@ begin
   inherited;
 end;
 
-procedure TFHIRDataStore.DoExecuteOperation(request: TFHIRRequest;
-  response: TFHIRResponse; bWantSession: Boolean);
+procedure TFHIRDataStore.DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
 var
   storage: TFhirOperationManager;
+  context : TOperationContext;
 begin
   if bWantSession then
     request.session := CreateImplicitSession('server', true);
-  storage := TFhirOperationManager.Create('en', self.Link);
+  context := TOperationContext.create;
   try
-    storage.OwnerName := OwnerName;
-    storage.Connection := FDB.GetConnection('fhir');
-    storage.Connection.StartTransact;
+    storage := TFhirOperationManager.Create('en', self.Link);
     try
-      storage.Execute(request, response, false);
-      storage.Connection.Commit;
-      storage.Connection.Release;
-    except
-      on e: Exception do
-      begin
-        storage.Connection.Rollback;
-        storage.Connection.Error(e);
-        recordStack(e);
-        raise;
+      storage.OwnerName := OwnerName;
+      storage.Connection := FDB.GetConnection('fhir');
+      storage.Connection.StartTransact;
+      try
+        storage.Execute(context, request, response);
+        storage.Connection.Commit;
+        storage.Connection.Release;
+      except
+        on e: Exception do
+        begin
+          storage.Connection.Rollback;
+          storage.Connection.Error(e);
+          recordStack(e);
+          raise;
+        end;
       end;
+    finally
+      storage.free;
     end;
   finally
-    storage.free;
+    context.Free;
   end;
 end;
 
@@ -1120,7 +1125,7 @@ begin
 end;
 
 procedure TFHIRDataStore.RegisterConsentRecord(session: TFhirSession);
-{$IFNDEF FHIR2CM}
+{$IFNDEF FHIR2}
 var
   pc: TFhirConsent;
 begin
@@ -1185,7 +1190,7 @@ begin
     with ct.actorList.append do
     begin
       roleList.append.text := 'Server Host';
-      {$IFNDEF FHIR2CM}
+      {$IFNDEF FHIR2}
       entity := TFhirReference.Create;
       entity.reference := 'Device/this-server';
       {$ENDIF}
@@ -1405,9 +1410,6 @@ begin
   finally
     fpe.Free;
   end;
-  writeln(StringFormat('checking expressions: %d of %d ok', [c, t]));
-  if (s <> '') then
-    StringToFile(s, 'c:\temp\fail.txt', TEncoding.UTF8);
 end;
 
 procedure TFHIRDataStore.checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);

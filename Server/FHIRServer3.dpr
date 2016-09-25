@@ -268,10 +268,16 @@ uses
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas';
 
 begin
+  logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';
+  if ParamCount = 0 then
+  begin
+    filelog := true;
+    logt('testing');
+  end;
   JclStartExceptionTracking;
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
-    SetConsoleTitle('FHIR Server DSTU3');
+    SetConsoleTitle('FHIR Server STU3');
     ExecuteFhirServer;
   except
     on E: Exception do

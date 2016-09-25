@@ -4,6 +4,7 @@ Interface
 
 uses
   Generics.Collections,
+  ThreadSupport,
   LoincServices,
   Classes,
   FileSupport,
@@ -31,8 +32,11 @@ Const
   RF2_MAGIC_DEFINED = 900000000000073002;
   RF2_MAGIC_PRIMITIVE = 900000000000074008;
   RF2_MAGIC_FSN = 900000000000003001;
+  UPDATE_FREQ = 501;
+  UPDATE_FREQ_D = 1501;
 
 Type
+
   TRelationship = record
     relationship : Cardinal;
     characteristic : Integer;
@@ -90,7 +94,9 @@ Type
 
   TSnomedImporter = class (TAdvObject)
   private
-    FCacheDir : String;
+    callback : TInstallerCallback;
+    lastmessage : String;
+
     FConceptFiles : TStringList;
     FRelationshipFiles : TStringList;
     FDescriptionFiles : TStringList;
@@ -125,7 +131,7 @@ Type
     FDirectoryReferenceSets: String;
     FRF2: boolean;
     FStart : TDateTime;
-    outputFile : String;
+    FoutputFile : String;
 
     Function AddString(Const s : String):Cardinal;
     Function Compare(pA, pB : Pointer) : Integer;
@@ -138,7 +144,7 @@ Type
     procedure ImportSnomed;
     procedure ReadConceptsFile;
     procedure ReadDescriptionsFile;
-    Procedure LoadReferenceSets(path : String); overload;
+    Procedure LoadReferenceSets(path : String; var count : integer); overload;
     Procedure LoadReferenceSets; overload;
     Procedure CloseReferenceSets(); overload;
     Procedure LoadReferenceSet(sFile : String);
@@ -153,7 +159,7 @@ Type
     Function ListChildren(iConcept: Cardinal) : TCardinalArray;
 
     Function GetConcept(aId : Uint64; var iIndex : Integer) : TConcept;
-    procedure Progress(msg : String);
+    procedure Progress(Step : integer; pct : real; msg : String);
     function readDate(s: String): TSnomedDate;
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
     procedure SetVersion(s : String);
@@ -167,12 +173,13 @@ Type
     Property DirectoryReferenceSets : String read FDirectoryReferenceSets write FDirectoryReferenceSets;
     Property Status : Integer read FStatus Write FStatus;
     Property Key : Integer read FKey write FKey;
-    Property CacheDir : String read FCacheDir write FCacheDir;
     Property RF2 : boolean read FRF2 write FRF2;
+    Property OutputFile : String read FOutputFile write FOutputFile;
   end;
 
+
 function importSnomedRF1(dir : String; dest, uri : String) : String;
-function importSnomedRF2(dir : String; dest, uri : String) : String;
+function importSnomedRF2(dir : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
 
 Implementation
 
@@ -266,10 +273,10 @@ function importSnomedRF1(dir : String; dest, uri : String) : String;
 var
   imp : TSnomedImporter;
 begin
-  Write('Import Snomed (RF1) from '+dir);
   imp := TSnomedImporter.Create;
   try
-    imp.CacheDir := dest;
+    imp.progress(0, 0, 'Import Snomed (RF1) from '+dir);
+    imp.OutputFile := dest;
     imp.setVersion(uri);
     analyseDirectory(dir, imp);
     imp.Go;
@@ -279,16 +286,17 @@ begin
   end;
 end;
 
-function importSnomedRF2(dir : String; dest, uri : String) : String;
+function importSnomedRF2(dir : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TSnomedImporter;
 begin
-  Write('Import Snomed (RF2) from '+dir);
   imp := TSnomedImporter.Create;
   try
+    imp.callback := callback;
+    imp.progress(0, 0, 'Import Snomed (RF2) from '+dir);
     imp.RF2 := True;
     imp.setVersion(uri);
-    imp.CacheDir := dest;
+    imp.OutputFile := dest;
     analyseDirectoryRF2(dir, imp);
     imp.Go;
     result := imp.outputFile;
@@ -395,6 +403,7 @@ Procedure TSnomedImporter.ImportSnomed;
 var
   oSvc : TSnomedServices;
   active, inactive : UInt64Array;
+  s : String;
 begin
   FStart := now;
 
@@ -447,11 +456,11 @@ begin
     FRefs.DoneBuild;
     SetDepths(oSvc.ActiveRoots);
 
-    Progress('#16 Save');
+    Progress(16, 0, 'Save');
 
-    if not DirectoryExists(FCacheDir) then
-      CreateDir(ExtractFilePath(FCacheDir));
-    outputFile := IncludeTrailingPathDelimiter(FCacheDir)+'snomed_'+FVersionDate+'.cache';
+    s := ExtractFilePath(FoutputFile);
+    if not DirectoryExists(s) then
+      CreateDir(s);
     oSvc.Save(outputFile);
     // SetFileReadOnly(sFilename, true);
   Finally
@@ -524,7 +533,7 @@ var
     result := iCursor;
   End;
 Begin
-  Progress('#1 Read Concept File');
+  Progress(1, 0, 'Read Concept File');
   for fi := 0 to ConceptFiles.Count - 1 do
   begin
     s := LoadFile(ConceptFiles[fi]);
@@ -591,16 +600,16 @@ Begin
 
       inc(iCursor, 2);
       inc(OverallCount);
-      if OverallCount mod 5001 = 0 then
-        Progress('');
+      if OverallCount mod UPDATE_FREQ = 0 then
+        Progress(1, iCursor / Length(s), '');
       inc(iCount);
     End;
   End;
 
-  Progress('#2 Sort Concepts');
+  Progress(2, 0, 'Sort Concepts');
   FConcepts.SortedBy(Compare);
 
-  Progress('#3 Build Concept Cache');
+  Progress(3, 0, 'Build Concept Cache');
   iLast := 0;
   for iLoop := 0 to FConcepts.Count - 1 Do
   begin
@@ -610,8 +619,8 @@ Begin
     iLast := oConcept.Identity;
     inc(OverallCount);
     oConcept.Index := FConcept.AddConcept(oConcept.Identity, oConcept.FDate, oConcept.Flag);
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(3, iLoop / (FConcepts.Count*2), '');
   End;
   FConcept.DoneBuild;
 
@@ -619,8 +628,8 @@ Begin
   begin
     oConcept := TConcept(FConcepts[iLoop]);
     inc(OverallCount);
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(3, (FConcepts.Count+iLoop) / (FConcepts.Count*2), '');
     if not FConcept.FindConcept(oConcept.Identity, iIndex) or (iIndex <> oConcept.index) Then
       raise exception.create('unable to find a concept in the concept list it is in: '+inttostr(oConcept.Identity)+'['+inttostr(iLoop)+']');
     if RF2 then
@@ -714,7 +723,7 @@ begin
   for j := 0 to FConcepts.Count - 1 do
   begin
     inc(OverallCount);
-    if OverallCount mod 5001 = 0 then
+    if OverallCount mod UPDATE_FREQ = 0 then
       Progress('');
     oConcept := TConcept(FConcepts[j]);
     FConcept.GetConcept(oConcept.index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex);
@@ -767,7 +776,7 @@ var
     result := iCursor;
   End;
 begin
-  Progress('#4 Read Description File');
+  Progress(4, 0, 'Read Description File');
   SetLength(aIndex, 10000);
   aIndexLength := 0;
   iCount := 0;
@@ -881,30 +890,30 @@ begin
 
       inc(iCursor, 2);
       inc(OverallCount);
-      if OverallCount mod 15001 = 0 then
-        Progress('');
+      if OverallCount mod UPDATE_FREQ_D = 0 then
+        Progress(4, iCursor / Length(s), '');
       inc(iCount);
     End;
   end;
-  Progress('#5 Sort Descriptions');
+  Progress(5, 0, 'Sort Descriptions');
   SetLength(aIndex, aIndexLength);
   QuickSortIndex(aIndex);
-  Progress('#6 Build Description cache');
+  Progress(6, 0, 'Build Description cache');
   FDescRef.StartBuild;
   For i := 0 to Length(aIndex) - 1 Do
   Begin
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(6, i / Length(aIndex), '');
     FDescRef.AddDescription(aIndex[i].id, aIndex[i].ref);
   End;
   FDescRef.DoneBuild;
 
-  Progress('#7 Process Words');
+  Progress(7, 0, 'Process Words');
   FWords.StartBuild;
   For i := 0 to FWordList.Count - 1 Do
   Begin
     if OverallCount mod 5011 = 0 then
-      Progress('');
+      Progress(7, i / FWordList.Count, '');
     iFlag := TWordCache(FWordList.Objects[i]).Flags;
     iFlag := iFlag xor FLAG_WORD_DEP; // reverse usage
     FWords.AddWord(FStrings.AddString(FWordList[i]), iFlag);
@@ -913,12 +922,12 @@ begin
   End;
   FWords.DoneBuild;
 
-  Progress('#8 Process Stems');
+  Progress(8, 0, 'Process Stems');
   FStems.StartBuild;
   For i := 0 to FStemList.Count - 1 Do
   Begin
     if OverallCount mod 5011 = 0 then
-      Progress('');
+      Progress(8, i / FStemList.Count, '');
     oList := TAdvIntegerList(FStemList.Objects[i]);
     SetLength(aCardinals, oList.Count);
     for j := 0 to oList.Count - 1 Do
@@ -931,11 +940,11 @@ begin
     inc(OverallCount);
   End;
   FStems.DoneBuild;
-  Progress('#9 Mark Stems');
+  Progress(9, 0, 'Mark Stems');
   For i := 0 to FConcepts.Count - 1 Do
   Begin
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(9, i / FConcepts.Count, '');
     oConcept := TConcept(FConcepts[i]);
     SetLength(aCardinals, oConcept.Stems.Count);
     for j := 0 to oConcept.Stems.Count - 1 do
@@ -999,7 +1008,7 @@ var
       Raise Exception.Create('Unable to resolve the term reference '+sId+' in the relationships file');
   End;
 Begin
-  Progress('#10 Read Relationship File');
+  Progress(10, 0, 'Read Relationship File');
   if not FConcept.FindConcept(IS_A_MAGIC, Findex_is_a) Then
     Raise exception.Create('is-a concept not found ('+inttostr(IS_A_MAGIC)+')');
   for fi := 0 to RelationshipFiles.Count - 1 do
@@ -1089,8 +1098,8 @@ Begin
       oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := iGroup;
       inc(iCursor, 2);
       inc(OverallCount);
-      if OverallCount mod 15001 = 0 then
-        Progress('');
+      if OverallCount mod UPDATE_FREQ_D = 0 then
+        Progress(10, fi / RelationshipFiles.Count, '');
       inc(iCount);
     End;
   End;
@@ -1189,7 +1198,7 @@ var
   iIndex : Cardinal;
   aCards : TCardinalArray;
 begin
-  Progress('#11 Cross-Link Relationships');
+  Progress(11, 0, 'Cross-Link Relationships');
   SetLength(aCards, 0);
   SetLength(active, 0);
   SetLength(inactive, 0);
@@ -1221,8 +1230,8 @@ begin
     aCards := SortRelationshipArray(oConcept.FOutbounds);
     FConcept.SetOutbounds(oConcept.index, FRefs.AddReferences(aCards));
     inc(OverallCount);
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(11, iLoop / FConcepts.Count, '');
   End;
   if length(active) = 0 Then
     Raise Exception.Create('no roots found');
@@ -1232,7 +1241,7 @@ procedure TSnomedImporter.BuildClosureTable;
 var
   i : integer;
 begin
-  Progress('#12 Build Closure Table');
+  Progress(12, 0, 'Build Closure Table');
   for i := 0 to FConcepts.Count - 1 do
   begin
     BuildClosure(TConcept(FConcepts[i]).Index);
@@ -1347,8 +1356,8 @@ begin
     result := FRefs.GetReferences(iDesc)
   Else
   Begin
-    if OverallCount mod 5001 = 0 then
-      Progress('');
+    if OverallCount mod UPDATE_FREQ = 0 then
+      Progress(12, OverallCount / FConcepts.Count, '');
     inc(OverallCount);
 
     FConcept.SetAllDesc(iConcept, MAGIC_IN_PROGRESS);
@@ -1465,7 +1474,7 @@ var
   i : integer;
   j : cardinal;
 begin
-  Progress('#15 Set Concept Depths');
+  Progress(15, 0, 'Set Concept Depths');
   for i := 0 to Length(aRoots) - 1 do
   Begin
     FConcept.FindConcept(aRoots[i], j);
@@ -1566,7 +1575,7 @@ Begin
 End;
 }
 
-procedure TSnomedImporter.LoadReferenceSets(path : String);
+procedure TSnomedImporter.LoadReferenceSets(path : String; var count : integer);
 var
   sr: TSearchRec;
 begin
@@ -1576,12 +1585,13 @@ begin
       if (sr.Attr = faDirectory) then
       begin
         if not StringStartsWith(sr.Name, '.') then
-          LoadReferenceSets(IncludeTrailingPathDelimiter(path) + sr.Name);
+          LoadReferenceSets(IncludeTrailingPathDelimiter(path) + sr.Name, count);
       end
       else if (sr.Attr <> faDirectory) and (ExtractFileExt(sr.Name) = '.txt') then
       begin
         LoadReferenceSet(IncludeTrailingPathDelimiter(path) + sr.Name);
-        Progress('');
+        inc(count);
+        Progress(13, count / 300, '');
       end;
     until FindNext(sr) <> 0;
     FindClose(sr);
@@ -1596,26 +1606,28 @@ var
   refs, vals : TCardinalArray;
   ndx : Cardinal;
   values : Cardinal;
+  count : integer;
 begin
-    Progress('#13 Importing Reference Sets');
+  count := 0;
+    Progress(13, 0, 'Importing Reference Sets');
     if FDirectoryReferenceSets <> '' Then
-      LoadReferenceSets(FDirectoryReferenceSets);
+      LoadReferenceSets(FDirectoryReferenceSets, count);
     FStrings.DoneBuild;
     CloseReferenceSets;
-    Progress('#14 Sorting Reference Sets');
+    Progress(14, 0, 'Sorting Reference Sets');
     FRefsets.SortedBy(CompareRefSetByConcept);
-    Progress('');
+    Progress(14, 0.5, '');
     for i := 0 to FRefSets.Count - 1 Do
     begin
       refset := FRefsets[i] as TRefSet;
       FRefsetindex.AddReferenceSet(refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes);
     end;
 
-    Progress('#15 Indexing Reference Sets');
+    Progress(15, 0, 'Indexing Reference Sets');
     for i := 0 to FConcepts.Count - 1 do
     begin
       if (i mod 5000 = 0) then
-        Progress('');
+        Progress(15, i / (FConcepts.Count + FDesc.Count), '');
 
       conc := FConcepts[i] as TConcept;
       setLength(refs, FRefsets.Count);
@@ -1643,7 +1655,7 @@ begin
     for i := 0 to FDesc.Count - 1 do
     begin
       if (i mod 5000 = 0) then
-        Progress('');
+        Progress(15, (FDesc.Count + i) / (FConcepts.Count + FDesc.Count), '');
 
       setLength(refs, Frefsets.Count);
       setLength(vals, Frefsets.Count);
@@ -2018,18 +2030,24 @@ begin
 end;
 
 
-procedure TSnomedImporter.Progress(Msg : String);
+procedure TSnomedImporter.Progress(step : integer; pct : real; Msg : String);
 begin
-  if (msg <> '') then
+  if (assigned(callback)) then
+  begin
+    if msg = '' then
+      msg := lastmessage;
+    pct := ((step / 16) * 100) + (pct * (100 / 16));
+    callback(trunc(pct), Msg);
+    lastmessage := msg;
+  end
+  else if (msg <> '') then
   begin
     Writeln('           '+DescribePeriod(now - FStart));
-
-    write(msg)
+    write('#'+inttostr(step)+' '+msg)
   end
   else
     write('.');
 end;
-
 
 { TRefSetList }
 

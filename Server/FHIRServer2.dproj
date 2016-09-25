@@ -105,6 +105,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_2_64</DCC_DcuOutput>
         <DCC_Define>FHIR2;FHIR2CM;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
@@ -345,11 +346,11 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireballTests.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\CDSHooksUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRPatch.pas"/>
+        <DCCReference Include="AccessControlEngine.pas"/>
         <DCCReference Include="MPISearch.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIROperations.pas"/>
@@ -359,6 +360,8 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRXhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
+        <DCCReference Include="FHIRLog.pas"/>
+        <DCCReference Include="Logging.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRAuthMap.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
@@ -417,8 +420,8 @@
                     <Source Name="MainSource">FHIRServer2.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k230.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp230.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -428,14 +431,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -445,16 +448,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
+                <DeployFile LocalName="Profiling\AQtimeModule1.aqt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
                     </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                </DeployFile>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -768,7 +768,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

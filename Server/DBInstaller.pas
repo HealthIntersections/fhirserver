@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, GuidSupport,
+  SysUtils, Classes, GuidSupport, ThreadSupport,
   AdvObjects, AdvExceptions,
   KDBManager, KDBDialects, TextUtilities,
   FHIRBase, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
@@ -59,6 +59,7 @@ const
 Type
   TFHIRDatabaseInstaller = class (TAdvObject)
   private
+    Fcallback : TInstallerCallback;
     FConn : TKDBConnection;
     FDoAudit: boolean;
     FTransactions: boolean;
@@ -107,7 +108,7 @@ Type
     Procedure Uninstall;
     Procedure Upgrade(version : integer);
     Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
-
+    property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
 implementation
@@ -665,38 +666,66 @@ procedure TFHIRDatabaseInstaller.Install(scim : TSCIMServer);
 begin
   FConn.StartTransact;
   try
+    if assigned(CallBack) then Callback(40, 'Create Users');
     CreateUsers;
+    if assigned(CallBack) then Callback(41, 'Create UserIndexes');
     CreateUserIndexes;
     scim.defineSystem(FConn);
+    if assigned(CallBack) then Callback(42, 'Create ResourceSessions');
     CreateResourceSessions;
+    if assigned(CallBack) then Callback(43, 'Create OAuthLogins');
     CreateOAuthLogins;
 
+    if assigned(CallBack) then Callback(44, 'Create CodeSystems');
     CreateCodeSystems;
 
+    if assigned(CallBack) then Callback(45, 'Create Closures');
     CreateClosures;
+    if assigned(CallBack) then Callback(46, 'Create Concepts');
     CreateConcepts;
+    if assigned(CallBack) then Callback(47, 'Create ValueSets');
     CreateValueSets;
+    if assigned(CallBack) then Callback(48, 'Create ValueSetMembers');
     CreateValueSetMembers;
+    if assigned(CallBack) then Callback(49, 'Create ClosureEntries');
     CreateClosureEntries;
 
+    if assigned(CallBack) then Callback(50, 'Create ResourceTags');
     CreateResourceTags;
+    if assigned(CallBack) then Callback(51, 'Create ResourceTypes');
     CreateResourceTypes;
+    if assigned(CallBack) then Callback(52, 'Create ResourceConfig');
     CreateResourceConfig;
+    if assigned(CallBack) then Callback(53, 'Create Resources');
     CreateResources;
+    if assigned(CallBack) then Callback(54, 'Create ResourceCompartments');
     CreateResourceCompartments;
+    if assigned(CallBack) then Callback(55, 'Create ResourceVersions');
     CreateResourceVersions;
+    if assigned(CallBack) then Callback(56, 'Create ResourceVersionsTags');
     CreateResourceVersionsTags;
+    if assigned(CallBack) then Callback(57, 'Create ResourceIndexes');
     CreateResourceIndexes;
+    if assigned(CallBack) then Callback(58, 'Create ResourceSpaces');
     CreateResourceSpaces;
+    if assigned(CallBack) then Callback(59, 'Create ResourceIndexEntries');
     CreateResourceIndexEntries;
+    if assigned(CallBack) then Callback(60, 'Create ResourceSearches');
     CreateResourceSearches;
+    if assigned(CallBack) then Callback(61, 'Create ResourceSearchEntries');
     CreateResourceSearchEntries;
+    if assigned(CallBack) then Callback(62, 'Create SubscriptionQueue');
     CreateSubscriptionQueue;
+    if assigned(CallBack) then Callback(63, 'Create NotificationQueue');
     CreateNotificationQueue;
+    if assigned(CallBack) then Callback(64, 'Create WebSocketsQueue');
     CreateWebSocketsQueue;
 
+    if assigned(CallBack) then Callback(65, 'Create ResourceSpaces');
     DefineResourceSpaces;
+    if assigned(CallBack) then Callback(66, 'Create Indexes');
     DefineIndexes;
+    if assigned(CallBack) then Callback(67, 'Commit');
     FConn.Commit;
   except
     on e:exception do
@@ -706,6 +735,7 @@ begin
       raise;
     end;
   end;
+  if assigned(CallBack) then Callback(68, 'Do Post Install');
   DoPostTransactionInstall;
 end;
 
@@ -737,6 +767,7 @@ procedure TFHIRDatabaseInstaller.Uninstall;
 var
   meta : TKDBMetaData;
 begin
+  if assigned(CallBack) then Callback(5, 'Check for existing tables');
   meta := FConn.FetchMetaData;
   try
     FConn.StartTransact;
@@ -747,68 +778,97 @@ begin
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
+      if assigned(CallBack) then Callback(5, 'Check Delete WebSocketsQueue');
       if meta.hasTable('WebSocketsQueue') then
         FConn.DropTable('WebSocketsQueue');
+      if assigned(CallBack) then Callback(6, 'Check Delete NotificationQueue');
       if meta.hasTable('NotificationQueue') then
         FConn.DropTable('NotificationQueue');
+      if assigned(CallBack) then Callback(7, 'Check Delete SubscriptionQueue');
       if meta.hasTable('SubscriptionQueue') then
         FConn.DropTable('SubscriptionQueue');
+      if assigned(CallBack) then Callback(8, 'Check Delete SearchEntries');
       if meta.hasTable('SearchEntries') then
         FConn.DropTable('SearchEntries');
+      if assigned(CallBack) then Callback(9, 'Check Delete Searches');
       if meta.hasTable('Searches') then
         FConn.DropTable('Searches');
+      if assigned(CallBack) then Callback(10, 'Check Delete IndexEntries');
       if meta.hasTable('IndexEntries') then
         FConn.DropTable('IndexEntries');
+      if assigned(CallBack) then Callback(11, 'Check Delete Indexes');
       if meta.hasTable('Indexes') then
         FConn.DropTable('Indexes');
+      if assigned(CallBack) then Callback(12, 'Check Delete Spaces');
       if meta.hasTable('Spaces') then
         FConn.DropTable('Spaces');
 
+      if assigned(CallBack) then Callback(13, 'Check Delete VersionTags');
       if meta.hasTable('VersionTags') then
         FConn.DropTable('VersionTags');
+      if assigned(CallBack) then Callback(14, 'Check Delete Versions');
       if meta.hasTable('Versions') then
         FConn.DropTable('Versions');
+      if assigned(CallBack) then Callback(15, 'Check Delete Compartments');
       if meta.hasTable('Compartments') then
         FConn.DropTable('Compartments');
+      if assigned(CallBack) then Callback(16, 'Check Delete Ids');
       if meta.hasTable('Ids') then
         FConn.DropTable('Ids');
+      if assigned(CallBack) then Callback(17, 'Check Delete Config');
       if meta.hasTable('Config') then
         FConn.DropTable('Config');
+      if assigned(CallBack) then Callback(18, 'Check Delete Types');
       if meta.hasTable('Types') then
         FConn.DropTable('Types');
+      if assigned(CallBack) then Callback(19, 'Check Delete Tags');
       if meta.hasTable('Tags') then
         FConn.DropTable('Tags');
+      if assigned(CallBack) then Callback(20, 'Check Delete OAuthLogins');
       if meta.hasTable('OAuthLogins') then
         FConn.DropTable('OAuthLogins');
+      if assigned(CallBack) then Callback(21, 'Check Delete Sessions');
       if meta.hasTable('Sessions') then
         FConn.DropTable('Sessions');
+      if assigned(CallBack) then Callback(22, 'Check Delete UserIndexes');
       if meta.hasTable('UserIndexes') then
         FConn.DropTable('UserIndexes');
+      if assigned(CallBack) then Callback(23, 'Check Delete Users');
       if meta.hasTable('Users') then
         FConn.DropTable('Users');
 
+      if assigned(CallBack) then Callback(24, 'Check Delete ClosureEntries');
       if meta.hasTable('ClosureEntries') then
         FConn.DropTable('ClosureEntries');
+      if assigned(CallBack) then Callback(25, 'Check Delete ValueSetMembers');
       if meta.hasTable('ValueSetMembers') then
         FConn.DropTable('ValueSetMembers');
+      if assigned(CallBack) then Callback(26, 'Check Delete ValueSets');
       if meta.hasTable('ValueSets') then
         FConn.DropTable('ValueSets');
+      if assigned(CallBack) then Callback(27, 'Check Delete Closures');
       if meta.hasTable('Closures') then
         FConn.DropTable('Closures');
+      if assigned(CallBack) then Callback(28, 'Check Delete Concepts');
       if meta.hasTable('Concepts') then
         FConn.DropTable('Concepts');
 
-
+      if assigned(CallBack) then Callback(29, 'Check Delete UniiDesc');
       if meta.hasTable('UniiDesc') then
         FConn.DropTable('UniiDesc');
+      if assigned(CallBack) then Callback(30, 'Check Delete Unii');
       if meta.hasTable('Unii') then
         FConn.DropTable('Unii');
+      if assigned(CallBack) then Callback(31, 'Check Delete cvx');
       if meta.hasTable('cvx') then
         FConn.DropTable('cvx');
+      if assigned(CallBack) then Callback(32, 'Check Delete USStateCodes');
       if meta.hasTable('USStateCodes') then
         FConn.DropTable('USStateCodes');
+      if assigned(CallBack) then Callback(33, 'Check Delete AreaCodes');
       if meta.hasTable('AreaCodes') then
         FConn.DropTable('AreaCodes');
+      if assigned(CallBack) then Callback(34, 'Check Delete CountryCodes');
       if meta.hasTable('CountryCodes') then
         FConn.DropTable('CountryCodes');
 
@@ -825,6 +885,7 @@ begin
     meta.free;
   end;
   try
+    if assigned(CallBack) then Callback(35, 'Post Uninstall check');
     DoPostTransactionUnInstall;
   finally
     // nothing

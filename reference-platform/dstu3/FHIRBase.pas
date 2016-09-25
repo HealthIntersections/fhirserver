@@ -365,7 +365,7 @@ type
     function hasType(tl : Array of String) : boolean; overload;
     function describe : String;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
-
+    function toString : String; override;
   published
     {@member comments
       comments from the XML stream. No support for comments in JSON
@@ -403,6 +403,7 @@ type
     function Clone : TFHIRBaseList; Overload;
     function GetEnumerator : TFHIRBaseListEnumerator;
     Property ObjByIndex[index : Integer] : TFHIRBase read GetItemN; default;
+    function ToString : String; override;
   end;
 
   TFHIRBaseFactory = class (TAdvObject)
@@ -1500,6 +1501,20 @@ begin
 end;
 
 
+function TFHIRBaseList.ToString: String;
+var
+  i : integer;
+begin
+  result := '(';
+  for i := 0 to count - 1 do
+  begin
+    if (i > 0) then
+      result := result + ',';
+    result := result + ObjByIndex[i].ToString;
+  end;
+  result := result + ')';
+end;
+
 (*
 
 { TFHIRSid }
@@ -1967,6 +1982,14 @@ end;
 function TFHIRBase.primitiveValue: string;
 begin
   result := '';
+end;
+
+function TFHIRBase.toString: String;
+begin
+  if isPrimitive then
+    result := fhirType+'[''' + primitiveValue + ''']'
+  else
+    result := fhirType;
 end;
 
 { TFHIRExpressionNode }

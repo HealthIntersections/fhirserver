@@ -7,7 +7,6 @@ interface
 
 uses
   Classes, DB, Contnrs,
-  {$IFDEF WIN32} IdSoapDateTime, {$ENDIF}
   KDate, KDBManager, AdvExceptions;
 
 const
@@ -295,13 +294,6 @@ const
     );
   {$ENDIF}
 
-{$IFDEF WIN32}
-function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):TTimeStamp;
-function TimeStampToIdSoapDateTime(AValue : TTimeStamp):TIdSoapDateTime;
-
-procedure BindIdSoapDateTime(AConn : TKDBConnection; AName: String; AValue: TIdSoapDateTime);
-Function ColIdSoapDateTime(AConn : TKDBConnection; AName: String): TIdSoapDateTime;
-{$ENDIF}
 
 procedure PopulateDBTableMetaData(ADB : TDataSet; ATable : TKDBTable);
 function FetchIndexMetaData(AIndexDef : TIndexDef) : TKDBIndex;
@@ -311,72 +303,6 @@ implementation
 uses
   SysUtils,
   StringSupport;
-
-{$IFDEF WIN32}
-function IdSoapDateTimeToTimeStamp(AValue : TIdSoapDateTime):kdate.TTimeStamp;
-begin
-  if not Assigned(AValue) then
-    begin
-    FillChar(result, sizeof(kdate.TTimeStamp), 0);
-    end
-  else
-    begin
-    result.year := AValue.Year;
-    result.month := AValue.Month;
-    result.day := AValue.Day;
-    result.hour := AValue.Hour;
-    result.minute := AValue.Minute;
-    result.second := AValue.Second;
-    result.fraction := 0;
-    end;
-end;
-
-function TimeStampToIdSoapDateTime(AValue : kdate.TTimeStamp):TIdSoapDateTime;
-var
-  LYr : Cardinal;
-begin
-  LYr := abs(AValue.year);
-  if (LYr + AValue.month + AValue.day + AValue.hour + AValue.minute + AValue.minute + AValue.second + AValue.fraction = 0) then
-    begin
-    result := nil;
-    end
-  else
-    begin
-    Result := TIdSoapDateTime.Create;
-    Result.year := AValue.Year;
-    Result.month := AValue.Month;
-    Result.day := AValue.Day;
-    Result.hour := AValue.Hour;
-    Result.minute := AValue.Minute;
-    Result.second := AValue.Second;
-    end;
-end;
-
-procedure BindIdSoapDateTime(AConn : TKDBConnection; AName: String; AValue: TIdSoapDateTime);
-begin
-  if not assigned(AValue) then
-    begin
-    AConn.BindNull(AName);
-    end
-  else
-    begin
-    AConn.BindTimeStamp(AName, IdSoapDateTimeToTimeStamp(AValue));
-    // timezone?
-    end;
-end;
-
-function ColIdSoapDateTime(AConn : TKDBConnection; AName: String): TIdSoapDateTime;
-begin
-  if AConn.GetColNullByName(AName) then
-    begin
-    Result := NIL;
-    end
-  else
-    begin
-    result := TimeStampToIdSoapDateTime(AConn.ColTimeStampByName[AName]);
-    end;
-end;
-{$ENDIF}
 
 
 function FetchColumnMetaData(AField : TField):TKDBColumn;

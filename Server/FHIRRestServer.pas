@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, MsXml, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
+  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, MsXml, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
 
-  EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport,
+  EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
@@ -192,10 +192,10 @@ Type
     function extractFileData(form : TMimeMessage; const name: String; var sContentType : String): TStream;
     Procedure StartServer(active : boolean);
     Procedure StopServer;
-    Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; var cursor : integer) : TFHIRBundle;
+    Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
-    Procedure ProcessRequest(request : TFHIRRequest; response : TFHIRResponse; upload : Boolean);
+    Procedure ProcessRequest(context : TOperationContext; request : TFHIRRequest; response : TFHIRResponse);
     function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
@@ -213,7 +213,7 @@ Type
 
     Procedure Start(active : boolean);
     Procedure Stop;
-    Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile);
+    Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile; callback : TInstallerCallback);
 
     Property DataStore : TFHIRDataStore read FFhirStore;
   End;
@@ -222,7 +222,7 @@ Implementation
 
 
 Uses
-  Windows, Registry,
+  Registry,
 
   FHIRLog, SystemService,
 
@@ -454,20 +454,26 @@ function TFhirWebServer.DoSearch(session: TFhirSession; rtype: string; lang, par
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
+  context : TOperationContext;
 begin
   request := TFHIRRequest.create(FFhirStore.ValidatorContext.link, roRest, FFhirStore.Indexes.Compartments.Link);
-  response := TFHIRResponse.Create;
+  context := TOperationContext.Create;
   try
-    request.Session := session.link;
-    request.ResourceName := rType;
-    request.Lang := lang;
-    request.LoadParams(params);
-    request.CommandType := fcmdSearch;
-    ProcessRequest(request, response, false);
-    result := response.bundle.Link;
+    response := TFHIRResponse.Create;
+    try
+      request.Session := session.link;
+      request.ResourceName := rType;
+      request.Lang := lang;
+      request.LoadParams(params);
+      request.CommandType := fcmdSearch;
+      ProcessRequest(context, request, response);
+      result := response.bundle.Link;
+    finally
+      response.free;
+      request.Free;
+    end;
   finally
-    response.free;
-    request.Free;
+    context.Free;
   end;
 end;
 
@@ -623,12 +629,13 @@ Begin
   end;
 End;
 
-procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base : String; ini : TIniFile);
+procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base : String; ini : TIniFile; callback : TInstallerCallback);
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
   op : TFhirOperationManager;
   cursor : integer;
+  context : TOperationContext;
 begin
   if init then
   begin
@@ -646,31 +653,35 @@ begin
       op.Free;
     end;
   end;
-
-  req := TFHIRRequest.Create(FFHIRStore.ValidatorContext.Link, roUpload, FFhirStore.Indexes.Compartments.Link);
+  context := TOperationContext.Create(true, callback, 'Load from '+name);
   try
-    req.CommandType := fcmdTransaction;
-    req.resource := ProcessZip('en', stream, name, base, init, ini, cursor);
-    req.resource.tags['duplicates'] := 'ignore';
-    req.session := FFhirStore.CreateImplicitSession('service', true);
-    req.session.allowAll;
-    req.LoadParams('');
-    req.baseUrl := FFhirStore.Bases[0];
-    resp := TFHIRResponse.Create;
+    req := TFHIRRequest.Create(FFHIRStore.ValidatorContext.Link, roUpload, FFhirStore.Indexes.Compartments.Link);
     try
-      ProcessRequest(req, resp, true);
+      req.CommandType := fcmdTransaction;
+      req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
+      req.resource.tags['duplicates'] := 'ignore';
+      req.session := FFhirStore.CreateImplicitSession('service', true);
+      req.session.allowAll;
+      req.LoadParams('');
+      req.baseUrl := FFhirStore.Bases[0];
+      context.message := 'Process '+name;
+      resp := TFHIRResponse.Create;
+      try
+        ProcessRequest(context, req, resp);
+      finally
+        resp.Free;
+      end;
+      if (ini <> nil) then
+        if (cursor = -1) then
+          ini.DeleteKey('process', 'start')
+        else
+          ini.WriteInteger('process', 'start', cursor);
     finally
-      resp.Free;
+      req.Free;
     end;
-    if (ini <> nil) then
-      if (cursor = -1) then
-        ini.DeleteKey('process', 'start')
-      else
-        ini.WriteInteger('process', 'start', cursor);
   finally
-    req.Free;
+    context.free;
   end;
-
 end;
 
 function TFhirWebServer.WebDesc: String;
@@ -943,6 +954,7 @@ var
   domain : String;
   sBearer : String;
   noErrCode, upload : boolean;
+  context : TOperationContext;
 Begin
   noErrCode := false;
   upload := false;
@@ -1076,10 +1088,16 @@ Begin
                 else
                 begin
                   try
-                    if oRequest.CommandType = fcmdWebUI then
-                      HandleWebUIRequest(oRequest, oResponse, secure)
-                    else
-                      ProcessRequest(oRequest, oResponse, upload);
+                    context := TOperationContext.Create;
+                    try
+                      context.upload := upload;
+                      if oRequest.CommandType = fcmdWebUI then
+                        HandleWebUIRequest(oRequest, oResponse, secure)
+                      else
+                        ProcessRequest(context, oRequest, oResponse);
+                    finally
+                      context.free;
+                    end;
                   except
                     on e : EAbort do
                     begin
@@ -1326,6 +1344,7 @@ var
   s, typ, id, ver : String;
   p : TParseMap;
   prsr : TFHIRParser;
+  context : TOperationContext;
 begin
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1335,34 +1354,39 @@ begin
   request.ResourceName := typ;
   request.CommandType := fcmdUpdate;
 
-  p := TParseMap.create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
+  context := TOperationContext.Create;
   try
-    if p.GetVar('srcformat') = 'json' then
-      prsr := TFHIRJsonParser.Create(request.context.link, request.Lang)
-    else
-      prsr := TFHIRXMLParser.Create(request.context.link, request.Lang);
+    p := TParseMap.create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
     try
-      s := p.GetVar('source');
-      prsr.source := TStringStream.Create(s, TEncoding.UTF8);
+      if p.GetVar('srcformat') = 'json' then
+        prsr := TFHIRJsonParser.Create(request.context.link, request.Lang)
+      else
+        prsr := TFHIRXMLParser.Create(request.context.link, request.Lang);
       try
-        prsr.Parse;
-        request.Resource := prsr.resource.Link;
-        ProcessRequest(request, response, false);
-        if response.HTTPCode < 300 then
-        begin
-          response.HTTPCode := 303;
-          response.Location := request.baseUrl+typ+'/'+id;
+        s := p.GetVar('source');
+        prsr.source := TStringStream.Create(s, TEncoding.UTF8);
+        try
+          prsr.Parse;
+          request.Resource := prsr.resource.Link;
+          ProcessRequest(context, request, response);
+          if response.HTTPCode < 300 then
+          begin
+            response.HTTPCode := 303;
+            response.Location := request.baseUrl+typ+'/'+id;
+          end;
+        finally
+          prsr.source.Free;
         end;
       finally
-        prsr.source.Free;
+        prsr.Free;
       end;
     finally
-      prsr.Free;
+      p.Free;
     end;
+    result := 0;
   finally
-    p.Free;
+    context.Free;
   end;
-  result := 0;
 end;
 
 function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
@@ -1888,7 +1912,7 @@ Begin
         begin
           oRequest.CopyPost(oPostStream);
           if (sContentType = 'application/x-zip-compressed') or (sContentType = 'application/zip') then
-            oRequest.resource := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, cursor)
+            oRequest.resource := ProcessZip(lang, oPostStream, NewGuidURN, 'http://hl7.org/fhir', false, nil, nil,cursor)
           else
           begin
             oRequest.Source := TAdvBuffer.Create;
@@ -1964,7 +1988,7 @@ Begin
   End;
 End;
 
-Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; var cursor : integer) : TFHIRBundle;
+Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
 var
   rdr : TAdvZipReader;
   p : TFHIRParser;
@@ -2017,6 +2041,8 @@ begin
 
       for i := iStart to iEnd Do
       begin
+        if context <> nil then
+          context.progress(trunc(100 * (i - iStart) / (iEnd - iStart)));
         if rdr.Parts[i].name.EndsWith('.json') then
           p := TFHIRJsonParser.create(FFhirStore.Validator.Context.Link, lang)
         else if rdr.Parts[i].name.EndsWith('.map') then
@@ -2026,7 +2052,6 @@ begin
         try
           p.source := TBytesStream.create(rdr.parts[i].AsBytes);
           p.AllowUnknownContent := true;
-        writeln('parse: '+rdr.Parts[i].name);
           p.Parse;
           if  p.resource is TFhirBundle then
           begin
@@ -2216,7 +2241,7 @@ begin
   result := FormatDateTime('c', now);
 end;
 
-procedure TFhirWebServer.ProcessRequest(request: TFHIRRequest; response: TFHIRResponse; upload : Boolean);
+procedure TFhirWebServer.ProcessRequest(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   store : TFhirOperationManager;
   t : cardinal;
@@ -2236,7 +2261,7 @@ begin
     try
       store.Connection.StartTransact;
       try
-        store.Execute(request, response, upload);
+        store.Execute(context, request, response);
         store.Connection.Commit;
       except
         on e:exception do
@@ -2741,6 +2766,7 @@ function TFhirWebServer.GetResource(session : TFhirSession; rtype: string; lang,
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
+  context : TOperationContext;
 begin
   request := TFHIRRequest.create(FFhirStore.ValidatorContext.Link, roRest, FFhirStore.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
@@ -2762,7 +2788,12 @@ begin
       request.CommandType := fcmdVersionRead;
       request.SubId := ver;
     end;
-    ProcessRequest(request, response, false);
+    context := TOperationContext.Create;
+    try
+      ProcessRequest(context, request, response);
+    finally
+      context.Free;
+    end;
     if response.Resource <> nil then
       result := response.resource.link
     else
@@ -2777,6 +2808,7 @@ function TFhirWebServer.FindResource(session : TFhirSession; rtype: string; lang
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
+  context : TOperationContext;
 begin
   request := TFHIRRequest.create(FFhirStore.ValidatorContext.Link, roRest, FFhirStore.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
@@ -2786,7 +2818,12 @@ begin
     request.Lang := lang;
     request.LoadParams(params);
     request.CommandType := fcmdSearch;
-    ProcessRequest(request, response, false);
+    context := TOperationContext.Create;
+    try
+      ProcessRequest(context, request, response);
+    finally
+      context.Free;
+    end;
     if (response.bundle <> nil) and (response.bundle.entryList.Count = 1) then
       result := response.bundle.entryList[0].resource.link
     else

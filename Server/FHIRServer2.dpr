@@ -32,58 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$R *.res}
 
-
-{
-
-bug list:
-
-Hi Grahame,
-[12:05:43 PM] David Hay: any reason why this query doesn’t return any expansion:
-[12:05:51 PM] David Hay: http://fhir-dev.healthintersections.com.au/openValueSet/valueset-medication-codes/$expand?filter=amox
-[12:05:59 PM] David Hay: This one works just fine:
-[12:06:07 PM] David Hay: http://fhir-dev.healthintersections.com.au/openValueSet/valueset-condition-code/$expand?filter=asth
-[12:12:43 PM] David Hay: also: valueset-medication-form-codes
-[12:12:50 PM] David Hay: are actually route codes…
-
-
-
- * multiple duplicate tags
- * Try dereferencing http://hl7.org/fhir/quest'ionnaire-extensions#answerFormat -- 404
-    Our URLs for extensions are broken
-    They should all be http://hl7.org/fhir/Profile/someid#extension
-
-[2:25:55 PM] Brian Postlethwaite: http://fhir.healthintersections.com.au/open/MedicationStatement/_search?_count=100&patient:Patient._id=163
- is there a way to issue a query and include _since>= on it?
-
-
-[1:33:14 AM] Ewout Kramer: paging on your server seems to reverse url and relation:
-[1:33:14 AM] Ewout Kramer: <relation value="http://fhir-dev.healthintersections.com.au/open/DiagnosticReport/_search?_format=text/xml+fhir&amp;search-id=e9a68b91-6777-4fbf-a4e2-de31e44829&amp;&amp;search-sort=_id" xmlns="http://hl7.org/fhir" />
-[1:33:18 AM] Ewout Kramer: <url value="self" xmlns="http://hl7.org/fhir" />
-
-
-build validator jar not in validation pack
-
-
-Change record:\
-  3-May 2015
-    * fix string searching - case and accent insensitive
-
-  2-May 2014
-    * fix search / last
-    * rebuild history to work like search (modify search tables too)
-
-  19-April 2014
-    * add Questionnaire web interface (Lloyd's transform)
-    * fix bug indexing patient compartment
-  18-April 2014
-    * pick up tags on PUT/POST and handle them properly
-    * fix tag functionality in Web UI
-    * reject unknown attributes
-    * fix problem where you couldn't vread an old version of a resource that is currently deleted
-    * fix compartment searches looking for plural name instead of singular name e.g.http://hl7connect.healthintersections.com.au/open/Patient/1053/Observation[s]
-    * fix mime type on content element in atom feed
-}
-
 uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
@@ -288,11 +236,11 @@ uses
   FHIRClient in '..\reference-platform\dstu2\FHIRClient.pas',
   FHIRValidator in '..\reference-platform\dstu2\FHIRValidator.pas',
   ClosureManager in 'ClosureManager.pas',
+  CDSHooksUtilities in '..\reference-platform\dstu2\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownDaringFireballTests in '..\..\markdown\source\MarkdownDaringFireballTests.pas',
-  CDSHooksUtilities in '..\reference-platform\dstu2\CDSHooksUtilities.pas',
-  FHIRPatch in '..\reference-platform\dstu2\FHIRPatch.pas',
+  AccessControlEngine in 'AccessControlEngine.pas',
   MPISearch in 'MPISearch.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\dstu2\FHIROperations.pas',
@@ -302,9 +250,18 @@ uses
   FHIRXhtml in '..\reference-platform\dstu2\FHIRXhtml.pas',
   FHIRContext in '..\reference-platform\dstu2\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
+  FHIRLog in 'FHIRLog.pas',
+  Logging in 'Logging.pas',
+
   FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas';
 
 begin
+  logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';
+  if ParamCount = 0 then
+  begin
+    filelog := true;
+    logt('testing');
+  end;
   JclStartExceptionTracking;
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try

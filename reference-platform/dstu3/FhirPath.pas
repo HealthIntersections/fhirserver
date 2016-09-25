@@ -495,6 +495,16 @@ begin
     finally
       pack.Free;
     end;
+  end
+  else
+  begin
+//    if op then
+//      if input2 <> nil then
+//        writeln(input1.ToString+' '+CODES_TFHIRPathOperation[exp.Operation]+' '+input2.ToString+' = ' + outcome.ToString)
+//      else
+//        writeln(input1.ToString+' '+CODES_TFHIRPathOperation[exp.Operation]+' (nil) = ' + outcome.ToString)
+//    else
+//      writeln('@'+exp.ToString+': '+input1.ToString+' -> '+outcome.ToString);
   end;
 end;
 

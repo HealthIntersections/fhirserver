@@ -33,7 +33,7 @@ interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   AdvExceptions,
-  SystemService, SystemSupport, FileSupport,
+  SystemService, SystemSupport, FileSupport, ThreadSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
@@ -55,6 +55,8 @@ Type
 
     FNotServing : boolean;
     FLoadStore : boolean;
+    FInstaller : boolean;
+    Fcallback: TInstallerCallback;
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -63,8 +65,11 @@ Type
     procedure CloseDatabase;
     function dbExists : Boolean;
     procedure validate;
+    procedure InstallerCallBack(i : integer; s : String);
+    procedure cb(i : integer; s : WideString);
   protected
     function CanStart : boolean; Override;
+    procedure postStart; override;
     procedure DoStop; Override;
     procedure dump; override;
   public
@@ -77,6 +82,9 @@ Type
     procedure Index;
     procedure InstallDatabase;
     procedure UnInstallDatabase;
+
+    property NotServing : boolean read FNotServing write FNotServing;
+    property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
 procedure ExecuteFhirServer;
@@ -96,7 +104,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, fn, ver, lver : String;
+  dir, fn, ver, lver, dest : String;
   svc : TFHIRService;
 begin
   try
@@ -105,7 +113,7 @@ begin
       iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
 
     if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
-      svcName := 'fhirserver';
+      svcName := 'FHIRServer';
     if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
       dispName := 'FHIR Server';
     iniName := iniName.replace('.dstu', '.dev');
@@ -115,11 +123,16 @@ begin
     else
       logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
     logt('FHIR Version '+FHIR_GENERATED_VERSION);
-    dispName := dispName + ' '+SERVER_VERSION+' ('+FHIR_GENERATED_VERSION+')';
-
+    dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
 
     svc := TFHIRService.Create(svcName, dispName, iniName);
     try
+      if FindCmdLineSwitch('installer') then
+      begin
+        svc.FInstaller := true;
+        svc.callback := svc.InstallerCallBack;
+      end;
+
       svc.FLoadStore := not FindCmdLineSwitch('noload');
       if FindCmdLineSwitch('mount') then
       begin
@@ -160,15 +173,17 @@ begin
         svc.ExecuteTests(false)
       else if FindCmdLineSwitch('tests-all') then
         svc.ExecuteTests(true)
-      else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
-      begin
-        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-        svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
-      end
+//      else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
+//      begin
+//        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
+//        svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+//      end
       else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
       begin
         FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-        svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
+        if not FindCmdLineSwitch('sdest', dest, true, [clstValueNextParam]) then
+          dest := svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
+        svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
       end
       else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
         svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
@@ -201,7 +216,10 @@ begin
   except
     on e : Exception do
     begin
-      logt(E.ClassName+ ': '+E.Message+#13#10#13#10+ExceptionStack(e));
+      if FindCmdLineSwitch('installer') then
+        writeln('##> Exception '+E.Message)
+      else
+        logt(E.ClassName+ ': '+E.Message+#13#10#13#10+ExceptionStack(e));
       raise;
     end;
   end;
@@ -248,6 +266,9 @@ end;
 
 function TFHIRService.CanStart: boolean;
 begin
+  if not DebugMode then
+    filelog := true;
+
   result := false;
   try
     if FDb = nil then
@@ -269,13 +290,16 @@ end;
 procedure TFHIRService.DoStop;
 begin
   try
-    logt('stop: '+StopReason);
+    logt('stopping: '+StopReason);
     StopRestServer;
+    logt('stopping.b: '+StopReason);
     UnloadTerminologies;
+    logt('stopping.c: '+StopReason);
   except
     on e : Exception do
       logt(E.ClassName + ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
   end;
+    logt('stopping.d: '+StopReason);
 end;
 
 procedure TFHIRService.dump;
@@ -356,6 +380,13 @@ begin
 end;
 
 
+
+procedure TFHIRService.cb(i: integer; s: WideString);
+begin
+  if FInstaller then
+    InstallerCallBack(i, s);
+end;
+
 procedure TFHIRService.CloseDatabase;
 begin
   FDB.Free;
@@ -382,16 +413,20 @@ var
   s, src : String;
   first : boolean;
   ini : TIniFile;
+  i : integer;
 begin
   FNotServing := true;
+  cb(1, 'Load: Connect to database');
   if FDb = nil then
     ConnectToDatabase;
+  cb(1, 'Load: start kernel');
   CanStart;
+  cb(2, 'Load from '+fn);
   {$IFDEF FHIR2}
   logt('Load database from '+fn);
   f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
   try
-    FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil);
+    FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
   finally
     f.Free;
   end;
@@ -413,14 +448,15 @@ begin
       first := false;
     end;
 
-    first := true;
+    i := 0;
     for s in st do
     begin
       logt('Load file '+s);
+      cb(0, 'Load from '+s);
       src := locate(s, fn, first);
       f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
       try
-        FWebServer.Transaction(f, first, src, ini.ReadString('files', s, ''), nil);
+        FWebServer.Transaction(f, first, src, ini.ReadString('files', s, ''), nil, callback);
       finally
         f.Free;
       end;
@@ -433,8 +469,9 @@ begin
 
   {$ENDIF}
   logt('done');
-
-  FTerminologyServer.BuildIndexes(true);
+  cb(95, 'Building Terminology Closure Tables');
+  FTerminologyServer.BuildIndexes(not assigned(callback));
+  cb(100, 'Cleaning up');
 
   DoStop;
 end;
@@ -458,7 +495,7 @@ begin
       logt('Load database from '+fn);
       f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
-        FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', ini);
+        FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', ini, callback);
       finally
         f.Free;
       end;
@@ -472,7 +509,7 @@ begin
           logt('Load '+fn);
           f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
           try
-            FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini);
+            FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini, callback);
           finally
             f.Free;
           end;
@@ -491,6 +528,10 @@ procedure TFHIRService.LoadTerminologies;
 begin
   FTerminologyServer := TTerminologyServer.create(FDB.Link);
   FTerminologyServer.load(FIni);
+end;
+
+procedure TFHIRService.postStart;
+begin
 end;
 
 procedure TFHIRService.UnloadTerminologies;
@@ -523,13 +564,9 @@ end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  logt('a');
   FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, FLoadStore);
-  logt('b');
   FWebServer.Start(not FNotServing);
-  logt('c');
   FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload');
-  logt('d');
 end;
 
 procedure TFHIRService.InstallDatabase;
@@ -571,6 +608,7 @@ begin
     try
       db := TFHIRDatabaseInstaller.create(conn, sql);
       try
+        db.callback := callback;
         db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
         db.Bases.Add('http://hl7.org/fhir');
         db.TextIndexing := not FindCmdLineSwitch('no-text-index');
@@ -596,6 +634,11 @@ begin
   end;
 end;
 
+procedure TFHIRService.InstallerCallBack(i: integer; s: String);
+begin
+  writeln('##> '+inttostr(i)+' '+s);
+end;
+
 procedure TFHIRService.UnInstallDatabase;
 var
   db : TFHIRDatabaseInstaller;
@@ -608,6 +651,7 @@ begin
   try
     db := TFHIRDatabaseInstaller.create(conn, '');
     try
+      db.callback := callback;
       db.UnInstall;
     finally
       db.free;

@@ -981,7 +981,7 @@ begin
   if (Fchildren <> nil) then
   begin
 	  for c in Fchildren do
-	  	if (c.Name = name) then
+	  	if (c.Name = name) or (name.endsWith('[x]') and (c.name.startsWith(name.substring(0, name.length-3)))) then
 	  		if (result = nil) then
 	  			result := c
 	  		else

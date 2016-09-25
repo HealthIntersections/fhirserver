@@ -58,6 +58,7 @@ type
   Protected
     function CanInstall : boolean; Virtual;
     function CanStart : boolean; Virtual;
+    procedure postStart; Virtual;
     procedure DoStop; Virtual;
     procedure DoRemove; Virtual;
 
@@ -180,8 +181,9 @@ end;
 
 Procedure DeathThread(o : TObject); Stdcall;
 var
-  LMemMgr: TMemoryManagerEx;
+  LMemMgr: {$IFDEF VER130}TMemoryManager {$ELSE}TMemoryManagerEx{$ENDIF};
 Begin
+  exit;
   DebugThreadName := 'DeathThread';
   Try
     Sleep(150);
@@ -245,6 +247,7 @@ begin
           begin
           SetStatus(SERVICE_RUNNING, SERVICE_ACCEPT_STOP or SERVICE_ACCEPT_SHUTDOWN);
           end;
+        postStart;
         repeat
           if (LCheckTime < Now) then
             begin
@@ -271,7 +274,8 @@ begin
       if FDebugMode then
         begin
         logt('Exception in Service Execution: '+#13#10+#13#10+e.message+' '+#13#10+'['+e.classname+']');
-        write('press Enter to close');
+        if DebugMode then
+          write('press Enter to close');
         Readln;
         end
       else
@@ -280,6 +284,11 @@ begin
         end;
       end;
   end;
+end;
+
+procedure TSystemService.postStart;
+begin
+// nothing
 end;
 
 procedure ServiceCallHandler(fdwControl: DWORD); Stdcall;
@@ -301,7 +310,6 @@ end;
 procedure ServiceMainEntry(dwArgc: DWORD; lpszArgv: pointer); Stdcall;
 begin
   DebugThreadName := 'Service';
-
   GService.FHandle := RegisterServiceCtrlHandler(PChar(lpszArgv^), @ServiceCallHandler);
   if GService.FHandle <> 0 then
     begin
@@ -319,10 +327,11 @@ end;
 var
   GServiceInfo : array [0..1] of TServiceTableEntry;
 
+
 procedure TSystemService.ServiceExecute;
 begin
   // problem: if we weren't actually started as a service we are about
-  // to hang. But there is no way to determine whether we are running
+  // to hang. But there is no way to deteramine whether we are running
   // as a service
   GServiceInfo[0].lpServiceName := PChar(FSystemName);
   GServiceInfo[0].lpServiceProc := @ServiceMainEntry;

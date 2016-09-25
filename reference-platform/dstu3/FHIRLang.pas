@@ -118,6 +118,9 @@ var
   stream : TStream;
   msg : TFHIRMessage;
 begin
+  if FHIRExeModuleName = '##' then
+    exit;
+
   stream := TBytesStream.Create(LoadSource);
   try
     source := LoadXml(stream);
@@ -148,6 +151,8 @@ begin
   result := '';
   if GMessages = nil then
     LoadMessages;
+  if GMessages = nil then
+    exit(id);
   if not GMessages.ContainsKey(id) then
     result := 'Unknown message '+id
   else

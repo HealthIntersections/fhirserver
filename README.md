@@ -28,7 +28,7 @@ In form, this a middleware tool to help applications exchange data via a reposit
 It shows how to implement a generic FHIR server against an SQL database. The server 
 is specifically written as an reference server - it implements all parts of the 
 specification as defined, and is co-developed with the specification. It is not 
-optimised for hosting/supporting very large repositories efficiently. 
+well optimised for hosting/supporting very large repositories efficiently. 
 
 Compiling 
 ---------
@@ -42,7 +42,6 @@ https://github.com/grahamegrieve/delphi-markdown. You need to get a copy of
 this and fix the paths for the markdown processor units in the .dprs.
 
 After that, compiling should be simple: open the file fhirprojects.groupproj in your version of delphi, and compile
-
 
 Running
 -------

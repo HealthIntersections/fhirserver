@@ -193,7 +193,7 @@ begin
         if (map <> nil) then
         begin
           element := nil;
-          {$IFDEF FHIR2CM}
+          {$IFDEF FHIR2}
             for e in g.elementList do
               if (e.system = match.uriSrc) and (e.code = match.codeSrc) then
           {$ELSE}
@@ -208,7 +208,7 @@ begin
           target := nil;
           if (element <> nil) then
             for t in element.targetList do
-              {$IFDEF FHIR2CM}
+              {$IFDEF FHIR2}
               if (t.system = match.uriTgt) and (t.code = match.codeTgt) then
               {$ELSE}
               if (group.target = match.uriTgt) and (t.code = match.codeTgt) then
@@ -244,7 +244,7 @@ function TClosureManager.getGroup(map: TFHIRConceptMap; source, target: String):
 var
   g : TFHIRConceptMapGroup;
 begin
-  {$IFDEF FHIR2CM}
+  {$IFDEF FHIR2}
     result := map;
   {$ELSE}
   for g in map.groupList do

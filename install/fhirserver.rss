@@ -3,11 +3,27 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.81 2016-09-26</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.81.exe</link>
+			<description>2016-09-26 (v1.0.81): major rebuild of installer + fix issues running as a windows service</description>
+		</item>
+<item><title>FHIRServer release 1.0.80 2016-09-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.80.exe</link>
+			<description>2016-09-20 (v1.0.80): remove debugging code</description>
+		</item>
+		<item><title>FHIRServer release 1.0.79 2016-09-20</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.79.exe</link>
+			<description>2016-09-20 (v1.0.79): fix validation bug</description>
+		</item>
+		<item><title>FHIRServer release 1.0.78 2016-09-19</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.78.exe</link>
+			<description>2016-09-19 (v1.0.78): fix installation bug with value sets (and upgrade to FHIR 1.7.0)</description>
+		</item>
 		<item><title>FHIRServer release 1.0.77 2016-09-18</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.77.exe</link>
 			<description>2016-09-18 (v1.0.77): fix instal bug</description>
 		</item>
-<item><title>FHIRServer release 1.0.76 2016-09-18</title>
+		<item><title>FHIRServer release 1.0.76 2016-09-18</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.76.exe</link>
 			<description>2016-09-18 (v1.0.76): Combiine DSTU2 and STU3 versions to a single install + fix bug accepting value sets</description>
 		</item>

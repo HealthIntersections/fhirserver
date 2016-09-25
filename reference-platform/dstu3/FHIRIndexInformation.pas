@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-09-18T03:48:47+10:00
+// FHIR v1.7.0 generated 2016-09-23T05:40:22+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -47,6 +47,7 @@ Type
   private
     procedure buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForActivityGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -142,6 +143,7 @@ Type
     procedure buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -200,6 +202,29 @@ begin
   indexes.add('ActivityDefinition', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'ActivityDefinition.title', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ActivityDefinition.topic', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'ActivityDefinition.version', SearchXpathUsageNormal);
+end;
+
+procedure TFHIRIndexBuilder.buildIndexesForActivityGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ActivityGroup', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'author', 'The author of the activity group', SearchParamTypeREFERENCE, ['Practitioner', 'Device'], 'ActivityGroup.author', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'context', 'The context the activity group applies to', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'ActivityGroup.context', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'encounter', 'The encounter the activity group applies to', SearchParamTypeREFERENCE, ['Encounter'], 'ActivityGroup.context', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'participant', 'The participant in the activities in the group', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'Person', 'RelatedPerson'], 'ActivityGroup.action.participant', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'patient', 'The identity of a patient to search for activity groups', SearchParamTypeREFERENCE, ['Patient'], 'ActivityGroup.subject', SearchXpathUsageNormal);
+  indexes.add('ActivityGroup', 'subject', 'The subject that the activity group is about', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'ActivityGroup.subject', SearchXpathUsageNormal);
+  compartments.register(frtPatient, 'ActivityGroup', ['subject', 'participant']);
+  compartments.register(frtEncounter, 'ActivityGroup', ['encounter']);
+  compartments.register(frtRelatedPerson, 'ActivityGroup', ['participant']);
+  compartments.register(frtPractitioner, 'ActivityGroup', ['participant', 'author']);
+  compartments.register(frtDevice, 'ActivityGroup', ['author']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2494,6 +2519,24 @@ begin
   indexes.add('Sequence', 'type', 'The type of the variant: Amino acid / cDNA transcript / RNA variant.', SearchParamTypeTOKEN, [], 'Sequence.type', SearchXpathUsageNormal);
 end;
 
+procedure TFHIRIndexBuilder.buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ServiceDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'ServiceDefinition.description', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'ServiceDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'ServiceDefinition.status', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'ServiceDefinition.title', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ServiceDefinition.topic', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'ServiceDefinition.version', SearchXpathUsageNormal);
+end;
+
 procedure TFHIRIndexBuilder.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Slot', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2764,6 +2807,7 @@ procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartmen
 begin
   buildIndexesForAccount(Indexes, compartments);
   buildIndexesForActivityDefinition(Indexes, compartments);
+  buildIndexesForActivityGroup(Indexes, compartments);
   buildIndexesForAllergyIntolerance(Indexes, compartments);
   buildIndexesForAppointment(Indexes, compartments);
   buildIndexesForAppointmentResponse(Indexes, compartments);
@@ -2859,6 +2903,7 @@ begin
   buildIndexesForSchedule(Indexes, compartments);
   buildIndexesForSearchParameter(Indexes, compartments);
   buildIndexesForSequence(Indexes, compartments);
+  buildIndexesForServiceDefinition(Indexes, compartments);
   buildIndexesForSlot(Indexes, compartments);
   buildIndexesForSpecimen(Indexes, compartments);
   buildIndexesForStructureDefinition(Indexes, compartments);

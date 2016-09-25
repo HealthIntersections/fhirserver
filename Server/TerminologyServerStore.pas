@@ -2342,7 +2342,7 @@ var
   c : TFhirConceptMapGroupElement;
 begin
   result := false;
-  {$IFDEF FHIR2CM}
+  {$IFDEF FHIR2}
     for c in g.elementList do
     begin
       if (c.system = system) and (c.code = code) then

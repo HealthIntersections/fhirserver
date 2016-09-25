@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   RegExpr, KDate, HL7V2DateSupport, DateAndTime, ParseMap, KCritSct, TextUtilities, ZLib,
-  DateSupport, StringSupport, EncodeSupport, GuidSupport, BytesSupport,
+  DateSupport, StringSupport, EncodeSupport, GuidSupport, BytesSupport, ThreadSupport,
   KDBManager, KDBDialects,
   AdvObjects, AdvIntegerObjectMatches, AdvMemories, AdvBuffers, AdvVclStreams, AdvStringObjectMatches, AdvStringMatches, AdvGenerics, AdvExceptions,
   AdvStringBuilders, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvJson, MsXml, XmlPatch, MsXmlParser,
@@ -44,7 +44,7 @@ uses
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
   {$IFDEF FHIR3}
-  {$IFNDEF FHIR2CM}
+  {$IFNDEF FHIR2}
   FHIRStructureMapUtilities,
   {$ENDIF}
   {$ENDIF}
@@ -61,6 +61,22 @@ const
 
 type
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew);
+
+  TOperationContext = class (TAdvObject)
+  private
+    FUpload : boolean;
+    FCallback : TInstallerCallback;
+    FMessage : String;
+  public
+    constructor Create; overload;
+    constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
+
+    property upload : boolean read FUpload write FUpload;
+    property callback : TInstallerCallback read FCallback write FCallback;
+    property message : String read FMessage write FMessage;
+
+    procedure progress(i : integer);
+  end;
 
   TKeyPair = class (TAdvObject)
   private
@@ -145,7 +161,7 @@ type
     function Types : TFhirResourceTypeSet; virtual;
     function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
     function CreateDefinition(base : String) : TFHIROperationDefinition; virtual;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function formalURL : String; virtual;
   end;
 
@@ -222,19 +238,19 @@ type
 
     procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
 
-    function  ExecuteUpdate(upload : boolean; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
+    function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse);
-    Function  ExecuteCreate(upload : boolean; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
+    Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
     procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteUpload(request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean;
-    procedure ExecuteTransaction(upload : boolean; request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteBatch(upload : boolean; request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteOperation(request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure SetConnection(const Value: TKDBConnection);
     procedure ReIndex;
     procedure CheckCreateNarrative(request : TFHIRRequest);
@@ -257,7 +273,7 @@ type
     function GetPatientId : String; virtual;
 
     // called when kernel actually wants to process against the store
-    Function Execute(request: TFHIRRequest; response : TFHIRResponse; upload : Boolean) : String;  virtual;
+    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
 
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
 
@@ -285,7 +301,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
@@ -297,7 +313,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirQuestionnaireGenerationOperation = class (TFHIROperation)
@@ -308,7 +324,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirExpandValueSetOperation = class (TFHIROperation)
@@ -320,7 +336,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -332,7 +348,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -345,7 +361,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 {$ENDIF}
@@ -358,7 +374,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -370,7 +386,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -383,7 +399,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -395,7 +411,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -410,7 +426,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirGenerateCDSHookOperation = class (TFHIROperation)
@@ -429,7 +445,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirValidationOperation = class (TFHIROperation)
@@ -440,7 +456,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -452,7 +468,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirCurrentTestScriptOperation = class (TFHIROperation)
@@ -463,7 +479,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirGenerateSnapshotOperation = class (TFHIROperation)
@@ -474,7 +490,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirGenerateTemplateOperation = class (TFHIROperation)
@@ -485,7 +501,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirGenerateNarrativeOperation = class (TFHIROperation)
@@ -496,7 +512,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirSuggestKeyWordsOperation = class (TFHIROperation)
@@ -507,7 +523,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
   TFhirGetMetaDataOperation = class (TFHIROperation)
@@ -518,7 +534,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -530,7 +546,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -542,11 +558,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  {$IFNDEF FHIR2CM}
+  {$IFNDEF FHIR2}
   TServerTransformerServices = class (TTransformerServices)
   private
     FRepository : TFHIRDataStore;
@@ -561,7 +577,7 @@ type
   end;
   {$ENDIF}
 
-  {$IFNDEF FHIR2CM}
+  {$IFNDEF FHIR2}
   TFhirTransformOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -570,7 +586,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
   {$ENDIF}
@@ -584,7 +600,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
   {$ENDIF}
@@ -638,7 +654,7 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.create);
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
-  {$IFNDEF FHIR2CM}
+  {$IFNDEF FHIR2}
   FOperations.add(TFhirTransformOperation.create);
   {$ENDIF}
   {$IFDEF FHIR3}
@@ -848,23 +864,23 @@ begin
   end;
 end;
 
-Function TFhirOperationManager.Execute(request: TFHIRRequest; response : TFHIRResponse; upload : Boolean) : String;
+Function TFhirOperationManager.Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;
 begin
  // assert(FConnection.InTransaction);
   result := Request.Id;
   case request.CommandType of
     fcmdRead : ExecuteRead(request, response);
-    fcmdUpdate : ExecuteUpdate(upload, request, response);
+    fcmdUpdate : ExecuteUpdate(context, request, response);
     fcmdVersionRead : ExecuteVersionRead(request, response);
     fcmdDelete : ExecuteDelete(request, response);
     fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
     fcmdSearch : ExecuteSearch(request, response);
-    fcmdCreate : result := ExecuteCreate(false, request, response, idNoNew, 0);
+    fcmdCreate : result := ExecuteCreate(context, request, response, idNoNew, 0);
     fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
-    fcmdTransaction : ExecuteTransaction(upload, request, response);
-    fcmdBatch : ExecuteBatch(upload, request, response);
-    fcmdOperation : ExecuteOperation(request, response);
-    fcmdUpload : ExecuteUpload(request, response);
+    fcmdTransaction : ExecuteTransaction(context, request, response);
+    fcmdBatch : ExecuteBatch(context, request, response);
+    fcmdOperation : ExecuteOperation(context, request, response);
+    fcmdUpload : ExecuteUpload(context, request, response);
     fcmdPatch : ExecutePatch(request, response);
     fcmdValidate : ExecuteValidation(request, response, 'Validation')
   else
@@ -1134,7 +1150,7 @@ begin
   end;
 end;
 
-Function TFhirOperationManager.ExecuteCreate(upload : boolean; request: TFHIRRequest; response: TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
+Function TFhirOperationManager.ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
 var
   sId, s : String;
   resourceKey, i : Integer;
@@ -1159,7 +1175,7 @@ begin
 
     ok := checkOkToStore(request, response, needSecure);
 
-    if ok and FRepository.Validate and not upload and (request.Session <> nil) then
+    if ok and FRepository.Validate and not context.upload and (request.Session <> nil) then
     begin
       if not ExecuteValidation(request, response, 'Create Resource '+request.ResourceName+'/'+request.Id+' ('+request.originalId+')') then
         ok := false
@@ -2214,7 +2230,7 @@ begin
 end;
 
 
-function TFhirOperationManager.ExecuteUpdate(upload : boolean; request: TFHIRRequest; response: TFHIRResponse) : boolean;
+function TFhirOperationManager.ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
   resourceKey : Integer;
   key, nvid, i : Integer;
@@ -2241,7 +2257,7 @@ begin
       ok := false;
 
     ok := checkOkToStore(request, response, needSecure);
-    if ok and FRepository.Validate and not upload then
+    if ok and FRepository.Validate and not context.upload then
     begin
       if not ExecuteValidation(request, response, 'Update Resource '+request.ResourceName+'/'+request.Id) then
         ok := false
@@ -2256,7 +2272,7 @@ begin
       try
         if (list.Count = 0) then
         begin
-          ExecuteCreate(upload, request, response, idMaybeNew, 0);
+          ExecuteCreate(context, request, response, idMaybeNew, 0);
           result := false;
           ok := false;
         end
@@ -2286,7 +2302,7 @@ begin
 
     if ok and not FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments) Then
     begin
-      ExecuteCreate(upload, request, response, idMaybeNew, 0);
+      ExecuteCreate(context, request, response, idMaybeNew, 0);
       result := false;
       ok := false;
     end;
@@ -3271,7 +3287,7 @@ begin
   FConnection := Value;
 end;
 
-procedure TFhirOperationManager.ExecuteUpload(request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirOperationManager.ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   s : String;
   ok : boolean;
@@ -3293,12 +3309,12 @@ begin
       // do nothing
     else if request.resource is TFhirBundle then
     begin
-      ExecuteTransaction(true, request, response);
+      ExecuteTransaction(context, request, response);
       exit;
     end
     else
     begin
-      ExecuteCreate(true, request, response, idMaybeNew, 0);
+      ExecuteCreate(context, request, response, idMaybeNew, 0);
       s := '1 new resource created @'+request.id;
     end;
 
@@ -3847,6 +3863,7 @@ end;
 function TFhirOperationManager.commitResource(request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry: TFHIRBundleEntry; i : integer; id: TFHIRTransactionEntry; session : TFHIRSession; resp : TFHIRBundle) : Boolean;
 var
   ne : TFhirBundleEntry;
+  context : TOperationContext;
 begin
   if (entry.request <> nil) then
     logt(inttostr(i)+': '+entry.request.methodElement.value+' '+id.summary)
@@ -3865,44 +3882,49 @@ begin
   response.versionId := '';
 
   //todo: check session
+  context := TOperationContext.Create;
+  try
+    context.upload := upload;
+    case id.state of
+      tesIgnore: ;  // yup, ignore it
+      tesRead: executeReadInTransaction(entry.request, request, response);
+      tesCreate: ExecuteCreate(context, request, response, idIsNew, id.key);
+      tesUpdate:
+        begin
+  //        if (entry.request <> nil) and (entry.request.url.contains('?')) then
+  //        begin
+  //          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
+  //            raise Exception.Create('error processing batch - id clash: one of the create statements altered the processing of a conditional update: '+entry.request.url);
+  //        end;
+          ExecuteUpdate(context, request, response);
+        end;
+      tesDelete:
+        begin
+  //        if (entry.request <> nil) and (entry.request.url.contains('?')) then
+  //        begin
+  //          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
+  //            raise Exception.Create('error processing batch - id clash: one of the create or update statements altered the processing of a conditional delete: '+entry.request.url);
+  //        end;
+          ExecuteDelete(request, Response);
+        end;
+    end;
 
-  case id.state of
-    tesIgnore: ;  // yup, ignore it
-    tesRead: executeReadInTransaction(entry.request, request, response);
-    tesCreate: ExecuteCreate(upload, request, response, idIsNew, id.key);
-    tesUpdate:
-      begin
-//        if (entry.request <> nil) and (entry.request.url.contains('?')) then
-//        begin
-//          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
-//            raise Exception.Create('error processing batch - id clash: one of the create statements altered the processing of a conditional update: '+entry.request.url);
-//        end;
-        ExecuteUpdate(upload, request, response);
-      end;
-    tesDelete:
-      begin
-//        if (entry.request <> nil) and (entry.request.url.contains('?')) then
-//        begin
-//          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
-//            raise Exception.Create('error processing batch - id clash: one of the create or update statements altered the processing of a conditional delete: '+entry.request.url);
-//        end;
-        ExecuteDelete(request, Response);
-      end;
+    if response.HTTPCode < 300 then
+      result := true
+    else if response.Resource is TFhirOperationOutcome then
+      result := false
+    else
+      result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, IssueTypeNull);
+    ne := id.entry;
+    ne.resource := response.resource.Link;
+    ne.response := TFhirBundleEntryResponse.Create;
+    ne.response.status := inttostr(response.HTTPCode);
+    ne.response.location := response.Location;
+    ne.response.etag := 'W/'+response.versionId;
+    ne.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+  finally
+    context.Free;
   end;
-
-  if response.HTTPCode < 300 then
-    result := true
-  else if response.Resource is TFhirOperationOutcome then
-    result := false
-  else
-    result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, IssueTypeNull);
-  ne := id.entry;
-  ne.resource := response.resource.Link;
-  ne.response := TFhirBundleEntryResponse.Create;
-  ne.response.status := inttostr(response.HTTPCode);
-  ne.response.location := response.Location;
-  ne.response.etag := 'W/'+response.versionId;
-  ne.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
 end;
 
 procedure ignoreEntry(req, resp : TFHIRBundleEntry);
@@ -3915,7 +3937,7 @@ end;
 
 
 
-procedure TFhirOperationManager.ExecuteTransaction(upload : boolean; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirOperationManager.ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
 //  match : boolean;
   i : integer;
@@ -3936,7 +3958,7 @@ begin
     if ok then
     bundle := request.Resource as TFhirBundle;
     if bundle.type_ = BundleTypeBatch then
-      executeBatch(upload, request, response)
+      executeBatch(context, request, response)
     else
     begin
       request.Source := nil; // ignore that now
@@ -3953,11 +3975,13 @@ begin
         for i := 0 to bundle.entryList.count - 1 do
         begin
           bundle.entryList[i].Tag := scanId(request, bundle.entryList[i], ids, i).Link;
+          context.progress(0+trunc(100 * (i / (bundle.entryList.count * 10))));
         end;
 
         // third pass: reassign references
         for i := 0 to bundle.entryList.count - 1 do
         begin
+          context.progress(10+trunc(100 * (i / (bundle.entryList.count * 10))));
           entry := bundle.entryList[i].Tag as TFHIRTransactionEntry;
 
           if not entry.ignore and not entry.deleted then
@@ -3965,35 +3989,51 @@ begin
         end;
 
         // four pass: commit resources
-         bundle := bundle.Link;
+        bundle := bundle.Link;
         try
           for i := 0 to bundle.entryList.count - 1 do
           begin
+            context.progress(20+trunc(100 * (i / (bundle.entryList.count * 10))));
              ne := resp.entryList.Append;
 //             ne.request := bundle.entryList[i].request.Link;
             (bundle.entryList[i].Tag as TFHIRTransactionEntry).entry := ne;
           end;
 
           for i := 0 to bundle.entryList.count - 1 do
+          begin
+            context.progress(30+trunc(100 * (i / (bundle.entryList.count * 10))));
             if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
               ignoreEntry(bundle.entryList[i], resp.entryList[i]);
+          end;
 
           for i := 0 to bundle.entryList.count - 1 do
+          begin
+            context.progress(40+trunc(100 * (i / (bundle.entryList.count * 5))));
             if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesCreate then
-              if not commitResource(request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
                 Abort;
+          end;
           for i := 0 to bundle.entryList.count - 1 do
+          begin
+            context.progress(60+trunc(100 * (i / (bundle.entryList.count * 5))));
             if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesUpdate then
-              if not commitResource(request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
                 Abort;
+          end;
           for i := 0 to bundle.entryList.count - 1 do
+          begin
+            context.progress(80+trunc(100 * (i / (bundle.entryList.count * 10))));
             if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesDelete then
-              if not commitResource(request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
                 Abort;
+          end;
           for i := 0 to bundle.entryList.count - 1 do
+          begin
+            context.progress(90+trunc(100 * (i / (bundle.entryList.count * 10))));
             if (bundle.entryList[i].Tag as TFHIRTransactionEntry).state = tesRead then
-              if not commitResource(request, response, upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
+              if not commitResource(request, response, context.upload, bundle.entryList[i], i, bundle.entryList[i].Tag as TFHIRTransactionEntry, request.Session, resp) then
                 Abort;
+          end;
 
         finally
           bundle.free;
@@ -4019,7 +4059,7 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ExecuteBatch(upload : boolean; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirOperationManager.ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   req, resp : TFHIRBundle;
   src, dest : TFhirBundleEntry;
@@ -4060,7 +4100,7 @@ begin
           request.resource := src.resource.link;
           request.Source := TAdvBuffer.Create;
           request.PostFormat := ffXml;
-          if not upload and FRepository.validate and (request.resource <> nil) then
+          if not context.upload and FRepository.validate and (request.resource <> nil) then
           begin
             comp := TFHIRXmlComposer.Create(FRepository.Validator.Context.Link, 'en');
             mem := TAdvMemoryStream.Create;
@@ -4075,7 +4115,7 @@ begin
               mem.Free;
             end;
           end;
-          Execute(request, response, upload);
+          Execute(context, request, response);
           dest.response := TFhirBundleEntryResponse.Create;
           dest.response.status := inttostr(response.HTTPCode);
           dest.response.location := response.Location;
@@ -4116,8 +4156,7 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.ExecuteOperation(request: TFHIRRequest; response: TFHIRResponse);
-
+procedure TFhirOperationManager.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   i : integer;
   op : TFhirOperation;
@@ -4127,7 +4166,7 @@ begin
     op := TFhirOperation(FOperations[i]);
     if (op.HandlesRequest(request)) then
     begin
-      op.Execute(self, request, response);
+      op.Execute(context, self, request, response);
       exit;
     end;
   end;
@@ -5009,43 +5048,50 @@ var
   i : integer;
   request: TFHIRRequest;
   response : TFHIRResponse;
+  context : TOperationContext;
 begin
   CreateIndexer;
-  Connection.StartTransact;
+  context := TOperationContext.create;
   try
-    // cut us off from the external request
-    request := TFHIRRequest.create(FRepository.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
-    response := TFHIRResponse.create;
+    context.upload := upload;
+    Connection.StartTransact;
     try
-      for i := 0 to list.count - 1 do
-      begin
-        request.ResourceName := list[i].FhirType;
-        request.CommandType := fcmdCreate;
-        request.Resource := list[i].link;
-
-        if (list[i].id <> '') then
+      // cut us off from the external request
+      request := TFHIRRequest.create(FRepository.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
+      response := TFHIRResponse.create;
+      try
+        for i := 0 to list.count - 1 do
         begin
-          request.id := list[i].id;
-          request.CommandType := fcmdUpdate;
-        end;
+          request.ResourceName := list[i].FhirType;
+          request.CommandType := fcmdCreate;
+          request.Resource := list[i].link;
 
-        if TFhirResource(list[i]).Tag <> nil then
-          request.lastModifiedDate := TDateAndTime(TFhirResource(list[i]).Tag).GetDateTime;
-        request.Session := nil;
-        Execute(request, response, upload);
+          if (list[i].id <> '') then
+          begin
+            request.id := list[i].id;
+            request.CommandType := fcmdUpdate;
+          end;
+
+          if TFhirResource(list[i]).Tag <> nil then
+            request.lastModifiedDate := TDateAndTime(TFhirResource(list[i]).Tag).GetDateTime;
+          request.Session := nil;
+          Execute(context, request, response);
+        end;
+      finally
+        response.Free;
+        request.free;
       end;
-    finally
-      response.Free;
-      request.free;
+      Connection.Commit;
+    except
+      on e : Exception do
+      begin
+        Connection.Rollback;
+        recordStack(e);
+        raise;
+      end;
     end;
-    Connection.Commit;
-  except
-    on e : Exception do
-    begin
-      Connection.Rollback;
-      recordStack(e);
-      raise;
-    end;
+  finally
+    context.Free;
   end;
 end;
 
@@ -5683,7 +5729,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 begin
   // nothing
 end;
@@ -5764,7 +5810,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateQAOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 begin
 end;
 
@@ -5790,7 +5836,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirHandleQAPostOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 begin
 end;
 
@@ -5821,7 +5867,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirQuestionnaireGenerationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirQuestionnaireGenerationOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   profile : TFHirStructureDefinition;
   op : TFhirOperationOutcome;
@@ -6018,7 +6064,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirExpandValueSetOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   vs, dst : TFHIRValueSet;
   resourceKey : integer;
@@ -6137,7 +6183,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirLookupCodeSystemOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRLookupOpRequest;
   resp : TFHIRLookupOpResponse;
@@ -6236,7 +6282,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirSubsumesOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRSubsumesOpRequest;
   resp : TFHIRSubsumesOpResponse;
@@ -6345,7 +6391,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirValidationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirValidationOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
@@ -6490,7 +6536,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirValueSetValidationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   vs : TFHIRValueSet;
   resourceKey : integer;
@@ -6673,7 +6719,7 @@ begin
   end;
 end;
 
-procedure TFhirPatientEverythingOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirPatientEverythingOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   bundle : TFHIRBundle;
   entry : TFHIRBundleEntry;
@@ -6880,7 +6926,7 @@ begin
   end;
 end;
 
-procedure TFhirGenerateDocumentOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateDocumentOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   composition : TFhirComposition;
   bundle : TFhirBundle;
@@ -6930,7 +6976,7 @@ begin
               request.CommandType := fcmdUpdate;
               request.Id := bundle.id;
               request.Resource := bundle.link;
-              manager.Execute(request, response, false);
+              manager.Execute(context, request, response);
             end
             else
             begin
@@ -6994,7 +7040,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirProcessClaimOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirProcessClaimOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : integer;
   params : TFhirParameters;
@@ -7109,7 +7155,7 @@ begin
   result := frtConceptMap;
 end;
 
-procedure TFhirConceptMapTranslationOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   cm : TLoadedConceptMap;
 //  op : TFhirOperationOutcome;
@@ -7230,7 +7276,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateSnapshotOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateSnapshotOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFhirParameters;
   sdParam, sdBase : TFhirStructureDefinition;
@@ -7441,7 +7487,7 @@ begin
   result := [frtNull];
 end;
 
-procedure TFhirGenerateCDSHookOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateCDSHookOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TCDSHookRequest;
   resp : TCDSHookResponse;
@@ -7631,7 +7677,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateTemplateOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateTemplateOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   profile : TFHirStructureDefinition;
   resourceKey : integer;
@@ -7734,7 +7780,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateNarrativeOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateNarrativeOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   narr : TFHIRNarrativeGenerator;
   r : TFHIRResource;
@@ -7817,7 +7863,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirConceptMapClosureOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFhirParameters;
   p : TFhirParametersParameter;
@@ -7951,7 +7997,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirSuggestKeyWordsOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 begin
   raise Exception.Create('Not done yet');
 end;
@@ -7983,7 +8029,7 @@ begin
   result := nil
 end;
 
-procedure TFhirGetMetaDataOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGetMetaDataOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   ok : boolean;
   meta : TFhirMeta;
@@ -8123,7 +8169,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirAddMetaDataOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirAddMetaDataOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -8278,7 +8324,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirDeleteMetaDataOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirDeleteMetaDataOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -8438,7 +8484,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirCurrentTestScriptOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirCurrentTestScriptOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 begin
   if request.Session = nil then
   begin
@@ -8481,7 +8527,7 @@ begin
 end;
 
 
-{$IFNDEF FHIR2CM}
+{$IFNDEF FHIR2}
 { TFhirTransformOperation }
 
 function TFhirTransformOperation.CreateDefinition(base: String): TFHIROperationDefinition;
@@ -8489,7 +8535,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirTransformOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirTransformOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFHIRTransformOpRequest;
   rkey : integer;
@@ -8653,7 +8699,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirActivateOperation.Execute(manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirActivateOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   rKey : integer;
   op : TFHIROperationOutcome;
@@ -8737,6 +8783,27 @@ begin
   result := [frtImplementationGuide];
 end;
 {$ENDIF}
+
+{ TOperationContext }
+
+constructor TOperationContext.Create;
+begin
+  inherited Create;
+end;
+
+constructor TOperationContext.Create(upload: boolean; callback: TInstallerCallback; message : String);
+begin
+  Create;
+  FUpload := upload;
+  FCallback := callback;
+  FMessage := message;
+end;
+
+procedure TOperationContext.progress(i: integer);
+begin
+  if assigned(FCallback) then
+    FCallback(i, FMessage);
+end;
 
 end.
 
