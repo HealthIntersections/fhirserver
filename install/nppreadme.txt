@@ -1,12 +1,12 @@
 Welcome to the FHIR Notepad++ install
 
-This program will install the fhir notepad++ plug-in.
+This program will install the fhir Notepad++ plug-in.
 
 Choosing a Directory
 --------------------
 
 This installer guesses that Notepad++ has been installed to it's 
-default location (C:\Program Files (x86)\Notepad++\plugins).
+default location (C:\Program Files (x86)\Notepad++).
 If you installed it somewhere else, then you'll have to change
 the location accordingly.
 

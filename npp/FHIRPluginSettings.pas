@@ -15,6 +15,8 @@ const
   DEF_Height = 300;
 
 type
+  TDefinitionsVersion = (defV2, defV3);
+
   TFHIRPluginSettings = class
   private
     filename : String;
@@ -24,7 +26,7 @@ type
     procedure Save;
     function GetToolboxVisible: boolean;
     function GetVisualiserVisible: boolean;
-    function GetDefinitionsSource: string;
+    function GetDefinitionsVersion: TDefinitionsVersion;
     function GetAdditionalDefinitions: string;
     function GetTerminologyServer: string;
     function GetPath: String;
@@ -40,7 +42,7 @@ type
     function GetNoWelcomeScreen: boolean;
     function GetBuildPrompt: String;
 
-    procedure SetDefinitionsSource(const Value: string);
+    procedure SetDefinitionsVersion(const Value: TDefinitionsVersion);
     procedure SetAdditionalDefinitions(const Value: string);
     procedure SetTerminologyServer(const Value: string);
     procedure SetPath(const Value: String);
@@ -84,7 +86,7 @@ type
     property ToolboxVisible : boolean read GetToolboxVisible write SetToolboxVisible;
     property VisualiserVisible : boolean read GetVisualiserVisible write SetVisualiserVisible;
     property TerminologyServer : string read GetTerminologyServer write SetTerminologyServer;
-    property DefinitionsSource : string read GetDefinitionsSource write SetDefinitionsSource;
+    property DefinitionsVersion : TDefinitionsVersion read GetDefinitionsVersion write SetDefinitionsVersion;
     property AdditionalDefinitions : string read GetAdditionalDefinitions write SetAdditionalDefinitions;
     property Path : String read GetPath write SetPath;
     property NoPathSummary : boolean read GetNoPathSummary write SetNoPathSummary;
@@ -132,7 +134,7 @@ begin
   begin
     json := TJsonObject.Create;
     json.vStr['DefinitionsSource'] := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'validation-min.xml.zip';
-    json.vStr['TerminologyServer'] := 'http://fhir2.healthintersections.com.au/open';
+    json.vStr['TerminologyServer'] := 'http://fhir3.healthintersections.com.au/open';
     json.bool['BackgroundValidation'] := true;
 
     RegisterKnownServers;
@@ -250,9 +252,15 @@ begin
     result := StrToIntDef(o.vStr['Width'], DEF_Width);
 end;
 
-function TFHIRPluginSettings.GetDefinitionsSource: string;
+function TFHIRPluginSettings.GetDefinitionsVersion: TDefinitionsVersion;
+var
+  s : string;
 begin
-  result := json.vStr['DefinitionsSource'];
+  s := json.vStr['DefinitionsVersion'];
+  if (s = 'r2') then
+    result := defV2
+  else
+    result := defv3;
 end;
 
 function TFHIRPluginSettings.GetNoPathSummary: boolean;
@@ -382,9 +390,12 @@ begin
   Save;
 end;
 
-procedure TFHIRPluginSettings.SetDefinitionsSource(const Value: string);
+procedure TFHIRPluginSettings.SetDefinitionsVersion(const Value: TDefinitionsVersion);
 begin
-  json.vStr['DefinitionsSource'] := Value;
+  if value = defV2 then
+    json.vStr['DefinitionsVersion'] := 'r2'
+  else
+    json.vStr['DefinitionsVersion'] := 'r3';
   Save;
 end;
 
@@ -487,7 +498,7 @@ begin
   server := TRegisteredFHIRServer.Create;
   try
     server.name := 'Reference Server';
-    server.fhirEndpoint := 'http://fhir2.healthintersections.com.au/open';
+    server.fhirEndpoint := 'http://fhir3.healthintersections.com.au/open';
     server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
     server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
     server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
@@ -496,7 +507,7 @@ begin
 
     server.clear;
     server.name := 'Secure Reference Server';
-    server.fhirEndpoint := 'https://fhir2.healthintersections.com.au/closed';
+    server.fhirEndpoint := 'https://fhir3.healthintersections.com.au/closed';
     server.SmartOnFHIR := true;
     server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
     server.redirectport := 23145;

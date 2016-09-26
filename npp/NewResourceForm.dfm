@@ -25,10 +25,6 @@ object ResourceNewForm: TResourceNewForm
     TabOrder = 0
     object tbResources: TTabSheet
       Caption = 'Resources'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbResources: TListBox
         Left = 0
         Top = 0
@@ -45,10 +41,6 @@ object ResourceNewForm: TResourceNewForm
     object tbProfiles: TTabSheet
       Caption = 'Profiles'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbProfiles: TListBox
         Left = 0
         Top = 0
@@ -117,6 +109,9 @@ object ResourceNewForm: TResourceNewForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    DesignSize = (
+      527
+      35)
     object Label2: TLabel
       Left = 10
       Top = 11
@@ -135,6 +130,7 @@ object ResourceNewForm: TResourceNewForm
       Top = 12
       Width = 55
       Height = 17
+      Anchors = [akTop, akRight]
       Caption = 'JSON'
       Checked = True
       TabOrder = 0
@@ -145,6 +141,7 @@ object ResourceNewForm: TResourceNewForm
       Top = 12
       Width = 45
       Height = 17
+      Anchors = [akTop, akRight]
       Caption = 'XML'
       TabOrder = 1
     end

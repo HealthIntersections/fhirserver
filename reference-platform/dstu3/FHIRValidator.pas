@@ -1096,7 +1096,7 @@ begin
         if (rule(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
           sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref));
-          if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
+          if (warning(ctxt, IssueTypeINVALID, element.locStart, element.locEnd, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
             if (rule(ctxt, IssueTypeSTRUCTURE, element.locStart, element.locEnd, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
               resource.profiles.addProfile(sd);
           inc(i);

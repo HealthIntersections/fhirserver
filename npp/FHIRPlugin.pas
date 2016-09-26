@@ -87,6 +87,9 @@ type
     FUpgradeReference : String;
     FUpgradeNotes : String;
     FCurrentServer : TRegisteredFHIRServer;
+    nonFHIRFiles : TStringList;
+
+    function getDefPath(version : TDefinitionsVersion): String;
 
     // this procedure handles validation.
     // it is called whene the text of the scintilla buffer changes
@@ -162,6 +165,8 @@ type
     procedure DoNppnDwellEnd; override;
     procedure DoNppnShutdown; override;
     procedure DoStateChanged; override;
+    procedure DoNppnFileOpened; override;
+    procedure DoNppnFileClosed; override;
   end;
 
 procedure _FuncValidate; cdecl;
@@ -211,6 +216,9 @@ var
   i: Integer;
 begin
   inherited;
+  nonFHIRFiles := TStringList.create;
+  nonFHIRFiles.Sorted := true;
+  nonFHIRFiles.Duplicates := dupIgnore;
   errors := TAdvList<TFHIRAnnotation>.create;
   errorSorter := TFHIRAnnotationComparer.create;
   errors.Sort(errorSorter);
@@ -486,6 +494,25 @@ begin
   FHIRVisualizer.Show;
 end;
 
+function TFHIRPlugin.getDefPath(version: TDefinitionsVersion): String;
+begin
+  case version of
+    defV2 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir2-definitions.zip';
+    defV3 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir3-definitions.zip';
+  else
+    raise Exception.Create('not done yet');
+  end;
+  if not fileExists(result) then
+    case version of
+      defV3 : result := 'C:\work\org.hl7.fhir\build\publish\igpack.zip';
+      defV2 : result := 'C:\work\org.hl7.fhir\build\publish\definitions-r2asr3.xml.zip';
+    else
+      raise Exception.Create('not done yet');
+    end;
+
+
+end;
+
 function SplitElement(var src : String) : String;
 var
   i : integer;
@@ -541,21 +568,20 @@ begin
 end;
 
 procedure TFHIRPlugin.loadValidator;
+var
+  s : String;
 begin
   if FValidator = nil then
   begin
-    if (Settings.TerminologyServer = '') or (Settings.DefinitionsSource = '') then
-    begin
-      if MessageDlg('Validation is not configured. Would you like to configure it?', mtConfirmation, mbYesNo, 0) = mrYes then
-        _FuncSettings;
-      Abort;
-    end;
+    if (Settings.TerminologyServer = '') then
+      Settings.TerminologyServer := 'http://fhir3.healthintersections.com.au';
 
     OpMessage('Loading', 'Loading Definition Source');
     try
-      TFHIRPluginValidatorContext(FWorker).LoadFromDefinitions(Settings.DefinitionsSource);
+      TFHIRPluginValidatorContext(FWorker).LoadFromDefinitions(getDefPath(Settings.DefinitionsVersion));
       if Settings.AdditionalDefinitions <> '' then
-        TFHIRPluginValidatorContext(FWorker).LoadFromFolder(Settings.AdditionalDefinitions);
+        for s in Settings.AdditionalDefinitions.Split([',']) do
+          TFHIRPluginValidatorContext(FWorker).LoadFromFile(s);
       FValidator := TFHIRValidator.Create(FWorker.link);
     finally
       OpMessage('', '');
@@ -607,6 +633,7 @@ var
   a: TAboutForm;
 begin
   loadValidator;
+  nonFHIRFiles.clear;
   a := TAboutForm.Create(self);
   try
     a.Services := FWorker.link;
@@ -1247,6 +1274,7 @@ end;
 
 destructor TFHIRPlugin.Destroy;
 begin
+  nonFHIRFiles.Free;
   FCurrentServer.Free;
   FLastRes.free;
   inherited;
@@ -1349,6 +1377,16 @@ begin
   end;
 end;
 
+procedure TFHIRPlugin.DoNppnFileClosed;
+begin
+  nonFHIRFiles.Clear;
+end;
+
+procedure TFHIRPlugin.DoNppnFileOpened;
+begin
+  nonFHIRFiles.Clear;
+end;
+
 procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRBaseList; out expr : TFHIRExpressionNode; out types : TFHIRTypeDetails);
 var
   engine : TFHIRExpressionEngine;
@@ -1398,7 +1436,7 @@ end;
 
 procedure TFHIRPlugin.DoNppnTextModified;
 var
-  src, path : String;
+  src, path, fn : String;
   fmt : TFHIRFormat;
   s : TStringStream;
   res : TFHIRResource;
@@ -1409,10 +1447,15 @@ var
   focus : TArray<TFHIRObject>;
   sp, ep : integer;
   annot : TFHIRAnnotation;
+  i : integer;
 begin
   CheckUpgrade;
   if not init then
     exit;
+
+  fn := CurrentFileName;
+  if nonFHIRFiles.find(fn, i) then
+   exit;
 
   src := CurrentText;
   if src = FLastSrc then
@@ -1435,7 +1478,8 @@ begin
           vmNarrative: FHIRVisualizer.setNarrative(prepNarrative(''));
           vmPath: FHIRVisualizer.setPathOutcomes(nil, nil);
           vmFocus: FHIRVisualizer.setFocusInfo('', []);
-        end
+        end;
+      nonFHIRFiles.Add(fn);
     end
     else
     try

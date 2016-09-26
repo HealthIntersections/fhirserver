@@ -759,6 +759,7 @@ type
     // hooks
     procedure DoNppnReady; virtual;
     procedure DoNppnFileOpened; virtual;
+    procedure DoNppnFileClosed; virtual;
     procedure DoNppnBufferChange; virtual;
     procedure DoNppnToolbarModification; virtual;
     procedure DoNppnShutdown; virtual;
@@ -927,6 +928,10 @@ begin
   begin
     self.DoNppnFileOpened;
   end
+  else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_FILECLOSED) then
+  begin
+    self.DoNppnFileClosed;
+  end
   else if (HWND(sn^.nmhdr.hwndFrom) = self.NppData.NppHandle) and (sn^.nmhdr.code = NPPN_BUFFERACTIVATED) then
   begin
     self.DoNppnBufferChange;
@@ -1048,6 +1053,11 @@ begin
 end;
 
 procedure TNppPlugin.DoNppnDwellStart(offset: integer);
+begin
+  // override these
+end;
+
+procedure TNppPlugin.DoNppnFileClosed;
 begin
   // override these
 end;

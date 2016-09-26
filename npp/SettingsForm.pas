@@ -21,10 +21,6 @@ type
     Label2: TLabel;
     edtServer: TEdit;
     GroupBox2: TGroupBox;
-    Label3: TLabel;
-    Label4: TLabel;
-    SpeedButton1: TSpeedButton;
-    edtFile: TEdit;
     TabSheet2: TTabSheet;
     btnEditAsText: TButton;
     Panel3: TPanel;
@@ -34,7 +30,6 @@ type
     btnDelete: TButton;
     btnUp: TButton;
     btnDown: TButton;
-    Label5: TLabel;
     TabSheet3: TTabSheet;
     Panel4: TPanel;
     GroupBox3: TGroupBox;
@@ -42,13 +37,17 @@ type
     GroupBox4: TGroupBox;
     cbValidationSummary: TCheckBox;
     GroupBox5: TGroupBox;
-    Label6: TLabel;
-    Label7: TLabel;
-    SpeedButton2: TSpeedButton;
-    edtFolder: TEdit;
+    rbR3: TRadioButton;
+    rbR2: TRadioButton;
+    Panel5: TPanel;
+    Label5: TLabel;
+    lbAdditional: TListBox;
+    btnAddIG: TButton;
+    btnDeleteIG: TButton;
+    Label3: TLabel;
+    Button3: TButton;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
     procedure btnEditAsTextClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -59,6 +58,7 @@ type
     procedure btnDeleteClick(Sender: TObject);
     procedure btnUpClick(Sender: TObject);
     procedure btnDownClick(Sender: TObject);
+    procedure btnAddIGClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -86,10 +86,22 @@ begin
 end;
 
 procedure TSettingForm.Button1Click(Sender: TObject);
+var
+  b, s : String;
 begin
   Settings.TerminologyServer := edtServer.Text;
-  Settings.DefinitionsSource := edtFile.Text;
-  Settings.AdditionalDefinitions := edtFolder.Text;
+  if rbR2.Checked then
+    Settings.DefinitionsVersion := defV2
+  else
+    Settings.DefinitionsVersion := defV3;
+
+  b := '';
+  for s in lbAdditional.Items do
+    if b = '' then
+      b := s
+    else
+      b := b +','+s;
+  Settings.AdditionalDefinitions := s;
   Settings.NoPathSummary := not cbPathSummary.checked;
   Settings.NoValidationSummary := not cbValidationSummary.checked;
   Settings.CommitChanges;
@@ -122,6 +134,19 @@ begin
     for i := 1 to c - 1 do
       n := n.NextSibling;
     vtServers.Selected[n] := true;
+  end;
+end;
+
+procedure TSettingForm.btnAddIGClick(Sender: TObject);
+var
+  od : TFileOpenDialog;
+begin
+  od := TFileOpenDialog.Create(nil);
+  try
+    if od.Execute then
+      lbAdditional.Items.Add(od.FileName);
+  finally
+    od.Free;
   end;
 end;
 
@@ -198,26 +223,19 @@ begin
 end;
 
 procedure TSettingForm.FormShow(Sender: TObject);
+var
+  s : String;
 begin
   edtServer.Text := Settings.TerminologyServer;
-  edtFile.Text := Settings.DefinitionsSource;
+  if settings.DefinitionsVersion = defV2 then
+    rbR2.Checked := true
+  else
+    rbr3.Checked := true;
   vtServers.RootNodeCount := Settings.ServerCount;
   cbPathSummary.checked := not Settings.NoPathSummary;
   cbValidationSummary.checked := not Settings.NoValidationSummary;
-  edtFolder.Text := Settings.AdditionalDefinitions;
-end;
-
-procedure TSettingForm.SpeedButton1Click(Sender: TObject);
-var
-  od : TFileOpenDialog;
-begin
-  od := TFileOpenDialog.Create(nil);
-  try
-    if od.Execute then
-      edtFile.Text := od.FileName;
-  finally
-    od.Free;
-  end;
+  for s in Settings.AdditionalDefinitions.Split([',']) do
+    lbAdditional.Items.Add(s);
 end;
 
 procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);

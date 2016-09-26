@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects, AdvStreams;
+  Sysutils, RTLConsts, AdvObjects, AdvStreams, MathSupport;
 
 Type
   TAdvTextReader = class (TAdvObject)
@@ -56,12 +56,10 @@ Type
     FSkipPreamble: Boolean;
     FStream: TAdvStream;
     FCursor : Integer;
-    {$IFNDEF VER130}
     FEncoding: TEncoding;
     function DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
     function SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
     procedure FillBuffer(var Encoding: TEncoding);
-    {$ENDIF}
     function GetEndOfStream: Boolean;
   protected
     Property Stream : TAdvStream read FStream;
@@ -70,10 +68,8 @@ Type
     constructor Create(aStream: TAdvStream; DetectBOM: Boolean); overload;
     constructor Create(const Filename: string); overload;
     constructor Create(const Filename: string; DetectBOM: Boolean); overload;
-    {$IFNDEF VER130}
     constructor Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024); overload;
     constructor Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024); overload;
-    {$ENDIF}
     destructor Destroy; override;
     procedure Close; override;
     procedure DiscardBufferedData;
@@ -85,9 +81,7 @@ Type
     function ReadLine: string; override;
     function ReadToEnd: string; override;
     property BaseStream: TAdvStream read FStream;
-    {$IFNDEF VER130}
     property CurrentEncoding: TEncoding read FEncoding;
-    {$ENDIF}
     property EndOfStream: Boolean read GetEndOfStream;
   end;
 

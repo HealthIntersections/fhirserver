@@ -61,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Add debugging functionality for failed install"
+        as.returnvalue = "Update to FHIR R3 \+ fix various bugs. R3 support needs testing"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -166,16 +166,16 @@ begin
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
-        versioninfokeys = "CompanyName=" +
-                          "FileDescription=" +
-                          "FileVersion=1.0.0.1" +
-                          "InternalName=" +
-                          "LegalCopyright=" +
-                          "LegalTrademarks=" +
-                          "OriginalFilename=" +
-                          "ProductName=" +
-                          "ProductVersion=1.0.0.0" +
-                          "Comments=" +
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
                           ""
         warningsaserror = false
         workaroundd5bug = false
@@ -187,11 +187,11 @@ begin
           assertions = true
           assignableconst = false
           booleval = false
-          compilerwarnings = "-w-UNSAFE_TYPE=0" +
-                             "-w-UNSAFE_CODE=0" +
-                             "-w-UNSAFE_CAST=0" +
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
                              ""
-          conditionals = NPPUNICODE;RELEASE;FHIR2
+          conditionals = NPPUNICODE;RELEASE;FHIR3
           consoleapp = false
           debuginfo = false
           definitionsonly = false
@@ -231,7 +231,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
           usedebugdcu = false
           usepackages = false
           varstringchecks = true
@@ -300,7 +300,7 @@ begin
       action.ftp.connect
       begin
         connecttimeoutinsec = 0
-        cookie = q3B4xMWDXfAo74OHdw==
+        cookie = q3B4xMWDXfAo74OHdw\=\=
         detailedlogging = false
         enablekeepalives = false
         ftpconnectionname = HealthIntersections
@@ -353,9 +353,9 @@ begin
         insertatxpath = /rss/channel/link
         nodename = item
         nodetext = "" +
-                   "      <title>Notepad\+\+ Plugin release 1.0.%BuildCount% %BuildDate%</title>" +
-                   "      <link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.%BuildCount%.exe</link>" +
-                   "      <description>%BuildDate% (v1.0.%BuildCount%): %npp-purpose%</description>" +
+                   "      <title\>Notepad\+\+ Plugin release 1.0.%BuildCount% %BuildDate%</title\>" +
+                   "      <link\>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.%BuildCount%.exe</link\>" +
+                   "      <description\>%BuildDate% (v1.0.%BuildCount%): %npp-purpose%</description\>" +
                    "" +
                    ""
         parentxpath = /rss/channel
