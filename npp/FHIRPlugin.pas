@@ -497,8 +497,8 @@ end;
 function TFHIRPlugin.getDefPath(version: TDefinitionsVersion): String;
 begin
   case version of
-    defV2 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir2-definitions.zip';
-    defV3 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir3-definitions.zip';
+    defV2 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir\fhir2-definitions.zip';
+    defV3 : result := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'fhir\fhir3-definitions.zip';
   else
     raise Exception.Create('not done yet');
   end;

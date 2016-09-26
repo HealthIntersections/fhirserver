@@ -511,7 +511,7 @@ begin
       o.vStr['name'] := c.name;
       if (c.preFetch.Count > 0) then
       begin
-        arr := o.forceArr['prefetch'];
+        arr2 := o.forceArr['prefetch'];
         for s in c.preFetch do
           arr2.add(s);
       end;

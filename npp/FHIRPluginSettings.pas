@@ -3,7 +3,7 @@ unit FHIRPluginSettings;
 interface
 
 uses
-  SysUtils, Classes,
+  Windows, SysUtils, Classes,
   AdvObjects, AdvJson,
   FHIRTypes, SmartOnFhirUtilities, CDSHooksUtilities;
 
@@ -133,7 +133,7 @@ begin
   if not FileExists(filename) then
   begin
     json := TJsonObject.Create;
-    json.vStr['DefinitionsSource'] := IncludeTrailingBackslash(ExtractFilePath(GetModuleName(HInstance)))+'validation-min.xml.zip';
+    json.vStr['DefinitionsVersion'] := 'r3';
     json.vStr['TerminologyServer'] := 'http://fhir3.healthintersections.com.au/open';
     json.bool['BackgroundValidation'] := true;
 
