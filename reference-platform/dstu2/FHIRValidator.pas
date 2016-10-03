@@ -194,7 +194,7 @@ Type
 
     procedure checkFixedValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFhirElement; propName: String);
 
-    function checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, display: String): boolean;
+    function checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, version, display: String): boolean;
     procedure checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
     procedure checkPrimitiveBinding(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; element: TFHIRMMElement; profile : TFhirStructureDefinition);
     procedure checkPrimitive(ctxt : TFHIRValidatorContext; path, ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement; profile : TFhirStructureDefinition);
@@ -2547,22 +2547,23 @@ end;
 procedure TFHIRValidator.checkQuantity(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; context: TFHIRElementDefinition);
 var
   code: String;
-  System: String;
+  System, version: String;
   units: String;
 begin
   code := element.getNamedChildValue('code');
   System := element.getNamedChildValue('system');
+  version := element.getNamedChildValue('version');
   units := element.getNamedChildValue('units');
 
   if (System <> '') and (code <> '') then
-    checkCode(ctxt, element, path, code, System, units);
+    checkCode(ctxt, element, path, code, System, version, units);
 end;
 
 procedure TFHIRValidator.checkCoding(ctxt : TFHIRValidatorContext; path: String; element: TFHIRMMElement; profile: TFHIRStructureDefinition;
   context: TFHIRElementDefinition; inCodeableConcept: boolean);
 var
   code: String;
-  System: String;
+  System, version: String;
   display: String;
   Binding: TFhirElementDefinitionBinding;
   vs: TFHIRValueSet;
@@ -2571,13 +2572,14 @@ var
 begin
   code := element.getNamedChildValue('code');
   System := element.getNamedChildValue('system');
+  version := element.getNamedChildValue('version');
   display := element.getNamedChildValue('display');
 
   rule(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, isAbsolute(System), 'Coding.system must be an absolute reference, not a local reference ('+system+')');
 
   if (System <> '') and (code <> '') then
   begin
-    if (checkCode(ctxt, element, path, code, System, display)) then
+    if (checkCode(ctxt, element, path, code, System, version, display)) then
       if (context <> nil) and (context.Binding <> nil) then
       begin
         Binding := context.Binding;
@@ -2736,14 +2738,14 @@ begin
   end;
 end;
 
-function TFHIRValidator.checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, display: String): boolean;
+function TFHIRValidator.checkCode(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; code, System, version, display: String): boolean;
 var
   s: TValidationResult;
 begin
   result := true;
-  if (FContext.supportsSystem(System)) then
+  if (FContext.supportsSystem(System, version)) then
   begin
-    s := FContext.validateCode(System, code, display);
+    s := FContext.validateCode(System, version, code, display);
     try
       if (s = nil) or (s.isOk()) then
         result := true

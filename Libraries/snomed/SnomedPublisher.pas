@@ -33,7 +33,7 @@ Type
     Function GetConceptForRefset(iRefset : Cardinal) : Cardinal;
     procedure PublishPaths(html: THtmlPublisher; Const sPrefix : String; aPaths : TArrayofIdArray; iFocus : Cardinal; iIndent, iStart, iLow, iHigh : Integer);
 
-    Procedure PublishConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THtmlPublisher);
+    Procedure PublishConcept(bRoot : Boolean; showhist : boolean; Const sPrefix, sId : String; iStart : Integer; html : THtmlPublisher);
     Procedure PublishTermConcept(bRoot : Boolean; Const sPrefix, sId : String; iStart : Integer; html : THtmlPublisher);
     Procedure PublishConcepts(Const sPrefix : String; iStart : Integer; html : THtmlPublisher);
     Procedure PublishSearch(Const sPrefix, sText, sContext : String; iStart: Integer; all : boolean; html : THtmlPublisher);
@@ -97,10 +97,10 @@ Begin
   If sId = '*' Then
     PublishConcepts(sURL, StrToIntDef(oMap.Matches['start'], 0), html)
   else If (sId <> '')  Then
-    PublishConcept(false, sURL, sId, StrToIntDef(oMap.Matches['start'], 0), html)
+    PublishConcept(false, oMap['no-hist'] <> 'true', sURL, sId, StrToIntDef(oMap.Matches['start'], 0), html)
   else if oMap.ExistsByKey('srch') then
     if StringIsInteger64(oMap.Matches['srch']) and ((oMap.Matches['context'] = '') or (FSnomed.Subsumes(oMap.Matches['context'], oMap.Matches['srch']))) then
-      PublishConcept(false, sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
+      PublishConcept(false, oMap['no-hist'] <> 'true', sURL, oMap.Matches['srch'], StrToIntDef(oMap.Matches['start'], 0), html)
     else
       PublishSearch(sURL, oMap.Matches['srch'], oMap.Matches['context'], StrToIntDef(oMap.Matches['start'], 0), StringToBoolDef(oMap.matches['all'], false), html)
   else
@@ -199,7 +199,7 @@ Begin
       html.StartParagraph;
       html.AddText('Snomed Root Concept', true, false);
       html.EndParagraph;
-      PublishConcept(true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
+      PublishConcept(true, true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
     End
     Else
     Begin
@@ -519,7 +519,12 @@ begin
     result := result + ', primitive';
 end;
 
-procedure TSnomedPublisher.PublishConcept(bRoot : Boolean; const sPrefix, sId: String; iStart : Integer; html: THtmlPublisher);
+function isHistorical(Flags : Byte) : Boolean;
+begin
+ result := flags and MASK_REL_CHARACTERISTIC = VAL_REL_Historical;
+end;
+
+procedure TSnomedPublisher.PublishConcept(bRoot : Boolean; showhist : boolean; const sPrefix, sId: String; iStart : Integer; html: THtmlPublisher);
 var
   iId : UInt64;
   iIndex : Cardinal;
@@ -719,14 +724,17 @@ Begin
       for i := Low(Outbounds) To High(Outbounds) Do
       Begin
         FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-        html.StartRowFlip(i);
-        html.AddTableCell(Screen(PN, ''));
-        CellConceptRef(html, sPrefix, iWork3, cdDesc);
-        CellConceptRef(html, sPrefix, iWork2, cdDesc);
-        html.AddTableCell(' '+GetRelChar(Flags));
-        html.AddTableCell(' '+GetRelRefinability(Flags));
-        html.AddTableCell(' '+GetRelGroup(Group));
-        html.EndTableRow;
+        if (showhist) or (not isHistorical(Flags)) then
+        begin
+          html.StartRowFlip(i);
+          html.AddTableCell(Screen(PN, ''));
+          CellConceptRef(html, sPrefix, iWork3, cdDesc);
+          CellConceptRef(html, sPrefix, iWork2, cdDesc);
+          html.AddTableCell(' '+GetRelChar(Flags));
+          html.AddTableCell(' '+GetRelRefinability(Flags));
+          html.AddTableCell(' '+GetRelGroup(Group));
+          html.EndTableRow;
+        end;
       End;
       html.EndTable;
       html.Line;
@@ -822,14 +830,17 @@ Begin
       For i := iStart to Min(iStart+MAX_ROWS, High(Inbounds)) Do
       Begin
         FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-        html.StartRowFlip(i);
-        CellConceptRef(html, sPrefix, iWork, cdDesc);
-        CellConceptRef(html, sPrefix, iWork3, cdDesc);
-  //      html.AddTableCell(Screen(PN, ''));
-        html.AddTableCell(' '+GetRelChar(Flags));
-        html.AddTableCell(' '+GetRelRefinability(Flags));
-        html.AddTableCell(' '+GetRelGroup(Group));
-        html.EndTableRow;
+        if (showhist) or (not isHistorical(Flags)) then
+        begin
+          html.StartRowFlip(i);
+          CellConceptRef(html, sPrefix, iWork, cdDesc);
+          CellConceptRef(html, sPrefix, iWork3, cdDesc);
+    //      html.AddTableCell(Screen(PN, ''));
+          html.AddTableCell(' '+GetRelChar(Flags));
+          html.AddTableCell(' '+GetRelRefinability(Flags));
+          html.AddTableCell(' '+GetRelGroup(Group));
+          html.EndTableRow;
+        End;
       End;
       html.EndTable;
       if (iStart > 0) or (iStart+MAX_ROWS < High(Inbounds)) Then

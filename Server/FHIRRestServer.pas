@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, MsXml, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
+  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
 
   EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
 
@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)

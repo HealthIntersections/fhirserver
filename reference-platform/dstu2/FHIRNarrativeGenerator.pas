@@ -166,7 +166,7 @@ Type
     procedure renderTiming(s: TFHIRTiming; x: TFHIRXhtmlNode);
     procedure renderRange(q: TFHIRRange; x: TFHIRXhtmlNode);
 
-    function lookupCode(system, code: String): String;
+    function lookupCode(system, version, code: String): String;
 
     function getChildrenForPath(elements: TFHIRElementDefinitionList; path: String): TAdvList<TFHIRElementDefinition>;
     function splitExtensions(profile: TFHIRStructureDefinition; children: TAdvList<TPropertyWrapper>): TAdvList<TPropertyWrapper>;
@@ -1339,7 +1339,7 @@ begin
     begin
       if (c.code <> '') and (c.system <> '') then
       begin
-        s := lookupCode(c.system, c.code);
+        s := lookupCode(c.system, c.version, c.code);
         if s <> '' then
           break;
       end;
@@ -1372,9 +1372,9 @@ begin
       else
         sp.addText('; ');
       if c.display <> '' then
-        sp.addText('{' + describeSystem(c.system) + ' code "' + c.code + '" := "' + lookupCode(c.system, c.code) + '", given as "' + c.display + '"}')
+        sp.addText('{' + describeSystem(c.system) + ' code "' + c.code + '" := "' + lookupCode(c.system, c.version, c.code) + '", given as "' + c.display + '"}')
       else
-        sp.addText('{' + describeSystem(c.system) + ' code "' + c.code + '" := "' + lookupCode(c.system, c.code));
+        sp.addText('{' + describeSystem(c.system) + ' code "' + c.code + '" := "' + lookupCode(c.system, c.version, c.code));
     end;
     sp.addText(')');
   end
@@ -1437,14 +1437,14 @@ begin
   if (c.display <> '') then
     s := c.display;
   if (s = '') then
-    s := lookupCode(c.system, c.code);
+    s := lookupCode(c.system, c.version, c.code);
 
   if (s = '') then
     s := c.code;
 
   if (showCodeDetails) then
   begin
-    x.addText(s + ' (Details: ' + describeSystem(c.system) + ' code ' + c.code + ' := "' + lookupCode(c.system, c.code) + '", stated as "' + c.display + '")');
+    x.addText(s + ' (Details: ' + describeSystem(c.system) + ' code ' + c.code + ' := "' + lookupCode(c.system, c.version, c.code) + '", stated as "' + c.display + '")');
   end
   else
     x.addTag('span').setAttribute('title', 'begin' + c.system + ' ' + c.code + 'end;').addText(s);
@@ -1472,11 +1472,11 @@ begin
     result := system;
 end;
 
-function TFHIRNarrativeGenerator.lookupCode(system, code: String): String;
+function TFHIRNarrativeGenerator.lookupCode(system, version, code: String): String;
 var
   t: TValidationResult;
 begin
-  t := context.validateCode(system, code, '');
+  t := context.validateCode(system, version, code, '');
   try
     if (t <> nil) and (t.display <> '') then
       result := t.display
@@ -1522,7 +1522,7 @@ begin
     begin
       if (c.code <> '') and (c.system <> '') then
       begin
-        s := lookupCode(c.system, c.code);
+        s := lookupCode(c.system, c.version, c.code);
         if (s <> '') then
           break;
       end;
@@ -1564,7 +1564,7 @@ begin
   begin
     sp := x.addTag('span');
     sp.setAttribute('style', 'background: LightGoldenRodYellow ');
-    sp.addText(' (Details: ' + describeSystem(q.system) + ' code ' + q.code + ' := "' + lookupCode(q.system, q.code) + '")');
+    sp.addText(' (Details: ' + describeSystem(q.system) + ' code ' + q.code + ' := "' + lookupCode(q.system, '', q.code) + '")');
   end;
 end;
 
@@ -1649,7 +1649,7 @@ begin
     s.append('" code ');
     s.append(q.code);
     s.append(' := "');
-    s.append(lookupCode(q.system, q.code)).append('")');
+    s.append(lookupCode(q.system, '', q.code)).append('")');
 
     result := s.toString();
   finally
@@ -1904,7 +1904,7 @@ begin
     else if (ii.Type_.codingList.Count > 0) and (ii.Type_.codingList[0].display <> '') then
       s := ii.Type_.codingList[0].display + ' = ' + s
     else if (ii.Type_.codingList.Count > 0) and (ii.Type_.codingList[0].code <> '') then
-      s := lookupCode(ii.Type_.codingList[0].system, ii.Type_.codingList[0].code) + ' = ' + s;
+      s := lookupCode(ii.Type_.codingList[0].system, ii.Type_.codingList[0].version, ii.Type_.codingList[0].code) + ' = ' + s;
   end;
 
   if (ii.Use <> IdentifierUseNull) then

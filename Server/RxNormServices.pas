@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  StringSupport,
+  StringSupport, ThreadSupport,
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   YuStemmer, DateAndTime,
   KDBManager,
@@ -104,7 +104,7 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
   end;
 
-procedure generateRxStems(db : TKDBManager);
+procedure generateRxStems(db : TKDBManager; callback : TInstallerCallback = nil);
 
 implementation
 
@@ -134,12 +134,12 @@ begin
   end;
 end;
 
-procedure generateRxStems(db : TKDBManager);
+procedure generateRxStems(db : TKDBManager; callback : TInstallerCallback = nil);
 var
   stems, list : TStringList;
   qry : TKDBConnection;
   stemmer : TYuStemmer_8;
-  i, j : integer;
+  i, j, c, t : integer;
 begin
   stemmer := GetStemmer_8('english');
   stems := TStringList.Create;
@@ -149,25 +149,40 @@ begin
     try
       qry.ExecSQL('delete from rxnstems');
 
+      t := qry.CountSQL('Select count(*) from rxnconso where SAB = ''RXNORM''');
+      c := 0;
+
       qry.SQL := 'select RXCUI, STR from rxnconso where SAB = ''RXNORM'''; // allow SY
       qry.Prepare;
       qry.Execute;
       i := 0;
-      write('Stemming');
+      if (assigned(callback)) then
+        callback(0, 'Stemming')
+      else
+        write('Stemming');
       while qry.FetchNext do
       begin
         makeStems(stemmer, stems, qry.ColString[2], qry.ColString[1]);
         inc(i);
-        if (i mod 10000 = 0) then
-          write('.');
+        if (i mod 1000 = 0) then
+          if assigned(callback) then
+            callback(trunc(i * 10 / t), 'Stemming')
+          else
+            write('.');
       end;
-      writeln('done');
-      writeln(inttostr(stems.Count)+' stems');
       qry.Terminate;
+      if (not assigned(callback)) then
+      begin
+        writeln('done');
+        writeln(inttostr(stems.Count)+' stems');
+      end;
 
       qry.SQL := 'insert into rxnstems (stem, cui) values (:stem, :cui)';
       qry.Prepare;
-      write('Storing');
+      if (assigned(callback)) then
+        callback(10, 'Storing')
+      else
+        write('Storing');
       for i := 0 to stems.count - 1 do
       begin
         list := stems.objects[i] as TStringList;
@@ -178,9 +193,15 @@ begin
           qry.Execute;
         end;
         if (i mod 100 = 0) then
-          write('.');
+          if (assigned(callback)) then
+            callback(10 + trunc(i * 90 / stems.Count), 'Storing')
+          else
+            write('.');
       end;
-      writeln('done');
+      if (assigned(callback)) then
+        callback(100, 'Done')
+      else
+        writeln('done');
       qry.Terminate;
       qry.Release;
     except
@@ -192,6 +213,8 @@ begin
       end;
     end;
   finally
+    for i := 0 to stems.Count - 1 do
+      stems.Objects[i].free;
     stems.Free;
     stemmer.Free;
     db.free;

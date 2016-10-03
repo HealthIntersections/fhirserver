@@ -15,7 +15,7 @@ Type
     FOthers : TAdvStringObjectMatch; // checkers or code system providers
     fvs : TFHIRValueSet;
     FId: String;
-    function check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
+    function check(system, version, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
     function findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
 //    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
@@ -29,7 +29,7 @@ Type
 
     procedure prepare(vs : TFHIRValueSet);
 
-    function check(system, code : String; abstractOk : boolean) : boolean; overload;
+    function check(system, version, code : String; abstractOk : boolean) : boolean; overload;
     function check(coding : TFhirCoding; abstractOk : boolean): TFhirParameters; overload;
     function check(code: TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters; overload;
   end;
@@ -100,7 +100,7 @@ begin
       begin
         fvs.compose.includeList[i].checkNoModifiers('ValueSetChecker.prepare', 'include');
         if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
-          FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system));
+          FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system, fvs.compose.includeList[i].version));
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
         for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
         begin
@@ -114,7 +114,7 @@ begin
       begin
         fvs.compose.excludeList[i].checkNoModifiers('ValueSetChecker.prepare', 'exclude');
         if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
-          FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system));
+          FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system, fvs.compose.excludeList[i].version));
         cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
         for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
         begin
@@ -177,19 +177,19 @@ begin
     result := '??';
 end;
 
-function TValueSetChecker.check(system, code: String; abstractOk : boolean): boolean;
+function TValueSetChecker.check(system, version, code: String; abstractOk : boolean): boolean;
 var
   list : TStringList;
 begin
   list := TStringList.Create;
   try
-    result := check(system, code, abstractOk, list);
+    result := check(system, version, code, abstractOk, list);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, code : String; abstractOk : boolean; displays : TStringList) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk : boolean; displays : TStringList) : boolean;
 var
   checker : TValueSetChecker;
   cs : TCodeSystemProvider;
@@ -201,7 +201,7 @@ begin
   {special case:}
   if (fvs.url = ANY_CODE_VS) then
   begin
-    cs := FStore.getProvider(system, true);
+    cs := FStore.getProvider(system, version, true);
     try
       if cs = nil then
         result := false
@@ -242,7 +242,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[fvs.compose.importList[i].value]);
-          result := checker.check(system, code, abstractOk, displays);
+          result := checker.check(system, version, code, abstractOk, displays);
         end;
       end;
       for i := 0 to fvs.compose.includeList.Count - 1 do
@@ -275,7 +275,7 @@ begin
     list := TStringList.Create;
     try
       list.CaseSensitive := false;
-      if check(coding.system, coding.code, abstractOk, list) then
+      if check(coding.system, coding.version, coding.code, abstractOk, list) then
       begin
         result.AddParameter('result', TFhirBoolean.Create(true));
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
@@ -328,7 +328,7 @@ begin
         list.Clear;
         cc := ',{'+code.codingList[i].system+'}'+code.codingList[i].code;
         codelist := codelist + cc;
-        v := check(code.codingList[i].system, code.codingList[i].code, abstractOk, list);
+        v := check(code.codingList[i].system, code.codingList[i].version, code.codingList[i].code, abstractOk, list);
         ok.value := ok.value or v;
 
         if (v) then
@@ -340,7 +340,7 @@ begin
         end
         else
         begin
-          prov := FStore.getProvider(code.codingList[i].system, true);
+          prov := FStore.getProvider(code.codingList[i].system, code.codingList[i].version, true);
           try
            if (prov = nil) then
            begin

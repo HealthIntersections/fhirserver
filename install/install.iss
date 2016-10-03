@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.81
+AppVerName=1.0.82
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.81
+OutputBaseFilename=fhirserver3-1.0.82
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -81,6 +81,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 ; Executable files
 Source: "C:\work\fhirserver\Exec\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
@@ -119,8 +120,10 @@ Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{com
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
 
 [Icons]
-Name: "{group}\FHIR Server";        Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
-Name: "{group}\Ini File";           Filename: "{app}\fhirserver.ini";         
+Name: "{group}\FHIR Server (Desktop Mode)";  Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    
+Name: "{group}\FHIR Server Utilities";       Filename: "{app}\FHIRServerutils.exe";                       WorkingDir: "{app}"    
+Name: "{group}\Documentation";               Filename: "{app}\documentation.rtf";         
+Name: "{group}\Ini File";                    Filename: "{app}\fhirserver.ini";         
 
 [Code]
 const

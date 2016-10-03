@@ -467,7 +467,7 @@ var
   display : String;
 begin
   cset.checkNoModifiers('ValueSetExpander.processCodes', 'set');
-  cs := FStore.getProvider(cset.system);
+  cs := FStore.getProvider(cset.system, cset.version);
   try
     if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
     begin

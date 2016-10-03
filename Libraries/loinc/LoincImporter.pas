@@ -32,15 +32,18 @@ Interface
 
 Uses
   SysUtils, Contnrs, Classes,
-  StringSupport, DateSupport, AdvGenerics,
+  StringSupport, DateSupport, ThreadSupport, AdvGenerics,
   AdvObjects, AdvObjectLists, AdvStringLists, AdvIntegerLists, AdvNames, AdvCSVExtractors, AdvFiles, AdvExceptions,
   YuStemmer, LoincServices;
 
 Const
   FLAG_LONG_COMMON = 1;
   FLAG_LONG_RELATED = 2;
-  STEP_COUNT = 1000;
-  
+  STEP_COUNT = 100;
+  ESTIMATED_CONCEPTS = 83000;
+  ESTIMATED_HEIRACHY = 85000;
+  ESTIMATED_ANSWERS = 47000;
+
 
 Type
   TLOINCImporter = class;
@@ -175,6 +178,8 @@ Type
 
   TLoincImporter = class (TAdvObject)
   private
+    callback : TInstallerCallback;
+    lastmessage : String;
     FStart : TDateTime;
     FFolder : String;
     TotalConcepts : Integer;
@@ -204,10 +209,10 @@ Type
     Function AddDescription(Const s : String):Cardinal;
     function LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
     function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Word;
-    procedure Progress(msg : String);
     procedure ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
     procedure ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
     procedure StoreHeirarchyEntry(entry : THeirarchyEntry);
+    procedure Progress(Step : integer; pct : real; msg : String);
   public
     procedure ImportLOINC;
 
@@ -216,7 +221,7 @@ Type
     Property Version : String read FVersion write FVersion;
   end;
 
-function importLoinc(folder, version, dest : String) : String;
+function importLoinc(folder, version, dest : String; callback : TInstallerCallback = nil) : String;
 
 Implementation
 
@@ -244,20 +249,20 @@ begin
     raise Exception.Create('Unable to read the version from '+txtFile);
 end;
 
-function importLoinc(folder, version, dest : String) : String;
+function importLoinc(folder, version, dest : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TLoincImporter;
 begin
-  Writeln('Import LOINC from '+folder);
   imp := TLoincImporter.Create;
   try
+    imp.callback := callback;
+    imp.progress(0, 0, 'Import LOINC from '+folder);
     imp.Folder := folder;
     imp.Version := version;
-    Writeln('Version: '+imp.Version);
-    result := IncludeTrailingPathDelimiter(dest)+'loinc.cache';
+    result := dest;
     imp.outputFile := result;
     imp.ImportLOINC;
-    Writeln('Done '+inttostr(imp.TotalConcepts)+' Concepts');
+    imp.progress(16, 0, 'Done '+inttostr(imp.TotalConcepts)+' Concepts');
   finally
     imp.Free;
   end;
@@ -476,7 +481,7 @@ begin
     end;
 
     iCount := 0;
-    Progress('Loading Concepts');
+    Progress(0, 0, 'Loading Concepts');
     items := TAdvStringList.create;
     f := TAdvFile.Create;
     try
@@ -607,7 +612,7 @@ begin
             // properties
 
             if iCount mod STEP_COUNT = 0 then
-              Progress('');
+              Progress(0, iCount * 3 / ESTIMATED_CONCEPTS, '');
             inc(iCount);
           end;
         End;
@@ -618,13 +623,13 @@ begin
     finally
       f.free;
     end;
-    Progress('Sort Codes');
+    Progress(3, 0, 'Sort Codes');
     oCodes.SortedByCode;
 
     // now, process the multi-axial file
     if FileExists(IncludeTrailingPathDelimiter(folder) + 'mafile.csv') then
     begin
-      Progress('Loading Multi-Axial Source');
+      Progress(3,0,'Loading Multi-Axial Source');
       oHeirarchy.SortedByCode;
       AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'mafile.csv');
       Reset(ma);
@@ -636,7 +641,7 @@ begin
         Readln(ma, ln);
         ProcessMultiAxialEntry(oHeirarchy, oCodes, ln);
         if iCount mod STEP_COUNT = 0 then
-          Progress('');
+          Progress(3, iCount*2/ESTIMATED_HEIRACHY, '');
         inc(iCount);
       end;
       CloseFile(ma);
@@ -647,7 +652,7 @@ begin
 
     if FileExists(IncludeTrailingPathDelimiter(folder) + 'answers.csv') then
     begin
-      Progress('Loading Answer Lists');
+      Progress(5, 0, 'Loading Answer Lists');
       AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'answers.csv');
       Reset(ma);
       Readln(ma, ln); // skip header
@@ -657,24 +662,26 @@ begin
         Readln(ma, ln);
         ProcessAnswerLine(oHeirarchy, oCodes, ln);
         if iCount mod STEP_COUNT = 0 then
-          Progress('');
+          Progress(5, iCount / ESTIMATED_ANSWERS, '');
         inc(iCount);
       end;
       CloseFile(ma);
     end;
 
-    Progress('Build Cache');
+    Progress(6, 0, 'Build Cache');
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       oCode := TCode(oCodes[iLoop]);
       oCode.Code := StringPadRight(oCode.Code, ' ', iLength);
+      if iLoop mod STEP_COUNT = 0 then
+        Progress(6, iCount * 0.5 / oCodes.Count, '');
     End;
     FCode.CodeLength := iLength;
 
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       if iCount mod STEP_COUNT = 0 then
-        Progress('');
+        Progress(6, 0.5+(iCount *0.5 / oCodes.Count), '');
       inc(iCount);
       oCode := TCode(oCodes[iLoop]);
       Try
@@ -682,7 +689,7 @@ begin
           e := oCode.entry.index
         else
           e := 0;
-          
+
         oCode.Index := FCode.AddCode(oCode.Code, AddDescription(oCode.Display), oCode.Names, e, oCode.Flags);
       Except
         on E:Exception Do
@@ -712,14 +719,14 @@ begin
     result := FConcepts.AddConcept(AddDescription('LOINC Definitions'), FRefs.AddWords(aConcepts), 0);
     FCode.donebuild;
 
-    Progress('Storing Heirachy');
+    Progress(7, 0, 'Storing Heirachy');
     FEntries.StartBuild;
     iCount := 0;
     SetLength(roots, 0);
     for i := 0 to oHeirarchy.Count - 1 do
     begin
       if iCount mod STEP_COUNT = 0 then
-        Progress('');
+        Progress(7, i / oHeirarchy.Count, '');
       inc(iCount);
       if oHeirarchy[i].FParent = nil then
       begin
@@ -738,7 +745,7 @@ begin
       subsets[a] := FRefs.AddCardinals(aCardinals);
     end;
 
-    Progress('Processing Answer Lists');
+    Progress(8, 0, 'Processing Answer Lists');
     FAnswers.StartBuild;
     st := TStringList.Create;
     st2 := TStringList.Create;
@@ -758,9 +765,9 @@ begin
 
       for i := 0 to st2.Count - 1 do
       begin
+        if i mod STEP_COUNT = 0 then
+          Progress(8, i/st2.Count, '');
         answer := TAnswer(st2.Objects[i]);
-        if answer.FCode = 'LA3-6' then
-          writeln('test');
         SetLength(aCardinals, answer.FParents.Count);
         for j := 0 to answer.FParents.Count - 1 do
           aCardinals[j] := answer.FParents[j].FIndex;
@@ -768,9 +775,9 @@ begin
       end;
       for i := 0 to st.Count - 1 do
       begin
+        if i mod STEP_COUNT = 0 then
+          Progress(9, i/st2.Count, '');
         answerlist := TAnswerList(st.Objects[i]);
-        if answerList.FCode = 'LL183-5' then
-          writeln('test');
         SetLength(aCardinals, answerlist.FAnswers.Count);
         for j := 0 to answerlist.FAnswers.Count - 1 do
           aCardinals[j] := answerlist.FAnswers[j].FIndex;
@@ -786,23 +793,23 @@ begin
 
 
 
-    Progress('Processing Words');
+    Progress(10, 0, 'Processing Words');
     FWords.StartBuild;
     For i := 0 to FWordList.Count - 1 Do
     Begin
       if i mod STEP_COUNT = 0 then
-        Progress('');
+        Progress(10, i/FWordList.Count, '');
       iFlag := Integer(FWordList.Objects[i]);
       FWords.AddWord(FDesc.AddEntry(FWordList[i]), iFlag);
     End;
     FWords.DoneBuild;
 
-    Progress('Processing Stems');
+    Progress(11, 0, 'Processing Stems');
     FStems.StartBuild;
     For i := 0 to FStemList.Count - 1 Do
     Begin
       if i mod STEP_COUNT = 0 then
-        Progress('');
+        Progress(11,  i / FStemList.Count, '');
       oTemp := TAdvObjectList(FStemList.Objects[i]);
       iStem := FDesc.AddEntry(FStemList[i]);
       FStems.AddStem(iStem);
@@ -814,16 +821,18 @@ begin
     FStems.DoneBuild;
     For i := 0 to oCodes.Count - 1 Do
     Begin
+      if i mod STEP_COUNT = 0 then
+        Progress(12,  i / oCodes.Count, '');
       oCode := TCode(oCodes[i]);
       SetLength(aCardinals, oCode.Stems.Count);
       for j := 0 to oCode.Stems.Count - 1 do
         aCardinals[j] := oCode.Stems[j];
-      if (oCode.Index = 0) then
-        writeln('.');
       FCode.SetStems(oCode.Index, FRefs.AddCardinals(aCardinals));
     End;
     For i := 0 to oHeirarchy.Count - 1 Do
     Begin
+      if i mod STEP_COUNT = 0 then
+        Progress(13,  i / oHeirarchy.Count, '');
       oEntry := oHeirarchy[i];
       SetLength(aCardinals, oEntry.Stems.Count);
       for j := 0 to oEntry.Stems.Count - 1 do
@@ -831,11 +840,11 @@ begin
       FEntries.SetStems(oEntry.Index, FRefs.AddCardinals(aCardinals));
     End;
 
-    Progress('Cross-Linking');
+    Progress(14, 0, 'Cross-Linking');
     For iLoop := 0 to oCodes.Count - 1 Do
     Begin
       if iLoop mod STEP_COUNT = 0 then
-        Progress('');
+        Progress(14, iLoop / oCodes.Count, '');
       inc(iCount);
       oCode := TCode(oCodes[iLoop]);
       if oCode.Comps <> nil Then
@@ -941,9 +950,10 @@ begin
       ls := s;
     end;
 
-    Progress('Save');
+    Progress(15, 0, 'Save');
     oSvc.Save(FOutputFile);
 
+    Progress(15, 0.5, 'Cleanup');
   Finally
     oSvc.Free;
     FWordList.Free;
@@ -1039,7 +1049,7 @@ begin
     end;
 
     if (AnswerStringID = '') then
-      writeln('?')
+      // writeln('?')
     else
     begin
       if FAnswerMap.ContainsKey(AnswerStringID) then
@@ -1119,12 +1129,20 @@ begin
   end;
 end;
 
-procedure TLoincImporter.Progress(msg: String);
+procedure TLoincImporter.Progress(Step : integer; pct : real; msg : String);
 begin
-  if (msg <> '') then
+  if (assigned(callback)) then
+  begin
+    if msg = '' then
+      msg := lastmessage;
+    pct := ((step / 16) * 100) + (pct * (100 / 16));
+    callback(trunc(pct), Msg);
+    lastmessage := msg;
+  end
+  else if (msg <> '') then
   begin
     Writeln('           '+DescribePeriod(now - FStart));
-    write(msg)
+    write('#'+inttostr(step)+' '+msg)
   end
   else
     write('.');

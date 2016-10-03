@@ -94,6 +94,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderContext); overload; virtual; abstract;
 
     procedure RecordUse;
+    function defToThisVersion(specifiedVersion : String) : boolean; virtual;
     property UseCount : cardinal read FUseCount;
   end;
 
@@ -104,6 +105,11 @@ implementation
 procedure TCodeSystemProvider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
   // do nothing
+end;
+
+function TCodeSystemProvider.defToThisVersion(specifiedVersion : String): boolean;
+begin
+  result := true;
 end;
 
 function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperatorEnum; value: String): boolean;

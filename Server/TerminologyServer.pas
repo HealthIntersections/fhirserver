@@ -28,7 +28,7 @@ Type
 
     // database maintenance
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TKDBConnection);
-    procedure processConcept(ConceptKey : integer; URL, Code : String; conn2, conn3 : TKDBConnection);
+    procedure processConcept(ConceptKey : integer; URL, version, Code : String; conn2, conn3 : TKDBConnection);
     function isOkTarget(cm: TLoadedConceptMap; vs: TFHIRValueSet): boolean;
     function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
     function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
@@ -63,8 +63,8 @@ Type
     function translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
     function translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters; overload;
     Function MakeChecker(uri : string) : TValueSetChecker;
-    function getDisplayForCode(system, code : String): String;
-    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
+    function getDisplayForCode(system, version, code : String): String;
+    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
 
     // closures
     function InitClosure(name : String) : String;
@@ -112,9 +112,10 @@ end;
 
 procedure TTerminologyServer.load(ini : TIniFile);
 var
-  fn : string;
+  fn, s : string;
   p : TCodeSystemProvider;
   sn: TSnomedServices;
+  def : boolean;
 begin
   logt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
@@ -123,6 +124,7 @@ begin
   AreaCode := TAreaCodeServices.Create(Fdb);
   p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);
+  ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   logt(' - done');
 
   if ini.ReadString('RxNorm', 'database', '') <> '' then
@@ -142,12 +144,20 @@ begin
   fn := ini.ReadString('snomed', 'cache', '');
   if fn <> '' then
   begin
-    logt('Load Snomed from '+fn);
-    sn := TSnomedServices.Create;
-    snomed.Add(sn);
-    sn.Load(fn);
-    DefSnomed := sn.Link;
-    logt(' - done');
+    def := true;
+    for s in fn.split([',']) do
+    begin
+      logt('Load Snomed from '+s);
+      sn := TSnomedServices.Create;
+      snomed.Add(sn);
+      sn.Load(s);
+      if (def) then
+        DefSnomed := sn.Link;
+      ProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.versionUri, sn.Link);
+      ProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.editionUri, sn.Link);
+      logt(' - done');
+      def := false;
+    end;
   end;
   fn := ini.ReadString('loinc', 'cache', '');
   if fn <> '' then
@@ -204,7 +214,7 @@ var
       result := props.Contains(name);
   end;
 begin
-  provider := getProvider(coding.system);
+  provider := getProvider(coding.system, coding.version);
   try
     resp.name := provider.name(nil);
     s := provider.version(nil);
@@ -529,7 +539,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system : string; display : string) : boolean;
+function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
 var
   vs : TFhirValueSet;
   cs : TFhirCodeSystem;
@@ -563,7 +573,7 @@ begin
   end
   else
   begin
-    cp := getProvider(system, true);
+    cp := getProvider(system, version, true);
     if cp <> nil then
     begin
       try
@@ -639,11 +649,11 @@ begin
 end;
 
 
-function TTerminologyServer.getDisplayForCode(system, code: String): String;
+function TTerminologyServer.getDisplayForCode(system, version, code: String): String;
 var
   provider : TCodeSystemProvider;
 begin
-  provider := getProvider(system, true);
+  provider := getProvider(system, version, true);
   if provider <> nil then
   try
     result := provider.getDisplay(code, '');
@@ -657,7 +667,7 @@ var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
 begin
-  cs := getProvider(coding.system, true);
+  cs := getProvider(coding.system, coding.version, true);
   if cs <> nil then
   begin
     try
@@ -779,7 +789,7 @@ begin
   op := TFhirOperationOutcome.Create;
   try
     try
-      if not checkCode(op, '', coding.code, coding.system, coding.display) then
+      if not checkCode(op, '', coding.code, coding.system, coding.version, coding.display) then
         raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
@@ -985,7 +995,7 @@ begin
           inc(i);
           if (prog and (i mod 10 = 0)) then Write('.');
           BackgroundThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
-          processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code'], conn2, conn3);
+          processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
         end;
         conn1.Terminate;
         if (prog) then Writeln;
@@ -1035,7 +1045,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, Code: String; conn2, conn3: TKDBConnection);
+procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, version, Code: String; conn2, conn3: TKDBConnection);
 var
   vs : TFhirValueSet;
   val : TValuesetChecker;
@@ -1054,7 +1064,7 @@ begin
           val := TValueSetChecker.create(self.Link, vs.url);
           try
             val.prepare(vs);
-            if not val.check(URL, code, true) then
+            if not val.check(URL, version, code, true) then
               conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
             else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
               conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
@@ -1079,7 +1089,7 @@ procedure TTerminologyServer.processValueSet(ValueSetKey: integer; URL: String; 
 var
   vs : TFhirValueSet;
   val : TValuesetChecker;
-  system, code : String;
+  system, version, code : String;
 begin
   vs := getValueSetByURL(URL);
   if vs = nil then
@@ -1090,14 +1100,15 @@ begin
         val := TValueSetChecker.create(self.Link, vs.url);
         try
           val.prepare(vs);
-          conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
+          conn2.SQL := 'select ConceptKey, URL, Version, Code from Concepts';
           conn2.Prepare;
           conn2.Execute;
           while conn2.FetchNext do
           begin
             system := conn2.ColStringByName['URL'];
+            version := conn2.ColStringByName['Version'];
             code := conn2.ColStringByName['Code'];
-            if not val.check(system, code, true) then
+            if not val.check(system, version, code, true) then
               conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
             else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
               conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');
@@ -1150,7 +1161,7 @@ begin
   op := TFhirOperationOutcome.Create;
   try
     try
-      if not checkCode(op, '', coding.code, coding.system, coding.display) then
+      if not checkCode(op, '', coding.code, coding.system, coding.version, coding.display) then
         raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
 //      // check to see whether the coding is already in the target value set, and if so, just return it

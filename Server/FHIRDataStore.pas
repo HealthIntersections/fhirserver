@@ -191,7 +191,7 @@ Type
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer;
       allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
-    function LookupCode(system, code: String): String;
+    function LookupCode(system, version, code: String): String;
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
     Property Validate: Boolean read FValidate write FValidate;
     procedure QueueResource(r: TFhirResource); overload;
@@ -2044,12 +2044,12 @@ begin
   FTerminologyServer.Loading := false;
 end;
 
-function TFHIRDataStore.LookupCode(system, code: String): String;
+function TFHIRDataStore.LookupCode(system, version, code: String): String;
 var
   prov: TCodeSystemProvider;
 begin
   try
-    prov := FTerminologyServer.getProvider(system);
+    prov := FTerminologyServer.getProvider(system, version);
     try
       if prov <> nil then
         result := prov.getDisplay(code, '');

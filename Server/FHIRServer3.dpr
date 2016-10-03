@@ -185,7 +185,6 @@ uses
   AdvIntegerMatches in '..\reference-platform\Support\AdvIntegerMatches.pas',
   SnomedPublisher in '..\Libraries\snomed\SnomedPublisher.pas',
   SnomedExpressions in '..\Libraries\snomed\SnomedExpressions.pas',
-  FhirServerTests in 'FhirServerTests.pas',
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   LoincImporter in '..\Libraries\loinc\LoincImporter.pas',
   LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas',

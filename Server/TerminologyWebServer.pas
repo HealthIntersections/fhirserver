@@ -979,10 +979,10 @@ begin
   end
   else
   begin
-    exp := TSnomedExpressionParser.Parse(FServer.DefSnomed, code);
+    exp := FServer.DefSnomed.parseExpression(code);
     try
-      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(TSnomedExpressionParser.Render(FServer.DefSnomed, exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
-      EncodeXml(TSnomedExpressionParser.Render(FServer.DefSnomed, exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(TSnomedExpressionParser.Display(FServer.DefSnomed, exp), xmlAttribute)+'" ok="true"/>';
+      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(FServer.DefSnomed.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
+      EncodeXml(FServer.DefSnomed.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(FServer.DefSnomed.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
     finally
       exp.Free;
     end;

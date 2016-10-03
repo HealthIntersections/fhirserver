@@ -55,8 +55,8 @@ const
 
 
 procedure ExecuteFhirServerTests(all: boolean);
-//var
-//  context : TTestingWorkerContext;
+var
+  context : TTestingWorkerContext;
 begin
 //  Writeln('FHIR Server Tests');
 //  Writeln('=================');

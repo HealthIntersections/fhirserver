@@ -34,8 +34,8 @@ Type
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
-    function supportsSystem(system : string) : boolean; override;
-    function validateCode(system, code, display : String) : TValidationResult; override;
+    function supportsSystem(system, version : string) : boolean; override;
+    function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, code, version : String; vs : TFHIRValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
@@ -163,12 +163,12 @@ begin
   result := FTerminologyServer.expandVS(vs, '', FProfile, '', 0, 0, 0);
 end;
 
-function TFHIRServerWorkerContext.supportsSystem(system : string) : boolean;
+function TFHIRServerWorkerContext.supportsSystem(system, version : string) : boolean;
 begin
-  result := FTerminologyServer.supportsSystem(system);
+  result := FTerminologyServer.supportsSystem(system, version);
 end;
 
-function TFHIRServerWorkerContext.validateCode(system, code, display : String) : TValidationResult;
+function TFHIRServerWorkerContext.validateCode(system, version, code, display : String) : TValidationResult;
 var
   op : TFHIROperationOutcome;
 begin
@@ -176,7 +176,7 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, '', code, system, display) then
+      if FTerminologyServer.checkCode(op, '', code, system, version, display) then
         result.Severity := IssueSeverityNull
       else if op.issueList.Count = 1 then
       begin

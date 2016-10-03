@@ -70,3 +70,7 @@ Server/FHIRServer3_project.tvsconfig
 install/fhirquick.fb8lck
 RDPs/
 install/helper/installer.stat
+utils/FhirServerUtils.stat
+utils/FhirServerUtils.rsb
+tests/FHIRServerTests.stat
+Server/win64_3/Debug/TestInsightSettings.ini

@@ -38,7 +38,7 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FhirServerTests, FHIROperation, FHIRDataStore, FHIRBase, FHIRPath,
+  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRDataStore, FHIRBase, FHIRPath,
   FHIRServerConstants,
   SCIMServer;
 
@@ -76,7 +76,6 @@ Type
     Constructor Create(const ASystemName, ADisplayName, AIniName: String);
     Destructor Destroy; override;
 
-    procedure ExecuteTests(all : boolean);
     procedure Load(fn : String);
     procedure LoadbyProfile(fn : String; init : boolean);
     procedure Index;
@@ -169,15 +168,6 @@ begin
       end
       else if FindCmdLineSwitch('index') then
         svc.index
-      else if FindCmdLineSwitch('tests') then
-        svc.ExecuteTests(false)
-      else if FindCmdLineSwitch('tests-all') then
-        svc.ExecuteTests(true)
-//      else if FindCmdLineSwitch('snomed-rf1', dir, true, [clstValueNextParam]) then
-//      begin
-//        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-//        svc.FIni.WriteString('snomed', 'cache', importSnomedRF1(dir, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver'), ver));
-//      end
       else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
       begin
         FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
@@ -306,11 +296,6 @@ procedure TFHIRService.dump;
 begin
   inherited;
   logt(KDBManagers.Dump);
-end;
-
-procedure TFHIRService.ExecuteTests(all : boolean);
-begin
-  ExecuteFhirServerTests(all);
 end;
 
 Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);

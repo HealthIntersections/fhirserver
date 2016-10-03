@@ -12,6 +12,8 @@ uses
   USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
   YuStemmer;
 
+const
+  URI_VERSION_BREAK = '#';
 Type
 
   ETerminologySetup = class (Exception);
@@ -231,7 +233,8 @@ Type
     procedure DropTerminologyResource(aType : TFhirResourceType; id : String);
 
     // access procedures. All return values are owned, and must be freed
-    Function getProvider(system : String; noException : boolean = false) : TCodeSystemProvider;
+    Function getProvider(system : String; version : String; noException : boolean = false) : TCodeSystemProvider; overload;
+    Function getProvider(codesystem : TFHIRCodeSystem) : TCodeSystemProvider; overload;
     function getValueSetByUrl(url : String) : TFHIRValueSet;
     function getValueSetById(id : String) : TFHIRValueSet;
     function getCodeSystemById(id : String) : TFHIRCodeSystem;
@@ -253,7 +256,7 @@ Type
     {$IFDEF FHIR3}
     procedure declareCodeSystems(list : TFhirResourceList);
     {$ENDIF}
-    function supportsSystem(s : String) : boolean;
+    function supportsSystem(s : String; version : String) : boolean;
     function subsumes(uri1, code1, uri2, code2 : String) : boolean; overload;
     function subsumes(cs : TFHIRCodeSystem; codeA, codeB : TFHIRCoding) : string; overload;
     function NextClosureKey : integer;
@@ -451,7 +454,7 @@ constructor TAllCodeSystemsProvider.Create(store: TTerminologyServerStore);
 begin
   inherited Create;
   FStore := store;
-  FActCode := store.getProvider('http://hl7.org/fhir/v3/ActCode');
+  FActCode := store.getProvider('http://hl7.org/fhir/v3/ActCode', '');
 end;
 
 function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext; lang : String) : string;
@@ -818,8 +821,10 @@ begin
   FSnomed := TAdvList<TSnomedServices>.create;
   p := TIETFLanguageCodeServices.Create;
   FProviderClasses.Add(p.system(nil), p);
+  FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TUriServices.Create();
   FProviderClasses.Add(p.system(nil), p);
+  FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
 
   FStem := GetStemmer_8('english');
 
@@ -879,22 +884,24 @@ end;
 procedure TTerminologyServerStore.declareSystems(oConf: TFHIRConformance);
 var
   e : TFhirExtension;
+  c, s : String;
   cp : TCodeSystemProvider;
-  s : String;
 begin
-  for cp in FProviderClasses.Values do
-  begin
-    e := oConf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', nil);
-    e.Tags['summary'] := 'true';
-    s := cp.system(nil);
-    e.addExtension('system', TFHIRUri.Create(s));
-    s := cp.version(nil);
-    if (s <> '') then
-      e.addExtension('version', s);
-    s := cp.name(nil);
-    if (s <> '') then
-      e.addExtension('name', s);
-  end;
+  for c in FProviderClasses.Keys do
+    if (c.Contains(URI_VERSION_BREAK)) then
+    begin
+      cp := FProviderClasses[c];
+      e := oConf.addExtension('http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system', nil);
+      e.Tags['summary'] := 'true';
+      s := cp.system(nil);
+      e.addExtension('system', TFHIRUri.Create(s));
+      s := cp.version(nil);
+      if (s <> '') then
+        e.addExtension('version', s);
+      s := cp.name(nil);
+      if (s <> '') then
+        e.addExtension('name', s);
+    end;
 end;
 
 destructor TTerminologyServerStore.Destroy;
@@ -932,41 +939,65 @@ end;
 procedure TTerminologyServerStore.SetLoinc(const Value: TLOINCServices);
 begin
   if FLoinc <> nil then
+  begin
     FProviderClasses.Remove(FLoinc.system(nil));
+    FProviderClasses.Remove(FLoinc.system(nil)+URI_VERSION_BREAK+FLoinc.version(nil));
+  end;
   FLoinc.Free;
   FLoinc := Value;
   if FLoinc <> nil then
+  begin
     FProviderClasses.add(FLoinc.system(nil), FLoinc.Link);
+    FProviderClasses.add(FLoinc.system(nil)+URI_VERSION_BREAK+FLoinc.version(nil), FLoinc.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetRxNorm(const Value: TRxNormServices);
 begin
   if FRxNorm <> nil then
+  begin
     FProviderClasses.Remove(FRxNorm.system(nil));
+    FProviderClasses.Remove(FRxNorm.system(nil)+URI_VERSION_BREAK+FRxNorm.version(nil));
+  end;
   FRxNorm.Free;
   FRxNorm := Value;
   if FRxNorm <> nil then
+  begin
     FProviderClasses.add(FRxNorm.system(nil), FRxNorm.Link);
+    FProviderClasses.add(FRxNorm.system(nil)+URI_VERSION_BREAK+FRxNorm.version(nil), FRxNorm.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetNciMeta(const Value: TNciMetaServices);
 begin
   if FNciMeta <> nil then
+  begin
     FProviderClasses.Remove(FNciMeta.system(nil));
+    FProviderClasses.Remove(FNciMeta.system(nil)+URI_VERSION_BREAK+FNciMeta.version(nil));
+  end;
   FNciMeta.Free;
   FNciMeta := Value;
   if FNciMeta <> nil then
+  begin
     FProviderClasses.add(FNciMeta.system(nil), FNciMeta.Link);
+    FProviderClasses.add(FNciMeta.system(nil)+URI_VERSION_BREAK+FNciMeta.version(nil), FNciMeta.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetUnii(const Value: TUniiServices);
 begin
   if FUnii <> nil then
+  begin
     FProviderClasses.Remove(FUnii.system(nil));
+    FProviderClasses.Remove(FUnii.system(nil)+URI_VERSION_BREAK+FUnii.version(nil));
+  end;
   FUnii.Free;
   FUnii := Value;
   if FUnii <> nil then
+  begin
     FProviderClasses.add(FUnii.system(nil), FUnii.Link);
+    FProviderClasses.add(FUnii.system(nil)+URI_VERSION_BREAK+FUnii.version(nil), FUnii.Link);
+  end;
 end;
 
 function TTerminologyServerStore.subsumes(cs: TFHIRCodeSystem; codeA, codeB: TFHIRCoding): string;
@@ -981,7 +1012,7 @@ begin
   if (codeA.code = codeB.code) then
     exit('equivalent');
 
-  prov := getProvider(cs.url);
+  prov := getProvider(cs);
   try
     result := prov.subsumesTest(codeA.code, codeB.code);
   finally
@@ -989,11 +1020,11 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.supportsSystem(s: String): boolean;
+function TTerminologyServerStore.supportsSystem(s: String; version : String): boolean;
 var
   p : TCodeSystemProvider;
 begin
-  p := getProvider(s, true);
+  p := getProvider(s, version, true);
   try
     result := p <> nil;
   finally
@@ -1004,21 +1035,33 @@ end;
 procedure TTerminologyServerStore.SetCountryCode(const Value: TCountryCodeServices);
 begin
   if FCountryCode <> nil then
+  begin
     FProviderClasses.Remove(FCountryCode.system(nil));
+    FProviderClasses.Remove(FCountryCode.system(nil)+URI_VERSION_BREAK+FCountryCode.version(nil));
+  end;
   FCountryCode.Free;
   FCountryCode := Value;
   if FCountryCode <> nil then
+  begin
     FProviderClasses.add(FCountryCode.system(nil), FCountryCode.Link);
+    FProviderClasses.add(FCountryCode.system(nil)+URI_VERSION_BREAK+FCountryCode.version(nil), FCountryCode.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetAreaCode(const Value: TAreaCodeServices);
 begin
   if FAreaCode <> nil then
+  begin
     FProviderClasses.Remove(FAreaCode.system(nil));
+    FProviderClasses.Remove(FAreaCode.system(nil)+URI_VERSION_BREAK+FAreaCode.version(nil));
+  end;
   FAreaCode.Free;
   FAreaCode := Value;
   if FAreaCode <> nil then
+  begin
     FProviderClasses.add(FAreaCode.system(nil), FAreaCode.Link);
+    FProviderClasses.add(FAreaCode.system(nil)+URI_VERSION_BREAK+FAreaCode.version(nil), FAreaCode.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetBackgroundThreadStatus(const Value: String);
@@ -1034,11 +1077,17 @@ end;
 procedure TTerminologyServerStore.SetCvx(const Value: TCvxServices);
 begin
   if FCvx <> nil then
+  begin
     FProviderClasses.Remove(FCvx.system(nil));
+    FProviderClasses.Remove(FCvx.system(nil)+URI_VERSION_BREAK+FCvx.version(nil));
+  end;
   FCvx.Free;
   FCvx := Value;
   if FCvx <> nil then
+  begin
     FProviderClasses.add(FCvx.system(nil), FCvx.Link);
+    FProviderClasses.add(FCvx.system(nil)+URI_VERSION_BREAK+FCvx.version(nil), FCvx.Link);
+  end;
 end;
 
 procedure TTerminologyServerStore.SetDefSnomed(const Value: TSnomedServices);
@@ -1054,11 +1103,17 @@ end;
 procedure TTerminologyServerStore.SetUcum(const Value: TUcumServices);
 begin
   if FUcum <> nil then
+  begin
     FProviderClasses.Remove(FUcum.system(nil));
+    FProviderClasses.Remove(FUcum.system(nil)+URI_VERSION_BREAK+FUcum.version(nil));
+  end;
   FUcum.Free;
   FUcum := Value;
   if FUcum <> nil then
+  begin
     FProviderClasses.add(FUcum.system(nil), FUcum.Link);
+    FProviderClasses.add(FUcum.system(nil)+URI_VERSION_BREAK+FUcum.version(nil), FUcum.Link);
+  end;
 end;
 
 function TTerminologyServerStore.TrackValueSet(id: String; bOnlyIfNew : boolean): integer;
@@ -1476,18 +1531,39 @@ begin
 end;
 
 
-Function TTerminologyServerStore.getProvider(system : String; noException : boolean = false) : TCodeSystemProvider;
+Function TTerminologyServerStore.getProvider(system : String; version : String; noException : boolean = false) : TCodeSystemProvider;
 begin
   result := nil;
 
   if FProviderClasses.ContainsKey(system) then
-    result := FProviderClasses[system].Link
-  else if system = ANY_CODE_VS then
+  begin
+    if (version <> '') then
+    begin
+      if FProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version) then
+        result := FProviderClasses[system+URI_VERSION_BREAK+version].Link
+      else
+      begin
+        // special support for SNOMED Editions
+        if (system = 'http://snomed.info/sct') and version.contains('/version/') and FProviderClasses.ContainsKey(system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))) then
+          result := FProviderClasses[system+URI_VERSION_BREAK+version.Substring(0, version.IndexOf('/version/'))].Link
+        else
+          result := FProviderClasses[system].Link;
+        if not result.defToThisVersion(version) then
+        begin
+          result.Free;
+          raise ETerminologySetup.create('Unable to provide support for code system '+system+' version '+version);
+        end;
+      end;
+    end
+    else
+      result := FProviderClasses[system].Link
+  end else if system = ANY_CODE_VS then
     result := TAllCodeSystemsProvider.create(self.link)
   else
   begin
     FLock.Lock('getProvider');
     try
+      // todo; version specific....
       if FCodeSystemsByUrl.ContainsKey(system) then
         result := TFhirCodeSystemProvider.create(FCodeSystemsByUrl[system].link);
     finally
@@ -1509,6 +1585,11 @@ begin
     raise ETerminologySetup.create('Unable to provide support for code system '+system);
 end;
 
+
+function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystem): TCodeSystemProvider;
+begin
+  result := TFhirCodeSystemProvider.create(codesystem.link);
+end;
 
 procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
 var
@@ -1684,7 +1765,7 @@ begin
     result := DefSnomed.Subsumes(code1, code2)
   else
   begin
-    prov := getProvider(uri1, true);
+    prov := getProvider(uri1, '', true);
     if prov <> nil then
     begin
       try

@@ -294,7 +294,7 @@ begin
        ' Code nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Concepts', 'ConceptKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_Concepts_Name ON Concepts (URL, Code)');
+  FConn.ExecSQL('Create INDEX SK_Concepts_Name ON Concepts (URL, Version, Code)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateNotificationQueue;

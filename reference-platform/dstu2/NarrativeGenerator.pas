@@ -95,7 +95,7 @@ type
     function displayCodeable(v : TFHIRCodeableConcept) : String;
 
     function resolveReference(res : TFHIRResource; url : String) : TResourceWithReference;
-    function lookupCode(system, code : String) : String;
+    function lookupCode(system, version, code : String) : String;
     function describeSystem(system : String) : String; overload;
     function describeSystem(system : TFHIRContactPointSystemEnum) : String;  overload;
   public
@@ -399,10 +399,10 @@ begin
   result := not e.Type_List.isEmpty;
 end;
 
-function TNarrativeGenerator.lookupCode(system, code: String): String;
+function TNarrativeGenerator.lookupCode(system, version, code: String): String;
 begin
   if Assigned(FOnLookupCode) then
-    result := FOnLookupCode(system, code)
+    result := FOnLookupCode(system, version, code)
   else
     result := '';
 end;
@@ -819,7 +819,7 @@ begin
     // still? ok, let's try looking it up
     for i := 0 to v.codingList.Count - 1 do
       if (s = '') and (v.codingList[i].Code <> '') and (v.codingList[i].System <> '') then
-         s := lookupCode(v.codingList[i].System, v.codingList[i].Code);
+         s := lookupCode(v.codingList[i].System, v.codingList[i].Version, v.codingList[i].Code);
   end;
 
   if (s = '') then
@@ -846,7 +846,7 @@ begin
       end
       else
         sp.addText('; ');
-      sp.addText('{'+describeSystem(v.codingList[i].System)+' code "'+v.codingList[i].Code+'" := "'+lookupCode(v.codingList[i].System, v.codingList[i].Code)+'", given as "'+v.codingList[i].Display+'"}');
+      sp.addText('{'+describeSystem(v.codingList[i].System)+' code "'+v.codingList[i].Code+'" := "'+lookupCode(v.codingList[i].System, v.codingList[i].Version, v.codingList[i].Code)+'", given as "'+v.codingList[i].Display+'"}');
     end;
     sp.addText(')');
   end
@@ -875,13 +875,13 @@ begin
   if (v.Display <> '') then
     s := v.Display;
   if (s = '') then
-    s := lookupCode(v.System, v.Code);
+    s := lookupCode(v.System, v.version, v.Code);
 
   if (s = '') then
     s := v.Code;
 
   if (showCodeDetails) then
-    x.addText(s+' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, v.Code)+'", stated as "'+v.Display+'")')
+    x.addText(s+' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, v.version, v.Code)+'", stated as "'+v.Display+'")')
   else
     x.addTag('span').setAttribute('title', '{'+v.System+' '+v.Code+'}').addText(s);
 end;
@@ -923,7 +923,7 @@ begin
   begin
     sp := x.addTag('span');
     sp.setAttribute('style', 'background: LightGoldenRodYellow ');
-    sp.addText(' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, v.Code)+'")');
+    sp.addText(' (Details: '+describeSystem(v.System)+' code '+v.Code+' := "'+lookupCode(v.System, '', v.Code)+'")');
   end;
 end;
 

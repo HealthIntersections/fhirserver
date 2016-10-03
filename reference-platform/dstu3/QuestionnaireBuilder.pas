@@ -53,7 +53,7 @@ Const
 
 Type
   TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
-  TLookupCodeEvent = function(system, code : String) : String of object;
+  TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
 
   {

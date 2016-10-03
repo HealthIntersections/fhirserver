@@ -61,6 +61,12 @@ Function EncodeHexadecimal(Const iValue : Byte) : AnsiString; Overload;
 Function EncodeHexadecimal(Const aBuffer; iCount : Integer) : AnsiString; Overload;
 Function EncodeHexadecimal(Const sValue : TBytes) : AnsiString; Overload;
 
+// Quick String Encryption
+function GetCryptKey(const AStr: String): Word;
+// convert a string to an encyption key
+function strEncrypt(const AStr: String; AKey: Word): String; // encrypt a string. Result is Mime Encoded so is still a valid string in many contexts (but is longer)
+function strDecrypt(const AStr: String; AKey: Word): String; // decrypt a string encrypted with above procedure
+
 Implementation
 
 {$IFDEF VER130}
@@ -746,5 +752,53 @@ Begin
       Result := cFirst;
   End;
 End;
+
+function GetCryptKey(const AStr: String): Word;
+var
+  i: Integer;
+begin
+  {$R-}
+  Result := 1;
+  for i := 1 to Length(AStr) do
+    Result := Result * i * Ord(AStr[i]);
+  {$R+}
+end;
+
+{$Q-}
+  {$R-}
+const
+  C1 = 52845;
+  C2 = 22719;
+
+function strEncrypt(const AStr: String; AKey: Word): String;
+var
+  i: Integer;
+begin
+  Result := '';
+  setlength(Result, Length(AStr));
+  for i := 1 to Length(AStr) do
+    begin
+    Result[i] := Char(Ord(AStr[i]) xor (AKey shr 8));
+    AKey := (Ord(Result[i]) + AKey) * C1 + C2;
+    end;
+  Result := EncodeMIME(Result);
+end;
+
+function strDecrypt(const AStr: String; AKey: Word): String;
+var
+  i: Integer;
+  LStr: String;
+begin
+  Result := '';
+  LStr := DecodeMime(AStr);
+  setlength(Result, length(LStr));
+  for i := 1 to Length(LStr) do
+    begin
+    Result[i] := Char(Ord(LStr[i]) xor (AKey shr 8));
+    AKey := (Ord(LStr[i]) + AKey) * C1 + C2;
+    end;
+end;
+{$R+}
+{$Q+}
 
 End. // EncodeSupport //
