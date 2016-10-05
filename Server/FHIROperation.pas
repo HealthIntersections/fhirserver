@@ -199,9 +199,9 @@ type
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource;
-    function getResourceByReference(source : TFHIRDomainResource; url, compartments : string; var needSecure : boolean): TFHIRResource;
+    function getResourceByReference(source : TFHIRDomainResource; url, compartments : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource;
-    function getResourceByUrl(aType : TFhirResourceType; url, version : string; var needSecure : boolean): TFHIRResource;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
@@ -3052,9 +3052,9 @@ begin
       if rd.source = nil then
         res := nil
       else if rd.source is TFhirUri then
-        res := getResourceByUrl(frtNull, (rd.source as TFhirUri).value, '', needsSecure)
+        res := getResourceByUrl(frtNull, (rd.source as TFhirUri).value, '', true, needsSecure)
       else
-        res := getResourceByReference(ig, (rd.source as TFhirReference).reference, '', needsSecure);
+        res := getResourceByReference(ig, (rd.source as TFhirReference).reference, '', true, needsSecure);
 
       if res <> nil then // for now, we just ignore them...
       begin
@@ -4591,7 +4591,7 @@ var
 //end;
 //
 
-function TFhirOperationManager.GetResourceByUrl(aType : TFhirResourceType; url, version: String; var needSecure : boolean): TFHIRResource;
+function TFhirOperationManager.GetResourceByUrl(aType : TFhirResourceType; url, version: String; allowNil : boolean; var needSecure : boolean): TFHIRResource;
 var
   s : TBytes;
   parser : TFHIRParser;
@@ -4614,7 +4614,10 @@ begin
       FConnection.BindString('ver', version);
     FConnection.Execute;
     if not FConnection.FetchNext then
-      raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
+      if allowNil then
+        exit(nil)
+      else
+        raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
@@ -4740,7 +4743,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.getResourceByReference(source : TFHIRDomainResource; url, compartments: string; var needSecure : boolean): TFHIRResource;
+function TFhirOperationManager.getResourceByReference(source : TFHIRDomainResource; url, compartments: string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
 var
   parser : TFHIRParser;
   s : TBytes;
@@ -4750,6 +4753,7 @@ var
   parts : TArray<String>;
   res : TFHIRResource;
 begin
+  result := nil;
   ver := '';
   if url.StartsWith('#') then
   begin
@@ -4804,7 +4808,7 @@ begin
           parser.free;
         end;
       end
-      else
+      else if not allowNil then
         raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unable to find resource '+inttostr(key), 404, IssueTypeNotFound);
     finally
       FConnection.Terminate;
@@ -5891,7 +5895,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
             profile := manager.GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -6011,7 +6015,7 @@ var
 begin
   {$IFDEF FHIR3}
   if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-    exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', needSecure) as TFhirExpansionProfile
+    exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
   else if params.str['profile'] <> '' then
     exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
   else
@@ -6098,7 +6102,7 @@ begin
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version'), needSecure) as TFHIRValueSet;
+              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
@@ -6308,7 +6312,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
             cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
           else if req.system <> '' then
-            cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, needSecure) as TFhirCodeSystem
+            cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
           else
             raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
 
@@ -6435,7 +6439,7 @@ begin
     else if StringStartsWith(ProfileId, request.baseUrl+'StructureDefinition/') then
       profile := manager.GetResourceById(request, 'StructureDefinition', copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if (profileId <> '') then
-      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '', needSecure) as TFhirStructureDefinition;
+      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '', false, needSecure) as TFhirStructureDefinition;
 
     if Profile <> nil then
       opDesc := 'Validate resource '+request.id+' against profile '+profileId
@@ -6567,7 +6571,7 @@ begin
             else if params.hasParameter('identifier') then
             begin
               if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
-                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], needSecure) as TFHIRValueSet;
+                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], false, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then
@@ -6860,7 +6864,7 @@ var
 begin
   if reference = nil then
     exit;
-  res := manager.getResourceByReference(source, reference.reference, compartments, needSecure);
+  res := manager.getResourceByReference(source, reference.reference, compartments, true, needSecure);
   try
     if res <> nil then
     begin
@@ -7700,7 +7704,7 @@ begin
           if request.Id <> '' then // and it must exist, because of the check above
             profile := manager.GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', needSecure) as TFhirStructureDefinition
+            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then

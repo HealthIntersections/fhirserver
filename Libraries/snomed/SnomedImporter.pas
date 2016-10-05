@@ -1953,7 +1953,7 @@ begin
     end
     else
     begin
-      if (s[iCursor] <> 13) then
+      if (iCursor < length(s)) and (s[iCursor] <> 13) then
         iCursor := Next(13)
       else
         iCursor := iRefComp;

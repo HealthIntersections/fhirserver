@@ -115,7 +115,7 @@ implementation
 {$R *.dfm}
 
 Uses
-  EncodeSupport,
+  EncodeSupport, DateSupport,
   KDBManager, KDBOdbcExpress,
   SnomedImporter, LoincImporter, RxNormServices;
 
@@ -196,6 +196,7 @@ end;
 procedure TForm4.btnImportSnomedClick(Sender: TObject);
 var
   module, version : String;
+  start : TDateTime;
 begin
   if not FolderExists(edtSource.Text) then
     ShowMessage('Folder "'+edtSource.Text+'" not found')
@@ -224,6 +225,7 @@ begin
     btnSource.enabled := false;
     btnDestination.enabled := false;
     try
+      start := now;
       importSnomedRF2(edtSource.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
     finally
       cursor := crDefault;
@@ -239,6 +241,7 @@ begin
       btnDestination.enabled := true;
       sctCallback(0, '');
     end;
+    MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   end;
 end;
 
@@ -284,6 +287,8 @@ begin
 end;
 
 procedure TForm4.btnImportLoincClick(Sender: TObject);
+var
+  start : TDateTime;
 begin
   if not FolderExists(edtloincSource.Text) then
     ShowMessage('Folder "'+edtSource.Text+'" not found')
@@ -323,6 +328,7 @@ begin
       btnLoincDest.enabled := true;
       loincCallback(0, '');
     end;
+    MessageDlg('Successfully Imported LOINC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   end;
 end;
 
@@ -332,6 +338,7 @@ end;
 procedure TForm4.btnProcessUMLSClick(Sender: TObject);
 var
   db : TKDBManager;
+  start : TDateTime;
 begin
   if edtUMLSServer.Text = '' then
     ShowMessage('No Server specified')
@@ -371,6 +378,7 @@ begin
       btnUMLSClose.enabled := true;
       umlsCallback(0, '');
     end;
+    MessageDlg('Successfully Process UMLS Entries in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   end;
 end;
 

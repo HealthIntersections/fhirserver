@@ -1100,13 +1100,12 @@ begin
         val := TValueSetChecker.create(self.Link, vs.url);
         try
           val.prepare(vs);
-          conn2.SQL := 'select ConceptKey, URL, Version, Code from Concepts';
+          conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
           conn2.Prepare;
           conn2.Execute;
           while conn2.FetchNext do
           begin
             system := conn2.ColStringByName['URL'];
-            version := conn2.ColStringByName['Version'];
             code := conn2.ColStringByName['Code'];
             if not val.check(system, version, code, true) then
               conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])

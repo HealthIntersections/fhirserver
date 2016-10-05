@@ -456,7 +456,7 @@ end;
 procedure TFHIRValueSetExpander.processCodes(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; cset: TFhirValueSetComposeInclude; filter : TSearchFilterText; dependencies : TStringList; params : TFhirValueSetExpansionParameterList; profile : TFhirExpansionProfile; var notClosed : boolean);
 var
   cs : TCodeSystemProvider;
-  i, offset : integer;
+  i, offset, count : integer;
   fc : TFhirValueSetComposeIncludeFilter;
   c : TCodeSystemProviderContext;
   filters : Array of TCodeSystemProviderFilterContext;
@@ -554,7 +554,8 @@ begin
         end;
 
         inner := not cs.prepare(prep);
-        While cs.FilterMore(filters[0]) do
+        count := 0;
+        While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
         begin
           c := cs.FilterConcept(filters[0]);
           ok := true;
@@ -562,7 +563,11 @@ begin
             for i := 1 to length(filters) - 1 do
               ok := ok and cs.InFilter(filters[i], c);
           if ok then
-            processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, profile.displayLanguage), cs.definition(c), params, profile);
+          begin
+            inc(count);
+            if count > FOffset then
+              processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, profile.displayLanguage), cs.definition(c), params, profile);
+          end;
         end;
         for i := 0 to length(filters) - 1 do
           cs.Close(filters[i]);

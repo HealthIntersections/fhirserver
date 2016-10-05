@@ -27,7 +27,6 @@ object Form4: TForm4
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 0
-    ExplicitHeight = 324
     object ListView1: TListView
       Left = 2
       Top = 2
@@ -46,8 +45,6 @@ object Form4: TForm4
       ShowWorkAreas = True
       TabOrder = 0
       OnClick = ListView1Click
-      ExplicitWidth = 93
-      ExplicitHeight = 332
     end
   end
   object PageControl1: TPageControl
@@ -62,6 +59,8 @@ object Form4: TForm4
     StyleElements = [seFont, seClient]
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 505
       ExplicitHeight = 378
       object Panel2: TPanel
@@ -227,11 +226,10 @@ object Form4: TForm4
         object lblSCTAmount: TLabel
           Left = 544
           Top = 10
-          Width = 30
+          Width = 29
           Height = 13
           Anchors = [akTop, akRight]
           Caption = '100%'
-          ExplicitLeft = 495
         end
         object lblSCTAction: TLabel
           Left = 10
@@ -390,7 +388,6 @@ object Form4: TForm4
             'Netherlands'
             'Sweden'
             'UK')
-          ExplicitWidth = 446
         end
         object edtDate: TDateTimePicker
           Left = 80
@@ -462,6 +459,8 @@ object Form4: TForm4
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 505
       ExplicitHeight = 378
       object Panel8: TPanel
@@ -840,7 +839,6 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitTop = 8
       end
       object Panel15: TPanel
         Left = 0
@@ -853,7 +851,6 @@ object Form4: TForm4
         BorderWidth = 4
         ParentBackground = False
         TabOrder = 1
-        ExplicitTop = 49
         object Panel16: TPanel
           Left = 5
           Top = 5
@@ -891,7 +888,6 @@ object Form4: TForm4
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitTop = 109
         DesignSize = (
           582
           137)
@@ -966,8 +962,6 @@ object Form4: TForm4
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 3
-        ExplicitLeft = -3
-        ExplicitTop = 207
         DesignSize = (
           582
           51)
@@ -1004,7 +998,6 @@ object Form4: TForm4
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitTop = 246
         DesignSize = (
           582
           41)
@@ -1130,7 +1123,7 @@ object Form4: TForm4
     Left = 16
     Top = 16
     Bitmap = {
-      494C010103000800440030003000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800480030003000FFFFFF00FF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000C00000003000000001002000000000000090
       000000000000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
