@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.84 2016-10-07</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.84.exe</link>
+			<description>2016-10-07 (v1.0.84): Update for changes to ValueSet.compose.import</description>
+		</item>
+<item><title>FHIRServer release 1.0.83 2016-10-05</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.83.exe</link>
+			<description>2016-10-05 (v1.0.83): minor terminology server bug fixes</description>
+		</item>
 		<item><title>FHIRServer release 1.0.82 2016-10-03</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.82.exe</link>
 			<description>2016-10-03 (v1.0.82): Add support for SNOMED CT Post-Coordination</description>
 		</item>
-<item><title>FHIRServer release 1.0.81 2016-09-26</title>
+		<item><title>FHIRServer release 1.0.81 2016-09-26</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.81.exe</link>
 			<description>2016-09-26 (v1.0.81): major rebuild of installer + fix issues running as a windows service</description>
 		</item>

@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.82
+AppVerName=1.0.84
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.82
+OutputBaseFilename=fhirserver3-1.0.84
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -103,8 +103,7 @@ Source: "C:\work\fhirserver\install\load.ini";                                De
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\dicom.cache";                      DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc.cache";                      DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc_256.cache";                      DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
@@ -921,8 +920,8 @@ begin
       ConnectionPage.values[2] := GetIniString('database', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
       ConnectionPage.values[3] := GetIniString('database', 'password', '', ExpandConstant('{app}')+'\fhirserver.ini');
       webHostName.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPort.Text := GetIniString('web', 'base', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webOpenPath.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webOpenPort.Text := GetIniString('web', 'http', '', ExpandConstant('{app}')+'\fhirserver.ini');
+      webOpenPath.Text := GetIniString('web', 'base', '', ExpandConstant('{app}')+'\fhirserver.ini');
       webSecurePort.Text := GetIniString('web', 'https', '', ExpandConstant('{app}')+'\fhirserver.ini');
       webSecurePath.Text := GetIniString('web', 'secure', '', ExpandConstant('{app}')+'\fhirserver.ini');
       certFile.Text := GetIniString('web', 'certname', '', ExpandConstant('{app}')+'\fhirserver.ini');
@@ -1365,8 +1364,8 @@ begin
   if webpop then
   begin
     SetIniString('web', 'host', webHostName.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'base', webOpenPort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('web', 'host', webOpenPath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'http', webOpenPort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('web', 'base', webOpenPath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
     SetIniString('web', 'https', webSecurePort.Text, ExpandConstant('{app}')+'\fhirserver.ini');
     SetIniString('web', 'secure', webSecurePath.Text, ExpandConstant('{app}')+'\fhirserver.ini');
     SetIniString('web', 'certname', certFile.Text, ExpandConstant('{app}')+'\fhirserver.ini');

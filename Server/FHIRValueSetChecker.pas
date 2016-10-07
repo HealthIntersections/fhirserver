@@ -20,6 +20,7 @@ Type
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
 //    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
     function getName: String;
+    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeInclude; var cs: TCodeSystemProvider);
   public
     constructor Create(store : TTerminologyServerStore; id : String); overload;
     destructor Destroy; override;
@@ -57,10 +58,15 @@ end;
 
 procedure TValueSetChecker.prepare(vs: TFHIRValueSet);
 var
-  i, j : integer;
-  checker : TValueSetChecker;
   cs : TCodeSystemProvider;
+  cc : TFhirValueSetComposeInclude;
+  desc : string;
+  i, j : integer;
+  {$IFDEF FHIR2}
   other : TFHIRValueSet;
+  checker : TValueSetChecker;
+
+  {$ENDIF}
 begin
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   vs.checkNoModifiers('ValueSetChecker.prepare', 'ValueSet');
@@ -79,6 +85,7 @@ begin
     if (fvs.compose <> nil) then
     begin
       fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose');
+    {$IFDEF FHIR2}
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
         other := FStore.getValueSetByUrl(fvs.compose.importList[i].value);
@@ -96,52 +103,53 @@ begin
           other.free;
         end;
       end;
-      for i := 0 to fvs.compose.includeList.Count - 1 do
-      begin
-        fvs.compose.includeList[i].checkNoModifiers('ValueSetChecker.prepare', 'include');
-        if not FOthers.ExistsByKey(fvs.compose.includeList[i].system) then
-          FOthers.Add(fvs.compose.includeList[i].system, FStore.getProvider(fvs.compose.includeList[i].system, fvs.compose.includeList[i].version));
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-        for j := 0 to fvs.compose.includeList[i].filterList.count - 1 do
-        begin
-          fvs.compose.includeList[i].filterList[j].checkNoModifiers('ValueSetChecker.prepare', 'include.filter');
-          if not (('concept' = fvs.compose.includeList[i].filterList[j].property_) and (fvs.compose.includeList[i].filterList[j].Op = FilterOperatorIsA)) then
-            if not cs.doesFilter(fvs.compose.includeList[i].filterList[j].property_, fvs.compose.includeList[i].filterList[j].Op, fvs.compose.includeList[i].filterList[j].value) then
-              raise ETerminologyError.create('The filter "'+fvs.compose.includeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.includeList[i].filterList[j].Op]+ ' '+fvs.compose.includeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
-        end;
-      end;
-      for i := 0 to fvs.compose.excludeList.Count - 1 do
-      begin
-        fvs.compose.excludeList[i].checkNoModifiers('ValueSetChecker.prepare', 'exclude');
-        if not FOthers.ExistsByKey(fvs.compose.excludeList[i].system) then
-          FOthers.Add(fvs.compose.excludeList[i].system, FStore.getProvider(fvs.compose.excludeList[i].system, fvs.compose.excludeList[i].version));
-        cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
-        for j := 0 to fvs.compose.excludeList[i].filterList.count - 1 do
-        begin
-          fvs.compose.excludeList[i].filterList[j].checkNoModifiers('ValueSetChecker.prepare', 'include.filter');
-          if not (('concept' = fvs.compose.excludeList[i].filterList[j].property_) and (fvs.compose.excludeList[i].filterList[j].Op = FilterOperatorIsA)) then
-            if not cs.doesFilter(fvs.compose.excludeList[i].filterList[j].property_, fvs.compose.excludeList[i].filterList[j].Op, fvs.compose.excludeList[i].filterList[j].value) then
-              raise Exception.create('The filter "'+fvs.compose.excludeList[i].filterList[j].property_ +' '+ CODES_TFhirFilterOperatorEnum[fvs.compose.excludeList[i].filterList[j].Op]+ ' '+fvs.compose.excludeList[i].filterList[j].value+'" was not understood in the context of '+cs.system(nil));
-        end;
-      end;
+    {$ENDIF}
+      for cc in fvs.compose.includeList do
+        prepareConceptSet('include', cc, cs);
+      for cc in fvs.compose.excludeList do
+        prepareConceptSet('exclude', cc, cs);
     end;
   end;
 end;
 
-//function TValueSetChecker.rule(op: TFhirOperationOutcome; severity: TFhirIssueSeverityEnum; test: boolean; code : TFhirIssueTypeEnum; msg: string): boolean;
-//var
-//  issue : TFhirOperationOutcomeIssue;
-//begin
-//  result := test;
-//  if not test then
-//  begin
-//    issue := op.issueList.Append;
-//    issue.severity := severity;
-//    issue.code := code;
-//    issue.diagnostics := msg;
-//  end;
-//end;
-//
+procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeInclude; var cs: TCodeSystemProvider);
+var
+  ivs: TFhirUri;
+  other: TFhirValueSet;
+  checker: TValueSetChecker;
+  ccf: TFhirValueSetComposeIncludeFilter;
+begin
+  cc.checkNoModifiers('ValueSetChecker.prepare', desc);
+  {$IFDEF FHIR3}
+  for ivs in cc.valueSetList do
+  begin
+    other := FStore.getValueSetByUrl(ivs.value);
+    try
+      if other = nil then
+        raise ETerminologyError.create('Unable to find value set ' + ivs.value);
+      checker := TValueSetChecker.create(Fstore.link, other.url);
+      try
+        checker.prepare(other);
+        FOthers.Add(ivs.value, checker.Link);
+      finally
+        checker.free;
+      end;
+    finally
+      other.free;
+    end;
+  end;
+  {$ENDIF}
+  if not FOthers.ExistsByKey(cc.system) then
+    FOthers.Add(cc.system, FStore.getProvider(cc.system, cc.version));
+  cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+  for ccf in cc.filterList do
+  begin
+    ccf.checkNoModifiers('ValueSetChecker.prepare', desc + '.filter');
+    if not (('concept' = ccf.property_) and (ccf.Op = FilterOperatorIsA)) then
+      if not cs.doesFilter(ccf.property_, ccf.Op, ccf.value) then
+        raise ETerminologyError.create('The filter "' + ccf.property_ + ' ' + CODES_TFhirFilterOperatorEnum[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));
+  end;
+end;
 
 function TValueSetChecker.findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
 var
@@ -194,8 +202,12 @@ var
   checker : TValueSetChecker;
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
+  cc : TFhirValueSetComposeInclude;
+  uri : TFhirUri;
+  isabstract, excluded : boolean;
+  {$IFDEF FHIR2}
   i : integer;
-  isabstract : boolean;
+  {$ENDIF}
 begin
   result := false;
   {special case:}
@@ -237,6 +249,8 @@ begin
     {$ENDIF}
     if (fvs.compose <> nil) then
     begin
+      result := false;
+      {$IFDEF FHIR2}
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
         if not result then
@@ -245,22 +259,46 @@ begin
           result := checker.check(system, version, code, abstractOk, displays);
         end;
       end;
-      for i := 0 to fvs.compose.includeList.Count - 1 do
+      {$ENDIF}
+      for cc in fvs.compose.includeList do
       begin
-        if not result then
+        if cc.system = '' then
+          result := true
+        else
         begin
-          cs := TCodeSystemProvider(FOthers.matches[fvs.compose.includeList[i].system]);
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, fvs.compose.includeList[i], code, abstractOk, displays);
+          cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays);
         end;
-      end;
-      for i := 0 to fvs.compose.excludeList.Count - 1 do
-      begin
+        {$IFDEF FHIR3}
+        for uri in cc.valueSetList do
+        begin
+          checker := TValueSetChecker(FOthers.matches[uri.value]);
+          result := result and checker.check(system, version, code, abstractOk, displays);
+        end;
+        {$ENDIF}
         if result then
-        begin
-          cs := TCodeSystemProvider(FOthers.matches[fvs.compose.excludeList[i].system]);
-          result := not ((cs.system(nil) = system) and checkConceptSet(cs, fvs.compose.excludeList[i], code, abstractOk, displays));
-        end;
+          break;
       end;
+      if result then
+        for cc in fvs.compose.excludeList do
+        begin
+          if cc.system = '' then
+            excluded := true
+          else
+          begin
+            cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays);
+          end;
+          {$IFDEF FHIR3}
+          for uri in cc.valueSetList do
+          begin
+            checker := TValueSetChecker(FOthers.matches[uri.value]);
+            excluded := excluded and checker.check(system, version, code, abstractOk, displays);
+          end;
+          {$ENDIF}
+          if excluded then
+            exit(false);
+        end;
     end;
   end;
 end;

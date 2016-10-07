@@ -430,7 +430,7 @@ end;
 
 procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
 const
-  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
+  CHARS_EQUIVALENCE : array [TFhirConceptMapEquivalenceEnum] of string = ('??', ':', '==', '=', '<-', '<=', '>-', '>=', '~', '||', '--');
 var
   prefixes : TDictionary<String, String>;
   g : TFhirConceptMapGroup;

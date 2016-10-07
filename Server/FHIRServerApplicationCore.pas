@@ -143,6 +143,7 @@ begin
         svc.UninstallDatabase
       else if FindCmdLineSwitch('remount') then
       begin
+        svc.DebugMode := true;
         svc.FNotServing := true;
         svc.UninstallDatabase;
         svc.InstallDatabase;
@@ -434,6 +435,7 @@ begin
     end;
 
     i := 0;
+    first := true;
     for s in st do
     begin
       logt('Load file '+s);

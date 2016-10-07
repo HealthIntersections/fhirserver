@@ -72,7 +72,7 @@ type
     procedure ServiceExecute;
     Procedure ContainedStart;
     Procedure ContainedStop;
-    property DebugMode : Boolean read FDebugMode;
+    property DebugMode : Boolean read FDebugMode write FDebugMode;
     property IsContained : Boolean read FIsContained;
     property WantStop : Boolean read FWantStop;
     property StopReason: String read FStopReason;

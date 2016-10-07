@@ -1157,7 +1157,7 @@ var
   key : Integer;
   tags : TFHIRTagList;
   ok : boolean;
-  tnow : TDateTime;
+  tnow : TDateAndTime;
   needSecure : boolean;
   list : TMatchingResourceList;
 begin
@@ -1235,70 +1235,73 @@ begin
       request.Resource.meta.lastUpdated := NowUTC;
       request.Resource.meta.versionId := '1';
       updateProvenance(request.Provenance, request.ResourceName, sid, '1');
-      tnow := request.Resource.meta.lastUpdated.AsUTC.GetDateTime;
-
-      checkNotRedacted(request.Resource.meta, 'Creating resource');
-      tags := TFHIRTagList.create;
+      tnow := request.Resource.meta.lastUpdated.AsUTC;
       try
-        tags.readTags(request.resource.meta);
-
-        checkProposedContent(request, request.Resource, tags);
-        result := sId;
-        request.id := sId;
-        key := FRepository.NextVersionKey;
-        for i := 0 to tags.count - 1 do
-          FRepository.RegisterTag(tags[i], FConnection);
-
-        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, '+
-                'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :sec, :tb, :xc, :xs, :jc, :js)';
-        FConnection.prepare;
+        checkNotRedacted(request.Resource.meta, 'Creating resource');
+        tags := TFHIRTagList.create;
         try
-          FConnection.BindInteger('k', key);
-          FConnection.BindInteger('rk', resourceKey);
-          FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
-          FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
-          request.SubId := '1';
-          FConnection.BindString('v', '1');
-          FConnection.BindIntegerFromBoolean('sec', needSecure);
-          if request.Session <> nil then
-            FConnection.BindInteger('s', request.Session.Key)
-          else
-            FConnection.BindInteger('s', 0);
-          FConnection.BindInteger('f', 2);
-          FConnection.BindBlobFromBytes('tb', tags.json);
-          FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-          FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
-          markRedacted(request.Resource.meta);
-          FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-          FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
-          unmarkRedacted(request.Resource.meta);
-          FConnection.Execute;
-          CommitTags(tags, key);
+          tags.readTags(request.resource.meta);
+
+          checkProposedContent(request, request.Resource, tags);
+          result := sId;
+          request.id := sId;
+          key := FRepository.NextVersionKey;
+          for i := 0 to tags.count - 1 do
+            FRepository.RegisterTag(tags[i], FConnection);
+
+          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, '+
+                  'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :sec, :tb, :xc, :xs, :jc, :js)';
+          FConnection.prepare;
+          try
+            FConnection.BindInteger('k', key);
+            FConnection.BindInteger('rk', resourceKey);
+            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow.GetDateTime));
+            FConnection.BindTimeStamp('td', DateTimeToTS(tnow.GetDateTime));
+            request.SubId := '1';
+            FConnection.BindString('v', '1');
+            FConnection.BindIntegerFromBoolean('sec', needSecure);
+            if request.Session <> nil then
+              FConnection.BindInteger('s', request.Session.Key)
+            else
+              FConnection.BindInteger('s', 0);
+            FConnection.BindInteger('f', 2);
+            FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
+            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+            markRedacted(request.Resource.meta);
+            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
+            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+            unmarkRedacted(request.Resource.meta);
+            FConnection.Execute;
+            CommitTags(tags, key);
+          finally
+            FConnection.Terminate;
+          end;
+          FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
+          if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
+            FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
+
+          CreateIndexer;
+          CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
+          FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
+          if request.resourceEnum = frtPatient then
+            FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
+          response.HTTPCode := 201;
+          response.Message := 'Created';
+          response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
+          response.Resource := request.Resource.Link;
+          response.LastModifiedDate := now;
+
+          response.id := sId;
+          response.versionId := '1';
         finally
-          FConnection.Terminate;
+          tags.free;
         end;
-        FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
-        if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
-          FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
-
-        CreateIndexer;
-        CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
-        FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
-        if request.resourceEnum = frtPatient then
-          FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
-        response.HTTPCode := 201;
-        response.Message := 'Created';
-        response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
-        response.Resource := request.Resource.Link;
-        response.LastModifiedDate := now;
-
-        response.id := sId;
-        response.versionId := '1';
       finally
-        tags.free;
+        tnow.Free;
       end;
-      if request.Provenance <> nil then
-        SaveProvenance(request.Session, request.Provenance);
+        if request.Provenance <> nil then
+          SaveProvenance(request.Session, request.Provenance);
     end;
     if request.ResourceEnum <> frtAuditEvent then // else you never stop
       AuditRest(request.session, request.requestId, request.ip, request.ResourceName, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);

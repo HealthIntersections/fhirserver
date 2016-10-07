@@ -1595,7 +1595,7 @@ begin
           for ei in children do
             if (ei.definition = ed) then
               inc(count);
-          location := 'Profile ' + profile.Url + ', Element "' + stack.LiteralPath + '.' + tail(ed.path) + ' (' + ed.id+')';
+          location := 'Profile ' + profile.Url + ', Element "' + stack.LiteralPath + '.' + tail(ed.path) + '" (' + ed.id+')';
           if (ed.Min <> '0') then
             if (problematicPaths.indexOf(ed.path) > -1) then
               hint(ctxt, IssueTypeNOTSUPPORTED, element.locStart, element.locEnd, stack.literalPath, count >= StrToInt(ed.Min), location + ': Unable to check minimum required (" + Integer.toString(ed.getMin()) + ") due to lack of slicing validation')

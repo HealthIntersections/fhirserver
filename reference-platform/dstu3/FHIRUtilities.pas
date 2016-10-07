@@ -2915,7 +2915,8 @@ begin
   try
     if (compose <> nil) then
       for comp in compose.includeList do
-        b.Append(csName(comp.system));
+        if comp.system <> '' then
+          b.Append(csName(comp.system));
     result := b.AsString;
   finally
     b.Free;

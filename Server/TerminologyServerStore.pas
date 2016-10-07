@@ -867,17 +867,17 @@ var
   sn : TSnomedServices;
 begin
   if FLoinc <> nil then
-    addCodeSystem('LOINC', 'loinc', FLoinc.system(nil), FLoinc.version(nil), FLoinc.ChildCount(nil));
+    addCodeSystem('LOINC', 'loinc', FLoinc.system(nil), FLoinc.version(nil), FLoinc.TotalCount);
   for sn in FSnomed do
-    addCodeSystem('SNOMED CT', 'sct', sn.system(nil), sn.version(nil), sn.ChildCount(nil));
+    addCodeSystem('SNOMED CT', 'sct', sn.system(nil), sn.version(nil), sn.TotalCount);
   if FUcum <> nil then
-    addCodeSystem('Ucum', 'ucum', FUcum.system(nil), FUcum.version(nil), FUcum.ChildCount(nil));
+    addCodeSystem('Ucum', 'ucum', FUcum.system(nil), FUcum.version(nil), FUcum.TotalCount);
   if FRxNorm <> nil then
-    addCodeSystem('RxNorm', 'rxnorm', FRxNorm.system(nil), FRxNorm.version(nil), 0);
+    addCodeSystem('RxNorm', 'rxnorm', FRxNorm.system(nil), FRxNorm.version(nil), FRxNorm.TotalCount);
   if FUnii <> nil then
-    addCodeSystem('Unii', 'unii', FUnii.system(nil), FUnii.version(nil), FUnii.ChildCount(nil));
+    addCodeSystem('Unii', 'unii', FUnii.system(nil), FUnii.version(nil), FUnii.TotalCount);
   if FCvx <> nil then
-    addCodeSystem('CVX', 'cvx', FCvx.system(nil), FCvx.version(nil), FCvx.ChildCount(nil));
+    addCodeSystem('CVX', 'cvx', FCvx.system(nil), FCvx.version(nil), FCvx.TotalCount);
 end;
 {$ENDIF}
 

@@ -2701,7 +2701,7 @@ var
 begin
   SetLength(inbounds, 0);
   if (context = nil) then // root
-    raise exception.create('check this code? [1]') // result := 1 - shouldn't this be FActiveRoots?
+    result := length(FActiveRoots)
   else if (TSnomedExpressionContext(context).isComplex) then
     result := 0 // no children on expressions
   else

@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "major rebuild of installer"
+        as.returnvalue = "minor terminology server bug fixes"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -488,7 +488,7 @@ begin
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
-        iconfile = C:\\work\\fhirserver\\utils\\mainicon.ico
+        iconfile = C:\\work\\fhirserver\\utils\\FhirServerUtils_Icon.ico
         id = {37CDABF0-A1B4-404E-B41A-F4783027A20A}
         includecompiledate = false
         includemanifest = false

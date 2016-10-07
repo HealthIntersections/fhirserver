@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-09-23T05:40:22+10:00
+// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -1098,6 +1098,7 @@ Type
   }
   TFhirConceptMapEquivalenceEnum = (
     ConceptMapEquivalenceNull,  {@enum.value ConceptMapEquivalenceNull Value is missing from Instance }
+    ConceptMapEquivalenceRelatedto, {@enum.value ConceptMapEquivalenceRelatedto  }
     ConceptMapEquivalenceEquivalent, {@enum.value ConceptMapEquivalenceEquivalent  }
     ConceptMapEquivalenceEqual, {@enum.value ConceptMapEquivalenceEqual  }
     ConceptMapEquivalenceWider, {@enum.value ConceptMapEquivalenceWider  }
@@ -1558,7 +1559,8 @@ Type
     EndpointStatusSuspended, {@enum.value EndpointStatusSuspended  }
     EndpointStatusError, {@enum.value EndpointStatusError  }
     EndpointStatusOff, {@enum.value EndpointStatusOff  }
-    EndpointStatusEnteredInError); {@enum.value EndpointStatusEnteredInError  }
+    EndpointStatusEnteredInError, {@enum.value EndpointStatusEnteredInError  }
+    EndpointStatusTest); {@enum.value EndpointStatusTest  }
   TFhirEndpointStatusEnumList = set of TFhirEndpointStatusEnum;
 
   {@Enum TFhirEnrollmentrequestStatusEnum
@@ -2475,6 +2477,17 @@ Type
     AssertResponseCodeTypesPreconditionFailed, {@enum.value AssertResponseCodeTypesPreconditionFailed  }
     AssertResponseCodeTypesUnprocessable); {@enum.value AssertResponseCodeTypesUnprocessable  }
   TFhirAssertResponseCodeTypesEnumList = set of TFhirAssertResponseCodeTypesEnum;
+
+  {@Enum TFhirVisionStatusEnum
+    A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/vision-status
+  }
+  TFhirVisionStatusEnum = (
+    VisionStatusNull,  {@enum.value VisionStatusNull Value is missing from Instance }
+    VisionStatusActive, {@enum.value VisionStatusActive  }
+    VisionStatusCancelled, {@enum.value VisionStatusCancelled  }
+    VisionStatusDraft, {@enum.value VisionStatusDraft  }
+    VisionStatusEnteredInError); {@enum.value VisionStatusEnteredInError  }
+  TFhirVisionStatusEnumList = set of TFhirVisionStatusEnum;
 
   {@Enum TFhirVisionEyeCodesEnum
     A coded concept listing the eye codes. from http://hl7.org/fhir/ValueSet/vision-eye-codes
@@ -12703,8 +12716,8 @@ Const
   SYSTEMS_TFhirCompositionAttestationModeEnum : Array[TFhirCompositionAttestationModeEnum] of String = ('', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode');
   CODES_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'working', 'snapshot', 'changes');
   SYSTEMS_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode');
-  CODES_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'equivalent', 'equal', 'wider', 'subsumes', 'narrower', 'specializes', 'inexact', 'unmatched', 'disjoint');
-  SYSTEMS_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence');
+  CODES_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'relatedto', 'equivalent', 'equal', 'wider', 'subsumes', 'narrower', 'specializes', 'inexact', 'unmatched', 'disjoint');
+  SYSTEMS_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence');
   CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'relapse', 'remission', 'resolved');
   SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
   CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
@@ -12781,8 +12794,8 @@ Const
   SYSTEMS_TFhirEncounterStatusEnum : Array[TFhirEncounterStatusEnum] of String = ('', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status', 'http://hl7.org/fhir/encounter-status');
   CODES_TFhirEncounterLocationStatusEnum : Array[TFhirEncounterLocationStatusEnum] of String = ('', 'planned', 'active', 'reserved', 'completed');
   SYSTEMS_TFhirEncounterLocationStatusEnum : Array[TFhirEncounterLocationStatusEnum] of String = ('', 'http://hl7.org/fhir/encounter-location-status', 'http://hl7.org/fhir/encounter-location-status', 'http://hl7.org/fhir/encounter-location-status', 'http://hl7.org/fhir/encounter-location-status');
-  CODES_TFhirEndpointStatusEnum : Array[TFhirEndpointStatusEnum] of String = ('', 'active', 'suspended', 'error', 'off', 'entered-in-error');
-  SYSTEMS_TFhirEndpointStatusEnum : Array[TFhirEndpointStatusEnum] of String = ('', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status');
+  CODES_TFhirEndpointStatusEnum : Array[TFhirEndpointStatusEnum] of String = ('', 'active', 'suspended', 'error', 'off', 'entered-in-error', 'test');
+  SYSTEMS_TFhirEndpointStatusEnum : Array[TFhirEndpointStatusEnum] of String = ('', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status', 'http://hl7.org/fhir/endpoint-status');
   CODES_TFhirEnrollmentrequestStatusEnum : Array[TFhirEnrollmentrequestStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
   SYSTEMS_TFhirEnrollmentrequestStatusEnum : Array[TFhirEnrollmentrequestStatusEnum] of String = ('', 'http://hl7.org/fhir/enrollmentrequest-status', 'http://hl7.org/fhir/enrollmentrequest-status', 'http://hl7.org/fhir/enrollmentrequest-status', 'http://hl7.org/fhir/enrollmentrequest-status');
   CODES_TFhirEnrollmentresponseStatusEnum : Array[TFhirEnrollmentresponseStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
@@ -12934,6 +12947,8 @@ Const
   SYSTEMS_TFhirAssertOperatorCodesEnum : Array[TFhirAssertOperatorCodesEnum] of String = ('', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes', 'http://hl7.org/fhir/assert-operator-codes');
   CODES_TFhirAssertResponseCodeTypesEnum : Array[TFhirAssertResponseCodeTypesEnum] of String = ('', 'okay', 'created', 'noContent', 'notModified', 'bad', 'forbidden', 'notFound', 'methodNotAllowed', 'conflict', 'gone', 'preconditionFailed', 'unprocessable');
   SYSTEMS_TFhirAssertResponseCodeTypesEnum : Array[TFhirAssertResponseCodeTypesEnum] of String = ('', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types', 'http://hl7.org/fhir/assert-response-code-types');
+  CODES_TFhirVisionStatusEnum : Array[TFhirVisionStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
+  SYSTEMS_TFhirVisionStatusEnum : Array[TFhirVisionStatusEnum] of String = ('', 'http://hl7.org/fhir/vision-status', 'http://hl7.org/fhir/vision-status', 'http://hl7.org/fhir/vision-status', 'http://hl7.org/fhir/vision-status');
   CODES_TFhirVisionEyeCodesEnum : Array[TFhirVisionEyeCodesEnum] of String = ('', 'right', 'left');
   SYSTEMS_TFhirVisionEyeCodesEnum : Array[TFhirVisionEyeCodesEnum] of String = ('', 'http://hl7.org/fhir/vision-eye-codes', 'http://hl7.org/fhir/vision-eye-codes');
   CODES_TFhirVisionBaseCodesEnum : Array[TFhirVisionBaseCodesEnum] of String = ('', 'up', 'down', 'in', 'out');
@@ -13303,6 +13318,8 @@ Function TFhirAssertOperatorCodesEnumListAsInteger(aSet : TFhirAssertOperatorCod
 Function IntegerAsTFhirAssertOperatorCodesEnumList(i : integer) : TFhirAssertOperatorCodesEnumList; overload;
 Function TFhirAssertResponseCodeTypesEnumListAsInteger(aSet : TFhirAssertResponseCodeTypesEnumList) : Integer; overload;
 Function IntegerAsTFhirAssertResponseCodeTypesEnumList(i : integer) : TFhirAssertResponseCodeTypesEnumList; overload;
+Function TFhirVisionStatusEnumListAsInteger(aSet : TFhirVisionStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirVisionStatusEnumList(i : integer) : TFhirVisionStatusEnumList; overload;
 Function TFhirVisionEyeCodesEnumListAsInteger(aSet : TFhirVisionEyeCodesEnumList) : Integer; overload;
 Function IntegerAsTFhirVisionEyeCodesEnumList(i : integer) : TFhirVisionEyeCodesEnumList; overload;
 Function TFhirVisionBaseCodesEnumListAsInteger(aSet : TFhirVisionBaseCodesEnumList) : Integer; overload;
@@ -36361,6 +36378,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirAssertResponseCodeTypesEnum) to high(TFhirAssertResponseCodeTypesEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirVisionStatusEnumListAsInteger(aSet : TFhirVisionStatusEnumList) : Integer;
+var
+  a : TFhirVisionStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirVisionStatusEnum) to high(TFhirVisionStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirVisionStatusEnumList(i : Integer) : TFhirVisionStatusEnumList;
+var
+  aLoop : TFhirVisionStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirVisionStatusEnum) to high(TFhirVisionStatusEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

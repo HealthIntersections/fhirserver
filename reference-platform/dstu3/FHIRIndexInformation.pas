@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-09-23T05:40:22+10:00
+// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -415,12 +415,13 @@ begin
   indexes.add('CarePlan', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activitycode', 'Detail type of activity', SearchParamTypeTOKEN, [], 'CarePlan.activity.detail.code', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activitydate', 'Specified date occurs within period specified by CarePlan.activity.timingSchedule', SearchParamTypeDATE, [], 'CarePlan.activity.detail.scheduled', SearchXpathUsageNormal);
-  indexes.add('CarePlan', 'activityreference', 'Activity details defined in specific resource', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'NutritionRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest', 'CommunicationRequest', 'SupplyRequest'], 'CarePlan.activity.reference', SearchXpathUsageNormal);
+  indexes.add('CarePlan', 'activityreference', 'Activity details defined in specific resource', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'NutritionRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest', 'CommunicationRequest'], 'CarePlan.activity.reference', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'careteam', 'Who''s involved in plan?', SearchParamTypeREFERENCE, ['CareTeam'], 'CarePlan.careTeam', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'category', 'Type of plan', SearchParamTypeTOKEN, [], 'CarePlan.category', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'condition', 'Health issues this plan addresses', SearchParamTypeREFERENCE, ['Condition'], 'CarePlan.addresses', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'date', 'Time period plan covers', SearchParamTypeDATE, [], 'CarePlan.period', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', SearchParamTypeREFERENCE, ['Goal'], 'CarePlan.goal', SearchXpathUsageNormal);
+  indexes.add('CarePlan', 'identifier', 'External Ids for this plan', SearchParamTypeTOKEN, [], 'CarePlan.identifier', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'patient', 'Who care plan is for', SearchParamTypeREFERENCE, ['Patient'], 'CarePlan.subject', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'performer', 'Matches if the practitioner is listed as a performer in any of the "simple" activities.  (For performers of the detailed activities, chain through the activitydetail search parameter.)', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'RelatedPerson'], 'CarePlan.activity.detail.performer', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'related', 'A combination of the type of relationship and the related plan', SearchParamTypeCOMPOSITE, [], '', SearchXpathUsageNormal);
@@ -465,21 +466,14 @@ begin
   indexes.add('Claim', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Claim', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Claim', 'created', 'The creation date for the Claim', SearchParamTypeDATE, [], 'Claim.created', SearchXpathUsageNormal);
-  indexes.add('Claim', 'facility-identifier', 'Facility responsible for the goods and services', SearchParamTypeTOKEN, [], 'Claim.facility.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'facility-reference', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'Claim.facility.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('Claim', 'facility', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'Claim.facility', SearchXpathUsageNormal);
   indexes.add('Claim', 'identifier', 'The primary identifier of the financial resource', SearchParamTypeTOKEN, [], 'Claim.identifier', SearchXpathUsageNormal);
-  indexes.add('Claim', 'insurer-identifier', 'The target payor/insurer for the Claim', SearchParamTypeTOKEN, [], 'Claim.insurer.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'insurer-reference', 'The target payor/insurer for the Claim', SearchParamTypeREFERENCE, ['Organization'], 'Claim.insurer.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'organization-identifier', 'The reference to the providing organization', SearchParamTypeTOKEN, [], 'Claim.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'organization-reference', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'Claim.organization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'patient-identifier', 'Patient receiving the services', SearchParamTypeTOKEN, [], 'Claim.patient.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'patient-reference', 'Patient receiving the services', SearchParamTypeREFERENCE, ['Patient'], 'Claim.patient.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('Claim', 'insurer', 'The target payor/insurer for the Claim', SearchParamTypeREFERENCE, ['Organization'], 'Claim.insurer', SearchXpathUsageNormal);
+  indexes.add('Claim', 'organization', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'Claim.organization', SearchXpathUsageNormal);
+  indexes.add('Claim', 'patient', 'Patient receiving the services', SearchParamTypeREFERENCE, ['Patient'], 'Claim.patient', SearchXpathUsageNormal);
   indexes.add('Claim', 'priority', 'Processing priority requested', SearchParamTypeTOKEN, [], 'Claim.priority', SearchXpathUsageNormal);
-  indexes.add('Claim', 'provider-identifier', 'Provider responsible for the Claim', SearchParamTypeTOKEN, [], 'Claim.provider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Claim', 'provider-reference', 'Provider responsible for the Claim', SearchParamTypeREFERENCE, ['Practitioner'], 'Claim.provider.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('Claim', 'provider', 'Provider responsible for the Claim', SearchParamTypeREFERENCE, ['Practitioner'], 'Claim.provider', SearchXpathUsageNormal);
   indexes.add('Claim', 'use', 'The kind of financial resource', SearchParamTypeTOKEN, [], 'Claim.use', SearchXpathUsageNormal);
-  compartments.register(frtPatient, 'Claim', ['patient-identifier', 'patient-reference']);
-  compartments.register(frtPractitioner, 'Claim', ['provider-identifier', 'provider-reference']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -495,12 +489,10 @@ begin
   indexes.add('ClaimResponse', 'created', 'The creation date', SearchParamTypeDATE, [], 'ClaimResponse.created', SearchXpathUsageNormal);
   indexes.add('ClaimResponse', 'disposition', 'The contents of the disposition message', SearchParamTypeSTRING, [], 'ClaimResponse.disposition', SearchXpathUsageNormal);
   indexes.add('ClaimResponse', 'identifier', 'The identity of the insurer', SearchParamTypeTOKEN, [], 'ClaimResponse.identifier', SearchXpathUsageNormal);
-  indexes.add('ClaimResponse', 'organization-identifier', 'The organization who generated this resource', SearchParamTypeTOKEN, [], 'ClaimResponse.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ClaimResponse', 'organization-reference', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'ClaimResponse.organization.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('ClaimResponse', 'organization', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'ClaimResponse.organization', SearchXpathUsageNormal);
   indexes.add('ClaimResponse', 'outcome', 'The processing outcome', SearchParamTypeTOKEN, [], 'ClaimResponse.outcome', SearchXpathUsageNormal);
   indexes.add('ClaimResponse', 'paymentdate', 'The expected paymentDate', SearchParamTypeDATE, [], 'ClaimResponse.payment.date', SearchXpathUsageNormal);
-  indexes.add('ClaimResponse', 'request-identifier', 'The claim reference', SearchParamTypeTOKEN, [], 'ClaimResponse.request.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ClaimResponse', 'request-reference', 'The claim reference', SearchParamTypeREFERENCE, ['Claim'], 'ClaimResponse.request.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('ClaimResponse', 'request', 'The claim reference', SearchParamTypeREFERENCE, ['Claim'], 'ClaimResponse.request', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -513,7 +505,7 @@ begin
   indexes.add('ClinicalImpression', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ClinicalImpression', 'action', 'Actions taken during assessment', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'NutritionRequest', 'ProcedureRequest', 'Procedure', 'MedicationOrder', 'DiagnosticRequest', 'SupplyRequest'], 'ClinicalImpression.action', SearchXpathUsageNormal);
+  indexes.add('ClinicalImpression', 'action', 'Actions taken during assessment', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'NutritionRequest', 'ProcedureRequest', 'Procedure', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest'], 'ClinicalImpression.action', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'assessor', 'The clinician performing the assessment', SearchParamTypeREFERENCE, ['Practitioner'], 'ClinicalImpression.assessor', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'context', 'Encounter or Episode created from', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'ClinicalImpression.context', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'date', 'When the assessment was documented', SearchParamTypeDATE, [], 'ClinicalImpression.date', SearchXpathUsageNormal);
@@ -521,7 +513,7 @@ begin
   indexes.add('ClinicalImpression', 'finding-ref', 'What was found', SearchParamTypeREFERENCE, ['Condition', 'Observation'], 'ClinicalImpression.finding.item.as(Reference)', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'investigation', 'Record of a specific investigation', SearchParamTypeREFERENCE, ['RiskAssessment', 'FamilyMemberHistory', 'Observation', 'DiagnosticReport', 'ImagingStudy', 'QuestionnaireResponse'], 'ClinicalImpression.investigations.item', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'patient', 'Patient or group assessed', SearchParamTypeREFERENCE, ['Patient'], 'ClinicalImpression.subject', SearchXpathUsageNormal);
-  indexes.add('ClinicalImpression', 'plan', 'Plan of action after assessment', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'CarePlan', 'NutritionRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest', 'CommunicationRequest', 'SupplyRequest'], 'ClinicalImpression.plan', SearchXpathUsageNormal);
+  indexes.add('ClinicalImpression', 'plan', 'Plan of action after assessment', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'CarePlan', 'NutritionRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest', 'CommunicationRequest'], 'ClinicalImpression.plan', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'previous', 'Reference to last assessment', SearchParamTypeREFERENCE, ['ClinicalImpression'], 'ClinicalImpression.previous', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'problem', 'Relevant impressions of patient state', SearchParamTypeREFERENCE, ['Condition', 'AllergyIntolerance'], 'ClinicalImpression.problem', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'status', 'draft | completed | entered-in-error', SearchParamTypeTOKEN, [], 'ClinicalImpression.status', SearchXpathUsageNormal);
@@ -710,7 +702,7 @@ begin
   indexes.add('Condition', 'abatement-age', 'Abatement as age or age range', SearchParamTypeQUANTITY, [], 'Condition.abatement.as(Quantity) | Condition.abatement.as(Range)', SearchXpathUsageNormal);
   indexes.add('Condition', 'abatement-boolean', 'Abatement boolean (boolean is true or non-boolean values are present)', SearchParamTypeTOKEN, [], 'Condition.abatement.as(boolean) | Condition.abatement.is(dateTime) | Condition.abatement.is(Age) | Condition.abatement.is(Period) | Condition.abatement.is(Range) | Condition.abatement.is(string)', SearchXpathUsageNormal);
   indexes.add('Condition', 'abatement-date', 'Date-related abatements (dateTime and period)', SearchParamTypeDATE, [], 'Condition.abatement.as(dateTime) | Condition.abatement.as(Period)', SearchXpathUsageNormal);
-  indexes.add('Condition', 'abatement-info', 'Abatement as a string', SearchParamTypeQUANTITY, [], 'Condition.abatement.as(string)', SearchXpathUsageNormal);
+  indexes.add('Condition', 'abatement-string', 'Abatement as a string', SearchParamTypeSTRING, [], 'Condition.abatement.as(string)', SearchXpathUsageNormal);
   indexes.add('Condition', 'asserter', 'Person who asserts this condition', SearchParamTypeREFERENCE, ['Practitioner', 'Patient'], 'Condition.asserter', SearchXpathUsageNormal);
   indexes.add('Condition', 'body-site', 'Anatomical location, if relevant', SearchParamTypeTOKEN, [], 'Condition.bodySite', SearchXpathUsageNormal);
   indexes.add('Condition', 'category', 'The category of the condition', SearchParamTypeTOKEN, [], 'Condition.category', SearchXpathUsageNormal);
@@ -821,19 +813,12 @@ begin
   indexes.add('Coverage', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Coverage', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Coverage', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'beneficiary-identifier', 'Covered party', SearchParamTypeTOKEN, [], 'Coverage.beneficiary.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'beneficiary-reference', 'Covered party', SearchParamTypeREFERENCE, ['Patient'], 'Coverage.beneficiary.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('Coverage', 'beneficiary', 'Covered party', SearchParamTypeREFERENCE, ['Patient'], 'Coverage.beneficiary', SearchXpathUsageNormal);
   indexes.add('Coverage', 'dependent', 'Dependent number', SearchParamTypeNUMBER, [], 'Coverage.dependent', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'group', 'Group identifier', SearchParamTypeTOKEN, [], 'Coverage.group', SearchXpathUsageNormal);
   indexes.add('Coverage', 'identifier', 'The primary identifier of the insured and the coverage', SearchParamTypeTOKEN, [], 'Coverage.identifier', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'issuer-identifier', 'The identity of the insurer', SearchParamTypeTOKEN, [], 'Coverage.issuer.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'issuer-reference', 'The identity of the insurer', SearchParamTypeREFERENCE, ['Organization', 'Patient', 'RelatedPerson'], 'Coverage.issuer.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'plan', 'A plan or policy identifier', SearchParamTypeTOKEN, [], 'Coverage.plan', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'planholder-identifier', 'Reference to the planholder', SearchParamTypeTOKEN, [], 'Coverage.planholder.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'planholder-reference', 'Reference to the planholder', SearchParamTypeREFERENCE, ['Organization', 'Patient'], 'Coverage.planholder.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('Coverage', 'issuer', 'The identity of the insurer', SearchParamTypeREFERENCE, ['Organization', 'Patient', 'RelatedPerson'], 'Coverage.issuer', SearchXpathUsageNormal);
+  indexes.add('Coverage', 'planholder', 'Reference to the planholder', SearchParamTypeREFERENCE, ['Organization', 'Patient'], 'Coverage.planholder', SearchXpathUsageNormal);
   indexes.add('Coverage', 'sequence', 'Sequence number', SearchParamTypeNUMBER, [], 'Coverage.sequence', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'subgroup', 'Sub-group identifier', SearchParamTypeTOKEN, [], 'Coverage.subGroup', SearchXpathUsageNormal);
-  indexes.add('Coverage', 'subplan', 'Sub-plan identifier', SearchParamTypeTOKEN, [], 'Coverage.subPlan', SearchXpathUsageNormal);
   indexes.add('Coverage', 'type', 'The kind of coverage (health plan, auto, Workers Compensation)', SearchParamTypeTOKEN, [], 'Coverage.type', SearchXpathUsageNormal);
 end;
 
@@ -1150,15 +1135,11 @@ begin
   indexes.add('EligibilityRequest', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('EligibilityRequest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('EligibilityRequest', 'created', 'The creation date for the EOB', SearchParamTypeDATE, [], 'EligibilityRequest.created', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'facility-identifier', 'Facility responsible for the goods and services', SearchParamTypeTOKEN, [], 'EligibilityRequest.facility.as(identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'facility-reference', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'EligibilityRequest.facility.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('EligibilityRequest', 'facility', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'EligibilityRequest.facility', SearchXpathUsageNormal);
   indexes.add('EligibilityRequest', 'identifier', 'The business identifier of the Eligibility', SearchParamTypeTOKEN, [], 'EligibilityRequest.identifier', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'organization-identifier', 'The reference to the providing organization', SearchParamTypeTOKEN, [], 'EligibilityRequest.organization.as(identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'organization-reference', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityRequest.organization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'patient-identifier', 'The reference to the patient', SearchParamTypeTOKEN, [], 'EligibilityRequest.patient.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'patient-reference', 'The reference to the patient', SearchParamTypeREFERENCE, ['Patient'], 'EligibilityRequest.patient.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'provider-identifier', 'The reference to the provider', SearchParamTypeTOKEN, [], 'EligibilityRequest.provider.as(identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityRequest', 'provider-reference', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'EligibilityRequest.provider.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('EligibilityRequest', 'organization', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityRequest.organization', SearchXpathUsageNormal);
+  indexes.add('EligibilityRequest', 'patient', 'The reference to the patient', SearchParamTypeREFERENCE, ['Patient'], 'EligibilityRequest.patient', SearchXpathUsageNormal);
+  indexes.add('EligibilityRequest', 'provider', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'EligibilityRequest.provider', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1174,15 +1155,11 @@ begin
   indexes.add('EligibilityResponse', 'created', 'The creation date', SearchParamTypeDATE, [], 'EligibilityResponse.created', SearchXpathUsageNormal);
   indexes.add('EligibilityResponse', 'disposition', 'The contents of the disposition message', SearchParamTypeSTRING, [], 'EligibilityResponse.disposition', SearchXpathUsageNormal);
   indexes.add('EligibilityResponse', 'identifier', 'The business identifier', SearchParamTypeTOKEN, [], 'EligibilityResponse.identifier', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'organization-identifier', 'The organization which generated this resource', SearchParamTypeTOKEN, [], 'EligibilityResponse.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'organization-reference', 'The organization which generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityResponse.organization.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('EligibilityResponse', 'organization', 'The organization which generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityResponse.organization', SearchXpathUsageNormal);
   indexes.add('EligibilityResponse', 'outcome', 'The processing outcome', SearchParamTypeTOKEN, [], 'EligibilityResponse.outcome', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-identifier', 'The EligibilityRequest reference', SearchParamTypeTOKEN, [], 'EligibilityResponse.request.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-organization-identifier', 'The EligibilityRequest organization', SearchParamTypeTOKEN, [], 'EligibilityResponse.requestOrganization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-organization-reference', 'The EligibilityRequest organization', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityResponse.requestOrganization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-provider-identifier', 'The EligibilityRequest provider', SearchParamTypeTOKEN, [], 'EligibilityResponse.requestProvider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-provider-reference', 'The EligibilityRequest provider', SearchParamTypeREFERENCE, ['Practitioner'], 'EligibilityResponse.requestProvider.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('EligibilityResponse', 'request-reference', 'The EligibilityRequest reference', SearchParamTypeREFERENCE, ['EligibilityRequest'], 'EligibilityResponse.request.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('EligibilityResponse', 'request', 'The EligibilityRequest reference', SearchParamTypeREFERENCE, ['EligibilityRequest'], 'EligibilityResponse.request', SearchXpathUsageNormal);
+  indexes.add('EligibilityResponse', 'request-organization', 'The EligibilityRequest organization', SearchParamTypeREFERENCE, ['Organization'], 'EligibilityResponse.requestOrganization', SearchXpathUsageNormal);
+  indexes.add('EligibilityResponse', 'request-provider', 'The EligibilityRequest provider', SearchParamTypeREFERENCE, ['Practitioner'], 'EligibilityResponse.requestProvider', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1232,9 +1209,10 @@ begin
   indexes.add('Endpoint', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Endpoint', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Endpoint', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('Endpoint', 'connection-type', 'Protocol/Profile/Standard to be used with this endpoint connection', SearchParamTypeTOKEN, [], 'Endpoint.connectionType', SearchXpathUsageNormal);
   indexes.add('Endpoint', 'identifier', 'Identifies this endpoint across multiple systems', SearchParamTypeTOKEN, [], 'Endpoint.identifier', SearchXpathUsageNormal);
   indexes.add('Endpoint', 'name', 'A name that this endpoint can be identified by', SearchParamTypeSTRING, [], 'Endpoint.name', SearchXpathUsageNormal);
-  indexes.add('Endpoint', 'organization', 'The organization that is exposing the endpoint', SearchParamTypeREFERENCE, ['Organization'], 'Endpoint.managingOrganization', SearchXpathUsageNormal);
+  indexes.add('Endpoint', 'organization', 'The organization that is managing the endpoint', SearchParamTypeREFERENCE, ['Organization'], 'Endpoint.managingOrganization', SearchXpathUsageNormal);
   indexes.add('Endpoint', 'payload-type', 'The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)', SearchParamTypeTOKEN, [], 'Endpoint.payloadType', SearchXpathUsageNormal);
   indexes.add('Endpoint', 'status', 'The current status of the Endpoint (usually expected to be active)', SearchParamTypeTOKEN, [], 'Endpoint.status', SearchXpathUsageNormal);
 end;
@@ -1323,19 +1301,14 @@ begin
   indexes.add('ExplanationOfBenefit', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ExplanationOfBenefit', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ExplanationOfBenefit', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'claimidentifier', 'The reference to the claim', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.claim.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'claimreference', 'The reference to the claim', SearchParamTypeREFERENCE, ['Claim'], 'ExplanationOfBenefit.claim.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('ExplanationOfBenefit', 'claim', 'The reference to the claim', SearchParamTypeREFERENCE, ['Claim'], 'ExplanationOfBenefit.claim', SearchXpathUsageNormal);
   indexes.add('ExplanationOfBenefit', 'created', 'The creation date for the EOB', SearchParamTypeDATE, [], 'ExplanationOfBenefit.created', SearchXpathUsageNormal);
   indexes.add('ExplanationOfBenefit', 'disposition', 'The contents of the disposition message', SearchParamTypeSTRING, [], 'ExplanationOfBenefit.disposition', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'facilityidentifier', 'Facility responsible for the goods and services', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.facility.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'facilityreference', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'ExplanationOfBenefit.facility.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('ExplanationOfBenefit', 'facility', 'Facility responsible for the goods and services', SearchParamTypeREFERENCE, ['Location'], 'ExplanationOfBenefit.facility', SearchXpathUsageNormal);
   indexes.add('ExplanationOfBenefit', 'identifier', 'The business identifier of the Explanation of Benefit', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.identifier', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'organizationidentifier', 'The reference to the providing organization', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'organizationreference', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'ExplanationOfBenefit.organization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'patientidentifier', 'The reference to the patient', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.patient.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'patientreference', 'The reference to the patient', SearchParamTypeREFERENCE, ['Patient'], 'ExplanationOfBenefit.patient.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'provideridentifier', 'The reference to the provider', SearchParamTypeTOKEN, [], 'ExplanationOfBenefit.provider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ExplanationOfBenefit', 'providerreference', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'ExplanationOfBenefit.provider.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('ExplanationOfBenefit', 'organization', 'The reference to the providing organization', SearchParamTypeREFERENCE, ['Organization'], 'ExplanationOfBenefit.organization', SearchXpathUsageNormal);
+  indexes.add('ExplanationOfBenefit', 'patient', 'The reference to the patient', SearchParamTypeREFERENCE, ['Patient'], 'ExplanationOfBenefit.patient', SearchXpathUsageNormal);
+  indexes.add('ExplanationOfBenefit', 'provider', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'ExplanationOfBenefit.provider', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1732,7 +1705,7 @@ begin
   indexes.add('Medication', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Medication', 'code', 'Codes that identify this medication', SearchParamTypeTOKEN, [], 'Medication.code', SearchXpathUsageNormal);
   indexes.add('Medication', 'container', 'E.g. box, vial, blister-pack', SearchParamTypeTOKEN, [], 'Medication.package.container', SearchXpathUsageNormal);
-  indexes.add('Medication', 'form', 'powder | tablets | carton +', SearchParamTypeTOKEN, [], 'Medication.product.form', SearchXpathUsageNormal);
+  indexes.add('Medication', 'form', 'powder | tablets | capsule +', SearchParamTypeTOKEN, [], 'Medication.product.form', SearchXpathUsageNormal);
   indexes.add('Medication', 'ingredient', 'The product contained', SearchParamTypeREFERENCE, ['Medication', 'Substance'], 'Medication.product.ingredient.item.as(Reference)', SearchXpathUsageNormal);
   indexes.add('Medication', 'ingredient-code', 'The product contained', SearchParamTypeTOKEN, [], 'Medication.product.ingredient.item.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('Medication', 'manufacturer', 'Manufacturer of the item', SearchParamTypeREFERENCE, ['Organization'], 'Medication.manufacturer', SearchXpathUsageNormal);
@@ -2073,15 +2046,11 @@ begin
   indexes.add('PaymentNotice', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('PaymentNotice', 'created', 'Creation date fro the notice', SearchParamTypeDATE, [], 'PaymentNotice.created', SearchXpathUsageNormal);
   indexes.add('PaymentNotice', 'identifier', 'The business identifier of the notice', SearchParamTypeTOKEN, [], 'PaymentNotice.identifier', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'organization-identifier', 'The organization who generated this resource', SearchParamTypeTOKEN, [], 'PaymentNotice.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'organization-reference', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentNotice.organization.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('PaymentNotice', 'organization', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentNotice.organization', SearchXpathUsageNormal);
   indexes.add('PaymentNotice', 'payment-status', 'The type of payment notice', SearchParamTypeTOKEN, [], 'PaymentNotice.paymentStatus', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'provider-identifier', 'The reference to the provider', SearchParamTypeTOKEN, [], 'PaymentNotice.provider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'provider-reference', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'PaymentNotice.provider.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'request-identifier', 'The Claim', SearchParamTypeTOKEN, [], 'PaymentNotice.request.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'request-reference', 'The Claim', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.request.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'response-identifier', 'The ClaimResponse', SearchParamTypeTOKEN, [], 'PaymentNotice.response.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentNotice', 'response-reference', 'The ClaimResponse', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.response.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('PaymentNotice', 'provider', 'The reference to the provider', SearchParamTypeREFERENCE, ['Practitioner'], 'PaymentNotice.provider', SearchXpathUsageNormal);
+  indexes.add('PaymentNotice', 'request', 'The Claim', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.request', SearchXpathUsageNormal);
+  indexes.add('PaymentNotice', 'response', 'The ClaimResponse', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PaymentNotice.response', SearchXpathUsageNormal);
   indexes.add('PaymentNotice', 'statusdate', 'The date of the payment action', SearchParamTypeDATE, [], 'PaymentNotice.statusDate', SearchXpathUsageNormal);
 end;
 
@@ -2098,15 +2067,11 @@ begin
   indexes.add('PaymentReconciliation', 'created', 'The creation date', SearchParamTypeDATE, [], 'PaymentReconciliation.created', SearchXpathUsageNormal);
   indexes.add('PaymentReconciliation', 'disposition', 'The contents of the disposition message', SearchParamTypeSTRING, [], 'PaymentReconciliation.disposition', SearchXpathUsageNormal);
   indexes.add('PaymentReconciliation', 'identifier', 'The business identifier of the Explanation of Benefit', SearchParamTypeTOKEN, [], 'PaymentReconciliation.identifier', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'organization-identifier', 'The organization who generated this resource', SearchParamTypeTOKEN, [], 'PaymentReconciliation.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'organization-reference', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentReconciliation.organization.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('PaymentReconciliation', 'organization', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentReconciliation.organization', SearchXpathUsageNormal);
   indexes.add('PaymentReconciliation', 'outcome', 'The processing outcome', SearchParamTypeTOKEN, [], 'PaymentReconciliation.outcome', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-identifier', 'The reference to the claim', SearchParamTypeTOKEN, [], 'PaymentReconciliation.request.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-organization-identifier', 'The organization who generated this resource', SearchParamTypeTOKEN, [], 'PaymentReconciliation.requestOrganization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-organization-reference', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentReconciliation.requestOrganization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-provider-identifier', 'The reference to the provider who sumbitted the claim', SearchParamTypeTOKEN, [], 'PaymentReconciliation.requestProvider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-provider-reference', 'The reference to the provider who sumbitted the claim', SearchParamTypeREFERENCE, ['Practitioner'], 'PaymentReconciliation.requestProvider.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('PaymentReconciliation', 'request-reference', 'The reference to the claim', SearchParamTypeREFERENCE, ['ProcessRequest'], 'PaymentReconciliation.request.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('PaymentReconciliation', 'request', 'The reference to the claim', SearchParamTypeREFERENCE, ['ProcessRequest'], 'PaymentReconciliation.request', SearchXpathUsageNormal);
+  indexes.add('PaymentReconciliation', 'request-organization', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'PaymentReconciliation.requestOrganization', SearchXpathUsageNormal);
+  indexes.add('PaymentReconciliation', 'request-provider', 'The reference to the provider who sumbitted the claim', SearchParamTypeREFERENCE, ['Practitioner'], 'PaymentReconciliation.requestProvider', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2277,11 +2242,9 @@ begin
   indexes.add('ProcessRequest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('ProcessRequest', 'action', 'The action requested by this resource', SearchParamTypeTOKEN, [], 'ProcessRequest.action', SearchXpathUsageNormal);
   indexes.add('ProcessRequest', 'identifier', 'The business identifier of the ProcessRequest', SearchParamTypeTOKEN, [], 'ProcessRequest.identifier', SearchXpathUsageNormal);
-  indexes.add('ProcessRequest', 'organization-identifier', 'The organization who generated this request', SearchParamTypeTOKEN, [], 'ProcessRequest.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessRequest', 'organization-reference', 'The organization who generated this request', SearchParamTypeREFERENCE, ['Organization'], 'ProcessRequest.organization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ProcessRequest', 'provider-identifier', 'The provider who regenerated this request', SearchParamTypeTOKEN, [], 'ProcessRequest.provider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessRequest', 'provider-reference', 'The provider who regenerated this request', SearchParamTypeREFERENCE, ['Practitioner'], 'ProcessRequest.provider.as(Reference)', SearchXpathUsageNormal);
-  compartments.register(frtPractitioner, 'ProcessRequest', ['provider-reference']);
+  indexes.add('ProcessRequest', 'organization', 'The organization who generated this request', SearchParamTypeREFERENCE, ['Organization'], 'ProcessRequest.organization', SearchXpathUsageNormal);
+  indexes.add('ProcessRequest', 'provider', 'The provider who regenerated this request', SearchParamTypeREFERENCE, ['Practitioner'], 'ProcessRequest.provider', SearchXpathUsageNormal);
+  compartments.register(frtPractitioner, 'ProcessRequest', ['provider']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2295,15 +2258,11 @@ begin
   indexes.add('ProcessResponse', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ProcessResponse', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('ProcessResponse', 'identifier', 'The business identifier of the Explanation of Benefit', SearchParamTypeTOKEN, [], 'ProcessResponse.identifier', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'organization-identifier', 'The organization who generated this resource', SearchParamTypeTOKEN, [], 'ProcessResponse.organization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'organization-reference', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'ProcessResponse.organization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-identifier', 'The reference to the claim', SearchParamTypeTOKEN, [], 'ProcessResponse.request.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-organization-identifier', 'The Organization who is responsible the request transaction', SearchParamTypeTOKEN, [], 'ProcessResponse.requestOrganization.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-organization-reference', 'The Organization who is responsible the request transaction', SearchParamTypeREFERENCE, ['Organization'], 'ProcessResponse.requestOrganization.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-provide-ridentifier', 'The Provider who is responsible the request transaction', SearchParamTypeTOKEN, [], 'ProcessResponse.requestProvider.as(Identifier)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-provider-reference', 'The Provider who is responsible the request transaction', SearchParamTypeREFERENCE, ['Practitioner'], 'ProcessResponse.requestProvider.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ProcessResponse', 'request-reference', 'The reference to the claim', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ProcessResponse.request.as(Reference)', SearchXpathUsageNormal);
-  compartments.register(frtPractitioner, 'ProcessResponse', ['request-provider-reference']);
+  indexes.add('ProcessResponse', 'organization', 'The organization who generated this resource', SearchParamTypeREFERENCE, ['Organization'], 'ProcessResponse.organization', SearchXpathUsageNormal);
+  indexes.add('ProcessResponse', 'request', 'The reference to the claim', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ProcessResponse.request', SearchXpathUsageNormal);
+  indexes.add('ProcessResponse', 'request-organization', 'The Organization who is responsible the request transaction', SearchParamTypeREFERENCE, ['Organization'], 'ProcessResponse.requestOrganization', SearchXpathUsageNormal);
+  indexes.add('ProcessResponse', 'request-provider', 'The Provider who is responsible the request transaction', SearchParamTypeREFERENCE, ['Practitioner'], 'ProcessResponse.requestProvider', SearchXpathUsageNormal);
+  compartments.register(frtPractitioner, 'ProcessResponse', ['request-provider']);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2426,7 +2385,7 @@ begin
   indexes.add('RelatedPerson', 'birthdate', 'The Related Person''s date of birth', SearchParamTypeDATE, [], 'RelatedPerson.birthDate', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'email', 'A value in an email contact', SearchParamTypeTOKEN, [], 'RelatedPerson.telecom.where(system=''email'')', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'gender', 'Gender of the person', SearchParamTypeTOKEN, [], 'RelatedPerson.gender', SearchXpathUsageNormal);
-  indexes.add('RelatedPerson', 'identifier', 'A patient Identifier', SearchParamTypeTOKEN, [], 'RelatedPerson.identifier', SearchXpathUsageNormal);
+  indexes.add('RelatedPerson', 'identifier', 'An Identifier of the RelatedPerson', SearchParamTypeTOKEN, [], 'RelatedPerson.identifier', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', SearchParamTypeSTRING, [], 'RelatedPerson.name', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'patient', 'The patient this person is related to', SearchParamTypeREFERENCE, ['Patient'], 'RelatedPerson.patient', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'phone', 'A value in a phone contact', SearchParamTypeTOKEN, [], 'RelatedPerson.telecom.where(system=''phone'')', SearchXpathUsageNormal);

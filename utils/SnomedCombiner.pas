@@ -5,6 +5,40 @@ interface
 uses
   AdvGenerics, AdvObjects,
   SnomedServices;
+
+Type
+  TSnomedCombinedConcept = class;
+
+  TSnomedCombinedDescription = class (TAdvObject)
+  private
+    FId : Int64;
+    FDate : TSnomedDate;
+    FModule : byte;
+    FKind : TSnomedCombinedConcept; // not linked
+    FFlags : byte;
+  public
+  end;
+
+  TSnomedCombinedRelationship = class (TAdvObject)
+  private
+    FId : Int64;
+
+  public
+  end;
+
+  TSnomedCombinedConcept = class (TAdvObject)
+  private
+    FId : Int64;
+    FDescriptions : TAdvList<TSnomedCombinedDescription>;
+    FFlags : byte;
+    FModule : byte;
+    FDate : TSnomedDate;
+    FParents : TAdvList<TSnomedCombinedConcept>;
+    FChildren : TAdvList<TSnomedCombinedConcept>;
+    FInbounds : TAdvList<TSnomedCombinedRelationship>;
+    FOutbounds : TAdvList<TSnomedCombinedRelationship>;
+  public
+  end;
 {
 // for major.concept
 //   add to combination
@@ -17,6 +51,8 @@ uses
 //     are it's descriptions in combo?
 //     are its relationships in combo?
 
+// classify
+
 // write the combo to RF2 format
 
 }
@@ -24,14 +60,16 @@ Type
   TSnomedCombiner = class (TAdvObject)
   private
     FModuleId: int64;
-    FBase: TSnomedServices;
+    FInternational: TSnomedServices;
     FOthers: TAdvMap<TSnomedServices>;
-    procedure SetBase(const Value: TSnomedServices);
+    procedure SetInternational(const Value: TSnomedServices);
   public
     Constructor Create; override;
     Destructor Destroy; override;
 
-    property base : TSnomedServices read FBase write SetBase;
+    procedure Execute;
+
+    property international : TSnomedServices read FInternational write SetInternational;
     property others : TAdvMap<TSnomedServices> read FOthers;
     property moduleId : int64 read FModuleId write FModuleId;
   end;
@@ -49,14 +87,20 @@ end;
 destructor TSnomedCombiner.Destroy;
 begin
   FOthers.free;
-  FBase.free;
+  FInternational.free;
   inherited;
 end;
 
-procedure TSnomedCombiner.SetBase(const Value: TSnomedServices);
+procedure TSnomedCombiner.Execute;
 begin
-  FBase.free;
-  FBase := Value;
+
 end;
+
+procedure TSnomedCombiner.SetInternational(const Value: TSnomedServices);
+begin
+  FInternational.free;
+  FInternational := Value;
+end;
+
 
 end.
