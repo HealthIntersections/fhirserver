@@ -33,6 +33,7 @@ Type
     function processExpand(pm : TParseMap) : String;
     function processTranslate(pm : TParseMap) : String;
 
+    function chooseSnomedRelease() : String;
     Procedure HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleSnomedRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
@@ -87,6 +88,35 @@ uses
   FHIRParser;
 
 { TTerminologyWebServer }
+
+function TTerminologyWebServer.chooseSnomedRelease: String;
+var
+  html : THtmlPublisher;
+  ss : TSnomedServices;
+begin
+  html := THtmlPublisher.Create;
+  try
+    html.Version := SERVER_VERSION;
+    html.StartTable(true);
+    html.StartTableRow;
+    html.AddTableCell('Choose SNOMED Edition');
+    html.AddTableCell('Version');
+    html.AddTableCell('Date');
+    html.EndTableRow;
+    for ss in FServer.Snomed do
+    begin
+      html.StartTableRow;
+      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId);
+      html.AddTableCell(ss.VersionUri);
+      html.AddTableCell(ss.VersionDate);
+      html.EndTableRow;
+    end;
+    html.EndTable;
+    result := html.output;
+  finally
+    html.Free;
+  end;
+end;
 
 constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TWorkerContext; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
@@ -835,10 +865,12 @@ var
   pub : TSnomedPublisher;
   html : THtmlPublisher;
   analysis : TSnomedAnalysis;
+  parts : TArray<String>;
+  ss, t : TSnomedServices;
 begin
-  FServer.DefSnomed.RecordUse;
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
+    FServer.DefSnomed.RecordUse;
     response.ContentType := 'text/xml';
     try
       response.ContentText := processSnomedForTool(request.Document.Substring(13));
@@ -853,6 +885,7 @@ begin
   end
   else if request.Document.StartsWith('/snomed/analysis/')  then
   begin
+    FServer.DefSnomed.RecordUse;
     analysis := TSnomedAnalysis.create(FServer.DefSnomed.Link);
     try
       response.ContentText := analysis.generate;
@@ -861,30 +894,50 @@ begin
       analysis.free;
     end;
   end
-  else if request.Document.StartsWith('/snomed/doco/')  then
+  else if request.Document.StartsWith('/snomed/doco') then
   begin
-    code := request.UnparsedParams;
-    logt('Snomed Doco: '+code);
+    response.ContentText := chooseSnomedRelease();
+    response.ResponseNo := 200;
+  end
+  else if request.Document.StartsWith('/snomed/') then
+  begin
+    parts := request.Document.Split(['/']);
+    ss := nil;
+    for t in FServer.Snomed do
+      if t.EditionId = parts[2] then
+        ss := t;
+    if ss = nil then
+    begin
+      response.ResponseNo := 404;
+      response.ContentText := 'Document '+request.Document+' not found';
+      logt('miss: '+request.Document);
+    end
+    else
+    begin
+      ss.RecordUse;
+      code := request.UnparsedParams;
+      logt('Snomed Doco ('+ss.EditionName+'): '+code);
 
-    try
-      html := THtmlPublisher.Create;
-      pub := TSnomedPublisher.create(FServer.DefSnomed, FFHIRPath);
       try
-        html.Version := SERVER_VERSION;
-        html.BaseURL := '/snomed/doco/';
-        html.Lang := request.AcceptLanguage;
-        pub.PublishDict(code, '/snomed/doco/', html);
-        response.ContentText := html.output;
-        response.ResponseNo := 200;
-      finally
-        html.free;
-        pub.free;
-      end;
-    except
-      on e:exception do
-      begin
-        response.ResponseNo := 500;
-        response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+        html := THtmlPublisher.Create;
+        pub := TSnomedPublisher.create(ss, FFHIRPath);
+        try
+          html.Version := SERVER_VERSION;
+          html.BaseURL := '/snomed/'+ss.EditionId+'/';
+          html.Lang := request.AcceptLanguage;
+          pub.PublishDict(code, '/snomed/'+ss.EditionId+'/', html);
+          response.ContentText := html.output;
+          response.ResponseNo := 200;
+        finally
+          html.free;
+          pub.free;
+        end;
+      except
+        on e:exception do
+        begin
+          response.ResponseNo := 500;
+          response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+        end;
       end;
     end;
   end

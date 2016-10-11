@@ -145,8 +145,8 @@ Type
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
 
     function OAuthPath(secure : boolean):String;
-    procedure PopulateConformanceAuth(rest: TFhirConformanceRest);
-    procedure PopulateConformance(sender : TObject; conf : TFhirConformance);
+    procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
+    procedure PopulateConformance(sender : TObject; conf : TFhirCapabilityStatement);
     function WebDump : String;
 
     function BuildCompartmentList(session : TFHIRSession) : String;
@@ -795,13 +795,13 @@ begin
   end;
 end;
 
-procedure TFhirWebServer.PopulateConformanceAuth(rest: TFhirConformanceRest);
+procedure TFhirWebServer.PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
 var
   c : TFHIRCoding;
   ext : TFhirExtension;
 begin
   if rest.security = nil then
-    rest.security := TFhirConformanceRestSecurity.Create;
+    rest.security := TFhirCapabilityStatementRestSecurity.Create;
   rest.security.cors := true;
   if FAuthServer <> nil then
   begin
@@ -820,7 +820,7 @@ begin
   end;
 end;
 
-procedure TFhirWebServer.PopulateConformance(sender: TObject; conf: TFhirConformance);
+procedure TFhirWebServer.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
 var
   i : integer;
 begin

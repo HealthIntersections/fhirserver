@@ -194,7 +194,7 @@ Type
     procedure generate(cm: TFHIRConceptMap); overload;
     procedure generate(vs: TFHIRValueSet; b: boolean); overload;
     procedure generate(oo: TFHIROperationOutcome); overload;
-    procedure generate(conf: TFHIRConformance); overload;
+    procedure generate(conf: TFhirCapabilityStatement); overload;
     procedure generate(od: TFHIROperationDefinition); overload;
 
     procedure renderLeaf(res: TResourceWrapper; ew: TBaseWrapper; defn: TFHIRElementDefinition; x: TFHIRXhtmlNode; title: boolean; showCodeDetails: boolean;
@@ -431,8 +431,8 @@ begin
     generate(TFHIRValueSet(r), true)
   else if (r is TFHIROperationOutcome) then
     generate(TFHIROperationOutcome(r))
-  else if (r is TFHIRConformance) then
-    generate(TFHIRConformance(r))
+  else if (r is TFhirCapabilityStatement) then
+    generate(TFhirCapabilityStatement(r))
   else if (r is TFHIROperationDefinition) then
     generate(TFHIROperationDefinition(r))
   else
@@ -475,7 +475,7 @@ begin
   raise Exception.create('Not done yet');
 end;
 
-procedure TFHIRNarrativeGenerator.generate(conf: TFHIRConformance);
+procedure TFHIRNarrativeGenerator.generate(conf: TFhirCapabilityStatement);
 begin
   raise Exception.create('Not done yet');
 end;
@@ -3157,7 +3157,7 @@ end;
   end;
   end;
 
-  public void generate(TFHIRConformance conf) begin
+  public void generate(TFhirCapabilityStatement conf) begin
   TFHIRXhtmlNode x := new TFHIRXhtmlNode(NodeType.Element, 'div');
   x.addTag('h2').addText(conf.getName());
   smartAddText(x.addTag('p'), conf.getDescription());

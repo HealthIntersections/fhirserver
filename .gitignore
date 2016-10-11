@@ -74,3 +74,4 @@ utils/FhirServerUtils.stat
 utils/FhirServerUtils.rsb
 tests/FHIRServerTests.stat
 Server/win64_3/Debug/TestInsightSettings.ini
+Server/FHIRServer3.cfg

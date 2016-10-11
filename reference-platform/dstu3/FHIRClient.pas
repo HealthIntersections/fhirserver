@@ -104,7 +104,7 @@ Type
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
 
-    function conformance(summary : boolean) : TFhirConformance;
+    function conformance(summary : boolean) : TFhirCapabilityStatement;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
@@ -166,7 +166,7 @@ begin
   result := TFHIRClient(inherited Link);
 end;
 
-function TFhirClient.conformance(summary : boolean): TFhirConformance;
+function TFhirClient.conformance(summary : boolean): TFhirCapabilityStatement;
 var
   params : TAdvStringMatch;
 begin
@@ -174,7 +174,7 @@ begin
   try
     if summary then
       params.Add('_summary', 'true');
-    result := FetchResource(MakeUrl('metadata', params), get, nil) as TFhirConformance;
+    result := FetchResource(MakeUrl('metadata', params), get, nil) as TFhirCapabilityStatement;
   finally
     params.Free;
   end;

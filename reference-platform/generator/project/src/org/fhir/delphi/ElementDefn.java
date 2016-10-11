@@ -60,6 +60,7 @@ public class ElementDefn {
   private String definition;
   private String path;
   private String statedType; // explicitly stated type (=xxxx)
+  private boolean inherited;
   
 
 
@@ -609,6 +610,14 @@ public class ElementDefn {
         return t;
     }
     return null;
+  }
+
+  public boolean isInherited() {
+    return inherited;
+  }
+
+  public void setInherited(boolean inherited) {
+    this.inherited = inherited;
   } 
 
 

@@ -303,7 +303,7 @@ begin
     FQuestionnaire.Date := profile.Date.link;
     FQuestionnaire.publisher := profile.Publisher;
     FQuestionnaire.ItemList.Add(TFHIRQuestionnaireItem.Create);
-    FQuestionnaire.itemList[0].conceptList.AddAll(profile.codeList);
+    FQuestionnaire.itemList[0].conceptList.AddAll(profile.keywordList);
   end;
 
   if FAnswers <> nil then

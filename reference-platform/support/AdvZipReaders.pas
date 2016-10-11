@@ -61,11 +61,11 @@ Type
       Procedure ReadPart;
       Procedure Skip(iCount : Integer);
       Function ReadString(iLength : Word):AnsiString;
-      Procedure ReadData(iFlags, iComp : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer : TAdvBuffer);
-      Procedure ReadDeflate(iFlags : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
+      Procedure ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer : TAdvBuffer);
+      Procedure ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
       Procedure ReadUncompressed(iSizeComp : LongWord; oBuffer: TAdvBuffer);
-      Procedure ReadUnknownLengthDeflate(oBuffer : TAdvBuffer);
-      Procedure ReadKnownDeflate(pIn : Pointer; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
+      Procedure ReadUnknownLengthDeflate(partName : string; oBuffer : TAdvBuffer);
+      Procedure ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
       Procedure ReadDirectory(iCount : Integer);
       Procedure ReadDigSig;
       Procedure ReadTermination;
@@ -125,7 +125,7 @@ Begin
 
     {Immediately following the local header for a file
       is the compressed or stored data for the file. }
-    ReadData(iFlags, iComp, iSizeComp, iSizeUncomp, oBuffer);
+    ReadData(oBuffer.Name, iFlags, iComp, iSizeComp, iSizeUncomp, oBuffer);
 
     Parts.Add(oBuffer.Link);
   Finally
@@ -173,12 +173,12 @@ Begin
     Stream.Read(oBuffer.Data^, oBuffer.Capacity);
 End;
 
-Procedure TAdvZipReader.ReadDeflate(iFlags : Word; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
+Procedure TAdvZipReader.ReadDeflate(iFlags : Word; partName : string; iSizeComp, iSizeUncomp : LongWord; oBuffer: TAdvBuffer);
 Var
   pIn : PAnsiChar;
 Begin
   If Bit(iFlags, flagUsesDataDescriptor) Then
-    ReadUnknownLengthDeflate(oBuffer)
+    ReadUnknownLengthDeflate(partName, oBuffer)
   Else
   Begin
     GetMem(pIn, iSizeComp+2);
@@ -186,7 +186,7 @@ Begin
       pIn[0] := AnsiChar(120);
       pIn[1] := AnsiChar(156);
       Stream.Read(pIn[2], iSizeComp);
-      ReadKnownDeflate(pIn, iSizeComp+2, iSizeUncomp, oBuffer);
+      ReadKnownDeflate(pIn, partName, iSizeComp+2, iSizeUncomp, oBuffer);
     Finally
       FreeMem(pIn);
     End;
@@ -195,18 +195,20 @@ End;
 
 Function TAdvZipReader.EndCondition(iLongWord : LongWord) : Boolean;
 Begin
-  Result := (Stream.Readable = 0) Or // shouldn't run out - should run into the central directory
+  Result := //(Stream.Readable = 0) Or // shouldn't run out - should run into the central directory
             (iLongWord = SIG_DATA_DESCRIPTOR);
 End;
 
 
-Procedure TAdvZipReader.ReadUnknownLengthDeflate(oBuffer : TAdvBuffer);
+Procedure TAdvZipReader.ReadUnknownLengthDeflate(partName : string; oBuffer : TAdvBuffer);
 Var
-  iCurrent : LongWord;
+  iCurrent, iCRC : LongWord;
   iByte : Byte;
   oMem : TAdvMemoryStream;
   iSizeComp : LongWord;
   iSizeUncomp : LongWord;
+  count : integer;
+  first : boolean;
 Begin
   // well, we don't know how long it's going to be.
   // what we're going to do is read this a byte at a time until
@@ -221,22 +223,27 @@ Begin
     iByte := 156;
     oMem.Write(iByte, 1);
     iCurrent := ReadLongWord;
-    While (Not EndCondition(iCurrent)) Do
-    Begin
-      iByte := iCurrent And $FF;
-      oMem.Write(iByte, 1);
-      iCurrent := (iCurrent And $FFFFFF00) Shr 8 + ReadByte Shl 24;
-    End;
+    count := 0;
+    repeat
+      first := true;
+      While first or (Not EndCondition(iCurrent)) Do
+      Begin
+        iByte := iCurrent And $FF;
+        oMem.Write(iByte, 1);
+        iCurrent := (iCurrent And $FFFFFF00) Shr 8 + ReadByte Shl 24;
+        first := false;
+      End;
+      inc(count);
+    until true; // {(partName <> 'fhir.schema.json.zip') or (count > 1);
     If iCurrent <> SIG_DATA_DESCRIPTOR Then
       Error('ReadUnknownLengthDeflate', 'Error in zip structure: Source is not terminated by a Data Descriptor');
-    Skip(4);                          // crc-32                          4 bytes
+    iCRC := ReadLongWord;                // crc-32                          4 bytes
     iSizeComp := ReadLongWord;           // compressed size                 4 bytes
     iSizeUncomp := ReadLongWord;         // uncompressed size               4 bytes
     {$WARNINGS OFF} // a widening notifications in this check and the assertion in ReadKnownDeflate
-    If oMem.Buffer.Capacity <> iSizeComp + 2 Then
-      Error( 'ReadUnknownLengthDeflate', 'Compressed length expected to be '+
-        IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
-    ReadKnownDeflate(oMem.Buffer.Data, iSizeComp + 2, iSizeUncomp, oBuffer);
+    If oMem.Buffer.Capacity < iSizeComp + 2 Then
+      Error( 'ReadUnknownLengthDeflate', 'Compressed length expected to be '+IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
+    ReadKnownDeflate(oMem.Buffer.Data, partName, iSizeComp + 2, iSizeUncomp, oBuffer);
   Finally
     oMem.Free;
   End;
@@ -260,7 +267,7 @@ Begin
 End;
 
 
-Procedure TAdvZipReader.ReadKnownDeflate(pIn : Pointer; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
+Procedure TAdvZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TAdvBuffer);
 Var
   oSrc : TStream;
   oDecompressor : TZDecompressionStream;
@@ -279,7 +286,7 @@ Begin
 
       {$IFOPT C+}
         iRead := oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
-        Assert(Condition(iRead = iSizeDecomp, 'ReadKnownDeflate', 'Expected to read '+IntegerToString(iSizeDecomp)+
+        Assert(Condition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
             ' bytes, but actually found '+IntegerToString(iRead)+' bytes'));
       {$ELSE}
         oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
@@ -293,11 +300,11 @@ Begin
   End;
 End;
 
-Procedure TAdvZipReader.ReadData(iFlags, iComp : Word; iSizeComp, iSizeUncomp: LongWord; oBuffer: TAdvBuffer);
+Procedure TAdvZipReader.ReadData(partName : string; iFlags, iComp : Word; iSizeComp, iSizeUncomp: LongWord; oBuffer: TAdvBuffer);
 Begin
   Case iComp Of
     METHOD_NONE: ReadUncompressed(iSizeComp, oBuffer);
-    METHOD_DEFLATE: ReadDeflate(iFlags, iSizeComp, iSizeUncomp, oBuffer);
+    METHOD_DEFLATE: ReadDeflate(iFlags, partName, iSizeComp, iSizeUncomp, oBuffer);
   Else
     Error('Decompress', 'Unknown Compression type '+IntegerToString(iComp));
   End;

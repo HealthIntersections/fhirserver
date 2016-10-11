@@ -304,6 +304,8 @@ Const
   VAL_REL_Optional = 1;
   VAL_REL_Mandatory = 2;
 
+  RELATIONSHIP_SIZE = 39;
+
 Type
   TSnomedRelationshipList = class (TAdvObject)
     private
@@ -317,6 +319,8 @@ Type
       Procedure StartBuild;
       Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Flags : Byte; Group : integer) : Cardinal;
       Procedure DoneBuild;
+
+      function count : integer;
   End;
 
 Type
@@ -446,7 +450,9 @@ operations
     FWords : TSnomedWords;
     FStems : TSnomedStems;
     FLoaded: Boolean;
-    FEditionUri: String;
+    FEditionUri : String;
+    FEditionId : String;
+    FEditionName : String;
 
     function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
     function filterIsA(id : UInt64): TCodeSystemProviderFilterContext;
@@ -484,6 +490,8 @@ operations
     procedure mergeRefinements(list : TAdvList<TSnomedRefinement>);
     function mergeGroups(grp1, grp2 : TSnomedRefinementGroup) : boolean;
     procedure rationaliseExpr(exp: TSnomedExpression);
+    function GetEditionName: String;
+    function GetEditionId: String;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -547,6 +555,8 @@ operations
     Property VersionUri : String read FVersionUri write SetVersionUri;
     Property EditionUri : String read FEditionUri;
     Property VersionDate : String read FVersionDate write FVersionDate;
+    Property EditionName : String read GetEditionName;
+    Property EditionId : String read GetEditionId;
 
     // generic terminology server interface
     function TotalCount : integer; override;
@@ -1741,6 +1751,42 @@ begin
   result := GetDisplayName(iTerm, iLang);
 end;
 
+function TSnomedServices.GetEditionId: String;
+begin
+  if FEditionId = '' then
+    GetEditionName;
+  result := FEditionId;
+end;
+
+function TSnomedServices.GetEditionName: String;
+var
+  s : TArray<String>;
+begin
+  if FEditionName <> '' then
+    exit(FEditionName);
+  s := EditionUri.split(['/']);
+  FEditionId := s[length(s)-1];
+  if FEditionId = '900000000000207008' then
+    result := 'International'
+  else if FEditionId = '731000124108' then
+    result := 'SNOMED CT USA'
+  else if FEditionId = '32506021000036107' then
+    result := 'SNOMED CT Australia'
+  else if FEditionId = '449081005' then
+    result := 'Spanish SNOMED CT '
+  else if FEditionId = '554471000005108' then
+    result := 'SNOMED CT Denmark'
+  else if FEditionId = '11000146104' then
+    result := 'SNOMED CT Netherlands'
+  else if FEditionId = '45991000052106' then
+    result := 'SNOMED CT Sweden'
+  else if FEditionId = '999000041000000102' then
+    result := 'SNOMED CT UK'
+  else if FEditionId = '999000041000000102' then
+    result := 'Custom Module';
+  FEditionName := result;
+end;
+
 function TSnomedServices.GetFSN(iDescriptions: TCardinalArray): String;
 var
   iLoop : Integer;
@@ -2244,6 +2290,11 @@ begin
   FBuilder.AddInteger(Group);
   FBuilder.AddUInt64(identity);
 End;
+
+function TSnomedRelationshipList.count: integer;
+begin
+  result := FLength div RELATIONSHIP_SIZE;
+end;
 
 procedure TSnomedRelationshipList.DoneBuild;
 begin
@@ -2915,7 +2966,7 @@ begin
       p := TFHIRLookupOpProperty_.create;
       resp.property_List.Add(p);
       p.code := 'inactive';
-      p.value := BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference));
+      p.value := BooleanToString(not IsActive(TSnomedExpressionContext(ctxt).reference));
       {$ELSE}
       resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
@@ -2927,7 +2978,7 @@ begin
       p := TFHIRLookupOpProperty_.create;
       resp.property_List.Add(p);
       p.code := 'moduleId';
-      p.value := inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference));
+      p.value := getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference));
       {$ELSE}
       resp.addExtension('moduleId', inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}

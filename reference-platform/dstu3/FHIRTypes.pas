@@ -38,12 +38,22 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
+// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
 
 Type
+  {@Enum TFhirConformanceResourceStatusEnum
+    The lifecycle status of a Value Set or Concept Map. from http://hl7.org/fhir/ValueSet/conformance-resource-status
+  }
+  TFhirConformanceResourceStatusEnum = (
+    ConformanceResourceStatusNull,  {@enum.value ConformanceResourceStatusNull Value is missing from Instance }
+    ConformanceResourceStatusDraft, {@enum.value ConformanceResourceStatusDraft  }
+    ConformanceResourceStatusActive, {@enum.value ConformanceResourceStatusActive  }
+    ConformanceResourceStatusRetired); {@enum.value ConformanceResourceStatusRetired  }
+  TFhirConformanceResourceStatusEnumList = set of TFhirConformanceResourceStatusEnum;
+
   {@Enum TFhirNarrativeStatusEnum
     The status of a resource narrative from http://hl7.org/fhir/ValueSet/narrative-status
   }
@@ -54,21 +64,6 @@ Type
     NarrativeStatusAdditional, {@enum.value NarrativeStatusAdditional  }
     NarrativeStatusEmpty); {@enum.value NarrativeStatusEmpty  }
   TFhirNarrativeStatusEnumList = set of TFhirNarrativeStatusEnum;
-
-  {@Enum TFhirRelatedResourceTypeEnum
-    The type of related resource for the module from http://hl7.org/fhir/ValueSet/related-resource-type
-  }
-  TFhirRelatedResourceTypeEnum = (
-    RelatedResourceTypeNull,  {@enum.value RelatedResourceTypeNull Value is missing from Instance }
-    RelatedResourceTypeDocumentation, {@enum.value RelatedResourceTypeDocumentation  }
-    RelatedResourceTypeJustification, {@enum.value RelatedResourceTypeJustification  }
-    RelatedResourceTypeCitation, {@enum.value RelatedResourceTypeCitation  }
-    RelatedResourceTypePredecessor, {@enum.value RelatedResourceTypePredecessor  }
-    RelatedResourceTypeSuccessor, {@enum.value RelatedResourceTypeSuccessor  }
-    RelatedResourceTypeDerivedFrom, {@enum.value RelatedResourceTypeDerivedFrom  }
-    RelatedResourceTypeDependsOn, {@enum.value RelatedResourceTypeDependsOn  }
-    RelatedResourceTypeComposedOf); {@enum.value RelatedResourceTypeComposedOf  }
-  TFhirRelatedResourceTypeEnumList = set of TFhirRelatedResourceTypeEnum;
 
   {@Enum TFhirTriggerTypeEnum
     The type of trigger from http://hl7.org/fhir/ValueSet/trigger-type
@@ -139,7 +134,7 @@ Type
     AllTypesRange, {@enum.value AllTypesRange  }
     AllTypesRatio, {@enum.value AllTypesRatio  }
     AllTypesReference, {@enum.value AllTypesReference  }
-    AllTypesRelatedResource, {@enum.value AllTypesRelatedResource  }
+    AllTypesRelatedArtifact, {@enum.value AllTypesRelatedArtifact  }
     AllTypesSampledData, {@enum.value AllTypesSampledData  }
     AllTypesSignature, {@enum.value AllTypesSignature  }
     AllTypesSimpleQuantity, {@enum.value AllTypesSimpleQuantity  }
@@ -175,6 +170,7 @@ Type
     AllTypesBinary, {@enum.value AllTypesBinary  }
     AllTypesBodySite, {@enum.value AllTypesBodySite  }
     AllTypesBundle, {@enum.value AllTypesBundle  }
+    AllTypesCapabilityStatement, {@enum.value AllTypesCapabilityStatement  }
     AllTypesCarePlan, {@enum.value AllTypesCarePlan  }
     AllTypesCareTeam, {@enum.value AllTypesCareTeam  }
     AllTypesClaim, {@enum.value AllTypesClaim  }
@@ -187,7 +183,6 @@ Type
     AllTypesComposition, {@enum.value AllTypesComposition  }
     AllTypesConceptMap, {@enum.value AllTypesConceptMap  }
     AllTypesCondition, {@enum.value AllTypesCondition  }
-    AllTypesConformance, {@enum.value AllTypesConformance  }
     AllTypesConsent, {@enum.value AllTypesConsent  }
     AllTypesContract, {@enum.value AllTypesContract  }
     AllTypesCoverage, {@enum.value AllTypesCoverage  }
@@ -281,6 +276,21 @@ Type
     AllTypesType, {@enum.value AllTypesType  }
     AllTypesAny); {@enum.value AllTypesAny  }
   TFhirAllTypesEnumList = set of TFhirAllTypesEnum;
+
+  {@Enum TFhirRelatedResourceTypeEnum
+    The type of related resource for the module from http://hl7.org/fhir/ValueSet/related-resource-type
+  }
+  TFhirRelatedResourceTypeEnum = (
+    RelatedResourceTypeNull,  {@enum.value RelatedResourceTypeNull Value is missing from Instance }
+    RelatedResourceTypeDocumentation, {@enum.value RelatedResourceTypeDocumentation  }
+    RelatedResourceTypeJustification, {@enum.value RelatedResourceTypeJustification  }
+    RelatedResourceTypeCitation, {@enum.value RelatedResourceTypeCitation  }
+    RelatedResourceTypePredecessor, {@enum.value RelatedResourceTypePredecessor  }
+    RelatedResourceTypeSuccessor, {@enum.value RelatedResourceTypeSuccessor  }
+    RelatedResourceTypeDerivedFrom, {@enum.value RelatedResourceTypeDerivedFrom  }
+    RelatedResourceTypeDependsOn, {@enum.value RelatedResourceTypeDependsOn  }
+    RelatedResourceTypeComposedOf); {@enum.value RelatedResourceTypeComposedOf  }
+  TFhirRelatedResourceTypeEnumList = set of TFhirRelatedResourceTypeEnum;
 
   {@Enum TFhirIdentifierUseEnum
     Identifies the purpose for this identifier, if known . from http://hl7.org/fhir/ValueSet/identifier-use
@@ -467,16 +477,6 @@ Type
     AccountStatusInactive, {@enum.value AccountStatusInactive  }
     AccountStatusEnteredInError); {@enum.value AccountStatusEnteredInError  }
   TFhirAccountStatusEnumList = set of TFhirAccountStatusEnum;
-
-  {@Enum TFhirModuleMetadataStatusEnum
-    The status of the ActivityDefinition from http://hl7.org/fhir/ValueSet/module-metadata-status
-  }
-  TFhirModuleMetadataStatusEnum = (
-    ModuleMetadataStatusNull,  {@enum.value ModuleMetadataStatusNull Value is missing from Instance }
-    ModuleMetadataStatusDraft, {@enum.value ModuleMetadataStatusDraft  }
-    ModuleMetadataStatusActive, {@enum.value ModuleMetadataStatusActive  }
-    ModuleMetadataStatusInactive); {@enum.value ModuleMetadataStatusInactive  }
-  TFhirModuleMetadataStatusEnumList = set of TFhirModuleMetadataStatusEnum;
 
   {@Enum TFhirActivityDefinitionCategoryEnum
     High-level categorization of the type of activity in a protocol. from http://hl7.org/fhir/ValueSet/activity-definition-category
@@ -749,183 +749,35 @@ Type
     HttpVerbDELETE); {@enum.value HttpVerbDELETE  }
   TFhirHttpVerbEnumList = set of TFhirHttpVerbEnum;
 
-  {@Enum TFhirCarePlanStatusEnum
-    Indicates whether the plan is currently being acted upon, represents future intentions or is now a historical record. from http://hl7.org/fhir/ValueSet/care-plan-status
+  {@Enum TFhirCapabilityStatementKindEnum
+    How a capability statement is intended to be used. from http://hl7.org/fhir/ValueSet/capability-statement-kind
   }
-  TFhirCarePlanStatusEnum = (
-    CarePlanStatusNull,  {@enum.value CarePlanStatusNull Value is missing from Instance }
-    CarePlanStatusProposed, {@enum.value CarePlanStatusProposed  }
-    CarePlanStatusDraft, {@enum.value CarePlanStatusDraft  }
-    CarePlanStatusActive, {@enum.value CarePlanStatusActive  }
-    CarePlanStatusCompleted, {@enum.value CarePlanStatusCompleted  }
-    CarePlanStatusCancelled); {@enum.value CarePlanStatusCancelled  }
-  TFhirCarePlanStatusEnumList = set of TFhirCarePlanStatusEnum;
+  TFhirCapabilityStatementKindEnum = (
+    CapabilityStatementKindNull,  {@enum.value CapabilityStatementKindNull Value is missing from Instance }
+    CapabilityStatementKindInstance, {@enum.value CapabilityStatementKindInstance  }
+    CapabilityStatementKindCapability, {@enum.value CapabilityStatementKindCapability  }
+    CapabilityStatementKindRequirements); {@enum.value CapabilityStatementKindRequirements  }
+  TFhirCapabilityStatementKindEnumList = set of TFhirCapabilityStatementKindEnum;
 
-  {@Enum TFhirCarePlanRelationshipEnum
-    Codes identifying the types of relationships between two plans. from http://hl7.org/fhir/ValueSet/care-plan-relationship
+  {@Enum TFhirUnknownContentCodeEnum
+    A code that indicates whether an application accepts unknown elements or extensions when reading resources. from http://hl7.org/fhir/ValueSet/unknown-content-code
   }
-  TFhirCarePlanRelationshipEnum = (
-    CarePlanRelationshipNull,  {@enum.value CarePlanRelationshipNull Value is missing from Instance }
-    CarePlanRelationshipIncludes, {@enum.value CarePlanRelationshipIncludes  }
-    CarePlanRelationshipReplaces, {@enum.value CarePlanRelationshipReplaces  }
-    CarePlanRelationshipFulfills); {@enum.value CarePlanRelationshipFulfills  }
-  TFhirCarePlanRelationshipEnumList = set of TFhirCarePlanRelationshipEnum;
+  TFhirUnknownContentCodeEnum = (
+    UnknownContentCodeNull,  {@enum.value UnknownContentCodeNull Value is missing from Instance }
+    UnknownContentCodeNo, {@enum.value UnknownContentCodeNo  }
+    UnknownContentCodeExtensions, {@enum.value UnknownContentCodeExtensions  }
+    UnknownContentCodeElements, {@enum.value UnknownContentCodeElements  }
+    UnknownContentCodeBoth); {@enum.value UnknownContentCodeBoth  }
+  TFhirUnknownContentCodeEnumList = set of TFhirUnknownContentCodeEnum;
 
-  {@Enum TFhirCarePlanActivityStatusEnum
-    Indicates where the activity is at in its overall life cycle. from http://hl7.org/fhir/ValueSet/care-plan-activity-status
+  {@Enum TFhirRestfulCapabilityModeEnum
+    The mode of a RESTful capability statement. from http://hl7.org/fhir/ValueSet/restful-capability-mode
   }
-  TFhirCarePlanActivityStatusEnum = (
-    CarePlanActivityStatusNull,  {@enum.value CarePlanActivityStatusNull Value is missing from Instance }
-    CarePlanActivityStatusNotStarted, {@enum.value CarePlanActivityStatusNotStarted  }
-    CarePlanActivityStatusScheduled, {@enum.value CarePlanActivityStatusScheduled  }
-    CarePlanActivityStatusInProgress, {@enum.value CarePlanActivityStatusInProgress  }
-    CarePlanActivityStatusOnHold, {@enum.value CarePlanActivityStatusOnHold  }
-    CarePlanActivityStatusCompleted, {@enum.value CarePlanActivityStatusCompleted  }
-    CarePlanActivityStatusCancelled); {@enum.value CarePlanActivityStatusCancelled  }
-  TFhirCarePlanActivityStatusEnumList = set of TFhirCarePlanActivityStatusEnum;
-
-  {@Enum TFhirClaimStatusEnum
-    A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/claim-status
-  }
-  TFhirClaimStatusEnum = (
-    ClaimStatusNull,  {@enum.value ClaimStatusNull Value is missing from Instance }
-    ClaimStatusActive, {@enum.value ClaimStatusActive  }
-    ClaimStatusCancelled, {@enum.value ClaimStatusCancelled  }
-    ClaimStatusDraft, {@enum.value ClaimStatusDraft  }
-    ClaimStatusEnteredInError); {@enum.value ClaimStatusEnteredInError  }
-  TFhirClaimStatusEnumList = set of TFhirClaimStatusEnum;
-
-  {@Enum TFhirClaimUseEnum
-    Complete, proposed, exploratory, other from http://hl7.org/fhir/ValueSet/claim-use
-  }
-  TFhirClaimUseEnum = (
-    ClaimUseNull,  {@enum.value ClaimUseNull Value is missing from Instance }
-    ClaimUseComplete, {@enum.value ClaimUseComplete  }
-    ClaimUseProposed, {@enum.value ClaimUseProposed  }
-    ClaimUseExploratory, {@enum.value ClaimUseExploratory  }
-    ClaimUseOther); {@enum.value ClaimUseOther  }
-  TFhirClaimUseEnumList = set of TFhirClaimUseEnum;
-
-  {@Enum TFhirClaimresponseStatusEnum
-    A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/claimresponse-status
-  }
-  TFhirClaimresponseStatusEnum = (
-    ClaimresponseStatusNull,  {@enum.value ClaimresponseStatusNull Value is missing from Instance }
-    ClaimresponseStatusActive, {@enum.value ClaimresponseStatusActive  }
-    ClaimresponseStatusCancelled, {@enum.value ClaimresponseStatusCancelled  }
-    ClaimresponseStatusDraft, {@enum.value ClaimresponseStatusDraft  }
-    ClaimresponseStatusEnteredInError); {@enum.value ClaimresponseStatusEnteredInError  }
-  TFhirClaimresponseStatusEnumList = set of TFhirClaimresponseStatusEnum;
-
-  {@Enum TFhirClinicalImpressionStatusEnum
-    The workflow state of a clinical impression. from http://hl7.org/fhir/ValueSet/clinical-impression-status
-  }
-  TFhirClinicalImpressionStatusEnum = (
-    ClinicalImpressionStatusNull,  {@enum.value ClinicalImpressionStatusNull Value is missing from Instance }
-    ClinicalImpressionStatusDraft, {@enum.value ClinicalImpressionStatusDraft  }
-    ClinicalImpressionStatusCompleted, {@enum.value ClinicalImpressionStatusCompleted  }
-    ClinicalImpressionStatusEnteredInError); {@enum.value ClinicalImpressionStatusEnteredInError  }
-  TFhirClinicalImpressionStatusEnumList = set of TFhirClinicalImpressionStatusEnum;
-
-  {@Enum TFhirConformanceResourceStatusEnum
-    The lifecycle status of a Value Set or Concept Map. from http://hl7.org/fhir/ValueSet/conformance-resource-status
-  }
-  TFhirConformanceResourceStatusEnum = (
-    ConformanceResourceStatusNull,  {@enum.value ConformanceResourceStatusNull Value is missing from Instance }
-    ConformanceResourceStatusDraft, {@enum.value ConformanceResourceStatusDraft  }
-    ConformanceResourceStatusActive, {@enum.value ConformanceResourceStatusActive  }
-    ConformanceResourceStatusRetired); {@enum.value ConformanceResourceStatusRetired  }
-  TFhirConformanceResourceStatusEnumList = set of TFhirConformanceResourceStatusEnum;
-
-  {@Enum TFhirCodesystemHierarchyMeaningEnum
-    The meaning of the hierarchy of concepts in a code system from http://hl7.org/fhir/ValueSet/codesystem-hierarchy-meaning
-  }
-  TFhirCodesystemHierarchyMeaningEnum = (
-    CodesystemHierarchyMeaningNull,  {@enum.value CodesystemHierarchyMeaningNull Value is missing from Instance }
-    CodesystemHierarchyMeaningGroupedBy, {@enum.value CodesystemHierarchyMeaningGroupedBy  }
-    CodesystemHierarchyMeaningSubsumes, {@enum.value CodesystemHierarchyMeaningSubsumes  }
-    CodesystemHierarchyMeaningPartOf, {@enum.value CodesystemHierarchyMeaningPartOf  }
-    CodesystemHierarchyMeaningClassifiedWith); {@enum.value CodesystemHierarchyMeaningClassifiedWith  }
-  TFhirCodesystemHierarchyMeaningEnumList = set of TFhirCodesystemHierarchyMeaningEnum;
-
-  {@Enum TFhirCodesystemContentModeEnum
-    How much of the content of the code system - the concepts and codes it defines - are represented in a code system resource from http://hl7.org/fhir/ValueSet/codesystem-content-mode
-  }
-  TFhirCodesystemContentModeEnum = (
-    CodesystemContentModeNull,  {@enum.value CodesystemContentModeNull Value is missing from Instance }
-    CodesystemContentModeNotPresent, {@enum.value CodesystemContentModeNotPresent  }
-    CodesystemContentModeExamplar, {@enum.value CodesystemContentModeExamplar  }
-    CodesystemContentModeFragment, {@enum.value CodesystemContentModeFragment  }
-    CodesystemContentModeComplete); {@enum.value CodesystemContentModeComplete  }
-  TFhirCodesystemContentModeEnumList = set of TFhirCodesystemContentModeEnum;
-
-  {@Enum TFhirFilterOperatorEnum
-    The kind of operation to perform as a part of a property based filter. from http://hl7.org/fhir/ValueSet/filter-operator
-  }
-  TFhirFilterOperatorEnum = (
-    FilterOperatorNull,  {@enum.value FilterOperatorNull Value is missing from Instance }
-    FilterOperatorEqual, {@enum.value FilterOperatorEqual  }
-    FilterOperatorIsA, {@enum.value FilterOperatorIsA  }
-    FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA  }
-    FilterOperatorRegex, {@enum.value FilterOperatorRegex  }
-    FilterOperatorIn, {@enum.value FilterOperatorIn  }
-    FilterOperatorNotIn, {@enum.value FilterOperatorNotIn  }
-    FilterOperatorGeneralizes); {@enum.value FilterOperatorGeneralizes  }
-  TFhirFilterOperatorEnumList = set of TFhirFilterOperatorEnum;
-
-  {@Enum TFhirConceptPropertyTypeEnum
-    The type of a property value from http://hl7.org/fhir/ValueSet/concept-property-type
-  }
-  TFhirConceptPropertyTypeEnum = (
-    ConceptPropertyTypeNull,  {@enum.value ConceptPropertyTypeNull Value is missing from Instance }
-    ConceptPropertyTypeCode, {@enum.value ConceptPropertyTypeCode  }
-    ConceptPropertyTypeCoding, {@enum.value ConceptPropertyTypeCoding  }
-    ConceptPropertyTypeString, {@enum.value ConceptPropertyTypeString  }
-    ConceptPropertyTypeInteger, {@enum.value ConceptPropertyTypeInteger  }
-    ConceptPropertyTypeBoolean, {@enum.value ConceptPropertyTypeBoolean  }
-    ConceptPropertyTypeDateTime); {@enum.value ConceptPropertyTypeDateTime  }
-  TFhirConceptPropertyTypeEnumList = set of TFhirConceptPropertyTypeEnum;
-
-  {@Enum TFhirCommunicationStatusEnum
-    The status of the communication. from http://hl7.org/fhir/ValueSet/communication-status
-  }
-  TFhirCommunicationStatusEnum = (
-    CommunicationStatusNull,  {@enum.value CommunicationStatusNull Value is missing from Instance }
-    CommunicationStatusInProgress, {@enum.value CommunicationStatusInProgress  }
-    CommunicationStatusCompleted, {@enum.value CommunicationStatusCompleted  }
-    CommunicationStatusSuspended, {@enum.value CommunicationStatusSuspended  }
-    CommunicationStatusRejected, {@enum.value CommunicationStatusRejected  }
-    CommunicationStatusFailed); {@enum.value CommunicationStatusFailed  }
-  TFhirCommunicationStatusEnumList = set of TFhirCommunicationStatusEnum;
-
-  {@Enum TFhirCommunicationRequestStatusEnum
-    The status of the communication. from http://hl7.org/fhir/ValueSet/communication-request-status
-  }
-  TFhirCommunicationRequestStatusEnum = (
-    CommunicationRequestStatusNull,  {@enum.value CommunicationRequestStatusNull Value is missing from Instance }
-    CommunicationRequestStatusProposed, {@enum.value CommunicationRequestStatusProposed  }
-    CommunicationRequestStatusPlanned, {@enum.value CommunicationRequestStatusPlanned  }
-    CommunicationRequestStatusRequested, {@enum.value CommunicationRequestStatusRequested  }
-    CommunicationRequestStatusReceived, {@enum.value CommunicationRequestStatusReceived  }
-    CommunicationRequestStatusAccepted, {@enum.value CommunicationRequestStatusAccepted  }
-    CommunicationRequestStatusInProgress, {@enum.value CommunicationRequestStatusInProgress  }
-    CommunicationRequestStatusCompleted, {@enum.value CommunicationRequestStatusCompleted  }
-    CommunicationRequestStatusSuspended, {@enum.value CommunicationRequestStatusSuspended  }
-    CommunicationRequestStatusRejected, {@enum.value CommunicationRequestStatusRejected  }
-    CommunicationRequestStatusFailed); {@enum.value CommunicationRequestStatusFailed  }
-  TFhirCommunicationRequestStatusEnumList = set of TFhirCommunicationRequestStatusEnum;
-
-  {@Enum TFhirCompartmentTypeEnum
-    Which compartment a compartmnet definition describes from http://hl7.org/fhir/ValueSet/compartment-type
-  }
-  TFhirCompartmentTypeEnum = (
-    CompartmentTypeNull,  {@enum.value CompartmentTypeNull Value is missing from Instance }
-    CompartmentTypePatient, {@enum.value CompartmentTypePatient  }
-    CompartmentTypeEncounter, {@enum.value CompartmentTypeEncounter  }
-    CompartmentTypeRelatedPerson, {@enum.value CompartmentTypeRelatedPerson  }
-    CompartmentTypePractitioner, {@enum.value CompartmentTypePractitioner  }
-    CompartmentTypeDevice); {@enum.value CompartmentTypeDevice  }
-  TFhirCompartmentTypeEnumList = set of TFhirCompartmentTypeEnum;
+  TFhirRestfulCapabilityModeEnum = (
+    RestfulCapabilityModeNull,  {@enum.value RestfulCapabilityModeNull Value is missing from Instance }
+    RestfulCapabilityModeClient, {@enum.value RestfulCapabilityModeClient  }
+    RestfulCapabilityModeServer); {@enum.value RestfulCapabilityModeServer  }
+  TFhirRestfulCapabilityModeEnumList = set of TFhirRestfulCapabilityModeEnum;
 
   {@Enum TFhirResourceTypesEnum
     One of the resource types defined as part of FHIR. from http://hl7.org/fhir/ValueSet/resource-types
@@ -943,6 +795,7 @@ Type
     ResourceTypesBinary, {@enum.value ResourceTypesBinary  }
     ResourceTypesBodySite, {@enum.value ResourceTypesBodySite  }
     ResourceTypesBundle, {@enum.value ResourceTypesBundle  }
+    ResourceTypesCapabilityStatement, {@enum.value ResourceTypesCapabilityStatement  }
     ResourceTypesCarePlan, {@enum.value ResourceTypesCarePlan  }
     ResourceTypesCareTeam, {@enum.value ResourceTypesCareTeam  }
     ResourceTypesClaim, {@enum.value ResourceTypesClaim  }
@@ -955,7 +808,6 @@ Type
     ResourceTypesComposition, {@enum.value ResourceTypesComposition  }
     ResourceTypesConceptMap, {@enum.value ResourceTypesConceptMap  }
     ResourceTypesCondition, {@enum.value ResourceTypesCondition  }
-    ResourceTypesConformance, {@enum.value ResourceTypesConformance  }
     ResourceTypesConsent, {@enum.value ResourceTypesConsent  }
     ResourceTypesContract, {@enum.value ResourceTypesContract  }
     ResourceTypesCoverage, {@enum.value ResourceTypesCoverage  }
@@ -1047,122 +899,6 @@ Type
     ResourceTypesValueSet, {@enum.value ResourceTypesValueSet  }
     ResourceTypesVisionPrescription); {@enum.value ResourceTypesVisionPrescription  }
   TFhirResourceTypesEnumList = set of TFhirResourceTypesEnum;
-
-  {@Enum TFhirCompositionStatusEnum
-    The workflow/clinical status of the composition. from http://hl7.org/fhir/ValueSet/composition-status
-  }
-  TFhirCompositionStatusEnum = (
-    CompositionStatusNull,  {@enum.value CompositionStatusNull Value is missing from Instance }
-    CompositionStatusPreliminary, {@enum.value CompositionStatusPreliminary  }
-    CompositionStatusFinal, {@enum.value CompositionStatusFinal  }
-    CompositionStatusAmended, {@enum.value CompositionStatusAmended  }
-    CompositionStatusEnteredInError); {@enum.value CompositionStatusEnteredInError  }
-  TFhirCompositionStatusEnumList = set of TFhirCompositionStatusEnum;
-
-  {@Enum TFhirV3ConfidentialityClassificationEnum
-    Codes specifying the level of confidentiality of the composition. from http://hl7.org/fhir/ValueSet/v3-ConfidentialityClassification
-  }
-  TFhirV3ConfidentialityClassificationEnum = (
-    V3ConfidentialityClassificationNull,  {@enum.value V3ConfidentialityClassificationNull Value is missing from Instance }
-    V3ConfidentialityClassificationU, {@enum.value V3ConfidentialityClassificationU  }
-    V3ConfidentialityClassificationL, {@enum.value V3ConfidentialityClassificationL  }
-    V3ConfidentialityClassificationM, {@enum.value V3ConfidentialityClassificationM  }
-    V3ConfidentialityClassificationN, {@enum.value V3ConfidentialityClassificationN  }
-    V3ConfidentialityClassificationR, {@enum.value V3ConfidentialityClassificationR  }
-    V3ConfidentialityClassificationV); {@enum.value V3ConfidentialityClassificationV  }
-  TFhirV3ConfidentialityClassificationEnumList = set of TFhirV3ConfidentialityClassificationEnum;
-
-  {@Enum TFhirCompositionAttestationModeEnum
-    The way in which a person authenticated a composition. from http://hl7.org/fhir/ValueSet/composition-attestation-mode
-  }
-  TFhirCompositionAttestationModeEnum = (
-    CompositionAttestationModeNull,  {@enum.value CompositionAttestationModeNull Value is missing from Instance }
-    CompositionAttestationModePersonal, {@enum.value CompositionAttestationModePersonal  }
-    CompositionAttestationModeProfessional, {@enum.value CompositionAttestationModeProfessional  }
-    CompositionAttestationModeLegal, {@enum.value CompositionAttestationModeLegal  }
-    CompositionAttestationModeOfficial); {@enum.value CompositionAttestationModeOfficial  }
-  TFhirCompositionAttestationModeEnumList = set of TFhirCompositionAttestationModeEnum;
-
-  {@Enum TFhirListModeEnum
-    The processing mode that applies to this section. from http://hl7.org/fhir/ValueSet/list-mode
-  }
-  TFhirListModeEnum = (
-    ListModeNull,  {@enum.value ListModeNull Value is missing from Instance }
-    ListModeWorking, {@enum.value ListModeWorking  }
-    ListModeSnapshot, {@enum.value ListModeSnapshot  }
-    ListModeChanges); {@enum.value ListModeChanges  }
-  TFhirListModeEnumList = set of TFhirListModeEnum;
-
-  {@Enum TFhirConceptMapEquivalenceEnum
-    The degree of equivalence between concepts. from http://hl7.org/fhir/ValueSet/concept-map-equivalence
-  }
-  TFhirConceptMapEquivalenceEnum = (
-    ConceptMapEquivalenceNull,  {@enum.value ConceptMapEquivalenceNull Value is missing from Instance }
-    ConceptMapEquivalenceRelatedto, {@enum.value ConceptMapEquivalenceRelatedto  }
-    ConceptMapEquivalenceEquivalent, {@enum.value ConceptMapEquivalenceEquivalent  }
-    ConceptMapEquivalenceEqual, {@enum.value ConceptMapEquivalenceEqual  }
-    ConceptMapEquivalenceWider, {@enum.value ConceptMapEquivalenceWider  }
-    ConceptMapEquivalenceSubsumes, {@enum.value ConceptMapEquivalenceSubsumes  }
-    ConceptMapEquivalenceNarrower, {@enum.value ConceptMapEquivalenceNarrower  }
-    ConceptMapEquivalenceSpecializes, {@enum.value ConceptMapEquivalenceSpecializes  }
-    ConceptMapEquivalenceInexact, {@enum.value ConceptMapEquivalenceInexact  }
-    ConceptMapEquivalenceUnmatched, {@enum.value ConceptMapEquivalenceUnmatched  }
-    ConceptMapEquivalenceDisjoint); {@enum.value ConceptMapEquivalenceDisjoint  }
-  TFhirConceptMapEquivalenceEnumList = set of TFhirConceptMapEquivalenceEnum;
-
-  {@Enum TFhirConditionClinicalEnum
-    The clinical status of the condition or diagnosis. from http://hl7.org/fhir/ValueSet/condition-clinical
-  }
-  TFhirConditionClinicalEnum = (
-    ConditionClinicalNull,  {@enum.value ConditionClinicalNull Value is missing from Instance }
-    ConditionClinicalActive, {@enum.value ConditionClinicalActive  }
-    ConditionClinicalRelapse, {@enum.value ConditionClinicalRelapse  }
-    ConditionClinicalRemission, {@enum.value ConditionClinicalRemission  }
-    ConditionClinicalResolved); {@enum.value ConditionClinicalResolved  }
-  TFhirConditionClinicalEnumList = set of TFhirConditionClinicalEnum;
-
-  {@Enum TFhirConditionVerStatusEnum
-    The verification status to support or decline the clinical status of the condition or diagnosis. from http://hl7.org/fhir/ValueSet/condition-ver-status
-  }
-  TFhirConditionVerStatusEnum = (
-    ConditionVerStatusNull,  {@enum.value ConditionVerStatusNull Value is missing from Instance }
-    ConditionVerStatusProvisional, {@enum.value ConditionVerStatusProvisional  }
-    ConditionVerStatusDifferential, {@enum.value ConditionVerStatusDifferential  }
-    ConditionVerStatusConfirmed, {@enum.value ConditionVerStatusConfirmed  }
-    ConditionVerStatusRefuted, {@enum.value ConditionVerStatusRefuted  }
-    ConditionVerStatusEnteredInError, {@enum.value ConditionVerStatusEnteredInError  }
-    ConditionVerStatusUnknown); {@enum.value ConditionVerStatusUnknown  }
-  TFhirConditionVerStatusEnumList = set of TFhirConditionVerStatusEnum;
-
-  {@Enum TFhirConformanceStatementKindEnum
-    How a conformance statement is intended to be used. from http://hl7.org/fhir/ValueSet/conformance-statement-kind
-  }
-  TFhirConformanceStatementKindEnum = (
-    ConformanceStatementKindNull,  {@enum.value ConformanceStatementKindNull Value is missing from Instance }
-    ConformanceStatementKindInstance, {@enum.value ConformanceStatementKindInstance  }
-    ConformanceStatementKindCapability, {@enum.value ConformanceStatementKindCapability  }
-    ConformanceStatementKindRequirements); {@enum.value ConformanceStatementKindRequirements  }
-  TFhirConformanceStatementKindEnumList = set of TFhirConformanceStatementKindEnum;
-
-  {@Enum TFhirUnknownContentCodeEnum
-    A code that indicates whether an application accepts unknown elements or extensions when reading resources. from http://hl7.org/fhir/ValueSet/unknown-content-code
-  }
-  TFhirUnknownContentCodeEnum = (
-    UnknownContentCodeNull,  {@enum.value UnknownContentCodeNull Value is missing from Instance }
-    UnknownContentCodeNo, {@enum.value UnknownContentCodeNo  }
-    UnknownContentCodeExtensions, {@enum.value UnknownContentCodeExtensions  }
-    UnknownContentCodeElements, {@enum.value UnknownContentCodeElements  }
-    UnknownContentCodeBoth); {@enum.value UnknownContentCodeBoth  }
-  TFhirUnknownContentCodeEnumList = set of TFhirUnknownContentCodeEnum;
-
-  {@Enum TFhirRestfulConformanceModeEnum
-    The mode of a RESTful conformance statement. from http://hl7.org/fhir/ValueSet/restful-conformance-mode
-  }
-  TFhirRestfulConformanceModeEnum = (
-    RestfulConformanceModeNull,  {@enum.value RestfulConformanceModeNull Value is missing from Instance }
-    RestfulConformanceModeClient, {@enum.value RestfulConformanceModeClient  }
-    RestfulConformanceModeServer); {@enum.value RestfulConformanceModeServer  }
-  TFhirRestfulConformanceModeEnumList = set of TFhirRestfulConformanceModeEnum;
 
   {@Enum TFhirTypeRestfulInteractionEnum
     Operations supported by REST at the type or instance level. from http://hl7.org/fhir/ValueSet/type-restful-interaction
@@ -1275,14 +1011,14 @@ Type
     MessageSignificanceCategoryNotification); {@enum.value MessageSignificanceCategoryNotification  }
   TFhirMessageSignificanceCategoryEnumList = set of TFhirMessageSignificanceCategoryEnum;
 
-  {@Enum TFhirMessageConformanceEventModeEnum
-    The mode of a message conformance statement. from http://hl7.org/fhir/ValueSet/message-conformance-event-mode
+  {@Enum TFhirEventCapabilityModeEnum
+    The mode of a message capability statement. from http://hl7.org/fhir/ValueSet/event-capability-mode
   }
-  TFhirMessageConformanceEventModeEnum = (
-    MessageConformanceEventModeNull,  {@enum.value MessageConformanceEventModeNull Value is missing from Instance }
-    MessageConformanceEventModeSender, {@enum.value MessageConformanceEventModeSender  }
-    MessageConformanceEventModeReceiver); {@enum.value MessageConformanceEventModeReceiver  }
-  TFhirMessageConformanceEventModeEnumList = set of TFhirMessageConformanceEventModeEnum;
+  TFhirEventCapabilityModeEnum = (
+    EventCapabilityModeNull,  {@enum.value EventCapabilityModeNull Value is missing from Instance }
+    EventCapabilityModeSender, {@enum.value EventCapabilityModeSender  }
+    EventCapabilityModeReceiver); {@enum.value EventCapabilityModeReceiver  }
+  TFhirEventCapabilityModeEnumList = set of TFhirEventCapabilityModeEnum;
 
   {@Enum TFhirDocumentModeEnum
     Whether the application produces or consumes documents. from http://hl7.org/fhir/ValueSet/document-mode
@@ -1292,6 +1028,260 @@ Type
     DocumentModeProducer, {@enum.value DocumentModeProducer  }
     DocumentModeConsumer); {@enum.value DocumentModeConsumer  }
   TFhirDocumentModeEnumList = set of TFhirDocumentModeEnum;
+
+  {@Enum TFhirCarePlanStatusEnum
+    Indicates whether the plan is currently being acted upon, represents future intentions or is now a historical record. from http://hl7.org/fhir/ValueSet/care-plan-status
+  }
+  TFhirCarePlanStatusEnum = (
+    CarePlanStatusNull,  {@enum.value CarePlanStatusNull Value is missing from Instance }
+    CarePlanStatusProposed, {@enum.value CarePlanStatusProposed  }
+    CarePlanStatusDraft, {@enum.value CarePlanStatusDraft  }
+    CarePlanStatusActive, {@enum.value CarePlanStatusActive  }
+    CarePlanStatusCompleted, {@enum.value CarePlanStatusCompleted  }
+    CarePlanStatusCancelled); {@enum.value CarePlanStatusCancelled  }
+  TFhirCarePlanStatusEnumList = set of TFhirCarePlanStatusEnum;
+
+  {@Enum TFhirCarePlanRelationshipEnum
+    Codes identifying the types of relationships between two plans. from http://hl7.org/fhir/ValueSet/care-plan-relationship
+  }
+  TFhirCarePlanRelationshipEnum = (
+    CarePlanRelationshipNull,  {@enum.value CarePlanRelationshipNull Value is missing from Instance }
+    CarePlanRelationshipIncludes, {@enum.value CarePlanRelationshipIncludes  }
+    CarePlanRelationshipReplaces, {@enum.value CarePlanRelationshipReplaces  }
+    CarePlanRelationshipFulfills); {@enum.value CarePlanRelationshipFulfills  }
+  TFhirCarePlanRelationshipEnumList = set of TFhirCarePlanRelationshipEnum;
+
+  {@Enum TFhirCarePlanActivityStatusEnum
+    Indicates where the activity is at in its overall life cycle. from http://hl7.org/fhir/ValueSet/care-plan-activity-status
+  }
+  TFhirCarePlanActivityStatusEnum = (
+    CarePlanActivityStatusNull,  {@enum.value CarePlanActivityStatusNull Value is missing from Instance }
+    CarePlanActivityStatusNotStarted, {@enum.value CarePlanActivityStatusNotStarted  }
+    CarePlanActivityStatusScheduled, {@enum.value CarePlanActivityStatusScheduled  }
+    CarePlanActivityStatusInProgress, {@enum.value CarePlanActivityStatusInProgress  }
+    CarePlanActivityStatusOnHold, {@enum.value CarePlanActivityStatusOnHold  }
+    CarePlanActivityStatusCompleted, {@enum.value CarePlanActivityStatusCompleted  }
+    CarePlanActivityStatusCancelled); {@enum.value CarePlanActivityStatusCancelled  }
+  TFhirCarePlanActivityStatusEnumList = set of TFhirCarePlanActivityStatusEnum;
+
+  {@Enum TFhirClaimStatusEnum
+    A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/claim-status
+  }
+  TFhirClaimStatusEnum = (
+    ClaimStatusNull,  {@enum.value ClaimStatusNull Value is missing from Instance }
+    ClaimStatusActive, {@enum.value ClaimStatusActive  }
+    ClaimStatusCancelled, {@enum.value ClaimStatusCancelled  }
+    ClaimStatusDraft, {@enum.value ClaimStatusDraft  }
+    ClaimStatusEnteredInError); {@enum.value ClaimStatusEnteredInError  }
+  TFhirClaimStatusEnumList = set of TFhirClaimStatusEnum;
+
+  {@Enum TFhirClaimUseEnum
+    Complete, proposed, exploratory, other from http://hl7.org/fhir/ValueSet/claim-use
+  }
+  TFhirClaimUseEnum = (
+    ClaimUseNull,  {@enum.value ClaimUseNull Value is missing from Instance }
+    ClaimUseComplete, {@enum.value ClaimUseComplete  }
+    ClaimUseProposed, {@enum.value ClaimUseProposed  }
+    ClaimUseExploratory, {@enum.value ClaimUseExploratory  }
+    ClaimUseOther); {@enum.value ClaimUseOther  }
+  TFhirClaimUseEnumList = set of TFhirClaimUseEnum;
+
+  {@Enum TFhirClaimresponseStatusEnum
+    A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/claimresponse-status
+  }
+  TFhirClaimresponseStatusEnum = (
+    ClaimresponseStatusNull,  {@enum.value ClaimresponseStatusNull Value is missing from Instance }
+    ClaimresponseStatusActive, {@enum.value ClaimresponseStatusActive  }
+    ClaimresponseStatusCancelled, {@enum.value ClaimresponseStatusCancelled  }
+    ClaimresponseStatusDraft, {@enum.value ClaimresponseStatusDraft  }
+    ClaimresponseStatusEnteredInError); {@enum.value ClaimresponseStatusEnteredInError  }
+  TFhirClaimresponseStatusEnumList = set of TFhirClaimresponseStatusEnum;
+
+  {@Enum TFhirClinicalImpressionStatusEnum
+    The workflow state of a clinical impression. from http://hl7.org/fhir/ValueSet/clinical-impression-status
+  }
+  TFhirClinicalImpressionStatusEnum = (
+    ClinicalImpressionStatusNull,  {@enum.value ClinicalImpressionStatusNull Value is missing from Instance }
+    ClinicalImpressionStatusDraft, {@enum.value ClinicalImpressionStatusDraft  }
+    ClinicalImpressionStatusCompleted, {@enum.value ClinicalImpressionStatusCompleted  }
+    ClinicalImpressionStatusEnteredInError); {@enum.value ClinicalImpressionStatusEnteredInError  }
+  TFhirClinicalImpressionStatusEnumList = set of TFhirClinicalImpressionStatusEnum;
+
+  {@Enum TFhirCodesystemHierarchyMeaningEnum
+    The meaning of the hierarchy of concepts in a code system from http://hl7.org/fhir/ValueSet/codesystem-hierarchy-meaning
+  }
+  TFhirCodesystemHierarchyMeaningEnum = (
+    CodesystemHierarchyMeaningNull,  {@enum.value CodesystemHierarchyMeaningNull Value is missing from Instance }
+    CodesystemHierarchyMeaningGroupedBy, {@enum.value CodesystemHierarchyMeaningGroupedBy  }
+    CodesystemHierarchyMeaningSubsumes, {@enum.value CodesystemHierarchyMeaningSubsumes  }
+    CodesystemHierarchyMeaningPartOf, {@enum.value CodesystemHierarchyMeaningPartOf  }
+    CodesystemHierarchyMeaningClassifiedWith); {@enum.value CodesystemHierarchyMeaningClassifiedWith  }
+  TFhirCodesystemHierarchyMeaningEnumList = set of TFhirCodesystemHierarchyMeaningEnum;
+
+  {@Enum TFhirCodesystemContentModeEnum
+    How much of the content of the code system - the concepts and codes it defines - are represented in a code system resource from http://hl7.org/fhir/ValueSet/codesystem-content-mode
+  }
+  TFhirCodesystemContentModeEnum = (
+    CodesystemContentModeNull,  {@enum.value CodesystemContentModeNull Value is missing from Instance }
+    CodesystemContentModeNotPresent, {@enum.value CodesystemContentModeNotPresent  }
+    CodesystemContentModeExamplar, {@enum.value CodesystemContentModeExamplar  }
+    CodesystemContentModeFragment, {@enum.value CodesystemContentModeFragment  }
+    CodesystemContentModeComplete); {@enum.value CodesystemContentModeComplete  }
+  TFhirCodesystemContentModeEnumList = set of TFhirCodesystemContentModeEnum;
+
+  {@Enum TFhirFilterOperatorEnum
+    The kind of operation to perform as a part of a property based filter. from http://hl7.org/fhir/ValueSet/filter-operator
+  }
+  TFhirFilterOperatorEnum = (
+    FilterOperatorNull,  {@enum.value FilterOperatorNull Value is missing from Instance }
+    FilterOperatorEqual, {@enum.value FilterOperatorEqual  }
+    FilterOperatorIsA, {@enum.value FilterOperatorIsA  }
+    FilterOperatorIsNotA, {@enum.value FilterOperatorIsNotA  }
+    FilterOperatorRegex, {@enum.value FilterOperatorRegex  }
+    FilterOperatorIn, {@enum.value FilterOperatorIn  }
+    FilterOperatorNotIn, {@enum.value FilterOperatorNotIn  }
+    FilterOperatorGeneralizes); {@enum.value FilterOperatorGeneralizes  }
+  TFhirFilterOperatorEnumList = set of TFhirFilterOperatorEnum;
+
+  {@Enum TFhirConceptPropertyTypeEnum
+    The type of a property value from http://hl7.org/fhir/ValueSet/concept-property-type
+  }
+  TFhirConceptPropertyTypeEnum = (
+    ConceptPropertyTypeNull,  {@enum.value ConceptPropertyTypeNull Value is missing from Instance }
+    ConceptPropertyTypeCode, {@enum.value ConceptPropertyTypeCode  }
+    ConceptPropertyTypeCoding, {@enum.value ConceptPropertyTypeCoding  }
+    ConceptPropertyTypeString, {@enum.value ConceptPropertyTypeString  }
+    ConceptPropertyTypeInteger, {@enum.value ConceptPropertyTypeInteger  }
+    ConceptPropertyTypeBoolean, {@enum.value ConceptPropertyTypeBoolean  }
+    ConceptPropertyTypeDateTime); {@enum.value ConceptPropertyTypeDateTime  }
+  TFhirConceptPropertyTypeEnumList = set of TFhirConceptPropertyTypeEnum;
+
+  {@Enum TFhirCommunicationStatusEnum
+    The status of the communication. from http://hl7.org/fhir/ValueSet/communication-status
+  }
+  TFhirCommunicationStatusEnum = (
+    CommunicationStatusNull,  {@enum.value CommunicationStatusNull Value is missing from Instance }
+    CommunicationStatusInProgress, {@enum.value CommunicationStatusInProgress  }
+    CommunicationStatusCompleted, {@enum.value CommunicationStatusCompleted  }
+    CommunicationStatusSuspended, {@enum.value CommunicationStatusSuspended  }
+    CommunicationStatusRejected, {@enum.value CommunicationStatusRejected  }
+    CommunicationStatusFailed); {@enum.value CommunicationStatusFailed  }
+  TFhirCommunicationStatusEnumList = set of TFhirCommunicationStatusEnum;
+
+  {@Enum TFhirCommunicationRequestStatusEnum
+    The status of the communication. from http://hl7.org/fhir/ValueSet/communication-request-status
+  }
+  TFhirCommunicationRequestStatusEnum = (
+    CommunicationRequestStatusNull,  {@enum.value CommunicationRequestStatusNull Value is missing from Instance }
+    CommunicationRequestStatusProposed, {@enum.value CommunicationRequestStatusProposed  }
+    CommunicationRequestStatusPlanned, {@enum.value CommunicationRequestStatusPlanned  }
+    CommunicationRequestStatusRequested, {@enum.value CommunicationRequestStatusRequested  }
+    CommunicationRequestStatusReceived, {@enum.value CommunicationRequestStatusReceived  }
+    CommunicationRequestStatusAccepted, {@enum.value CommunicationRequestStatusAccepted  }
+    CommunicationRequestStatusInProgress, {@enum.value CommunicationRequestStatusInProgress  }
+    CommunicationRequestStatusCompleted, {@enum.value CommunicationRequestStatusCompleted  }
+    CommunicationRequestStatusSuspended, {@enum.value CommunicationRequestStatusSuspended  }
+    CommunicationRequestStatusRejected, {@enum.value CommunicationRequestStatusRejected  }
+    CommunicationRequestStatusFailed); {@enum.value CommunicationRequestStatusFailed  }
+  TFhirCommunicationRequestStatusEnumList = set of TFhirCommunicationRequestStatusEnum;
+
+  {@Enum TFhirCompartmentTypeEnum
+    Which compartment a compartmnet definition describes from http://hl7.org/fhir/ValueSet/compartment-type
+  }
+  TFhirCompartmentTypeEnum = (
+    CompartmentTypeNull,  {@enum.value CompartmentTypeNull Value is missing from Instance }
+    CompartmentTypePatient, {@enum.value CompartmentTypePatient  }
+    CompartmentTypeEncounter, {@enum.value CompartmentTypeEncounter  }
+    CompartmentTypeRelatedPerson, {@enum.value CompartmentTypeRelatedPerson  }
+    CompartmentTypePractitioner, {@enum.value CompartmentTypePractitioner  }
+    CompartmentTypeDevice); {@enum.value CompartmentTypeDevice  }
+  TFhirCompartmentTypeEnumList = set of TFhirCompartmentTypeEnum;
+
+  {@Enum TFhirCompositionStatusEnum
+    The workflow/clinical status of the composition. from http://hl7.org/fhir/ValueSet/composition-status
+  }
+  TFhirCompositionStatusEnum = (
+    CompositionStatusNull,  {@enum.value CompositionStatusNull Value is missing from Instance }
+    CompositionStatusPreliminary, {@enum.value CompositionStatusPreliminary  }
+    CompositionStatusFinal, {@enum.value CompositionStatusFinal  }
+    CompositionStatusAmended, {@enum.value CompositionStatusAmended  }
+    CompositionStatusEnteredInError); {@enum.value CompositionStatusEnteredInError  }
+  TFhirCompositionStatusEnumList = set of TFhirCompositionStatusEnum;
+
+  {@Enum TFhirV3ConfidentialityClassificationEnum
+    Codes specifying the level of confidentiality of the composition. from http://hl7.org/fhir/ValueSet/v3-ConfidentialityClassification
+  }
+  TFhirV3ConfidentialityClassificationEnum = (
+    V3ConfidentialityClassificationNull,  {@enum.value V3ConfidentialityClassificationNull Value is missing from Instance }
+    V3ConfidentialityClassificationU, {@enum.value V3ConfidentialityClassificationU  }
+    V3ConfidentialityClassificationL, {@enum.value V3ConfidentialityClassificationL  }
+    V3ConfidentialityClassificationM, {@enum.value V3ConfidentialityClassificationM  }
+    V3ConfidentialityClassificationN, {@enum.value V3ConfidentialityClassificationN  }
+    V3ConfidentialityClassificationR, {@enum.value V3ConfidentialityClassificationR  }
+    V3ConfidentialityClassificationV); {@enum.value V3ConfidentialityClassificationV  }
+  TFhirV3ConfidentialityClassificationEnumList = set of TFhirV3ConfidentialityClassificationEnum;
+
+  {@Enum TFhirCompositionAttestationModeEnum
+    The way in which a person authenticated a composition. from http://hl7.org/fhir/ValueSet/composition-attestation-mode
+  }
+  TFhirCompositionAttestationModeEnum = (
+    CompositionAttestationModeNull,  {@enum.value CompositionAttestationModeNull Value is missing from Instance }
+    CompositionAttestationModePersonal, {@enum.value CompositionAttestationModePersonal  }
+    CompositionAttestationModeProfessional, {@enum.value CompositionAttestationModeProfessional  }
+    CompositionAttestationModeLegal, {@enum.value CompositionAttestationModeLegal  }
+    CompositionAttestationModeOfficial); {@enum.value CompositionAttestationModeOfficial  }
+  TFhirCompositionAttestationModeEnumList = set of TFhirCompositionAttestationModeEnum;
+
+  {@Enum TFhirListModeEnum
+    The processing mode that applies to this section. from http://hl7.org/fhir/ValueSet/list-mode
+  }
+  TFhirListModeEnum = (
+    ListModeNull,  {@enum.value ListModeNull Value is missing from Instance }
+    ListModeWorking, {@enum.value ListModeWorking  }
+    ListModeSnapshot, {@enum.value ListModeSnapshot  }
+    ListModeChanges); {@enum.value ListModeChanges  }
+  TFhirListModeEnumList = set of TFhirListModeEnum;
+
+  {@Enum TFhirConceptMapEquivalenceEnum
+    The degree of equivalence between concepts. from http://hl7.org/fhir/ValueSet/concept-map-equivalence
+  }
+  TFhirConceptMapEquivalenceEnum = (
+    ConceptMapEquivalenceNull,  {@enum.value ConceptMapEquivalenceNull Value is missing from Instance }
+    ConceptMapEquivalenceRelatedto, {@enum.value ConceptMapEquivalenceRelatedto  }
+    ConceptMapEquivalenceEquivalent, {@enum.value ConceptMapEquivalenceEquivalent  }
+    ConceptMapEquivalenceEqual, {@enum.value ConceptMapEquivalenceEqual  }
+    ConceptMapEquivalenceWider, {@enum.value ConceptMapEquivalenceWider  }
+    ConceptMapEquivalenceSubsumes, {@enum.value ConceptMapEquivalenceSubsumes  }
+    ConceptMapEquivalenceNarrower, {@enum.value ConceptMapEquivalenceNarrower  }
+    ConceptMapEquivalenceSpecializes, {@enum.value ConceptMapEquivalenceSpecializes  }
+    ConceptMapEquivalenceInexact, {@enum.value ConceptMapEquivalenceInexact  }
+    ConceptMapEquivalenceUnmatched, {@enum.value ConceptMapEquivalenceUnmatched  }
+    ConceptMapEquivalenceDisjoint); {@enum.value ConceptMapEquivalenceDisjoint  }
+  TFhirConceptMapEquivalenceEnumList = set of TFhirConceptMapEquivalenceEnum;
+
+  {@Enum TFhirConditionClinicalEnum
+    The clinical status of the condition or diagnosis. from http://hl7.org/fhir/ValueSet/condition-clinical
+  }
+  TFhirConditionClinicalEnum = (
+    ConditionClinicalNull,  {@enum.value ConditionClinicalNull Value is missing from Instance }
+    ConditionClinicalActive, {@enum.value ConditionClinicalActive  }
+    ConditionClinicalRelapse, {@enum.value ConditionClinicalRelapse  }
+    ConditionClinicalRemission, {@enum.value ConditionClinicalRemission  }
+    ConditionClinicalResolved); {@enum.value ConditionClinicalResolved  }
+  TFhirConditionClinicalEnumList = set of TFhirConditionClinicalEnum;
+
+  {@Enum TFhirConditionVerStatusEnum
+    The verification status to support or decline the clinical status of the condition or diagnosis. from http://hl7.org/fhir/ValueSet/condition-ver-status
+  }
+  TFhirConditionVerStatusEnum = (
+    ConditionVerStatusNull,  {@enum.value ConditionVerStatusNull Value is missing from Instance }
+    ConditionVerStatusProvisional, {@enum.value ConditionVerStatusProvisional  }
+    ConditionVerStatusDifferential, {@enum.value ConditionVerStatusDifferential  }
+    ConditionVerStatusConfirmed, {@enum.value ConditionVerStatusConfirmed  }
+    ConditionVerStatusRefuted, {@enum.value ConditionVerStatusRefuted  }
+    ConditionVerStatusEnteredInError, {@enum.value ConditionVerStatusEnteredInError  }
+    ConditionVerStatusUnknown); {@enum.value ConditionVerStatusUnknown  }
+  TFhirConditionVerStatusEnumList = set of TFhirConditionVerStatusEnum;
 
   {@Enum TFhirConsentStatusEnum
     Indicates the status of the consent from http://hl7.org/fhir/ValueSet/consent-status
@@ -2556,8 +2546,6 @@ Type
   TFhirExtensionList = class;
   TFhirNarrative = class;
   TFhirNarrativeList = class;
-  TFhirRelatedResource = class;
-  TFhirRelatedResourceList = class;
   TFhirReference = class;
   TFhirReferenceList = class;
   TFhirTriggerDefinition = class;
@@ -2578,6 +2566,8 @@ Type
   TFhirDataRequirementList = class;
   TFhirRange = class;
   TFhirRangeList = class;
+  TFhirRelatedArtifact = class;
+  TFhirRelatedArtifactList = class;
   TFhirAnnotation = class;
   TFhirAnnotationList = class;
   TFhirContactDetail = class;
@@ -2639,7 +2629,7 @@ Type
     Base definition for all elements in a resource.
   }
   TFhirElement = class (TFHIRBase)
-  private
+  protected
     FId : TFhirId;
     FextensionList : TFhirExtensionList;
     Procedure SetId(value : TFhirId);
@@ -2647,7 +2637,7 @@ Type
     Procedure SetIdST(value : String);
     function GetExtensionList : TFhirExtensionList;
     function GetHasExtensionList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -2781,11 +2771,11 @@ Type
     Base definition for all elements that are defined inside a resource - but not those in a data type.
   }
   TFhirBackboneElement = class (TFHIRElement)
-  private
+  protected
     FmodifierExtensionList : TFhirExtensionList;
     function GetModifierExtensionList : TFhirExtensionList;
     function GetHasModifierExtensionList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -5398,14 +5388,14 @@ Type
     Optional Extensions Element - found in all resources.
   }
   TFhirExtension = class (TFHIRType)
-  private
+  protected
     FUrl : TFhirUri;
     FValue : TFhirType;
     Procedure SetUrl(value : TFhirUri);
     Function GetUrlST : String;
     Procedure SetUrlST(value : String);
     Procedure SetValue(value : TFhirType);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -5542,14 +5532,14 @@ Type
     A human-readable formatted text, including images.
   }
   TFhirNarrative = class (TFHIRType)
-  private
+  protected
     FStatus : TFhirEnum;
     FDiv_ : TFhirXHtmlNode;
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirNarrativeStatusEnum;
     Procedure SetStatusST(value : TFhirNarrativeStatusEnum);
     Procedure SetDiv_(value : TFhirXHtmlNode);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -5679,202 +5669,11 @@ Type
   End;
 
 
-  {@Class TFhirRelatedResource : TFhirType
-    Related resources such as additional documentation, justification, or bibliographic references.
-  }
-  TFhirRelatedResource = class (TFhirType)
-  private
-    FType_ : TFhirEnum;
-    FDisplay : TFhirString;
-    FCitation : TFhirString;
-    FUrl : TFhirUri;
-    FDocument : TFhirAttachment;
-    FResource : TFhirReference{TFhirReference};
-    Procedure SetType_(value : TFhirEnum);
-    Function GetType_ST : TFhirRelatedResourceTypeEnum;
-    Procedure SetType_ST(value : TFhirRelatedResourceTypeEnum);
-    Procedure SetDisplay(value : TFhirString);
-    Function GetDisplayST : String;
-    Procedure SetDisplayST(value : String);
-    Procedure SetCitation(value : TFhirString);
-    Function GetCitationST : String;
-    Procedure SetCitationST(value : String);
-    Procedure SetUrl(value : TFhirUri);
-    Function GetUrlST : String;
-    Procedure SetUrlST(value : String);
-    Procedure SetDocument(value : TFhirAttachment);
-    Procedure SetResource(value : TFhirReference{TFhirReference});
-  protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
-    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
-  public
-    constructor Create; Override;
-    destructor Destroy; override;
-    {!script hide}
-    procedure Assign(oSource : TAdvObject); override;
-    function Link : TFhirRelatedResource; overload;
-    function Clone : TFhirRelatedResource; overload;
-    procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
-    function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
-    {!script show}
-  published
-    {@member type_
-      The type of related resource.
-    }
-    property type_ : TFhirRelatedResourceTypeEnum read GetType_ST write SetType_ST;
-    property type_Element : TFhirEnum read FType_ write SetType_;
-
-    {@member display
-      Typed access to A brief description of the document or resource being referenced, suitable for display to a consumer.
-    }
-    property display : String read GetDisplayST write SetDisplayST;
-    {@member displayElement
-      A brief description of the document or resource being referenced, suitable for display to a consumer.
-    }
-    property displayElement : TFhirString read FDisplay write SetDisplay;
-
-    {@member citation
-      Typed access to A bibliographic citation for the related resource. This text SHOULD be formatted according to an accepted citation format.
-    }
-    property citation : String read GetCitationST write SetCitationST;
-    {@member citationElement
-      A bibliographic citation for the related resource. This text SHOULD be formatted according to an accepted citation format.
-    }
-    property citationElement : TFhirString read FCitation write SetCitation;
-
-    {@member url
-      Typed access to A url for the resource that can be followed to access the actual content.
-    }
-    property url : String read GetUrlST write SetUrlST;
-    {@member urlElement
-      A url for the resource that can be followed to access the actual content.
-    }
-    property urlElement : TFhirUri read FUrl write SetUrl;
-
-    {@member document
-      Typed access to The document being referenced, represented as an attachment. This is exclusive with the resource element. (defined for API consistency)
-    }
-    property document : TFhirAttachment read FDocument write SetDocument;
-    {@member documentElement
-      The document being referenced, represented as an attachment. This is exclusive with the resource element.
-    }
-    property documentElement : TFhirAttachment read FDocument write SetDocument;
-
-    {@member resource
-      Typed access to The related resource, such as a library, value set, profile, or other module. (defined for API consistency)
-    }
-    property resource : TFhirReference{TFhirReference} read FResource write SetResource;
-    {@member resourceElement
-      The related resource, such as a library, value set, profile, or other module.
-    }
-    property resourceElement : TFhirReference{TFhirReference} read FResource write SetResource;
-
-  end;
-
-
-  TFhirRelatedResourceListEnumerator = class (TAdvObject)
-  private
-    FIndex : integer;
-    FList : TFhirRelatedResourceList;
-    function GetCurrent : TFhirRelatedResource;
-  public
-    constructor Create(list : TFhirRelatedResourceList);
-    Destructor Destroy; override;
-    function MoveNext : boolean;
-    property Current : TFhirRelatedResource read GetCurrent;
-  end;
-
-
-  {@Class TFhirRelatedResourceList
-    A list of FhirRelatedResource
-  }
-  TFhirRelatedResourceList = class (TFHIRObjectList)
-  private
-
-    function GetItemN(index : Integer) : TFhirRelatedResource;
-    procedure SetItemN(index : Integer; value : TFhirRelatedResource);
-  public
-
-    {!script hide}
-    function Link : TFhirRelatedResourceList; Overload;
-    function Clone : TFhirRelatedResourceList; Overload;
-    function GetEnumerator : TFhirRelatedResourceListEnumerator;
-    {!script show}
-    
-
-    {@member Append
-      Add a FhirRelatedResource to the end of the list.
-    }
-    function Append : TFhirRelatedResource;
-
-    
-    {@member AddItem
-      Add an already existing FhirRelatedResource to the end of the list.
-    }
-    procedure AddItem(value : TFhirRelatedResource); overload;
-
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    
-    {@member IndexOf
-      See if an item is already in the list. returns -1 if not in the list
-    }
-    function IndexOf(value : TFhirRelatedResource) : Integer;
-    
-
-    {@member Insert
-      Insert FhirRelatedResource before the designated index (0 = first item)
-    }
-    function Insert(index : Integer) : TFhirRelatedResource;
-    
-
-    {@member InsertItem
-       Insert an existing FhirRelatedResource before the designated index (0 = first item)
-    }
-    procedure InsertItem(index : Integer; value : TFhirRelatedResource);
-    
-    {@member Item
-       Get the iIndexth FhirRelatedResource. (0 = first item)
-    }
-    
-    {@member Item
-       Get the iIndexth FhirRelatedResource. (0 = first item)
-    }
-    procedure SetItemByIndex(index : Integer; value : TFhirRelatedResource);
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Item(index : Integer) : TFhirRelatedResource;
-    
-    {@member Count
-      The number of items in the collection
-    }
-    function Count : Integer; Overload;
-    
-    {@member remove
-      Remove the indexth item. The first item is index 0.
-    }
-    procedure Remove(index : Integer);
-    {@member ClearItems
-      Remove All Items from the list
-    }
-    procedure ClearItems;
-    
-    Property FhirRelatedResources[index : Integer] : TFhirRelatedResource read GetItemN write SetItemN; default;
-  End;
-
-
   {@Class TFhirReference : TFhirType
     A reference from one resource to another.
   }
   TFhirReference = class (TFhirType)
-  private
+  protected
     FReference : TFhirString;
     FIdentifier : TFhirIdentifier;
     FDisplay : TFhirString;
@@ -5885,7 +5684,7 @@ Type
     Procedure SetDisplay(value : TFhirString);
     Function GetDisplayST : String;
     Procedure SetDisplayST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6031,7 +5830,7 @@ Type
     A description of a triggering event.
   }
   TFhirTriggerDefinition = class (TFhirType)
-  private
+  protected
     FType_ : TFhirEnum;
     FEventName : TFhirString;
     FEventTiming : TFhirType;
@@ -6044,7 +5843,7 @@ Type
     Procedure SetEventNameST(value : String);
     Procedure SetEventTiming(value : TFhirType);
     Procedure SetEventData(value : TFhirDataRequirement);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6196,7 +5995,7 @@ Type
     A measured amount (or an amount that can potentially be measured). Note that measured amounts include amounts that are not precisely quantified, including amounts involving arbitrary units and floating currencies.
   }
   TFhirQuantity = class (TFhirType)
-  private
+  protected
     FValue : TFhirDecimal;
     FComparator : TFhirEnum;
     FUnit_ : TFhirString;
@@ -6217,7 +6016,7 @@ Type
     Procedure SetCode(value : TFhirCode);
     Function GetCodeST : String;
     Procedure SetCodeST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6378,7 +6177,7 @@ Type
     A time period defined by a start and end date and optionally time.
   }
   TFhirPeriod = class (TFhirType)
-  private
+  protected
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
     Procedure SetStart(value : TFhirDateTime);
@@ -6387,7 +6186,7 @@ Type
     Procedure SetEnd_(value : TFhirDateTime);
     Function GetEnd_ST : TDateAndTime;
     Procedure SetEnd_ST(value : TDateAndTime);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6524,7 +6323,7 @@ Type
     A contributor to the content of a knowledge asset, including authors, editors, reviewers, and endorsers.
   }
   TFhirContributor = class (TFhirType)
-  private
+  protected
     FType_ : TFhirEnum;
     FName : TFhirString;
     FcontactList : TFhirContactDetailList;
@@ -6536,7 +6335,7 @@ Type
     Procedure SetNameST(value : String);
     function GetContactList : TFhirContactDetailList;
     function GetHasContactList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6676,7 +6475,7 @@ Type
     For referring to data content defined in other formats.
   }
   TFhirAttachment = class (TFhirType)
-  private
+  protected
     FContentType : TFhirCode;
     FLanguage : TFhirCode;
     FData : TFhirBase64Binary;
@@ -6709,7 +6508,7 @@ Type
     Procedure SetCreation(value : TFhirDateTime);
     Function GetCreationST : TDateAndTime;
     Procedure SetCreationST(value : TDateAndTime);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -6900,7 +6699,7 @@ Type
     Code filters specify additional constraints on the data, specifying the value set of interest for a particular element of the data.
   }
   TFhirDataRequirementCodeFilter = class (TFhirElement)
-  private
+  protected
     FPath : TFhirString;
     FValueSet : TFhirType;
     FvalueCodeList : TFhirCodeList;
@@ -6916,7 +6715,7 @@ Type
     function GetHasValueCodingList : Boolean;
     function GetValueCodeableConceptList : TFhirCodeableConceptList;
     function GetHasValueCodeableConceptList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7071,14 +6870,14 @@ Type
     Date filters specify additional constraints on the data in terms of the applicable date range for specific elements.
   }
   TFhirDataRequirementDateFilter = class (TFhirElement)
-  private
+  protected
     FPath : TFhirString;
     FValue : TFhirType;
     Procedure SetPath(value : TFhirString);
     Function GetPathST : String;
     Procedure SetPathST(value : String);
     Procedure SetValue(value : TFhirType);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7215,7 +7014,7 @@ Type
     Describes a required data item for evaluation in terms of the type of data, and optional code- or date-based filters of the data.
   }
   TFhirDataRequirement = class (TFhirType)
-  private
+  protected
     FType_ : TFhirEnum;
     FprofileList : TFhirReferenceList{TFhirStructureDefinition};
     FmustSupportList : TFhirStringList;
@@ -7232,7 +7031,7 @@ Type
     function GetHasCodeFilterList : Boolean;
     function GetDateFilterList : TFhirDataRequirementDateFilterList;
     function GetHasDateFilterList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7381,12 +7180,12 @@ Type
     A set of ordered Quantities defined by a low and high limit.
   }
   TFhirRange = class (TFhirType)
-  private
+  protected
     FLow : TFhirQuantity;
     FHigh : TFhirQuantity;
     Procedure SetLow(value : TFhirQuantity);
     Procedure SetHigh(value : TFhirQuantity);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7519,11 +7318,202 @@ Type
   End;
 
 
+  {@Class TFhirRelatedArtifact : TFhirType
+    Related resources such as additional documentation, justification, or bibliographic references.
+  }
+  TFhirRelatedArtifact = class (TFhirType)
+  protected
+    FType_ : TFhirEnum;
+    FDisplay : TFhirString;
+    FCitation : TFhirString;
+    FUrl : TFhirUri;
+    FDocument : TFhirAttachment;
+    FResource : TFhirReference{TFhirReference};
+    Procedure SetType_(value : TFhirEnum);
+    Function GetType_ST : TFhirRelatedResourceTypeEnum;
+    Procedure SetType_ST(value : TFhirRelatedResourceTypeEnum);
+    Procedure SetDisplay(value : TFhirString);
+    Function GetDisplayST : String;
+    Procedure SetDisplayST(value : String);
+    Procedure SetCitation(value : TFhirString);
+    Function GetCitationST : String;
+    Procedure SetCitationST(value : String);
+    Procedure SetUrl(value : TFhirUri);
+    Function GetUrlST : String;
+    Procedure SetUrlST(value : String);
+    Procedure SetDocument(value : TFhirAttachment);
+    Procedure SetResource(value : TFhirReference{TFhirReference});
+  
+    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirRelatedArtifact; overload;
+    function Clone : TFhirRelatedArtifact; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    function makeProperty(propName : string): TFHIRObject; override;
+    function fhirType : string; override;
+    function equalsDeep(other : TFHIRBase) : boolean; override;
+    function equalsShallow(other : TFHIRBase) : boolean; override;
+    {!script show}
+  published
+    {@member type_
+      The type of related resource.
+    }
+    property type_ : TFhirRelatedResourceTypeEnum read GetType_ST write SetType_ST;
+    property type_Element : TFhirEnum read FType_ write SetType_;
+
+    {@member display
+      Typed access to A brief description of the document or resource being referenced, suitable for display to a consumer.
+    }
+    property display : String read GetDisplayST write SetDisplayST;
+    {@member displayElement
+      A brief description of the document or resource being referenced, suitable for display to a consumer.
+    }
+    property displayElement : TFhirString read FDisplay write SetDisplay;
+
+    {@member citation
+      Typed access to A bibliographic citation for the related resource. This text SHOULD be formatted according to an accepted citation format.
+    }
+    property citation : String read GetCitationST write SetCitationST;
+    {@member citationElement
+      A bibliographic citation for the related resource. This text SHOULD be formatted according to an accepted citation format.
+    }
+    property citationElement : TFhirString read FCitation write SetCitation;
+
+    {@member url
+      Typed access to A url for the resource that can be followed to access the actual content.
+    }
+    property url : String read GetUrlST write SetUrlST;
+    {@member urlElement
+      A url for the resource that can be followed to access the actual content.
+    }
+    property urlElement : TFhirUri read FUrl write SetUrl;
+
+    {@member document
+      Typed access to The document being referenced, represented as an attachment. This is exclusive with the resource element. (defined for API consistency)
+    }
+    property document : TFhirAttachment read FDocument write SetDocument;
+    {@member documentElement
+      The document being referenced, represented as an attachment. This is exclusive with the resource element.
+    }
+    property documentElement : TFhirAttachment read FDocument write SetDocument;
+
+    {@member resource
+      Typed access to The related resource, such as a library, value set, profile, or other module. (defined for API consistency)
+    }
+    property resource : TFhirReference{TFhirReference} read FResource write SetResource;
+    {@member resourceElement
+      The related resource, such as a library, value set, profile, or other module.
+    }
+    property resourceElement : TFhirReference{TFhirReference} read FResource write SetResource;
+
+  end;
+
+
+  TFhirRelatedArtifactListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirRelatedArtifactList;
+    function GetCurrent : TFhirRelatedArtifact;
+  public
+    constructor Create(list : TFhirRelatedArtifactList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirRelatedArtifact read GetCurrent;
+  end;
+
+
+  {@Class TFhirRelatedArtifactList
+    A list of FhirRelatedArtifact
+  }
+  TFhirRelatedArtifactList = class (TFHIRObjectList)
+  private
+
+    function GetItemN(index : Integer) : TFhirRelatedArtifact;
+    procedure SetItemN(index : Integer; value : TFhirRelatedArtifact);
+  public
+
+    {!script hide}
+    function Link : TFhirRelatedArtifactList; Overload;
+    function Clone : TFhirRelatedArtifactList; Overload;
+    function GetEnumerator : TFhirRelatedArtifactListEnumerator;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirRelatedArtifact to the end of the list.
+    }
+    function Append : TFhirRelatedArtifact;
+
+    
+    {@member AddItem
+      Add an already existing FhirRelatedArtifact to the end of the list.
+    }
+    procedure AddItem(value : TFhirRelatedArtifact); overload;
+
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirRelatedArtifact) : Integer;
+    
+
+    {@member Insert
+      Insert FhirRelatedArtifact before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirRelatedArtifact;
+    
+
+    {@member InsertItem
+       Insert an existing FhirRelatedArtifact before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirRelatedArtifact);
+    
+    {@member Item
+       Get the iIndexth FhirRelatedArtifact. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirRelatedArtifact. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirRelatedArtifact);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirRelatedArtifact;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirRelatedArtifacts[index : Integer] : TFhirRelatedArtifact read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirAnnotation : TFhirType
     A  text note which also  contains information about who made the statement and when.
   }
   TFhirAnnotation = class (TFhirType)
-  private
+  protected
     FAuthor : TFhirType;
     FTime : TFhirDateTime;
     FText : TFhirString;
@@ -7534,7 +7524,7 @@ Type
     Procedure SetText(value : TFhirString);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7680,7 +7670,7 @@ Type
     Specifies contact information for a person or organization.
   }
   TFhirContactDetail = class (TFhirType)
-  private
+  protected
     FName : TFhirString;
     FtelecomList : TFhirContactPointList;
     Procedure SetName(value : TFhirString);
@@ -7688,7 +7678,7 @@ Type
     Procedure SetNameST(value : String);
     function GetTelecomList : TFhirContactPointList;
     function GetHasTelecomList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -7822,7 +7812,7 @@ Type
     A technical identifier - identifies some entity uniquely and unambiguously.
   }
   TFhirIdentifier = class (TFhirType)
-  private
+  protected
     FUse : TFhirEnum;
     FType_ : TFhirCodeableConcept;
     FSystem : TFhirUri;
@@ -7841,7 +7831,7 @@ Type
     Procedure SetValueST(value : String);
     Procedure SetPeriod(value : TFhirPeriod);
     Procedure SetAssigner(value : TFhirReference{TFhirOrganization});
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8011,7 +8001,7 @@ Type
     A reference to a code defined by a terminology system.
   }
   TFhirCoding = class (TFhirType)
-  private
+  protected
     FSystem : TFhirUri;
     FVersion : TFhirString;
     FCode : TFhirCode;
@@ -8032,7 +8022,7 @@ Type
     Procedure SetUserSelected(value : TFhirBoolean);
     Function GetUserSelectedST : Boolean;
     Procedure SetUserSelectedST(value : Boolean);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8193,35 +8183,15 @@ Type
 
 
   {@Class TFhirUsageContext : TFhirType
-    Specifies clinical metadata that can be used to retrieve, index and/or categorize the knowledge artifact. This metadata can either be specific to the applicable population (e.g., age category, DRG) or the specific context of care (e.g., venue, care setting, provider of care).
+    Specifies clinical/business/etc metadata that can be used to retrieve, index and/or categorize an artifact. This metadata can either be specific to the applicable population (e.g., age category, DRG) or the specific context of care (e.g., venue, care setting, provider of care).
   }
   TFhirUsageContext = class (TFhirType)
-  private
-    FpatientGenderList : TFhirCodeableConceptList;
-    FpatientAgeGroupList : TFhirCodeableConceptList;
-    FclinicalFocusList : TFhirCodeableConceptList;
-    FtargetUserList : TFhirCodeableConceptList;
-    FworkflowSettingList : TFhirCodeableConceptList;
-    FworkflowTaskList : TFhirCodeableConceptList;
-    FclinicalVenueList : TFhirCodeableConceptList;
-    FjurisdictionList : TFhirCodeableConceptList;
-    function GetPatientGenderList : TFhirCodeableConceptList;
-    function GetHasPatientGenderList : Boolean;
-    function GetPatientAgeGroupList : TFhirCodeableConceptList;
-    function GetHasPatientAgeGroupList : Boolean;
-    function GetClinicalFocusList : TFhirCodeableConceptList;
-    function GetHasClinicalFocusList : Boolean;
-    function GetTargetUserList : TFhirCodeableConceptList;
-    function GetHasTargetUserList : Boolean;
-    function GetWorkflowSettingList : TFhirCodeableConceptList;
-    function GetHasWorkflowSettingList : Boolean;
-    function GetWorkflowTaskList : TFhirCodeableConceptList;
-    function GetHasWorkflowTaskList : Boolean;
-    function GetClinicalVenueList : TFhirCodeableConceptList;
-    function GetHasClinicalVenueList : Boolean;
-    function GetJurisdictionList : TFhirCodeableConceptList;
-    function GetHasJurisdictionList : Boolean;
   protected
+    FCode : TFhirCoding;
+    FValue : TFhirType;
+    Procedure SetCode(value : TFhirCoding);
+    Procedure SetValue(value : TFhirType);
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8238,53 +8208,23 @@ Type
     function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
   published
-    {@member patientGenderList
-      The gender of the patient. For this item type, use HL7 administrative gender codes (OID: 2.16.840.1.113883.1.11.1).
+    {@member code
+      Typed access to A code the specifies the type of context being specified by this usage context. (defined for API consistency)
     }
-    property patientGenderList : TFhirCodeableConceptList read GetPatientGenderList;
-    property hasPatientGenderList : boolean read GetHasPatientGenderList;
+    property code : TFhirCoding read FCode write SetCode;
+    {@member codeElement
+      A code the specifies the type of context being specified by this usage context.
+    }
+    property codeElement : TFhirCoding read FCode write SetCode;
 
-    {@member patientAgeGroupList
-      A patient demographic category for which this artifact is applicable. Allows specification of age groups using coded values originating from the MeSH Code system (OID: 2.16.840.1.113883.6.177). More specifically, only codes from the AgeGroupObservationValue value set are valid for this field  [2.16.840.1.113883.11.75].
+    {@member value
+      Typed access to A value that defines the context specified in this context of use. The interpretation of the value is defined the code. (defined for API consistency)
     }
-    property patientAgeGroupList : TFhirCodeableConceptList read GetPatientAgeGroupList;
-    property hasPatientAgeGroupList : boolean read GetHasPatientAgeGroupList;
-
-    {@member clinicalFocusList
-      The clinical concept(s) addressed by the artifact.  For example, disease, diagnostic test interpretation, medication ordering. Please refer to the implementation guide on which code system and codes to use.
+    property value : TFhirType read FValue write SetValue;
+    {@member valueElement
+      A value that defines the context specified in this context of use. The interpretation of the value is defined the code.
     }
-    property clinicalFocusList : TFhirCodeableConceptList read GetClinicalFocusList;
-    property hasClinicalFocusList : boolean read GetHasClinicalFocusList;
-
-    {@member targetUserList
-      The user types to which an artifact is targeted.  For example, PCP, Patient, Cardiologist, Behavioral Professional, Oral Health Professional, Prescriber, etc... taken from the NUCC Health Care provider taxonomyCode system (OID: 2.16.840.1.113883.6.101).
-    }
-    property targetUserList : TFhirCodeableConceptList read GetTargetUserList;
-    property hasTargetUserList : boolean read GetHasTargetUserList;
-
-    {@member workflowSettingList
-      The settings in which the artifact is intended for use.  For example, admission, pre-op, etc.
-    }
-    property workflowSettingList : TFhirCodeableConceptList read GetWorkflowSettingList;
-    property hasWorkflowSettingList : boolean read GetHasWorkflowSettingList;
-
-    {@member workflowTaskList
-      The context for the clinical task(s) represented by this artifact. Can be any task context represented by the HL7 ActTaskCode value set (OID: 2.16.840.1.113883.1.11.19846). General categories include: order entry, patient documentation and patient information review.
-    }
-    property workflowTaskList : TFhirCodeableConceptList read GetWorkflowTaskList;
-    property hasWorkflowTaskList : boolean read GetHasWorkflowTaskList;
-
-    {@member clinicalVenueList
-      The venue in which an artifact could be used.  For example, Outpatient, Inpatient, Home, Nursing home. The code value may originate from either the HL7 ActEncounter (OID: 2.16.840.1.113883.1.11.13955) or NUCC non-individual provider codes OID: 2.16.840.1.113883.1.11.19465.
-    }
-    property clinicalVenueList : TFhirCodeableConceptList read GetClinicalVenueList;
-    property hasClinicalVenueList : boolean read GetHasClinicalVenueList;
-
-    {@member jurisdictionList
-      The jurisdiction in which the artifact is intended to be used.
-    }
-    property jurisdictionList : TFhirCodeableConceptList read GetJurisdictionList;
-    property hasJurisdictionList : boolean read GetHasJurisdictionList;
+    property valueElement : TFhirType read FValue write SetValue;
 
   end;
 
@@ -8388,7 +8328,7 @@ Type
     A digital signature along with supporting context. The signature may be electronic/cryptographic in nature, or a graphical image representing a hand-written signature, or a signature process. Different Signature approaches have different utilities.
   }
   TFhirSignature = class (TFhirType)
-  private
+  protected
     Ftype_List : TFhirCodingList;
     FWhen : TFhirInstant;
     FWho : TFhirType;
@@ -8408,7 +8348,7 @@ Type
     Procedure SetBlob(value : TFhirBase64Binary);
     Function GetBlobST : TBytes;
     Procedure SetBlobST(value : TBytes);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8578,7 +8518,7 @@ Type
     A series of measurements taken by a device, with upper and lower limits. There may be more than one dimension in the data.
   }
   TFhirSampledData = class (TFhirType)
-  private
+  protected
     FOrigin : TFhirQuantity;
     FPeriod : TFhirDecimal;
     FFactor : TFhirDecimal;
@@ -8605,7 +8545,7 @@ Type
     Procedure SetData(value : TFhirString);
     Function GetDataST : String;
     Procedure SetDataST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8787,12 +8727,12 @@ Type
     A relationship of two Quantity values - expressed as a numerator and a denominator.
   }
   TFhirRatio = class (TFhirType)
-  private
+  protected
     FNumerator : TFhirQuantity;
     FDenominator : TFhirQuantity;
     Procedure SetNumerator(value : TFhirQuantity);
     Procedure SetDenominator(value : TFhirQuantity);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -8929,7 +8869,7 @@ Type
     A concept that may be defined by a formal reference to a terminology or ontology or may be provided by text.
   }
   TFhirCodeableConcept = class (TFhirType)
-  private
+  protected
     FcodingList : TFhirCodingList;
     FText : TFhirString;
     function GetCodingList : TFhirCodingList;
@@ -8937,7 +8877,7 @@ Type
     Procedure SetText(value : TFhirString);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -9071,7 +9011,7 @@ Type
     The parameters to the module. This collection specifies both the input and output parameters. Input parameters are provided by the caller as part of the $evaluate operation. Output parameters are included in the GuidanceResponse.
   }
   TFhirParameterDefinition = class (TFhirType)
-  private
+  protected
     FName : TFhirCode;
     FUse : TFhirEnum;
     FMin : TFhirInteger;
@@ -9098,7 +9038,7 @@ Type
     Function GetType_ST : TFhirAllTypesEnum;
     Procedure SetType_ST(value : TFhirAllTypesEnum);
     Procedure SetProfile(value : TFhirReference{TFhirStructureDefinition});
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -9274,7 +9214,7 @@ Type
     The metadata about a resource. This is content in the resource that is maintained by the infrastructure. Changes to the content may not always be associated with version changes to the resource.
   }
   TFhirMeta = class (TFhirType)
-  private
+  protected
     FVersionId : TFhirId;
     FLastUpdated : TFhirInstant;
     FprofileList : TFhirUriList;
@@ -9292,7 +9232,7 @@ Type
     function GetHasSecurityList : Boolean;
     function GetTagList : TFhirCodingList;
     function GetHasTagList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -9447,7 +9387,7 @@ Type
     A human's name with the ability to identify parts and usage.
   }
   TFhirHumanName = class (TFhirType)
-  private
+  protected
     FUse : TFhirEnum;
     FText : TFhirString;
     FfamilyList : TFhirStringList;
@@ -9470,7 +9410,7 @@ Type
     function GetSuffixList : TFhirStringList;
     function GetHasSuffixList : Boolean;
     Procedure SetPeriod(value : TFhirPeriod);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -9637,7 +9577,7 @@ Type
     Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
   }
   TFhirContactPoint = class (TFhirType)
-  private
+  protected
     FSystem : TFhirEnum;
     FValue : TFhirString;
     FUse : TFhirEnum;
@@ -9656,7 +9596,7 @@ Type
     Function GetRankST : String;
     Procedure SetRankST(value : String);
     Procedure SetPeriod(value : TFhirPeriod);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -9814,7 +9754,7 @@ Type
     An address expressed using postal conventions (as opposed to GPS or other location definition formats).  This data type may be used to convey addresses for use in delivering mail as well as for visiting locations and which might not be valid for mail delivery.  There are a variety of postal address formats defined around the world.
   }
   TFhirAddress = class (TFhirType)
-  private
+  protected
     FUse : TFhirEnum;
     FType_ : TFhirEnum;
     FText : TFhirString;
@@ -9852,7 +9792,7 @@ Type
     Function GetCountryST : String;
     Procedure SetCountryST(value : String);
     Procedure SetPeriod(value : TFhirPeriod);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10052,7 +9992,7 @@ Type
     A set of rules that describe when the event should occur.
   }
   TFhirTimingRepeat = class (TFhirElement)
-  private
+  protected
     FBounds : TFhirType;
     FCount : TFhirInteger;
     FCountMax : TFhirInteger;
@@ -10103,7 +10043,7 @@ Type
     Procedure SetOffset(value : TFhirUnsignedInt);
     Function GetOffsetST : String;
     Procedure SetOffsetST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10330,7 +10270,7 @@ Type
     Specifies an event that may occur multiple times. Timing schedules are used to record when things are expected or requested to occur. The most common usage is in dosage instructions for medications. They are also used when planning care of various kinds.
   }
   TFhirTiming = class (TFhirType)
-  private
+  protected
     FeventList : TFhirDateTimeList;
     FRepeat_ : TFhirTimingRepeat;
     FCode : TFhirCodeableConcept;
@@ -10338,7 +10278,7 @@ Type
     function GetHasEventList : Boolean;
     Procedure SetRepeat_(value : TFhirTimingRepeat);
     Procedure SetCode(value : TFhirCodeableConcept);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10481,7 +10421,7 @@ Type
     Indicates that the element is sliced into a set of alternative definitions (i.e. in a structure definition, there are multiple different constraints on a single element in the base resource). Slicing can be used in any resource that has cardinality ..* on the base resource, or any resource with a choice of types. The set of slices is any elements that come after this in the element sequence that have the same path, until a shorter path occurs (the shorter path terminates the set).
   }
   TFhirElementDefinitionSlicing = class (TFhirElement)
-  private
+  protected
     FdiscriminatorList : TFhirStringList;
     FDescription : TFhirString;
     FOrdered : TFhirBoolean;
@@ -10497,7 +10437,7 @@ Type
     Procedure SetRules(value : TFhirEnum);
     Function GetRulesST : TFhirResourceSlicingRulesEnum;
     Procedure SetRulesST(value : TFhirResourceSlicingRulesEnum);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10646,7 +10586,7 @@ Type
     Information about the base definition of the element, provided to make it unnecessary for tools to trace the deviation of the element through the derived and related profiles. This information is provided when the element definition is not the original definition of an element - i.g. either in a constraint on another type, or for elements from a super type in a snap shot.
   }
   TFhirElementDefinitionBase = class (TFhirElement)
-  private
+  protected
     FPath : TFhirString;
     FMin : TFhirInteger;
     FMax : TFhirString;
@@ -10659,7 +10599,7 @@ Type
     Procedure SetMax(value : TFhirString);
     Function GetMaxST : String;
     Procedure SetMaxST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10805,7 +10745,7 @@ Type
     The data type or resource that the value of this element is permitted to be.
   }
   TFhirElementDefinitionType = class (TFhirElement)
-  private
+  protected
     FCode : TFhirCode;
     FProfile : TFhirUri;
     FTargetProfile : TFhirUri;
@@ -10827,7 +10767,7 @@ Type
     Procedure SetVersioning(value : TFhirEnum);
     Function GetVersioningST : TFhirReferenceVersionRulesEnum;
     Procedure SetVersioningST(value : TFhirReferenceVersionRulesEnum);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -10985,7 +10925,7 @@ Type
     Formal constraints such as co-occurrence and other constraints that can be computationally evaluated within the context of the instance.
   }
   TFhirElementDefinitionConstraint = class (TFhirElement)
-  private
+  protected
     FKey : TFhirId;
     FRequirements : TFhirString;
     FSeverity : TFhirEnum;
@@ -11010,7 +10950,7 @@ Type
     Procedure SetXpath(value : TFhirString);
     Function GetXpathST : String;
     Procedure SetXpathST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -11180,7 +11120,7 @@ Type
     Binds to a value set if this element is coded (code, Coding, CodeableConcept).
   }
   TFhirElementDefinitionBinding = class (TFhirElement)
-  private
+  protected
     FStrength : TFhirEnum;
     FDescription : TFhirString;
     FValueSet : TFhirType;
@@ -11191,7 +11131,7 @@ Type
     Function GetDescriptionST : String;
     Procedure SetDescriptionST(value : String);
     Procedure SetValueSet(value : TFhirType);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -11334,7 +11274,7 @@ Type
     Identifies a concept from an external specification that roughly corresponds to this element.
   }
   TFhirElementDefinitionMapping = class (TFhirElement)
-  private
+  protected
     FIdentity : TFhirId;
     FLanguage : TFhirCode;
     FMap : TFhirString;
@@ -11347,7 +11287,7 @@ Type
     Procedure SetMap(value : TFhirString);
     Function GetMapST : String;
     Procedure SetMapST(value : String);
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -11493,7 +11433,7 @@ Type
     Captures constraints on each element within the resource, profile, or extension.
   }
   TFhirElementDefinition = class (TFhirType)
-  private
+  protected
     FPath : TFhirString;
     FRepresentation : TFhirEnumList;
     FName : TFhirString;
@@ -11595,7 +11535,7 @@ Type
     Procedure SetBinding(value : TFhirElementDefinitionBinding);
     function GetMappingList : TFhirElementDefinitionMappingList;
     function GetHasMappingList : Boolean;
-  protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -11972,8 +11912,8 @@ Type
     A length of time.
   }
   TFhirDuration = class (TFhirQuantity)
-  private
   protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -12092,8 +12032,8 @@ Type
     A measured amount (or an amount that can potentially be measured). Note that measured amounts include amounts that are not precisely quantified, including amounts involving arbitrary units and floating currencies.
   }
   TFhirCount = class (TFhirQuantity)
-  private
   protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -12212,8 +12152,8 @@ Type
     An amount of economic utility in some recognised currency.
   }
   TFhirMoney = class (TFhirQuantity)
-  private
   protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -12332,8 +12272,8 @@ Type
     A length - a value with a unit that is a physical distance.
   }
   TFhirDistance = class (TFhirQuantity)
-  private
   protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -12452,8 +12392,8 @@ Type
     A duration of time during which an organism (or a process) has existed.
   }
   TFhirAge = class (TFhirQuantity)
-  private
   protected
+  
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -12569,18 +12509,18 @@ Type
 
 
 Const
+  CODES_TFhirConformanceResourceStatusEnum : Array[TFhirConformanceResourceStatusEnum] of String = ('', 'draft', 'active', 'retired');
+  SYSTEMS_TFhirConformanceResourceStatusEnum : Array[TFhirConformanceResourceStatusEnum] of String = ('', 'http://hl7.org/fhir/conformance-resource-status', 'http://hl7.org/fhir/conformance-resource-status', 'http://hl7.org/fhir/conformance-resource-status');
   CODES_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'generated', 'extensions', 'additional', 'empty');
   SYSTEMS_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status');
-  CODES_TFhirRelatedResourceTypeEnum : Array[TFhirRelatedResourceTypeEnum] of String = ('', 'documentation', 'justification', 'citation', 'predecessor', 'successor', 'derived-from', 'depends-on', 'composed-of');
-  SYSTEMS_TFhirRelatedResourceTypeEnum : Array[TFhirRelatedResourceTypeEnum] of String = ('', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type');
   CODES_TFhirTriggerTypeEnum : Array[TFhirTriggerTypeEnum] of String = ('', 'named-event', 'periodic', 'data-added', 'data-modified', 'data-removed', 'data-accessed', 'data-access-ended');
   SYSTEMS_TFhirTriggerTypeEnum : Array[TFhirTriggerTypeEnum] of String = ('', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type', 'http://hl7.org/fhir/trigger-type');
   CODES_TFhirQuantityComparatorEnum : Array[TFhirQuantityComparatorEnum] of String = ('', '<', '<=', '>=', '>');
   SYSTEMS_TFhirQuantityComparatorEnum : Array[TFhirQuantityComparatorEnum] of String = ('', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator', 'http://hl7.org/fhir/quantity-comparator');
   CODES_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'author', 'editor', 'reviewer', 'endorser');
   SYSTEMS_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type');
-  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedResource', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 
-    'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 
+  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 
+    'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 
     'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
   SYSTEMS_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
     'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
@@ -12589,6 +12529,8 @@ Const
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
+  CODES_TFhirRelatedResourceTypeEnum : Array[TFhirRelatedResourceTypeEnum] of String = ('', 'documentation', 'justification', 'citation', 'predecessor', 'successor', 'derived-from', 'depends-on', 'composed-of');
+  SYSTEMS_TFhirRelatedResourceTypeEnum : Array[TFhirRelatedResourceTypeEnum] of String = ('', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type', 'http://hl7.org/fhir/related-resource-type');
   CODES_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'usual', 'official', 'temp', 'secondary');
   SYSTEMS_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use');
   CODES_TFhirOperationParameterUseEnum : Array[TFhirOperationParameterUseEnum] of String = ('', 'in', 'out');
@@ -12621,8 +12563,6 @@ Const
   SYSTEMS_TFhirBindingStrengthEnum : Array[TFhirBindingStrengthEnum] of String = ('', 'http://hl7.org/fhir/binding-strength', 'http://hl7.org/fhir/binding-strength', 'http://hl7.org/fhir/binding-strength', 'http://hl7.org/fhir/binding-strength');
   CODES_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'active', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status');
-  CODES_TFhirModuleMetadataStatusEnum : Array[TFhirModuleMetadataStatusEnum] of String = ('', 'draft', 'active', 'inactive');
-  SYSTEMS_TFhirModuleMetadataStatusEnum : Array[TFhirModuleMetadataStatusEnum] of String = ('', 'http://hl7.org/fhir/module-metadata-status', 'http://hl7.org/fhir/module-metadata-status', 'http://hl7.org/fhir/module-metadata-status');
   CODES_TFhirActivityDefinitionCategoryEnum : Array[TFhirActivityDefinitionCategoryEnum] of String = ('', 'communication', 'device', 'diagnostic', 'diet', 'drug', 'encounter', 'immunization', 'observation', 'procedure', 'referral', 'supply', 'vision', 'other');
   SYSTEMS_TFhirActivityDefinitionCategoryEnum : Array[TFhirActivityDefinitionCategoryEnum] of String = ('', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category', 'http://hl7.org/fhir/activity-definition-category');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
@@ -12671,63 +12611,19 @@ Const
   SYSTEMS_TFhirSearchEntryModeEnum : Array[TFhirSearchEntryModeEnum] of String = ('', 'http://hl7.org/fhir/search-entry-mode', 'http://hl7.org/fhir/search-entry-mode', 'http://hl7.org/fhir/search-entry-mode');
   CODES_TFhirHttpVerbEnum : Array[TFhirHttpVerbEnum] of String = ('', 'GET', 'POST', 'PUT', 'DELETE');
   SYSTEMS_TFhirHttpVerbEnum : Array[TFhirHttpVerbEnum] of String = ('', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb', 'http://hl7.org/fhir/http-verb');
-  CODES_TFhirCarePlanStatusEnum : Array[TFhirCarePlanStatusEnum] of String = ('', 'proposed', 'draft', 'active', 'completed', 'cancelled');
-  SYSTEMS_TFhirCarePlanStatusEnum : Array[TFhirCarePlanStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status');
-  CODES_TFhirCarePlanRelationshipEnum : Array[TFhirCarePlanRelationshipEnum] of String = ('', 'includes', 'replaces', 'fulfills');
-  SYSTEMS_TFhirCarePlanRelationshipEnum : Array[TFhirCarePlanRelationshipEnum] of String = ('', 'http://hl7.org/fhir/care-plan-relationship', 'http://hl7.org/fhir/care-plan-relationship', 'http://hl7.org/fhir/care-plan-relationship');
-  CODES_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled');
-  SYSTEMS_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status');
-  CODES_TFhirClaimStatusEnum : Array[TFhirClaimStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
-  SYSTEMS_TFhirClaimStatusEnum : Array[TFhirClaimStatusEnum] of String = ('', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status');
-  CODES_TFhirClaimUseEnum : Array[TFhirClaimUseEnum] of String = ('', 'complete', 'proposed', 'exploratory', 'other');
-  SYSTEMS_TFhirClaimUseEnum : Array[TFhirClaimUseEnum] of String = ('', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use');
-  CODES_TFhirClaimresponseStatusEnum : Array[TFhirClaimresponseStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
-  SYSTEMS_TFhirClaimresponseStatusEnum : Array[TFhirClaimresponseStatusEnum] of String = ('', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status');
-  CODES_TFhirClinicalImpressionStatusEnum : Array[TFhirClinicalImpressionStatusEnum] of String = ('', 'draft', 'completed', 'entered-in-error');
-  SYSTEMS_TFhirClinicalImpressionStatusEnum : Array[TFhirClinicalImpressionStatusEnum] of String = ('', 'http://hl7.org/fhir/clinical-impression-status', 'http://hl7.org/fhir/clinical-impression-status', 'http://hl7.org/fhir/clinical-impression-status');
-  CODES_TFhirConformanceResourceStatusEnum : Array[TFhirConformanceResourceStatusEnum] of String = ('', 'draft', 'active', 'retired');
-  SYSTEMS_TFhirConformanceResourceStatusEnum : Array[TFhirConformanceResourceStatusEnum] of String = ('', 'http://hl7.org/fhir/conformance-resource-status', 'http://hl7.org/fhir/conformance-resource-status', 'http://hl7.org/fhir/conformance-resource-status');
-  CODES_TFhirCodesystemHierarchyMeaningEnum : Array[TFhirCodesystemHierarchyMeaningEnum] of String = ('', 'grouped-by', 'subsumes', 'part-of', 'classified-with');
-  SYSTEMS_TFhirCodesystemHierarchyMeaningEnum : Array[TFhirCodesystemHierarchyMeaningEnum] of String = ('', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning');
-  CODES_TFhirCodesystemContentModeEnum : Array[TFhirCodesystemContentModeEnum] of String = ('', 'not-present', 'examplar', 'fragment', 'complete');
-  SYSTEMS_TFhirCodesystemContentModeEnum : Array[TFhirCodesystemContentModeEnum] of String = ('', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode');
-  CODES_TFhirFilterOperatorEnum : Array[TFhirFilterOperatorEnum] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes');
-  SYSTEMS_TFhirFilterOperatorEnum : Array[TFhirFilterOperatorEnum] of String = ('', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator');
-  CODES_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'code', 'Coding', 'string', 'integer', 'boolean', 'dateTime');
-  SYSTEMS_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type');
-  CODES_TFhirCommunicationStatusEnum : Array[TFhirCommunicationStatusEnum] of String = ('', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
-  SYSTEMS_TFhirCommunicationStatusEnum : Array[TFhirCommunicationStatusEnum] of String = ('', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status');
-  CODES_TFhirCommunicationRequestStatusEnum : Array[TFhirCommunicationRequestStatusEnum] of String = ('', 'proposed', 'planned', 'requested', 'received', 'accepted', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
-  SYSTEMS_TFhirCommunicationRequestStatusEnum : Array[TFhirCommunicationRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status');
-  CODES_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'Patient', 'Encounter', 'RelatedPerson', 'Practitioner', 'Device');
-  SYSTEMS_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type');
-  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 
+  CODES_TFhirCapabilityStatementKindEnum : Array[TFhirCapabilityStatementKindEnum] of String = ('', 'instance', 'capability', 'requirements');
+  SYSTEMS_TFhirCapabilityStatementKindEnum : Array[TFhirCapabilityStatementKindEnum] of String = ('', 'http://hl7.org/fhir/capability-statement-kind', 'http://hl7.org/fhir/capability-statement-kind', 'http://hl7.org/fhir/capability-statement-kind');
+  CODES_TFhirUnknownContentCodeEnum : Array[TFhirUnknownContentCodeEnum] of String = ('', 'no', 'extensions', 'elements', 'both');
+  SYSTEMS_TFhirUnknownContentCodeEnum : Array[TFhirUnknownContentCodeEnum] of String = ('', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code');
+  CODES_TFhirRestfulCapabilityModeEnum : Array[TFhirRestfulCapabilityModeEnum] of String = ('', 'client', 'server');
+  SYSTEMS_TFhirRestfulCapabilityModeEnum : Array[TFhirRestfulCapabilityModeEnum] of String = ('', 'http://hl7.org/fhir/restful-capability-mode', 'http://hl7.org/fhir/restful-capability-mode');
+  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 
     'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription');
   SYSTEMS_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
-  CODES_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'preliminary', 'final', 'amended', 'entered-in-error');
-  SYSTEMS_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status');
-  CODES_TFhirV3ConfidentialityClassificationEnum : Array[TFhirV3ConfidentialityClassificationEnum] of String = ('', 'U', 'L', 'M', 'N', 'R', 'V');
-  SYSTEMS_TFhirV3ConfidentialityClassificationEnum : Array[TFhirV3ConfidentialityClassificationEnum] of String = ('', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality');
-  CODES_TFhirCompositionAttestationModeEnum : Array[TFhirCompositionAttestationModeEnum] of String = ('', 'personal', 'professional', 'legal', 'official');
-  SYSTEMS_TFhirCompositionAttestationModeEnum : Array[TFhirCompositionAttestationModeEnum] of String = ('', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode');
-  CODES_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'working', 'snapshot', 'changes');
-  SYSTEMS_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode');
-  CODES_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'relatedto', 'equivalent', 'equal', 'wider', 'subsumes', 'narrower', 'specializes', 'inexact', 'unmatched', 'disjoint');
-  SYSTEMS_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence');
-  CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'relapse', 'remission', 'resolved');
-  SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
-  CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
-  SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
-  CODES_TFhirConformanceStatementKindEnum : Array[TFhirConformanceStatementKindEnum] of String = ('', 'instance', 'capability', 'requirements');
-  SYSTEMS_TFhirConformanceStatementKindEnum : Array[TFhirConformanceStatementKindEnum] of String = ('', 'http://hl7.org/fhir/conformance-statement-kind', 'http://hl7.org/fhir/conformance-statement-kind', 'http://hl7.org/fhir/conformance-statement-kind');
-  CODES_TFhirUnknownContentCodeEnum : Array[TFhirUnknownContentCodeEnum] of String = ('', 'no', 'extensions', 'elements', 'both');
-  SYSTEMS_TFhirUnknownContentCodeEnum : Array[TFhirUnknownContentCodeEnum] of String = ('', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code', 'http://hl7.org/fhir/unknown-content-code');
-  CODES_TFhirRestfulConformanceModeEnum : Array[TFhirRestfulConformanceModeEnum] of String = ('', 'client', 'server');
-  SYSTEMS_TFhirRestfulConformanceModeEnum : Array[TFhirRestfulConformanceModeEnum] of String = ('', 'http://hl7.org/fhir/restful-conformance-mode', 'http://hl7.org/fhir/restful-conformance-mode');
   CODES_TFhirTypeRestfulInteractionEnum : Array[TFhirTypeRestfulInteractionEnum] of String = ('', 'read', 'vread', 'update', 'delete', 'history-instance', 'history-type', 'create', 'search-type');
   SYSTEMS_TFhirTypeRestfulInteractionEnum : Array[TFhirTypeRestfulInteractionEnum] of String = ('', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction');
   CODES_TFhirVersioningPolicyEnum : Array[TFhirVersioningPolicyEnum] of String = ('', 'no-version', 'versioned', 'versioned-update');
@@ -12746,10 +12642,52 @@ Const
   SYSTEMS_TFhirSystemRestfulInteractionEnum : Array[TFhirSystemRestfulInteractionEnum] of String = ('', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction', 'http://hl7.org/fhir/restful-interaction');
   CODES_TFhirMessageSignificanceCategoryEnum : Array[TFhirMessageSignificanceCategoryEnum] of String = ('', 'Consequence', 'Currency', 'Notification');
   SYSTEMS_TFhirMessageSignificanceCategoryEnum : Array[TFhirMessageSignificanceCategoryEnum] of String = ('', 'http://hl7.org/fhir/message-significance-category', 'http://hl7.org/fhir/message-significance-category', 'http://hl7.org/fhir/message-significance-category');
-  CODES_TFhirMessageConformanceEventModeEnum : Array[TFhirMessageConformanceEventModeEnum] of String = ('', 'sender', 'receiver');
-  SYSTEMS_TFhirMessageConformanceEventModeEnum : Array[TFhirMessageConformanceEventModeEnum] of String = ('', 'http://hl7.org/fhir/message-conformance-event-mode', 'http://hl7.org/fhir/message-conformance-event-mode');
+  CODES_TFhirEventCapabilityModeEnum : Array[TFhirEventCapabilityModeEnum] of String = ('', 'sender', 'receiver');
+  SYSTEMS_TFhirEventCapabilityModeEnum : Array[TFhirEventCapabilityModeEnum] of String = ('', 'http://hl7.org/fhir/event-capability-mode', 'http://hl7.org/fhir/event-capability-mode');
   CODES_TFhirDocumentModeEnum : Array[TFhirDocumentModeEnum] of String = ('', 'producer', 'consumer');
   SYSTEMS_TFhirDocumentModeEnum : Array[TFhirDocumentModeEnum] of String = ('', 'http://hl7.org/fhir/document-mode', 'http://hl7.org/fhir/document-mode');
+  CODES_TFhirCarePlanStatusEnum : Array[TFhirCarePlanStatusEnum] of String = ('', 'proposed', 'draft', 'active', 'completed', 'cancelled');
+  SYSTEMS_TFhirCarePlanStatusEnum : Array[TFhirCarePlanStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status');
+  CODES_TFhirCarePlanRelationshipEnum : Array[TFhirCarePlanRelationshipEnum] of String = ('', 'includes', 'replaces', 'fulfills');
+  SYSTEMS_TFhirCarePlanRelationshipEnum : Array[TFhirCarePlanRelationshipEnum] of String = ('', 'http://hl7.org/fhir/care-plan-relationship', 'http://hl7.org/fhir/care-plan-relationship', 'http://hl7.org/fhir/care-plan-relationship');
+  CODES_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled');
+  SYSTEMS_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status');
+  CODES_TFhirClaimStatusEnum : Array[TFhirClaimStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
+  SYSTEMS_TFhirClaimStatusEnum : Array[TFhirClaimStatusEnum] of String = ('', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status', 'http://hl7.org/fhir/claim-status');
+  CODES_TFhirClaimUseEnum : Array[TFhirClaimUseEnum] of String = ('', 'complete', 'proposed', 'exploratory', 'other');
+  SYSTEMS_TFhirClaimUseEnum : Array[TFhirClaimUseEnum] of String = ('', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use', 'http://hl7.org/fhir/claim-use');
+  CODES_TFhirClaimresponseStatusEnum : Array[TFhirClaimresponseStatusEnum] of String = ('', 'active', 'cancelled', 'draft', 'entered-in-error');
+  SYSTEMS_TFhirClaimresponseStatusEnum : Array[TFhirClaimresponseStatusEnum] of String = ('', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status', 'http://hl7.org/fhir/claimresponse-status');
+  CODES_TFhirClinicalImpressionStatusEnum : Array[TFhirClinicalImpressionStatusEnum] of String = ('', 'draft', 'completed', 'entered-in-error');
+  SYSTEMS_TFhirClinicalImpressionStatusEnum : Array[TFhirClinicalImpressionStatusEnum] of String = ('', 'http://hl7.org/fhir/clinical-impression-status', 'http://hl7.org/fhir/clinical-impression-status', 'http://hl7.org/fhir/clinical-impression-status');
+  CODES_TFhirCodesystemHierarchyMeaningEnum : Array[TFhirCodesystemHierarchyMeaningEnum] of String = ('', 'grouped-by', 'subsumes', 'part-of', 'classified-with');
+  SYSTEMS_TFhirCodesystemHierarchyMeaningEnum : Array[TFhirCodesystemHierarchyMeaningEnum] of String = ('', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning', 'http://hl7.org/fhir/codesystem-hierarchy-meaning');
+  CODES_TFhirCodesystemContentModeEnum : Array[TFhirCodesystemContentModeEnum] of String = ('', 'not-present', 'examplar', 'fragment', 'complete');
+  SYSTEMS_TFhirCodesystemContentModeEnum : Array[TFhirCodesystemContentModeEnum] of String = ('', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode', 'http://hl7.org/fhir/codesystem-content-mode');
+  CODES_TFhirFilterOperatorEnum : Array[TFhirFilterOperatorEnum] of String = ('', '=', 'is-a', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes');
+  SYSTEMS_TFhirFilterOperatorEnum : Array[TFhirFilterOperatorEnum] of String = ('', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator', 'http://hl7.org/fhir/filter-operator');
+  CODES_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'code', 'Coding', 'string', 'integer', 'boolean', 'dateTime');
+  SYSTEMS_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type');
+  CODES_TFhirCommunicationStatusEnum : Array[TFhirCommunicationStatusEnum] of String = ('', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
+  SYSTEMS_TFhirCommunicationStatusEnum : Array[TFhirCommunicationStatusEnum] of String = ('', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status', 'http://hl7.org/fhir/communication-status');
+  CODES_TFhirCommunicationRequestStatusEnum : Array[TFhirCommunicationRequestStatusEnum] of String = ('', 'proposed', 'planned', 'requested', 'received', 'accepted', 'in-progress', 'completed', 'suspended', 'rejected', 'failed');
+  SYSTEMS_TFhirCommunicationRequestStatusEnum : Array[TFhirCommunicationRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status', 'http://hl7.org/fhir/communication-request-status');
+  CODES_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'Patient', 'Encounter', 'RelatedPerson', 'Practitioner', 'Device');
+  SYSTEMS_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type');
+  CODES_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'preliminary', 'final', 'amended', 'entered-in-error');
+  SYSTEMS_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status', 'http://hl7.org/fhir/composition-status');
+  CODES_TFhirV3ConfidentialityClassificationEnum : Array[TFhirV3ConfidentialityClassificationEnum] of String = ('', 'U', 'L', 'M', 'N', 'R', 'V');
+  SYSTEMS_TFhirV3ConfidentialityClassificationEnum : Array[TFhirV3ConfidentialityClassificationEnum] of String = ('', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality', 'http://hl7.org/fhir/v3/Confidentiality');
+  CODES_TFhirCompositionAttestationModeEnum : Array[TFhirCompositionAttestationModeEnum] of String = ('', 'personal', 'professional', 'legal', 'official');
+  SYSTEMS_TFhirCompositionAttestationModeEnum : Array[TFhirCompositionAttestationModeEnum] of String = ('', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode', 'http://hl7.org/fhir/composition-attestation-mode');
+  CODES_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'working', 'snapshot', 'changes');
+  SYSTEMS_TFhirListModeEnum : Array[TFhirListModeEnum] of String = ('', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode', 'http://hl7.org/fhir/list-mode');
+  CODES_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'relatedto', 'equivalent', 'equal', 'wider', 'subsumes', 'narrower', 'specializes', 'inexact', 'unmatched', 'disjoint');
+  SYSTEMS_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence');
+  CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'relapse', 'remission', 'resolved');
+  SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
+  CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
+  SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
   CODES_TFhirConsentStatusEnum : Array[TFhirConsentStatusEnum] of String = ('', 'draft', 'proposed', 'active', 'rejected', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirConsentStatusEnum : Array[TFhirConsentStatusEnum] of String = ('', 'http://hl7.org/fhir/consent-status', 'http://hl7.org/fhir/consent-status', 'http://hl7.org/fhir/consent-status', 'http://hl7.org/fhir/consent-status', 'http://hl7.org/fhir/consent-status', 'http://hl7.org/fhir/consent-status');
   CODES_TFhirConsentExceptTypeEnum : Array[TFhirConsentExceptTypeEnum] of String = ('', 'deny', 'permit');
@@ -12954,10 +12892,10 @@ Const
   CODES_TFhirVisionBaseCodesEnum : Array[TFhirVisionBaseCodesEnum] of String = ('', 'up', 'down', 'in', 'out');
   SYSTEMS_TFhirVisionBaseCodesEnum : Array[TFhirVisionBaseCodesEnum] of String = ('', 'http://hl7.org/fhir/vision-base-codes', 'http://hl7.org/fhir/vision-base-codes', 'http://hl7.org/fhir/vision-base-codes', 'http://hl7.org/fhir/vision-base-codes');
 
+Function TFhirConformanceResourceStatusEnumListAsInteger(aSet : TFhirConformanceResourceStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirConformanceResourceStatusEnumList(i : integer) : TFhirConformanceResourceStatusEnumList; overload;
 Function TFhirNarrativeStatusEnumListAsInteger(aSet : TFhirNarrativeStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirNarrativeStatusEnumList(i : integer) : TFhirNarrativeStatusEnumList; overload;
-Function TFhirRelatedResourceTypeEnumListAsInteger(aSet : TFhirRelatedResourceTypeEnumList) : Integer; overload;
-Function IntegerAsTFhirRelatedResourceTypeEnumList(i : integer) : TFhirRelatedResourceTypeEnumList; overload;
 Function TFhirTriggerTypeEnumListAsInteger(aSet : TFhirTriggerTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirTriggerTypeEnumList(i : integer) : TFhirTriggerTypeEnumList; overload;
 Function TFhirQuantityComparatorEnumListAsInteger(aSet : TFhirQuantityComparatorEnumList) : Integer; overload;
@@ -12966,6 +12904,8 @@ Function TFhirContributorTypeEnumListAsInteger(aSet : TFhirContributorTypeEnumLi
 Function IntegerAsTFhirContributorTypeEnumList(i : integer) : TFhirContributorTypeEnumList; overload;
 Function TFhirAllTypesEnumListAsInteger(aSet : TFhirAllTypesEnumList) : Integer; overload;
 Function IntegerAsTFhirAllTypesEnumList(i : integer) : TFhirAllTypesEnumList; overload;
+Function TFhirRelatedResourceTypeEnumListAsInteger(aSet : TFhirRelatedResourceTypeEnumList) : Integer; overload;
+Function IntegerAsTFhirRelatedResourceTypeEnumList(i : integer) : TFhirRelatedResourceTypeEnumList; overload;
 Function TFhirIdentifierUseEnumListAsInteger(aSet : TFhirIdentifierUseEnumList) : Integer; overload;
 Function IntegerAsTFhirIdentifierUseEnumList(i : integer) : TFhirIdentifierUseEnumList; overload;
 Function TFhirOperationParameterUseEnumListAsInteger(aSet : TFhirOperationParameterUseEnumList) : Integer; overload;
@@ -12998,8 +12938,6 @@ Function TFhirBindingStrengthEnumListAsInteger(aSet : TFhirBindingStrengthEnumLi
 Function IntegerAsTFhirBindingStrengthEnumList(i : integer) : TFhirBindingStrengthEnumList; overload;
 Function TFhirAccountStatusEnumListAsInteger(aSet : TFhirAccountStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirAccountStatusEnumList(i : integer) : TFhirAccountStatusEnumList; overload;
-Function TFhirModuleMetadataStatusEnumListAsInteger(aSet : TFhirModuleMetadataStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirModuleMetadataStatusEnumList(i : integer) : TFhirModuleMetadataStatusEnumList; overload;
 Function TFhirActivityDefinitionCategoryEnumListAsInteger(aSet : TFhirActivityDefinitionCategoryEnumList) : Integer; overload;
 Function IntegerAsTFhirActivityDefinitionCategoryEnumList(i : integer) : TFhirActivityDefinitionCategoryEnumList; overload;
 Function TFhirActionParticipantTypeEnumListAsInteger(aSet : TFhirActionParticipantTypeEnumList) : Integer; overload;
@@ -13048,58 +12986,14 @@ Function TFhirSearchEntryModeEnumListAsInteger(aSet : TFhirSearchEntryModeEnumLi
 Function IntegerAsTFhirSearchEntryModeEnumList(i : integer) : TFhirSearchEntryModeEnumList; overload;
 Function TFhirHttpVerbEnumListAsInteger(aSet : TFhirHttpVerbEnumList) : Integer; overload;
 Function IntegerAsTFhirHttpVerbEnumList(i : integer) : TFhirHttpVerbEnumList; overload;
-Function TFhirCarePlanStatusEnumListAsInteger(aSet : TFhirCarePlanStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirCarePlanStatusEnumList(i : integer) : TFhirCarePlanStatusEnumList; overload;
-Function TFhirCarePlanRelationshipEnumListAsInteger(aSet : TFhirCarePlanRelationshipEnumList) : Integer; overload;
-Function IntegerAsTFhirCarePlanRelationshipEnumList(i : integer) : TFhirCarePlanRelationshipEnumList; overload;
-Function TFhirCarePlanActivityStatusEnumListAsInteger(aSet : TFhirCarePlanActivityStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirCarePlanActivityStatusEnumList(i : integer) : TFhirCarePlanActivityStatusEnumList; overload;
-Function TFhirClaimStatusEnumListAsInteger(aSet : TFhirClaimStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirClaimStatusEnumList(i : integer) : TFhirClaimStatusEnumList; overload;
-Function TFhirClaimUseEnumListAsInteger(aSet : TFhirClaimUseEnumList) : Integer; overload;
-Function IntegerAsTFhirClaimUseEnumList(i : integer) : TFhirClaimUseEnumList; overload;
-Function TFhirClaimresponseStatusEnumListAsInteger(aSet : TFhirClaimresponseStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirClaimresponseStatusEnumList(i : integer) : TFhirClaimresponseStatusEnumList; overload;
-Function TFhirClinicalImpressionStatusEnumListAsInteger(aSet : TFhirClinicalImpressionStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirClinicalImpressionStatusEnumList(i : integer) : TFhirClinicalImpressionStatusEnumList; overload;
-Function TFhirConformanceResourceStatusEnumListAsInteger(aSet : TFhirConformanceResourceStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirConformanceResourceStatusEnumList(i : integer) : TFhirConformanceResourceStatusEnumList; overload;
-Function TFhirCodesystemHierarchyMeaningEnumListAsInteger(aSet : TFhirCodesystemHierarchyMeaningEnumList) : Integer; overload;
-Function IntegerAsTFhirCodesystemHierarchyMeaningEnumList(i : integer) : TFhirCodesystemHierarchyMeaningEnumList; overload;
-Function TFhirCodesystemContentModeEnumListAsInteger(aSet : TFhirCodesystemContentModeEnumList) : Integer; overload;
-Function IntegerAsTFhirCodesystemContentModeEnumList(i : integer) : TFhirCodesystemContentModeEnumList; overload;
-Function TFhirFilterOperatorEnumListAsInteger(aSet : TFhirFilterOperatorEnumList) : Integer; overload;
-Function IntegerAsTFhirFilterOperatorEnumList(i : integer) : TFhirFilterOperatorEnumList; overload;
-Function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer; overload;
-Function IntegerAsTFhirConceptPropertyTypeEnumList(i : integer) : TFhirConceptPropertyTypeEnumList; overload;
-Function TFhirCommunicationStatusEnumListAsInteger(aSet : TFhirCommunicationStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirCommunicationStatusEnumList(i : integer) : TFhirCommunicationStatusEnumList; overload;
-Function TFhirCommunicationRequestStatusEnumListAsInteger(aSet : TFhirCommunicationRequestStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirCommunicationRequestStatusEnumList(i : integer) : TFhirCommunicationRequestStatusEnumList; overload;
-Function TFhirCompartmentTypeEnumListAsInteger(aSet : TFhirCompartmentTypeEnumList) : Integer; overload;
-Function IntegerAsTFhirCompartmentTypeEnumList(i : integer) : TFhirCompartmentTypeEnumList; overload;
-Function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer; overload;
-Function IntegerAsTFhirResourceTypesEnumList(i : integer) : TFhirResourceTypesEnumList; overload;
-Function TFhirCompositionStatusEnumListAsInteger(aSet : TFhirCompositionStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirCompositionStatusEnumList(i : integer) : TFhirCompositionStatusEnumList; overload;
-Function TFhirV3ConfidentialityClassificationEnumListAsInteger(aSet : TFhirV3ConfidentialityClassificationEnumList) : Integer; overload;
-Function IntegerAsTFhirV3ConfidentialityClassificationEnumList(i : integer) : TFhirV3ConfidentialityClassificationEnumList; overload;
-Function TFhirCompositionAttestationModeEnumListAsInteger(aSet : TFhirCompositionAttestationModeEnumList) : Integer; overload;
-Function IntegerAsTFhirCompositionAttestationModeEnumList(i : integer) : TFhirCompositionAttestationModeEnumList; overload;
-Function TFhirListModeEnumListAsInteger(aSet : TFhirListModeEnumList) : Integer; overload;
-Function IntegerAsTFhirListModeEnumList(i : integer) : TFhirListModeEnumList; overload;
-Function TFhirConceptMapEquivalenceEnumListAsInteger(aSet : TFhirConceptMapEquivalenceEnumList) : Integer; overload;
-Function IntegerAsTFhirConceptMapEquivalenceEnumList(i : integer) : TFhirConceptMapEquivalenceEnumList; overload;
-Function TFhirConditionClinicalEnumListAsInteger(aSet : TFhirConditionClinicalEnumList) : Integer; overload;
-Function IntegerAsTFhirConditionClinicalEnumList(i : integer) : TFhirConditionClinicalEnumList; overload;
-Function TFhirConditionVerStatusEnumListAsInteger(aSet : TFhirConditionVerStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirConditionVerStatusEnumList(i : integer) : TFhirConditionVerStatusEnumList; overload;
-Function TFhirConformanceStatementKindEnumListAsInteger(aSet : TFhirConformanceStatementKindEnumList) : Integer; overload;
-Function IntegerAsTFhirConformanceStatementKindEnumList(i : integer) : TFhirConformanceStatementKindEnumList; overload;
+Function TFhirCapabilityStatementKindEnumListAsInteger(aSet : TFhirCapabilityStatementKindEnumList) : Integer; overload;
+Function IntegerAsTFhirCapabilityStatementKindEnumList(i : integer) : TFhirCapabilityStatementKindEnumList; overload;
 Function TFhirUnknownContentCodeEnumListAsInteger(aSet : TFhirUnknownContentCodeEnumList) : Integer; overload;
 Function IntegerAsTFhirUnknownContentCodeEnumList(i : integer) : TFhirUnknownContentCodeEnumList; overload;
-Function TFhirRestfulConformanceModeEnumListAsInteger(aSet : TFhirRestfulConformanceModeEnumList) : Integer; overload;
-Function IntegerAsTFhirRestfulConformanceModeEnumList(i : integer) : TFhirRestfulConformanceModeEnumList; overload;
+Function TFhirRestfulCapabilityModeEnumListAsInteger(aSet : TFhirRestfulCapabilityModeEnumList) : Integer; overload;
+Function IntegerAsTFhirRestfulCapabilityModeEnumList(i : integer) : TFhirRestfulCapabilityModeEnumList; overload;
+Function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer; overload;
+Function IntegerAsTFhirResourceTypesEnumList(i : integer) : TFhirResourceTypesEnumList; overload;
 Function TFhirTypeRestfulInteractionEnumListAsInteger(aSet : TFhirTypeRestfulInteractionEnumList) : Integer; overload;
 Function IntegerAsTFhirTypeRestfulInteractionEnumList(i : integer) : TFhirTypeRestfulInteractionEnumList; overload;
 Function TFhirVersioningPolicyEnumListAsInteger(aSet : TFhirVersioningPolicyEnumList) : Integer; overload;
@@ -13118,10 +13012,52 @@ Function TFhirSystemRestfulInteractionEnumListAsInteger(aSet : TFhirSystemRestfu
 Function IntegerAsTFhirSystemRestfulInteractionEnumList(i : integer) : TFhirSystemRestfulInteractionEnumList; overload;
 Function TFhirMessageSignificanceCategoryEnumListAsInteger(aSet : TFhirMessageSignificanceCategoryEnumList) : Integer; overload;
 Function IntegerAsTFhirMessageSignificanceCategoryEnumList(i : integer) : TFhirMessageSignificanceCategoryEnumList; overload;
-Function TFhirMessageConformanceEventModeEnumListAsInteger(aSet : TFhirMessageConformanceEventModeEnumList) : Integer; overload;
-Function IntegerAsTFhirMessageConformanceEventModeEnumList(i : integer) : TFhirMessageConformanceEventModeEnumList; overload;
+Function TFhirEventCapabilityModeEnumListAsInteger(aSet : TFhirEventCapabilityModeEnumList) : Integer; overload;
+Function IntegerAsTFhirEventCapabilityModeEnumList(i : integer) : TFhirEventCapabilityModeEnumList; overload;
 Function TFhirDocumentModeEnumListAsInteger(aSet : TFhirDocumentModeEnumList) : Integer; overload;
 Function IntegerAsTFhirDocumentModeEnumList(i : integer) : TFhirDocumentModeEnumList; overload;
+Function TFhirCarePlanStatusEnumListAsInteger(aSet : TFhirCarePlanStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirCarePlanStatusEnumList(i : integer) : TFhirCarePlanStatusEnumList; overload;
+Function TFhirCarePlanRelationshipEnumListAsInteger(aSet : TFhirCarePlanRelationshipEnumList) : Integer; overload;
+Function IntegerAsTFhirCarePlanRelationshipEnumList(i : integer) : TFhirCarePlanRelationshipEnumList; overload;
+Function TFhirCarePlanActivityStatusEnumListAsInteger(aSet : TFhirCarePlanActivityStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirCarePlanActivityStatusEnumList(i : integer) : TFhirCarePlanActivityStatusEnumList; overload;
+Function TFhirClaimStatusEnumListAsInteger(aSet : TFhirClaimStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirClaimStatusEnumList(i : integer) : TFhirClaimStatusEnumList; overload;
+Function TFhirClaimUseEnumListAsInteger(aSet : TFhirClaimUseEnumList) : Integer; overload;
+Function IntegerAsTFhirClaimUseEnumList(i : integer) : TFhirClaimUseEnumList; overload;
+Function TFhirClaimresponseStatusEnumListAsInteger(aSet : TFhirClaimresponseStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirClaimresponseStatusEnumList(i : integer) : TFhirClaimresponseStatusEnumList; overload;
+Function TFhirClinicalImpressionStatusEnumListAsInteger(aSet : TFhirClinicalImpressionStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirClinicalImpressionStatusEnumList(i : integer) : TFhirClinicalImpressionStatusEnumList; overload;
+Function TFhirCodesystemHierarchyMeaningEnumListAsInteger(aSet : TFhirCodesystemHierarchyMeaningEnumList) : Integer; overload;
+Function IntegerAsTFhirCodesystemHierarchyMeaningEnumList(i : integer) : TFhirCodesystemHierarchyMeaningEnumList; overload;
+Function TFhirCodesystemContentModeEnumListAsInteger(aSet : TFhirCodesystemContentModeEnumList) : Integer; overload;
+Function IntegerAsTFhirCodesystemContentModeEnumList(i : integer) : TFhirCodesystemContentModeEnumList; overload;
+Function TFhirFilterOperatorEnumListAsInteger(aSet : TFhirFilterOperatorEnumList) : Integer; overload;
+Function IntegerAsTFhirFilterOperatorEnumList(i : integer) : TFhirFilterOperatorEnumList; overload;
+Function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer; overload;
+Function IntegerAsTFhirConceptPropertyTypeEnumList(i : integer) : TFhirConceptPropertyTypeEnumList; overload;
+Function TFhirCommunicationStatusEnumListAsInteger(aSet : TFhirCommunicationStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirCommunicationStatusEnumList(i : integer) : TFhirCommunicationStatusEnumList; overload;
+Function TFhirCommunicationRequestStatusEnumListAsInteger(aSet : TFhirCommunicationRequestStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirCommunicationRequestStatusEnumList(i : integer) : TFhirCommunicationRequestStatusEnumList; overload;
+Function TFhirCompartmentTypeEnumListAsInteger(aSet : TFhirCompartmentTypeEnumList) : Integer; overload;
+Function IntegerAsTFhirCompartmentTypeEnumList(i : integer) : TFhirCompartmentTypeEnumList; overload;
+Function TFhirCompositionStatusEnumListAsInteger(aSet : TFhirCompositionStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirCompositionStatusEnumList(i : integer) : TFhirCompositionStatusEnumList; overload;
+Function TFhirV3ConfidentialityClassificationEnumListAsInteger(aSet : TFhirV3ConfidentialityClassificationEnumList) : Integer; overload;
+Function IntegerAsTFhirV3ConfidentialityClassificationEnumList(i : integer) : TFhirV3ConfidentialityClassificationEnumList; overload;
+Function TFhirCompositionAttestationModeEnumListAsInteger(aSet : TFhirCompositionAttestationModeEnumList) : Integer; overload;
+Function IntegerAsTFhirCompositionAttestationModeEnumList(i : integer) : TFhirCompositionAttestationModeEnumList; overload;
+Function TFhirListModeEnumListAsInteger(aSet : TFhirListModeEnumList) : Integer; overload;
+Function IntegerAsTFhirListModeEnumList(i : integer) : TFhirListModeEnumList; overload;
+Function TFhirConceptMapEquivalenceEnumListAsInteger(aSet : TFhirConceptMapEquivalenceEnumList) : Integer; overload;
+Function IntegerAsTFhirConceptMapEquivalenceEnumList(i : integer) : TFhirConceptMapEquivalenceEnumList; overload;
+Function TFhirConditionClinicalEnumListAsInteger(aSet : TFhirConditionClinicalEnumList) : Integer; overload;
+Function IntegerAsTFhirConditionClinicalEnumList(i : integer) : TFhirConditionClinicalEnumList; overload;
+Function TFhirConditionVerStatusEnumListAsInteger(aSet : TFhirConditionVerStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirConditionVerStatusEnumList(i : integer) : TFhirConditionVerStatusEnumList; overload;
 Function TFhirConsentStatusEnumListAsInteger(aSet : TFhirConsentStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirConsentStatusEnumList(i : integer) : TFhirConsentStatusEnumList; overload;
 Function TFhirConsentExceptTypeEnumListAsInteger(aSet : TFhirConsentExceptTypeEnumList) : Integer; overload;
@@ -17601,6 +17537,33 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+function TFhirConformanceResourceStatusEnumListAsInteger(aSet : TFhirConformanceResourceStatusEnumList) : Integer;
+var
+  a : TFhirConformanceResourceStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirConformanceResourceStatusEnum) to high(TFhirConformanceResourceStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConformanceResourceStatusEnumList(i : Integer) : TFhirConformanceResourceStatusEnumList;
+var
+  aLoop : TFhirConformanceResourceStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConformanceResourceStatusEnum) to high(TFhirConformanceResourceStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 { TFhirExtension }
 
 constructor TFhirExtension.Create;
@@ -18122,392 +18085,6 @@ end;
 procedure TFhirNarrativeList.SetItemN(index: Integer; value: TFhirNarrative);
 begin
   assert(value is TFhirNarrative);
-  ObjectByIndex[index] := value;
-end;
-
-function TFhirRelatedResourceTypeEnumListAsInteger(aSet : TFhirRelatedResourceTypeEnumList) : Integer;
-var
-  a : TFhirRelatedResourceTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirRelatedResourceTypeEnum) to high(TFhirRelatedResourceTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirRelatedResourceTypeEnumList(i : Integer) : TFhirRelatedResourceTypeEnumList;
-var
-  aLoop : TFhirRelatedResourceTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirRelatedResourceTypeEnum) to high(TFhirRelatedResourceTypeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-{ TFhirRelatedResource }
-
-constructor TFhirRelatedResource.Create;
-begin
-  inherited;
-end;
-
-destructor TFhirRelatedResource.Destroy;
-begin
-  FType_.free;
-  FDisplay.free;
-  FCitation.free;
-  FUrl.free;
-  FDocument.free;
-  FResource.free;
-  inherited;
-end;
-
-procedure TFhirRelatedResource.Assign(oSource : TAdvObject);
-begin
-  inherited;
-  FType_ := TFhirRelatedResource(oSource).FType_.Link;
-  displayElement := TFhirRelatedResource(oSource).displayElement.Clone;
-  citationElement := TFhirRelatedResource(oSource).citationElement.Clone;
-  urlElement := TFhirRelatedResource(oSource).urlElement.Clone;
-  document := TFhirRelatedResource(oSource).document.Clone;
-  resource := TFhirRelatedResource(oSource).resource.Clone;
-end;
-
-procedure TFhirRelatedResource.GetChildrenByName(child_name : string; list : TFHIRObjectList);
-begin
-  inherited;
-  if (child_name = 'type') Then
-     list.add(FType_.Link);
-  if (child_name = 'display') Then
-     list.add(FDisplay.Link);
-  if (child_name = 'citation') Then
-     list.add(FCitation.Link);
-  if (child_name = 'url') Then
-     list.add(FUrl.Link);
-  if (child_name = 'document') Then
-     list.add(FDocument.Link);
-  if (child_name = 'resource') Then
-     list.add(FResource.Link);
-end;
-
-procedure TFhirRelatedResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
-begin
-  inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'citation', 'string', false, TFhirString, FCitation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'document', 'Attachment', false, TFhirAttachment, FDocument.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'resource', 'Reference(Any)', false, TFhirReference{TFhirReference}, FResource.Link));{2}
-end;
-
-procedure TFhirRelatedResource.setProperty(propName: string; propValue: TFHIRObject);
-begin
-  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirRelatedResourceTypeEnum, CODES_TFhirRelatedResourceTypeEnum, propValue)
-  else if (propName = 'display') then DisplayElement := asString(propValue){5a}
-  else if (propName = 'citation') then CitationElement := asString(propValue){5a}
-  else if (propName = 'url') then UrlElement := asUri(propValue){5a}
-  else if (propName = 'document') then Document := propValue as TFhirAttachment{4b}
-  else if (propName = 'resource') then Resource := propValue as TFhirReference{TFhirReference}{4b}
-  else inherited;
-end;
-
-function TFhirRelatedResource.makeProperty(propName: string) : TFHIRObject;
-begin
-  if (propName = 'document') then begin Document := TFhirAttachment.create(); result := Document; end{4b}
-  else if (propName = 'resource') then begin Resource := TFhirReference{TFhirReference}.create(); result := Resource; end{4b}
-  else result := inherited makeProperty(propName);
-end;
-
-function TFhirRelatedResource.fhirType : string;
-begin
-  result := 'RelatedResource';
-end;
-
-function TFhirRelatedResource.equalsDeep(other : TFHIRBase) : boolean; 
-var
-  o : TFhirRelatedResource;
-begin
-  if (not inherited equalsDeep(other)) then
-    result := false
-  else if (not (other is TFhirRelatedResource)) then
-    result := false
-  else
-  begin
-    o := TFhirRelatedResource(other);
-    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(displayElement, o.displayElement, true) and 
-      compareDeep(citationElement, o.citationElement, true) and compareDeep(urlElement, o.urlElement, true) and 
-      compareDeep(documentElement, o.documentElement, true) and compareDeep(resourceElement, o.resourceElement, true);
-  end;
-end;
-
-function TFhirRelatedResource.equalsShallow(other : TFHIRBase) : boolean; 
-var
-  o : TFhirRelatedResource;
-begin
-  if (not inherited equalsShallow(other)) then
-    result := false
-  else if (not (other is TFhirRelatedResource)) then
-    result := false
-  else
-  begin
-    o := TFhirRelatedResource(other);
-    result := compareValues(type_Element, o.type_Element, true) and compareValues(displayElement, o.displayElement, true) and 
-      compareValues(citationElement, o.citationElement, true) and compareValues(urlElement, o.urlElement, true);
-  end;
-end;
-
-function TFhirRelatedResource.Link : TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource(inherited Link);
-end;
-
-function TFhirRelatedResource.Clone : TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource(inherited Clone);
-end;
-
-{ TFhirRelatedResource }
-
-Procedure TFhirRelatedResource.SetType_(value : TFhirEnum);
-begin
-  FType_.free;
-  FType_ := value;
-end;
-
-Function TFhirRelatedResource.GetType_ST : TFhirRelatedResourceTypeEnum;
-begin
-  if FType_ = nil then
-    result := TFhirRelatedResourceTypeEnum(0)
-  else
-    result := TFhirRelatedResourceTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirRelatedResourceTypeEnum, FType_.value));
-end;
-
-Procedure TFhirRelatedResource.SetType_ST(value : TFhirRelatedResourceTypeEnum);
-begin
-  if ord(value) = 0 then
-    Type_Element := nil
-  else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirRelatedResourceTypeEnum[value], CODES_TFhirRelatedResourceTypeEnum[value]);
-end;
-
-Procedure TFhirRelatedResource.SetDisplay(value : TFhirString);
-begin
-  FDisplay.free;
-  FDisplay := value;
-end;
-
-Function TFhirRelatedResource.GetDisplayST : String;
-begin
-  if FDisplay = nil then
-    result := ''
-  else
-    result := FDisplay.value;
-end;
-
-Procedure TFhirRelatedResource.SetDisplayST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FDisplay = nil then
-      FDisplay := TFhirString.create;
-    FDisplay.value := value
-  end
-  else if FDisplay <> nil then
-    FDisplay.value := '';
-end;
-
-Procedure TFhirRelatedResource.SetCitation(value : TFhirString);
-begin
-  FCitation.free;
-  FCitation := value;
-end;
-
-Function TFhirRelatedResource.GetCitationST : String;
-begin
-  if FCitation = nil then
-    result := ''
-  else
-    result := FCitation.value;
-end;
-
-Procedure TFhirRelatedResource.SetCitationST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FCitation = nil then
-      FCitation := TFhirString.create;
-    FCitation.value := value
-  end
-  else if FCitation <> nil then
-    FCitation.value := '';
-end;
-
-Procedure TFhirRelatedResource.SetUrl(value : TFhirUri);
-begin
-  FUrl.free;
-  FUrl := value;
-end;
-
-Function TFhirRelatedResource.GetUrlST : String;
-begin
-  if FUrl = nil then
-    result := ''
-  else
-    result := FUrl.value;
-end;
-
-Procedure TFhirRelatedResource.SetUrlST(value : String);
-begin
-  if value <> '' then
-  begin
-    if FUrl = nil then
-      FUrl := TFhirUri.create;
-    FUrl.value := value
-  end
-  else if FUrl <> nil then
-    FUrl.value := '';
-end;
-
-Procedure TFhirRelatedResource.SetDocument(value : TFhirAttachment);
-begin
-  FDocument.free;
-  FDocument := value;
-end;
-
-Procedure TFhirRelatedResource.SetResource(value : TFhirReference{TFhirReference});
-begin
-  FResource.free;
-  FResource := value;
-end;
-
-
-{ TFhirRelatedResourceListEnumerator }
-
-Constructor TFhirRelatedResourceListEnumerator.Create(list : TFhirRelatedResourceList);
-begin
-  inherited Create;
-  FIndex := -1;
-  FList := list;
-end;
-
-Destructor TFhirRelatedResourceListEnumerator.Destroy;
-begin
-  FList.Free;
-  inherited;
-end;
-
-function TFhirRelatedResourceListEnumerator.MoveNext : boolean;
-begin
-  inc(FIndex);
-  Result := FIndex < FList.count;
-end;
-
-function TFhirRelatedResourceListEnumerator.GetCurrent : TFhirRelatedResource;
-begin
-  Result := FList[FIndex];
-end;
-
-
-{ TFhirRelatedResourceList }
-procedure TFhirRelatedResourceList.AddItem(value: TFhirRelatedResource);
-begin
-  assert(value.ClassName = 'TFhirRelatedResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRelatedResource');
-  add(value);
-end;
-
-
-function TFhirRelatedResourceList.Append: TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource.create;
-  try
-    add(result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirRelatedResourceList.ClearItems;
-begin
-  Clear;
-end;
-
-function TFhirRelatedResourceList.GetEnumerator : TFhirRelatedResourceListEnumerator;
-begin
-  result := TFhirRelatedResourceListEnumerator.Create(self.link);
-end;
-
-function TFhirRelatedResourceList.Clone: TFhirRelatedResourceList;
-begin
-  result := TFhirRelatedResourceList(inherited Clone);
-end;
-
-function TFhirRelatedResourceList.Count: Integer;
-begin
-  result := Inherited Count;
-end;
-
-function TFhirRelatedResourceList.GetItemN(index: Integer): TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource(ObjectByIndex[index]);
-end;
-
-function TFhirRelatedResourceList.IndexOf(value: TFhirRelatedResource): Integer;
-begin
-  result := IndexByReference(value);
-end;
-
-
-function TFhirRelatedResourceList.Insert(index: Integer): TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource.create;
-  try
-    inherited insert(index, result.Link);
-  finally
-    result.free;
-  end;
-end;
-
-
-procedure TFhirRelatedResourceList.InsertItem(index: Integer; value: TFhirRelatedResource);
-begin
-  assert(value is TFhirRelatedResource);
-  Inherited Insert(index, value);
-end;
-
-function TFhirRelatedResourceList.Item(index: Integer): TFhirRelatedResource;
-begin
-  result := TFhirRelatedResource(ObjectByIndex[index]);
-end;
-
-function TFhirRelatedResourceList.Link: TFhirRelatedResourceList;
-begin
-  result := TFhirRelatedResourceList(inherited Link);
-end;
-
-procedure TFhirRelatedResourceList.Remove(index: Integer);
-begin
-  DeleteByIndex(index);
-end;
-
-procedure TFhirRelatedResourceList.SetItemByIndex(index: Integer; value: TFhirRelatedResource);
-begin
-  assert(value is TFhirRelatedResource);
-  FhirRelatedResources[index] := value;
-end;
-
-procedure TFhirRelatedResourceList.SetItemN(index: Integer; value: TFhirRelatedResource);
-begin
-  assert(value is TFhirRelatedResource);
   ObjectByIndex[index] := value;
 end;
 
@@ -21760,6 +21337,392 @@ begin
   ObjectByIndex[index] := value;
 end;
 
+function TFhirRelatedResourceTypeEnumListAsInteger(aSet : TFhirRelatedResourceTypeEnumList) : Integer;
+var
+  a : TFhirRelatedResourceTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirRelatedResourceTypeEnum) to high(TFhirRelatedResourceTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirRelatedResourceTypeEnumList(i : Integer) : TFhirRelatedResourceTypeEnumList;
+var
+  aLoop : TFhirRelatedResourceTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirRelatedResourceTypeEnum) to high(TFhirRelatedResourceTypeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+{ TFhirRelatedArtifact }
+
+constructor TFhirRelatedArtifact.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirRelatedArtifact.Destroy;
+begin
+  FType_.free;
+  FDisplay.free;
+  FCitation.free;
+  FUrl.free;
+  FDocument.free;
+  FResource.free;
+  inherited;
+end;
+
+procedure TFhirRelatedArtifact.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  FType_ := TFhirRelatedArtifact(oSource).FType_.Link;
+  displayElement := TFhirRelatedArtifact(oSource).displayElement.Clone;
+  citationElement := TFhirRelatedArtifact(oSource).citationElement.Clone;
+  urlElement := TFhirRelatedArtifact(oSource).urlElement.Clone;
+  document := TFhirRelatedArtifact(oSource).document.Clone;
+  resource := TFhirRelatedArtifact(oSource).resource.Clone;
+end;
+
+procedure TFhirRelatedArtifact.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+begin
+  inherited;
+  if (child_name = 'type') Then
+     list.add(FType_.Link);
+  if (child_name = 'display') Then
+     list.add(FDisplay.Link);
+  if (child_name = 'citation') Then
+     list.add(FCitation.Link);
+  if (child_name = 'url') Then
+     list.add(FUrl.Link);
+  if (child_name = 'document') Then
+     list.add(FDocument.Link);
+  if (child_name = 'resource') Then
+     list.add(FResource.Link);
+end;
+
+procedure TFhirRelatedArtifact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
+  oList.add(TFHIRProperty.create(self, 'display', 'string', false, TFhirString, FDisplay.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'citation', 'string', false, TFhirString, FCitation.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'document', 'Attachment', false, TFhirAttachment, FDocument.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'resource', 'Reference(Any)', false, TFhirReference{TFhirReference}, FResource.Link));{2}
+end;
+
+procedure TFhirRelatedArtifact.setProperty(propName: string; propValue: TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirRelatedResourceTypeEnum, CODES_TFhirRelatedResourceTypeEnum, propValue)
+  else if (propName = 'display') then DisplayElement := asString(propValue){5a}
+  else if (propName = 'citation') then CitationElement := asString(propValue){5a}
+  else if (propName = 'url') then UrlElement := asUri(propValue){5a}
+  else if (propName = 'document') then Document := propValue as TFhirAttachment{4b}
+  else if (propName = 'resource') then Resource := propValue as TFhirReference{TFhirReference}{4b}
+  else inherited;
+end;
+
+function TFhirRelatedArtifact.makeProperty(propName: string) : TFHIRObject;
+begin
+  if (propName = 'document') then begin Document := TFhirAttachment.create(); result := Document; end{4b}
+  else if (propName = 'resource') then begin Resource := TFhirReference{TFhirReference}.create(); result := Resource; end{4b}
+  else result := inherited makeProperty(propName);
+end;
+
+function TFhirRelatedArtifact.fhirType : string;
+begin
+  result := 'RelatedArtifact';
+end;
+
+function TFhirRelatedArtifact.equalsDeep(other : TFHIRBase) : boolean; 
+var
+  o : TFhirRelatedArtifact;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirRelatedArtifact)) then
+    result := false
+  else
+  begin
+    o := TFhirRelatedArtifact(other);
+    result := compareDeep(type_Element, o.type_Element, true) and compareDeep(displayElement, o.displayElement, true) and 
+      compareDeep(citationElement, o.citationElement, true) and compareDeep(urlElement, o.urlElement, true) and 
+      compareDeep(documentElement, o.documentElement, true) and compareDeep(resourceElement, o.resourceElement, true);
+  end;
+end;
+
+function TFhirRelatedArtifact.equalsShallow(other : TFHIRBase) : boolean; 
+var
+  o : TFhirRelatedArtifact;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirRelatedArtifact)) then
+    result := false
+  else
+  begin
+    o := TFhirRelatedArtifact(other);
+    result := compareValues(type_Element, o.type_Element, true) and compareValues(displayElement, o.displayElement, true) and 
+      compareValues(citationElement, o.citationElement, true) and compareValues(urlElement, o.urlElement, true);
+  end;
+end;
+
+function TFhirRelatedArtifact.Link : TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact(inherited Link);
+end;
+
+function TFhirRelatedArtifact.Clone : TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact(inherited Clone);
+end;
+
+{ TFhirRelatedArtifact }
+
+Procedure TFhirRelatedArtifact.SetType_(value : TFhirEnum);
+begin
+  FType_.free;
+  FType_ := value;
+end;
+
+Function TFhirRelatedArtifact.GetType_ST : TFhirRelatedResourceTypeEnum;
+begin
+  if FType_ = nil then
+    result := TFhirRelatedResourceTypeEnum(0)
+  else
+    result := TFhirRelatedResourceTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirRelatedResourceTypeEnum, FType_.value));
+end;
+
+Procedure TFhirRelatedArtifact.SetType_ST(value : TFhirRelatedResourceTypeEnum);
+begin
+  if ord(value) = 0 then
+    Type_Element := nil
+  else
+    Type_Element := TFhirEnum.create(SYSTEMS_TFhirRelatedResourceTypeEnum[value], CODES_TFhirRelatedResourceTypeEnum[value]);
+end;
+
+Procedure TFhirRelatedArtifact.SetDisplay(value : TFhirString);
+begin
+  FDisplay.free;
+  FDisplay := value;
+end;
+
+Function TFhirRelatedArtifact.GetDisplayST : String;
+begin
+  if FDisplay = nil then
+    result := ''
+  else
+    result := FDisplay.value;
+end;
+
+Procedure TFhirRelatedArtifact.SetDisplayST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDisplay = nil then
+      FDisplay := TFhirString.create;
+    FDisplay.value := value
+  end
+  else if FDisplay <> nil then
+    FDisplay.value := '';
+end;
+
+Procedure TFhirRelatedArtifact.SetCitation(value : TFhirString);
+begin
+  FCitation.free;
+  FCitation := value;
+end;
+
+Function TFhirRelatedArtifact.GetCitationST : String;
+begin
+  if FCitation = nil then
+    result := ''
+  else
+    result := FCitation.value;
+end;
+
+Procedure TFhirRelatedArtifact.SetCitationST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FCitation = nil then
+      FCitation := TFhirString.create;
+    FCitation.value := value
+  end
+  else if FCitation <> nil then
+    FCitation.value := '';
+end;
+
+Procedure TFhirRelatedArtifact.SetUrl(value : TFhirUri);
+begin
+  FUrl.free;
+  FUrl := value;
+end;
+
+Function TFhirRelatedArtifact.GetUrlST : String;
+begin
+  if FUrl = nil then
+    result := ''
+  else
+    result := FUrl.value;
+end;
+
+Procedure TFhirRelatedArtifact.SetUrlST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FUrl = nil then
+      FUrl := TFhirUri.create;
+    FUrl.value := value
+  end
+  else if FUrl <> nil then
+    FUrl.value := '';
+end;
+
+Procedure TFhirRelatedArtifact.SetDocument(value : TFhirAttachment);
+begin
+  FDocument.free;
+  FDocument := value;
+end;
+
+Procedure TFhirRelatedArtifact.SetResource(value : TFhirReference{TFhirReference});
+begin
+  FResource.free;
+  FResource := value;
+end;
+
+
+{ TFhirRelatedArtifactListEnumerator }
+
+Constructor TFhirRelatedArtifactListEnumerator.Create(list : TFhirRelatedArtifactList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirRelatedArtifactListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirRelatedArtifactListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirRelatedArtifactListEnumerator.GetCurrent : TFhirRelatedArtifact;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirRelatedArtifactList }
+procedure TFhirRelatedArtifactList.AddItem(value: TFhirRelatedArtifact);
+begin
+  assert(value.ClassName = 'TFhirRelatedArtifact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRelatedArtifact');
+  add(value);
+end;
+
+
+function TFhirRelatedArtifactList.Append: TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirRelatedArtifactList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirRelatedArtifactList.GetEnumerator : TFhirRelatedArtifactListEnumerator;
+begin
+  result := TFhirRelatedArtifactListEnumerator.Create(self.link);
+end;
+
+function TFhirRelatedArtifactList.Clone: TFhirRelatedArtifactList;
+begin
+  result := TFhirRelatedArtifactList(inherited Clone);
+end;
+
+function TFhirRelatedArtifactList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirRelatedArtifactList.GetItemN(index: Integer): TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact(ObjectByIndex[index]);
+end;
+
+function TFhirRelatedArtifactList.IndexOf(value: TFhirRelatedArtifact): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirRelatedArtifactList.Insert(index: Integer): TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirRelatedArtifactList.InsertItem(index: Integer; value: TFhirRelatedArtifact);
+begin
+  assert(value is TFhirRelatedArtifact);
+  Inherited Insert(index, value);
+end;
+
+function TFhirRelatedArtifactList.Item(index: Integer): TFhirRelatedArtifact;
+begin
+  result := TFhirRelatedArtifact(ObjectByIndex[index]);
+end;
+
+function TFhirRelatedArtifactList.Link: TFhirRelatedArtifactList;
+begin
+  result := TFhirRelatedArtifactList(inherited Link);
+end;
+
+procedure TFhirRelatedArtifactList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirRelatedArtifactList.SetItemByIndex(index: Integer; value: TFhirRelatedArtifact);
+begin
+  assert(value is TFhirRelatedArtifact);
+  FhirRelatedArtifacts[index] := value;
+end;
+
+procedure TFhirRelatedArtifactList.SetItemN(index: Integer; value: TFhirRelatedArtifact);
+begin
+  assert(value is TFhirRelatedArtifact);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirAnnotation }
 
 constructor TFhirAnnotation.Create;
@@ -23050,159 +23013,44 @@ end;
 
 destructor TFhirUsageContext.Destroy;
 begin
-  FPatientGenderList.Free;
-  FPatientAgeGroupList.Free;
-  FClinicalFocusList.Free;
-  FTargetUserList.Free;
-  FWorkflowSettingList.Free;
-  FWorkflowTaskList.Free;
-  FClinicalVenueList.Free;
-  FJurisdictionList.Free;
+  FCode.free;
+  FValue.free;
   inherited;
 end;
 
 procedure TFhirUsageContext.Assign(oSource : TAdvObject);
 begin
   inherited;
-  if (TFhirUsageContext(oSource).FPatientGenderList = nil) then
-  begin
-    FPatientGenderList.free;
-    FPatientGenderList := nil;
-  end
-  else
-  begin
-    FPatientGenderList := TFhirCodeableConceptList.Create;
-    FPatientGenderList.Assign(TFhirUsageContext(oSource).FPatientGenderList);
-  end;
-  if (TFhirUsageContext(oSource).FPatientAgeGroupList = nil) then
-  begin
-    FPatientAgeGroupList.free;
-    FPatientAgeGroupList := nil;
-  end
-  else
-  begin
-    FPatientAgeGroupList := TFhirCodeableConceptList.Create;
-    FPatientAgeGroupList.Assign(TFhirUsageContext(oSource).FPatientAgeGroupList);
-  end;
-  if (TFhirUsageContext(oSource).FClinicalFocusList = nil) then
-  begin
-    FClinicalFocusList.free;
-    FClinicalFocusList := nil;
-  end
-  else
-  begin
-    FClinicalFocusList := TFhirCodeableConceptList.Create;
-    FClinicalFocusList.Assign(TFhirUsageContext(oSource).FClinicalFocusList);
-  end;
-  if (TFhirUsageContext(oSource).FTargetUserList = nil) then
-  begin
-    FTargetUserList.free;
-    FTargetUserList := nil;
-  end
-  else
-  begin
-    FTargetUserList := TFhirCodeableConceptList.Create;
-    FTargetUserList.Assign(TFhirUsageContext(oSource).FTargetUserList);
-  end;
-  if (TFhirUsageContext(oSource).FWorkflowSettingList = nil) then
-  begin
-    FWorkflowSettingList.free;
-    FWorkflowSettingList := nil;
-  end
-  else
-  begin
-    FWorkflowSettingList := TFhirCodeableConceptList.Create;
-    FWorkflowSettingList.Assign(TFhirUsageContext(oSource).FWorkflowSettingList);
-  end;
-  if (TFhirUsageContext(oSource).FWorkflowTaskList = nil) then
-  begin
-    FWorkflowTaskList.free;
-    FWorkflowTaskList := nil;
-  end
-  else
-  begin
-    FWorkflowTaskList := TFhirCodeableConceptList.Create;
-    FWorkflowTaskList.Assign(TFhirUsageContext(oSource).FWorkflowTaskList);
-  end;
-  if (TFhirUsageContext(oSource).FClinicalVenueList = nil) then
-  begin
-    FClinicalVenueList.free;
-    FClinicalVenueList := nil;
-  end
-  else
-  begin
-    FClinicalVenueList := TFhirCodeableConceptList.Create;
-    FClinicalVenueList.Assign(TFhirUsageContext(oSource).FClinicalVenueList);
-  end;
-  if (TFhirUsageContext(oSource).FJurisdictionList = nil) then
-  begin
-    FJurisdictionList.free;
-    FJurisdictionList := nil;
-  end
-  else
-  begin
-    FJurisdictionList := TFhirCodeableConceptList.Create;
-    FJurisdictionList.Assign(TFhirUsageContext(oSource).FJurisdictionList);
-  end;
+  code := TFhirUsageContext(oSource).code.Clone;
+  value := TFhirUsageContext(oSource).value.Clone;
 end;
 
 procedure TFhirUsageContext.GetChildrenByName(child_name : string; list : TFHIRObjectList);
 begin
   inherited;
-  if (child_name = 'patientGender') Then
-    list.addAll(FPatientGenderList);
-  if (child_name = 'patientAgeGroup') Then
-    list.addAll(FPatientAgeGroupList);
-  if (child_name = 'clinicalFocus') Then
-    list.addAll(FClinicalFocusList);
-  if (child_name = 'targetUser') Then
-    list.addAll(FTargetUserList);
-  if (child_name = 'workflowSetting') Then
-    list.addAll(FWorkflowSettingList);
-  if (child_name = 'workflowTask') Then
-    list.addAll(FWorkflowTaskList);
-  if (child_name = 'clinicalVenue') Then
-    list.addAll(FClinicalVenueList);
-  if (child_name = 'jurisdiction') Then
-    list.addAll(FJurisdictionList);
+  if (child_name = 'code') Then
+     list.add(FCode.Link);
+  if (child_name = 'value[x]') or (child_name = 'value') Then
+     list.add(FValue.Link);
 end;
 
 procedure TFhirUsageContext.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patientGender', 'CodeableConcept', true, TFhirCodeableConcept, FPatientGenderList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'patientAgeGroup', 'CodeableConcept', true, TFhirCodeableConcept, FPatientAgeGroupList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'clinicalFocus', 'CodeableConcept', true, TFhirCodeableConcept, FClinicalFocusList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'targetUser', 'CodeableConcept', true, TFhirCodeableConcept, FTargetUserList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'workflowSetting', 'CodeableConcept', true, TFhirCodeableConcept, FWorkflowSettingList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'workflowTask', 'CodeableConcept', true, TFhirCodeableConcept, FWorkflowTaskList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'clinicalVenue', 'CodeableConcept', true, TFhirCodeableConcept, FClinicalVenueList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'CodeableConcept', true, TFhirCodeableConcept, FJurisdictionList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'code', 'Coding', false, TFhirCoding, FCode.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'value[x]', 'CodeableConcept|Quantity|Range', false, TFhirType, FValue.Link));{2}
 end;
 
 procedure TFhirUsageContext.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'patientGender') then PatientGenderList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'patientAgeGroup') then PatientAgeGroupList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'clinicalFocus') then ClinicalFocusList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'targetUser') then TargetUserList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'workflowSetting') then WorkflowSettingList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'workflowTask') then WorkflowTaskList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'clinicalVenue') then ClinicalVenueList.add(propValue as TFhirCodeableConcept){2}
-  else if (propName = 'jurisdiction') then JurisdictionList.add(propValue as TFhirCodeableConcept){2}
+  if (propName = 'code') then Code := propValue as TFhirCoding{4b}
+  else if (propName.startsWith('value')) then Value := propValue as TFhirType{4}
   else inherited;
 end;
 
 function TFhirUsageContext.makeProperty(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patientGender') then result := PatientGenderList.append(){2}
-  else if (propName = 'patientAgeGroup') then result := PatientAgeGroupList.append(){2}
-  else if (propName = 'clinicalFocus') then result := ClinicalFocusList.append(){2}
-  else if (propName = 'targetUser') then result := TargetUserList.append(){2}
-  else if (propName = 'workflowSetting') then result := WorkflowSettingList.append(){2}
-  else if (propName = 'workflowTask') then result := WorkflowTaskList.append(){2}
-  else if (propName = 'clinicalVenue') then result := ClinicalVenueList.append(){2}
-  else if (propName = 'jurisdiction') then result := JurisdictionList.append(){2}
+  if (propName = 'code') then begin Code := TFhirCoding.create(); result := Code; end{4b}
   else result := inherited makeProperty(propName);
 end;
 
@@ -23222,10 +23070,7 @@ begin
   else
   begin
     o := TFhirUsageContext(other);
-    result := compareDeep(patientGenderList, o.patientGenderList, true) and compareDeep(patientAgeGroupList, o.patientAgeGroupList, true) and 
-      compareDeep(clinicalFocusList, o.clinicalFocusList, true) and compareDeep(targetUserList, o.targetUserList, true) and 
-      compareDeep(workflowSettingList, o.workflowSettingList, true) and compareDeep(workflowTaskList, o.workflowTaskList, true) and 
-      compareDeep(clinicalVenueList, o.clinicalVenueList, true) and compareDeep(jurisdictionList, o.jurisdictionList, true);
+    result := compareDeep(codeElement, o.codeElement, true) and compareDeep(valueElement, o.valueElement, true);
   end;
 end;
 
@@ -23256,100 +23101,16 @@ end;
 
 { TFhirUsageContext }
 
-Function TFhirUsageContext.GetPatientGenderList : TFhirCodeableConceptList;
+Procedure TFhirUsageContext.SetCode(value : TFhirCoding);
 begin
-  if FPatientGenderList = nil then
-    FPatientGenderList := TFhirCodeableConceptList.Create;
-  result := FPatientGenderList;
+  FCode.free;
+  FCode := value;
 end;
 
-Function TFhirUsageContext.GetHasPatientGenderList : boolean;
+Procedure TFhirUsageContext.SetValue(value : TFhirType);
 begin
-  result := (FPatientGenderList <> nil) and (FPatientGenderList.count > 0);
-end;
-
-Function TFhirUsageContext.GetPatientAgeGroupList : TFhirCodeableConceptList;
-begin
-  if FPatientAgeGroupList = nil then
-    FPatientAgeGroupList := TFhirCodeableConceptList.Create;
-  result := FPatientAgeGroupList;
-end;
-
-Function TFhirUsageContext.GetHasPatientAgeGroupList : boolean;
-begin
-  result := (FPatientAgeGroupList <> nil) and (FPatientAgeGroupList.count > 0);
-end;
-
-Function TFhirUsageContext.GetClinicalFocusList : TFhirCodeableConceptList;
-begin
-  if FClinicalFocusList = nil then
-    FClinicalFocusList := TFhirCodeableConceptList.Create;
-  result := FClinicalFocusList;
-end;
-
-Function TFhirUsageContext.GetHasClinicalFocusList : boolean;
-begin
-  result := (FClinicalFocusList <> nil) and (FClinicalFocusList.count > 0);
-end;
-
-Function TFhirUsageContext.GetTargetUserList : TFhirCodeableConceptList;
-begin
-  if FTargetUserList = nil then
-    FTargetUserList := TFhirCodeableConceptList.Create;
-  result := FTargetUserList;
-end;
-
-Function TFhirUsageContext.GetHasTargetUserList : boolean;
-begin
-  result := (FTargetUserList <> nil) and (FTargetUserList.count > 0);
-end;
-
-Function TFhirUsageContext.GetWorkflowSettingList : TFhirCodeableConceptList;
-begin
-  if FWorkflowSettingList = nil then
-    FWorkflowSettingList := TFhirCodeableConceptList.Create;
-  result := FWorkflowSettingList;
-end;
-
-Function TFhirUsageContext.GetHasWorkflowSettingList : boolean;
-begin
-  result := (FWorkflowSettingList <> nil) and (FWorkflowSettingList.count > 0);
-end;
-
-Function TFhirUsageContext.GetWorkflowTaskList : TFhirCodeableConceptList;
-begin
-  if FWorkflowTaskList = nil then
-    FWorkflowTaskList := TFhirCodeableConceptList.Create;
-  result := FWorkflowTaskList;
-end;
-
-Function TFhirUsageContext.GetHasWorkflowTaskList : boolean;
-begin
-  result := (FWorkflowTaskList <> nil) and (FWorkflowTaskList.count > 0);
-end;
-
-Function TFhirUsageContext.GetClinicalVenueList : TFhirCodeableConceptList;
-begin
-  if FClinicalVenueList = nil then
-    FClinicalVenueList := TFhirCodeableConceptList.Create;
-  result := FClinicalVenueList;
-end;
-
-Function TFhirUsageContext.GetHasClinicalVenueList : boolean;
-begin
-  result := (FClinicalVenueList <> nil) and (FClinicalVenueList.count > 0);
-end;
-
-Function TFhirUsageContext.GetJurisdictionList : TFhirCodeableConceptList;
-begin
-  if FJurisdictionList = nil then
-    FJurisdictionList := TFhirCodeableConceptList.Create;
-  result := FJurisdictionList;
-end;
-
-Function TFhirUsageContext.GetHasJurisdictionList : boolean;
-begin
-  result := (FJurisdictionList <> nil) and (FJurisdictionList.count > 0);
+  FValue.free;
+  FValue := value;
 end;
 
 
@@ -32066,33 +31827,6 @@ begin
  end;
 
 
-function TFhirModuleMetadataStatusEnumListAsInteger(aSet : TFhirModuleMetadataStatusEnumList) : Integer;
-var
-  a : TFhirModuleMetadataStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirModuleMetadataStatusEnum) to high(TFhirModuleMetadataStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirModuleMetadataStatusEnumList(i : Integer) : TFhirModuleMetadataStatusEnumList;
-var
-  aLoop : TFhirModuleMetadataStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirModuleMetadataStatusEnum) to high(TFhirModuleMetadataStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirActivityDefinitionCategoryEnumListAsInteger(aSet : TFhirActivityDefinitionCategoryEnumList) : Integer;
 var
   a : TFhirActivityDefinitionCategoryEnum;
@@ -32741,12 +32475,12 @@ begin
  end;
 
 
-function TFhirCarePlanStatusEnumListAsInteger(aSet : TFhirCarePlanStatusEnumList) : Integer;
+function TFhirCapabilityStatementKindEnumListAsInteger(aSet : TFhirCapabilityStatementKindEnumList) : Integer;
 var
-  a : TFhirCarePlanStatusEnum;
+  a : TFhirCapabilityStatementKindEnum;
 begin
   result := 0;
-  for a := low(TFhirCarePlanStatusEnum) to high(TFhirCarePlanStatusEnum) do
+  for a := low(TFhirCapabilityStatementKindEnum) to high(TFhirCapabilityStatementKindEnum) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -32754,633 +32488,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirCarePlanStatusEnumList(i : Integer) : TFhirCarePlanStatusEnumList;
+function IntegerAsTFhirCapabilityStatementKindEnumList(i : Integer) : TFhirCapabilityStatementKindEnumList;
 var
-  aLoop : TFhirCarePlanStatusEnum;
+  aLoop : TFhirCapabilityStatementKindEnum;
 begin
   result := [];
-  for aLoop := low(TFhirCarePlanStatusEnum) to high(TFhirCarePlanStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCarePlanRelationshipEnumListAsInteger(aSet : TFhirCarePlanRelationshipEnumList) : Integer;
-var
-  a : TFhirCarePlanRelationshipEnum;
-begin
-  result := 0;
-  for a := low(TFhirCarePlanRelationshipEnum) to high(TFhirCarePlanRelationshipEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCarePlanRelationshipEnumList(i : Integer) : TFhirCarePlanRelationshipEnumList;
-var
-  aLoop : TFhirCarePlanRelationshipEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCarePlanRelationshipEnum) to high(TFhirCarePlanRelationshipEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCarePlanActivityStatusEnumListAsInteger(aSet : TFhirCarePlanActivityStatusEnumList) : Integer;
-var
-  a : TFhirCarePlanActivityStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirCarePlanActivityStatusEnum) to high(TFhirCarePlanActivityStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCarePlanActivityStatusEnumList(i : Integer) : TFhirCarePlanActivityStatusEnumList;
-var
-  aLoop : TFhirCarePlanActivityStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCarePlanActivityStatusEnum) to high(TFhirCarePlanActivityStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirClaimStatusEnumListAsInteger(aSet : TFhirClaimStatusEnumList) : Integer;
-var
-  a : TFhirClaimStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirClaimStatusEnum) to high(TFhirClaimStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirClaimStatusEnumList(i : Integer) : TFhirClaimStatusEnumList;
-var
-  aLoop : TFhirClaimStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirClaimStatusEnum) to high(TFhirClaimStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirClaimUseEnumListAsInteger(aSet : TFhirClaimUseEnumList) : Integer;
-var
-  a : TFhirClaimUseEnum;
-begin
-  result := 0;
-  for a := low(TFhirClaimUseEnum) to high(TFhirClaimUseEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirClaimUseEnumList(i : Integer) : TFhirClaimUseEnumList;
-var
-  aLoop : TFhirClaimUseEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirClaimUseEnum) to high(TFhirClaimUseEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirClaimresponseStatusEnumListAsInteger(aSet : TFhirClaimresponseStatusEnumList) : Integer;
-var
-  a : TFhirClaimresponseStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirClaimresponseStatusEnum) to high(TFhirClaimresponseStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirClaimresponseStatusEnumList(i : Integer) : TFhirClaimresponseStatusEnumList;
-var
-  aLoop : TFhirClaimresponseStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirClaimresponseStatusEnum) to high(TFhirClaimresponseStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirClinicalImpressionStatusEnumListAsInteger(aSet : TFhirClinicalImpressionStatusEnumList) : Integer;
-var
-  a : TFhirClinicalImpressionStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirClinicalImpressionStatusEnum) to high(TFhirClinicalImpressionStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirClinicalImpressionStatusEnumList(i : Integer) : TFhirClinicalImpressionStatusEnumList;
-var
-  aLoop : TFhirClinicalImpressionStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirClinicalImpressionStatusEnum) to high(TFhirClinicalImpressionStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConformanceResourceStatusEnumListAsInteger(aSet : TFhirConformanceResourceStatusEnumList) : Integer;
-var
-  a : TFhirConformanceResourceStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirConformanceResourceStatusEnum) to high(TFhirConformanceResourceStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConformanceResourceStatusEnumList(i : Integer) : TFhirConformanceResourceStatusEnumList;
-var
-  aLoop : TFhirConformanceResourceStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConformanceResourceStatusEnum) to high(TFhirConformanceResourceStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCodesystemHierarchyMeaningEnumListAsInteger(aSet : TFhirCodesystemHierarchyMeaningEnumList) : Integer;
-var
-  a : TFhirCodesystemHierarchyMeaningEnum;
-begin
-  result := 0;
-  for a := low(TFhirCodesystemHierarchyMeaningEnum) to high(TFhirCodesystemHierarchyMeaningEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCodesystemHierarchyMeaningEnumList(i : Integer) : TFhirCodesystemHierarchyMeaningEnumList;
-var
-  aLoop : TFhirCodesystemHierarchyMeaningEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCodesystemHierarchyMeaningEnum) to high(TFhirCodesystemHierarchyMeaningEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCodesystemContentModeEnumListAsInteger(aSet : TFhirCodesystemContentModeEnumList) : Integer;
-var
-  a : TFhirCodesystemContentModeEnum;
-begin
-  result := 0;
-  for a := low(TFhirCodesystemContentModeEnum) to high(TFhirCodesystemContentModeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCodesystemContentModeEnumList(i : Integer) : TFhirCodesystemContentModeEnumList;
-var
-  aLoop : TFhirCodesystemContentModeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCodesystemContentModeEnum) to high(TFhirCodesystemContentModeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirFilterOperatorEnumListAsInteger(aSet : TFhirFilterOperatorEnumList) : Integer;
-var
-  a : TFhirFilterOperatorEnum;
-begin
-  result := 0;
-  for a := low(TFhirFilterOperatorEnum) to high(TFhirFilterOperatorEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirFilterOperatorEnumList(i : Integer) : TFhirFilterOperatorEnumList;
-var
-  aLoop : TFhirFilterOperatorEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirFilterOperatorEnum) to high(TFhirFilterOperatorEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer;
-var
-  a : TFhirConceptPropertyTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConceptPropertyTypeEnumList(i : Integer) : TFhirConceptPropertyTypeEnumList;
-var
-  aLoop : TFhirConceptPropertyTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCommunicationStatusEnumListAsInteger(aSet : TFhirCommunicationStatusEnumList) : Integer;
-var
-  a : TFhirCommunicationStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirCommunicationStatusEnum) to high(TFhirCommunicationStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCommunicationStatusEnumList(i : Integer) : TFhirCommunicationStatusEnumList;
-var
-  aLoop : TFhirCommunicationStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCommunicationStatusEnum) to high(TFhirCommunicationStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCommunicationRequestStatusEnumListAsInteger(aSet : TFhirCommunicationRequestStatusEnumList) : Integer;
-var
-  a : TFhirCommunicationRequestStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirCommunicationRequestStatusEnum) to high(TFhirCommunicationRequestStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCommunicationRequestStatusEnumList(i : Integer) : TFhirCommunicationRequestStatusEnumList;
-var
-  aLoop : TFhirCommunicationRequestStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCommunicationRequestStatusEnum) to high(TFhirCommunicationRequestStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCompartmentTypeEnumListAsInteger(aSet : TFhirCompartmentTypeEnumList) : Integer;
-var
-  a : TFhirCompartmentTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirCompartmentTypeEnum) to high(TFhirCompartmentTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCompartmentTypeEnumList(i : Integer) : TFhirCompartmentTypeEnumList;
-var
-  aLoop : TFhirCompartmentTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCompartmentTypeEnum) to high(TFhirCompartmentTypeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer;
-var
-  a : TFhirResourceTypesEnum;
-begin
-  result := 0;
-  for a := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirResourceTypesEnumList(i : Integer) : TFhirResourceTypesEnumList;
-var
-  aLoop : TFhirResourceTypesEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCompositionStatusEnumListAsInteger(aSet : TFhirCompositionStatusEnumList) : Integer;
-var
-  a : TFhirCompositionStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirCompositionStatusEnum) to high(TFhirCompositionStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCompositionStatusEnumList(i : Integer) : TFhirCompositionStatusEnumList;
-var
-  aLoop : TFhirCompositionStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCompositionStatusEnum) to high(TFhirCompositionStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirV3ConfidentialityClassificationEnumListAsInteger(aSet : TFhirV3ConfidentialityClassificationEnumList) : Integer;
-var
-  a : TFhirV3ConfidentialityClassificationEnum;
-begin
-  result := 0;
-  for a := low(TFhirV3ConfidentialityClassificationEnum) to high(TFhirV3ConfidentialityClassificationEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirV3ConfidentialityClassificationEnumList(i : Integer) : TFhirV3ConfidentialityClassificationEnumList;
-var
-  aLoop : TFhirV3ConfidentialityClassificationEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirV3ConfidentialityClassificationEnum) to high(TFhirV3ConfidentialityClassificationEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirCompositionAttestationModeEnumListAsInteger(aSet : TFhirCompositionAttestationModeEnumList) : Integer;
-var
-  a : TFhirCompositionAttestationModeEnum;
-begin
-  result := 0;
-  for a := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirCompositionAttestationModeEnumList(i : Integer) : TFhirCompositionAttestationModeEnumList;
-var
-  aLoop : TFhirCompositionAttestationModeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirListModeEnumListAsInteger(aSet : TFhirListModeEnumList) : Integer;
-var
-  a : TFhirListModeEnum;
-begin
-  result := 0;
-  for a := low(TFhirListModeEnum) to high(TFhirListModeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirListModeEnumList(i : Integer) : TFhirListModeEnumList;
-var
-  aLoop : TFhirListModeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirListModeEnum) to high(TFhirListModeEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConceptMapEquivalenceEnumListAsInteger(aSet : TFhirConceptMapEquivalenceEnumList) : Integer;
-var
-  a : TFhirConceptMapEquivalenceEnum;
-begin
-  result := 0;
-  for a := low(TFhirConceptMapEquivalenceEnum) to high(TFhirConceptMapEquivalenceEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConceptMapEquivalenceEnumList(i : Integer) : TFhirConceptMapEquivalenceEnumList;
-var
-  aLoop : TFhirConceptMapEquivalenceEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConceptMapEquivalenceEnum) to high(TFhirConceptMapEquivalenceEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConditionClinicalEnumListAsInteger(aSet : TFhirConditionClinicalEnumList) : Integer;
-var
-  a : TFhirConditionClinicalEnum;
-begin
-  result := 0;
-  for a := low(TFhirConditionClinicalEnum) to high(TFhirConditionClinicalEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConditionClinicalEnumList(i : Integer) : TFhirConditionClinicalEnumList;
-var
-  aLoop : TFhirConditionClinicalEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConditionClinicalEnum) to high(TFhirConditionClinicalEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConditionVerStatusEnumListAsInteger(aSet : TFhirConditionVerStatusEnumList) : Integer;
-var
-  a : TFhirConditionVerStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirConditionVerStatusEnum) to high(TFhirConditionVerStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConditionVerStatusEnumList(i : Integer) : TFhirConditionVerStatusEnumList;
-var
-  aLoop : TFhirConditionVerStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConditionVerStatusEnum) to high(TFhirConditionVerStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConformanceStatementKindEnumListAsInteger(aSet : TFhirConformanceStatementKindEnumList) : Integer;
-var
-  a : TFhirConformanceStatementKindEnum;
-begin
-  result := 0;
-  for a := low(TFhirConformanceStatementKindEnum) to high(TFhirConformanceStatementKindEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConformanceStatementKindEnumList(i : Integer) : TFhirConformanceStatementKindEnumList;
-var
-  aLoop : TFhirConformanceStatementKindEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConformanceStatementKindEnum) to high(TFhirConformanceStatementKindEnum) Do
+  for aLoop := low(TFhirCapabilityStatementKindEnum) to high(TFhirCapabilityStatementKindEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -33416,12 +32529,12 @@ begin
  end;
 
 
-function TFhirRestfulConformanceModeEnumListAsInteger(aSet : TFhirRestfulConformanceModeEnumList) : Integer;
+function TFhirRestfulCapabilityModeEnumListAsInteger(aSet : TFhirRestfulCapabilityModeEnumList) : Integer;
 var
-  a : TFhirRestfulConformanceModeEnum;
+  a : TFhirRestfulCapabilityModeEnum;
 begin
   result := 0;
-  for a := low(TFhirRestfulConformanceModeEnum) to high(TFhirRestfulConformanceModeEnum) do
+  for a := low(TFhirRestfulCapabilityModeEnum) to high(TFhirRestfulCapabilityModeEnum) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -33429,12 +32542,39 @@ begin
   end;
 end;
 
-function IntegerAsTFhirRestfulConformanceModeEnumList(i : Integer) : TFhirRestfulConformanceModeEnumList;
+function IntegerAsTFhirRestfulCapabilityModeEnumList(i : Integer) : TFhirRestfulCapabilityModeEnumList;
 var
-  aLoop : TFhirRestfulConformanceModeEnum;
+  aLoop : TFhirRestfulCapabilityModeEnum;
 begin
   result := [];
-  for aLoop := low(TFhirRestfulConformanceModeEnum) to high(TFhirRestfulConformanceModeEnum) Do
+  for aLoop := low(TFhirRestfulCapabilityModeEnum) to high(TFhirRestfulCapabilityModeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) : Integer;
+var
+  a : TFhirResourceTypesEnum;
+begin
+  result := 0;
+  for a := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirResourceTypesEnumList(i : Integer) : TFhirResourceTypesEnumList;
+var
+  aLoop : TFhirResourceTypesEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirResourceTypesEnum) to high(TFhirResourceTypesEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -33686,12 +32826,12 @@ begin
  end;
 
 
-function TFhirMessageConformanceEventModeEnumListAsInteger(aSet : TFhirMessageConformanceEventModeEnumList) : Integer;
+function TFhirEventCapabilityModeEnumListAsInteger(aSet : TFhirEventCapabilityModeEnumList) : Integer;
 var
-  a : TFhirMessageConformanceEventModeEnum;
+  a : TFhirEventCapabilityModeEnum;
 begin
   result := 0;
-  for a := low(TFhirMessageConformanceEventModeEnum) to high(TFhirMessageConformanceEventModeEnum) do
+  for a := low(TFhirEventCapabilityModeEnum) to high(TFhirEventCapabilityModeEnum) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -33699,12 +32839,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirMessageConformanceEventModeEnumList(i : Integer) : TFhirMessageConformanceEventModeEnumList;
+function IntegerAsTFhirEventCapabilityModeEnumList(i : Integer) : TFhirEventCapabilityModeEnumList;
 var
-  aLoop : TFhirMessageConformanceEventModeEnum;
+  aLoop : TFhirEventCapabilityModeEnum;
 begin
   result := [];
-  for aLoop := low(TFhirMessageConformanceEventModeEnum) to high(TFhirMessageConformanceEventModeEnum) Do
+  for aLoop := low(TFhirEventCapabilityModeEnum) to high(TFhirEventCapabilityModeEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -33732,6 +32872,573 @@ var
 begin
   result := [];
   for aLoop := low(TFhirDocumentModeEnum) to high(TFhirDocumentModeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCarePlanStatusEnumListAsInteger(aSet : TFhirCarePlanStatusEnumList) : Integer;
+var
+  a : TFhirCarePlanStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirCarePlanStatusEnum) to high(TFhirCarePlanStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCarePlanStatusEnumList(i : Integer) : TFhirCarePlanStatusEnumList;
+var
+  aLoop : TFhirCarePlanStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCarePlanStatusEnum) to high(TFhirCarePlanStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCarePlanRelationshipEnumListAsInteger(aSet : TFhirCarePlanRelationshipEnumList) : Integer;
+var
+  a : TFhirCarePlanRelationshipEnum;
+begin
+  result := 0;
+  for a := low(TFhirCarePlanRelationshipEnum) to high(TFhirCarePlanRelationshipEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCarePlanRelationshipEnumList(i : Integer) : TFhirCarePlanRelationshipEnumList;
+var
+  aLoop : TFhirCarePlanRelationshipEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCarePlanRelationshipEnum) to high(TFhirCarePlanRelationshipEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCarePlanActivityStatusEnumListAsInteger(aSet : TFhirCarePlanActivityStatusEnumList) : Integer;
+var
+  a : TFhirCarePlanActivityStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirCarePlanActivityStatusEnum) to high(TFhirCarePlanActivityStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCarePlanActivityStatusEnumList(i : Integer) : TFhirCarePlanActivityStatusEnumList;
+var
+  aLoop : TFhirCarePlanActivityStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCarePlanActivityStatusEnum) to high(TFhirCarePlanActivityStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirClaimStatusEnumListAsInteger(aSet : TFhirClaimStatusEnumList) : Integer;
+var
+  a : TFhirClaimStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirClaimStatusEnum) to high(TFhirClaimStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirClaimStatusEnumList(i : Integer) : TFhirClaimStatusEnumList;
+var
+  aLoop : TFhirClaimStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirClaimStatusEnum) to high(TFhirClaimStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirClaimUseEnumListAsInteger(aSet : TFhirClaimUseEnumList) : Integer;
+var
+  a : TFhirClaimUseEnum;
+begin
+  result := 0;
+  for a := low(TFhirClaimUseEnum) to high(TFhirClaimUseEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirClaimUseEnumList(i : Integer) : TFhirClaimUseEnumList;
+var
+  aLoop : TFhirClaimUseEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirClaimUseEnum) to high(TFhirClaimUseEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirClaimresponseStatusEnumListAsInteger(aSet : TFhirClaimresponseStatusEnumList) : Integer;
+var
+  a : TFhirClaimresponseStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirClaimresponseStatusEnum) to high(TFhirClaimresponseStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirClaimresponseStatusEnumList(i : Integer) : TFhirClaimresponseStatusEnumList;
+var
+  aLoop : TFhirClaimresponseStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirClaimresponseStatusEnum) to high(TFhirClaimresponseStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirClinicalImpressionStatusEnumListAsInteger(aSet : TFhirClinicalImpressionStatusEnumList) : Integer;
+var
+  a : TFhirClinicalImpressionStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirClinicalImpressionStatusEnum) to high(TFhirClinicalImpressionStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirClinicalImpressionStatusEnumList(i : Integer) : TFhirClinicalImpressionStatusEnumList;
+var
+  aLoop : TFhirClinicalImpressionStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirClinicalImpressionStatusEnum) to high(TFhirClinicalImpressionStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCodesystemHierarchyMeaningEnumListAsInteger(aSet : TFhirCodesystemHierarchyMeaningEnumList) : Integer;
+var
+  a : TFhirCodesystemHierarchyMeaningEnum;
+begin
+  result := 0;
+  for a := low(TFhirCodesystemHierarchyMeaningEnum) to high(TFhirCodesystemHierarchyMeaningEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCodesystemHierarchyMeaningEnumList(i : Integer) : TFhirCodesystemHierarchyMeaningEnumList;
+var
+  aLoop : TFhirCodesystemHierarchyMeaningEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCodesystemHierarchyMeaningEnum) to high(TFhirCodesystemHierarchyMeaningEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCodesystemContentModeEnumListAsInteger(aSet : TFhirCodesystemContentModeEnumList) : Integer;
+var
+  a : TFhirCodesystemContentModeEnum;
+begin
+  result := 0;
+  for a := low(TFhirCodesystemContentModeEnum) to high(TFhirCodesystemContentModeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCodesystemContentModeEnumList(i : Integer) : TFhirCodesystemContentModeEnumList;
+var
+  aLoop : TFhirCodesystemContentModeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCodesystemContentModeEnum) to high(TFhirCodesystemContentModeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirFilterOperatorEnumListAsInteger(aSet : TFhirFilterOperatorEnumList) : Integer;
+var
+  a : TFhirFilterOperatorEnum;
+begin
+  result := 0;
+  for a := low(TFhirFilterOperatorEnum) to high(TFhirFilterOperatorEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirFilterOperatorEnumList(i : Integer) : TFhirFilterOperatorEnumList;
+var
+  aLoop : TFhirFilterOperatorEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirFilterOperatorEnum) to high(TFhirFilterOperatorEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTypeEnumList) : Integer;
+var
+  a : TFhirConceptPropertyTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConceptPropertyTypeEnumList(i : Integer) : TFhirConceptPropertyTypeEnumList;
+var
+  aLoop : TFhirConceptPropertyTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConceptPropertyTypeEnum) to high(TFhirConceptPropertyTypeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCommunicationStatusEnumListAsInteger(aSet : TFhirCommunicationStatusEnumList) : Integer;
+var
+  a : TFhirCommunicationStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirCommunicationStatusEnum) to high(TFhirCommunicationStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCommunicationStatusEnumList(i : Integer) : TFhirCommunicationStatusEnumList;
+var
+  aLoop : TFhirCommunicationStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCommunicationStatusEnum) to high(TFhirCommunicationStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCommunicationRequestStatusEnumListAsInteger(aSet : TFhirCommunicationRequestStatusEnumList) : Integer;
+var
+  a : TFhirCommunicationRequestStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirCommunicationRequestStatusEnum) to high(TFhirCommunicationRequestStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCommunicationRequestStatusEnumList(i : Integer) : TFhirCommunicationRequestStatusEnumList;
+var
+  aLoop : TFhirCommunicationRequestStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCommunicationRequestStatusEnum) to high(TFhirCommunicationRequestStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCompartmentTypeEnumListAsInteger(aSet : TFhirCompartmentTypeEnumList) : Integer;
+var
+  a : TFhirCompartmentTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirCompartmentTypeEnum) to high(TFhirCompartmentTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCompartmentTypeEnumList(i : Integer) : TFhirCompartmentTypeEnumList;
+var
+  aLoop : TFhirCompartmentTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCompartmentTypeEnum) to high(TFhirCompartmentTypeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCompositionStatusEnumListAsInteger(aSet : TFhirCompositionStatusEnumList) : Integer;
+var
+  a : TFhirCompositionStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirCompositionStatusEnum) to high(TFhirCompositionStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCompositionStatusEnumList(i : Integer) : TFhirCompositionStatusEnumList;
+var
+  aLoop : TFhirCompositionStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCompositionStatusEnum) to high(TFhirCompositionStatusEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirV3ConfidentialityClassificationEnumListAsInteger(aSet : TFhirV3ConfidentialityClassificationEnumList) : Integer;
+var
+  a : TFhirV3ConfidentialityClassificationEnum;
+begin
+  result := 0;
+  for a := low(TFhirV3ConfidentialityClassificationEnum) to high(TFhirV3ConfidentialityClassificationEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirV3ConfidentialityClassificationEnumList(i : Integer) : TFhirV3ConfidentialityClassificationEnumList;
+var
+  aLoop : TFhirV3ConfidentialityClassificationEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirV3ConfidentialityClassificationEnum) to high(TFhirV3ConfidentialityClassificationEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirCompositionAttestationModeEnumListAsInteger(aSet : TFhirCompositionAttestationModeEnumList) : Integer;
+var
+  a : TFhirCompositionAttestationModeEnum;
+begin
+  result := 0;
+  for a := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirCompositionAttestationModeEnumList(i : Integer) : TFhirCompositionAttestationModeEnumList;
+var
+  aLoop : TFhirCompositionAttestationModeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirListModeEnumListAsInteger(aSet : TFhirListModeEnumList) : Integer;
+var
+  a : TFhirListModeEnum;
+begin
+  result := 0;
+  for a := low(TFhirListModeEnum) to high(TFhirListModeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirListModeEnumList(i : Integer) : TFhirListModeEnumList;
+var
+  aLoop : TFhirListModeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirListModeEnum) to high(TFhirListModeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirConceptMapEquivalenceEnumListAsInteger(aSet : TFhirConceptMapEquivalenceEnumList) : Integer;
+var
+  a : TFhirConceptMapEquivalenceEnum;
+begin
+  result := 0;
+  for a := low(TFhirConceptMapEquivalenceEnum) to high(TFhirConceptMapEquivalenceEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConceptMapEquivalenceEnumList(i : Integer) : TFhirConceptMapEquivalenceEnumList;
+var
+  aLoop : TFhirConceptMapEquivalenceEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConceptMapEquivalenceEnum) to high(TFhirConceptMapEquivalenceEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirConditionClinicalEnumListAsInteger(aSet : TFhirConditionClinicalEnumList) : Integer;
+var
+  a : TFhirConditionClinicalEnum;
+begin
+  result := 0;
+  for a := low(TFhirConditionClinicalEnum) to high(TFhirConditionClinicalEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConditionClinicalEnumList(i : Integer) : TFhirConditionClinicalEnumList;
+var
+  aLoop : TFhirConditionClinicalEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConditionClinicalEnum) to high(TFhirConditionClinicalEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirConditionVerStatusEnumListAsInteger(aSet : TFhirConditionVerStatusEnumList) : Integer;
+var
+  a : TFhirConditionVerStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirConditionVerStatusEnum) to high(TFhirConditionVerStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConditionVerStatusEnumList(i : Integer) : TFhirConditionVerStatusEnumList;
+var
+  aLoop : TFhirConditionVerStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConditionVerStatusEnum) to high(TFhirConditionVerStatusEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

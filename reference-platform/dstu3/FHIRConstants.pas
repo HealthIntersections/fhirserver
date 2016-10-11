@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
+// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -79,12 +79,18 @@ Type
     spActivityDefinition__security, {@enum.value "_security" spActivityDefinition__security Security Labels applied to this resource }
     spActivityDefinition__tag, {@enum.value "_tag" spActivityDefinition__tag Tags applied to this resource }
     spActivityDefinition__text, {@enum.value "_text" spActivityDefinition__text Search on the narrative of the resource }
-    spActivityDefinition_Description, {@enum.value "description" spActivityDefinition_Description Text search against the description }
-    spActivityDefinition_Identifier, {@enum.value "identifier" spActivityDefinition_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spActivityDefinition_Status, {@enum.value "status" spActivityDefinition_Status Status of the module }
-    spActivityDefinition_Title, {@enum.value "title" spActivityDefinition_Title Text search against the title }
+    spActivityDefinition_Date, {@enum.value "date" spActivityDefinition_Date The activity definition publication date }
+    spActivityDefinition_Description, {@enum.value "description" spActivityDefinition_Description Text search against the description of the activity definition }
+    spActivityDefinition_Effective, {@enum.value "effective" spActivityDefinition_Effective Effective time associated with the activity definition }
+    spActivityDefinition_Identifier, {@enum.value "identifier" spActivityDefinition_Identifier External identifiers for the activity definition }
+    spActivityDefinition_Jurisdiction, {@enum.value "jurisdiction" spActivityDefinition_Jurisdiction Intended jurisdiction for activity definition }
+    spActivityDefinition_Name, {@enum.value "name" spActivityDefinition_Name Name of the activity definition }
+    spActivityDefinition_Publisher, {@enum.value "publisher" spActivityDefinition_Publisher Name of the publisher of the activity definition }
+    spActivityDefinition_Status, {@enum.value "status" spActivityDefinition_Status The current status of the activity definition }
+    spActivityDefinition_Title, {@enum.value "title" spActivityDefinition_Title Text search against the title of the activity definition }
     spActivityDefinition_Topic, {@enum.value "topic" spActivityDefinition_Topic Topics associated with the module }
-    spActivityDefinition_Version); {@enum.value "version" spActivityDefinition_Version Version of the module (e.g. 1.0.0) }
+    spActivityDefinition_Url, {@enum.value "url" spActivityDefinition_Url The uri that identifies the activity definition }
+    spActivityDefinition_Version); {@enum.value "version" spActivityDefinition_Version The version identifier of the activity definition }
 
   {@Enum TSearchParamsActivityGroup
     Search Parameters for ActivityGroup
@@ -271,6 +277,37 @@ Type
     spBundle_Message, {@enum.value "message" spBundle_Message The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents }
     spBundle_Type); {@enum.value "type" spBundle_Type document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection }
 
+  {@Enum TSearchParamsCapabilityStatement
+    Search Parameters for CapabilityStatement
+  }
+  TSearchParamsCapabilityStatement = (
+    spCapabilityStatement__content, {@enum.value "_content" spCapabilityStatement__content Search on the entire content of the resource }
+    spCapabilityStatement__id, {@enum.value "_id" spCapabilityStatement__id Logical id of this artifact }
+    spCapabilityStatement__lastUpdated, {@enum.value "_lastUpdated" spCapabilityStatement__lastUpdated When the resource version last changed }
+    spCapabilityStatement__profile, {@enum.value "_profile" spCapabilityStatement__profile Profiles this resource claims to conform to }
+    spCapabilityStatement__query, {@enum.value "_query" spCapabilityStatement__query A custom search profile that describes a specific defined query operation }
+    spCapabilityStatement__security, {@enum.value "_security" spCapabilityStatement__security Security Labels applied to this resource }
+    spCapabilityStatement__tag, {@enum.value "_tag" spCapabilityStatement__tag Tags applied to this resource }
+    spCapabilityStatement__text, {@enum.value "_text" spCapabilityStatement__text Search on the narrative of the resource }
+    spCapabilityStatement_Date, {@enum.value "date" spCapabilityStatement_Date The capability statement publication date }
+    spCapabilityStatement_Description, {@enum.value "description" spCapabilityStatement_Description Text search against the description of the capability statement }
+    spCapabilityStatement_Event, {@enum.value "event" spCapabilityStatement_Event Event code in a capability statement }
+    spCapabilityStatement_Fhirversion, {@enum.value "fhirversion" spCapabilityStatement_Fhirversion The version of FHIR }
+    spCapabilityStatement_Format, {@enum.value "format" spCapabilityStatement_Format formats supported (xml | json | ttl | mime type) }
+    spCapabilityStatement_Jurisdiction, {@enum.value "jurisdiction" spCapabilityStatement_Jurisdiction Intended jurisdiction for capability statement }
+    spCapabilityStatement_Mode, {@enum.value "mode" spCapabilityStatement_Mode Mode - restful (server/client) or messaging (sender/receiver) }
+    spCapabilityStatement_Name, {@enum.value "name" spCapabilityStatement_Name Name of the capability statement }
+    spCapabilityStatement_Publisher, {@enum.value "publisher" spCapabilityStatement_Publisher Name of the publisher of the capability statement }
+    spCapabilityStatement_Resource, {@enum.value "resource" spCapabilityStatement_Resource Name of a resource mentioned in a capability statement }
+    spCapabilityStatement_Resourceprofile, {@enum.value "resourceprofile" spCapabilityStatement_Resourceprofile A profile id invoked in a capability statement }
+    spCapabilityStatement_Securityservice, {@enum.value "securityservice" spCapabilityStatement_Securityservice OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates }
+    spCapabilityStatement_Software, {@enum.value "software" spCapabilityStatement_Software Part of a the name of a software application }
+    spCapabilityStatement_Status, {@enum.value "status" spCapabilityStatement_Status The current status of the capability statement }
+    spCapabilityStatement_Supportedprofile, {@enum.value "supported-profile" spCapabilityStatement_Supportedprofile Profiles for use cases supported }
+    spCapabilityStatement_Title, {@enum.value "title" spCapabilityStatement_Title Text search against the title of the capability statement }
+    spCapabilityStatement_Url, {@enum.value "url" spCapabilityStatement_Url The uri that identifies the capability statement }
+    spCapabilityStatement_Version); {@enum.value "version" spCapabilityStatement_Version The version identifier of the capability statement }
+
   {@Enum TSearchParamsCarePlan
     Search Parameters for CarePlan
   }
@@ -401,16 +438,17 @@ Type
     spCodeSystem__text, {@enum.value "_text" spCodeSystem__text Search on the narrative of the resource }
     spCodeSystem_Code, {@enum.value "code" spCodeSystem_Code A code defined in the code system }
     spCodeSystem_Content, {@enum.value "content" spCodeSystem_Content not-present | examplar | fragment | complete }
-    spCodeSystem_Context, {@enum.value "context" spCodeSystem_Context A use context assigned to the code system }
     spCodeSystem_Date, {@enum.value "date" spCodeSystem_Date The code system publication date }
-    spCodeSystem_Description, {@enum.value "description" spCodeSystem_Description Text search in the description of the code system }
-    spCodeSystem_Identifier, {@enum.value "identifier" spCodeSystem_Identifier The identifier for the code system }
+    spCodeSystem_Description, {@enum.value "description" spCodeSystem_Description Text search against the description of the code system }
+    spCodeSystem_Identifier, {@enum.value "identifier" spCodeSystem_Identifier External identifiers for the code system }
+    spCodeSystem_Jurisdiction, {@enum.value "jurisdiction" spCodeSystem_Jurisdiction Intended jurisdiction for code system }
     spCodeSystem_Language, {@enum.value "language" spCodeSystem_Language A language in which a designation is provided }
-    spCodeSystem_Name, {@enum.value "name" spCodeSystem_Name The name of the code system }
+    spCodeSystem_Name, {@enum.value "name" spCodeSystem_Name Name of the code system }
     spCodeSystem_Publisher, {@enum.value "publisher" spCodeSystem_Publisher Name of the publisher of the code system }
-    spCodeSystem_Status, {@enum.value "status" spCodeSystem_Status The status of the code system }
+    spCodeSystem_Status, {@enum.value "status" spCodeSystem_Status The current status of the code system }
     spCodeSystem_System, {@enum.value "system" spCodeSystem_System The system for any codes defined by this code system (same as 'url') }
-    spCodeSystem_Url, {@enum.value "url" spCodeSystem_Url The logical URL for the code system }
+    spCodeSystem_Title, {@enum.value "title" spCodeSystem_Title Text search against the title of the code system }
+    spCodeSystem_Url, {@enum.value "url" spCodeSystem_Url The uri that identifies the code system }
     spCodeSystem_Version); {@enum.value "version" spCodeSystem_Version The version identifier of the code system }
 
   {@Enum TSearchParamsCommunication
@@ -477,11 +515,15 @@ Type
     spCompartmentDefinition__tag, {@enum.value "_tag" spCompartmentDefinition__tag Tags applied to this resource }
     spCompartmentDefinition__text, {@enum.value "_text" spCompartmentDefinition__text Search on the narrative of the resource }
     spCompartmentDefinition_Code, {@enum.value "code" spCompartmentDefinition_Code Patient | Encounter | RelatedPerson | Practitioner | Device }
-    spCompartmentDefinition_Date, {@enum.value "date" spCompartmentDefinition_Date Publication Date(/time) }
-    spCompartmentDefinition_Name, {@enum.value "name" spCompartmentDefinition_Name Informal name for this compartment definition }
+    spCompartmentDefinition_Date, {@enum.value "date" spCompartmentDefinition_Date The compartment definition publication date }
+    spCompartmentDefinition_Description, {@enum.value "description" spCompartmentDefinition_Description Text search against the description of the compartment definition }
+    spCompartmentDefinition_Jurisdiction, {@enum.value "jurisdiction" spCompartmentDefinition_Jurisdiction Intended jurisdiction for compartment definition }
+    spCompartmentDefinition_Name, {@enum.value "name" spCompartmentDefinition_Name Name of the compartment definition }
+    spCompartmentDefinition_Publisher, {@enum.value "publisher" spCompartmentDefinition_Publisher Name of the publisher of the compartment definition }
     spCompartmentDefinition_Resource, {@enum.value "resource" spCompartmentDefinition_Resource Name of resource type }
-    spCompartmentDefinition_Status, {@enum.value "status" spCompartmentDefinition_Status draft | active | retired }
-    spCompartmentDefinition_Url); {@enum.value "url" spCompartmentDefinition_Url Absolute URL used to reference this compartment definition }
+    spCompartmentDefinition_Status, {@enum.value "status" spCompartmentDefinition_Status The current status of the compartment definition }
+    spCompartmentDefinition_Title, {@enum.value "title" spCompartmentDefinition_Title Text search against the title of the compartment definition }
+    spCompartmentDefinition_Url); {@enum.value "url" spCompartmentDefinition_Url The uri that identifies the compartment definition }
 
   {@Enum TSearchParamsComposition
     Search Parameters for Composition
@@ -524,11 +566,11 @@ Type
     spConceptMap__security, {@enum.value "_security" spConceptMap__security Security Labels applied to this resource }
     spConceptMap__tag, {@enum.value "_tag" spConceptMap__tag Tags applied to this resource }
     spConceptMap__text, {@enum.value "_text" spConceptMap__text Search on the narrative of the resource }
-    spConceptMap_Context, {@enum.value "context" spConceptMap_Context A use context assigned to the concept map }
     spConceptMap_Date, {@enum.value "date" spConceptMap_Date The concept map publication date }
     spConceptMap_Dependson, {@enum.value "dependson" spConceptMap_Dependson Reference to property mapping depends on }
-    spConceptMap_Description, {@enum.value "description" spConceptMap_Description Text search in the description of the concept map }
-    spConceptMap_Identifier, {@enum.value "identifier" spConceptMap_Identifier Additional identifier for the concept map }
+    spConceptMap_Description, {@enum.value "description" spConceptMap_Description Text search against the description of the concept map }
+    spConceptMap_Identifier, {@enum.value "identifier" spConceptMap_Identifier External identifiers for the concept map }
+    spConceptMap_Jurisdiction, {@enum.value "jurisdiction" spConceptMap_Jurisdiction Intended jurisdiction for concept map }
     spConceptMap_Name, {@enum.value "name" spConceptMap_Name Name of the concept map }
     spConceptMap_Product, {@enum.value "product" spConceptMap_Product Reference to property mapping depends on }
     spConceptMap_Publisher, {@enum.value "publisher" spConceptMap_Publisher Name of the publisher of the concept map }
@@ -536,12 +578,13 @@ Type
     spConceptMap_Sourcecode, {@enum.value "source-code" spConceptMap_Sourcecode Identifies element being mapped }
     spConceptMap_Sourcesystem, {@enum.value "source-system" spConceptMap_Sourcesystem Code System (if value set crosses code systems) }
     spConceptMap_Sourceuri, {@enum.value "source-uri" spConceptMap_Sourceuri Identifies the source of the concepts which are being mapped }
-    spConceptMap_Status, {@enum.value "status" spConceptMap_Status Status of the concept map }
+    spConceptMap_Status, {@enum.value "status" spConceptMap_Status The current status of the concept map }
     spConceptMap_Target, {@enum.value "target" spConceptMap_Target Provides context to the mappings }
     spConceptMap_Targetcode, {@enum.value "target-code" spConceptMap_Targetcode Code that identifies the target element }
     spConceptMap_Targetsystem, {@enum.value "target-system" spConceptMap_Targetsystem System of the target (if necessary) }
     spConceptMap_Targeturi, {@enum.value "target-uri" spConceptMap_Targeturi Provides context to the mappings }
-    spConceptMap_Url, {@enum.value "url" spConceptMap_Url The URL of the concept map }
+    spConceptMap_Title, {@enum.value "title" spConceptMap_Title Text search against the title of the concept map }
+    spConceptMap_Url, {@enum.value "url" spConceptMap_Url The uri that identifies the concept map }
     spConceptMap_Version); {@enum.value "version" spConceptMap_Version The version identifier of the concept map }
 
   {@Enum TSearchParamsCondition
@@ -576,36 +619,6 @@ Type
     spCondition_Severity, {@enum.value "severity" spCondition_Severity The severity of the condition }
     spCondition_Stage, {@enum.value "stage" spCondition_Stage Simple summary (disease specific) }
     spCondition_Subject); {@enum.value "subject" spCondition_Subject Who has the condition? }
-
-  {@Enum TSearchParamsConformance
-    Search Parameters for Conformance
-  }
-  TSearchParamsConformance = (
-    spConformance__content, {@enum.value "_content" spConformance__content Search on the entire content of the resource }
-    spConformance__id, {@enum.value "_id" spConformance__id Logical id of this artifact }
-    spConformance__lastUpdated, {@enum.value "_lastUpdated" spConformance__lastUpdated When the resource version last changed }
-    spConformance__profile, {@enum.value "_profile" spConformance__profile Profiles this resource claims to conform to }
-    spConformance__query, {@enum.value "_query" spConformance__query A custom search profile that describes a specific defined query operation }
-    spConformance__security, {@enum.value "_security" spConformance__security Security Labels applied to this resource }
-    spConformance__tag, {@enum.value "_tag" spConformance__tag Tags applied to this resource }
-    spConformance__text, {@enum.value "_text" spConformance__text Search on the narrative of the resource }
-    spConformance_Context, {@enum.value "context" spConformance_Context A use context assigned to the conformance statement }
-    spConformance_Date, {@enum.value "date" spConformance_Date The conformance statement publication date }
-    spConformance_Description, {@enum.value "description" spConformance_Description Text search in the description of the conformance statement }
-    spConformance_Event, {@enum.value "event" spConformance_Event Event code in a conformance statement }
-    spConformance_Fhirversion, {@enum.value "fhirversion" spConformance_Fhirversion The version of FHIR }
-    spConformance_Format, {@enum.value "format" spConformance_Format formats supported (xml | json | ttl | mime type) }
-    spConformance_Mode, {@enum.value "mode" spConformance_Mode Mode - restful (server/client) or messaging (sender/receiver) }
-    spConformance_Name, {@enum.value "name" spConformance_Name Name of the conformance statement }
-    spConformance_Publisher, {@enum.value "publisher" spConformance_Publisher Name of the publisher of the conformance statement }
-    spConformance_Resource, {@enum.value "resource" spConformance_Resource Name of a resource mentioned in a conformance statement }
-    spConformance_Resourceprofile, {@enum.value "resourceprofile" spConformance_Resourceprofile A profile id invoked in a conformance statement }
-    spConformance_Securityservice, {@enum.value "securityservice" spConformance_Securityservice OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates }
-    spConformance_Software, {@enum.value "software" spConformance_Software Part of a the name of a software application }
-    spConformance_Status, {@enum.value "status" spConformance_Status The current status of the conformance statement }
-    spConformance_Supportedprofile, {@enum.value "supported-profile" spConformance_Supportedprofile Profiles for use cases supported }
-    spConformance_Url, {@enum.value "url" spConformance_Url The uri that identifies the conformance statement }
-    spConformance_Version); {@enum.value "version" spConformance_Version The version identifier of the conformance statement }
 
   {@Enum TSearchParamsConsent
     Search Parameters for Consent
@@ -691,17 +704,18 @@ Type
     spDataElement__tag, {@enum.value "_tag" spDataElement__tag Tags applied to this resource }
     spDataElement__text, {@enum.value "_text" spDataElement__text Search on the narrative of the resource }
     spDataElement_Code, {@enum.value "code" spDataElement_Code A code for the data element (server may choose to do subsumption) }
-    spDataElement_Context, {@enum.value "context" spDataElement_Context A use context assigned to the data element }
     spDataElement_Date, {@enum.value "date" spDataElement_Date The data element publication date }
     spDataElement_Description, {@enum.value "description" spDataElement_Description Text search in the description of the data element.  This corresponds to the definition of the first DataElement.element. }
-    spDataElement_Identifier, {@enum.value "identifier" spDataElement_Identifier The identifier of the data element }
+    spDataElement_Identifier, {@enum.value "identifier" spDataElement_Identifier External identifiers for the data element }
+    spDataElement_Jurisdiction, {@enum.value "jurisdiction" spDataElement_Jurisdiction Intended jurisdiction for data element }
     spDataElement_Name, {@enum.value "name" spDataElement_Name Name of the data element }
     spDataElement_ObjectClass, {@enum.value "objectClass" spDataElement_ObjectClass Matches on the 11179-objectClass extension value }
     spDataElement_ObjectClassProperty, {@enum.value "objectClassProperty" spDataElement_ObjectClassProperty Matches on the 11179-objectClassProperty extension value }
     spDataElement_Publisher, {@enum.value "publisher" spDataElement_Publisher Name of the publisher of the data element }
     spDataElement_Status, {@enum.value "status" spDataElement_Status The current status of the data element }
     spDataElement_Stringency, {@enum.value "stringency" spDataElement_Stringency The stringency of the data element definition }
-    spDataElement_Url, {@enum.value "url" spDataElement_Url The official URL for the data element }
+    spDataElement_Title, {@enum.value "title" spDataElement_Title Text search against the title of the data element }
+    spDataElement_Url, {@enum.value "url" spDataElement_Url The uri that identifies the data element }
     spDataElement_Version); {@enum.value "version" spDataElement_Version The version identifier of the data element }
 
   {@Enum TSearchParamsDecisionSupportServiceModule
@@ -716,12 +730,18 @@ Type
     spDecisionSupportServiceModule__security, {@enum.value "_security" spDecisionSupportServiceModule__security Security Labels applied to this resource }
     spDecisionSupportServiceModule__tag, {@enum.value "_tag" spDecisionSupportServiceModule__tag Tags applied to this resource }
     spDecisionSupportServiceModule__text, {@enum.value "_text" spDecisionSupportServiceModule__text Search on the narrative of the resource }
-    spDecisionSupportServiceModule_Description, {@enum.value "description" spDecisionSupportServiceModule_Description Text search against the description }
-    spDecisionSupportServiceModule_Identifier, {@enum.value "identifier" spDecisionSupportServiceModule_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spDecisionSupportServiceModule_Status, {@enum.value "status" spDecisionSupportServiceModule_Status Status of the module }
-    spDecisionSupportServiceModule_Title, {@enum.value "title" spDecisionSupportServiceModule_Title Text search against the title }
+    spDecisionSupportServiceModule_Date, {@enum.value "date" spDecisionSupportServiceModule_Date The decision support service module publication date }
+    spDecisionSupportServiceModule_Description, {@enum.value "description" spDecisionSupportServiceModule_Description Text search against the description of the decision support service module }
+    spDecisionSupportServiceModule_Effective, {@enum.value "effective" spDecisionSupportServiceModule_Effective Effective time associated with the decision support service module }
+    spDecisionSupportServiceModule_Identifier, {@enum.value "identifier" spDecisionSupportServiceModule_Identifier External identifiers for the decision support service module }
+    spDecisionSupportServiceModule_Jurisdiction, {@enum.value "jurisdiction" spDecisionSupportServiceModule_Jurisdiction Intended jurisdiction for decision support service module }
+    spDecisionSupportServiceModule_Name, {@enum.value "name" spDecisionSupportServiceModule_Name Name of the decision support service module }
+    spDecisionSupportServiceModule_Publisher, {@enum.value "publisher" spDecisionSupportServiceModule_Publisher Name of the publisher of the decision support service module }
+    spDecisionSupportServiceModule_Status, {@enum.value "status" spDecisionSupportServiceModule_Status The current status of the decision support service module }
+    spDecisionSupportServiceModule_Title, {@enum.value "title" spDecisionSupportServiceModule_Title Text search against the title of the decision support service module }
     spDecisionSupportServiceModule_Topic, {@enum.value "topic" spDecisionSupportServiceModule_Topic Topics associated with the module }
-    spDecisionSupportServiceModule_Version); {@enum.value "version" spDecisionSupportServiceModule_Version Version of the module (e.g. 1.0.0) }
+    spDecisionSupportServiceModule_Url, {@enum.value "url" spDecisionSupportServiceModule_Url The uri that identifies the decision support service module }
+    spDecisionSupportServiceModule_Version); {@enum.value "version" spDecisionSupportServiceModule_Version The version identifier of the decision support service module }
 
   {@Enum TSearchParamsDetectedIssue
     Search Parameters for DetectedIssue
@@ -1124,12 +1144,13 @@ Type
     spExpansionProfile__tag, {@enum.value "_tag" spExpansionProfile__tag Tags applied to this resource }
     spExpansionProfile__text, {@enum.value "_text" spExpansionProfile__text Search on the narrative of the resource }
     spExpansionProfile_Date, {@enum.value "date" spExpansionProfile_Date The expansion profile publication date }
-    spExpansionProfile_Description, {@enum.value "description" spExpansionProfile_Description Text search in the description of the expansion profile }
-    spExpansionProfile_Identifier, {@enum.value "identifier" spExpansionProfile_Identifier The identifier for the expansion profile }
-    spExpansionProfile_Name, {@enum.value "name" spExpansionProfile_Name The name of the expansion profile }
+    spExpansionProfile_Description, {@enum.value "description" spExpansionProfile_Description Text search against the description of the expansion profile }
+    spExpansionProfile_Identifier, {@enum.value "identifier" spExpansionProfile_Identifier External identifiers for the expansion profile }
+    spExpansionProfile_Jurisdiction, {@enum.value "jurisdiction" spExpansionProfile_Jurisdiction Intended jurisdiction for expansion profile }
+    spExpansionProfile_Name, {@enum.value "name" spExpansionProfile_Name Name of the expansion profile }
     spExpansionProfile_Publisher, {@enum.value "publisher" spExpansionProfile_Publisher Name of the publisher of the expansion profile }
-    spExpansionProfile_Status, {@enum.value "status" spExpansionProfile_Status The status of the expansion profile }
-    spExpansionProfile_Url, {@enum.value "url" spExpansionProfile_Url The logical URL for the expansion profile }
+    spExpansionProfile_Status, {@enum.value "status" spExpansionProfile_Status The current status of the expansion profile }
+    spExpansionProfile_Url, {@enum.value "url" spExpansionProfile_Url The uri that identifies the expansion profile }
     spExpansionProfile_Version); {@enum.value "version" spExpansionProfile_Version The version identifier of the expansion profile }
 
   {@Enum TSearchParamsExplanationOfBenefit
@@ -1376,16 +1397,16 @@ Type
     spImplementationGuide__security, {@enum.value "_security" spImplementationGuide__security Security Labels applied to this resource }
     spImplementationGuide__tag, {@enum.value "_tag" spImplementationGuide__tag Tags applied to this resource }
     spImplementationGuide__text, {@enum.value "_text" spImplementationGuide__text Search on the narrative of the resource }
-    spImplementationGuide_Context, {@enum.value "context" spImplementationGuide_Context A use context assigned to the structure }
     spImplementationGuide_Date, {@enum.value "date" spImplementationGuide_Date The implementation guide publication date }
     spImplementationGuide_Dependency, {@enum.value "dependency" spImplementationGuide_Dependency Where to find dependency }
-    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description Text search in the description of the implementation guide }
+    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description Text search against the description of the implementation guide }
     spImplementationGuide_Experimental, {@enum.value "experimental" spImplementationGuide_Experimental If for testing purposes, not real usage }
+    spImplementationGuide_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuide_Jurisdiction Intended jurisdiction for implementation guide }
     spImplementationGuide_Name, {@enum.value "name" spImplementationGuide_Name Name of the implementation guide }
     spImplementationGuide_Publisher, {@enum.value "publisher" spImplementationGuide_Publisher Name of the publisher of the implementation guide }
     spImplementationGuide_Resource, {@enum.value "resource" spImplementationGuide_Resource Location of the resource }
     spImplementationGuide_Status, {@enum.value "status" spImplementationGuide_Status The current status of the implementation guide }
-    spImplementationGuide_Url, {@enum.value "url" spImplementationGuide_Url Absolute URL used to reference this Implementation Guide }
+    spImplementationGuide_Url, {@enum.value "url" spImplementationGuide_Url The uri that identifies the implementation guide }
     spImplementationGuide_Version); {@enum.value "version" spImplementationGuide_Version The version identifier of the implementation guide }
 
   {@Enum TSearchParamsLibrary
@@ -1400,12 +1421,18 @@ Type
     spLibrary__security, {@enum.value "_security" spLibrary__security Security Labels applied to this resource }
     spLibrary__tag, {@enum.value "_tag" spLibrary__tag Tags applied to this resource }
     spLibrary__text, {@enum.value "_text" spLibrary__text Search on the narrative of the resource }
-    spLibrary_Description, {@enum.value "description" spLibrary_Description Text search against the description }
-    spLibrary_Identifier, {@enum.value "identifier" spLibrary_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spLibrary_Status, {@enum.value "status" spLibrary_Status Status of the module }
-    spLibrary_Title, {@enum.value "title" spLibrary_Title Text search against the title }
+    spLibrary_Date, {@enum.value "date" spLibrary_Date The library publication date }
+    spLibrary_Description, {@enum.value "description" spLibrary_Description Text search against the description of the library }
+    spLibrary_Effective, {@enum.value "effective" spLibrary_Effective Effective time associated with the library }
+    spLibrary_Identifier, {@enum.value "identifier" spLibrary_Identifier External identifiers for the library }
+    spLibrary_Jurisdiction, {@enum.value "jurisdiction" spLibrary_Jurisdiction Intended jurisdiction for library }
+    spLibrary_Name, {@enum.value "name" spLibrary_Name Name of the library }
+    spLibrary_Publisher, {@enum.value "publisher" spLibrary_Publisher Name of the publisher of the library }
+    spLibrary_Status, {@enum.value "status" spLibrary_Status The current status of the library }
+    spLibrary_Title, {@enum.value "title" spLibrary_Title Text search against the title of the library }
     spLibrary_Topic, {@enum.value "topic" spLibrary_Topic Topics associated with the module }
-    spLibrary_Version); {@enum.value "version" spLibrary_Version Version of the module (e.g. 1.0.0) }
+    spLibrary_Url, {@enum.value "url" spLibrary_Url The uri that identifies the library }
+    spLibrary_Version); {@enum.value "version" spLibrary_Version The version identifier of the library }
 
   {@Enum TSearchParamsLinkage
     Search Parameters for Linkage
@@ -1487,12 +1514,18 @@ Type
     spMeasure__security, {@enum.value "_security" spMeasure__security Security Labels applied to this resource }
     spMeasure__tag, {@enum.value "_tag" spMeasure__tag Tags applied to this resource }
     spMeasure__text, {@enum.value "_text" spMeasure__text Search on the narrative of the resource }
-    spMeasure_Description, {@enum.value "description" spMeasure_Description Text search against the description }
-    spMeasure_Identifier, {@enum.value "identifier" spMeasure_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spMeasure_Status, {@enum.value "status" spMeasure_Status Status of the module }
-    spMeasure_Title, {@enum.value "title" spMeasure_Title Text search against the title }
+    spMeasure_Date, {@enum.value "date" spMeasure_Date The measure publication date }
+    spMeasure_Description, {@enum.value "description" spMeasure_Description Text search against the description of the measure }
+    spMeasure_Effective, {@enum.value "effective" spMeasure_Effective Effective time associated with the measure }
+    spMeasure_Identifier, {@enum.value "identifier" spMeasure_Identifier External identifiers for the measure }
+    spMeasure_Jurisdiction, {@enum.value "jurisdiction" spMeasure_Jurisdiction Intended jurisdiction for measure }
+    spMeasure_Name, {@enum.value "name" spMeasure_Name Name of the measure }
+    spMeasure_Publisher, {@enum.value "publisher" spMeasure_Publisher Name of the publisher of the measure }
+    spMeasure_Status, {@enum.value "status" spMeasure_Status The current status of the measure }
+    spMeasure_Title, {@enum.value "title" spMeasure_Title Text search against the title of the measure }
     spMeasure_Topic, {@enum.value "topic" spMeasure_Topic Topics associated with the module }
-    spMeasure_Version); {@enum.value "version" spMeasure_Version Version of the module (e.g. 1.0.0) }
+    spMeasure_Url, {@enum.value "url" spMeasure_Url The uri that identifies the measure }
+    spMeasure_Version); {@enum.value "version" spMeasure_Version The version identifier of the measure }
 
   {@Enum TSearchParamsMeasureReport
     Search Parameters for MeasureReport
@@ -1564,15 +1597,17 @@ Type
     spMedicationAdministration__text, {@enum.value "_text" spMedicationAdministration__text Search on the narrative of the resource }
     spMedicationAdministration_Code, {@enum.value "code" spMedicationAdministration_Code Return administrations of this medication code }
     spMedicationAdministration_Device, {@enum.value "device" spMedicationAdministration_Device Return administrations with this administration device identity }
-    spMedicationAdministration_Effectivetime, {@enum.value "effectivetime" spMedicationAdministration_Effectivetime Date administration happened (or did not happen) }
+    spMedicationAdministration_Effectivetime, {@enum.value "effective-time" spMedicationAdministration_Effectivetime Date administration happened (or did not happen) }
     spMedicationAdministration_Encounter, {@enum.value "encounter" spMedicationAdministration_Encounter Return administrations that share this encounter }
     spMedicationAdministration_Identifier, {@enum.value "identifier" spMedicationAdministration_Identifier Return administrations with this external identifier }
     spMedicationAdministration_Medication, {@enum.value "medication" spMedicationAdministration_Medication Return administrations of this medication resource }
+    spMedicationAdministration_Notgiven, {@enum.value "not-given" spMedicationAdministration_Notgiven Administrations that were not made }
     spMedicationAdministration_Patient, {@enum.value "patient" spMedicationAdministration_Patient The identity of a patient to list administrations  for }
-    spMedicationAdministration_Performer, {@enum.value "performer" spMedicationAdministration_Performer Who administered substance }
+    spMedicationAdministration_Performer, {@enum.value "performer" spMedicationAdministration_Performer The identify of the individual who administered the medication }
     spMedicationAdministration_Prescription, {@enum.value "prescription" spMedicationAdministration_Prescription The identity of a prescription to list administrations from }
-    spMedicationAdministration_Status, {@enum.value "status" spMedicationAdministration_Status MedicationAdministration event status (for example one of active/paused/completed/nullified) }
-    spMedicationAdministration_Wasnotgiven); {@enum.value "wasnotgiven" spMedicationAdministration_Wasnotgiven Administrations that were not made }
+    spMedicationAdministration_Reasongiven, {@enum.value "reason-given" spMedicationAdministration_Reasongiven Reasons for administering the medication }
+    spMedicationAdministration_Reasonnotgiven, {@enum.value "reason-not-given" spMedicationAdministration_Reasonnotgiven Reasons for not administering the medication }
+    spMedicationAdministration_Status); {@enum.value "status" spMedicationAdministration_Status MedicationAdministration event status (for example one of active/paused/completed/nullified) }
 
   {@Enum TSearchParamsMedicationDispense
     Search Parameters for MedicationDispense
@@ -1638,7 +1673,7 @@ Type
     spMedicationStatement_Identifier, {@enum.value "identifier" spMedicationStatement_Identifier Return statements with this external identifier }
     spMedicationStatement_Medication, {@enum.value "medication" spMedicationStatement_Medication Return statements of this medication reference }
     spMedicationStatement_Patient, {@enum.value "patient" spMedicationStatement_Patient The identity of a patient to list statements  for }
-    spMedicationStatement_Source, {@enum.value "source" spMedicationStatement_Source Who the information in the statement came from }
+    spMedicationStatement_Source, {@enum.value "source" spMedicationStatement_Source Who or where the information in the statement came from }
     spMedicationStatement_Status); {@enum.value "status" spMedicationStatement_Status Return statements that match the given status }
 
   {@Enum TSearchParamsMessageHeader
@@ -1681,17 +1716,18 @@ Type
     spNamingSystem__tag, {@enum.value "_tag" spNamingSystem__tag Tags applied to this resource }
     spNamingSystem__text, {@enum.value "_text" spNamingSystem__text Search on the narrative of the resource }
     spNamingSystem_Contact, {@enum.value "contact" spNamingSystem_Contact Name of an individual to contact }
-    spNamingSystem_Context, {@enum.value "context" spNamingSystem_Context Content intends to support these contexts }
-    spNamingSystem_Date, {@enum.value "date" spNamingSystem_Date Publication Date(/time) }
+    spNamingSystem_Date, {@enum.value "date" spNamingSystem_Date The naming system publication date }
+    spNamingSystem_Description, {@enum.value "description" spNamingSystem_Description Text search against the description of the naming system }
     spNamingSystem_Idtype, {@enum.value "id-type" spNamingSystem_Idtype oid | uuid | uri | other }
+    spNamingSystem_Jurisdiction, {@enum.value "jurisdiction" spNamingSystem_Jurisdiction Intended jurisdiction for naming system }
     spNamingSystem_Kind, {@enum.value "kind" spNamingSystem_Kind codesystem | identifier | root }
-    spNamingSystem_Name, {@enum.value "name" spNamingSystem_Name Human-readable label }
+    spNamingSystem_Name, {@enum.value "name" spNamingSystem_Name Name of the naming system }
     spNamingSystem_Period, {@enum.value "period" spNamingSystem_Period When is identifier valid? }
-    spNamingSystem_Publisher, {@enum.value "publisher" spNamingSystem_Publisher Name of the publisher (Organization or individual) }
+    spNamingSystem_Publisher, {@enum.value "publisher" spNamingSystem_Publisher Name of the publisher of the naming system }
     spNamingSystem_Replacedby, {@enum.value "replaced-by" spNamingSystem_Replacedby Use this instead }
     spNamingSystem_Responsible, {@enum.value "responsible" spNamingSystem_Responsible Who maintains system namespace? }
-    spNamingSystem_Status, {@enum.value "status" spNamingSystem_Status draft | active | retired }
-    spNamingSystem_Telecom, {@enum.value "telecom" spNamingSystem_Telecom Contact details for individual or publisher }
+    spNamingSystem_Status, {@enum.value "status" spNamingSystem_Status The current status of the naming system }
+    spNamingSystem_Telecom, {@enum.value "telecom" spNamingSystem_Telecom Contact details for individual or organization }
     spNamingSystem_Type, {@enum.value "type" spNamingSystem_Type e.g. driver,  provider,  patient, bank etc. }
     spNamingSystem_Value); {@enum.value "value" spNamingSystem_Value The unique identifier }
 
@@ -1766,18 +1802,19 @@ Type
     spOperationDefinition__text, {@enum.value "_text" spOperationDefinition__text Search on the narrative of the resource }
     spOperationDefinition_Base, {@enum.value "base" spOperationDefinition_Base Marks this as a profile of the base }
     spOperationDefinition_Code, {@enum.value "code" spOperationDefinition_Code Name used to invoke the operation }
-    spOperationDefinition_Context, {@enum.value "context" spOperationDefinition_Context A use context assigned to the operation definition }
-    spOperationDefinition_Date, {@enum.value "date" spOperationDefinition_Date Date for this version of the operation definition }
+    spOperationDefinition_Date, {@enum.value "date" spOperationDefinition_Date The operation definition publication date }
+    spOperationDefinition_Description, {@enum.value "description" spOperationDefinition_Description Text search against the description of the operation definition }
     spOperationDefinition_Instance, {@enum.value "instance" spOperationDefinition_Instance Invoke on an instance? }
+    spOperationDefinition_Jurisdiction, {@enum.value "jurisdiction" spOperationDefinition_Jurisdiction Intended jurisdiction for operation definition }
     spOperationDefinition_Kind, {@enum.value "kind" spOperationDefinition_Kind operation | query }
-    spOperationDefinition_Name, {@enum.value "name" spOperationDefinition_Name Informal name for this operation }
+    spOperationDefinition_Name, {@enum.value "name" spOperationDefinition_Name Name of the operation definition }
     spOperationDefinition_Paramprofile, {@enum.value "paramprofile" spOperationDefinition_Paramprofile Profile on the type }
-    spOperationDefinition_Publisher, {@enum.value "publisher" spOperationDefinition_Publisher Name of the publisher (Organization or individual) }
-    spOperationDefinition_Status, {@enum.value "status" spOperationDefinition_Status draft | active | retired }
+    spOperationDefinition_Publisher, {@enum.value "publisher" spOperationDefinition_Publisher Name of the publisher of the operation definition }
+    spOperationDefinition_Status, {@enum.value "status" spOperationDefinition_Status The current status of the operation definition }
     spOperationDefinition_System, {@enum.value "system" spOperationDefinition_System Invoke at the system level? }
-    spOperationDefinition_Type, {@enum.value "type" spOperationDefinition_Type Invoke at resource level for these type }
-    spOperationDefinition_Url, {@enum.value "url" spOperationDefinition_Url Logical URL to reference this operation definition }
-    spOperationDefinition_Version); {@enum.value "version" spOperationDefinition_Version Logical id for this version of the operation definition }
+    spOperationDefinition_Type, {@enum.value "type" spOperationDefinition_Type Invole at the type level? }
+    spOperationDefinition_Url, {@enum.value "url" spOperationDefinition_Url The uri that identifies the operation definition }
+    spOperationDefinition_Version); {@enum.value "version" spOperationDefinition_Version The version identifier of the operation definition }
 
   {@Enum TSearchParamsOperationOutcome
     Search Parameters for OperationOutcome
@@ -1943,12 +1980,18 @@ Type
     spPlanDefinition__security, {@enum.value "_security" spPlanDefinition__security Security Labels applied to this resource }
     spPlanDefinition__tag, {@enum.value "_tag" spPlanDefinition__tag Tags applied to this resource }
     spPlanDefinition__text, {@enum.value "_text" spPlanDefinition__text Search on the narrative of the resource }
-    spPlanDefinition_Description, {@enum.value "description" spPlanDefinition_Description Text search against the description }
-    spPlanDefinition_Identifier, {@enum.value "identifier" spPlanDefinition_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spPlanDefinition_Status, {@enum.value "status" spPlanDefinition_Status Status of the module }
-    spPlanDefinition_Title, {@enum.value "title" spPlanDefinition_Title Text search against the title }
+    spPlanDefinition_Date, {@enum.value "date" spPlanDefinition_Date The plan definition publication date }
+    spPlanDefinition_Description, {@enum.value "description" spPlanDefinition_Description Text search against the description of the plan definition }
+    spPlanDefinition_Effective, {@enum.value "effective" spPlanDefinition_Effective Effective time associated with the plan definition }
+    spPlanDefinition_Identifier, {@enum.value "identifier" spPlanDefinition_Identifier External identifiers for the plan definition }
+    spPlanDefinition_Jurisdiction, {@enum.value "jurisdiction" spPlanDefinition_Jurisdiction Intended jurisdiction for plan definition }
+    spPlanDefinition_Name, {@enum.value "name" spPlanDefinition_Name Name of the plan definition }
+    spPlanDefinition_Publisher, {@enum.value "publisher" spPlanDefinition_Publisher Name of the publisher of the plan definition }
+    spPlanDefinition_Status, {@enum.value "status" spPlanDefinition_Status The current status of the plan definition }
+    spPlanDefinition_Title, {@enum.value "title" spPlanDefinition_Title Text search against the title of the plan definition }
     spPlanDefinition_Topic, {@enum.value "topic" spPlanDefinition_Topic Topics associated with the module }
-    spPlanDefinition_Version); {@enum.value "version" spPlanDefinition_Version Version of the module (e.g. 1.0.0) }
+    spPlanDefinition_Url, {@enum.value "url" spPlanDefinition_Url The uri that identifies the plan definition }
+    spPlanDefinition_Version); {@enum.value "version" spPlanDefinition_Version The version identifier of the plan definition }
 
   {@Enum TSearchParamsPractitioner
     Search Parameters for Practitioner
@@ -2258,12 +2301,16 @@ Type
     spSearchParameter_Base, {@enum.value "base" spSearchParameter_Base The resource type this search parameter applies to }
     spSearchParameter_Code, {@enum.value "code" spSearchParameter_Code Code used in URL }
     spSearchParameter_Component, {@enum.value "component" spSearchParameter_Component For Composite resources to define the parts }
-    spSearchParameter_Context, {@enum.value "context" spSearchParameter_Context A use context assigned to the search parameter }
-    spSearchParameter_Description, {@enum.value "description" spSearchParameter_Description Documentation for  search parameter }
-    spSearchParameter_Name, {@enum.value "name" spSearchParameter_Name Informal name for this search parameter }
+    spSearchParameter_Date, {@enum.value "date" spSearchParameter_Date The search parameter publication date }
+    spSearchParameter_Description, {@enum.value "description" spSearchParameter_Description Text search against the description of the search parameter }
+    spSearchParameter_Jurisdiction, {@enum.value "jurisdiction" spSearchParameter_Jurisdiction Intended jurisdiction for search parameter }
+    spSearchParameter_Name, {@enum.value "name" spSearchParameter_Name Name of the search parameter }
+    spSearchParameter_Publisher, {@enum.value "publisher" spSearchParameter_Publisher Name of the publisher of the search parameter }
+    spSearchParameter_Status, {@enum.value "status" spSearchParameter_Status The current status of the search parameter }
     spSearchParameter_Target, {@enum.value "target" spSearchParameter_Target Types of resource (if a resource reference) }
     spSearchParameter_Type, {@enum.value "type" spSearchParameter_Type number | date | string | token | reference | composite | quantity | uri }
-    spSearchParameter_Url); {@enum.value "url" spSearchParameter_Url Absolute URL used to reference this search parameter }
+    spSearchParameter_Url, {@enum.value "url" spSearchParameter_Url The uri that identifies the search parameter }
+    spSearchParameter_Version); {@enum.value "version" spSearchParameter_Version The version identifier of the search parameter }
 
   {@Enum TSearchParamsSequence
     Search Parameters for Sequence
@@ -2296,12 +2343,18 @@ Type
     spServiceDefinition__security, {@enum.value "_security" spServiceDefinition__security Security Labels applied to this resource }
     spServiceDefinition__tag, {@enum.value "_tag" spServiceDefinition__tag Tags applied to this resource }
     spServiceDefinition__text, {@enum.value "_text" spServiceDefinition__text Search on the narrative of the resource }
-    spServiceDefinition_Description, {@enum.value "description" spServiceDefinition_Description Text search against the description }
-    spServiceDefinition_Identifier, {@enum.value "identifier" spServiceDefinition_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spServiceDefinition_Status, {@enum.value "status" spServiceDefinition_Status Status of the module }
-    spServiceDefinition_Title, {@enum.value "title" spServiceDefinition_Title Text search against the title }
+    spServiceDefinition_Date, {@enum.value "date" spServiceDefinition_Date The service definition publication date }
+    spServiceDefinition_Description, {@enum.value "description" spServiceDefinition_Description Text search against the description of the service definition }
+    spServiceDefinition_Effective, {@enum.value "effective" spServiceDefinition_Effective Effective time associated with the service definition }
+    spServiceDefinition_Identifier, {@enum.value "identifier" spServiceDefinition_Identifier External identifiers for the service definition }
+    spServiceDefinition_Jurisdiction, {@enum.value "jurisdiction" spServiceDefinition_Jurisdiction Intended jurisdiction for service definition }
+    spServiceDefinition_Name, {@enum.value "name" spServiceDefinition_Name Name of the service definition }
+    spServiceDefinition_Publisher, {@enum.value "publisher" spServiceDefinition_Publisher Name of the publisher of the service definition }
+    spServiceDefinition_Status, {@enum.value "status" spServiceDefinition_Status The current status of the service definition }
+    spServiceDefinition_Title, {@enum.value "title" spServiceDefinition_Title Text search against the title of the service definition }
     spServiceDefinition_Topic, {@enum.value "topic" spServiceDefinition_Topic Topics associated with the module }
-    spServiceDefinition_Version); {@enum.value "version" spServiceDefinition_Version Version of the module (e.g. 1.0.0) }
+    spServiceDefinition_Url, {@enum.value "url" spServiceDefinition_Url The uri that identifies the service definition }
+    spServiceDefinition_Version); {@enum.value "version" spServiceDefinition_Version The version identifier of the service definition }
 
   {@Enum TSearchParamsSlot
     Search Parameters for Slot
@@ -2360,25 +2413,25 @@ Type
     spStructureDefinition_Abstract, {@enum.value "abstract" spStructureDefinition_Abstract Whether the structure is abstract }
     spStructureDefinition_Base, {@enum.value "base" spStructureDefinition_Base Definition that this type is constrained/specialized from }
     spStructureDefinition_Basepath, {@enum.value "base-path" spStructureDefinition_Basepath Path that identifies the base element }
-    spStructureDefinition_Code, {@enum.value "code" spStructureDefinition_Code A code for the profile }
-    spStructureDefinition_Context, {@enum.value "context" spStructureDefinition_Context A use context assigned to the structure }
     spStructureDefinition_Contexttype, {@enum.value "context-type" spStructureDefinition_Contexttype resource | datatype | extension }
-    spStructureDefinition_Date, {@enum.value "date" spStructureDefinition_Date The profile publication date }
+    spStructureDefinition_Date, {@enum.value "date" spStructureDefinition_Date The structure definition publication date }
     spStructureDefinition_Derivation, {@enum.value "derivation" spStructureDefinition_Derivation specialization | constraint - How relates to base definition }
-    spStructureDefinition_Description, {@enum.value "description" spStructureDefinition_Description Text search in the description of the profile }
-    spStructureDefinition_Display, {@enum.value "display" spStructureDefinition_Display Use this name when displaying the value }
+    spStructureDefinition_Description, {@enum.value "description" spStructureDefinition_Description Text search against the description of the structure definition }
     spStructureDefinition_Experimental, {@enum.value "experimental" spStructureDefinition_Experimental If for testing purposes, not real usage }
     spStructureDefinition_Extcontext, {@enum.value "ext-context" spStructureDefinition_Extcontext Where the extension can be used in instances }
-    spStructureDefinition_Identifier, {@enum.value "identifier" spStructureDefinition_Identifier The identifier of the profile }
+    spStructureDefinition_Identifier, {@enum.value "identifier" spStructureDefinition_Identifier External identifiers for the structure definition }
+    spStructureDefinition_Jurisdiction, {@enum.value "jurisdiction" spStructureDefinition_Jurisdiction Intended jurisdiction for structure definition }
+    spStructureDefinition_Keyword, {@enum.value "keyword" spStructureDefinition_Keyword A code for the profile }
     spStructureDefinition_Kind, {@enum.value "kind" spStructureDefinition_Kind primitive-type | complex-type | resource | logical }
-    spStructureDefinition_Name, {@enum.value "name" spStructureDefinition_Name Name of the profile }
+    spStructureDefinition_Name, {@enum.value "name" spStructureDefinition_Name Name of the structure definition }
     spStructureDefinition_Path, {@enum.value "path" spStructureDefinition_Path A path that is constrained in the profile }
-    spStructureDefinition_Publisher, {@enum.value "publisher" spStructureDefinition_Publisher Name of the publisher of the profile }
-    spStructureDefinition_Status, {@enum.value "status" spStructureDefinition_Status The current status of the profile }
+    spStructureDefinition_Publisher, {@enum.value "publisher" spStructureDefinition_Publisher Name of the publisher of the structure definition }
+    spStructureDefinition_Status, {@enum.value "status" spStructureDefinition_Status The current status of the structure definition }
+    spStructureDefinition_Title, {@enum.value "title" spStructureDefinition_Title Text search against the title of the structure definition }
     spStructureDefinition_Type, {@enum.value "type" spStructureDefinition_Type Type defined or constrained by this structure }
-    spStructureDefinition_Url, {@enum.value "url" spStructureDefinition_Url Absolute URL used to reference this StructureDefinition }
+    spStructureDefinition_Url, {@enum.value "url" spStructureDefinition_Url The uri that identifies the structure definition }
     spStructureDefinition_Valueset, {@enum.value "valueset" spStructureDefinition_Valueset A vocabulary binding reference }
-    spStructureDefinition_Version); {@enum.value "version" spStructureDefinition_Version The version identifier of the profile }
+    spStructureDefinition_Version); {@enum.value "version" spStructureDefinition_Version The version identifier of the structure definition }
 
   {@Enum TSearchParamsStructureMap
     Search Parameters for StructureMap
@@ -2392,16 +2445,16 @@ Type
     spStructureMap__security, {@enum.value "_security" spStructureMap__security Security Labels applied to this resource }
     spStructureMap__tag, {@enum.value "_tag" spStructureMap__tag Tags applied to this resource }
     spStructureMap__text, {@enum.value "_text" spStructureMap__text Search on the narrative of the resource }
-    spStructureMap_Context, {@enum.value "context" spStructureMap_Context A use context assigned to the structure }
-    spStructureMap_Date, {@enum.value "date" spStructureMap_Date The profile publication date }
-    spStructureMap_Description, {@enum.value "description" spStructureMap_Description Text search in the description of the profile }
-    spStructureMap_Experimental, {@enum.value "experimental" spStructureMap_Experimental Whether the map is defined purely for experimental reasons }
-    spStructureMap_Identifier, {@enum.value "identifier" spStructureMap_Identifier The identifier of the profile }
-    spStructureMap_Name, {@enum.value "name" spStructureMap_Name Name of the profile }
-    spStructureMap_Publisher, {@enum.value "publisher" spStructureMap_Publisher Name of the publisher of the profile }
-    spStructureMap_Status, {@enum.value "status" spStructureMap_Status The current status of the profile }
-    spStructureMap_Url, {@enum.value "url" spStructureMap_Url The url that identifies the structure map }
-    spStructureMap_Version); {@enum.value "version" spStructureMap_Version The version identifier of the profile }
+    spStructureMap_Date, {@enum.value "date" spStructureMap_Date The structure map publication date }
+    spStructureMap_Description, {@enum.value "description" spStructureMap_Description Text search against the description of the structure map }
+    spStructureMap_Identifier, {@enum.value "identifier" spStructureMap_Identifier External identifiers for the structure map }
+    spStructureMap_Jurisdiction, {@enum.value "jurisdiction" spStructureMap_Jurisdiction Intended jurisdiction for structure map }
+    spStructureMap_Name, {@enum.value "name" spStructureMap_Name Name of the structure map }
+    spStructureMap_Publisher, {@enum.value "publisher" spStructureMap_Publisher Name of the publisher of the structure map }
+    spStructureMap_Status, {@enum.value "status" spStructureMap_Status The current status of the structure map }
+    spStructureMap_Title, {@enum.value "title" spStructureMap_Title Text search against the title of the structure map }
+    spStructureMap_Url, {@enum.value "url" spStructureMap_Url The uri that identifies the structure map }
+    spStructureMap_Version); {@enum.value "version" spStructureMap_Version The version identifier of the structure map }
 
   {@Enum TSearchParamsSubscription
     Search Parameters for Subscription
@@ -2521,14 +2574,17 @@ Type
     spTestScript__security, {@enum.value "_security" spTestScript__security Security Labels applied to this resource }
     spTestScript__tag, {@enum.value "_tag" spTestScript__tag Tags applied to this resource }
     spTestScript__text, {@enum.value "_text" spTestScript__text Search on the narrative of the resource }
-    spTestScript_Date, {@enum.value "date" spTestScript_Date Date for this version of the TestScript }
-    spTestScript_Description, {@enum.value "description" spTestScript_Description Natural language description of the TestScript }
-    spTestScript_Identifier, {@enum.value "identifier" spTestScript_Identifier External identifier }
-    spTestScript_Name, {@enum.value "name" spTestScript_Name Informal name for this TestScript }
-    spTestScript_Publisher, {@enum.value "publisher" spTestScript_Publisher Name of the publisher (Organization or individual) }
+    spTestScript_Date, {@enum.value "date" spTestScript_Date The test script publication date }
+    spTestScript_Description, {@enum.value "description" spTestScript_Description Text search against the description of the test script }
+    spTestScript_Identifier, {@enum.value "identifier" spTestScript_Identifier External identifiers for the test script }
+    spTestScript_Jurisdiction, {@enum.value "jurisdiction" spTestScript_Jurisdiction Intended jurisdiction for test script }
+    spTestScript_Name, {@enum.value "name" spTestScript_Name Name of the test script }
+    spTestScript_Publisher, {@enum.value "publisher" spTestScript_Publisher Name of the publisher of the test script }
+    spTestScript_Status, {@enum.value "status" spTestScript_Status The current status of the test script }
     spTestScript_Testscriptcapability, {@enum.value "testscript-capability" spTestScript_Testscriptcapability TestScript required and validated capability }
-    spTestScript_Url, {@enum.value "url" spTestScript_Url Absolute URL used to reference this TestScript }
-    spTestScript_Usecontext); {@enum.value "use-context" spTestScript_Usecontext Content intends to support these contexts }
+    spTestScript_Title, {@enum.value "title" spTestScript_Title Text search against the title of the test script }
+    spTestScript_Url, {@enum.value "url" spTestScript_Url The uri that identifies the test script }
+    spTestScript_Version); {@enum.value "version" spTestScript_Version The version identifier of the test script }
 
   {@Enum TSearchParamsValueSet
     Search Parameters for ValueSet
@@ -2542,16 +2598,17 @@ Type
     spValueSet__security, {@enum.value "_security" spValueSet__security Security Labels applied to this resource }
     spValueSet__tag, {@enum.value "_tag" spValueSet__tag Tags applied to this resource }
     spValueSet__text, {@enum.value "_text" spValueSet__text Search on the narrative of the resource }
-    spValueSet_Context, {@enum.value "context" spValueSet_Context A use context assigned to the value set }
     spValueSet_Date, {@enum.value "date" spValueSet_Date The value set publication date }
-    spValueSet_Description, {@enum.value "description" spValueSet_Description Text search in the description of the value set }
+    spValueSet_Description, {@enum.value "description" spValueSet_Description Text search against the description of the value set }
     spValueSet_Expansion, {@enum.value "expansion" spValueSet_Expansion Uniquely identifies this expansion }
-    spValueSet_Identifier, {@enum.value "identifier" spValueSet_Identifier The identifier for the value set }
-    spValueSet_Name, {@enum.value "name" spValueSet_Name The name of the value set }
+    spValueSet_Identifier, {@enum.value "identifier" spValueSet_Identifier External identifiers for the value set }
+    spValueSet_Jurisdiction, {@enum.value "jurisdiction" spValueSet_Jurisdiction Intended jurisdiction for value set }
+    spValueSet_Name, {@enum.value "name" spValueSet_Name Name of the value set }
     spValueSet_Publisher, {@enum.value "publisher" spValueSet_Publisher Name of the publisher of the value set }
     spValueSet_Reference, {@enum.value "reference" spValueSet_Reference A code system included or excluded in the value set or an imported value set }
-    spValueSet_Status, {@enum.value "status" spValueSet_Status The status of the value set }
-    spValueSet_Url, {@enum.value "url" spValueSet_Url The logical URL for the value set }
+    spValueSet_Status, {@enum.value "status" spValueSet_Status The current status of the value set }
+    spValueSet_Title, {@enum.value "title" spValueSet_Title Text search against the title of the value set }
+    spValueSet_Url, {@enum.value "url" spValueSet_Url The uri that identifies the value set }
     spValueSet_Version); {@enum.value "version" spValueSet_Version The version identifier of the value set }
 
   {@Enum TSearchParamsVisionPrescription
@@ -2573,8 +2630,8 @@ Type
     spVisionPrescription_Prescriber); {@enum.value "prescriber" spVisionPrescription_Prescriber Who authorizes the vision product }
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 
-      'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 
+      'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'activitydefinition',
      'activitygroup',
@@ -2586,6 +2643,7 @@ Const
      'binary',
      'bodysite',
      'bundle',
+     'capabilitystatement',
      'careplan',
      'careteam',
      'claim',
@@ -2598,7 +2656,6 @@ Const
      'composition',
      'conceptmap',
      'condition',
-     'conformance',
      'consent',
      'contract',
      'coverage',
@@ -2700,6 +2757,7 @@ Const
      TFhirBinary,
      TFhirBodySite,
      TFhirBundle,
+     TFhirCapabilityStatement,
      TFhirCarePlan,
      TFhirCareTeam,
      TFhirClaim,
@@ -2712,7 +2770,6 @@ Const
      TFhirComposition,
      TFhirConceptMap,
      TFhirCondition,
-     TFhirConformance,
      TFhirConsent,
      TFhirContract,
      TFhirCoverage,
@@ -2814,6 +2871,7 @@ Const
      frtBinary,
      frtBodySite,
      frtBundle,
+     frtCapabilityStatement,
      frtCarePlan,
      frtCareTeam,
      frtClaim,
@@ -2826,7 +2884,6 @@ Const
      frtComposition,
      frtConceptMap,
      frtCondition,
-     frtConformance,
      frtConsent,
      frtContract,
      frtCoverage,
@@ -2928,6 +2985,7 @@ Const
      'Binary',
      'BodySite',
      'Bundle',
+     'CapabilityStatement',
      'CarePlan',
      'CareTeam',
      'Claim',
@@ -2940,7 +2998,6 @@ Const
      'Composition',
      'ConceptMap',
      'Condition',
-     'Conformance',
      'Consent',
      'Contract',
      'Coverage',
@@ -3032,7 +3089,7 @@ Const
      'Custom'];
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
-  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsActivityGroup : Array[TSearchParamsActivityGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'context', 'encounter', 'participant', 'patient', 'subject');
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'reporter', 'route', 'severity', 'status', 'type');
   CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
@@ -3042,24 +3099,24 @@ Const
   CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'contenttype');
   CODES_TSearchParamsBodySite : Array[TSearchParamsBodySite] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'identifier', 'patient');
   CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'composition', 'message', 'type');
+  CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'event', 'fhirversion', 'format', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resourceprofile', 'securityservice', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
   CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'activitycode', 'activitydate', 'activityreference', 'careteam', 'category', 'condition', 'date', 'goal', 'identifier', 'patient', 'performer', 'related', 'relatedcode', 'relatedplan', 'subject');
   CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'participant', 'patient', 'status', 'subject', 'type');
   CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'facility', 'identifier', 'insurer', 'organization', 'patient', 'priority', 'provider', 'use');
   CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'paymentdate', 'request');
   CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'investigation', 'patient', 'plan', 'previous', 'problem', 'status', 'subject');
-  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'content', 'context', 'date', 'description', 'identifier', 'language', 'name', 'publisher', 'status', 'system', 'url', 'version');
+  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'content', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'system', 'title', 'url', 'version');
   CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'context', 'identifier', 'medium', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
   CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'encounter', 'identifier', 'medium', 'patient', 'priority', 'recipient', 'requested', 'requester', 'sender', 'status', 'subject', 'time');
-  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'name', 'resource', 'status', 'url');
+  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url');
   CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'section', 'status', 'subject', 'title', 'type');
-  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'dependson', 'description', 'identifier', 'name', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'url', 'version');
+  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
   CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abatement-age', 'abatement-boolean', 'abatement-date', 'abatement-string', 'asserter', 'body-site', 'category', 'clinicalstatus', 'code', 'context', 'date-recorded', 'evidence', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'severity', 'stage', 'subject');
-  CODES_TSearchParamsConformance : Array[TSearchParamsConformance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'description', 'event', 'fhirversion', 'format', 'mode', 'name', 'publisher', 'resource', 'resourceprofile', 'securityservice', 'software', 'status', 'supported-profile', 'url', 'version');
   CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'recipient', 'security', 'source', 'status');
   CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'subject', 'topic', 'ttopic');
   CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'beneficiary', 'dependent', 'identifier', 'issuer', 'planholder', 'sequence', 'type');
-  CODES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'date', 'description', 'identifier', 'name', 'objectClass', 'objectClassProperty', 'publisher', 'status', 'stringency', 'url', 'version');
-  CODES_TSearchParamsDecisionSupportServiceModule : Array[TSearchParamsDecisionSupportServiceModule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'objectClass', 'objectClassProperty', 'publisher', 'status', 'stringency', 'title', 'url', 'version');
+  CODES_TSearchParamsDecisionSupportServiceModule : Array[TSearchParamsDecisionSupportServiceModule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'type', 'udicarrier', 'url');
   CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'parent', 'source', 'type');
@@ -3077,7 +3134,7 @@ Const
   CODES_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient-identifier', 'patient-reference', 'subject-identifier', 'subject-reference');
   CODES_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier');
   CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
-  CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'name', 'publisher', 'status', 'url', 'version');
+  CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'claim', 'created', 'disposition', 'facility', 'identifier', 'organization', 'patient', 'provider');
   CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'gender', 'identifier', 'patient', 'relationship');
   CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'date', 'encounter', 'patient', 'subject');
@@ -3089,31 +3146,31 @@ Const
   CODES_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'basedon', 'bodysite', 'context', 'dicom-class', 'identifier', 'modality', 'patient', 'reason', 'series', 'started', 'study', 'uid');
   CODES_TSearchParamsImmunization : Array[TSearchParamsImmunization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-sequence', 'identifier', 'location', 'lot-number', 'manufacturer', 'notgiven', 'patient', 'performer', 'reaction', 'reaction-date', 'reason', 'reason-not-given', 'requester', 'status', 'vaccine-code');
   CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'vaccine-type');
-  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'dependency', 'description', 'experimental', 'name', 'publisher', 'resource', 'status', 'url', 'version');
-  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsLinkage : Array[TSearchParamsLinkage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'item', 'source');
   CODES_TSearchParamsList : Array[TSearchParamsList] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'empty-reason', 'encounter', 'identifier', 'item', 'notes', 'patient', 'source', 'status', 'subject', 'title');
   CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'identifier', 'name', 'near', 'near-distance', 'organization', 'partof', 'status', 'type');
-  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'patient');
   CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'identifier', 'operator', 'patient', 'subject', 'subtype', 'type', 'view');
   CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'container', 'form', 'ingredient', 'ingredient-code', 'manufacturer', 'package-item', 'package-item-code');
-  CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'device', 'effectivetime', 'encounter', 'identifier', 'medication', 'patient', 'performer', 'prescription', 'status', 'wasnotgiven');
+  CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'device', 'effective-time', 'encounter', 'identifier', 'medication', 'not-given', 'patient', 'performer', 'prescription', 'reason-given', 'reason-not-given', 'status');
   CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'destination', 'dispenser', 'identifier', 'medication', 'patient', 'prescription', 'receiver', 'responsibleparty', 'status', 'type', 'whenhandedover', 'whenprepared');
   CODES_TSearchParamsMedicationOrder : Array[TSearchParamsMedicationOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'datewritten', 'encounter', 'identifier', 'medication', 'patient', 'prescriber', 'status');
   CODES_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'effective', 'identifier', 'medication', 'patient', 'source', 'status');
   CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'data', 'destination', 'destination-uri', 'enterer', 'event', 'receiver', 'response-id', 'responsible', 'source', 'source-uri', 'target', 'timestamp');
-  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'context', 'date', 'id-type', 'kind', 'name', 'period', 'publisher', 'replaced-by', 'responsible', 'status', 'telecom', 'type', 'value');
+  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'replaced-by', 'responsible', 'status', 'telecom', 'type', 'value');
   CODES_TSearchParamsNutritionRequest : Array[TSearchParamsNutritionRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'additive', 'datetime', 'encounter', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
   CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'code-value-[x]', 'data-absent-reason', 'date', 'device', 'encounter', 'identifier', 'method', 'patient', 'performer', 'related', 'related-target', 'related-type', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
-  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'context', 'date', 'instance', 'kind', 'name', 'paramprofile', 'publisher', 'status', 'system', 'type', 'url', 'version');
+  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'date', 'description', 'instance', 'jurisdiction', 'kind', 'name', 'paramprofile', 'publisher', 'status', 'system', 'type', 'url', 'version');
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text');
   CODES_TSearchParamsOrganization : Array[TSearchParamsOrganization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'identifier', 'name', 'partof', 'phonetic', 'type');
   CODES_TSearchParamsPatient : Array[TSearchParamsPatient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'animal-breed', 'animal-species', 'birthdate', 'death-date', 'deceased', 'email', 'ethnicity', 'family', 'gender', 'general-practitioner', 'given', 'identifier', 'language', 'link', 'name', 'organization', 'phone', 'phonetic', 'race', 'telecom');
   CODES_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'identifier', 'organization', 'payment-status', 'provider', 'request', 'response', 'statusdate');
   CODES_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'request', 'request-organization', 'request-provider');
   CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'link', 'name', 'organization', 'patient', 'phone', 'phonetic', 'practitioner', 'relatedperson', 'telecom');
-  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'location', 'name', 'organization', 'phone', 'phonetic', 'role', 'specialty', 'telecom');
   CODES_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'email', 'identifier', 'location', 'organization', 'phone', 'practitioner', 'role', 'specialty', 'telecom');
   CODES_TSearchParamsProcedure : Array[TSearchParamsProcedure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'date', 'encounter', 'identifier', 'location', 'patient', 'performer', 'subject');
@@ -3127,24 +3184,24 @@ Const
   CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
   CODES_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'condition', 'date', 'encounter', 'identifier', 'method', 'patient', 'performer', 'subject');
   CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
-  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'component', 'context', 'description', 'name', 'target', 'type', 'url');
+  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'component', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
   CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'patient', 'start', 'type');
-  CODES_TSearchParamsServiceDefinition : Array[TSearchParamsServiceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'description', 'identifier', 'status', 'title', 'topic', 'version');
+  CODES_TSearchParamsServiceDefinition : Array[TSearchParamsServiceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'schedule', 'slot-type', 'start', 'status');
   CODES_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'bodysite', 'collected', 'collector', 'container', 'container-id', 'identifier', 'parent', 'patient', 'subject', 'type');
-  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abstract', 'base', 'base-path', 'code', 'context', 'context-type', 'date', 'derivation', 'description', 'display', 'experimental', 'ext-context', 'identifier', 'kind', 'name', 'path', 'publisher', 'status', 'type', 'url', 'valueset', 'version');
-  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'description', 'experimental', 'identifier', 'name', 'publisher', 'status', 'url', 'version');
+  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abstract', 'base', 'base-path', 'context-type', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
+  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
   CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'criteria', 'payload', 'status', 'tag', 'type', 'url');
   CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'container-identifier', 'expiry', 'identifier', 'quantity', 'substance-reference');
   CODES_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'receiver', 'status', 'supplier');
   CODES_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'kind', 'patient', 'source', 'status', 'supplier');
   CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'created', 'definition', 'focus', 'identifier', 'modified', 'owner', 'parent', 'patient', 'performer', 'priority', 'requester', 'stage', 'status', 'statusreason');
-  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'name', 'publisher', 'testscript-capability', 'url', 'use-context');
-  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'context', 'date', 'description', 'expansion', 'identifier', 'name', 'publisher', 'reference', 'status', 'url', 'version');
+  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
+  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.7.0';
 
-  FHIR_GENERATED_DATE = '2016-10-06T04:17:22+11:00';
+  FHIR_GENERATED_DATE = '2016-10-11T20:45:51+11:00';
 
 
 

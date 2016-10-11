@@ -170,7 +170,7 @@ Begin
   html.AddLine(1);
 }
 
-  html.Header('Snomed-CT Definitions (v: '+FSnomed.VersionDate+')');
+  html.Header('Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
   if Not FSnomed.Loaded Then
   Begin
     html.StartParagraph;

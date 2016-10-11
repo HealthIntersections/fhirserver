@@ -5,13 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, FileSupport, SystemSupport, Inifiles;
+  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, FileSupport, SystemSupport, Inifiles,
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg;
 
 type
   TForm4 = class(TForm)
     Panel1: TPanel;
-    ListView1: TListView;
-    ImageList1: TImageList;
     dlgSource: TFileOpenDialog;
     dlgDestination: TFileSaveDialog;
     PageControl1: TPageControl;
@@ -83,6 +82,36 @@ type
     btnUMLSStop: TBitBtn;
     Label16: TLabel;
     edtUMLSPassword: TEdit;
+    TabSheet4: TTabSheet;
+    Panel20: TPanel;
+    btnCloseCombine: TBitBtn;
+    btnCombineGo: TBitBtn;
+    btnStopCombine: TBitBtn;
+    Panel21: TPanel;
+    lblCombineAmount: TLabel;
+    lblCombineAction: TLabel;
+    prgCombine: TProgressBar;
+    Panel22: TPanel;
+    Panel23: TPanel;
+    Label17: TLabel;
+    Panel24: TPanel;
+    Panel25: TPanel;
+    Label18: TLabel;
+    Label19: TLabel;
+    btnInternational: TSpeedButton;
+    edtInternational: TEdit;
+    lbEditions: TListBox;
+    btnAddEdition: TSpeedButton;
+    btnDeleteEdition: TSpeedButton;
+    dlgOpenCache: TFileOpenDialog;
+    pnlProcessUMLS: TPanel;
+    Image1: TImage;
+    pnlLoincImport: TPanel;
+    Image2: TImage;
+    pnlCombineSnomed: TPanel;
+    Image3: TImage;
+    pnlSnomedImport: TPanel;
+    Image4: TImage;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -90,17 +119,27 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
-    procedure ListView1Click(Sender: TObject);
     procedure btnLoincSourceClick(Sender: TObject);
     procedure btnLoincDestClick(Sender: TObject);
     procedure btnImportLoincClick(Sender: TObject);
     procedure btnProcessUMLSClick(Sender: TObject);
+    procedure btnInternationalClick(Sender: TObject);
+    procedure btnAddEditionClick(Sender: TObject);
+    procedure lbEditionsClick(Sender: TObject);
+    procedure btnDeleteEditionClick(Sender: TObject);
+    procedure btnCombineGoClick(Sender: TObject);
+    procedure pnlSnomedImportClick(Sender: TObject);
+    procedure pnlCombineSnomedClick(Sender: TObject);
+    procedure Image2Click(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
     wantStop : boolean;
+    running : boolean;
     function getSnomedModule: String;
     procedure sctCallback(pct: Integer; action: String);
+    procedure cmbCallback(pct: Integer; action: String);
     procedure loincCallback(pct: Integer; action: String);
     procedure umlsCallback(pct: Integer; action: String);
   public
@@ -117,7 +156,8 @@ implementation
 Uses
   EncodeSupport, DateSupport,
   KDBManager, KDBOdbcExpress,
-  SnomedImporter, LoincImporter, RxNormServices;
+  SnomedImporter, SnomedCombiner, SnomedServices,
+  LoincImporter, RxNormServices;
 
 procedure TForm4.FormCreate(Sender: TObject);
 var
@@ -138,20 +178,24 @@ begin
   edtUMLSUsername.text := ini.ReadString('umls-process', 'username', '');
   edtUMLSPassword.text := strDecrypt(ini.ReadString('umls-process', 'password', ''), GetCryptKey('umls encryption key'));
 
+  edtInternational.text := ini.ReadString('snomed-combine', 'base', '');
+  lbEditions.Items.CommaText := ini.ReadString('snomed-combine', 'editions', '');
+  if lbEditions.Items.Count > 0 then
+    lbEditions.Itemindex := 0;
+
   for page := 0 to PageControl1.PageCount - 1 do
     PageControl1.Pages[page].TabVisible := false;
-  ListView1.ItemIndex := 0;
+  pnlSnomedImport.Color := rgb(217, 240, 247);
+  pnlLoincImport.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  pnlProcessUMLS.color := clWhite;
   PageControl1.ActivePageIndex := 0;
+  lbEditionsClick(self);
 end;
 
 procedure TForm4.FormDestroy(Sender: TObject);
 begin
   ini.Free;
-end;
-
-procedure TForm4.ListView1Click(Sender: TObject);
-begin
-  PageControl1.ActivePageIndex := ListView1.ItemIndex;
 end;
 
 procedure TForm4.btnCloseClick(Sender: TObject);
@@ -162,6 +206,50 @@ end;
 procedure TForm4.btnStopClick(Sender: TObject);
 begin
   wantStop := true;
+end;
+
+procedure TForm4.pnlCombineSnomedClick(Sender: TObject);
+begin
+  if running then
+    exit;
+  pnlCombineSnomed.Color := rgb(217, 240, 247);
+  pnlLoincImport.color := clWhite;
+  pnlSnomedImport.color := clWhite;
+  pnlProcessUMLS.color := clWhite;
+  PageControl1.ActivePageIndex := 1;
+end;
+
+procedure TForm4.pnlSnomedImportClick(Sender: TObject);
+begin
+  if running then
+    exit;
+  pnlSnomedImport.Color := rgb(217, 240, 247);
+  pnlLoincImport.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  pnlProcessUMLS.color := clWhite;
+  PageControl1.ActivePageIndex := 0;
+end;
+
+procedure TForm4.Image1Click(Sender: TObject);
+begin
+  if running then
+    exit;
+  pnlProcessUMLS.Color := rgb(217, 240, 247);
+  pnlLoincImport.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  pnlSnomedImport.color := clWhite;
+  PageControl1.ActivePageIndex := 3;
+end;
+
+procedure TForm4.Image2Click(Sender: TObject);
+begin
+  if running then
+    exit;
+  pnlLoincImport.Color := rgb(217, 240, 247);
+  pnlSnomedImport.color := clWhite;
+  pnlCombineSnomed.color := clWhite;
+  pnlProcessUMLS.color := clWhite;
+  PageControl1.ActivePageIndex := 2;
 end;
 
 // snomed module ---------------------------------------------------------------
@@ -215,7 +303,7 @@ begin
     wantStop := false;
     btnSnomedImportStop.Visible := true;
     cursor := crHourGlass;
-    listview1.enabled := false;
+    running := true;
     edtSource.enabled := false;
     cbxEdition.enabled := false;
     edtDate.enabled := false;
@@ -230,7 +318,7 @@ begin
     finally
       cursor := crDefault;
       btnSnomedImportStop.Visible := false;
-      listview1.enabled := true;
+      running := false;
       edtSource.enabled := true;
       cbxEdition.enabled := true;
       edtDate.enabled := true;
@@ -256,6 +344,121 @@ begin
   dlgSource.Title := 'Choose SNOMED CT RF2 Snapshot Folder';
   if dlgSource.Execute then
     edtSource.text := dlgSource.filename;
+end;
+
+// Snomed Combiner  ------------------------------------------------------------
+
+procedure TForm4.btnInternationalClick(Sender: TObject);
+begin
+  dlgOpenCache.Title := 'Choose International SNOMED cache file';
+  if dlgOpenCache.Execute then
+    edtInternational.text := dlgOpenCache.filename;
+end;
+
+procedure TForm4.btnAddEditionClick(Sender: TObject);
+begin
+  dlgOpenCache.Title := 'Choose National SNOMED Edition cache file';
+  if dlgOpenCache.Execute then
+  begin
+    lbEditions.Items.Add(dlgOpenCache.filename);
+    lbEditions.ItemIndex := lbEditions.Items.Count - 1;
+    lbEditionsClick(nil);
+  end;
+end;
+
+procedure TForm4.lbEditionsClick(Sender: TObject);
+begin
+  btnDeleteEdition.Enabled := lbEditions.ItemIndex <> -1;
+end;
+
+procedure TForm4.btnDeleteEditionClick(Sender: TObject);
+begin
+  if (lbEditions.ItemIndex > -1) then
+    lbEditions.Items.Delete(lbEditions.ItemIndex);
+end;
+
+
+procedure TForm4.cmbCallback(pct: Integer; action: String);
+begin
+  prgCombine.Position := pct;
+  lblCombineAction.Caption := action;
+  lblCombineAmount.Caption := inttostr(pct)+'%';
+  prgCombine.Update;
+  lblCombineAction.Update;
+  lblCombineAmount.Update;
+  Application.ProcessMessages;
+  if (wantStop)  then
+    abort;
+end;
+
+procedure TForm4.btnCombineGoClick(Sender: TObject);
+var
+  i : integer;
+  start : TDateTime;
+  combiner : TSnomedCombiner;
+  svc : TSnomedServices;
+begin
+  if not FileExists(edtInternational.Text) then
+    ShowMessage('International File "'+edtInternational.Text+'" not found')
+  else if lbEditions.Items.Count = 0 then
+    ShowMessage('Please provide some other editions')
+  else
+    for i := 0 to lbEditions.Items.Count - 1 do
+      if not FileExists(lbEditions.Items[i]) then
+      begin
+        ShowMessage('Edition File "'+lbEditions.Items[i]+'" not found');
+        exit;
+      end;
+
+//  else if not FileExists(edtDestination.Text) or (MessageDlg('Overwrite "'+edtDestination.Text+'"?', mtConfirmation, mbYesNo, 0) = mrYes) then
+    ini.WriteString('snomed-combine', 'base', edtInternational.text);
+    ini.WriteString('snomed-combine', 'editions', lbEditions.Items.CommaText);
+
+    wantStop := false;
+    btnStopCombine.Visible := true;
+    cursor := crHourGlass;
+    running := true;
+    edtInternational.enabled := false;
+    lbEditions.enabled := false;
+    btnCombineGo.enabled := false;
+    btnInternational.enabled := false;
+    btnAddEdition.enabled := false;
+    btnDeleteEdition.enabled := false;
+    btnCloseCombine.enabled := false;
+    try
+      start := now;
+      cmbCallback(0, 'Loading Editions');
+      combiner := TSnomedCombiner.Create;
+      try
+        combiner.international := TSnomedServices.Create;
+        combiner.international.Load(edtInternational.Text);
+        for i := 0 to lbEditions.Items.Count - 1 do
+        begin
+          svc := TSnomedServices.create;
+          combiner.others.Add(svc);
+          svc.load(lbEditions.Items[i]);
+        end;
+        combiner.callback := cmbCallBack;
+        combiner.Execute;
+        combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
+        MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
+      finally
+        combiner.free;
+      end;
+//      importSnomedRF2(edtSource.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
+    finally
+      btnStopCombine.Visible := false;
+      cursor := crDefault;
+      running := false;
+      edtInternational.enabled := true;
+      lbEditions.enabled := true;
+      btnCombineGo.enabled := true;
+      btnInternational.enabled := true;
+      btnAddEdition.enabled := true;
+      btnDeleteEdition.enabled := true;
+      btnCloseCombine.enabled := true;
+      cmbCallback(0, '');
+    end;
 end;
 
 // LOINC module ----------------------------------------------------------------
@@ -305,7 +508,7 @@ begin
     wantStop := false;
     btnLoincImportStop.Visible := true;
     cursor := crHourGlass;
-    listview1.enabled := false;
+    running := true;
     edtLoincSource.enabled := false;
     edtLoincVersion.enabled := false;
     edtLoincDest.enabled := false;
@@ -318,7 +521,7 @@ begin
     finally
       cursor := crDefault;
       btnUMLSStop.Visible := false;
-      listview1.enabled := true;
+      running := false;
       edtLoincSource.enabled := true;
       edtLoincVersion.enabled := true;
       edtLoincDest.enabled := true;
@@ -356,7 +559,7 @@ begin
     wantStop := false;
     btnUMLSStop.Visible := true;
     cursor := crHourGlass;
-    listview1.enabled := false;
+    running := true;
     edtUMLSServer.enabled := false;
     edtUMLSDatabase.enabled := false;
     edtUMLSUsername.enabled := false;
@@ -369,7 +572,7 @@ begin
     finally
       cursor := crDefault;
       btnUMLSStop.Visible := false;
-      listview1.enabled := true;
+      running := false;
       edtUMLSServer.enabled := true;
       edtUMLSDatabase.enabled := true;
       edtUMLSUsername.enabled := true;

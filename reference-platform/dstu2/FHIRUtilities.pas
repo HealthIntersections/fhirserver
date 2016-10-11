@@ -151,6 +151,17 @@ type
   TFhirConceptMapGroupElement = TFhirConceptMapElement;
   TFhirConceptMapGroupElementTarget = TFhirConceptMapElementTarget;
   TFhirConceptMapGroupElementTargetList = TFhirConceptMapElementTargetList;
+  TFhirCapabilityStatement = TFhirConformance;
+  TFhirCapabilityStatementRest = TFhirConformanceRest;
+  TFhirCapabilityStatementRestResourceSearchParamList = TFhirConformanceRestResourceSearchParamList;
+  TFhirCapabilityStatementRestResourceSearchParam = TFhirConformanceRestResourceSearchParam;
+  TFhirCapabilityStatementRestResource = TFhirConformanceRestResource;
+  TFhirCapabilityStatementRestOperation = TFhirConformanceRestOperation;
+  TFhirCapabilityStatementContact = TFhirConformanceContact;
+  TFhirCapabilityStatementSoftware = TFhirConformanceSoftware;
+  TFhirCapabilityStatementImplementation = TFhirConformanceImplementation;
+  TFhirCapabilityStatementRestSecurity = TFhirConformanceRestSecurity;
+
 
   TResourceWithReference = class (TAdvObject)
   private
@@ -254,6 +265,15 @@ type
   public
     function rest(type_ : TFhirResourceType) : TFhirConformanceRestResource;
     procedure checkCompatible;
+  end;
+
+  TFHIROperationDefinitionHelper = class helper (TFHIRDomainResourceHelper) for TFHIROperationDefinition
+  private
+    function Gettype_: boolean;
+    procedure Settype_(const Value: boolean);
+  public
+    function resourceList : TFhirEnumList;
+    property type_ : boolean read Gettype_ write Settype_;
   end;
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
@@ -479,6 +499,7 @@ type
 
 const
   frtCodeSystem = frtValueSet;
+  RestfulCapabilityModeServer = RestfulConformanceModeServer;
 
 function Path(const parts : array of String) : String;
 
@@ -4107,6 +4128,23 @@ begin
     result := def
   else
     result := props.Contains(name);
+end;
+
+{ TFHIROperationDefinitionHelper }
+
+function TFHIROperationDefinitionHelper.Gettype_: boolean;
+begin
+
+end;
+
+function TFHIROperationDefinitionHelper.resourceList: TFhirEnumList;
+begin
+  result := type_list;
+end;
+
+procedure TFHIROperationDefinitionHelper.Settype_(const Value: boolean);
+begin
+
 end;
 
 end.

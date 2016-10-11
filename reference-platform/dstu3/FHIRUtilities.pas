@@ -151,6 +151,8 @@ type
   TFhirAuditEventObject = TFhirAuditEventEntity;
   TFhirAuditEventEvent = TFhirAuditEvent;
   TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
+  TFhirNamingSystemContact = TFHIRContactDetail;
+  TFhirConformanceContact = TFHIRContactDetail;
 
   TResourceWithReference = class (TAdvObject)
   private
@@ -258,9 +260,9 @@ type
     function summary : String;
   end;
 
-  TFHIRConformanceHelper = class helper (TFHIRDomainResourceHelper) for TFHIRConformance
+  TFHIRCapabilityStatementHelper = class helper (TFHIRDomainResourceHelper) for TFHIRCapabilityStatement
   public
-    function rest(type_ : TFhirResourceType) : TFhirConformanceRestResource;
+    function rest(type_ : TFhirResourceType) : TFhirCapabilityStatementRestResource;
     procedure checkCompatible;
   end;
 
@@ -269,9 +271,9 @@ type
     function hasCode(System, Code : String) : boolean;
   end;
 
-  TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirConformanceRestResource
+  TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
-    function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirConformanceRestResourceInteraction;
+    function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
   end;
 
   TFHIRContactPointListHelper = class helper for TFhirContactPointList
@@ -280,7 +282,7 @@ type
     procedure setSystem(type_ : TFHIRContactPointSystemEnum; value : String);
   end;
 
-  TFhirValueSetContactListHelper = class helper for TFhirValueSetContactList
+  TFhirContactDetailListHelper = class helper for TFhirContactDetailList
   public
     function system(type_ : TFHIRContactPointSystemEnum) : String;
     procedure setSystem(type_ : TFHIRContactPointSystemEnum; value : String);
@@ -1697,7 +1699,7 @@ begin
   case res.ResourceType of
     frtCodeSystem: result := TFHIRCodeSystem(res).url;
     frtConceptMap: result := TFHIRConceptMap(res).url;
-    frtConformance: result := TFHIRConformance(res).url;
+    frtCapabilityStatement: result := TFHIRCapabilityStatement(res).url;
     frtDataElement: result := TFHIRDataElement(res).url;
     frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
@@ -2053,9 +2055,9 @@ begin
   ext.value := TFhirString.Create(value);
 end;
 
-{ TFHIRConformanceHelper }
+{ TFHIRCapabilityStatementHelper }
 
-procedure TFHIRConformanceHelper.checkCompatible;
+procedure TFHIRCapabilityStatementHelper.checkCompatible;
 var
   res, code : String;
 begin
@@ -2068,14 +2070,14 @@ begin
     raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
 end;
 
-function TFHIRConformanceHelper.rest(type_: TFhirResourceType): TFhirConformanceRestResource;
+function TFHIRCapabilityStatementHelper.rest(type_: TFhirResourceType): TFhirCapabilityStatementRestResource;
 var
   i : integer;
   j : integer;
 begin
   result := nil;
   for I := 0 to self.restlist.count - 1 do
-    if self.restlist[i].mode = RestfulConformanceModeServer then
+    if self.restlist[i].mode = RestfulCapabilityModeServer then
       for j := 0 to self.restlist[i].resourceList.count - 1 do
         if CODES_TFhirResourceTypesEnum[self.restlist[i].resourceList[j].type_] = CODES_TFhirResourceType[type_] then
         begin
@@ -2084,9 +2086,9 @@ begin
         end;
 end;
 
-{ TFhirConformanceRestResourceHelper }
+{ TFhirCapabilityStatementRestResourceHelper }
 
-function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteractionEnum): TFhirConformanceRestResourceInteraction;
+function TFhirConformanceRestResourceHelper.interaction(type_: TFhirTypeRestfulInteractionEnum): TFhirCapabilityStatementRestResourceInteraction;
 var
   i : integer;
 begin
@@ -2094,9 +2096,6 @@ begin
   for i := 0 to self.interactionList.count - 1 do
     if (self.interactionList[i].code = type_) then
       result := self.interactionList[i];
-
-
-
 end;
 
 { TFhirValueSetHelper }
@@ -2848,9 +2847,9 @@ begin
   end;
 end;
 
-{ TFhirValueSetContactListHelper }
+{ TFhirContactDetailListHelper }
 
-procedure TFhirValueSetContactListHelper.setSystem(type_: TFHIRContactPointSystemEnum; value: String);
+procedure TFhirContactDetailListHelper.setSystem(type_: TFHIRContactPointSystemEnum; value: String);
 var
   i : integer;
   c : TFhirContactPoint;
@@ -2868,7 +2867,7 @@ begin
   c.value := value;
 end;
 
-function TFhirValueSetContactListHelper.system(type_: TFHIRContactPointSystemEnum): String;
+function TFhirContactDetailListHelper.system(type_: TFHIRContactPointSystemEnum): String;
 var
   i, j : integer;
 begin

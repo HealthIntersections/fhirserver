@@ -128,11 +128,13 @@ begin
   begin
     {$IFDEF FHIR2}
     result.codeSystem := nil;
+    result.requirements := '';
+    {$ELSE}
+    result.purpose := '';
     {$ENDIF}
     result.compose := nil;
     result.description := '';
     result.contactList.Clear;
-    result.requirements := '';
     result.copyright := '';
     result.publisher := '';
     result.extensionList.Clear;

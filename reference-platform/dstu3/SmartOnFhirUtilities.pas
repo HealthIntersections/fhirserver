@@ -215,7 +215,7 @@ type
   end;
 
 // given a conformance statement, check the server is using Smart on FHIR, and extract the end points
-function usesSmartOnFHIR(conf : TFhirConformance; var authorize, token: String): Boolean;
+function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token: String): Boolean;
 
 // build the launch token (used by the form)
 function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String) : String;
@@ -230,7 +230,7 @@ begin
   result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://localhost:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
 end;
 
-function usesSmartOnFHIR(conf : TFhirConformance; var authorize, token: String): Boolean;
+function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token: String): Boolean;
 var
   cc : TFhirCodeableConcept;
   ex1, ex2 : TFhirExtension;

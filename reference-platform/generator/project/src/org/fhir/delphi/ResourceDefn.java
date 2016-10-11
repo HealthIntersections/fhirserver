@@ -12,7 +12,8 @@ public class ResourceDefn  {
   private String display;
   private String definition = null;
   private TypeDefn root;   
-
+  private boolean special;
+  
   public String getName()
   {
     return name;
@@ -64,6 +65,14 @@ public class ResourceDefn  {
 
   public void setDisplay(String display) {
     this.display = display;
+  }
+
+  public boolean isSpecial() {
+    return special;
+  }
+
+  public void setSpecial(boolean special) {
+    this.special = special;
   }
 
   

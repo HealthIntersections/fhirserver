@@ -146,7 +146,7 @@ type
     function asSql : String;
   end;
 
-  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirConformance) of object;
+  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatement) of object;
 
   TFhirOperationManager = class;
 
@@ -182,7 +182,7 @@ type
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
     procedure unmarkRedacted(meta : TFhirMeta);
-    procedure AddCDSHooks(conf : TFhirConformanceRest);
+    procedure AddCDSHooks(conf : TFhirCapabilityStatementRest);
 
     function checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean) : boolean;
     function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; c : TFHIRCoding) : boolean;
@@ -263,7 +263,7 @@ type
     Property Repository : TFHIRDataStore read FRepository;
 
     // internal utility functions
-    procedure addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
+    procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 
     function AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean;
@@ -888,12 +888,12 @@ begin
   End;
 end;
 
-procedure TFhirOperationManager.addParam(srch : TFhirConformanceRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
+procedure TFhirOperationManager.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 var
-  param : TFhirConformanceRestResourceSearchParam;
+  param : TFhirCapabilityStatementRestResourceSearchParam;
   a : string;
 begin
-  param := TFhirConformanceRestResourceSearchParam.create;
+  param := TFhirCapabilityStatementRestResourceSearchParam.create;
   try
     param.name := n;
     param.definition := url;
@@ -936,19 +936,19 @@ end;
 
 procedure TFhirOperationManager.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
 var
-  oConf : TFhirConformance;
-  res : TFhirConformanceRestResource;
+  oConf : TFhirCapabilityStatement;
+  res : TFhirCapabilityStatementRestResource;
   a : String;
   html : TAdvStringBuilder;
   c : TFhirContactPoint;
   i : integer;
-  op : TFhirConformanceRestOperation;
+  op : TFhirCapabilityStatementRestOperation;
   ct : TFhirConformanceContact;
 begin
   try
 
     response.HTTPCode := 200;
-    oConf := TFhirConformance.Create;
+    oConf := TFhirCapabilityStatement.Create;
     response.Resource := oConf;
 
     oConf.id := 'FhirServer';
@@ -968,13 +968,13 @@ begin
     oConf.status := ConformanceResourceStatusActive;
     oConf.experimental := false;
     oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
-    oConf.software := TFhirConformanceSoftware.Create;
+    oConf.software := TFhirCapabilityStatementSoftware.Create;
     oConf.software.name := 'Reference Server';
     oConf.software.version := SERVER_VERSION+'.';
     oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
     if FRepository.FormalURLPlainOpen <> '' then
     begin
-      oConf.implementation_ := TFhirConformanceImplementation.Create;
+      oConf.implementation_ := TFhirCapabilityStatementImplementation.Create;
       oConf.implementation_.description := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
       oConf.implementation_.url := FRepository.FormalURLPlainOpen;
     end;
@@ -991,8 +991,8 @@ begin
     {$ENDIF}
 
     oConf.fhirVersion := FHIR_GENERATED_VERSION;
-    oConf.restList.add(TFhirConformanceRest.Create);
-    oConf.restList[0].mode := RestfulConformanceModeServer;
+    oConf.restList.add(TFhirCapabilityStatementRest.Create);
+    oConf.restList[0].mode := RestfulCapabilityModeServer;
     oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/conformance-websockets', request.baseUrl+'websockets');
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
@@ -1026,7 +1026,7 @@ begin
           else
             html.append('<tr><td>'+a+'</td>'+
             '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
-          res := TFhirConformanceRestResource.create;
+          res := TFhirCapabilityStatementRestResource.create;
           try
             res.type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', a);
             if a <> 'Binary' then
@@ -2803,7 +2803,7 @@ begin
   FConnection.terminate;
 end;
 
-procedure TFhirOperationManager.AddCDSHooks(conf: TFhirConformanceRest);
+procedure TFhirOperationManager.AddCDSHooks(conf: TFhirCapabilityStatementRest);
 var
   ext : TFhirExtension;
 begin
@@ -6709,7 +6709,8 @@ begin
   try
     result.{$IFDEF FHIR2}notes{$ELSE}comment{$ENDIF} := 'This server has little idea what a valid patient record is; it returns everything in the patient compartment, and any resource directly referred to from one of these';
     result.system := False;
-    result.type_List.AddItem('Patient');
+    result.resourceList.AddItem('Patient');
+    result.type_ := true;
     result.instance := true;
     with result.parameterList.Append do
     begin
@@ -6916,7 +6917,8 @@ begin
   result := CreateBaseDefinition(base);
   try
     result.system := False;
-    result.type_List.AddItem('Composition');
+    result.resourceList.AddItem('Composition');
+    result.type_ := true;
     result.instance := true;
     with result.parameterList.Append do
     begin
@@ -7395,8 +7397,11 @@ procedure TFhirGenerateCDSHookOperation.addNamingSystemInfo(ns: TFHIRNamingSyste
 var
   card : TCDSHookCard;
   b : TStringBuilder;
-  cc : TFhirCodeableConcept;
   cp : TFhirNamingSystemContact;
+  {$IFDEF FHIR3}
+  uc : TFhirUsageContext;
+  {$ENDIF}
+  cc : TFhirCodeableConcept;
 begin
   card := resp.addCard;
   card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
@@ -7414,11 +7419,18 @@ begin
 
     b.append(#13#10);
 
-    if ns.useContextList.Count > 0 then
+    if (ns.useContextList.Count > 0) {$IFDEF FHIR3}or (ns.jurisdictionList.Count > 0){$ENDIF} then
     begin
       b.Append('Contexts of Use'#13#10#13#10);
+      {$IFDEF FHIR3}
+      for uc in ns.useContextList do
+        b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
+      for cc in ns.jurisdictionList do
+        b.Append('* Jurisdiction: '+gen(cc)+#13#10);
+      {$ELSE}
       for cc in ns.useContextList do
         b.Append('* '+gen(cc)+#13#10);
+      {$ENDIF}
       b.append(#13#10);
     end;
 

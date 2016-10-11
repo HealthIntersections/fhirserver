@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
+// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -722,6 +722,113 @@ Type
     property return : TFhirLibrary read FReturn write SetReturn;
   end;
 
+  //Operation subset (Fetch a subset of the CapabilityStatement resource)
+  TFHIRSubsetOpRequest = class (TFHIROperationRequest)
+  private
+    FServer : String;
+    FResourceList : TList<String>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property server : String read FServer write FServer;
+    property resourceList : TList<String> read FResourceList;
+  end;
+
+  TFHIRSubsetOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirCapabilityStatement;
+    procedure SetReturn(value : TFhirCapabilityStatement);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirCapabilityStatement read FReturn write SetReturn;
+  end;
+
+  //Operation implements (Test if a server implements a client's required operations)
+  TFHIRImplementsOpRequest = class (TFHIROperationRequest)
+  private
+    FServer : String;
+    FClient : String;
+    FResource : TFhirCapabilityStatement;
+    procedure SetResource(value : TFhirCapabilityStatement);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property server : String read FServer write FServer;
+    property client : String read FClient write FClient;
+    property resource : TFhirCapabilityStatement read FResource write SetResource;
+  end;
+
+  TFHIRImplementsOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirOperationOutcome;
+    FIssues : TFhirOperationOutcome;
+    FUnion : TFhirBundle;
+    FIntersection : TFhirBundle;
+    procedure SetReturn(value : TFhirOperationOutcome);
+    procedure SetIssues(value : TFhirOperationOutcome);
+    procedure SetUnion(value : TFhirBundle);
+    procedure SetIntersection(value : TFhirBundle);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirOperationOutcome read FReturn write SetReturn;
+    property issues : TFhirOperationOutcome read FIssues write SetIssues;
+    property union : TFhirBundle read FUnion write SetUnion;
+    property intersection : TFhirBundle read FIntersection write SetIntersection;
+  end;
+
+  //Operation conforms (Test if a server implements a client's required operations)
+  TFHIRConformsOpRequest = class (TFHIROperationRequest)
+  private
+    FLeft : String;
+    FRight : String;
+    FMode : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property left : String read FLeft write FLeft;
+    property right : String read FRight write FRight;
+    property mode : String read FMode write FMode;
+  end;
+
+  TFHIRConformsOpResponse = class (TFHIROperationResponse)
+  private
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+  end;
+
   //Operation document (Generate a Document)
   TFHIRDocumentOpRequest = class (TFHIROperationRequest)
   private
@@ -886,113 +993,6 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirConceptMap read FReturn write SetReturn;
-  end;
-
-  //Operation subset (Fetch a subset of the conformance resource)
-  TFHIRSubsetOpRequest = class (TFHIROperationRequest)
-  private
-    FServer : String;
-    FResourceList : TList<String>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property server : String read FServer write FServer;
-    property resourceList : TList<String> read FResourceList;
-  end;
-
-  TFHIRSubsetOpResponse = class (TFHIROperationResponse)
-  private
-    FReturn : TFhirConformance;
-    procedure SetReturn(value : TFhirConformance);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property return : TFhirConformance read FReturn write SetReturn;
-  end;
-
-  //Operation implements (Test if a server implements a client's required operations)
-  TFHIRImplementsOpRequest = class (TFHIROperationRequest)
-  private
-    FServer : String;
-    FClient : String;
-    FResource : TFhirConformance;
-    procedure SetResource(value : TFhirConformance);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property server : String read FServer write FServer;
-    property client : String read FClient write FClient;
-    property resource : TFhirConformance read FResource write SetResource;
-  end;
-
-  TFHIRImplementsOpResponse = class (TFHIROperationResponse)
-  private
-    FReturn : TFhirOperationOutcome;
-    FIssues : TFhirOperationOutcome;
-    FUnion : TFhirBundle;
-    FIntersection : TFhirBundle;
-    procedure SetReturn(value : TFhirOperationOutcome);
-    procedure SetIssues(value : TFhirOperationOutcome);
-    procedure SetUnion(value : TFhirBundle);
-    procedure SetIntersection(value : TFhirBundle);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property return : TFhirOperationOutcome read FReturn write SetReturn;
-    property issues : TFhirOperationOutcome read FIssues write SetIssues;
-    property union : TFhirBundle read FUnion write SetUnion;
-    property intersection : TFhirBundle read FIntersection write SetIntersection;
-  end;
-
-  //Operation conforms (Test if a server implements a client's required operations)
-  TFHIRConformsOpRequest = class (TFHIROperationRequest)
-  private
-    FLeft : String;
-    FRight : String;
-    FMode : String;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property left : String read FLeft write FLeft;
-    property right : String read FRight write FRight;
-    property mode : String read FMode write FMode;
-  end;
-
-  TFHIRConformsOpResponse = class (TFHIROperationResponse)
-  private
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
   end;
 
   //Operation evaluate (Evaluate)
@@ -3752,6 +3752,317 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+constructor TFHIRSubsetOpRequest.create;
+begin
+  inherited create();
+  FResourceList := TList<String>.create;
+end;
+
+procedure TFHIRSubsetOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  FServer := params.str['server'];
+  for p in params.parameterList do
+    if p.name = 'resource' then
+      FResourceList.Add((p.value as TFhirCode).value);{ob.1}
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubsetOpRequest.load(params : TParseMap);
+begin
+  FServer := params.getVar('server');
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubsetOpRequest.Destroy;
+begin
+  FResourceList.free;
+  inherited;
+end;
+
+function TFHIRSubsetOpRequest.asParams : TFhirParameters;
+var
+  v1 : String;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FServer <> '') then
+      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
+    for v1 in FResourceList do
+      result.AddParameter('resource', TFhirCode.create(v1));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubsetOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['server', 'resource'], name);
+end;
+
+procedure TFHIRSubsetOpResponse.SetReturn(value : TFhirCapabilityStatement);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+constructor TFHIRSubsetOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRSubsetOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirCapabilityStatement).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubsetOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubsetOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+
+function TFHIRSubsetOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubsetOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return'], name);
+end;
+
+procedure TFHIRImplementsOpRequest.SetResource(value : TFhirCapabilityStatement);
+begin
+  FResource.free;
+  FResource := value;
+end;
+
+constructor TFHIRImplementsOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRImplementsOpRequest.load(params : TFHIRParameters);
+begin
+  FServer := params.str['server'];
+  FClient := params.str['client'];
+  FResource := (params.res['resource'] as TFhirCapabilityStatement).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRImplementsOpRequest.load(params : TParseMap);
+begin
+  FServer := params.getVar('server');
+  FClient := params.getVar('client');
+  loadExtensions(params);
+end;
+
+destructor TFHIRImplementsOpRequest.Destroy;
+begin
+  FResource.free;
+  inherited;
+end;
+
+function TFHIRImplementsOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FServer <> '') then
+      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
+    if (FClient <> '') then
+      result.addParameter('client', TFHIRUri.create(FClient));{oz.5f}
+    if (FResource <> nil) then
+      result.addParameter('resource', FResource.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRImplementsOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['server', 'client', 'resource'], name);
+end;
+
+procedure TFHIRImplementsOpResponse.SetReturn(value : TFhirOperationOutcome);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+procedure TFHIRImplementsOpResponse.SetIssues(value : TFhirOperationOutcome);
+begin
+  FIssues.free;
+  FIssues := value;
+end;
+
+procedure TFHIRImplementsOpResponse.SetUnion(value : TFhirBundle);
+begin
+  FUnion.free;
+  FUnion := value;
+end;
+
+procedure TFHIRImplementsOpResponse.SetIntersection(value : TFhirBundle);
+begin
+  FIntersection.free;
+  FIntersection := value;
+end;
+
+constructor TFHIRImplementsOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRImplementsOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirOperationOutcome).Link;{ob.5a}
+  FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
+  FUnion := (params.res['union'] as TFhirBundle).Link;{ob.5a}
+  FIntersection := (params.res['intersection'] as TFhirBundle).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRImplementsOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRImplementsOpResponse.Destroy;
+begin
+  FReturn.free;
+  FIssues.free;
+  FUnion.free;
+  FIntersection.free;
+  inherited;
+end;
+
+function TFHIRImplementsOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    if (FIssues <> nil) then
+      result.addParameter('issues', FIssues.Link);{oz.5a}
+    if (FUnion <> nil) then
+      result.addParameter('union', FUnion.Link);{oz.5a}
+    if (FIntersection <> nil) then
+      result.addParameter('intersection', FIntersection.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRImplementsOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return', 'issues', 'union', 'intersection'], name);
+end;
+
+constructor TFHIRConformsOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRConformsOpRequest.load(params : TFHIRParameters);
+begin
+  FLeft := params.str['left'];
+  FRight := params.str['right'];
+  FMode := params.str['mode'];
+  loadExtensions(params);
+end;
+
+procedure TFHIRConformsOpRequest.load(params : TParseMap);
+begin
+  FLeft := params.getVar('left');
+  FRight := params.getVar('right');
+  FMode := params.getVar('mode');
+  loadExtensions(params);
+end;
+
+destructor TFHIRConformsOpRequest.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRConformsOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FLeft <> '') then
+      result.addParameter('left', TFHIRUri.create(FLeft));{oz.5f}
+    if (FRight <> '') then
+      result.addParameter('right', TFHIRUri.create(FRight));{oz.5f}
+    if (FMode <> '') then
+      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRConformsOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['left', 'right', 'mode'], name);
+end;
+
+constructor TFHIRConformsOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRConformsOpResponse.load(params : TFHIRParameters);
+begin
+  loadExtensions(params);
+end;
+
+procedure TFHIRConformsOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRConformsOpResponse.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRConformsOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRConformsOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := false;
+end;
+
 constructor TFHIRDocumentOpRequest.create;
 begin
   inherited create();
@@ -4227,317 +4538,6 @@ end;
 function TFHIRClosureOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
-end;
-
-constructor TFHIRSubsetOpRequest.create;
-begin
-  inherited create();
-  FResourceList := TList<String>.create;
-end;
-
-procedure TFHIRSubsetOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  FServer := params.str['server'];
-  for p in params.parameterList do
-    if p.name = 'resource' then
-      FResourceList.Add((p.value as TFhirCode).value);{ob.1}
-  loadExtensions(params);
-end;
-
-procedure TFHIRSubsetOpRequest.load(params : TParseMap);
-begin
-  FServer := params.getVar('server');
-  loadExtensions(params);
-end;
-
-destructor TFHIRSubsetOpRequest.Destroy;
-begin
-  FResourceList.free;
-  inherited;
-end;
-
-function TFHIRSubsetOpRequest.asParams : TFhirParameters;
-var
-  v1 : String;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FServer <> '') then
-      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
-    for v1 in FResourceList do
-      result.AddParameter('resource', TFhirCode.create(v1));
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRSubsetOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['server', 'resource'], name);
-end;
-
-procedure TFHIRSubsetOpResponse.SetReturn(value : TFhirConformance);
-begin
-  FReturn.free;
-  FReturn := value;
-end;
-
-constructor TFHIRSubsetOpResponse.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRSubsetOpResponse.load(params : TFHIRParameters);
-begin
-  FReturn := (params.res['return'] as TFhirConformance).Link;{ob.5a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRSubsetOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRSubsetOpResponse.Destroy;
-begin
-  FReturn.free;
-  inherited;
-end;
-
-function TFHIRSubsetOpResponse.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FReturn <> nil) then
-      result.addParameter('return', FReturn.Link);{oz.5a}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRSubsetOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['return'], name);
-end;
-
-procedure TFHIRImplementsOpRequest.SetResource(value : TFhirConformance);
-begin
-  FResource.free;
-  FResource := value;
-end;
-
-constructor TFHIRImplementsOpRequest.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRImplementsOpRequest.load(params : TFHIRParameters);
-begin
-  FServer := params.str['server'];
-  FClient := params.str['client'];
-  FResource := (params.res['resource'] as TFhirConformance).Link;{ob.5a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRImplementsOpRequest.load(params : TParseMap);
-begin
-  FServer := params.getVar('server');
-  FClient := params.getVar('client');
-  loadExtensions(params);
-end;
-
-destructor TFHIRImplementsOpRequest.Destroy;
-begin
-  FResource.free;
-  inherited;
-end;
-
-function TFHIRImplementsOpRequest.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FServer <> '') then
-      result.addParameter('server', TFHIRUri.create(FServer));{oz.5f}
-    if (FClient <> '') then
-      result.addParameter('client', TFHIRUri.create(FClient));{oz.5f}
-    if (FResource <> nil) then
-      result.addParameter('resource', FResource.Link);{oz.5a}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRImplementsOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['server', 'client', 'resource'], name);
-end;
-
-procedure TFHIRImplementsOpResponse.SetReturn(value : TFhirOperationOutcome);
-begin
-  FReturn.free;
-  FReturn := value;
-end;
-
-procedure TFHIRImplementsOpResponse.SetIssues(value : TFhirOperationOutcome);
-begin
-  FIssues.free;
-  FIssues := value;
-end;
-
-procedure TFHIRImplementsOpResponse.SetUnion(value : TFhirBundle);
-begin
-  FUnion.free;
-  FUnion := value;
-end;
-
-procedure TFHIRImplementsOpResponse.SetIntersection(value : TFhirBundle);
-begin
-  FIntersection.free;
-  FIntersection := value;
-end;
-
-constructor TFHIRImplementsOpResponse.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRImplementsOpResponse.load(params : TFHIRParameters);
-begin
-  FReturn := (params.res['return'] as TFhirOperationOutcome).Link;{ob.5a}
-  FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
-  FUnion := (params.res['union'] as TFhirBundle).Link;{ob.5a}
-  FIntersection := (params.res['intersection'] as TFhirBundle).Link;{ob.5a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRImplementsOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRImplementsOpResponse.Destroy;
-begin
-  FReturn.free;
-  FIssues.free;
-  FUnion.free;
-  FIntersection.free;
-  inherited;
-end;
-
-function TFHIRImplementsOpResponse.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FReturn <> nil) then
-      result.addParameter('return', FReturn.Link);{oz.5a}
-    if (FIssues <> nil) then
-      result.addParameter('issues', FIssues.Link);{oz.5a}
-    if (FUnion <> nil) then
-      result.addParameter('union', FUnion.Link);{oz.5a}
-    if (FIntersection <> nil) then
-      result.addParameter('intersection', FIntersection.Link);{oz.5a}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRImplementsOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['return', 'issues', 'union', 'intersection'], name);
-end;
-
-constructor TFHIRConformsOpRequest.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRConformsOpRequest.load(params : TFHIRParameters);
-begin
-  FLeft := params.str['left'];
-  FRight := params.str['right'];
-  FMode := params.str['mode'];
-  loadExtensions(params);
-end;
-
-procedure TFHIRConformsOpRequest.load(params : TParseMap);
-begin
-  FLeft := params.getVar('left');
-  FRight := params.getVar('right');
-  FMode := params.getVar('mode');
-  loadExtensions(params);
-end;
-
-destructor TFHIRConformsOpRequest.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRConformsOpRequest.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FLeft <> '') then
-      result.addParameter('left', TFHIRUri.create(FLeft));{oz.5f}
-    if (FRight <> '') then
-      result.addParameter('right', TFHIRUri.create(FRight));{oz.5f}
-    if (FMode <> '') then
-      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRConformsOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['left', 'right', 'mode'], name);
-end;
-
-constructor TFHIRConformsOpResponse.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRConformsOpResponse.load(params : TFHIRParameters);
-begin
-  loadExtensions(params);
-end;
-
-procedure TFHIRConformsOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRConformsOpResponse.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRConformsOpResponse.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRConformsOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := false;
 end;
 
 procedure TFHIREvaluateOpRequest.SetEvaluateAtDateTime(value : TDateAndTime);

@@ -252,7 +252,7 @@ Type
 
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
-    procedure declareSystems(oConf : TFHIRConformance);
+    procedure declareSystems(oConf : TFhirCapabilityStatement);
     {$IFDEF FHIR3}
     procedure declareCodeSystems(list : TFhirResourceList);
     {$ENDIF}
@@ -881,7 +881,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TTerminologyServerStore.declareSystems(oConf: TFHIRConformance);
+procedure TTerminologyServerStore.declareSystems(oConf: TFhirCapabilityStatement);
 var
   e : TFhirExtension;
   c, s : String;

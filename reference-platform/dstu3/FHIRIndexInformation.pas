@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-06T04:17:22+11:00
+// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -56,6 +56,7 @@ Type
     procedure buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForBodySite(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -68,7 +69,6 @@ Type
     procedure buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    procedure buildIndexesForConformance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -196,12 +196,18 @@ begin
   indexes.add('ActivityDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'ActivityDefinition.description', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'ActivityDefinition.identifier', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'ActivityDefinition.status', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'ActivityDefinition.title', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'date', 'The activity definition publication date', SearchParamTypeDATE, [], 'ActivityDefinition.date', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'description', 'Text search against the description of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.description', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'effective', 'Effective time associated with the activity definition', SearchParamTypeDATE, [], 'ActivityDefinition.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'identifier', 'External identifiers for the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'jurisdiction', 'Intended jurisdiction for activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'name', 'Name of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.name', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'publisher', 'Name of the publisher of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'status', 'The current status of the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.status', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'title', 'Text search against the title of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.title', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ActivityDefinition.topic', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'ActivityDefinition.version', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'url', 'The uri that identifies the activity definition', SearchParamTypeURI, [], 'ActivityDefinition.url', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'version', 'The version identifier of the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForActivityGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -403,6 +409,36 @@ begin
   indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', SearchParamTypeTOKEN, [], 'Bundle.type', SearchXpathUsageNormal);
 end;
 
+procedure TFHIRIndexBuilder.buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('CapabilityStatement', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'date', 'The capability statement publication date', SearchParamTypeDATE, [], 'CapabilityStatement.date', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'description', 'Text search against the description of the capability statement', SearchParamTypeSTRING, [], 'CapabilityStatement.description', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'event', 'Event code in a capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.messaging.event.code', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'fhirversion', 'The version of FHIR', SearchParamTypeTOKEN, [], 'CapabilityStatement.version', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'format', 'formats supported (xml | json | ttl | mime type)', SearchParamTypeTOKEN, [], 'CapabilityStatement.format', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'jurisdiction', 'Intended jurisdiction for capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'mode', 'Mode - restful (server/client) or messaging (sender/receiver)', SearchParamTypeTOKEN, [], 'CapabilityStatement.rest.mode', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'name', 'Name of the capability statement', SearchParamTypeSTRING, [], 'CapabilityStatement.name', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'publisher', 'Name of the publisher of the capability statement', SearchParamTypeSTRING, [], 'CapabilityStatement.publisher', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'resource', 'Name of a resource mentioned in a capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.rest.resource.type', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'resourceprofile', 'A profile id invoked in a capability statement', SearchParamTypeREFERENCE, ['StructureDefinition'], 'CapabilityStatement.rest.resource.profile', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'securityservice', 'OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates', SearchParamTypeTOKEN, [], 'CapabilityStatement.rest.security.service', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'software', 'Part of a the name of a software application', SearchParamTypeSTRING, [], 'CapabilityStatement.software.name', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'status', 'The current status of the capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.status', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'supported-profile', 'Profiles for use cases supported', SearchParamTypeREFERENCE, ['StructureDefinition'], 'CapabilityStatement.profile', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'title', 'Text search against the title of the capability statement', SearchParamTypeSTRING, [], 'CapabilityStatement.title', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'url', 'The uri that identifies the capability statement', SearchParamTypeURI, [], 'CapabilityStatement.url', SearchXpathUsageNormal);
+  indexes.add('CapabilityStatement', 'version', 'The version identifier of the capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.version', SearchXpathUsageNormal);
+end;
+
 procedure TFHIRIndexBuilder.buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CarePlan', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -535,16 +571,17 @@ begin
   indexes.add('CodeSystem', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'code', 'A code defined in the code system', SearchParamTypeTOKEN, [], 'CodeSystem.concept.code', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'content', 'not-present | examplar | fragment | complete', SearchParamTypeTOKEN, [], 'CodeSystem.content', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'context', 'A use context assigned to the code system', SearchParamTypeTOKEN, [], 'CodeSystem.useContext', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'date', 'The code system publication date', SearchParamTypeDATE, [], 'CodeSystem.date', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'description', 'Text search in the description of the code system', SearchParamTypeSTRING, [], 'CodeSystem.description', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'identifier', 'The identifier for the code system', SearchParamTypeTOKEN, [], 'CodeSystem.identifier', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'description', 'Text search against the description of the code system', SearchParamTypeSTRING, [], 'CodeSystem.description', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'identifier', 'External identifiers for the code system', SearchParamTypeTOKEN, [], 'CodeSystem.identifier', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'jurisdiction', 'Intended jurisdiction for code system', SearchParamTypeTOKEN, [], 'CodeSystem.jurisdiction', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'language', 'A language in which a designation is provided', SearchParamTypeTOKEN, [], 'CodeSystem.concept.designation.language', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'name', 'The name of the code system', SearchParamTypeSTRING, [], 'CodeSystem.name', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'name', 'Name of the code system', SearchParamTypeSTRING, [], 'CodeSystem.name', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'publisher', 'Name of the publisher of the code system', SearchParamTypeSTRING, [], 'CodeSystem.publisher', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'status', 'The status of the code system', SearchParamTypeTOKEN, [], 'CodeSystem.status', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'status', 'The current status of the code system', SearchParamTypeTOKEN, [], 'CodeSystem.status', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'system', 'The system for any codes defined by this code system (same as ''url'')', SearchParamTypeURI, [], 'CodeSystem.url', SearchXpathUsageNormal);
-  indexes.add('CodeSystem', 'url', 'The logical URL for the code system', SearchParamTypeURI, [], 'CodeSystem.url', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'title', 'Text search against the title of the code system', SearchParamTypeSTRING, [], 'CodeSystem.title', SearchXpathUsageNormal);
+  indexes.add('CodeSystem', 'url', 'The uri that identifies the code system', SearchParamTypeURI, [], 'CodeSystem.url', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'version', 'The version identifier of the code system', SearchParamTypeTOKEN, [], 'CodeSystem.version', SearchXpathUsageNormal);
 end;
 
@@ -618,11 +655,15 @@ begin
   indexes.add('CompartmentDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('CompartmentDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('CompartmentDefinition', 'code', 'Patient | Encounter | RelatedPerson | Practitioner | Device', SearchParamTypeTOKEN, [], 'CompartmentDefinition.code', SearchXpathUsageNormal);
-  indexes.add('CompartmentDefinition', 'date', 'Publication Date(/time)', SearchParamTypeDATE, [], 'CompartmentDefinition.date', SearchXpathUsageNormal);
-  indexes.add('CompartmentDefinition', 'name', 'Informal name for this compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.name', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'date', 'The compartment definition publication date', SearchParamTypeDATE, [], 'CompartmentDefinition.date', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'description', 'Text search against the description of the compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.description', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'jurisdiction', 'Intended jurisdiction for compartment definition', SearchParamTypeTOKEN, [], 'CompartmentDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'name', 'Name of the compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.name', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'publisher', 'Name of the publisher of the compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.publisher', SearchXpathUsageNormal);
   indexes.add('CompartmentDefinition', 'resource', 'Name of resource type', SearchParamTypeTOKEN, [], 'CompartmentDefinition.resource.code', SearchXpathUsageNormal);
-  indexes.add('CompartmentDefinition', 'status', 'draft | active | retired', SearchParamTypeTOKEN, [], 'CompartmentDefinition.status', SearchXpathUsageNormal);
-  indexes.add('CompartmentDefinition', 'url', 'Absolute URL used to reference this compartment definition', SearchParamTypeURI, [], 'CompartmentDefinition.url', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'status', 'The current status of the compartment definition', SearchParamTypeTOKEN, [], 'CompartmentDefinition.status', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'title', 'Text search against the title of the compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.title', SearchXpathUsageNormal);
+  indexes.add('CompartmentDefinition', 'url', 'The uri that identifies the compartment definition', SearchParamTypeURI, [], 'CompartmentDefinition.url', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -668,11 +709,11 @@ begin
   indexes.add('ConceptMap', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ConceptMap', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ConceptMap', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ConceptMap', 'context', 'A use context assigned to the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.useContext', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'date', 'The concept map publication date', SearchParamTypeDATE, [], 'ConceptMap.date', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'dependson', 'Reference to property mapping depends on', SearchParamTypeURI, [], 'ConceptMap.group.element.target.dependsOn.property', SearchXpathUsageNormal);
-  indexes.add('ConceptMap', 'description', 'Text search in the description of the concept map', SearchParamTypeSTRING, [], 'ConceptMap.description', SearchXpathUsageNormal);
-  indexes.add('ConceptMap', 'identifier', 'Additional identifier for the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.identifier', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'description', 'Text search against the description of the concept map', SearchParamTypeSTRING, [], 'ConceptMap.description', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'identifier', 'External identifiers for the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.identifier', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'jurisdiction', 'Intended jurisdiction for concept map', SearchParamTypeTOKEN, [], 'ConceptMap.jurisdiction', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'name', 'Name of the concept map', SearchParamTypeSTRING, [], 'ConceptMap.name', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'product', 'Reference to property mapping depends on', SearchParamTypeURI, [], 'ConceptMap.group.element.target.product.property', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'publisher', 'Name of the publisher of the concept map', SearchParamTypeSTRING, [], 'ConceptMap.publisher', SearchXpathUsageNormal);
@@ -680,12 +721,13 @@ begin
   indexes.add('ConceptMap', 'source-code', 'Identifies element being mapped', SearchParamTypeTOKEN, [], 'ConceptMap.group.element.code', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'source-system', 'Code System (if value set crosses code systems)', SearchParamTypeURI, [], 'ConceptMap.group.source', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'source-uri', 'Identifies the source of the concepts which are being mapped', SearchParamTypeREFERENCE, ['StructureDefinition', 'ValueSet'], 'ConceptMap.source.as(Uri)', SearchXpathUsageNormal);
-  indexes.add('ConceptMap', 'status', 'Status of the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.status', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'status', 'The current status of the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.status', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'target', 'Provides context to the mappings', SearchParamTypeREFERENCE, ['StructureDefinition', 'ValueSet'], 'ConceptMap.target.as(Reference)', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'target-code', 'Code that identifies the target element', SearchParamTypeTOKEN, [], 'ConceptMap.group.element.target.code', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'target-system', 'System of the target (if necessary)', SearchParamTypeURI, [], 'ConceptMap.group.target', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'target-uri', 'Provides context to the mappings', SearchParamTypeREFERENCE, ['StructureDefinition', 'ValueSet'], 'ConceptMap.target.as(Uri)', SearchXpathUsageNormal);
-  indexes.add('ConceptMap', 'url', 'The URL of the concept map', SearchParamTypeURI, [], 'ConceptMap.url', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'title', 'Text search against the title of the concept map', SearchParamTypeSTRING, [], 'ConceptMap.title', SearchXpathUsageNormal);
+  indexes.add('ConceptMap', 'url', 'The uri that identifies the concept map', SearchParamTypeURI, [], 'ConceptMap.url', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'version', 'The version identifier of the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.version', SearchXpathUsageNormal);
 end;
 
@@ -722,35 +764,6 @@ begin
   compartments.register(frtPatient, 'Condition', ['patient']);
   compartments.register(frtEncounter, 'Condition', ['context']);
   compartments.register(frtPractitioner, 'Condition', ['asserter']);
-end;
-
-procedure TFHIRIndexBuilder.buildIndexesForConformance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('Conformance', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
-  indexes.add('Conformance', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'context', 'A use context assigned to the conformance statement', SearchParamTypeTOKEN, [], 'Conformance.useContext', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'date', 'The conformance statement publication date', SearchParamTypeDATE, [], 'Conformance.date', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'description', 'Text search in the description of the conformance statement', SearchParamTypeSTRING, [], 'Conformance.description', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'event', 'Event code in a conformance statement', SearchParamTypeTOKEN, [], 'Conformance.messaging.event.code', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'fhirversion', 'The version of FHIR', SearchParamTypeTOKEN, [], 'Conformance.version', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'format', 'formats supported (xml | json | ttl | mime type)', SearchParamTypeTOKEN, [], 'Conformance.format', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'mode', 'Mode - restful (server/client) or messaging (sender/receiver)', SearchParamTypeTOKEN, [], 'Conformance.rest.mode', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'name', 'Name of the conformance statement', SearchParamTypeSTRING, [], 'Conformance.name', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'publisher', 'Name of the publisher of the conformance statement', SearchParamTypeSTRING, [], 'Conformance.publisher', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'resource', 'Name of a resource mentioned in a conformance statement', SearchParamTypeTOKEN, [], 'Conformance.rest.resource.type', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'resourceprofile', 'A profile id invoked in a conformance statement', SearchParamTypeREFERENCE, ['StructureDefinition'], 'Conformance.rest.resource.profile', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'securityservice', 'OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates', SearchParamTypeTOKEN, [], 'Conformance.rest.security.service', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'software', 'Part of a the name of a software application', SearchParamTypeSTRING, [], 'Conformance.software.name', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'status', 'The current status of the conformance statement', SearchParamTypeTOKEN, [], 'Conformance.status', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'supported-profile', 'Profiles for use cases supported', SearchParamTypeREFERENCE, ['StructureDefinition'], 'Conformance.profile', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'url', 'The uri that identifies the conformance statement', SearchParamTypeURI, [], 'Conformance.url', SearchXpathUsageNormal);
-  indexes.add('Conformance', 'version', 'The version identifier of the conformance statement', SearchParamTypeTOKEN, [], 'Conformance.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -833,18 +846,19 @@ begin
   indexes.add('DataElement', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DataElement', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('DataElement', 'code', 'A code for the data element (server may choose to do subsumption)', SearchParamTypeTOKEN, [], 'DataElement.element.code', SearchXpathUsageNormal);
-  indexes.add('DataElement', 'context', 'A use context assigned to the data element', SearchParamTypeTOKEN, [], 'DataElement.useContext', SearchXpathUsageNormal);
   indexes.add('DataElement', 'date', 'The data element publication date', SearchParamTypeDATE, [], 'DataElement.date', SearchXpathUsageNormal);
   indexes.add('DataElement', 'description', 'Text search in the description of the data element.  This corresponds to the definition of the first DataElement.element.', SearchParamTypeSTRING, [], 'DataElement.element.definition', SearchXpathUsageNormal);
-  indexes.add('DataElement', 'identifier', 'The identifier of the data element', SearchParamTypeTOKEN, [], 'DataElement.identifier', SearchXpathUsageNormal);
+  indexes.add('DataElement', 'identifier', 'External identifiers for the data element', SearchParamTypeTOKEN, [], 'DataElement.identifier', SearchXpathUsageNormal);
+  indexes.add('DataElement', 'jurisdiction', 'Intended jurisdiction for data element', SearchParamTypeTOKEN, [], 'DataElement.jurisdiction', SearchXpathUsageNormal);
   indexes.add('DataElement', 'name', 'Name of the data element', SearchParamTypeSTRING, [], 'DataElement.name', SearchXpathUsageNormal);
   indexes.add('DataElement', 'objectClass', 'Matches on the 11179-objectClass extension value', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('DataElement', 'objectClassProperty', 'Matches on the 11179-objectClassProperty extension value', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('DataElement', 'publisher', 'Name of the publisher of the data element', SearchParamTypeSTRING, [], 'DataElement.publisher', SearchXpathUsageNormal);
   indexes.add('DataElement', 'status', 'The current status of the data element', SearchParamTypeTOKEN, [], 'DataElement.status', SearchXpathUsageNormal);
   indexes.add('DataElement', 'stringency', 'The stringency of the data element definition', SearchParamTypeTOKEN, [], 'DataElement.stringency', SearchXpathUsageNormal);
-  indexes.add('DataElement', 'url', 'The official URL for the data element', SearchParamTypeURI, [], 'DataElement.url', SearchXpathUsageNormal);
-  indexes.add('DataElement', 'version', 'The version identifier of the data element', SearchParamTypeSTRING, [], 'DataElement.version', SearchXpathUsageNormal);
+  indexes.add('DataElement', 'title', 'Text search against the title of the data element', SearchParamTypeSTRING, [], 'DataElement.title', SearchXpathUsageNormal);
+  indexes.add('DataElement', 'url', 'The uri that identifies the data element', SearchParamTypeURI, [], 'DataElement.url', SearchXpathUsageNormal);
+  indexes.add('DataElement', 'version', 'The version identifier of the data element', SearchParamTypeTOKEN, [], 'DataElement.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDecisionSupportServiceModule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -857,12 +871,18 @@ begin
   indexes.add('DecisionSupportServiceModule', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('DecisionSupportServiceModule', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DecisionSupportServiceModule', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('DecisionSupportServiceModule', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.description', SearchXpathUsageNormal);
-  indexes.add('DecisionSupportServiceModule', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.identifier', SearchXpathUsageNormal);
-  indexes.add('DecisionSupportServiceModule', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.status', SearchXpathUsageNormal);
-  indexes.add('DecisionSupportServiceModule', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.title', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'date', 'The decision support service module publication date', SearchParamTypeDATE, [], 'DecisionSupportServiceModule.date', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'description', 'Text search against the description of the decision support service module', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.description', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'effective', 'Effective time associated with the decision support service module', SearchParamTypeDATE, [], 'DecisionSupportServiceModule.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'identifier', 'External identifiers for the decision support service module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.identifier', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'jurisdiction', 'Intended jurisdiction for decision support service module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'name', 'Name of the decision support service module', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.name', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'publisher', 'Name of the publisher of the decision support service module', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.publisher', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'status', 'The current status of the decision support service module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.status', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'title', 'Text search against the title of the decision support service module', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.title', SearchXpathUsageNormal);
   indexes.add('DecisionSupportServiceModule', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.topic', SearchXpathUsageNormal);
-  indexes.add('DecisionSupportServiceModule', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'DecisionSupportServiceModule.version', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'url', 'The uri that identifies the decision support service module', SearchParamTypeURI, [], 'DecisionSupportServiceModule.url', SearchXpathUsageNormal);
+  indexes.add('DecisionSupportServiceModule', 'version', 'The version identifier of the decision support service module', SearchParamTypeTOKEN, [], 'DecisionSupportServiceModule.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1282,12 +1302,13 @@ begin
   indexes.add('ExpansionProfile', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ExpansionProfile', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('ExpansionProfile', 'date', 'The expansion profile publication date', SearchParamTypeDATE, [], 'ExpansionProfile.date', SearchXpathUsageNormal);
-  indexes.add('ExpansionProfile', 'description', 'Text search in the description of the expansion profile', SearchParamTypeSTRING, [], 'ExpansionProfile.description', SearchXpathUsageNormal);
-  indexes.add('ExpansionProfile', 'identifier', 'The identifier for the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.identifier', SearchXpathUsageNormal);
-  indexes.add('ExpansionProfile', 'name', 'The name of the expansion profile', SearchParamTypeSTRING, [], 'ExpansionProfile.name', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'description', 'Text search against the description of the expansion profile', SearchParamTypeSTRING, [], 'ExpansionProfile.description', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'identifier', 'External identifiers for the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.identifier', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'jurisdiction', 'Intended jurisdiction for expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'name', 'Name of the expansion profile', SearchParamTypeSTRING, [], 'ExpansionProfile.name', SearchXpathUsageNormal);
   indexes.add('ExpansionProfile', 'publisher', 'Name of the publisher of the expansion profile', SearchParamTypeSTRING, [], 'ExpansionProfile.publisher', SearchXpathUsageNormal);
-  indexes.add('ExpansionProfile', 'status', 'The status of the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.status', SearchXpathUsageNormal);
-  indexes.add('ExpansionProfile', 'url', 'The logical URL for the expansion profile', SearchParamTypeURI, [], 'ExpansionProfile.url', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'status', 'The current status of the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.status', SearchXpathUsageNormal);
+  indexes.add('ExpansionProfile', 'url', 'The uri that identifies the expansion profile', SearchParamTypeURI, [], 'ExpansionProfile.url', SearchXpathUsageNormal);
   indexes.add('ExpansionProfile', 'version', 'The version identifier of the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.version', SearchXpathUsageNormal);
 end;
 
@@ -1538,16 +1559,16 @@ begin
   indexes.add('ImplementationGuide', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ImplementationGuide', 'context', 'A use context assigned to the structure', SearchParamTypeTOKEN, [], 'ImplementationGuide.useContext', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'date', 'The implementation guide publication date', SearchParamTypeDATE, [], 'ImplementationGuide.date', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'dependency', 'Where to find dependency', SearchParamTypeURI, [], 'ImplementationGuide.dependency.uri', SearchXpathUsageNormal);
-  indexes.add('ImplementationGuide', 'description', 'Text search in the description of the implementation guide', SearchParamTypeSTRING, [], 'ImplementationGuide.description', SearchXpathUsageNormal);
+  indexes.add('ImplementationGuide', 'description', 'Text search against the description of the implementation guide', SearchParamTypeSTRING, [], 'ImplementationGuide.description', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'experimental', 'If for testing purposes, not real usage', SearchParamTypeTOKEN, [], 'ImplementationGuide.experimental', SearchXpathUsageNormal);
+  indexes.add('ImplementationGuide', 'jurisdiction', 'Intended jurisdiction for implementation guide', SearchParamTypeTOKEN, [], 'ImplementationGuide.jurisdiction', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'name', 'Name of the implementation guide', SearchParamTypeSTRING, [], 'ImplementationGuide.name', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'publisher', 'Name of the publisher of the implementation guide', SearchParamTypeSTRING, [], 'ImplementationGuide.publisher', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'resource', 'Location of the resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ImplementationGuide.package.resource.source', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'status', 'The current status of the implementation guide', SearchParamTypeTOKEN, [], 'ImplementationGuide.status', SearchXpathUsageNormal);
-  indexes.add('ImplementationGuide', 'url', 'Absolute URL used to reference this Implementation Guide', SearchParamTypeURI, [], 'ImplementationGuide.url', SearchXpathUsageNormal);
+  indexes.add('ImplementationGuide', 'url', 'The uri that identifies the implementation guide', SearchParamTypeURI, [], 'ImplementationGuide.url', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'version', 'The version identifier of the implementation guide', SearchParamTypeTOKEN, [], 'ImplementationGuide.version', SearchXpathUsageNormal);
 end;
 
@@ -1561,12 +1582,18 @@ begin
   indexes.add('Library', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Library', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Library', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Library', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'Library.description', SearchXpathUsageNormal);
-  indexes.add('Library', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'Library.identifier', SearchXpathUsageNormal);
-  indexes.add('Library', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'Library.status', SearchXpathUsageNormal);
-  indexes.add('Library', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'Library.title', SearchXpathUsageNormal);
+  indexes.add('Library', 'date', 'The library publication date', SearchParamTypeDATE, [], 'Library.date', SearchXpathUsageNormal);
+  indexes.add('Library', 'description', 'Text search against the description of the library', SearchParamTypeSTRING, [], 'Library.description', SearchXpathUsageNormal);
+  indexes.add('Library', 'effective', 'Effective time associated with the library', SearchParamTypeDATE, [], 'Library.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('Library', 'identifier', 'External identifiers for the library', SearchParamTypeTOKEN, [], 'Library.identifier', SearchXpathUsageNormal);
+  indexes.add('Library', 'jurisdiction', 'Intended jurisdiction for library', SearchParamTypeTOKEN, [], 'Library.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('Library', 'name', 'Name of the library', SearchParamTypeSTRING, [], 'Library.name', SearchXpathUsageNormal);
+  indexes.add('Library', 'publisher', 'Name of the publisher of the library', SearchParamTypeSTRING, [], 'Library.publisher', SearchXpathUsageNormal);
+  indexes.add('Library', 'status', 'The current status of the library', SearchParamTypeTOKEN, [], 'Library.status', SearchXpathUsageNormal);
+  indexes.add('Library', 'title', 'Text search against the title of the library', SearchParamTypeSTRING, [], 'Library.title', SearchXpathUsageNormal);
   indexes.add('Library', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'Library.topic', SearchXpathUsageNormal);
-  indexes.add('Library', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'Library.version', SearchXpathUsageNormal);
+  indexes.add('Library', 'url', 'The uri that identifies the library', SearchParamTypeURI, [], 'Library.url', SearchXpathUsageNormal);
+  indexes.add('Library', 'version', 'The version identifier of the library', SearchParamTypeTOKEN, [], 'Library.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1648,12 +1675,18 @@ begin
   indexes.add('Measure', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Measure', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Measure', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Measure', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'Measure.description', SearchXpathUsageNormal);
-  indexes.add('Measure', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'Measure.identifier', SearchXpathUsageNormal);
-  indexes.add('Measure', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'Measure.status', SearchXpathUsageNormal);
-  indexes.add('Measure', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'Measure.title', SearchXpathUsageNormal);
+  indexes.add('Measure', 'date', 'The measure publication date', SearchParamTypeDATE, [], 'Measure.date', SearchXpathUsageNormal);
+  indexes.add('Measure', 'description', 'Text search against the description of the measure', SearchParamTypeSTRING, [], 'Measure.description', SearchXpathUsageNormal);
+  indexes.add('Measure', 'effective', 'Effective time associated with the measure', SearchParamTypeDATE, [], 'Measure.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('Measure', 'identifier', 'External identifiers for the measure', SearchParamTypeTOKEN, [], 'Measure.identifier', SearchXpathUsageNormal);
+  indexes.add('Measure', 'jurisdiction', 'Intended jurisdiction for measure', SearchParamTypeTOKEN, [], 'Measure.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('Measure', 'name', 'Name of the measure', SearchParamTypeSTRING, [], 'Measure.name', SearchXpathUsageNormal);
+  indexes.add('Measure', 'publisher', 'Name of the publisher of the measure', SearchParamTypeSTRING, [], 'Measure.publisher', SearchXpathUsageNormal);
+  indexes.add('Measure', 'status', 'The current status of the measure', SearchParamTypeTOKEN, [], 'Measure.status', SearchXpathUsageNormal);
+  indexes.add('Measure', 'title', 'Text search against the title of the measure', SearchParamTypeSTRING, [], 'Measure.title', SearchXpathUsageNormal);
   indexes.add('Measure', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'Measure.topic', SearchXpathUsageNormal);
-  indexes.add('Measure', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'Measure.version', SearchXpathUsageNormal);
+  indexes.add('Measure', 'url', 'The uri that identifies the measure', SearchParamTypeURI, [], 'Measure.url', SearchXpathUsageNormal);
+  indexes.add('Measure', 'version', 'The version identifier of the measure', SearchParamTypeTOKEN, [], 'Measure.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1725,15 +1758,17 @@ begin
   indexes.add('MedicationAdministration', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'code', 'Return administrations of this medication code', SearchParamTypeTOKEN, [], 'MedicationAdministration.medication.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'device', 'Return administrations with this administration device identity', SearchParamTypeREFERENCE, ['Device'], 'MedicationAdministration.device', SearchXpathUsageNormal);
-  indexes.add('MedicationAdministration', 'effectivetime', 'Date administration happened (or did not happen)', SearchParamTypeDATE, [], 'MedicationAdministration.effectiveTime', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'effective-time', 'Date administration happened (or did not happen)', SearchParamTypeDATE, [], 'MedicationAdministration.effectiveTime', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'encounter', 'Return administrations that share this encounter', SearchParamTypeREFERENCE, ['Encounter'], 'MedicationAdministration.encounter', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'identifier', 'Return administrations with this external identifier', SearchParamTypeTOKEN, [], 'MedicationAdministration.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'medication', 'Return administrations of this medication resource', SearchParamTypeREFERENCE, ['Medication'], 'MedicationAdministration.medication.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'not-given', 'Administrations that were not made', SearchParamTypeTOKEN, [], 'MedicationAdministration.notGiven', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'patient', 'The identity of a patient to list administrations  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationAdministration.patient', SearchXpathUsageNormal);
-  indexes.add('MedicationAdministration', 'performer', 'Who administered substance', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'MedicationAdministration.performer', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'performer', 'The identify of the individual who administered the medication', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'MedicationAdministration.performer', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'prescription', 'The identity of a prescription to list administrations from', SearchParamTypeREFERENCE, ['MedicationOrder'], 'MedicationAdministration.prescription', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'reason-given', 'Reasons for administering the medication', SearchParamTypeTOKEN, [], 'MedicationAdministration.reasonGiven', SearchXpathUsageNormal);
+  indexes.add('MedicationAdministration', 'reason-not-given', 'Reasons for not administering the medication', SearchParamTypeTOKEN, [], 'MedicationAdministration.reasonNotGiven', SearchXpathUsageNormal);
   indexes.add('MedicationAdministration', 'status', 'MedicationAdministration event status (for example one of active/paused/completed/nullified)', SearchParamTypeTOKEN, [], 'MedicationAdministration.status', SearchXpathUsageNormal);
-  indexes.add('MedicationAdministration', 'wasnotgiven', 'Administrations that were not made', SearchParamTypeTOKEN, [], 'MedicationAdministration.wasNotGiven', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationAdministration', ['patient', 'performer']);
   compartments.register(frtEncounter, 'MedicationAdministration', ['encounter']);
   compartments.register(frtRelatedPerson, 'MedicationAdministration', ['performer']);
@@ -1806,7 +1841,7 @@ begin
   indexes.add('MedicationStatement', 'identifier', 'Return statements with this external identifier', SearchParamTypeTOKEN, [], 'MedicationStatement.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'medication', 'Return statements of this medication reference', SearchParamTypeREFERENCE, ['Medication'], 'MedicationStatement.medication.as(Reference)', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'patient', 'The identity of a patient to list statements  for', SearchParamTypeREFERENCE, ['Patient'], 'MedicationStatement.patient', SearchXpathUsageNormal);
-  indexes.add('MedicationStatement', 'source', 'Who the information in the statement came from', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'MedicationStatement.informationSource', SearchXpathUsageNormal);
+  indexes.add('MedicationStatement', 'source', 'Who or where the information in the statement came from', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'RelatedPerson'], 'MedicationStatement.informationSource', SearchXpathUsageNormal);
   indexes.add('MedicationStatement', 'status', 'Return statements that match the given status', SearchParamTypeTOKEN, [], 'MedicationStatement.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationStatement', ['patient', 'source']);
   compartments.register(frtRelatedPerson, 'MedicationStatement', ['source']);
@@ -1852,17 +1887,18 @@ begin
   indexes.add('NamingSystem', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('NamingSystem', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'contact', 'Name of an individual to contact', SearchParamTypeSTRING, [], 'NamingSystem.contact.name', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'context', 'Content intends to support these contexts', SearchParamTypeTOKEN, [], 'NamingSystem.useContext', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'date', 'Publication Date(/time)', SearchParamTypeDATE, [], 'NamingSystem.date', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'date', 'The naming system publication date', SearchParamTypeDATE, [], 'NamingSystem.date', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'description', 'Text search against the description of the naming system', SearchParamTypeSTRING, [], 'NamingSystem.description', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'id-type', 'oid | uuid | uri | other', SearchParamTypeTOKEN, [], 'NamingSystem.uniqueId.type', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'jurisdiction', 'Intended jurisdiction for naming system', SearchParamTypeTOKEN, [], 'NamingSystem.jurisdiction', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'kind', 'codesystem | identifier | root', SearchParamTypeTOKEN, [], 'NamingSystem.kind', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'name', 'Human-readable label', SearchParamTypeSTRING, [], 'NamingSystem.name', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'name', 'Name of the naming system', SearchParamTypeSTRING, [], 'NamingSystem.name', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'period', 'When is identifier valid?', SearchParamTypeDATE, [], 'NamingSystem.uniqueId.period', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'publisher', 'Name of the publisher (Organization or individual)', SearchParamTypeSTRING, [], 'NamingSystem.publisher', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'publisher', 'Name of the publisher of the naming system', SearchParamTypeSTRING, [], 'NamingSystem.publisher', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'replaced-by', 'Use this instead', SearchParamTypeREFERENCE, ['NamingSystem'], 'NamingSystem.replacedBy', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'responsible', 'Who maintains system namespace?', SearchParamTypeSTRING, [], 'NamingSystem.responsible', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'status', 'draft | active | retired', SearchParamTypeTOKEN, [], 'NamingSystem.status', SearchXpathUsageNormal);
-  indexes.add('NamingSystem', 'telecom', 'Contact details for individual or publisher', SearchParamTypeTOKEN, [], 'NamingSystem.contact.telecom', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'status', 'The current status of the naming system', SearchParamTypeTOKEN, [], 'NamingSystem.status', SearchXpathUsageNormal);
+  indexes.add('NamingSystem', 'telecom', 'Contact details for individual or organization', SearchParamTypeTOKEN, [], 'NamingSystem.contact.telecom', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'type', 'e.g. driver,  provider,  patient, bank etc.', SearchParamTypeTOKEN, [], 'NamingSystem.type', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'value', 'The unique identifier', SearchParamTypeSTRING, [], 'NamingSystem.uniqueId.value', SearchXpathUsageNormal);
 end;
@@ -1942,18 +1978,19 @@ begin
   indexes.add('OperationDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'base', 'Marks this as a profile of the base', SearchParamTypeREFERENCE, ['OperationDefinition'], 'OperationDefinition.base', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'code', 'Name used to invoke the operation', SearchParamTypeTOKEN, [], 'OperationDefinition.code', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'context', 'A use context assigned to the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.useContext', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'date', 'Date for this version of the operation definition', SearchParamTypeDATE, [], 'OperationDefinition.date', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'date', 'The operation definition publication date', SearchParamTypeDATE, [], 'OperationDefinition.date', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'description', 'Text search against the description of the operation definition', SearchParamTypeSTRING, [], 'OperationDefinition.description', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'instance', 'Invoke on an instance?', SearchParamTypeTOKEN, [], 'OperationDefinition.instance', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'jurisdiction', 'Intended jurisdiction for operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.jurisdiction', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'kind', 'operation | query', SearchParamTypeTOKEN, [], 'OperationDefinition.kind', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'name', 'Informal name for this operation', SearchParamTypeSTRING, [], 'OperationDefinition.name', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'name', 'Name of the operation definition', SearchParamTypeSTRING, [], 'OperationDefinition.name', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'paramprofile', 'Profile on the type', SearchParamTypeREFERENCE, ['StructureDefinition'], 'OperationDefinition.parameter.profile', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'publisher', 'Name of the publisher (Organization or individual)', SearchParamTypeSTRING, [], 'OperationDefinition.publisher', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'status', 'draft | active | retired', SearchParamTypeTOKEN, [], 'OperationDefinition.status', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'publisher', 'Name of the publisher of the operation definition', SearchParamTypeSTRING, [], 'OperationDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'status', 'The current status of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.status', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'system', 'Invoke at the system level?', SearchParamTypeTOKEN, [], 'OperationDefinition.system', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'type', 'Invoke at resource level for these type', SearchParamTypeTOKEN, [], 'OperationDefinition.type', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'url', 'Logical URL to reference this operation definition', SearchParamTypeURI, [], 'OperationDefinition.url', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'version', 'Logical id for this version of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.version', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'type', 'Invole at the type level?', SearchParamTypeTOKEN, [], 'OperationDefinition.type', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'url', 'The uri that identifies the operation definition', SearchParamTypeURI, [], 'OperationDefinition.url', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'version', 'The version identifier of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2118,12 +2155,18 @@ begin
   indexes.add('PlanDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'PlanDefinition.description', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'PlanDefinition.identifier', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'PlanDefinition.status', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'PlanDefinition.title', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'date', 'The plan definition publication date', SearchParamTypeDATE, [], 'PlanDefinition.date', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'description', 'Text search against the description of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.description', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'effective', 'Effective time associated with the plan definition', SearchParamTypeDATE, [], 'PlanDefinition.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'identifier', 'External identifiers for the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'jurisdiction', 'Intended jurisdiction for plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'name', 'Name of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.name', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'publisher', 'Name of the publisher of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'status', 'The current status of the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.status', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'title', 'Text search against the title of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.title', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'PlanDefinition.topic', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'PlanDefinition.version', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'url', 'The uri that identifies the plan definition', SearchParamTypeURI, [], 'PlanDefinition.url', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'version', 'The version identifier of the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2452,12 +2495,16 @@ begin
   indexes.add('SearchParameter', 'base', 'The resource type this search parameter applies to', SearchParamTypeTOKEN, [], 'SearchParameter.base', SearchXpathUsageNormal);
   indexes.add('SearchParameter', 'code', 'Code used in URL', SearchParamTypeTOKEN, [], 'SearchParameter.code', SearchXpathUsageNormal);
   indexes.add('SearchParameter', 'component', 'For Composite resources to define the parts', SearchParamTypeREFERENCE, ['SearchParameter'], 'SearchParameter.component', SearchXpathUsageNormal);
-  indexes.add('SearchParameter', 'context', 'A use context assigned to the search parameter', SearchParamTypeTOKEN, [], 'SearchParameter.useContext', SearchXpathUsageNormal);
-  indexes.add('SearchParameter', 'description', 'Documentation for  search parameter', SearchParamTypeSTRING, [], 'SearchParameter.description', SearchXpathUsageNormal);
-  indexes.add('SearchParameter', 'name', 'Informal name for this search parameter', SearchParamTypeSTRING, [], 'SearchParameter.name', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'date', 'The search parameter publication date', SearchParamTypeDATE, [], 'SearchParameter.date', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'description', 'Text search against the description of the search parameter', SearchParamTypeSTRING, [], 'SearchParameter.description', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'jurisdiction', 'Intended jurisdiction for search parameter', SearchParamTypeTOKEN, [], 'SearchParameter.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'name', 'Name of the search parameter', SearchParamTypeSTRING, [], 'SearchParameter.name', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'publisher', 'Name of the publisher of the search parameter', SearchParamTypeSTRING, [], 'SearchParameter.publisher', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'status', 'The current status of the search parameter', SearchParamTypeTOKEN, [], 'SearchParameter.status', SearchXpathUsageNormal);
   indexes.add('SearchParameter', 'target', 'Types of resource (if a resource reference)', SearchParamTypeTOKEN, [], 'SearchParameter.target', SearchXpathUsageNormal);
   indexes.add('SearchParameter', 'type', 'number | date | string | token | reference | composite | quantity | uri', SearchParamTypeTOKEN, [], 'SearchParameter.type', SearchXpathUsageNormal);
-  indexes.add('SearchParameter', 'url', 'Absolute URL used to reference this search parameter', SearchParamTypeURI, [], 'SearchParameter.url', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'url', 'The uri that identifies the search parameter', SearchParamTypeURI, [], 'SearchParameter.url', SearchXpathUsageNormal);
+  indexes.add('SearchParameter', 'version', 'The version identifier of the search parameter', SearchParamTypeTOKEN, [], 'SearchParameter.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2488,12 +2535,18 @@ begin
   indexes.add('ServiceDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'description', 'Text search against the description', SearchParamTypeSTRING, [], 'ServiceDefinition.description', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'identifier', 'Logical identifier for the module (e.g. CMS-143)', SearchParamTypeTOKEN, [], 'ServiceDefinition.identifier', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'status', 'Status of the module', SearchParamTypeTOKEN, [], 'ServiceDefinition.status', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'title', 'Text search against the title', SearchParamTypeSTRING, [], 'ServiceDefinition.title', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'date', 'The service definition publication date', SearchParamTypeDATE, [], 'ServiceDefinition.date', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'description', 'Text search against the description of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.description', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'effective', 'Effective time associated with the service definition', SearchParamTypeDATE, [], 'ServiceDefinition.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'identifier', 'External identifiers for the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'jurisdiction', 'Intended jurisdiction for service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'name', 'Name of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.name', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'publisher', 'Name of the publisher of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'status', 'The current status of the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.status', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'title', 'Text search against the title of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.title', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ServiceDefinition.topic', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'version', 'Version of the module (e.g. 1.0.0)', SearchParamTypeSTRING, [], 'ServiceDefinition.version', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'url', 'The uri that identifies the service definition', SearchParamTypeURI, [], 'ServiceDefinition.url', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'version', 'The version identifier of the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2552,25 +2605,25 @@ begin
   indexes.add('StructureDefinition', 'abstract', 'Whether the structure is abstract', SearchParamTypeTOKEN, [], 'StructureDefinition.abstract', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'base', 'Definition that this type is constrained/specialized from', SearchParamTypeURI, [], 'StructureDefinition.baseDefinition', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'base-path', 'Path that identifies the base element', SearchParamTypeTOKEN, [], 'StructureDefinition.snapshot.element.base.path | StructureDefinition.differential.element.base.path', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'code', 'A code for the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.code', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'context', 'A use context assigned to the structure', SearchParamTypeTOKEN, [], 'StructureDefinition.useContext', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'context-type', 'resource | datatype | extension', SearchParamTypeTOKEN, [], 'StructureDefinition.contextType', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'date', 'The profile publication date', SearchParamTypeDATE, [], 'StructureDefinition.date', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'date', 'The structure definition publication date', SearchParamTypeDATE, [], 'StructureDefinition.date', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'derivation', 'specialization | constraint - How relates to base definition', SearchParamTypeTOKEN, [], 'StructureDefinition.derivation', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'description', 'Text search in the description of the profile', SearchParamTypeSTRING, [], 'StructureDefinition.description', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'display', 'Use this name when displaying the value', SearchParamTypeSTRING, [], 'StructureDefinition.display', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'description', 'Text search against the description of the structure definition', SearchParamTypeSTRING, [], 'StructureDefinition.description', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'experimental', 'If for testing purposes, not real usage', SearchParamTypeTOKEN, [], 'StructureDefinition.experimental', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'ext-context', 'Where the extension can be used in instances', SearchParamTypeSTRING, [], 'StructureDefinition.context', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'identifier', 'The identifier of the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'identifier', 'External identifiers for the structure definition', SearchParamTypeTOKEN, [], 'StructureDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'jurisdiction', 'Intended jurisdiction for structure definition', SearchParamTypeTOKEN, [], 'StructureDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'keyword', 'A code for the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.keyword', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'kind', 'primitive-type | complex-type | resource | logical', SearchParamTypeTOKEN, [], 'StructureDefinition.kind', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'name', 'Name of the profile', SearchParamTypeSTRING, [], 'StructureDefinition.name', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'name', 'Name of the structure definition', SearchParamTypeSTRING, [], 'StructureDefinition.name', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'path', 'A path that is constrained in the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.snapshot.element.path | StructureDefinition.differential.element.path', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'publisher', 'Name of the publisher of the profile', SearchParamTypeSTRING, [], 'StructureDefinition.publisher', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'status', 'The current status of the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.status', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'publisher', 'Name of the publisher of the structure definition', SearchParamTypeSTRING, [], 'StructureDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'status', 'The current status of the structure definition', SearchParamTypeTOKEN, [], 'StructureDefinition.status', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'title', 'Text search against the title of the structure definition', SearchParamTypeSTRING, [], 'StructureDefinition.title', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'type', 'Type defined or constrained by this structure', SearchParamTypeTOKEN, [], 'StructureDefinition.type', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'url', 'Absolute URL used to reference this StructureDefinition', SearchParamTypeURI, [], 'StructureDefinition.url', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'url', 'The uri that identifies the structure definition', SearchParamTypeURI, [], 'StructureDefinition.url', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'valueset', 'A vocabulary binding reference', SearchParamTypeREFERENCE, ['ValueSet'], 'StructureDefinition.snapshot.element.binding.valueSet', SearchXpathUsageNormal);
-  indexes.add('StructureDefinition', 'version', 'The version identifier of the profile', SearchParamTypeTOKEN, [], 'StructureDefinition.version', SearchXpathUsageNormal);
+  indexes.add('StructureDefinition', 'version', 'The version identifier of the structure definition', SearchParamTypeTOKEN, [], 'StructureDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2583,16 +2636,16 @@ begin
   indexes.add('StructureMap', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('StructureMap', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('StructureMap', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'context', 'A use context assigned to the structure', SearchParamTypeTOKEN, [], 'StructureMap.useContext', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'date', 'The profile publication date', SearchParamTypeDATE, [], 'StructureMap.date', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'description', 'Text search in the description of the profile', SearchParamTypeSTRING, [], 'StructureMap.description', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'experimental', 'Whether the map is defined purely for experimental reasons', SearchParamTypeTOKEN, [], 'StructureMap.experimental', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'identifier', 'The identifier of the profile', SearchParamTypeTOKEN, [], 'StructureMap.identifier', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'name', 'Name of the profile', SearchParamTypeSTRING, [], 'StructureMap.name', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'publisher', 'Name of the publisher of the profile', SearchParamTypeSTRING, [], 'StructureMap.publisher', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'status', 'The current status of the profile', SearchParamTypeTOKEN, [], 'StructureMap.status', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'url', 'The url that identifies the structure map', SearchParamTypeURI, [], 'StructureMap.url', SearchXpathUsageNormal);
-  indexes.add('StructureMap', 'version', 'The version identifier of the profile', SearchParamTypeTOKEN, [], 'StructureMap.version', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'date', 'The structure map publication date', SearchParamTypeDATE, [], 'StructureMap.date', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'description', 'Text search against the description of the structure map', SearchParamTypeSTRING, [], 'StructureMap.description', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'identifier', 'External identifiers for the structure map', SearchParamTypeTOKEN, [], 'StructureMap.identifier', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'jurisdiction', 'Intended jurisdiction for structure map', SearchParamTypeTOKEN, [], 'StructureMap.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'name', 'Name of the structure map', SearchParamTypeSTRING, [], 'StructureMap.name', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'publisher', 'Name of the publisher of the structure map', SearchParamTypeSTRING, [], 'StructureMap.publisher', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'status', 'The current status of the structure map', SearchParamTypeTOKEN, [], 'StructureMap.status', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'title', 'Text search against the title of the structure map', SearchParamTypeSTRING, [], 'StructureMap.title', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'url', 'The uri that identifies the structure map', SearchParamTypeURI, [], 'StructureMap.url', SearchXpathUsageNormal);
+  indexes.add('StructureMap', 'version', 'The version identifier of the structure map', SearchParamTypeTOKEN, [], 'StructureMap.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2709,14 +2762,17 @@ begin
   indexes.add('TestScript', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('TestScript', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('TestScript', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'date', 'Date for this version of the TestScript', SearchParamTypeDATE, [], 'TestScript.date', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'description', 'Natural language description of the TestScript', SearchParamTypeSTRING, [], 'TestScript.description', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'identifier', 'External identifier', SearchParamTypeTOKEN, [], 'TestScript.identifier', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'name', 'Informal name for this TestScript', SearchParamTypeSTRING, [], 'TestScript.name', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'publisher', 'Name of the publisher (Organization or individual)', SearchParamTypeSTRING, [], 'TestScript.publisher', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'date', 'The test script publication date', SearchParamTypeDATE, [], 'TestScript.date', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'description', 'Text search against the description of the test script', SearchParamTypeSTRING, [], 'TestScript.description', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'identifier', 'External identifiers for the test script', SearchParamTypeTOKEN, [], 'TestScript.identifier', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'jurisdiction', 'Intended jurisdiction for test script', SearchParamTypeTOKEN, [], 'TestScript.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'name', 'Name of the test script', SearchParamTypeSTRING, [], 'TestScript.name', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'publisher', 'Name of the publisher of the test script', SearchParamTypeSTRING, [], 'TestScript.publisher', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'status', 'The current status of the test script', SearchParamTypeTOKEN, [], 'TestScript.status', SearchXpathUsageNormal);
   indexes.add('TestScript', 'testscript-capability', 'TestScript required and validated capability', SearchParamTypeSTRING, [], 'TestScript.metadata.capability.description', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'url', 'Absolute URL used to reference this TestScript', SearchParamTypeURI, [], 'TestScript.url', SearchXpathUsageNormal);
-  indexes.add('TestScript', 'use-context', 'Content intends to support these contexts', SearchParamTypeTOKEN, [], 'TestScript.useContext', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'title', 'Text search against the title of the test script', SearchParamTypeSTRING, [], 'TestScript.title', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'url', 'The uri that identifies the test script', SearchParamTypeURI, [], 'TestScript.url', SearchXpathUsageNormal);
+  indexes.add('TestScript', 'version', 'The version identifier of the test script', SearchParamTypeTOKEN, [], 'TestScript.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2729,16 +2785,17 @@ begin
   indexes.add('ValueSet', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ValueSet', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ValueSet', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'context', 'A use context assigned to the value set', SearchParamTypeTOKEN, [], 'ValueSet.useContext', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'date', 'The value set publication date', SearchParamTypeDATE, [], 'ValueSet.date', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'description', 'Text search in the description of the value set', SearchParamTypeSTRING, [], 'ValueSet.description', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'description', 'Text search against the description of the value set', SearchParamTypeSTRING, [], 'ValueSet.description', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'expansion', 'Uniquely identifies this expansion', SearchParamTypeURI, [], 'ValueSet.expansion.identifier', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'identifier', 'The identifier for the value set', SearchParamTypeTOKEN, [], 'ValueSet.identifier', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'name', 'The name of the value set', SearchParamTypeSTRING, [], 'ValueSet.name', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'identifier', 'External identifiers for the value set', SearchParamTypeTOKEN, [], 'ValueSet.identifier', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'jurisdiction', 'Intended jurisdiction for value set', SearchParamTypeTOKEN, [], 'ValueSet.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'name', 'Name of the value set', SearchParamTypeSTRING, [], 'ValueSet.name', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'publisher', 'Name of the publisher of the value set', SearchParamTypeSTRING, [], 'ValueSet.publisher', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'reference', 'A code system included or excluded in the value set or an imported value set', SearchParamTypeURI, [], 'ValueSet.compose.include.system', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'status', 'The status of the value set', SearchParamTypeTOKEN, [], 'ValueSet.status', SearchXpathUsageNormal);
-  indexes.add('ValueSet', 'url', 'The logical URL for the value set', SearchParamTypeURI, [], 'ValueSet.url', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'status', 'The current status of the value set', SearchParamTypeTOKEN, [], 'ValueSet.status', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'title', 'Text search against the title of the value set', SearchParamTypeSTRING, [], 'ValueSet.title', SearchXpathUsageNormal);
+  indexes.add('ValueSet', 'url', 'The uri that identifies the value set', SearchParamTypeURI, [], 'ValueSet.url', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'version', 'The version identifier of the value set', SearchParamTypeTOKEN, [], 'ValueSet.version', SearchXpathUsageNormal);
 end;
 
@@ -2775,6 +2832,7 @@ begin
   buildIndexesForBinary(Indexes, compartments);
   buildIndexesForBodySite(Indexes, compartments);
   buildIndexesForBundle(Indexes, compartments);
+  buildIndexesForCapabilityStatement(Indexes, compartments);
   buildIndexesForCarePlan(Indexes, compartments);
   buildIndexesForCareTeam(Indexes, compartments);
   buildIndexesForClaim(Indexes, compartments);
@@ -2787,7 +2845,6 @@ begin
   buildIndexesForComposition(Indexes, compartments);
   buildIndexesForConceptMap(Indexes, compartments);
   buildIndexesForCondition(Indexes, compartments);
-  buildIndexesForConformance(Indexes, compartments);
   buildIndexesForConsent(Indexes, compartments);
   buildIndexesForContract(Indexes, compartments);
   buildIndexesForCoverage(Indexes, compartments);

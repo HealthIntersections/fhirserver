@@ -207,22 +207,6 @@ Type
 function importSnomedRF1(dir : String; dest, uri : String) : String;
 function importSnomedRF2(dir : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
 
-type
-  TSnomedCombiner = class (TAdvObject)
-  private
-    FSource1: TSnomedServices;
-    FSource2: TSnomedServices;
-    procedure SetSource1(const Value: TSnomedServices);
-    procedure SetSource2(const Value: TSnomedServices);
-  public
-    destructor destroy; override;
-
-    procedure execute;
-
-    property source1 : TSnomedServices read FSource1 write SetSource1;
-    property source2 : TSnomedServices read FSource2 write SetSource2;
-  end;
-
 Implementation
 
 
@@ -2156,103 +2140,6 @@ begin
       end;
     end;
   end;
-end;
-
-{ TSnomedCombiner }
-
-destructor TSnomedCombiner.destroy;
-begin
-  FSource1.Free;
-  FSource2.Free;
-  inherited;
-end;
-
-procedure TSnomedCombiner.execute;
-Var
-  dest : TSnomedServices;
-//  active, inactive : UInt64Array;
-//  s : String;
-begin
-//  FStart := now;
-
-  dest := TSnomedServices.Create;
-//  FWordList := TStringList.Create;
-//  FStemList := TStringList.Create;
-//  FStringsTemp := TStringList.Create;
-//  FConcepts := TAdvObjectList.Create;
-//  FStemmer := GetStemmer_8('english');
-//  Frefsets := TRefSetList.Create;
-  try
-//    Frefsets.SortedByName;
-//    FWordList.Sorted := True;
-//    FStemList.Sorted := True;
-//    FSvc.VersionUri := FVersionUri;
-//    FStrings := FSvc.Strings;
-//    FRefs := FSvc.Refs;
-//    FDesc := FSvc.Desc;
-//    FDescRef := FSvc.DescRef;
-//
-//    FConcept := FSvc.Concept;
-//    FRel := FSvc.Rel;
-//    FRefsetIndex := FSvc.RefSetIndex;
-//    FRefsetMembers := FSvc.RefSetMembers;
-//    FWords := FSvc.Words;
-//    FStems := FSvc.Stems;
-//
-//    FStrings.StartBuild;
-//    FRefs.StartBuild;
-//    FDesc.StartBuild;
-//    FConcept.StartBuild;
-//    FRel.StartBuild;
-//    FRefsetIndex.StartBuild;
-//    FRefsetMembers.StartBuild;
-//
-//    ReadConceptsFile;
-//    ReadDescriptionsFile;
-//    FDesc.DoneBuild;
-//    ReadRelationshipsFile;
-//    FRel.DoneBuild;
-//    FRefs.Post;
-//    SaveConceptLinks(active, inactive);
-//    FSvc.ActiveRoots := active;
-//    FSvc.InActiveRoots := inactive;
-//    FSvc.Is_A_Index := Findex_is_a;
-//    BuildClosureTable;
-//    LoadReferenceSets;
-//    FRefsetIndex.DoneBuild;
-//    FRefsetMembers.DoneBuild;
-//    FRefs.DoneBuild;
-//    SetDepths(FSvc.ActiveRoots);
-//
-//    Progress(16, 0, 'Save');
-//
-//    s := ExtractFilePath(FoutputFile);
-//    if not DirectoryExists(s) then
-//      CreateDir(s);
-//    FSvc.Save(outputFile);
-//    // SetFileReadOnly(sFilename, true);
-  Finally
-//    Frefsets.free;
-//    FWordList.Free;
-//    FStemList.Free;
-//    FStringsTemp.Free;
-//    FConcepts.Free;
-//    FStemmer.Free;
-    dest.Free;
-  End;
-
-end;
-
-procedure TSnomedCombiner.SetSource1(const Value: TSnomedServices);
-begin
-  FSource1.Free;
-  FSource1 := Value;
-end;
-
-procedure TSnomedCombiner.SetSource2(const Value: TSnomedServices);
-begin
-  FSource2.Free;
-  FSource2 := Value;
 end;
 
 End.
