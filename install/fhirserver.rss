@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.85 2016-10-12</title>
+		<item><title>FHIRServer release 1.0.86 2016-10-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.86.exe</link>
+			<description>2016-10-12 (v1.0.86): Fix CORS issue + add TestReport</description>
+		</item>
+<item><title>FHIRServer release 1.0.85 2016-10-12</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.85.exe</link>
 			<description>2016-10-12 (v1.0.85): upgrade STU3 version for many changes to conformance resources</description>
 		</item>
-<item><title>FHIRServer release 1.0.84 2016-10-07</title>
+		<item><title>FHIRServer release 1.0.84 2016-10-07</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.84.exe</link>
 			<description>2016-10-07 (v1.0.84): Update for changes to ValueSet.compose.import</description>
 		</item>

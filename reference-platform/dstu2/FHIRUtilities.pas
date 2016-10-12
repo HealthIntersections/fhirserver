@@ -500,6 +500,10 @@ type
 const
   frtCodeSystem = frtValueSet;
   RestfulCapabilityModeServer = RestfulConformanceModeServer;
+  PublicationStatusNull = ConformanceResourceStatusNull;
+  PublicationStatusDraft = ConformanceResourceStatusDraft;
+  PublicationStatusActive = ConformanceResourceStatusActive;
+  PublicationStatusRetired = ConformanceResourceStatusRetired;
 
 function Path(const parts : array of String) : String;
 

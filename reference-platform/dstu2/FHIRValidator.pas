@@ -579,15 +579,16 @@ begin
   // all the other entry points end up here
   // dstu2, the validator is not re-written for the mutlt-profile approach in stu3, but the API is kept consistent
   profile := nil;
-  if profiles.FDefinitions.count > 0 then
-    profile := profiles.FDefinitions[0]
-  else if profiles.FCanonical.count > 0 then
-  begin
-    profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, profiles.FCanonical[0]));
-    ctxt.FOwned.add(profile);
-    if (profile = nil) then
-      raise Exception.Create('StructureDefinition "' + profiles.FCanonical[0] + '" not found');
-  end;
+  if (profiles <> nil) then
+    if profiles.FDefinitions.count > 0 then
+      profile := profiles.FDefinitions[0]
+    else if profiles.FCanonical.count > 0 then
+    begin
+      profile := TFHIRStructureDefinition(FContext.fetchResource(frtStructureDefinition, profiles.FCanonical[0]));
+      ctxt.FOwned.add(profile);
+      if (profile = nil) then
+        raise Exception.Create('StructureDefinition "' + profiles.FCanonical[0] + '" not found');
+    end;
   validateResource(ctxt, element, element, profile, ctxt.resourceIdRule, nil);
 end;
 
