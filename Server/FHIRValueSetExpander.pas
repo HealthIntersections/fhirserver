@@ -151,8 +151,8 @@ begin
   end;
 
   result.status := source.status;
-  if result.status = ConformanceResourceStatusNull then
-    result.status := ConformanceResourceStatusDraft;
+  if result.status = PublicationStatusNull then
+    result.status := PublicationStatusDraft;
 
   if (result.expansion <> nil) then
     exit; // just return the expansion

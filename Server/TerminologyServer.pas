@@ -419,7 +419,7 @@ begin
     result.url := ANY_CODE_VS;
     result.name := 'All codes known to the system';
     result.description := 'All codes known to the system';
-    result.status := ConformanceResourceStatusActive;
+    result.status := PublicationStatusActive;
     result.compose := TFhirValueSetCompose.create;
     result.compose.includeList.Append.system := ANY_CODE_VS;
     result.link;

@@ -756,7 +756,18 @@ begin
     if c > -1 then
       FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
-    if FileExists(AltFile(request.Document)) then
+    if (request.CommandType = hcOption) then
+    begin
+      response.ResponseNo := 200;
+      response.ContentText := 'ok';
+      response.CustomHeaders.add('Access-Control-Allow-Credentials: true');
+      response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+      response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+        response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+    end
+    else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
       ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
@@ -851,15 +862,14 @@ begin
     if c > -1 then
       FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
-    if (request.CommandType = hcOption) and ((request.Document <> FBasePath) and (request.Document <> FSecurePath)) then
+    if (request.CommandType = hcOption) then
     begin
       response.ResponseNo := 200;
       response.ContentText := 'ok';
+      response.CustomHeaders.add('Access-Control-Allow-Credentials: true');
       response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-  //  response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
       response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
       response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-  //  response.CustomHeaders.add('Access-Control-Expose-Headers: *');
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end

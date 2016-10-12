@@ -965,7 +965,7 @@ begin
     oConf.name := 'Health Intersections FHIR Server Conformance Statement';
     oConf.publisher := 'Health Intersections'; //
     oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-    oConf.status := ConformanceResourceStatusActive;
+    oConf.status := PublicationStatusActive;
     oConf.experimental := false;
     oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
     oConf.software := TFhirCapabilityStatementSoftware.Create;
@@ -5718,7 +5718,7 @@ begin
         value := 'grahame@fhir.org';
       end;
     result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
-    result.status := ConformanceResourceStatusDraft;
+    result.status := PublicationStatusDraft;
     result.experimental := false;
     result.date := TDateAndTime.CreateXML(FHIR_GENERATED_DATE);
     result.kind := OperationKindOperation;
@@ -7917,7 +7917,7 @@ begin
             response.resource := map.Link;
             map.id := NewGuidId;
             map.version := v;
-            map.status := ConformanceResourceStatusActive;
+            map.status := PublicationStatusActive;
             map.experimental := true; // for now
             map.date := NowUTC;
             map.name := 'Closure Table '+n+' initialized';
@@ -7942,7 +7942,7 @@ begin
               response.resource := map.Link;
               map.id := NewGuidId;
               map.version := inttostr(cm.version);
-              map.status := ConformanceResourceStatusActive;
+              map.status := PublicationStatusActive;
               map.experimental := true; // for now
               map.date := NowUTC;
               map.name := 'Updates for Closure Table '+n;
@@ -8516,7 +8516,7 @@ begin
       request.Session.TestScript := TFhirTestScript.Create;
     request.Session.TestScript.id := inttostr(request.Session.Key);
     request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.Name;
-    request.Session.TestScript.status := ConformanceResourceStatusActive;
+    request.Session.TestScript.status := PublicationStatusActive;
     request.Session.TestScript.publisher := manager.Repository.OwnerName;
     request.Session.TestScript.date := NowLocal;
     response.HTTPCode := 200;

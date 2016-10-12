@@ -9,6 +9,18 @@ uses
   SnomedServices;
 
 Type
+  TTabWriter = class (TAdvObject)
+  private
+    FStream : TFileStream;
+    FDiv : boolean;
+  public
+    constructor Create(filename : String);
+    destructor destroy; override;
+
+    procedure field(s : String);
+    procedure endRecord;
+  end;
+
   TSnomedCombinedConcept = class;
 
   TSnomedCombinedDescription = class (TAdvObject)
@@ -99,6 +111,7 @@ Type
     FMessage : String;
     FSummary : TStringList;
     FIssues : TStringList;
+    FDestination: String;
 
     procedure determineTotal;
 
@@ -158,6 +171,8 @@ Type
 
     property issues : TStringList read FIssues;
     property summary : TStringList read FSummary;
+
+    property destination : String read FDestination write FDestination;
   end;
 
 implementation
@@ -311,6 +326,7 @@ begin
   FIssues.free;
   FConcepts.Free;
   FInternational.free;
+  FOthers.free;
   inherited;
 end;
 
@@ -332,7 +348,7 @@ begin
      FConcepts.Count + // build groups
      FConcepts.Count + // eliminate duplicates
      FPathCount + // classify
-     FConcepts.Count + FDescCount + FRelnCount; // rf2
+     FConcepts.Count; // rf2
 
   FCurrent := 0;
   FPercent := 0;
@@ -354,6 +370,7 @@ procedure TSnomedCombiner.classify;
 var
   svc : TSnomedServices;
 begin
+  exit;
   callback(0, 'Searching for Circular definitions');
   classify(FInternational);
   for svc in others do
@@ -365,16 +382,16 @@ begin
   // 1. merging
   determineTotal;
   loadConcepts;
-//  loadDescriptions;
-  loadChildren;
-  loadRelationships;
+  loadDescriptions;
+//  loadChildren;
+//  loadRelationships;
 
   // 2. classifying
-  checkForCircles;
-  determineTotal2;
-  buildGroups;
-  eliminateDuplicates;
-  classify;
+//  checkForCircles;
+//  determineTotal2;
+//  buildGroups;
+//  eliminateDuplicates;
+//  classify;
 
   // 3. save to RF2
   saveToRF2;
@@ -764,9 +781,128 @@ begin
   FSummary.Add(s);
 end;
 
-procedure TSnomedCombiner.saveToRF2;
+function intCompare(List: TStringList; Index1, Index2: Integer): Integer;
+var
+  i1, i2, i3 : int64;
 begin
+  i1 := StrToInt64(list[index1]);
+  i2 := StrToInt64(list[index2]);
+  i3 := i1-i2;
+  if (i3 > 0) then
+    result := 1
+  else if (i3 < 0) then
+    result := -1
+  else
+    result := 0;
+end;
 
+procedure TSnomedCombiner.saveToRF2;
+var
+  c,d,r : TTabWriter;
+  concept, child : TSnomedCombinedConcept;
+  desc : TSnomedCombinedDescription;
+  st : TStringList;
+  s : String;
+  i : integer;
+begin
+  st := TStringList.Create;
+  try
+    for s in FConcepts.Keys do
+      st.AddObject(s, FConcepts[s]);
+    st.CustomSort(intCompare);
+
+    c := TTabWriter.Create(IncludeTrailingBackslash(destination)+'concepts.txt');
+    d := TTabWriter.Create(IncludeTrailingBackslash(destination)+'descriptions.txt');
+    r := TTabWriter.Create(IncludeTrailingBackslash(destination)+'relationships.txt');
+    try
+      c.field('id');
+      c.field('effectiveTime');
+      c.field('active');
+      c.field('moduleId');
+      c.field('definitionStatusId');
+      c.endRecord;
+
+      d.field('id');
+      d.field('effectiveTime');
+      d.field('active');
+      d.field('moduleId');
+      d.field('conceptId');
+      d.field('languageCode');
+      d.field('typeId');
+      d.field('term');
+      d.field('caseSignificanceId');
+      d.endRecord;
+
+      r.field('id');
+      r.field('effectiveTime');
+      r.field('active');
+      r.field('moduleId');
+      r.field('sourceId');
+      r.field('destinationId');
+      r.field('relationshipGroup');
+      r.field('typeId');
+      r.field('characteristicTypeId');
+      r.field('modifierId');
+      r.endRecord;
+
+      for i := 0 to st.Count - 1 do
+      begin
+        step('Saving RF2 format');
+        concept := TSnomedCombinedConcept(st.Objects[i]);
+        c.field(inttostr(concept.id));
+        c.field(inttostr(concept.Fdate));
+        if concept.FFlags and MASK_CONCEPT_STATUS > 0 then
+          c.field('0')
+        else
+          c.field('1');
+        c.field(inttostr(concept.FModule));
+        if concept.FFlags and MASK_CONCEPT_PRIMITIVE > 0 then
+          c.field(inttostr(RF2_MAGIC_PRIMITIVE))
+        else
+          c.field(inttostr(RF2_MAGIC_DEFINED));
+        c.endRecord;
+        for desc in concept.FDescriptions do
+        begin
+          d.field(inttostr(desc.FId));
+          d.field(inttostr(desc.FDate));
+          d.field(inttostr(desc.FFlags and MASK_DESC_STATUS));
+          d.field(inttostr(desc.FModule));
+          d.field(inttostr(concept.id));
+          d.field('en');
+          if desc.FKind = nil then
+            d.field('0')
+          else
+            d.field(inttostr(desc.FKind.FId));
+          d.field(desc.FValue);
+          case desc.FFlags and MASK_DESC_CAPS_MASK of
+            MASK_DESC_CAPS_NONE : d.field('900000000000448009');
+            MASK_DESC_CAPS_FIRST : d.field('900000000000020002');
+            MASK_DESC_CAPS_ALL : d.field('900000000000017005');
+          end;
+          d.endRecord;
+        end;
+        for child in concept.FChildren do
+        begin
+          r.field('id');
+          r.field('effectiveTime');
+          r.field('active');
+          r.field('moduleId');
+          r.field('sourceId');
+          r.field('destinationId');
+          r.field('relationshipGroup');
+          r.field('typeId');
+          r.field('characteristicTypeId');
+          r.field('modifierId');
+        end;
+      end;
+    finally
+      c.free;
+      d.Free;
+      r.Free;
+    end;
+  finally
+    st.Free;
+  end;
 end;
 
 procedure TSnomedCombiner.SetInternational(const Value: TSnomedServices);
@@ -1018,6 +1154,47 @@ end;
 function TSnomedCombinedRelationshipGroup.link: TSnomedCombinedRelationshipGroup;
 begin
   result := TSnomedCombinedRelationshipGroup(inherited link);
+end;
+
+{ TTabWriter }
+
+constructor TTabWriter.Create(filename: String);
+begin
+  inherited create;
+  FStream := TFileStream.Create(filename, fmCreate);
+  FDiv := false;
+end;
+
+destructor TTabWriter.destroy;
+begin
+  FStream.Free;
+  inherited;
+end;
+
+procedure TTabWriter.field(s: String);
+var
+  b : TBytes;
+begin
+  if FDiv then
+  begin
+    setLength(b, 1);
+    b[0] := 9;
+    FStream.Write(b[0], 1);
+  end;
+  b := TEncoding.UTF8.GetBytes(s);
+  FStream.Write(b[0], length(b));
+  FDiv := true;
+end;
+
+procedure TTabWriter.endRecord;
+var
+  b : TBytes;
+begin
+  setLength(b, 2);
+  b[0] := 13;
+  b[1] := 10;
+  FStream.Write(b[0], 2);
+  FDiv := false;
 end;
 
 end.

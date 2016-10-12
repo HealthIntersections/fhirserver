@@ -65,6 +65,9 @@ Const
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
 
+  RF2_MAGIC_DEFINED = 900000000000073002;
+  RF2_MAGIC_PRIMITIVE = 900000000000074008;
+
 type
   ESnomedServices = SnomedExpressions.ESnomedServices;
 
@@ -2648,7 +2651,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := url;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set List';
       result.description := 'Reference Sets defined in this SNOMED-CT version';
@@ -2673,7 +2676,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := url;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
@@ -2691,7 +2694,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := url;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set '+id.Substring(16);
       result.description := GetDisplayName(id.Substring(16), '');
@@ -2713,7 +2716,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := url;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := VersionDate;
       result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');

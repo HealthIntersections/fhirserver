@@ -278,12 +278,12 @@ begin
   inherited;
 end;
 
-function convertStatus(status : TFhirConformanceResourceStatusEnum) : TFHIRQuestionnaireStatusEnum;
+function convertStatus(status : TFhirPublicationStatusEnum) : TFHIRQuestionnaireStatusEnum;
 begin
   case (status) of
-		ConformanceResourceStatusActive: result := QuestionnaireStatusPublished;
-		ConformanceResourceStatusDraft: result := QuestionnaireStatusDraft;
-		ConformanceResourceStatusRetired : result := QuestionnaireStatusRetired;
+		PublicationStatusActive: result := QuestionnaireStatusPublished;
+		PublicationStatusDraft: result := QuestionnaireStatusDraft;
+		PublicationStatusRetired : result := QuestionnaireStatusRetired;
 	else
   result := QuestionnaireStatusNull;
 	end;
@@ -904,7 +904,7 @@ begin
       result.url := ANY_CODE_VS;
       result.name := 'All codes known to the system';
       result.description := 'All codes known to the system';
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.compose := TFhirValueSetCompose.create;
       result.compose.includeList.Append.system := ANY_CODE_VS;
       result.link;
@@ -926,7 +926,7 @@ begin
     vs.url := NewGuidURN;
     vs.name := 'Type options for '+path;
     vs.description := vs.name;
-    vs.status := ConformanceResourceStatusActive;
+    vs.status := PublicationStatusActive;
     vs.expansion := TFhirValueSetExpansion.Create;
     vs.expansion.timestamp := NowUTC;
     for t in types do

@@ -591,7 +591,7 @@ begin
       lexer.token('=');
       result.Name := lexer.readConstant('name');
       lexer.skipComments();
-      result.status := ConformanceResourceStatusDraft;
+      result.status := PublicationStatusDraft;
 
       while (lexer.hasToken('conceptmap')) do
         parseConceptMap(result, lexer);

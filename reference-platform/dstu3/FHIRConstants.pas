@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
+// FHIR v1.7.0 generated 2016-10-12T21:19:49+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -2562,6 +2562,25 @@ Type
     spTask_Status, {@enum.value "status" spTask_Status Search by task status }
     spTask_Statusreason); {@enum.value "statusreason" spTask_Statusreason Search by status reason }
 
+  {@Enum TSearchParamsTestReport
+    Search Parameters for TestReport
+  }
+  TSearchParamsTestReport = (
+    spTestReport__content, {@enum.value "_content" spTestReport__content Search on the entire content of the resource }
+    spTestReport__id, {@enum.value "_id" spTestReport__id Logical id of this artifact }
+    spTestReport__lastUpdated, {@enum.value "_lastUpdated" spTestReport__lastUpdated When the resource version last changed }
+    spTestReport__profile, {@enum.value "_profile" spTestReport__profile Profiles this resource claims to conform to }
+    spTestReport__query, {@enum.value "_query" spTestReport__query A custom search profile that describes a specific defined query operation }
+    spTestReport__security, {@enum.value "_security" spTestReport__security Security Labels applied to this resource }
+    spTestReport__tag, {@enum.value "_tag" spTestReport__tag Tags applied to this resource }
+    spTestReport__text, {@enum.value "_text" spTestReport__text Search on the narrative of the resource }
+    spTestReport_Identifier, {@enum.value "identifier" spTestReport_Identifier External identifier }
+    spTestReport_Issued, {@enum.value "issued" spTestReport_Issued When the TestScript was executed and this TestReport was generated }
+    spTestReport_Name, {@enum.value "name" spTestReport_Name Informal name of the executed TestScript }
+    spTestReport_Participant, {@enum.value "participant" spTestReport_Participant The uri of the participant. An absolute URL is preferred }
+    spTestReport_Tester, {@enum.value "tester" spTestReport_Tester Name of the tester producing this report (Organization or individual) }
+    spTestReport_Testscript); {@enum.value "testscript" spTestReport_Testscript Reference to the  version-specific TestScript that was executed to produce this TestReport }
+
   {@Enum TSearchParamsTestScript
     Search Parameters for TestScript
   }
@@ -2631,7 +2650,7 @@ Type
 
 Const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 
-      'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
+      'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'activitydefinition',
      'activitygroup',
@@ -2741,6 +2760,7 @@ Const
      'supplydelivery',
      'supplyrequest',
      'task',
+     'testreport',
      'testscript',
      'valueset',
      'visionprescription',
@@ -2855,6 +2875,7 @@ Const
      TFhirSupplyDelivery,
      TFhirSupplyRequest,
      TFhirTask,
+     TFhirTestReport,
      TFhirTestScript,
      TFhirValueSet,
      TFhirVisionPrescription,
@@ -2969,6 +2990,7 @@ Const
      frtSupplyDelivery,
      frtSupplyRequest,
      frtTask,
+     frtTestReport,
      frtTestScript,
      frtValueSet,
      frtVisionPrescription,
@@ -3083,6 +3105,7 @@ Const
      'SupplyDelivery',
      'SupplyRequest',
      'Task',
+     'TestReport',
      'TestScript',
      'ValueSet',
      'VisionPrescription',
@@ -3196,12 +3219,13 @@ Const
   CODES_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'receiver', 'status', 'supplier');
   CODES_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'kind', 'patient', 'source', 'status', 'supplier');
   CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'created', 'definition', 'focus', 'identifier', 'modified', 'owner', 'parent', 'patient', 'performer', 'priority', 'requester', 'stage', 'status', 'statusreason');
+  CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'issued', 'name', 'participant', 'tester', 'testscript');
   CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.7.0';
 
-  FHIR_GENERATED_DATE = '2016-10-11T20:45:51+11:00';
+  FHIR_GENERATED_DATE = '2016-10-12T21:19:49+11:00';
 
 
 

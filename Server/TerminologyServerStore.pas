@@ -858,7 +858,7 @@ procedure TTerminologyServerStore.declareCodeSystems(list : TFhirResourceList);
     cs.version := version;
     cs.name := name;
     cs.id := id;
-    cs.status := ConformanceResourceStatusActive;
+    cs.status := PublicationStatusActive;
     cs.content := CodesystemContentModeNotPresent;
     if count <> 0 then
       cs.count := inttostr(count);

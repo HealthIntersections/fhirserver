@@ -1542,7 +1542,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set - all LOINC codes';
       result.description := 'All LOINC codes';
@@ -1562,7 +1562,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text);
@@ -1585,7 +1585,7 @@ begin
     result := TFhirValueSet.Create;
     try
       result.url := id;
-      result.status := ConformanceResourceStatusActive;
+      result.status := PublicationStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Answer List '+id.Substring(20);
       result.description := 'LOINC Answer list for '+Desc.GetEntry(text);

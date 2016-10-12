@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.84
+AppVerName=1.0.85
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.84
+OutputBaseFilename=fhirserver3-1.0.85
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -93,11 +93,11 @@ Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion r
 ; Spec & IGs
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";              DestDir: "{app}\load";                          Components: r2; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";   DestDir: "{app}"; DestName: validation.json.zip;   Components: r2; Flags: ignoreversion  
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";            DestDir: {app};                             Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";            DestDir: {app}\web;                             Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";               DestDir: {app}\load; DestName: fhir.json.zip;   Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip";    DestDir: {app}\load; DestName: daf.json.zip;    Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip";    DestDir: {app}\load; DestName: sdc.json.zip;    Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Components: r3; Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip";    DestDir: {app}\load; DestName: sdc.json.zip;    Components: r3; Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";   DestDir: {app}\load; DestName: ccda.json.zip;   Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\install\load.ini";                                DestDir: {app}\load;                            Components: r3; Flags: ignoreversion
 

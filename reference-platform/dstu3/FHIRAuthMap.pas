@@ -126,6 +126,7 @@ const
     tcOther , // frtSupplyDelivery,
     tcOther , // frtSupplyRequest,
     tcOther , // frtTask,
+    tcOther , // frtTestReport,
     tcOther , // frtTestScript,
     tcOther , // frtValueSet,
     tcClinical,// frtVisionPrescription,

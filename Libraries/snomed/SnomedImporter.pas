@@ -30,8 +30,6 @@ uses
 //  TrackConceptDuplicates = false; // much slower, but only if you aren't reading a snapshot
 
 Const
-  RF2_MAGIC_DEFINED = 900000000000073002;
-  RF2_MAGIC_PRIMITIVE = 900000000000074008;
   RF2_MAGIC_FSN = 900000000000003001;
   UPDATE_FREQ = 501;
   UPDATE_FREQ_D = 1501;

@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-11T20:45:51+11:00
+// FHIR v1.7.0 generated 2016-10-12T21:19:49+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -153,6 +153,7 @@ Type
     procedure buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2752,6 +2753,24 @@ begin
   indexes.add('Task', 'statusreason', 'Search by status reason', SearchParamTypeTOKEN, [], 'Task.statusReason', SearchXpathUsageNormal);
 end;
 
+procedure TFHIRIndexBuilder.buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('TestReport', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('TestReport', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'identifier', 'External identifier', SearchParamTypeTOKEN, [], 'TestReport.identifier', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'issued', 'When the TestScript was executed and this TestReport was generated', SearchParamTypeDATE, [], 'TestReport.issued', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'name', 'Informal name of the executed TestScript', SearchParamTypeSTRING, [], 'TestReport.name', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'participant', 'The uri of the participant. An absolute URL is preferred', SearchParamTypeURI, [], 'TestReport.participant.uri', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'tester', 'Name of the tester producing this report (Organization or individual)', SearchParamTypeSTRING, [], 'TestReport.tester', SearchXpathUsageNormal);
+  indexes.add('TestReport', 'testscript', 'Reference to the  version-specific TestScript that was executed to produce this TestReport', SearchParamTypeREFERENCE, ['TestScript'], 'TestReport.testScript', SearchXpathUsageNormal);
+end;
+
 procedure TFHIRIndexBuilder.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestScript', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2929,6 +2948,7 @@ begin
   buildIndexesForSupplyDelivery(Indexes, compartments);
   buildIndexesForSupplyRequest(Indexes, compartments);
   buildIndexesForTask(Indexes, compartments);
+  buildIndexesForTestReport(Indexes, compartments);
   buildIndexesForTestScript(Indexes, compartments);
   buildIndexesForValueSet(Indexes, compartments);
   buildIndexesForVisionPrescription(Indexes, compartments);

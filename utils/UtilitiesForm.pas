@@ -112,6 +112,9 @@ type
     Image3: TImage;
     pnlSnomedImport: TPanel;
     Image4: TImage;
+    Label14: TLabel;
+    edtCombinedDestination: TEdit;
+    btnCombinedDestination: TSpeedButton;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -132,6 +135,7 @@ type
     procedure pnlCombineSnomedClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
+    procedure btnCombinedDestinationClick(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -180,6 +184,8 @@ begin
 
   edtInternational.text := ini.ReadString('snomed-combine', 'base', '');
   lbEditions.Items.CommaText := ini.ReadString('snomed-combine', 'editions', '');
+  edtCombinedDestination.text := ini.ReadString('snomed-combine', 'dest', '');
+
   if lbEditions.Items.Count > 0 then
     lbEditions.Itemindex := 0;
 
@@ -391,6 +397,13 @@ begin
     abort;
 end;
 
+procedure TForm4.btnCombinedDestinationClick(Sender: TObject);
+begin
+  dlgSource.Title := 'Choose Combined Files Destination';
+  if dlgSource.Execute then
+    edtCombinedDestination.text := dlgSource.filename;
+end;
+
 procedure TForm4.btnCombineGoClick(Sender: TObject);
 var
   i : integer;
@@ -413,6 +426,7 @@ begin
 //  else if not FileExists(edtDestination.Text) or (MessageDlg('Overwrite "'+edtDestination.Text+'"?', mtConfirmation, mbYesNo, 0) = mrYes) then
     ini.WriteString('snomed-combine', 'base', edtInternational.text);
     ini.WriteString('snomed-combine', 'editions', lbEditions.Items.CommaText);
+    ini.WriteString('snomed-combine', 'dest', edtCombinedDestination.text);
 
     wantStop := false;
     btnStopCombine.Visible := true;
@@ -425,6 +439,8 @@ begin
     btnAddEdition.enabled := false;
     btnDeleteEdition.enabled := false;
     btnCloseCombine.enabled := false;
+    btnCombinedDestination.enabled := false;
+    edtCombinedDestination.enabled := false;
     try
       start := now;
       cmbCallback(0, 'Loading Editions');
@@ -439,13 +455,13 @@ begin
           svc.load(lbEditions.Items[i]);
         end;
         combiner.callback := cmbCallBack;
+        combiner.destination := edtCombinedDestination.text;
         combiner.Execute;
         combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
         MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
       finally
         combiner.free;
       end;
-//      importSnomedRF2(edtSource.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
     finally
       btnStopCombine.Visible := false;
       cursor := crDefault;
@@ -457,6 +473,8 @@ begin
       btnAddEdition.enabled := true;
       btnDeleteEdition.enabled := true;
       btnCloseCombine.enabled := true;
+      btnCombinedDestination.enabled := true;
+      edtCombinedDestination.enabled := true;
       cmbCallback(0, '');
     end;
 end;
