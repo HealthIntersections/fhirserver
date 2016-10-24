@@ -271,6 +271,7 @@ begin
     5 { Netherlands } : result := '11000146104';
     6 { Sweden } : result := '45991000052106';
     7 { UK } : result := '999000041000000102';
+    8 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
 
@@ -341,12 +342,16 @@ end;
 
 procedure TForm4.btnDestinationClick(Sender: TObject);
 begin
+  if (edtDestination.text <> '') then
+    dlgDestination.filename := edtDestination.text;
   if dlgDestination.Execute then
     edtDestination.text := dlgDestination.filename;
 end;
 
 procedure TForm4.btnSourceClick(Sender: TObject);
 begin
+  if (edtSource.text <> '') then
+    dlgSource.filename := edtSource.text;
   dlgSource.Title := 'Choose SNOMED CT RF2 Snapshot Folder';
   if dlgSource.Execute then
     edtSource.text := dlgSource.filename;
@@ -356,6 +361,8 @@ end;
 
 procedure TForm4.btnInternationalClick(Sender: TObject);
 begin
+  if (edtInternational.text <> '') then
+    dlgOpenCache.filename := edtInternational.text;
   dlgOpenCache.Title := 'Choose International SNOMED cache file';
   if dlgOpenCache.Execute then
     edtInternational.text := dlgOpenCache.filename;
@@ -399,6 +406,8 @@ end;
 
 procedure TForm4.btnCombinedDestinationClick(Sender: TObject);
 begin
+  if (edtCombinedDestination.text <> '') then
+    dlgSource.filename := edtCombinedDestination.text;
   dlgSource.Title := 'Choose Combined Files Destination';
   if dlgSource.Execute then
     edtCombinedDestination.text := dlgSource.filename;
@@ -456,6 +465,7 @@ begin
         end;
         combiner.callback := cmbCallBack;
         combiner.destination := edtCombinedDestination.text;
+        combiner.moduleId := COMBINED_MODULE_ID;
         combiner.Execute;
         combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
         MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
@@ -483,6 +493,8 @@ end;
 
 procedure TForm4.btnLoincSourceClick(Sender: TObject);
 begin
+  if (edtLoincSource.text <> '') then
+    dlgSource.filename := edtLoincSource.text;
   dlgSource.Title := 'Choose LOINC Content Folder';
   if dlgSource.Execute then
     edtLoincSource.text := dlgSource.filename;
@@ -490,6 +502,8 @@ end;
 
 procedure TForm4.btnLoincDestClick(Sender: TObject);
 begin
+  if (edtLoincDest.text <> '') then
+    dlgDestination.filename := edtLoincDest.text;
   if dlgDestination.Execute then
     edtLoincDest.text := dlgDestination.filename;
 end;

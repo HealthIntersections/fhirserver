@@ -560,7 +560,7 @@ begin
     begin
       hash := makeImportHash(imports, 0);
       try
-        cs := FStore.getProvider(cset.system, cset.version);
+        cs := FStore.getProvider(cset.system, cset.version, FProfile);
         try
           if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
           begin

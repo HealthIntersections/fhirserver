@@ -460,6 +460,15 @@ type
     procedure AddParam(name : String; value : boolean); overload;
   end;
 
+  TFHIRExpansionProfileCodeSystemIncludeCodeSystem = class (TAdvObject)
+  private
+    FVersion: String;
+    FSystem: String;
+  public
+    property system : String read FSystem write FSystem;
+    property version : String read FVersion write FVersion;
+  end;
+
   TFhirExpansionProfile = class (TAdvObject)
   private
     FincludeDefinition: boolean;
@@ -470,7 +479,11 @@ type
     FexcludeNotForUI: boolean;
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
+    FcodeSystemList : TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem>;
+    FincludeInactiveElement: TAdvObject;
   public
+    Constructor Create; override;
+    Destructor Destroy; override;
     function Link : TFhirExpansionProfile; overload;
     function Clone : TFhirExpansionProfile; overload;
     function hash : string;
@@ -480,9 +493,14 @@ type
     property displayLanguage : String read FdisplayLanguage write FdisplayLanguage;
     property includeDesignations : boolean read FincludeDesignations write FincludeDesignations;
     property includeInactive : boolean read FincludeInactive write FincludeInactive;
+    property includeInactiveElement : TAdvObject read FincludeInactiveElement write FincludeInactiveElement;
     property excludeNested : boolean read FexcludeNested write FexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
+
+    property codeSystemList : TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem> read FcodeSystemList;
+    function codeSystem : TFhirExpansionProfile;
+    function include : TFhirExpansionProfile;
   end;
 
   TFHIRCodeSystem = TFhirValueSet;
@@ -3971,9 +3989,31 @@ begin
   result := TFhirExpansionProfile(inherited Clone);
 end;
 
+function TFhirExpansionProfile.codeSystem: TFhirExpansionProfile;
+begin
+  result := self;
+end;
+
+constructor TFhirExpansionProfile.Create;
+begin
+  inherited;
+  FcodeSystemList := TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem>.create;
+end;
+
+destructor TFhirExpansionProfile.Destroy;
+begin
+  FcodeSystemList.Free;
+  inherited;
+end;
+
 function TFhirExpansionProfile.hash: string;
 begin
   result := BooleanToString(FincludeDefinition)+'|'+BooleanToString(FlimitedExpansion);
+end;
+
+function TFhirExpansionProfile.include: TFhirExpansionProfile;
+begin
+  result := self;
 end;
 
 function TFhirExpansionProfile.Link: TFhirExpansionProfile;

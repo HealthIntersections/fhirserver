@@ -8,7 +8,7 @@ uses
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
   YuStemmer, DateAndTime,
   KDBManager,
-  FHIRTypes, FHIRResources, FHIROperations, CDSHooksUtilities,
+  FHIRTypes, FHIRResources, FHIROperations, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices;
 
 type
@@ -409,8 +409,41 @@ begin
 end;
 
 procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+var
+  qry : TKDBConnection;
+  b : boolean;
+  p : TFHIRLookupOpProperty_;
 begin
-  // todo
+  if hasProp(props, 'inactive', true) then
+  begin
+    qry := db.GetConnection(dbprefix+'.extendLookup');
+    try
+      qry.SQL := 'Select suppress from rxnconso where RXCUI = :code and SAB = ''RXNORM'' and TTY <> ''SY''';
+      qry.prepare;
+      qry.BindString('code', TUMLSConcept(ctxt).FCode);
+      qry.execute;
+      qry.FetchNext;
+      b := qry.colinteger[1] = 1;
+      qry.Terminate;
+      qry.Release;
+    except
+      on e : Exception do
+      begin
+        qry.Error(e);
+        recordStack(e);
+        raise;
+      end;
+    end;
+
+    {$IFDEF FHIR3}
+    p := TFHIRLookupOpProperty_.create;
+    resp.property_List.Add(p);
+    p.code := 'inactive';
+    p.value := BooleanToString(b);
+    {$ELSE}
+    resp.addExtension('inactive', b);
+    {$ENDIF}
+  end;
 end;
 
 function TUMLSServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

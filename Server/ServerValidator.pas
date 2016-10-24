@@ -103,7 +103,7 @@ begin
     c.system := system;
     c.code := code;
     c.version := version;
-    p := FTerminologyServer.validate(vs, c, false);
+    p := FTerminologyServer.validate(vs, c, nil, false);
     try
       result := TValidationResult.Create;
       try
@@ -207,7 +207,7 @@ var
 begin
   result := TValidationResult.Create;
   try
-    p := FTerminologyServer.validate(vs, code, false);
+    p := FTerminologyServer.validate(vs, code, nil, false);
     try
       result.Message := p.str['result'];
       if p.bool['result'] then
@@ -230,7 +230,7 @@ var
 begin
   result := TValidationResult.Create;
   try
-    p := FTerminologyServer.validate(vs, code, false);
+    p := FTerminologyServer.validate(vs, code, nil, false);
     try
       result.Message := p.str['message'];
       if p.bool['result'] then

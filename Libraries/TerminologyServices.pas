@@ -67,6 +67,7 @@ Type
     function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
+    function IsInactive(context : TCodeSystemProviderContext) : boolean; virtual;
     function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
     function Display(context : TCodeSystemProviderContext; lang : String) : string; virtual; abstract;
     function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
@@ -137,6 +138,11 @@ end;
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
+end;
+
+function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
+begin
+  result := false;
 end;
 
 function TCodeSystemProvider.Link: TCodeSystemProvider;

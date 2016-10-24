@@ -519,10 +519,6 @@ begin
     result := result + ', primitive';
 end;
 
-function isHistorical(Flags : Byte) : Boolean;
-begin
- result := flags and MASK_REL_CHARACTERISTIC = VAL_REL_Historical;
-end;
 
 procedure TSnomedPublisher.PublishConcept(bRoot : Boolean; showhist : boolean; const sPrefix, sId: String; iStart : Integer; html: THtmlPublisher);
 var
@@ -540,14 +536,15 @@ var
   Inbounds : TCardinalArray;
   outbounds : TCardinalArray;
   allDesc : TCardinalArray;
-  iWork, iWork2, iWork3, kind, module, refsets, valueses, modifier : Cardinal;
+  Active, Defining : boolean;
+  iWork, iWork2, iWork3, kind, caps, module, refsets, valueses, modifier : Cardinal;
   FSN : String;
   PN : String;
   FPaths : TArrayofIdArray;
   i, j : integer;
   iList : TRefSetMemberEntryArray;
-  iDummy, iRefSet, iMembers, iDescs, children, iTypes : Cardinal;
-  types, values : TCardinalArray;
+  iDummy, iRefSet, iMembers, iDescs, children, iTypes, iName, iFields : Cardinal;
+  types, fields, values : TCardinalArray;
   bDescSet : Boolean;
   aMembers : TSnomedReferenceSetMemberArray;
   date : TSnomedDate;
@@ -627,22 +624,22 @@ Begin
     html.EndTableRow;
     for i := Low(Descriptions) To High(Descriptions) Do
     Begin
-      FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, refsets, valueses, Flags);
-      if flags and MASK_DESC_STATUS = Flag_Active Then
+      FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, caps, refsets, valueses, active);
+      if active Then
       Begin
         html.StartRowFlip(i);
         html.AddTableCell(inttostr(iId));
         html.AddTableCell(Screen(FSnomed.Strings.GetEntry(iWork), ''));
-        if ((flags and MASK_DESC_STYLE) shr 4 = VAL_DESC_Unspecified) and (kind <> 0) then
-          CellConceptRef(html, sPrefix, kind, cdDesc)
+        CellConceptRef(html, sPrefix, kind, cdDesc);
+        if (active) then
+          html.AddTableCell('Active')
         else
-          html.AddTableCell(GetDescType(Flags));
-        html.AddTableCell(GetDescStatus1(Flags));
-        html.AddTableCell(GetDescStatus2(Flags));
+          html.AddTableCell('Inactive');
+        CellConceptRef(html, sPrefix, caps, cdDesc);
         if (module <> 0) then
           CellConceptRef(html, sPrefix, module, cdDesc)
         else
-        html.AddTableCell('');
+          html.AddTableCell('');
         if FSnomed.RefSetIndex.Count > 0 Then
         Begin
           iList := FSnomed.GetDescRefsets(Descriptions[i]);
@@ -671,8 +668,10 @@ Begin
     html.EndTable;
     html.Line;
 
-    iRefSet := FSnomed.GetConceptRefSet(iIndex, true, iMembers, itypes);
+    iRefSet := FSnomed.GetConceptRefSet(iIndex, true, iName, iMembers, itypes, iFields);
     allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
+    SetLength(types, 0);
+    SetLength(fields, 0);
     html.StartForm('GET', sPrefix);
     html.StartParagraph;
 
@@ -680,17 +679,17 @@ Begin
     begin
       html.AddTextPlain(inttostr(length(alldesc))+' descendants. ');
       children := length(alldesc);
-      types := 0;
       if children > 0 then
         html.AddTextPlain('Search Descendants: ');
     End
     else
     Begin
       children := FSnomed.RefSetMembers.GetMemberCount(iMembers);
-      if (iTypes = 0) then
-        SetLength(types, 0)
-      else
+      if (iTypes <> 0) then
+      begin
         types := FSnomed.Refs.GetReferences(iTypes);
+        fields := FSnomed.Refs.GetReferences(iFields);
+      end;
       html.AddTextPlain(inttostr(children)+' members. ');
       if children > 0 then
         html.AddTextPlain('Search Members: ');
@@ -716,6 +715,7 @@ Begin
       html.AddTableCell('Outbound Relationships', true);
       html.AddTableCell('Type', true);
       html.AddTableCell('Target', true);
+      html.AddTableCell('Active', true);
       html.AddTableCell('Characteristic', true);
       html.AddTableCell('Refinability', true);
       html.AddTableCell('Group', true);
@@ -723,15 +723,19 @@ Begin
 
       for i := Low(Outbounds) To High(Outbounds) Do
       Begin
-        FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-        if (showhist) or (not isHistorical(Flags)) then
+        FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+        if (showhist) or active then
         begin
           html.StartRowFlip(i);
-          html.AddTableCell(Screen(PN, ''));
+          html.AddTableCellHint(Screen(PN, ''), inttostr(did));
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
           CellConceptRef(html, sPrefix, iWork2, cdDesc);
-          html.AddTableCell(' '+GetRelChar(Flags));
-          html.AddTableCell(' '+GetRelRefinability(Flags));
+          if (active) then
+            html.AddTableCell('true')
+          else
+            html.AddTableCell('false');
+          CellConceptRef(html, sPrefix, kind, cdDesc);
+          CellConceptRef(html, sPrefix, modifier, cdDesc);
           html.AddTableCell(' '+GetRelGroup(Group));
           html.EndTableRow;
         end;
@@ -745,7 +749,9 @@ Begin
       aMembers := FSnomed.RefSetMembers.GetMembers(iMembers);
       html.StartTable(false);
       html.StartTableRow;
-      html.AddTableCell('Member', true);
+      html.AddTableCell('Members', true);
+      For i := 0 to length(fields)-1 Do
+        html.AddTableCell(FSnomed.Strings.GetEntry(fields[i]), true);
       html.EndTableRow;
       For i := iStart to Min(iStart+MAX_ROWS, High(aMembers)) Do
       Begin
@@ -761,7 +767,7 @@ Begin
           2 {relationship} :
             begin
               html.StartTableCell;
-              FSnomed.Rel.GetRelationship(aMembers[i].Ref, did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+              FSnomed.Rel.GetRelationship(aMembers[i].Ref, did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
               html.AddTextPlain(' '+inttostr(did)+': ');
               ConceptRef(html, sPrefix, iWork, cdConceptId, 0);
               html.AddTextPlain('---');
@@ -822,22 +828,22 @@ Begin
       html.StartTableRow;
       html.AddTableCell('Inbound Relationships', true);
       html.AddTableCell('Type', true);
-//      html.AddTableCell('Source', true);
+      html.AddTableCell('Source', true);
       html.AddTableCell('Characteristic', true);
       html.AddTableCell('Refinability', true);
       html.AddTableCell('Group', true);
       html.EndTableRow;
       For i := iStart to Min(iStart+MAX_ROWS, High(Inbounds)) Do
       Begin
-        FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-        if (showhist) or (not isHistorical(Flags)) then
+        FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+        if (showhist) or (Active) then
         begin
           html.StartRowFlip(i);
           CellConceptRef(html, sPrefix, iWork, cdDesc);
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
-    //      html.AddTableCell(Screen(PN, ''));
-          html.AddTableCell(' '+GetRelChar(Flags));
-          html.AddTableCell(' '+GetRelRefinability(Flags));
+          html.AddTableCellHint(Screen(PN, ''), inttostr(did));
+          CellConceptRef(html, sPrefix, kind, cdDesc);
+          CellConceptRef(html, sPrefix, modifier, cdDesc);
           html.AddTableCell(' '+GetRelGroup(Group));
           html.EndTableRow;
         End;
@@ -1619,6 +1625,7 @@ var
   iIndex : Cardinal;
   Identity : UInt64;
   Flags : Byte;
+  Active, Defining : boolean;
   Group: Integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -1668,8 +1675,8 @@ Begin
     html.StartList(false);
     for i := Low(Outbounds) To High(Outbounds) Do
     Begin
-      FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-      if flags and MASK_REL_CHARACTERISTIC = VAL_REL_Defining Then
+      FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+      if Defining Then
       Begin
         html.StartListItem;
         ConceptRef(html, sPrefix, iWork3, cdDesc, 0);
@@ -1690,8 +1697,8 @@ Begin
     html.StartList(false);
     For i := iStart to Min(iStart+MAX_ROWS, High(Inbounds)) Do
     Begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-      if iWork3 = FSnomed.Is_a_Index Then
+      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+      if Active and (iWork3 = FSnomed.Is_a_Index) Then
       Begin
         html.StartListItem;
         ConceptRef(html, sPrefix, iWork, cdDesc, 0);
@@ -1715,12 +1722,12 @@ end;
 
 procedure TSnomedPublisher.RefsetRef(html: THtmlPublisher; const sPrefix: String; iIndex: cardinal);
 var
-  iDefinition, iMembersByName, iMembersByRef, iTypes: Cardinal;
+  iDefinition, iMembersByName, iMembersByRef, iTypes, iName, iFields: Cardinal;
   types : TCardinalArray;
   id : String;
   i : integer;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iDefinition, iMembersByName, iMembersByRef, iTypes);
+  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iName, iDefinition, iMembersByName, iMembersByRef, iTypes, iFields);
   id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
   html.URL(Screen(id+' '+FSnomed.GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
   html.AddTextPlain('(');
@@ -1742,18 +1749,18 @@ end;
 function TSnomedPublisher.ConceptForDesc(iDesc: Cardinal; var iDescs : Cardinal): Cardinal;
 var
   id : UInt64;
-  iflags : Byte;
+  active : boolean;
   date : TSnomedDate;
-  module, refsets, valueses, kind : Cardinal;
+  module, refsets, valueses, kind, caps : Cardinal;
 begin
-  FSnomed.Desc.GetDescription(iDesc, iDescs, id, date, result, module, kind, refsets, valueses, iflags);
+  FSnomed.Desc.GetDescription(iDesc, iDescs, id, date, result, module, kind, caps, refsets, valueses, active);
 end;
 
 function TSnomedPublisher.GetConceptForRefset(iRefset: Cardinal): Cardinal;
 var
   iDummy : Cardinal;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iRefset, result, iDummy, iDummy, iDummy);
+  FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, result, iDummy, iDummy, iDummy, iDummy);
 end;
 
 

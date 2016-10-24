@@ -42,7 +42,7 @@ Type
 //    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByName(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
-    function processSnomedForTool(code : String) : String;
+    function processSnomedForTool(ss : TSnomedServices; code : String) : String;
 
     function sortVsByUrl(pA, pB : Pointer) : Integer;
     function sortVsByVer(pA, pB : Pointer) : Integer;
@@ -870,16 +870,30 @@ var
 begin
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
-    FServer.DefSnomed.RecordUse;
-    response.ContentType := 'text/xml';
-    try
-      response.ContentText := processSnomedForTool(request.Document.Substring(13));
-      response.ResponseNo := 200;
-    except
-      on e : Exception do
-      begin
-        response.ResponseNo := 500;
-        response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
+    parts := request.Document.Split(['/']);
+    ss := nil;
+    for t in FServer.Snomed do
+      if t.EditionId = parts[3] then
+        ss := t;
+    if ss = nil then
+    begin
+      response.ResponseNo := 404;
+      response.ContentText := 'Document '+request.Document+' not found';
+      logt('miss: '+request.Document);
+    end
+    else
+    begin
+      ss.RecordUse;
+      response.ContentType := 'text/xml';
+      try
+        response.ContentText := processSnomedForTool(ss, parts[4]);
+        response.ResponseNo := 200;
+      except
+        on e : Exception do
+        begin
+          response.ResponseNo := 500;
+          response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
+        end;
       end;
     end;
   end
@@ -991,7 +1005,7 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.processSnomedForTool(code : String) : String;
+function TTerminologyWebServer.processSnomedForTool(ss : TSnomedServices; code : String) : String;
 var
   sl : TStringList;
   s : String;
@@ -1001,12 +1015,12 @@ begin
   logt('Snomed: '+code);
   if StringIsInteger64(code) then
   begin
-    if FServer.DefSnomed.IsValidConcept(code) then
+    if ss.IsValidConcept(code) then
     begin
-      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="concept" concept="'+code+'" display="'+EncodeXml(FServer.DefSnomed.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+'" display="'+EncodeXml(ss.GetDisplayName(code, ''), xmlAttribute)+'">';
       sl := TStringList.Create;
       try
-        FServer.DefSnomed.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
+        ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
         for s in sl do
           result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
       finally
@@ -1014,12 +1028,12 @@ begin
       end;
       result := result + '</snomed>';
     end
-    else if FServer.DefSnomed.IsValidDescription(code, id, s) then
+    else if ss.IsValidDescription(code, id, s) then
     begin
-      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
       sl := TStringList.Create;
       try
-        FServer.DefSnomed.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
+        ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
         for s in sl do
           result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
       finally
@@ -1028,14 +1042,14 @@ begin
       result := result + '</snomed>';
     end
     else
-      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" description="Snomed ID '+code+' not known"/>';
+      result := '<snomed version="'+ss.VersionDate+'" description="Snomed ID '+code+' not known"/>';
   end
   else
   begin
-    exp := FServer.DefSnomed.parseExpression(code);
+    exp := ss.parseExpression(code);
     try
-      result := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(FServer.DefSnomed.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
-      EncodeXml(FServer.DefSnomed.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(FServer.DefSnomed.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
+      result := '<snomed version="'+ss.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(ss.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
+      EncodeXml(ss.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(ss.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
     finally
       exp.Free;
     end;
@@ -1089,7 +1103,7 @@ begin
       coding.version := pm.GetVar('version');
       coding.code := pm.GetVar('code');
       coding.display := pm.GetVar('display');
-      res := FServer.validate(vs, coding, pm.GetVar('abstract') = '1');
+      res := FServer.validate(vs, coding, nil, pm.GetVar('abstract') = '1');
       try
         if res is TFhirOperationOutcome then
           result := '<div style="background: red">'+asHtml(res as TFhirOperationOutcome)+'</div>'#13 +

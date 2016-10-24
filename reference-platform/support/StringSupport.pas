@@ -1312,7 +1312,7 @@ end;
 function StrToUINT64(Value:String):UInt64;
 begin
   if not TryStrToUINT64(Value,result) then
-    raise EConvertError.Create('Invalid uint64 value');
+    raise EConvertError.Create('Invalid uint64 value "'+value+'"');
 end;
 
 function StrToUInt64Def(Value:String; def : UInt64):UInt64;

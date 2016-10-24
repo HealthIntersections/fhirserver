@@ -49,6 +49,7 @@ Type
     procedure EndTable;
     procedure AddTableCellURL(text, url : String; hint : String = '');
     procedure AddTableCell(text : String; bold : boolean = false);
+    procedure AddTableCellHint(text, hint : String);
 
     procedure StartList(ordered : boolean = false);
     procedure EndList(ordered : boolean = false);
@@ -89,6 +90,15 @@ procedure THtmlPublisher.AddTableCell(text: String; bold: boolean);
 begin
   StartTableCell;
   addtext(text, bold, false);
+  EndTableCell;
+end;
+
+procedure THtmlPublisher.AddTableCellHint(text, hint: String);
+begin
+  StartTableCell;
+  FBuilder.Append('<span title="'+EncodeXML(hint, xmlAttribute)+'">');
+  addtext(text, false, false);
+  FBuilder.Append('</span>');
   EndTableCell;
 end;
 

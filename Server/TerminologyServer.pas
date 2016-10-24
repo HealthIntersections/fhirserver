@@ -57,12 +57,12 @@ Type
     function expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet; overload;
 
     procedure lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
-    function validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters; overload;
-    function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters; overload;
+    function validate(vs : TFHIRValueSet; coding : TFhirCoding; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters; overload;
+    function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters; overload;
     function translate(cm : TLoadedConceptMap; coding : TFhirCoding) : TFHIRParameters; overload;
     function translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
     function translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters; overload;
-    Function MakeChecker(uri : string) : TValueSetChecker;
+    Function MakeChecker(uri : string; profile : TFhirExpansionProfile) : TValueSetChecker;
     function getDisplayForCode(system, version, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
 
@@ -214,7 +214,7 @@ var
       result := props.Contains(name);
   end;
 begin
-  provider := getProvider(coding.system, coding.version);
+  provider := getProvider(coding.system, coding.version, nil);
   try
     resp.name := provider.name(nil);
     s := provider.version(nil);
@@ -470,7 +470,7 @@ begin
   result := vs <> nil;
 end;
 
-function TTerminologyServer.MakeChecker(uri: string): TValueSetChecker;
+function TTerminologyServer.MakeChecker(uri: string; profile : TFhirExpansionProfile): TValueSetChecker;
 var
   vs : TFhirValueSet;
 begin
@@ -478,7 +478,7 @@ begin
   try
     vs := getValueSetByUrl(uri);
     try
-      result.prepare(vs);
+      result.prepare(vs, profile);
     finally
       vs.Free;
     end;
@@ -488,7 +488,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.validate(vs : TFHIRValueSet; coding : TFhirCoding; abstractOk : boolean) : TFhirParameters;
+function TTerminologyServer.validate(vs : TFHIRValueSet; coding : TFhirCoding; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters;
 var
   check : TValueSetChecker;
 begin
@@ -503,7 +503,7 @@ begin
   try
     check := TValueSetChecker.create(self.Link, vs.url);
     try
-      check.prepare(vs);
+      check.prepare(vs, profile);
       result := check.check(coding, abstractOk);
     finally
       check.Free;
@@ -514,7 +514,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters;
+function TTerminologyServer.validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters;
 var
   check : TValueSetChecker;
 begin
@@ -529,7 +529,7 @@ begin
   try
     check := TValueSetChecker.create(self.Link, vs.url);
     try
-      check.prepare(vs);
+      check.prepare(vs, profile);
       result := check.check(coded, abstractOk);
     finally
       check.Free;
@@ -573,7 +573,7 @@ begin
   end
   else
   begin
-    cp := getProvider(system, version, true);
+    cp := getProvider(system, version, nil, true);
     if cp <> nil then
     begin
       try
@@ -653,7 +653,7 @@ function TTerminologyServer.getDisplayForCode(system, version, code: String): St
 var
   provider : TCodeSystemProvider;
 begin
-  provider := getProvider(system, version, true);
+  provider := getProvider(system, version, nil, true);
   if provider <> nil then
   try
     result := provider.getDisplay(code, '');
@@ -667,7 +667,7 @@ var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
 begin
-  cs := getProvider(coding.system, coding.version, true);
+  cs := getProvider(coding.system, coding.version, nil, true);
   if cs <> nil then
   begin
     try
@@ -793,7 +793,7 @@ begin
         raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
-      p := validate(target, coding, false);
+      p := validate(target, coding, nil, false);
       try
         if TFhirBoolean(p.NamedParameter['result']).value then
         begin
@@ -1063,7 +1063,7 @@ begin
         try
           val := TValueSetChecker.create(self.Link, vs.url);
           try
-            val.prepare(vs);
+            val.prepare(vs, nil);
             if not val.check(URL, version, code, true) then
               conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
             else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
@@ -1099,7 +1099,7 @@ begin
       try
         val := TValueSetChecker.create(self.Link, vs.url);
         try
-          val.prepare(vs);
+          val.prepare(vs, nil);
           conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
           conn2.Prepare;
           conn2.Execute;

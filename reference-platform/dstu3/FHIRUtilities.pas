@@ -2589,8 +2589,8 @@ begin
       if parameterList[i].resourceElement <> nil then
       begin
         result := parameterList[i].resourceElement;
-      exit;
-    end;
+        exit;
+      end;
     end;
   result := nil;
 end;

@@ -57,6 +57,7 @@ type
       Procedure Append(ch : AnsiChar); Overload;
       Procedure Append(b : Byte); Overload;
       Procedure Append(Const bytes : TBytes); Overload;
+      Procedure Append(mem : Pointer; len : word); Overload;
 
       Function EndsWith(aBytes : TBytes) : Boolean;
       Property Length : Integer Read FLength;
@@ -707,6 +708,19 @@ Begin
   SetLength(s, 2);
   move(val, s[0], 2);
   Append(s);
+end;
+
+procedure TAdvBytesBuilder.Append(mem: Pointer; len: word);
+begin
+  If len > 0 Then
+  Begin
+    If FLength + len > System.Length(FContent) Then
+      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, len));
+
+    Move(mem^, FContent[FLength], len);
+
+    Inc(FLength, len);
+  End;
 end;
 
 Procedure TAdvBytesBuilder.Append(Const bytes : TBytes);

@@ -156,6 +156,8 @@ type
     function isWrite : boolean; virtual;
     function owningResource : TFhirResourceType; virtual; // for security purposes
     function makeParams(request : TFHIRRequest) : TFhirParameters;
+
+    function buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params : TFhirParameters) : TFHIRExpansionProfile;
   public
     function Name : String; virtual;
     function Types : TFhirResourceTypeSet; virtual;
@@ -331,7 +333,6 @@ type
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
-    function buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params : TFhirParameters) : TFHIRExpansionProfile;
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
@@ -5785,6 +5786,66 @@ begin
   end;
 end;
 
+function TFhirOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params: TFhirParameters): TFHIRExpansionProfile;
+var
+  needSecure : boolean;
+  exp : TFhirExpansionProfile;
+  res : boolean;
+begin
+  res := false;
+  {$IFDEF FHIR3}
+  exp := params.res['profile'] as TFHIRExpansionProfile;
+  if exp <> nil then
+    res := true
+  else
+    if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
+      exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
+    else if params.str['profile'] <> '' then
+      exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
+    else
+  {$ENDIF}
+     exp := nil;
+
+  try
+   if exp = nil then
+     result := TFhirExpansionProfile.Create
+   else
+     result := exp.Clone;
+   try
+     if (not res) and (params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details') then
+       result.includeDefinition := true;
+     if (params.str['_incomplete'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
+     if (params.str['limitedExpansion'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
+     if (params.str['displayLanguage'] <> '') then
+       result.displayLanguage := params.str['displayLanguage'];
+     if (params.str['includeDesignations'] <> '') then
+       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
+     if (params.str['includeDefinition'] <> '') then
+       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
+     if (params.str['includeInactive'] <> '') then
+       result.includeInactive := StrToBoolDef(params.str['includeInactive'], false);
+     if (params.str['excludeNested'] <> '') then
+       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
+     if (params.str['excludeNotForUI'] <> '') then
+       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
+     if (params.str['excludePostCoordinated'] <> '') then
+       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
+     {$IFDEF FHIR3}
+     if (result.url = '') and not res then
+       result.url := params.str['profile'];
+     {$ENDIF}
+
+     result.Link;
+   finally
+     result.free;
+   end;
+  finally
+    exp.free;
+  end;
+end;
+
 { TFhirGenerateQAOperation }
 
 function TFhirGenerateQAOperation.Name: String;
@@ -6009,61 +6070,6 @@ end;
 function TFhirExpandValueSetOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtValueSet];
-end;
-
-function TFhirExpandValueSetOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFhirOperationManager; params: TFhirParameters): TFHIRExpansionProfile;
-var
-  needSecure : boolean;
-  exp : TFhirExpansionProfile;
-begin
-  {$IFDEF FHIR3}
-  if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-    exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
-  else if params.str['profile'] <> '' then
-    exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
-  else
-  {$ENDIF}
-    exp := nil;
-
-  try
-   if exp = nil then
-     result := TFhirExpansionProfile.Create
-   else
-     result := exp.Clone;
-   try
-     if params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details' then
-       result.includeDefinition := true;
-     if (params.str['_incomplete'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
-     if (params.str['limitedExpansion'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
-     if (params.str['displayLanguage'] <> '') then
-       result.displayLanguage := params.str['displayLanguage'];
-     if (params.str['includeDesignations'] <> '') then
-       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
-     if (params.str['includeDefinition'] <> '') then
-       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
-     if (params.str['includeInactive'] <> '') then
-       //  result.includeInactive := StrToBoolDef(params.str['includeInactive'], false);
-       raise ETerminologyError.Create('The terminology server does not presently support inactive codes');
-     if (params.str['excludeNested'] <> '') then
-       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
-     if (params.str['excludeNotForUI'] <> '') then
-       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
-     if (params.str['excludePostCoordinated'] <> '') then
-       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
-     {$IFDEF FHIR3}
-     if (result.url = '') then
-       result.url := params.str['profile'];
-     {$ENDIF}
-
-     result.Link;
-   finally
-     result.free;
-   end;
-  finally
-    exp.free;
-  end;
 end;
 
 function TFhirExpandValueSetOperation.CreateDefinition(base : String): TFHIROperationDefinition;
@@ -6553,6 +6559,7 @@ var
   abstractOk : boolean;
   params, pout : TFhirParameters;
   needSecure : boolean;
+  profile : TFhirExpansionProfile;
 begin
   try
     manager.NotFound(request, response);
@@ -6642,23 +6649,27 @@ begin
                 vs.checkNoModifiers('ValueSetValidation', 'ValueSet');
               end;
 
-
+              profile := buildExpansionProfile(request, manager, params);
               try
-                response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, abstractOk);
-              except
-                on e : Exception do
-                begin
-                  pout := TFHIRParameters.create;
-                  response.resource := pout;
-                  pout.AddParameter('result', false);
-                  pout.AddParameter('message', e.Message);
-                  pout.AddParameter('cause', 'unknown');
+                try
+                  response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, profile, abstractOk);
+                except
+                  on e : Exception do
+                  begin
+                    pout := TFHIRParameters.create;
+                    response.resource := pout;
+                    pout.AddParameter('result', false);
+                    pout.AddParameter('message', e.Message);
+                    pout.AddParameter('cause', 'unknown');
+                  end;
                 end;
+                response.HTTPCode := 200;
+                response.Message := 'OK';
+                response.Body := '';
+                response.LastModifiedDate := now;
+              finally
+                profile.free;
               end;
-              response.HTTPCode := 200;
-              response.Message := 'OK';
-              response.Body := '';
-              response.LastModifiedDate := now;
             finally
               coded.Free;
             end;

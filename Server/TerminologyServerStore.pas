@@ -205,6 +205,7 @@ Type
     function GetBackgroundThreadStatus: String;
     procedure SetBackgroundThreadStatus(const Value: String);
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptList; url : String);
+    function checkVersion(system, version: String; profile: TFHIRExpansionProfile): String;
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
@@ -233,8 +234,8 @@ Type
     procedure DropTerminologyResource(aType : TFhirResourceType; id : String);
 
     // access procedures. All return values are owned, and must be freed
-    Function getProvider(system : String; version : String; noException : boolean = false) : TCodeSystemProvider; overload;
-    Function getProvider(codesystem : TFHIRCodeSystem) : TCodeSystemProvider; overload;
+    Function getProvider(system : String; version : String; profile : TFHIRExpansionProfile; noException : boolean = false) : TCodeSystemProvider; overload;
+    Function getProvider(codesystem : TFHIRCodeSystem; profile : TFHIRExpansionProfile) : TCodeSystemProvider; overload;
     function getValueSetByUrl(url : String) : TFHIRValueSet;
     function getValueSetById(id : String) : TFHIRValueSet;
     function getCodeSystemById(id : String) : TFHIRCodeSystem;
@@ -454,7 +455,7 @@ constructor TAllCodeSystemsProvider.Create(store: TTerminologyServerStore);
 begin
   inherited Create;
   FStore := store;
-  FActCode := store.getProvider('http://hl7.org/fhir/v3/ActCode', '');
+  FActCode := store.getProvider('http://hl7.org/fhir/v3/ActCode', '', nil);
 end;
 
 function TAllCodeSystemsProvider.Display(context : TCodeSystemProviderContext; lang : String) : string;
@@ -1012,7 +1013,7 @@ begin
   if (codeA.code = codeB.code) then
     exit('equivalent');
 
-  prov := getProvider(cs);
+  prov := getProvider(cs, nil);
   try
     result := prov.subsumesTest(codeA.code, codeB.code);
   finally
@@ -1024,7 +1025,7 @@ function TTerminologyServerStore.supportsSystem(s: String; version : String): bo
 var
   p : TCodeSystemProvider;
 begin
-  p := getProvider(s, version, true);
+  p := getProvider(s, version, nil, true);
   try
     result := p <> nil;
   finally
@@ -1531,9 +1532,28 @@ begin
 end;
 
 
-Function TTerminologyServerStore.getProvider(system : String; version : String; noException : boolean = false) : TCodeSystemProvider;
+function TTerminologyServerStore.checkVersion(system, version : String; profile : TFHIRExpansionProfile) : String;
+var
+  t : TFHIRExpansionProfileCodeSystemIncludeCodeSystem;
+begin
+  if (profile = nil) or (profile.codeSystem = nil) or (profile.codeSystem.include = nil) then
+    exit(version);
+
+  for t in profile.codeSystem.include.codeSystemList do
+    if (t.system = system) and (t.version <> '') then
+    begin
+      if version = '' then
+        version := t.version
+      else
+        raise ETerminologyError.Create('Expansion Profile Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
+    end;
+  exit(version);
+end;
+
+Function TTerminologyServerStore.getProvider(system : String; version : String; profile : TFHIRExpansionProfile; noException : boolean = false) : TCodeSystemProvider;
 begin
   result := nil;
+  version := checkVersion(system, version, profile);
 
   if FProviderClasses.ContainsKey(system) then
   begin
@@ -1586,8 +1606,9 @@ begin
 end;
 
 
-function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystem): TCodeSystemProvider;
+function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystem; profile : TFHIRExpansionProfile): TCodeSystemProvider;
 begin
+  checkVersion(codeSystem.url, codeSystem.version, profile);
   result := TFhirCodeSystemProvider.create(codesystem.link);
 end;
 
@@ -1765,7 +1786,7 @@ begin
     result := DefSnomed.Subsumes(code1, code2)
   else
   begin
-    prov := getProvider(uri1, '', true);
+    prov := getProvider(uri1, '', nil, true);
     if prov <> nil then
     begin
       try

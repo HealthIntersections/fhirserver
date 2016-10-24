@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.88 2016-10-17</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.88.exe</link>
+			<description>2016-10-17 (v1.0.88): Update for better snomed ct support</description>
+		</item>
+<item><title>FHIRServer release 1.0.87 2016-10-13</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.87.exe</link>
+			<description>2016-10-13 (v1.0.87): fix bug in DSTU2 server validation</description>
+		</item>
 		<item><title>FHIRServer release 1.0.86 2016-10-12</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.86.exe</link>
 			<description>2016-10-12 (v1.0.86): Fix CORS issue + add TestReport</description>
 		</item>
-<item><title>FHIRServer release 1.0.85 2016-10-12</title>
+		<item><title>FHIRServer release 1.0.85 2016-10-12</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.85.exe</link>
 			<description>2016-10-12 (v1.0.85): upgrade STU3 version for many changes to conformance resources</description>
 		</item>

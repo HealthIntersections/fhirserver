@@ -15,6 +15,7 @@ Type
     FOthers : TAdvStringObjectMatch; // checkers or code system providers
     fvs : TFHIRValueSet;
     FId: String;
+    FProfile : TFhirExpansionProfile;
     function check(system, version, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
     function findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
     function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
@@ -28,7 +29,7 @@ Type
     property id : String read FId;
     property name : String read getName;
 
-    procedure prepare(vs : TFHIRValueSet);
+    procedure prepare(vs : TFHIRValueSet; profile : TFhirExpansionProfile);
 
     function check(system, version, code : String; abstractOk : boolean) : boolean; overload;
     function check(coding : TFhirCoding; abstractOk : boolean): TFhirParameters; overload;
@@ -53,10 +54,11 @@ begin
   FVs.Free;
   FOthers.Free;
   FStore.Free;
+  Fprofile.Free;
   inherited;
 end;
 
-procedure TValueSetChecker.prepare(vs: TFHIRValueSet);
+procedure TValueSetChecker.prepare(vs: TFHIRValueSet; profile : TFhirExpansionProfile);
 var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeInclude;
@@ -68,6 +70,7 @@ var
 
   {$ENDIF}
 begin
+  FProfile := profile.Link;
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   vs.checkNoModifiers('ValueSetChecker.prepare', 'ValueSet');
   if (vs = nil) then
@@ -94,7 +97,7 @@ begin
             raise ETerminologyError.create('Unable to find value set '+fvs.compose.importList[i].value);
           checker := TValueSetChecker.create(Fstore.link, other.url);
           try
-            checker.prepare(other);
+            checker.prepare(other, profile);
             FOthers.Add(fvs.compose.importList[i].value, checker.Link);
           finally
             checker.free;
@@ -129,7 +132,7 @@ begin
         raise ETerminologyError.create('Unable to find value set ' + ivs.value);
       checker := TValueSetChecker.create(Fstore.link, other.url);
       try
-        checker.prepare(other);
+        checker.prepare(other, FProfile);
         FOthers.Add(ivs.value, checker.Link);
       finally
         checker.free;
@@ -140,7 +143,7 @@ begin
   end;
   {$ENDIF}
   if not FOthers.ExistsByKey(cc.system) then
-    FOthers.Add(cc.system, FStore.getProvider(cc.system, cc.version));
+    FOthers.Add(cc.system, FStore.getProvider(cc.system, cc.version, Fprofile));
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
   for ccf in cc.filterList do
   begin
@@ -213,7 +216,7 @@ begin
   {special case:}
   if (fvs.url = ANY_CODE_VS) then
   begin
-    cs := FStore.getProvider(system, version, true);
+    cs := FStore.getProvider(system, version, FProfile, true);
     try
       if cs = nil then
         result := false
@@ -224,7 +227,7 @@ begin
           result := false
         else
           try
-            result := abstractOk or not cs.IsAbstract(ctxt);
+            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FProfile = nil) or (FProfile.includeInactiveElement <> nil) or FProfile.includeInactive or not cs.isInactive(ctxt));
             cs.Displays(ctxt, displays, '');
           finally
             cs.Close(ctxt);
@@ -378,7 +381,7 @@ begin
         end
         else
         begin
-          prov := FStore.getProvider(code.codingList[i].system, code.codingList[i].version, true);
+          prov := FStore.getProvider(code.codingList[i].system, code.codingList[i].version, FProfile, true);
           try
            if (prov = nil) then
            begin

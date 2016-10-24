@@ -70,6 +70,7 @@ var
 //  iIndex : Cardinal;
 //  Identity : UInt64;
   Flags : Byte;
+  Active, Defining : boolean;
   Group : integer;
 //  ParentIndex : Cardinal;
 //  DescriptionIndex : Cardinal;
@@ -105,7 +106,7 @@ begin
     Inbounds := FSnomed.Refs.GetReferences(FSnomed.Concept.GetInbounds(iIndex));
     For i := 0 to length(Inbounds)-1 Do
     begin
-      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
+      FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
       if FSnomed.GetConceptId(iWork3) = '116680003' then
         raise Exception.Create('Concept '+id+' has no descendants but it does ');
     end;
@@ -537,6 +538,7 @@ var
   rootConcepts : TCardinalArray;
 //  cnd : TFhirConditionDefinition;
   cid : String;
+  Active, Defining : boolean;
 begin
   FSnomed.Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := FSnomed.Refs.GetReferences(DescriptionIndex);
@@ -558,8 +560,8 @@ begin
 
   for i := Low(Outbounds) To High(Outbounds) Do
   begin
-    FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Flags, Group);
-    if (flags and MASK_REL_CHARACTERISTIC <> VAL_REL_Historical) then
+    FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
+    if Active then
     begin
       rootConcepts := getRootConcepts(iWork2);
 

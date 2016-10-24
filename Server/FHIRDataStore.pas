@@ -2049,7 +2049,7 @@ var
   prov: TCodeSystemProvider;
 begin
   try
-    prov := FTerminologyServer.getProvider(system, version);
+    prov := FTerminologyServer.getProvider(system, version, nil);
     try
       if prov <> nil then
         result := prov.getDisplay(code, '');
