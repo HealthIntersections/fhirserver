@@ -539,6 +539,7 @@ operations
     Function GetFSN(iDescriptions : TCardinalArray) : String;
     function GetPNForConcept(iIndex: Cardinal): String;
     function GetConceptParents(index : Cardinal) : TCardinalArray;
+    function GetConceptChildren(index : Cardinal) : TCardinalArray;
     function GetDefiningRelationships(index : Cardinal) : TCardinalArray; // but not is_a - the idea is that they'll be processed differently, since they're transitive
     function isPrimitive(index : Cardinal) : boolean;
     function IsActive(index : Cardinal) : boolean;
@@ -2273,6 +2274,38 @@ begin
     result := Refs.GetReferences(ParentIndex);
 end;
 
+function TSnomedServices.GetConceptChildren(index: Cardinal): TCardinalArray;
+var
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex : Cardinal;
+  refsets, c : Cardinal;
+  date : word;
+  inbounds : TCardinalArray;
+  Source, Target, RelType, module, kind, modifier : Cardinal;
+  Active, Defining : Boolean;
+  Group : Integer;
+begin
+  Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  SetLength(result, 0);
+  if InboundIndex > 0 then
+  begin
+    inbounds := Refs.GetReferences(InboundIndex);
+    for c in inbounds do
+    begin
+      Rel.GetRelationship(c, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
+      if (group = 0) and active and (relType = Is_a_Index) then
+      begin
+        SetLength(result, length(result)+1);
+        result[length(result)-1] := source;
+      end;
+    end;
+  end;
+end;
+
 function TSnomedServices.StringToIdOrZero(const s: String): UInt64;
 begin
   if StringIsInteger64(s) then
@@ -3053,6 +3086,14 @@ begin
     Concept.GetConcept(TSnomedExpressionContext(ctxt).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     Inbounds := Refs.GetReferences(InboundIndex);
 
+    {$IFDEF FHIR3}
+    p := TFHIRLookupOpProperty_.create;
+    resp.property_List.Add(p);
+    p.code := 'copyright';
+    p.value := 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement';
+    {$ELSE}
+    resp.addExtension('copyright', 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), '+'and distributed by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
+    {$ENDIF}
     if hasProp(props, 'inactive', true) then
     begin
       {$IFDEF FHIR3}
@@ -3064,6 +3105,8 @@ begin
       resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
     end;
+
+
 
     if hasProp(props, 'moduleId', true) then
     begin

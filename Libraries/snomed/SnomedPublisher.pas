@@ -749,6 +749,7 @@ Begin
       aMembers := FSnomed.RefSetMembers.GetMembers(iMembers);
       html.StartTable(false);
       html.StartTableRow;
+      html.AddTableCell('UID', true);
       html.AddTableCell('Members', true);
       For i := 0 to length(fields)-1 Do
         html.AddTableCell(FSnomed.Strings.GetEntry(fields[i]), true);
@@ -756,6 +757,7 @@ Begin
       For i := iStart to Min(iStart+MAX_ROWS, High(aMembers)) Do
       Begin
         html.StartRowFlip(i);
+        html.AddTableCell(GUIDToString(aMembers[i].id));
         case aMembers[i].kind of
           0 {concept} :
             CellConceptRef(html, sPrefix, aMembers[i].Ref, cdDesc);

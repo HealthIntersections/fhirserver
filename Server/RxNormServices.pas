@@ -412,7 +412,9 @@ procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TL
 var
   qry : TKDBConnection;
   b : boolean;
+  {$IFDEF FHIR3}
   p : TFHIRLookupOpProperty_;
+  {$ENDIF}
 begin
   if hasProp(props, 'inactive', true) then
   begin

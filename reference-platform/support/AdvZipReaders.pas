@@ -234,7 +234,7 @@ Begin
         first := false;
       End;
       inc(count);
-    until true; // {(partName <> 'fhir.schema.json.zip') or (count > 1);
+    until (partName <> 'fhir.schema.json.zip') or (count > 1);
     If iCurrent <> SIG_DATA_DESCRIPTOR Then
       Error('ReadUnknownLengthDeflate', 'Error in zip structure: Source is not terminated by a Data Descriptor');
     iCRC := ReadLongWord;                // crc-32                          4 bytes

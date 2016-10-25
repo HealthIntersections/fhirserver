@@ -606,7 +606,7 @@ begin
   begin
     step('Process Reference Sets for '+svc.EditionName);
     uid := GuidToString(m.id);
-    if not new or not rs.FMembers.ContainsKey(uid) then
+    if not rs.FMembers.ContainsKey(uid) then
     begin
       result := true;
       rm := TSnomedCombinedReferenceSetEntry.Create;
@@ -624,15 +624,17 @@ begin
         for j := 0 to length(tl) - 1 do
           case vl[j*2+1] of
             1 {concept} : rm.FValues.add(svc.GetConceptId(vl[j*2]));
-  //        2:
-  //        3:
+            2 {desc}    : rm.FValues.add(svc.GetDescriptionId(vl[j*2]));
+            3 {rel}     : rm.FValues.add(svc.GetRelationshipId(vl[j*2]));
             4 {integer} : rm.FValues.add(inttostr(vl[j*2]));
-            5 {string} : rm.FValues.add(svc.Strings.GetEntry(vl[j*2]));
+            5 {string}  : rm.FValues.add(svc.Strings.GetEntry(vl[j*2]));
           else
             raise exception.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
           end;
       end;
-    end;
+    end
+    else if new then
+      recordIssue('Apparent duplicate id '+uid+' in '+rs.FName+' ('+inttostr(rs.FDefinition.id)+')');
   end;
 end;
 
@@ -1052,7 +1054,7 @@ begin
         r.endRecord;
       end;
     finally
-      rs.Free;
+      r.Free;
     end;
   end;
 end;

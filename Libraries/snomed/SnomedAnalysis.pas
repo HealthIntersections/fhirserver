@@ -15,6 +15,7 @@ type
   public
     FRelationship : cardinal;
     FCount : cardinal;
+    FCounts : Array of Cardinal;
     FIndCount : cardinal;
     FTopmost : cardinal;
     FDupl : cardinal;
@@ -38,6 +39,7 @@ type
   private
     FSnomed : TSnomedServices;
     FRoots : TCardinalArray;
+    Handled : TCardinalArray;
 //    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
 //    function CreateRef(root, index : Cardinal) : TFhirReference;
     procedure listRelationships(iIndex : cardinal; list : TRelationshipList; bnd : TFhirBundle);
@@ -45,7 +47,11 @@ type
 //    function intersection(one, two : TCardinalArray) : TCardinalArray;
     procedure registerSCTRoots(ids : Array of String);
 
+    function tref(index : integer): String;
     procedure assess(b : TAdvStringBuilder; id : String; bnd : TFhirBundle = nil);
+    function getProps(id, prop : cardinal) : TCardinalArray;
+    procedure processTree(b : TAdvStringBuilder; id : string; props : Array of String);
+    procedure processNode(b : TAdvStringBuilder; id : cardinal; props : Array of Cardinal);
   public
     Constructor Create(snomed : TSnomedServices); overload;
     Destructor Destroy; override;
@@ -94,7 +100,9 @@ var
 //  ok : boolean;
 //  iRef : Cardinal;
   cid : String;
+  ic : integer;
 begin
+  exit;
   writeln('');
   writeln(id);
   iId := StrToUInt64Def(id, 0);
@@ -113,7 +121,7 @@ begin
   end;
 
   b.AppendLine(' <tr><td colspan="8"><b>');
-  b.append('<a href="../doco/?type=snomed&id=');
+  b.append('<a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
   b.Append(id);
   b.Append('">');
   b.Append(id);
@@ -138,7 +146,7 @@ begin
       begin
 
         b.AppendLine(' <tr>');
-        b.Append('  <td><a href="../doco/?type=snomed&id=');
+        b.Append('  <td><a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
         b.Append(FSnomed.GetConceptId(list[i].FRelationship));
         b.Append('"/>');
         b.Append(FSnomed.GetDisplayName(list[i].FRelationship, 0));
@@ -147,10 +155,14 @@ begin
         b.Append('</td><td>');
         b.Append(inttostr(trunc((list[i].FIndCount / length(alldesc)) * 100)));
         b.Append('</td><td>');
-        b.Append(inttostr(list[i].FCount));
+        // b.Append(inttostr(list[i].FCount));
+        for ic in list[i].FCounts do
+          b.Append(inttostr(ic)+' ');
+
+
         b.Append('</td><td>');
         b.Append(inttostr(list[i].FDupl+1));
-        b.Append('</td><td><a href="../doco/?type=snomed&id=');
+        b.Append('</td><td><a href="/snomed/'+FSnomed.EditionId+'/?type=snomed&id=');
         b.Append(FSnomed.GetConceptId(list[i].FMax));
         b.Append('"/>');
         b.Append(FSnomed.GetDisplayName(list[i].FMax, 0));
@@ -161,7 +173,7 @@ begin
         begin
           if (j > 0) then
             b.Append('<br/>');
-          b.Append('<a href="../doco/?type=snomed&id=');
+          b.Append('<a href="../'+FSnomed.EditionId+'/?type=snomed&id=');
           b.Append(FSnomed.GetConceptId(list[i].FBranches[j]));
           b.Append('"/>');
           b.Append(FSnomed.GetDisplayName(list[i].FBranches[j], 0));
@@ -361,6 +373,8 @@ begin
     end;
     b.AppendLine('</table>');
 
+    processTree(b, '123038009', ['370133003', '118169006', '118171006', '118170007', '118168003', '123005000', '260686004']);
+
     b.appendLine('</div>');
     b.appendLine('');
     b.appendLine('');
@@ -374,7 +388,7 @@ begin
     b.appendLine('		<div class="container">  <!-- container -->');
     b.appendLine('			<div class="inner-wrapper">');
     b.appendLine('				<p>');
-    b.appendLine('        <a href="/snomed/doco/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR Version <a href="'+FHIR_SPEC_URL+'" style="color: gold">0.5.0-5264</a>');
+    b.appendLine('        <a href="/snomed/'+FSnomed.EditionId+'/" style="color: gold">Server Home</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR Version <a href="'+FHIR_SPEC_URL+'" style="color: gold">0.5.0-5264</a>');
     b.appendLine('        </span>');
     b.appendLine('        </p>');
     b.appendLine('			</div>  <!-- /inner-wrapper -->');
@@ -386,23 +400,6 @@ begin
     b.appendLine('		<div class="container">  <!-- container -->');
     b.appendLine('		</div>  <!-- /container -->');
     b.appendLine('	</div>  <!-- /segment-post-footer -->');
-    b.appendLine('');
-    b.appendLine('');
-    b.appendLine('');
-    b.appendLine('');
-    b.appendLine('');
-    b.appendLine('      <!-- JS and analytics only. -->');
-    b.appendLine('      <!-- Bootstrap core JavaScript');
-    b.appendLine('================================================== -->');
-    b.appendLine('  <!-- Placed at the end of the document so the pages load faster -->');
-    b.appendLine('<script src="/assets/js/jquery.js"/>');
-    b.appendLine('<script src="/dist/js/bootstrap.min.js"/>');
-    b.appendLine('<script src="/assets/js/respond.min.js"/>');
-    b.appendLine('');
-    b.appendLine('<script src="/assets/js/fhir.js"/>');
-    b.appendLine('');
-    b.appendLine('  <!-- Analytics Below');
-    b.appendLine('================================================== -->');
     b.appendLine('');
     b.appendLine('');
     b.appendLine('');
@@ -453,6 +450,39 @@ end;
 //  SetLength(result, c);
 //end;
 //
+function TSnomedAnalysis.getProps(id, prop: cardinal): TCardinalArray;
+var
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex : Cardinal;
+  refsets, c : Cardinal;
+  date : word;
+  outbounds : TCardinalArray;
+  Source, Target, RelType, module, kind, modifier : Cardinal;
+  Active, Defining : Boolean;
+  Group : Integer;
+begin
+  FSnomed.Concept.GetConcept(id, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+  SetLength(result, 0);
+  if outboundIndex > 0 then
+  begin
+    outbounds := FSnomed.Refs.GetReferences(outboundIndex);
+    for c in outbounds do
+    begin
+      FSnomed.Rel.GetRelationship(c, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
+      if {(group = 0) and }active and (RelType = prop) then
+      begin
+        SetLength(result, length(result)+1);
+        result[length(result)-1] := target;
+      end;
+    end;
+  end;
+
+end;
+
 function TSnomedAnalysis.getRootConcepts(iIndex : cardinal) : TCardinalArray;
 var
   c, i, j, k, l : integer;
@@ -561,31 +591,9 @@ begin
   for i := Low(Outbounds) To High(Outbounds) Do
   begin
     FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
-    if Active then
+    if Active and (group = 0) then
     begin
       rootConcepts := getRootConcepts(iWork2);
-
-//      if (cnd <> nil) then
-//      begin
-//        rid := FSnomed.GetConceptId(iWork3);
-//        if (rid = '246112005') then
-//          cnd.severity := createCC(iWork2)
-//        else if (rid = '246454002') then
-//          cnd.occuranceList.Add(createCC(iWork2))
-//        else if (Length(rootConcepts) > 0) then
-//        begin
-//          if (rid = '363698007') then
-//            cnd.findingSiteList.Add(createRef(rootConcepts[0], iWork2))
-//          else if (rid = '116676008') then
-//            cnd.morphologyList.Add(createRef(rootConcepts[0], iWork2))
-//          else if (rid = '246075003') then
-//            cnd.causedByList.Add(createRef(rootConcepts[0], iWork2))
-//          else if (rid = '47429007') then
-//            cnd.associatedList.Add(createRef(rootConcepts[0], iWork2));
-//        end;
-//      end;
-
-
       rel := list.getById(iwork3);
       if (rel = nil) then
       begin
@@ -625,6 +633,9 @@ begin
           inc(c);
       if (c = 0) then
         inc(rel.FIndCount);
+      if Length(rel.FCounts) < c+1 then
+        SetLength(rel.FCounts, c+1);
+      rel.FCounts[c] := rel.FCounts[c] + 1;
       if c > rel.FDupl then
       begin
         rel.FDupl := c;
@@ -634,6 +645,65 @@ begin
   end;
 end;
 
+
+procedure TSnomedAnalysis.processNode(b: TAdvStringBuilder; id: cardinal; props: array of Cardinal);
+var
+  c, d : cardinal;
+  p, children, nhandled : TCardinalArray;
+begin
+  for c in Handled do
+    if c = id then
+      exit;
+  SetLength(handled, length(Handled)+1);
+  Handled[length(Handled)-1] := id;
+
+  b.Append(' <tr><td>'+tref(id)+'</td>');
+  for c in props do
+  begin
+    b.Append('<td>');
+    p := getProps(id, c);
+    if (length(p) <= 1) then
+    begin
+      for d in p do
+        b.Append(tref(d)+' ');
+    end
+    else
+    begin
+      b.Append('<ul>');
+      for d in p do
+        b.Append('<li>'+tref(d)+'</li>');
+      b.Append('</ul>');
+    end;
+    b.Append('</td>');
+  end;
+  b.Append('</tr>'+#13#10);
+  children := FSnomed.GetConceptChildren(id);
+  for c in children do
+    processNode(b, c, props);
+end;
+
+procedure TSnomedAnalysis.processTree(b: TAdvStringBuilder; id: string; props: array of String);
+var
+  index, c : cardinal;
+  propCs : array of cardinal;
+  i : integer;
+begin
+  FSnomed.Concept.FindConcept(StrToUInt64(id), index);
+  SetLength(propCs, length(props));
+  for I := 0 to length(props) - 1 do
+  begin
+    FSnomed.Concept.FindConcept(StrToUInt64(props[i]), c);
+    propCs[i] := c;
+  end;
+  b.Append('<table class="grid">'+#13#10);
+  b.Append(' <tr><td>'+tref(index)+'</td>');
+  for c in propCs do
+    b.Append('<td>'+tref(c)+'</td>');
+  b.Append('</tr>'+#13#10);
+  SetLength(Handled, 0);
+  processNode(b, index, propCs);
+  b.Append('</table>'+#13#10);
+end;
 
 procedure TSnomedAnalysis.registerSCTRoots(ids: array of String);
 var
@@ -649,6 +719,15 @@ begin
       raise Exception.Create('not defined: '+ids[i]);
     FRoots[i] := iIndex;
   end;
+end;
+
+function TSnomedAnalysis.tref(index: integer): String;
+var
+  id, text : String;
+begin
+  id := FSnomed.GetConceptId(index);
+  text := FSnomed.GetDisplayName(index, 0);
+  result := '<a href="/snomed/'+FSnomed.EditionId+'/?type=snomed&id='+id+'">'+text+'</a>';
 end;
 
 //Procedure TSnomedPublisher.CellConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; bShowId : Boolean; iDesc : Cardinal = 0);
