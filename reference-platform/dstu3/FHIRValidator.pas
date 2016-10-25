@@ -1456,7 +1456,7 @@ begin
 
   // get the list of direct defined children, including slices
   children := TAdvList<TElementInfo>.Create();
-  childDefinitions := getChildMap(profile, definition.name, definition.path, definition.ContentReference);
+  childDefinitions := getChildMap(profile, definition.slicename, definition.path, definition.ContentReference);
   try
     if (childDefinitions.isEmpty()) then
     begin
@@ -1888,7 +1888,7 @@ var
   index: integer;
 begin
   result := nil;
-  childDefinitions := getChildMap(profile, ed.name, ed.path, '');
+  childDefinitions := getChildMap(profile, ed.slicename, ed.path, '');
   try
     Snapshot := nil;
     if (childDefinitions.count = 0) then

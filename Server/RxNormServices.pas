@@ -413,7 +413,7 @@ var
   qry : TKDBConnection;
   b : boolean;
   {$IFDEF FHIR3}
-  p : TFHIRLookupOpProperty_;
+  p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
 begin
   if hasProp(props, 'inactive', true) then
@@ -438,7 +438,7 @@ begin
     end;
 
     {$IFDEF FHIR3}
-    p := TFHIRLookupOpProperty_.create;
+    p := TFHIRLookupOpRespProperty_.create;
     resp.property_List.Add(p);
     p.code := 'inactive';
     p.value := BooleanToString(b);

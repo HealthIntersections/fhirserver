@@ -227,7 +227,7 @@ begin
           result := false
         else
           try
-            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FProfile = nil) or (FProfile.includeInactiveElement <> nil) or FProfile.includeInactive or not cs.isInactive(ctxt));
+            result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FProfile = nil) or not FProfile.activeOnly or not cs.isInactive(ctxt));
             cs.Displays(ctxt, displays, '');
           finally
             cs.Close(ctxt);

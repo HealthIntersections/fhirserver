@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.88
+AppVerName=1.0.89
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.88
+OutputBaseFilename=fhirserver3-1.0.89
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -98,7 +98,7 @@ Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";               De
 Source: "C:\work\org.hl7.fhir\build\guides\daf2\output\examples.json.zip";    DestDir: {app}\load; DestName: daf.json.zip;    Components: r3; Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir\build\guides\sdc2\output\examples.json.zip";    DestDir: {app}\load; DestName: sdc.json.zip;    Components: r3; Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir\build\guides\qicore2\output\examples.json.zip"; DestDir: {app}\load; DestName: qicore.json.zip; Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";   DestDir: {app}\load; DestName: ccda.json.zip;   Components: r3; Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";   DestDir: {app}\load; DestName: ccda.json.zip;   Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\install\load.ini";                                DestDir: {app}\load;                            Components: r3; Flags: ignoreversion
 
 ; Terminology resources

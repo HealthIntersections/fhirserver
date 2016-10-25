@@ -2250,7 +2250,7 @@ var
 begin
   result := '';
   for i := 0 to Count - 1 do
-    result := result + ','+Item(i).name;
+    result := result + ','+Item(i).slicename;
   if result <> '' then
     result := result.Substring(1);
 end;
@@ -3066,7 +3066,7 @@ begin
       begin
         if (p = path) then
         begin
-          if (name = '') or (e.name = name) then
+          if (name = '') or (e.slicename = name) then
             inscope := true
           else
             inscope := false;
@@ -3962,7 +3962,7 @@ end;
 
 function TFhirExpansionProfileHelper.hash: String;
 begin
- result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion)+BooleanToString(includeDesignations)+BooleanToString(includeInactive)+
+ result := BooleanToString(includeDefinition)+'|'+BooleanToString(limitedExpansion)+BooleanToString(includeDesignations)+BooleanToString(activeOnly)+
    BooleanToString(excludeNested)+BooleanToString(excludeNotForUI)+BooleanToString(excludePostCoordinated)+displayLanguage;
 end;
 

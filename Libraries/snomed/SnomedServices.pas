@@ -3073,8 +3073,8 @@ var
   Parents : TCardinalArray;
   i, group : integer;
   {$IFDEF FHIR3}
-  d : TFHIRLookupOpDesignation;
-  p : TFHIRLookupOpProperty_;
+  d : TFHIRLookupOpRespDesignation;
+  p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
   did : UInt64;
   exp : TSnomedExpression;
@@ -3087,7 +3087,7 @@ begin
     Inbounds := Refs.GetReferences(InboundIndex);
 
     {$IFDEF FHIR3}
-    p := TFHIRLookupOpProperty_.create;
+    p := TFHIRLookupOpRespProperty_.create;
     resp.property_List.Add(p);
     p.code := 'copyright';
     p.value := 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement';
@@ -3097,7 +3097,7 @@ begin
     if hasProp(props, 'inactive', true) then
     begin
       {$IFDEF FHIR3}
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'inactive';
       p.value := BooleanToString(not IsActive(TSnomedExpressionContext(ctxt).reference));
@@ -3111,7 +3111,7 @@ begin
     if hasProp(props, 'moduleId', true) then
     begin
       {$IFDEF FHIR3}
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'moduleId';
       p.value := getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference));
@@ -3125,11 +3125,11 @@ begin
       exp := createNormalForm(TSnomedExpressionContext(ctxt).reference);
       try
         {$IFDEF FHIR3}
-        p := TFHIRLookupOpProperty_.create;
+        p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'normalForm';
         p.value := renderExpression(exp, sroFillMissing);
-        p := TFHIRLookupOpProperty_.create;
+        p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'normalFormTerse';
         p.value := renderExpression(exp, sroMinimal);
@@ -3153,7 +3153,7 @@ begin
         {$IFDEF FHIR3}
         if Active and (kind <> 0) Then
         Begin
-          d := TFHIRLookupOpDesignation.create;
+          d := TFHIRLookupOpRespDesignation.create;
           resp.designationList.Add(d);
           d.value := Strings.GetEntry(iWork);
           d.use := TFHIRCoding.Create;
@@ -3176,7 +3176,7 @@ begin
           Concept.GetConcept(Parents[i], Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex2, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
           {$IFDEF FHIR3}
-          p := TFHIRLookupOpProperty_.create;
+          p := TFHIRLookupOpRespProperty_.create;
           resp.property_List.Add(p);
           p.code := 'parent';
           p.value := IntToStr(Identity);
@@ -3199,7 +3199,7 @@ begin
           Concept.GetConcept(iWork, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
           Descriptions := Refs.GetReferences(DescriptionIndex);
           {$IFDEF FHIR3}
-          p := TFHIRLookupOpProperty_.create;
+          p := TFHIRLookupOpRespProperty_.create;
           resp.property_List.Add(p);
           p.code := 'child';
           p.value := IntToStr(Identity);
@@ -3216,11 +3216,11 @@ begin
     exp := normaliseExpression(TSnomedExpressionContext(ctxt).Expression);
     try
       {$IFDEF FHIR3}
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'normalForm';
       p.value := renderExpression(exp, sroFillMissing);
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'normalFormTerse';
       p.value := renderExpression(exp, sroMinimal);

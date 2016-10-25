@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  StringSupport, EncodeSupport,
+  StringSupport, EncodeSupport, ParseMap,
   AdvStringBuilders, AdvObjectLists,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRParser,
   SnomedServices, FHIRParserBase,
@@ -42,28 +42,28 @@ type
     Handled : TCardinalArray;
 //    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
 //    function CreateRef(root, index : Cardinal) : TFhirReference;
-    procedure listRelationships(iIndex : cardinal; list : TRelationshipList; bnd : TFhirBundle);
+    procedure listRelationships(iIndex : cardinal; list : TRelationshipList);
     function getRootConcepts(iIndex : cardinal) : TCardinalArray;
 //    function intersection(one, two : TCardinalArray) : TCardinalArray;
     procedure registerSCTRoots(ids : Array of String);
 
     function tref(index : integer): String;
-    procedure assess(b : TAdvStringBuilder; id : String; bnd : TFhirBundle = nil);
+    procedure assess(b : TAdvStringBuilder; id : String);
     function getProps(id, prop : cardinal) : TCardinalArray;
-    procedure processTree(b : TAdvStringBuilder; id : string; props : Array of String);
-    procedure processNode(b : TAdvStringBuilder; id : cardinal; props : Array of Cardinal);
+    procedure listChildren(id : cardinal; list : TStringList);
+    procedure processTree(b : TAdvStringBuilder; id : string; props : TStringList);
   public
     Constructor Create(snomed : TSnomedServices); overload;
     Destructor Destroy; override;
 
-    function generate : String;
+    function generate(params : TParseMap) : String;
   end;
 
 implementation
 
 { TSnomedAnalysis }
 
-procedure TSnomedAnalysis.assess(b: TAdvStringBuilder; id: String; bnd : TFhirBundle = nil);
+procedure TSnomedAnalysis.assess(b: TAdvStringBuilder; id: String);
 var
   list : TRelationshipList;
   did : UInt64;
@@ -102,9 +102,6 @@ var
   cid : String;
   ic : integer;
 begin
-  exit;
-  writeln('');
-  writeln(id);
   iId := StrToUInt64Def(id, 0);
   if not FSnomed.Concept.FindConcept(iId, iIndex) then
     raise Exception.Create('not defined: '+id);
@@ -135,9 +132,7 @@ begin
   try
     for i := Low(allDesc) to high(allDesc) do
     begin
-      if (i mod 1000 = 0) then
-        write('.');
-      listRelationships(allDesc[i], list, bnd);
+      listRelationships(allDesc[i], list);
     end;
     for i := 0 to list.count -1 do
     begin
@@ -232,17 +227,12 @@ begin
   inherited;
 end;
 
-function TSnomedAnalysis.generate: String;
+function TSnomedAnalysis.generate(params : TParseMap): String;
 var
   b : TAdvStringBuilder;
-  bnd : TFhirBundle;
-  xml : TFHIRXmlComposer;
-  f : TFileStream;
+  st : TStringList;
+  s : String;
 begin
-  registerSCTRoots(['105590001', '123037004', '123038009', '243796009', '254291000', '260787004',
-     '272379006', '308916002', '362981000', '363787002', '370115009', '373873005', '404684003', '410607006', '419891008', '48176007',
-     '71388002', '78621006', '900000000000441003']);
-
   b  := TAdvStringBuilder.Create;
   try
     b.appendLine('<?xml version="1.0" encoding="UTF-8"?>');
@@ -327,53 +317,60 @@ begin
     b.appendLine('');
     b.appendLine('');
 
-    b.AppendLine('<h2>Snomed Table Analysis</h2>');
-    b.AppendLine('<table border="1" cellspacing="1">');
-    b.AppendLine(' <tr><td>Relationship</td><td># Concepts</td><td>%</td><td># Rows</td><td>MaxCount</td><td>Concept at Max</td><td># distinct targets</td><td>Common Ancestors</td></tr>');
 
-
-    bnd := TFhirBundle.create;
-    try
-      bnd.type_ := BundleTypeCollection;
-
-      assess(b, '105590001');
-      assess(b, '123037004');
-      assess(b, '123038009');
-      assess(b, '243796009');
-      assess(b, '254291000');
-      assess(b, '260787004');
-      assess(b, '272379006');
-      assess(b, '308916002');
-      assess(b, '362981000');
-      assess(b, '363787002');
-      assess(b, '370115009');
-      assess(b, '373873005');
-      assess(b, '404684003', bnd);
-      assess(b, '410607006');
-      assess(b, '419891008');
-      assess(b, '48176007');
-      assess(b, '71388002');
-      assess(b, '78621006');
-      assess(b, '900000000000441003');
-
-      xml := TFHIRXmlComposer.Create(nil, 'en');
+    if params.VarExists('base') then
+    begin
+      st := TStringList.Create;
       try
-        f := TFileStream.Create('c:\temp\cdefs.xml', fmcreate);
-        try
-          xml.Compose(f, bnd, true);
-        finally
-
-          f.Free;
-        end;
+        st.CommaText := params.GetVar('props');
+        b.AppendLine('<form method="GET">');
+        b.AppendLine('<p>Regenerate: </p><p>');
+        b.AppendLine(' Base Concept: <input type="text" name="base" value="'+params.GetVar('base')+'"> (concept id)</br>');
+        b.AppendLine(' Properties: <input type="text" name="props" value="'+st.commatext+'"> (comma separated list of concept ids)</br>');
+        b.AppendLine('<input type="submit" value="build"></br>');
+        b.AppendLine('</p></form method="GET">');
+        processTree(b, params.GetVar('base'), st);
       finally
-        xml.Free;
+        st.Free;
       end;
-    finally
-      bnd.Free;
+    end
+    else if params.VarExists('scan') then
+    begin
+      st := TStringList.Create;
+      try
+        st.CommaText := params.GetVar('scan');
+        b.AppendLine('<form method="GET">');
+        b.AppendLine('<p>Rescan: </p><p>');
+        b.AppendLine(' Candidate Concepts: <input type="text" name="scan" value="'+st.commatext+'"> (comma separated list of concept ids)</br>');
+        b.AppendLine('<input type="submit" value="scan"></br>');
+        b.AppendLine('</p></form method="GET">');
+        b.AppendLine('<table border="1" cellspacing="1">');
+        b.AppendLine(' <tr><td>Relationship</td><td># Concepts</td><td>%</td><td># Rows</td><td>MaxCount</td><td>Concept at Max</td><td># distinct targets</td><td>Common Ancestors</td></tr>');
+        registerSCTRoots(['105590001', '123037004', '123038009', '243796009', '254291000', '260787004',
+         '272379006', '308916002', '362981000', '363787002', '370115009', '373873005', '404684003', '410607006', '419891008', '48176007',
+         '71388002', '78621006', '900000000000441003']);
+        for s in st do
+          assess(b, s);
+      finally
+        st.Free;
+      end;
+      b.AppendLine('</table>');
+    end
+    else
+    begin
+      b.AppendLine('<h2>Snomed Table Analysis</h2>');
+      b.AppendLine('<form method="GET">');
+      b.AppendLine('<p>Scan for table candidates: </p><p>');
+      b.AppendLine(' Candidate Concepts: <input type="text" name="scan" value="105590001,123037004,123038009,243796009,254291000,260787004,272379006,308916002,362981000,363787002,370115009,373873005,'+'404684003,410607006,419891008,48176007,71388002,78621006,900000000000441003"> (comma separated list of concept ids)</br>');
+      b.AppendLine('<input type="submit" value="scan"></br>');
+      b.AppendLine('</p></form method="GET">');
+      b.AppendLine('<form method="GET">');
+      b.AppendLine('<p>Generate a table: </p><p>');
+      b.AppendLine(' Base Concept: <input type="text" name="base" value="123038009"> (concept id)</br>');
+      b.AppendLine(' Properties: <input type="text" name="props" value="370133003,118169006,118171006,118170007,118168003,123005000,260686004"> (comma separated list of concept ids)</br>');
+      b.AppendLine('<input type="submit" value="build"></br>');
+      b.AppendLine('</p></form method="GET">');
     end;
-    b.AppendLine('</table>');
-
-    processTree(b, '123038009', ['370133003', '118169006', '118171006', '118170007', '118168003', '123005000', '260686004']);
 
     b.appendLine('</div>');
     b.appendLine('');
@@ -532,7 +529,7 @@ begin
   SetLength(queue, c);
 end;
 
-procedure TSnomedAnalysis.listRelationships(iIndex: cardinal; list : TRelationshipList; bnd : TFhirBundle);
+procedure TSnomedAnalysis.listRelationships(iIndex: cardinal; list : TRelationshipList);
 var
 //  iId : UInt64;
   did : UInt64;
@@ -646,62 +643,83 @@ begin
 end;
 
 
-procedure TSnomedAnalysis.processNode(b: TAdvStringBuilder; id: cardinal; props: array of Cardinal);
+procedure TSnomedAnalysis.listChildren(id: cardinal; list : TStringList);
 var
-  c, d : cardinal;
-  p, children, nhandled : TCardinalArray;
+  children : TCardinalArray;
+  i : integer;
+  c : cardinal;
+  found : boolean;
 begin
-  for c in Handled do
-    if c = id then
-      exit;
-  SetLength(handled, length(Handled)+1);
-  Handled[length(Handled)-1] := id;
-
-  b.Append(' <tr><td>'+tref(id)+'</td>');
-  for c in props do
-  begin
-    b.Append('<td>');
-    p := getProps(id, c);
-    if (length(p) <= 1) then
-    begin
-      for d in p do
-        b.Append(tref(d)+' ');
-    end
-    else
-    begin
-      b.Append('<ul>');
-      for d in p do
-        b.Append('<li>'+tref(d)+'</li>');
-      b.Append('</ul>');
-    end;
-    b.Append('</td>');
-  end;
-  b.Append('</tr>'+#13#10);
   children := FSnomed.GetConceptChildren(id);
   for c in children do
-    processNode(b, c, props);
+  begin
+    found := false;
+    for i := 0 to list.Count - 1 do
+      if Cardinal(list.Objects[i]) = c then
+      begin
+        found := true;
+        break;
+      end;
+    if not found then
+    begin
+      list.AddObject(FSnomed.GetDisplayName(c, 0), TObject(c));
+      listChildren(c, list);
+    end;
+  end;
 end;
 
-procedure TSnomedAnalysis.processTree(b: TAdvStringBuilder; id: string; props: array of String);
+procedure TSnomedAnalysis.processTree(b: TAdvStringBuilder; id: string; props: TStringList);
 var
-  index, c : cardinal;
+  index, c, iid, d : cardinal;
   propCs : array of cardinal;
+  p : TCardinalArray;
   i : integer;
+  children : TStringList;
 begin
   FSnomed.Concept.FindConcept(StrToUInt64(id), index);
-  SetLength(propCs, length(props));
-  for I := 0 to length(props) - 1 do
+  SetLength(propCs, props.Count);
+  for I := 0 to props.Count - 1 do
   begin
     FSnomed.Concept.FindConcept(StrToUInt64(props[i]), c);
     propCs[i] := c;
   end;
+
   b.Append('<table class="grid">'+#13#10);
   b.Append(' <tr><td>'+tref(index)+'</td>');
   for c in propCs do
     b.Append('<td>'+tref(c)+'</td>');
   b.Append('</tr>'+#13#10);
-  SetLength(Handled, 0);
-  processNode(b, index, propCs);
+  children := TStringList.create;
+  try
+    listChildren(index, children);
+    children.sort;
+    for I := 0 to children.count - 1 do
+    begin
+      iid := cardinal(children.objects[i]);
+      b.Append(' <tr><td>'+tref(iid)+'</td>');
+      for c in propCs do
+      begin
+        b.Append('<td>');
+        p := getProps(iid, c);
+        if (length(p) <= 1) then
+        begin
+          for d in p do
+            b.Append(tref(d)+' ');
+        end
+        else
+        begin
+          b.Append('<ul>');
+          for d in p do
+            b.Append('<li>'+tref(d)+'</li>');
+          b.Append('</ul>');
+        end;
+        b.Append('</td>');
+      end;
+      b.Append('</tr>'+#13#10);
+    end;
+  finally
+    children.free;
+  end;
   b.Append('</table>'+#13#10);
 end;
 

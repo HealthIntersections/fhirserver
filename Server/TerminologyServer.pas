@@ -204,7 +204,7 @@ var
   ctxt : TCodeSystemProviderContext;
   s : String;
   {$IFDEF FHIR3}
-  p : TFHIRLookupOpProperty_;
+  p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
   function hasProp(name : String; def : boolean) : boolean;
   begin
@@ -228,7 +228,7 @@ begin
       if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
       begin
         {$IFDEF FHIR3}
-        p := TFHIRLookupOpProperty_.create;
+        p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.add(p);
         p.code := 'abstract';
         p.value := 'true';

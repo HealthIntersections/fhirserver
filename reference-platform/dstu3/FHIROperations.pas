@@ -38,14 +38,14 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-12T21:19:49+11:00
+// FHIR v1.7.0 generated 2016-10-26T07:06:29+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
 
 Type
 
-  //Operation lookup (Concept Look Up)
+  //Operation lookup (Concept Look Up & Decomposition)
   TFHIRLookupOpRequest = class (TFHIROperationRequest)
   private
     FCode : String;
@@ -72,24 +72,7 @@ Type
     property property_List : TList<String> read FProperty_List;
   end;
 
-  TFHIRLookupOpProperty_ = class (TFHIROperationObject)
-  private
-    FCode : String;
-    FValue : String;
-    FDescription : String;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property code : String read FCode write FCode;
-    property value : String read FValue write FValue;
-    property description : String read FDescription write FDescription;
-  end;
-
-  TFHIRLookupOpDesignation = class (TFHIROperationObject)
+  TFHIRLookupOpRespDesignation = class (TFHIROperationObject)
   private
     FLanguage : String;
     FUse : TFhirCoding;
@@ -107,13 +90,49 @@ Type
     property value : String read FValue write FValue;
   end;
 
+  TFHIRLookupOpRespSubproperty = class (TFHIROperationObject)
+  private
+    FCode : String;
+    FValue : String;
+    FDescription : String;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property code : String read FCode write FCode;
+    property value : String read FValue write FValue;
+    property description : String read FDescription write FDescription;
+  end;
+
+  TFHIRLookupOpRespProperty_ = class (TFHIROperationObject)
+  private
+    FCode : String;
+    FValue : String;
+    FDescription : String;
+    FSubpropertyList : TAdvList<TFHIRLookupOpRespSubproperty>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property code : String read FCode write FCode;
+    property value : String read FValue write FValue;
+    property description : String read FDescription write FDescription;
+    property subpropertyList : TAdvList<TFHIRLookupOpRespSubproperty> read FSubpropertyList;
+  end;
+
   TFHIRLookupOpResponse = class (TFHIROperationResponse)
   private
     FName : String;
     FVersion : String;
     FDisplay : String;
-    FProperty_List : TAdvList<TFHIRLookupOpProperty_>;
-    FDesignationList : TAdvList<TFHIRLookupOpDesignation>;
+    FDesignationList : TAdvList<TFHIRLookupOpRespDesignation>;
+    FProperty_List : TAdvList<TFHIRLookupOpRespProperty_>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -125,8 +144,8 @@ Type
     property name : String read FName write FName;
     property version : String read FVersion write FVersion;
     property display : String read FDisplay write FDisplay;
-    property property_List : TAdvList<TFHIRLookupOpProperty_> read FProperty_List;
-    property designationList : TAdvList<TFHIRLookupOpDesignation> read FDesignationList;
+    property designationList : TAdvList<TFHIRLookupOpRespDesignation> read FDesignationList;
+    property property_List : TAdvList<TFHIRLookupOpRespProperty_> read FProperty_List;
   end;
 
   //Operation subsumes (Subsumption Testing)
@@ -170,11 +189,11 @@ Type
     property outcome : String read FOutcome write FOutcome;
   end;
 
-  //Operation infer (Performing inferencing based on a set of codes - e.g. a mix of composition and decomposition)
-  TFHIRInferOpConcept = class (TFHIROperationObject)
+  //Operation compose (Code Composition based on supplied properties)
+  TFHIRComposeOpReqSubproperty = class (TFHIROperationObject)
   private
-    FProperty_ : String;
     FCode : String;
+    FValue : String;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -182,16 +201,34 @@ Type
     constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
-    property property_ : String read FProperty_ write FProperty_;
     property code : String read FCode write FCode;
+    property value : String read FValue write FValue;
   end;
 
-  TFHIRInferOpRequest = class (TFHIROperationRequest)
+  TFHIRComposeOpReqProperty_ = class (TFHIROperationObject)
+  private
+    FCode : String;
+    FValue : String;
+    FSubpropertyList : TAdvList<TFHIRComposeOpReqSubproperty>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property code : String read FCode write FCode;
+    property value : String read FValue write FValue;
+    property subpropertyList : TAdvList<TFHIRComposeOpReqSubproperty> read FSubpropertyList;
+  end;
+
+  TFHIRComposeOpRequest = class (TFHIROperationRequest)
   private
     FSystem : String;
     FVersion : String;
-    FConceptList : TAdvList<TFHIRInferOpConcept>;
-    FProperty_List : TList<String>;
+    FProperty_List : TAdvList<TFHIRComposeOpReqProperty_>;
+    FMode : String;
+    FCompositional : Boolean;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -202,15 +239,15 @@ Type
     function asParams : TFHIRParameters; override;
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
-    property conceptList : TAdvList<TFHIRInferOpConcept> read FConceptList;
-    property property_List : TList<String> read FProperty_List;
+    property property_List : TAdvList<TFHIRComposeOpReqProperty_> read FProperty_List;
+    property mode : String read FMode write FMode;
+    property compositional : Boolean read FCompositional write FCompositional;
   end;
 
-  TFHIRInferOpOutput = class (TFHIROperationObject)
+  TFHIRComposeOpRespProperty_ = class (TFHIROperationObject)
   private
-    FProperty_ : String;
     FCode : String;
-    FDisplay : String;
+    FValue : String;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -218,15 +255,49 @@ Type
     constructor Create(params : TFhirParametersParameter); overload;
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter;
-    property property_ : String read FProperty_ write FProperty_;
     property code : String read FCode write FCode;
-    property display : String read FDisplay write FDisplay;
+    property value : String read FValue write FValue;
   end;
 
-  TFHIRInferOpResponse = class (TFHIROperationResponse)
+  TFHIRComposeOpRespUnmatched = class (TFHIROperationObject)
   private
-    FMessage : String;
-    FOutputList : TAdvList<TFHIRInferOpOutput>;
+    FCode : String;
+    FValue : String;
+    FProperty_List : TAdvList<TFHIRComposeOpRespProperty_>;
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property code : String read FCode write FCode;
+    property value : String read FValue write FValue;
+    property property_List : TAdvList<TFHIRComposeOpRespProperty_> read FProperty_List;
+  end;
+
+  TFHIRComposeOpRespMatch = class (TFHIROperationObject)
+  private
+    FCode : TFhirCoding;
+    FUnmatched : TFHIRComposeOpRespUnmatched;
+    FComment : String;
+    procedure SetCode(value : TFhirCoding);
+    procedure SetUnmatched(value : TFHIRComposeOpRespUnmatched);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload;
+    constructor Create(params : TFhirParametersParameter); overload;
+    destructor Destroy; override;
+    function asParams(name : String) : TFHIRParametersParameter;
+    property code : TFhirCoding read FCode write SetCode;
+    property unmatched : TFHIRComposeOpRespUnmatched read FUnmatched write SetUnmatched;
+    property comment : String read FComment write FComment;
+  end;
+
+  TFHIRComposeOpResponse = class (TFHIROperationResponse)
+  private
+    FMatchList : TAdvList<TFHIRComposeOpRespMatch>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -235,8 +306,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property message : String read FMessage write FMessage;
-    property outputList : TAdvList<TFHIRInferOpOutput> read FOutputList;
+    property matchList : TAdvList<TFHIRComposeOpRespMatch> read FMatchList;
   end;
 
   //Operation expand (Value Set Expansion)
@@ -252,7 +322,7 @@ Type
     FCount : String;
     FIncludeDesignations : Boolean;
     FIncludeDefinition : Boolean;
-    FIncludeInactive : Boolean;
+    FActiveOnly : Boolean;
     FExcludeNested : Boolean;
     FExcludeNotForUI : Boolean;
     FExcludePostCoordinated : Boolean;
@@ -278,7 +348,7 @@ Type
     property count : String read FCount write FCount;
     property includeDesignations : Boolean read FIncludeDesignations write FIncludeDesignations;
     property includeDefinition : Boolean read FIncludeDefinition write FIncludeDefinition;
-    property includeInactive : Boolean read FIncludeInactive write FIncludeInactive;
+    property activeOnly : Boolean read FActiveOnly write FActiveOnly;
     property excludeNested : Boolean read FExcludeNested write FExcludeNested;
     property excludeNotForUI : Boolean read FExcludeNotForUI write FExcludeNotForUI;
     property excludePostCoordinated : Boolean read FExcludePostCoordinated write FExcludePostCoordinated;
@@ -481,162 +551,6 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirMeta read FReturn write SetReturn;
-  end;
-
-  //Operation cds-hook (The CDS Hook operation is the core API request for CDS Hooks)
-  TFHIRCdsHookOpOauth = class (TFHIROperationObject)
-  private
-    FToken : String;
-    FScope : String;
-    FExpires : String;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property token : String read FToken write FToken;
-    property scope : String read FScope write FScope;
-    property expires : String read FExpires write FExpires;
-  end;
-
-  TFHIRCdsHookOpSource = class (TFHIROperationObject)
-  private
-    FLabel_ : String;
-    FUrl : String;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property label_ : String read FLabel_ write FLabel_;
-    property url : String read FUrl write FUrl;
-  end;
-
-  TFHIRCdsHookOpSuggestion = class (TFHIROperationObject)
-  private
-    FLabel_ : String;
-    FCreate_List : TAdvList<TFhirResource>;
-    FDeleteList : TList<String>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property label_ : String read FLabel_ write FLabel_;
-    property create_List : TAdvList<TFhirResource> read FCreate_List;
-    property deleteList : TList<String> read FDeleteList;
-  end;
-
-  TFHIRCdsHookOpLink_ = class (TFHIROperationObject)
-  private
-    FLabel_ : String;
-    FUrl : String;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property label_ : String read FLabel_ write FLabel_;
-    property url : String read FUrl write FUrl;
-  end;
-
-  TFHIRCdsHookOpCard = class (TFHIROperationObject)
-  private
-    FSummary : String;
-    FDetail : String;
-    FIndicator : String;
-    FSource : TFHIRCdsHookOpSource;
-    FSuggestionList : TAdvList<TFHIRCdsHookOpSuggestion>;
-    FLink_List : TAdvList<TFHIRCdsHookOpLink_>;
-    procedure SetSource(value : TFHIRCdsHookOpSource);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property summary : String read FSummary write FSummary;
-    property detail : String read FDetail write FDetail;
-    property indicator : String read FIndicator write FIndicator;
-    property source : TFHIRCdsHookOpSource read FSource write SetSource;
-    property suggestionList : TAdvList<TFHIRCdsHookOpSuggestion> read FSuggestionList;
-    property link_List : TAdvList<TFHIRCdsHookOpLink_> read FLink_List;
-  end;
-
-  TFHIRCdsHookOpRequest = class (TFHIROperationRequest)
-  private
-    FActivity : TFhirCoding;
-    FActivityInstance : String;
-    FFhirServer : String;
-    FOauth : TFHIRCdsHookOpOauth;
-    FRedirect : String;
-    FUser : String;
-    FPatient : String;
-    FEncounter : String;
-    FContextList : TAdvList<TFhirResource>;
-    FPreFetchData : TFhirBundle;
-    FCard : TFHIRCdsHookOpCard;
-    procedure SetActivity(value : TFhirCoding);
-    procedure SetOauth(value : TFHIRCdsHookOpOauth);
-    procedure SetPreFetchData(value : TFhirBundle);
-    procedure SetCard(value : TFHIRCdsHookOpCard);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property activity : TFhirCoding read FActivity write SetActivity;
-    property activityInstance : String read FActivityInstance write FActivityInstance;
-    property fhirServer : String read FFhirServer write FFhirServer;
-    property oauth : TFHIRCdsHookOpOauth read FOauth write SetOauth;
-    property redirect : String read FRedirect write FRedirect;
-    property user : String read FUser write FUser;
-    property patient : String read FPatient write FPatient;
-    property encounter : String read FEncounter write FEncounter;
-    property contextList : TAdvList<TFhirResource> read FContextList;
-    property preFetchData : TFhirBundle read FPreFetchData write SetPreFetchData;
-    property card : TFHIRCdsHookOpCard read FCard write SetCard;
-  end;
-
-  TFHIRCdsHookOpDecision = class (TFHIROperationObject)
-  private
-    FCreate_List : TAdvList<TFhirResource>;
-    FDeleteList : TList<String>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
-    destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
-    property create_List : TAdvList<TFhirResource> read FCreate_List;
-    property deleteList : TList<String> read FDeleteList;
-  end;
-
-  TFHIRCdsHookOpResponse = class (TFHIROperationResponse)
-  private
-    FDecisionList : TAdvList<TFHIRCdsHookOpDecision>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property decisionList : TAdvList<TFHIRCdsHookOpDecision> read FDecisionList;
   end;
 
   //Operation apply (Apply)
@@ -857,7 +771,7 @@ Type
   end;
 
   //Operation translate (Concept Translation)
-  TFHIRTranslateOpDependency = class (TFHIROperationObject)
+  TFHIRTranslateOpReqDependency = class (TFHIROperationObject)
   private
     FElement : String;
     FConcept : TFhirCodeableConcept;
@@ -883,7 +797,7 @@ Type
     FCodeableConcept : TFhirCodeableConcept;
     FTarget : String;
     FTargetsystem : String;
-    FDependencyList : TAdvList<TFHIRTranslateOpDependency>;
+    FDependencyList : TAdvList<TFHIRTranslateOpReqDependency>;
     FReverse : Boolean;
     procedure SetCoding(value : TFhirCoding);
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
@@ -903,11 +817,11 @@ Type
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
     property target : String read FTarget write FTarget;
     property targetsystem : String read FTargetsystem write FTargetsystem;
-    property dependencyList : TAdvList<TFHIRTranslateOpDependency> read FDependencyList;
+    property dependencyList : TAdvList<TFHIRTranslateOpReqDependency> read FDependencyList;
     property reverse : Boolean read FReverse write FReverse;
   end;
 
-  TFHIRTranslateOpProduct = class (TFHIROperationObject)
+  TFHIRTranslateOpRespProduct = class (TFHIROperationObject)
   private
     FElement : String;
     FConcept : TFhirCoding;
@@ -923,11 +837,11 @@ Type
     property concept : TFhirCoding read FConcept write SetConcept;
   end;
 
-  TFHIRTranslateOpMatch = class (TFHIROperationObject)
+  TFHIRTranslateOpRespMatch = class (TFHIROperationObject)
   private
     FEquivalence : String;
     FConcept : TFhirCoding;
-    FProductList : TAdvList<TFHIRTranslateOpProduct>;
+    FProductList : TAdvList<TFHIRTranslateOpRespProduct>;
     FSource : String;
     procedure SetConcept(value : TFhirCoding);
   protected
@@ -939,7 +853,7 @@ Type
     function asParams(name : String) : TFHIRParametersParameter;
     property equivalence : String read FEquivalence write FEquivalence;
     property concept : TFhirCoding read FConcept write SetConcept;
-    property productList : TAdvList<TFHIRTranslateOpProduct> read FProductList;
+    property productList : TAdvList<TFHIRTranslateOpRespProduct> read FProductList;
     property source : String read FSource write FSource;
   end;
 
@@ -947,7 +861,7 @@ Type
   private
     FResult : Boolean;
     FMessage : String;
-    FMatchList : TAdvList<TFHIRTranslateOpMatch>;
+    FMatchList : TAdvList<TFHIRTranslateOpRespMatch>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -958,7 +872,7 @@ Type
     function asParams : TFHIRParameters; override;
     property result : Boolean read FResult write FResult;
     property message : String read FMessage write FMessage;
-    property matchList : TAdvList<TFHIRTranslateOpMatch> read FMatchList;
+    property matchList : TAdvList<TFHIRTranslateOpRespMatch> read FMatchList;
   end;
 
   //Operation closure (Closure Table Maintenance)
@@ -1735,7 +1649,7 @@ Type
   end;
 
   //Operation set-input (Set Task Input)
-  TFHIRSetInputOpInput = class (TFHIROperationObject)
+  TFHIRSetInputOpReqInput = class (TFHIROperationObject)
   private
     FName : String;
     FValueX : TFhirType;
@@ -1753,7 +1667,7 @@ Type
 
   TFHIRSetInputOpRequest = class (TFHIROperationRequest)
   private
-    FInputList : TAdvList<TFHIRSetInputOpInput>;
+    FInputList : TAdvList<TFHIRSetInputOpReqInput>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -1762,7 +1676,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property inputList : TAdvList<TFHIRSetInputOpInput> read FInputList;
+    property inputList : TAdvList<TFHIRSetInputOpReqInput> read FInputList;
   end;
 
   TFHIRSetInputOpResponse = class (TFHIROperationResponse)
@@ -1790,7 +1704,7 @@ Type
     function asParams : TFHIRParameters; override;
   end;
 
-  TFHIRSetOutputOpOutput = class (TFHIROperationObject)
+  TFHIRSetOutputOpRespOutput = class (TFHIROperationObject)
   private
     FName : String;
     FValueX : TFhirType;
@@ -1808,7 +1722,7 @@ Type
 
   TFHIRSetOutputOpResponse = class (TFHIROperationResponse)
   private
-    FOutputList : TAdvList<TFHIRSetOutputOpOutput>;
+    FOutputList : TAdvList<TFHIRSetOutputOpRespOutput>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -1817,7 +1731,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property outputList : TAdvList<TFHIRSetOutputOpOutput> read FOutputList;
+    property outputList : TAdvList<TFHIRSetOutputOpRespOutput> read FOutputList;
   end;
 
 implementation
@@ -1904,60 +1818,18 @@ begin
   result := StringArrayExists(['code', 'system', 'version', 'coding', 'date', 'property'], name);
 end;
 
-constructor TFHIRLookupOpProperty_.create;
-begin
-  inherited create();
-end;
-
-constructor TFHIRLookupOpProperty_.create(params : TFhirParametersParameter);
-begin
-  inherited create();
-  FCode := params.str['code'];
-  FValue := params.str['value'];
-  FDescription := params.str['description'];
-  loadExtensions(params);
-end;
-
-destructor TFHIRLookupOpProperty_.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRLookupOpProperty_.asParams(name : String) : TFhirParametersParameter;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
-    if (FValue <> '') then
-      result.addParameter('value', TFHIRString.create(FValue));{oz.5f}
-    if (FDescription <> '') then
-      result.addParameter('description', TFHIRString.create(FDescription));{oz.5f}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRLookupOpProperty_.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['code', 'value', 'description'], name);
-end;
-
-procedure TFHIRLookupOpDesignation.SetUse(value : TFhirCoding);
+procedure TFHIRLookupOpRespDesignation.SetUse(value : TFhirCoding);
 begin
   FUse.free;
   FUse := value;
 end;
 
-constructor TFHIRLookupOpDesignation.create;
+constructor TFHIRLookupOpRespDesignation.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRLookupOpDesignation.create(params : TFhirParametersParameter);
+constructor TFHIRLookupOpRespDesignation.create(params : TFhirParametersParameter);
 begin
   inherited create();
   FLanguage := params.str['language'];
@@ -1966,13 +1838,13 @@ begin
   loadExtensions(params);
 end;
 
-destructor TFHIRLookupOpDesignation.Destroy;
+destructor TFHIRLookupOpRespDesignation.Destroy;
 begin
   FUse.free;
   inherited;
 end;
 
-function TFHIRLookupOpDesignation.asParams(name : String) : TFhirParametersParameter;
+function TFHIRLookupOpRespDesignation.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -1990,16 +1862,112 @@ begin
   end;
 end;
 
-function TFHIRLookupOpDesignation.isKnownName(name : String) : boolean;
+function TFHIRLookupOpRespDesignation.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['language', 'use', 'value'], name);
+end;
+
+constructor TFHIRLookupOpRespSubproperty.create;
+begin
+  inherited create();
+end;
+
+constructor TFHIRLookupOpRespSubproperty.create(params : TFhirParametersParameter);
+begin
+  inherited create();
+  FCode := params.str['code'];
+  FValue := params.str['value'];
+  FDescription := params.str['description'];
+  loadExtensions(params);
+end;
+
+destructor TFHIRLookupOpRespSubproperty.Destroy;
+begin
+  inherited;
+end;
+
+function TFHIRLookupOpRespSubproperty.asParams(name : String) : TFhirParametersParameter;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
+    if (FDescription <> '') then
+      result.addParameter('description', TFHIRString.create(FDescription));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRLookupOpRespSubproperty.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['code', 'value', 'description'], name);
+end;
+
+constructor TFHIRLookupOpRespProperty_.create;
+begin
+  inherited create();
+  FSubpropertyList := TAdvList<TFHIRLookupOpRespSubproperty>.create;
+end;
+
+constructor TFHIRLookupOpRespProperty_.create(params : TFhirParametersParameter);
+var
+  p : TFhirParametersParameter;
+begin
+  inherited create();
+  FSubpropertyList := TAdvList<TFHIRLookupOpRespSubproperty>.create;
+  FCode := params.str['code'];
+  FValue := params.str['value'];
+  FDescription := params.str['description'];
+  for p in params.partList do
+    if p.name = 'subproperty' then
+      FSubpropertyList.Add(TFHIRLookupOpRespSubproperty.create(p));{a}
+  loadExtensions(params);
+end;
+
+destructor TFHIRLookupOpRespProperty_.Destroy;
+begin
+  FSubpropertyList.free;
+  inherited;
+end;
+
+function TFHIRLookupOpRespProperty_.asParams(name : String) : TFhirParametersParameter;
+var
+  v1 : TFHIRLookupOpRespSubproperty;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
+    if (FDescription <> '') then
+      result.addParameter('description', TFHIRString.create(FDescription));{oz.5f}
+    for v1 in FSubpropertyList do
+      result.AddParameter(v1.asParams('subproperty'));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRLookupOpRespProperty_.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['code', 'value', 'description', 'subproperty'], name);
 end;
 
 constructor TFHIRLookupOpResponse.create;
 begin
   inherited create();
-  FProperty_List := TAdvList<TFHIRLookupOpProperty_>.create;
-  FDesignationList := TAdvList<TFHIRLookupOpDesignation>.create;
+  FDesignationList := TAdvList<TFHIRLookupOpRespDesignation>.create;
+  FProperty_List := TAdvList<TFHIRLookupOpRespProperty_>.create;
 end;
 
 procedure TFHIRLookupOpResponse.load(params : TFHIRParameters);
@@ -2010,11 +1978,11 @@ begin
   FVersion := params.str['version'];
   FDisplay := params.str['display'];
   for p in params.parameterList do
-    if p.name = 'property' then
-      FProperty_List.Add(TFHIRLookupOpProperty_.create(p));{a}
-  for p in params.parameterList do
     if p.name = 'designation' then
-      FDesignationList.Add(TFHIRLookupOpDesignation.create(p));{a}
+      FDesignationList.Add(TFHIRLookupOpRespDesignation.create(p));{a}
+  for p in params.parameterList do
+    if p.name = 'property' then
+      FProperty_List.Add(TFHIRLookupOpRespProperty_.create(p));{a}
   loadExtensions(params);
 end;
 
@@ -2028,15 +1996,15 @@ end;
 
 destructor TFHIRLookupOpResponse.Destroy;
 begin
-  FProperty_List.free;
   FDesignationList.free;
+  FProperty_List.free;
   inherited;
 end;
 
 function TFHIRLookupOpResponse.asParams : TFhirParameters;
 var
-  v1 : TFHIRLookupOpProperty_;
-  v2 : TFHIRLookupOpDesignation;
+  v1 : TFHIRLookupOpRespDesignation;
+  v2 : TFHIRLookupOpRespProperty_;
 begin
   result := TFHIRParameters.create;
   try
@@ -2046,10 +2014,10 @@ begin
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FDisplay <> '') then
       result.addParameter('display', TFHIRString.create(FDisplay));{oz.5f}
-    for v1 in FProperty_List do
-      result.AddParameter(v1.asParams('property'));
-    for v2 in FDesignationList do
-      result.AddParameter(v2.asParams('designation'));
+    for v1 in FDesignationList do
+      result.AddParameter(v1.asParams('designation'));
+    for v2 in FProperty_List do
+      result.AddParameter(v2.asParams('property'));
     writeExtensions(result);
     result.link;
   finally
@@ -2059,7 +2027,7 @@ end;
 
 function TFHIRLookupOpResponse.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['name', 'version', 'display', 'property', 'designation'], name);
+  result := StringArrayExists(['name', 'version', 'display', 'designation', 'property'], name);
 end;
 
 procedure TFHIRSubsumesOpRequest.SetCodingA(value : TFhirCoding);
@@ -2174,33 +2142,33 @@ begin
   result := StringArrayExists(['outcome'], name);
 end;
 
-constructor TFHIRInferOpConcept.create;
+constructor TFHIRComposeOpReqSubproperty.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRInferOpConcept.create(params : TFhirParametersParameter);
+constructor TFHIRComposeOpReqSubproperty.create(params : TFhirParametersParameter);
 begin
   inherited create();
-  FProperty_ := params.str['property'];
   FCode := params.str['code'];
+  FValue := params.str['value'];
   loadExtensions(params);
 end;
 
-destructor TFHIRInferOpConcept.Destroy;
+destructor TFHIRComposeOpReqSubproperty.Destroy;
 begin
   inherited;
 end;
 
-function TFHIRInferOpConcept.asParams(name : String) : TFhirParametersParameter;
+function TFHIRComposeOpReqSubproperty.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
     result.name := name;
-    if (FProperty_ <> '') then
-      result.addParameter('property', TFHIRCode.create(FProperty_));{oz.5f}
     if (FCode <> '') then
       result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2208,51 +2176,100 @@ begin
   end;
 end;
 
-function TFHIRInferOpConcept.isKnownName(name : String) : boolean;
+function TFHIRComposeOpReqSubproperty.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['property', 'code'], name);
+  result := StringArrayExists(['code', 'value'], name);
 end;
 
-constructor TFHIRInferOpRequest.create;
+constructor TFHIRComposeOpReqProperty_.create;
 begin
   inherited create();
-  FConceptList := TAdvList<TFHIRInferOpConcept>.create;
-  FProperty_List := TList<String>.create;
+  FSubpropertyList := TAdvList<TFHIRComposeOpReqSubproperty>.create;
 end;
 
-procedure TFHIRInferOpRequest.load(params : TFHIRParameters);
+constructor TFHIRComposeOpReqProperty_.create(params : TFhirParametersParameter);
+var
+  p : TFhirParametersParameter;
+begin
+  inherited create();
+  FSubpropertyList := TAdvList<TFHIRComposeOpReqSubproperty>.create;
+  FCode := params.str['code'];
+  FValue := params.str['value'];
+  for p in params.partList do
+    if p.name = 'subproperty' then
+      FSubpropertyList.Add(TFHIRComposeOpReqSubproperty.create(p));{a}
+  loadExtensions(params);
+end;
+
+destructor TFHIRComposeOpReqProperty_.Destroy;
+begin
+  FSubpropertyList.free;
+  inherited;
+end;
+
+function TFHIRComposeOpReqProperty_.asParams(name : String) : TFhirParametersParameter;
+var
+  v1 : TFHIRComposeOpReqSubproperty;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
+    for v1 in FSubpropertyList do
+      result.AddParameter(v1.asParams('subproperty'));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRComposeOpReqProperty_.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['code', 'value', 'subproperty'], name);
+end;
+
+constructor TFHIRComposeOpRequest.create;
+begin
+  inherited create();
+  FProperty_List := TAdvList<TFHIRComposeOpReqProperty_>.create;
+end;
+
+procedure TFHIRComposeOpRequest.load(params : TFHIRParameters);
 var
   p : TFhirParametersParameter;
 begin
   FSystem := params.str['system'];
   FVersion := params.str['version'];
   for p in params.parameterList do
-    if p.name = 'concept' then
-      FConceptList.Add(TFHIRInferOpConcept.create(p));{a}
-  for p in params.parameterList do
     if p.name = 'property' then
-      FProperty_List.Add((p.value as TFhirCode).value);{ob.1}
+      FProperty_List.Add(TFHIRComposeOpReqProperty_.create(p));{a}
+  FMode := params.str['mode'];
+  FCompositional := params.bool['compositional'];
   loadExtensions(params);
 end;
 
-procedure TFHIRInferOpRequest.load(params : TParseMap);
+procedure TFHIRComposeOpRequest.load(params : TParseMap);
 begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
+  FMode := params.getVar('mode');
+  FCompositional := StrToBool(params.getVar('compositional'));
   loadExtensions(params);
 end;
 
-destructor TFHIRInferOpRequest.Destroy;
+destructor TFHIRComposeOpRequest.Destroy;
 begin
-  FConceptList.free;
   FProperty_List.free;
   inherited;
 end;
 
-function TFHIRInferOpRequest.asParams : TFhirParameters;
+function TFHIRComposeOpRequest.asParams : TFhirParameters;
 var
-  v1 : TFHIRInferOpConcept;
-  v2 : String;
+  v1 : TFHIRComposeOpReqProperty_;
 begin
   result := TFHIRParameters.create;
   try
@@ -2260,10 +2277,11 @@ begin
       result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
-    for v1 in FConceptList do
-      result.AddParameter(v1.asParams('concept'));
-    for v2 in FProperty_List do
-      result.AddParameter('property', TFhirCode.create(v2));
+    for v1 in FProperty_List do
+      result.AddParameter(v1.asParams('property'));
+    if (FMode <> '') then
+      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
+      result.addParameter('compositional', TFHIRBoolean.create(FCompositional));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2271,41 +2289,44 @@ begin
   end;
 end;
 
-function TFHIRInferOpRequest.isKnownName(name : String) : boolean;
+function TFHIRComposeOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['system', 'version', 'concept', 'property'], name);
+  result := StringArrayExists(['system', 'version', 'property', 'mode', 'compositional'], name);
 end;
 
-constructor TFHIRInferOpOutput.create;
+procedure TFHIRComposeOpRespMatch.SetCode(value : TFhirCoding);
+begin
+  FCode.free;
+  FCode := value;
+end;
+
+constructor TFHIRComposeOpRespProperty_.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRInferOpOutput.create(params : TFhirParametersParameter);
+constructor TFHIRComposeOpRespProperty_.create(params : TFhirParametersParameter);
 begin
   inherited create();
-  FProperty_ := params.str['property'];
   FCode := params.str['code'];
-  FDisplay := params.str['display'];
+  FValue := params.str['value'];
   loadExtensions(params);
 end;
 
-destructor TFHIRInferOpOutput.Destroy;
+destructor TFHIRComposeOpRespProperty_.Destroy;
 begin
   inherited;
 end;
 
-function TFHIRInferOpOutput.asParams(name : String) : TFhirParametersParameter;
+function TFHIRComposeOpRespProperty_.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
     result.name := name;
-    if (FProperty_ <> '') then
-      result.addParameter('property', TFHIRCode.create(FProperty_));{oz.5f}
     if (FCode <> '') then
       result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
-    if (FDisplay <> '') then
-      result.addParameter('display', TFHIRString.create(FDisplay));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2313,50 +2334,50 @@ begin
   end;
 end;
 
-function TFHIRInferOpOutput.isKnownName(name : String) : boolean;
+function TFHIRComposeOpRespProperty_.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['property', 'code', 'display'], name);
+  result := StringArrayExists(['code', 'value'], name);
 end;
 
-constructor TFHIRInferOpResponse.create;
+constructor TFHIRComposeOpRespUnmatched.create;
 begin
   inherited create();
-  FOutputList := TAdvList<TFHIRInferOpOutput>.create;
+  FProperty_List := TAdvList<TFHIRComposeOpRespProperty_>.create;
 end;
 
-procedure TFHIRInferOpResponse.load(params : TFHIRParameters);
+constructor TFHIRComposeOpRespUnmatched.create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  FMessage := params.str['message'];
-  for p in params.parameterList do
-    if p.name = 'output' then
-      FOutputList.Add(TFHIRInferOpOutput.create(p));{a}
+  inherited create();
+  FProperty_List := TAdvList<TFHIRComposeOpRespProperty_>.create;
+  FCode := params.str['code'];
+  FValue := params.str['value'];
+  for p in params.partList do
+    if p.name = 'property' then
+      FProperty_List.Add(TFHIRComposeOpRespProperty_.create(p));{a}
   loadExtensions(params);
 end;
 
-procedure TFHIRInferOpResponse.load(params : TParseMap);
+destructor TFHIRComposeOpRespUnmatched.Destroy;
 begin
-  FMessage := params.getVar('message');
-  loadExtensions(params);
-end;
-
-destructor TFHIRInferOpResponse.Destroy;
-begin
-  FOutputList.free;
+  FProperty_List.free;
   inherited;
 end;
 
-function TFHIRInferOpResponse.asParams : TFhirParameters;
+function TFHIRComposeOpRespUnmatched.asParams(name : String) : TFhirParametersParameter;
 var
-  v1 : TFHIRInferOpOutput;
+  v1 : TFHIRComposeOpRespProperty_;
 begin
-  result := TFHIRParameters.create;
+  result := TFHIRParametersParameter.create;
   try
-    if (FMessage <> '') then
-      result.addParameter('message', TFHIRString.create(FMessage));{oz.5f}
-    for v1 in FOutputList do
-      result.AddParameter(v1.asParams('output'));
+    result.name := name;
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
+    if (FValue <> '') then
+      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
+    for v1 in FProperty_List do
+      result.AddParameter(v1.asParams('property'));
     writeExtensions(result);
     result.link;
   finally
@@ -2364,9 +2385,106 @@ begin
   end;
 end;
 
-function TFHIRInferOpResponse.isKnownName(name : String) : boolean;
+function TFHIRComposeOpRespUnmatched.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['message', 'output'], name);
+  result := StringArrayExists(['code', 'value', 'property'], name);
+end;
+
+procedure TFHIRComposeOpRespMatch.SetUnmatched(value : TFHIRComposeOpRespUnmatched);
+begin
+  FUnmatched.free;
+  FUnmatched := value;
+end;
+
+constructor TFHIRComposeOpRespMatch.create;
+begin
+  inherited create();
+end;
+
+constructor TFHIRComposeOpRespMatch.create(params : TFhirParametersParameter);
+begin
+  inherited create();
+  FCode := (params.param['code'].value as TFhirCoding).Link; {ob.5d}
+  FUnmatched := TFHIRComposeOpRespUnmatched.create(params.param['unmatched']); {ob.5c}
+  FComment := params.str['comment'];
+  loadExtensions(params);
+end;
+
+destructor TFHIRComposeOpRespMatch.Destroy;
+begin
+  FCode.free;
+  FUnmatched.free;
+  inherited;
+end;
+
+function TFHIRComposeOpRespMatch.asParams(name : String) : TFhirParametersParameter;
+begin
+  result := TFHIRParametersParameter.create;
+  try
+    result.name := name;
+    if (FCode <> nil) then
+      result.addParameter('code', FCode.Link);{oz.5d}
+    if (FUnmatched <> nil) then
+      result.addParameter(FUnmatched.asParams('unmatched'));{oz.5c}
+    if (FComment <> '') then
+      result.addParameter('comment', TFHIRString.create(FComment));{oz.5f}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRComposeOpRespMatch.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['code', 'unmatched', 'comment'], name);
+end;
+
+constructor TFHIRComposeOpResponse.create;
+begin
+  inherited create();
+  FMatchList := TAdvList<TFHIRComposeOpRespMatch>.create;
+end;
+
+procedure TFHIRComposeOpResponse.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  for p in params.parameterList do
+    if p.name = 'match' then
+      FMatchList.Add(TFHIRComposeOpRespMatch.create(p));{a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRComposeOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRComposeOpResponse.Destroy;
+begin
+  FMatchList.free;
+  inherited;
+end;
+
+function TFHIRComposeOpResponse.asParams : TFhirParameters;
+var
+  v1 : TFHIRComposeOpRespMatch;
+begin
+  result := TFHIRParameters.create;
+  try
+    for v1 in FMatchList do
+      result.AddParameter(v1.asParams('match'));
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRComposeOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['match'], name);
 end;
 
 procedure TFHIRExpandOpRequest.SetValueSet(value : TFhirValueSet);
@@ -2398,7 +2516,7 @@ begin
   FCount := params.str['count'];
   FIncludeDesignations := params.bool['includeDesignations'];
   FIncludeDefinition := params.bool['includeDefinition'];
-  FIncludeInactive := params.bool['includeInactive'];
+  FActiveOnly := params.bool['activeOnly'];
   FExcludeNested := params.bool['excludeNested'];
   FExcludeNotForUI := params.bool['excludeNotForUI'];
   FExcludePostCoordinated := params.bool['excludePostCoordinated'];
@@ -2417,7 +2535,7 @@ begin
   FCount := params.getVar('count');
   FIncludeDesignations := StrToBool(params.getVar('includeDesignations'));
   FIncludeDefinition := StrToBool(params.getVar('includeDefinition'));
-  FIncludeInactive := StrToBool(params.getVar('includeInactive'));
+  FActiveOnly := StrToBool(params.getVar('activeOnly'));
   FExcludeNested := StrToBool(params.getVar('excludeNested'));
   FExcludeNotForUI := StrToBool(params.getVar('excludeNotForUI'));
   FExcludePostCoordinated := StrToBool(params.getVar('excludePostCoordinated'));
@@ -2455,7 +2573,7 @@ begin
       result.addParameter('count', TFHIRInteger.create(FCount));{oz.5f}
       result.addParameter('includeDesignations', TFHIRBoolean.create(FIncludeDesignations));{oz.5f}
       result.addParameter('includeDefinition', TFHIRBoolean.create(FIncludeDefinition));{oz.5f}
-      result.addParameter('includeInactive', TFHIRBoolean.create(FIncludeInactive));{oz.5f}
+      result.addParameter('activeOnly', TFHIRBoolean.create(FActiveOnly));{oz.5f}
       result.addParameter('excludeNested', TFHIRBoolean.create(FExcludeNested));{oz.5f}
       result.addParameter('excludeNotForUI', TFHIRBoolean.create(FExcludeNotForUI));{oz.5f}
       result.addParameter('excludePostCoordinated', TFHIRBoolean.create(FExcludePostCoordinated));{oz.5f}
@@ -2471,7 +2589,7 @@ end;
 
 function TFHIRExpandOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'includeInactive', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
+  result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'activeOnly', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
 end;
 
 procedure TFHIRExpandOpResponse.SetReturn(value : TFhirValueSet);
@@ -3034,468 +3152,6 @@ end;
 function TFHIRMetaDeleteOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
-end;
-
-procedure TFHIRCdsHookOpRequest.SetActivity(value : TFhirCoding);
-begin
-  FActivity.free;
-  FActivity := value;
-end;
-
-constructor TFHIRCdsHookOpOauth.create;
-begin
-  inherited create();
-end;
-
-constructor TFHIRCdsHookOpOauth.create(params : TFhirParametersParameter);
-begin
-  inherited create();
-  FToken := params.str['token'];
-  FScope := params.str['scope'];
-  FExpires := params.str['expires'];
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpOauth.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRCdsHookOpOauth.asParams(name : String) : TFhirParametersParameter;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FToken <> '') then
-      result.addParameter('token', TFHIRString.create(FToken));{oz.5f}
-    if (FScope <> '') then
-      result.addParameter('scope', TFHIRString.create(FScope));{oz.5f}
-    if (FExpires <> '') then
-      result.addParameter('expires', TFHIRInteger.create(FExpires));{oz.5f}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpOauth.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['token', 'scope', 'expires'], name);
-end;
-
-procedure TFHIRCdsHookOpRequest.SetOauth(value : TFHIRCdsHookOpOauth);
-begin
-  FOauth.free;
-  FOauth := value;
-end;
-
-procedure TFHIRCdsHookOpRequest.SetPreFetchData(value : TFhirBundle);
-begin
-  FPreFetchData.free;
-  FPreFetchData := value;
-end;
-
-constructor TFHIRCdsHookOpSource.create;
-begin
-  inherited create();
-end;
-
-constructor TFHIRCdsHookOpSource.create(params : TFhirParametersParameter);
-begin
-  inherited create();
-  FLabel_ := params.str['label'];
-  FUrl := params.str['url'];
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpSource.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRCdsHookOpSource.asParams(name : String) : TFhirParametersParameter;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FLabel_ <> '') then
-      result.addParameter('label', TFHIRString.create(FLabel_));{oz.5f}
-    if (FUrl <> '') then
-      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpSource.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['label', 'url'], name);
-end;
-
-procedure TFHIRCdsHookOpCard.SetSource(value : TFHIRCdsHookOpSource);
-begin
-  FSource.free;
-  FSource := value;
-end;
-
-constructor TFHIRCdsHookOpSuggestion.create;
-begin
-  inherited create();
-  FCreate_List := TAdvList<TFhirResource>.create;
-  FDeleteList := TList<String>.create;
-end;
-
-constructor TFHIRCdsHookOpSuggestion.create(params : TFhirParametersParameter);
-var
-  p : TFhirParametersParameter;
-begin
-  inherited create();
-  FCreate_List := TAdvList<TFhirResource>.create;
-  FDeleteList := TList<String>.create;
-  FLabel_ := params.str['label'];
-  for p in params.partList do
-    if p.name = 'create' then
-      FCreate_List.Add((p.resource as TFhirResource).Link);{ob.2}
-  for p in params.partList do
-    if p.name = 'delete' then
-      FDeleteList.Add((p.value as TFhirId).value);{ob.1}
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpSuggestion.Destroy;
-begin
-  FCreate_List.free;
-  FDeleteList.free;
-  inherited;
-end;
-
-function TFHIRCdsHookOpSuggestion.asParams(name : String) : TFhirParametersParameter;
-var
-  v1 : TFhirResource;
-  v2 : String;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FLabel_ <> '') then
-      result.addParameter('label', TFHIRString.create(FLabel_));{oz.5f}
-    for v1 in FCreate_List do
-      result.AddParameter('create', v1.Link);
-    for v2 in FDeleteList do
-      result.AddParameter('delete', TFhirId.create(v2));
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpSuggestion.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['label', 'create', 'delete'], name);
-end;
-
-constructor TFHIRCdsHookOpLink_.create;
-begin
-  inherited create();
-end;
-
-constructor TFHIRCdsHookOpLink_.create(params : TFhirParametersParameter);
-begin
-  inherited create();
-  FLabel_ := params.str['label'];
-  FUrl := params.str['url'];
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpLink_.Destroy;
-begin
-  inherited;
-end;
-
-function TFHIRCdsHookOpLink_.asParams(name : String) : TFhirParametersParameter;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FLabel_ <> '') then
-      result.addParameter('label', TFHIRString.create(FLabel_));{oz.5f}
-    if (FUrl <> '') then
-      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpLink_.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['label', 'url'], name);
-end;
-
-constructor TFHIRCdsHookOpCard.create;
-begin
-  inherited create();
-  FSuggestionList := TAdvList<TFHIRCdsHookOpSuggestion>.create;
-  FLink_List := TAdvList<TFHIRCdsHookOpLink_>.create;
-end;
-
-constructor TFHIRCdsHookOpCard.create(params : TFhirParametersParameter);
-var
-  p : TFhirParametersParameter;
-begin
-  inherited create();
-  FSuggestionList := TAdvList<TFHIRCdsHookOpSuggestion>.create;
-  FLink_List := TAdvList<TFHIRCdsHookOpLink_>.create;
-  FSummary := params.str['summary'];
-  FDetail := params.str['detail'];
-  FIndicator := params.str['indicator'];
-  FSource := TFHIRCdsHookOpSource.create(params.param['source']); {ob.5c}
-  for p in params.partList do
-    if p.name = 'suggestion' then
-      FSuggestionList.Add(TFHIRCdsHookOpSuggestion.create(p));{a}
-  for p in params.partList do
-    if p.name = 'link' then
-      FLink_List.Add(TFHIRCdsHookOpLink_.create(p));{a}
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpCard.Destroy;
-begin
-  FSource.free;
-  FSuggestionList.free;
-  FLink_List.free;
-  inherited;
-end;
-
-function TFHIRCdsHookOpCard.asParams(name : String) : TFhirParametersParameter;
-var
-  v1 : TFHIRCdsHookOpSuggestion;
-  v2 : TFHIRCdsHookOpLink_;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    if (FSummary <> '') then
-      result.addParameter('summary', TFHIRString.create(FSummary));{oz.5f}
-    if (FDetail <> '') then
-      result.addParameter('detail', TFHIRString.create(FDetail));{oz.5f}
-    if (FIndicator <> '') then
-      result.addParameter('indicator', TFHIRCode.create(FIndicator));{oz.5f}
-    if (FSource <> nil) then
-      result.addParameter(FSource.asParams('source'));{oz.5c}
-    for v1 in FSuggestionList do
-      result.AddParameter(v1.asParams('suggestion'));
-    for v2 in FLink_List do
-      result.AddParameter(v2.asParams('link'));
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpCard.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['summary', 'detail', 'indicator', 'source', 'suggestion', 'link'], name);
-end;
-
-procedure TFHIRCdsHookOpRequest.SetCard(value : TFHIRCdsHookOpCard);
-begin
-  FCard.free;
-  FCard := value;
-end;
-
-constructor TFHIRCdsHookOpRequest.create;
-begin
-  inherited create();
-  FContextList := TAdvList<TFhirResource>.create;
-end;
-
-procedure TFHIRCdsHookOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  FActivity := (params.param['activity'].value as TFhirCoding).Link; {ob.5d}
-  FActivityInstance := params.str['activityInstance'];
-  FFhirServer := params.str['fhirServer'];
-  FOauth := TFHIRCdsHookOpOauth.create(params.param['oauth']); {ob.5c}
-  FRedirect := params.str['redirect'];
-  FUser := params.str['user'];
-  FPatient := params.str['patient'];
-  FEncounter := params.str['encounter'];
-  for p in params.parameterList do
-    if p.name = 'context' then
-      FContextList.Add((p.resource as TFhirResource).Link);{ob.2}
-  FPreFetchData := (params.res['preFetchData'] as TFhirBundle).Link;{ob.5a}
-  FCard := TFHIRCdsHookOpCard.create(params.param['card']); {ob.5c}
-  loadExtensions(params);
-end;
-
-procedure TFHIRCdsHookOpRequest.load(params : TParseMap);
-begin
-  FActivityInstance := params.getVar('activityInstance');
-  FFhirServer := params.getVar('fhirServer');
-  FRedirect := params.getVar('redirect');
-  FUser := params.getVar('user');
-  FPatient := params.getVar('patient');
-  FEncounter := params.getVar('encounter');
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpRequest.Destroy;
-begin
-  FActivity.free;
-  FOauth.free;
-  FContextList.free;
-  FPreFetchData.free;
-  FCard.free;
-  inherited;
-end;
-
-function TFHIRCdsHookOpRequest.asParams : TFhirParameters;
-var
-  v1 : TFhirResource;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FActivity <> nil) then
-      result.addParameter('activity', FActivity.Link);{oz.5d}
-    if (FActivityInstance <> '') then
-      result.addParameter('activityInstance', TFHIRString.create(FActivityInstance));{oz.5f}
-    if (FFhirServer <> '') then
-      result.addParameter('fhirServer', TFHIRUri.create(FFhirServer));{oz.5f}
-    if (FOauth <> nil) then
-      result.addParameter(FOauth.asParams('oauth'));{oz.5c}
-    if (FRedirect <> '') then
-      result.addParameter('redirect', TFHIRUri.create(FRedirect));{oz.5f}
-    if (FUser <> '') then
-      result.addParameter('user', TFHIRString.create(FUser));{oz.5f}
-    if (FPatient <> '') then
-      result.addParameter('patient', TFHIRId.create(FPatient));{oz.5f}
-    if (FEncounter <> '') then
-      result.addParameter('encounter', TFHIRId.create(FEncounter));{oz.5f}
-    for v1 in FContextList do
-      result.AddParameter('context', v1.Link);
-    if (FPreFetchData <> nil) then
-      result.addParameter('preFetchData', FPreFetchData.Link);{oz.5a}
-    if (FCard <> nil) then
-      result.addParameter(FCard.asParams('card'));{oz.5c}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['activity', 'activityInstance', 'fhirServer', 'oauth', 'redirect', 'user', 'patient', 'encounter', 'context', 'preFetchData', 'card'], name);
-end;
-
-constructor TFHIRCdsHookOpDecision.create;
-begin
-  inherited create();
-  FCreate_List := TAdvList<TFhirResource>.create;
-  FDeleteList := TList<String>.create;
-end;
-
-constructor TFHIRCdsHookOpDecision.create(params : TFhirParametersParameter);
-var
-  p : TFhirParametersParameter;
-begin
-  inherited create();
-  FCreate_List := TAdvList<TFhirResource>.create;
-  FDeleteList := TList<String>.create;
-  for p in params.partList do
-    if p.name = 'create' then
-      FCreate_List.Add((p.resource as TFhirResource).Link);{ob.2}
-  for p in params.partList do
-    if p.name = 'delete' then
-      FDeleteList.Add((p.value as TFhirId).value);{ob.1}
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpDecision.Destroy;
-begin
-  FCreate_List.free;
-  FDeleteList.free;
-  inherited;
-end;
-
-function TFHIRCdsHookOpDecision.asParams(name : String) : TFhirParametersParameter;
-var
-  v1 : TFhirResource;
-  v2 : String;
-begin
-  result := TFHIRParametersParameter.create;
-  try
-    result.name := name;
-    for v1 in FCreate_List do
-      result.AddParameter('create', v1.Link);
-    for v2 in FDeleteList do
-      result.AddParameter('delete', TFhirId.create(v2));
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpDecision.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['create', 'delete'], name);
-end;
-
-constructor TFHIRCdsHookOpResponse.create;
-begin
-  inherited create();
-  FDecisionList := TAdvList<TFHIRCdsHookOpDecision>.create;
-end;
-
-procedure TFHIRCdsHookOpResponse.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  for p in params.parameterList do
-    if p.name = 'decision' then
-      FDecisionList.Add(TFHIRCdsHookOpDecision.create(p));{a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRCdsHookOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRCdsHookOpResponse.Destroy;
-begin
-  FDecisionList.free;
-  inherited;
-end;
-
-function TFHIRCdsHookOpResponse.asParams : TFhirParameters;
-var
-  v1 : TFHIRCdsHookOpDecision;
-begin
-  result := TFHIRParameters.create;
-  try
-    for v1 in FDecisionList do
-      result.AddParameter(v1.asParams('decision'));
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRCdsHookOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['decision'], name);
 end;
 
 procedure TFHIRApplyOpRequest.SetPatient(value : TFhirReference);
@@ -4150,18 +3806,18 @@ begin
   FCodeableConcept := value;
 end;
 
-procedure TFHIRTranslateOpDependency.SetConcept(value : TFhirCodeableConcept);
+procedure TFHIRTranslateOpReqDependency.SetConcept(value : TFhirCodeableConcept);
 begin
   FConcept.free;
   FConcept := value;
 end;
 
-constructor TFHIRTranslateOpDependency.create;
+constructor TFHIRTranslateOpReqDependency.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRTranslateOpDependency.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpReqDependency.create(params : TFhirParametersParameter);
 begin
   inherited create();
   FElement := params.str['element'];
@@ -4169,13 +3825,13 @@ begin
   loadExtensions(params);
 end;
 
-destructor TFHIRTranslateOpDependency.Destroy;
+destructor TFHIRTranslateOpReqDependency.Destroy;
 begin
   FConcept.free;
   inherited;
 end;
 
-function TFHIRTranslateOpDependency.asParams(name : String) : TFhirParametersParameter;
+function TFHIRTranslateOpReqDependency.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -4191,7 +3847,7 @@ begin
   end;
 end;
 
-function TFHIRTranslateOpDependency.isKnownName(name : String) : boolean;
+function TFHIRTranslateOpReqDependency.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['element', 'concept'], name);
 end;
@@ -4199,7 +3855,7 @@ end;
 constructor TFHIRTranslateOpRequest.create;
 begin
   inherited create();
-  FDependencyList := TAdvList<TFHIRTranslateOpDependency>.create;
+  FDependencyList := TAdvList<TFHIRTranslateOpReqDependency>.create;
 end;
 
 procedure TFHIRTranslateOpRequest.load(params : TFHIRParameters);
@@ -4216,7 +3872,7 @@ begin
   FTargetsystem := params.str['targetsystem'];
   for p in params.parameterList do
     if p.name = 'dependency' then
-      FDependencyList.Add(TFHIRTranslateOpDependency.create(p));{a}
+      FDependencyList.Add(TFHIRTranslateOpReqDependency.create(p));{a}
   FReverse := params.bool['reverse'];
   loadExtensions(params);
 end;
@@ -4243,7 +3899,7 @@ end;
 
 function TFHIRTranslateOpRequest.asParams : TFhirParameters;
 var
-  v1 : TFHIRTranslateOpDependency;
+  v1 : TFHIRTranslateOpReqDependency;
 begin
   result := TFHIRParameters.create;
   try
@@ -4278,24 +3934,24 @@ begin
   result := StringArrayExists(['code', 'system', 'version', 'source', 'coding', 'codeableConcept', 'target', 'targetsystem', 'dependency', 'reverse'], name);
 end;
 
-procedure TFHIRTranslateOpMatch.SetConcept(value : TFhirCoding);
+procedure TFHIRTranslateOpRespMatch.SetConcept(value : TFhirCoding);
 begin
   FConcept.free;
   FConcept := value;
 end;
 
-procedure TFHIRTranslateOpProduct.SetConcept(value : TFhirCoding);
+procedure TFHIRTranslateOpRespProduct.SetConcept(value : TFhirCoding);
 begin
   FConcept.free;
   FConcept := value;
 end;
 
-constructor TFHIRTranslateOpProduct.create;
+constructor TFHIRTranslateOpRespProduct.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRTranslateOpProduct.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpRespProduct.create(params : TFhirParametersParameter);
 begin
   inherited create();
   FElement := params.str['element'];
@@ -4303,13 +3959,13 @@ begin
   loadExtensions(params);
 end;
 
-destructor TFHIRTranslateOpProduct.Destroy;
+destructor TFHIRTranslateOpRespProduct.Destroy;
 begin
   FConcept.free;
   inherited;
 end;
 
-function TFHIRTranslateOpProduct.asParams(name : String) : TFhirParametersParameter;
+function TFHIRTranslateOpRespProduct.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -4325,42 +3981,42 @@ begin
   end;
 end;
 
-function TFHIRTranslateOpProduct.isKnownName(name : String) : boolean;
+function TFHIRTranslateOpRespProduct.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['element', 'concept'], name);
 end;
 
-constructor TFHIRTranslateOpMatch.create;
+constructor TFHIRTranslateOpRespMatch.create;
 begin
   inherited create();
-  FProductList := TAdvList<TFHIRTranslateOpProduct>.create;
+  FProductList := TAdvList<TFHIRTranslateOpRespProduct>.create;
 end;
 
-constructor TFHIRTranslateOpMatch.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpRespMatch.create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
   inherited create();
-  FProductList := TAdvList<TFHIRTranslateOpProduct>.create;
+  FProductList := TAdvList<TFHIRTranslateOpRespProduct>.create;
   FEquivalence := params.str['equivalence'];
   FConcept := (params.param['concept'].value as TFhirCoding).Link; {ob.5d}
   for p in params.partList do
     if p.name = 'product' then
-      FProductList.Add(TFHIRTranslateOpProduct.create(p));{a}
+      FProductList.Add(TFHIRTranslateOpRespProduct.create(p));{a}
   FSource := params.str['source'];
   loadExtensions(params);
 end;
 
-destructor TFHIRTranslateOpMatch.Destroy;
+destructor TFHIRTranslateOpRespMatch.Destroy;
 begin
   FConcept.free;
   FProductList.free;
   inherited;
 end;
 
-function TFHIRTranslateOpMatch.asParams(name : String) : TFhirParametersParameter;
+function TFHIRTranslateOpRespMatch.asParams(name : String) : TFhirParametersParameter;
 var
-  v1 : TFHIRTranslateOpProduct;
+  v1 : TFHIRTranslateOpRespProduct;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -4380,7 +4036,7 @@ begin
   end;
 end;
 
-function TFHIRTranslateOpMatch.isKnownName(name : String) : boolean;
+function TFHIRTranslateOpRespMatch.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['equivalence', 'concept', 'product', 'source'], name);
 end;
@@ -4388,7 +4044,7 @@ end;
 constructor TFHIRTranslateOpResponse.create;
 begin
   inherited create();
-  FMatchList := TAdvList<TFHIRTranslateOpMatch>.create;
+  FMatchList := TAdvList<TFHIRTranslateOpRespMatch>.create;
 end;
 
 procedure TFHIRTranslateOpResponse.load(params : TFHIRParameters);
@@ -4399,7 +4055,7 @@ begin
   FMessage := params.str['message'];
   for p in params.parameterList do
     if p.name = 'match' then
-      FMatchList.Add(TFHIRTranslateOpMatch.create(p));{a}
+      FMatchList.Add(TFHIRTranslateOpRespMatch.create(p));{a}
   loadExtensions(params);
 end;
 
@@ -4418,7 +4074,7 @@ end;
 
 function TFHIRTranslateOpResponse.asParams : TFhirParameters;
 var
-  v1 : TFHIRTranslateOpMatch;
+  v1 : TFHIRTranslateOpRespMatch;
 begin
   result := TFHIRParameters.create;
   try
@@ -6701,18 +6357,18 @@ begin
   result := false;
 end;
 
-procedure TFHIRSetInputOpInput.SetValueX(value : TFhirType);
+procedure TFHIRSetInputOpReqInput.SetValueX(value : TFhirType);
 begin
   FValueX.free;
   FValueX := value;
 end;
 
-constructor TFHIRSetInputOpInput.create;
+constructor TFHIRSetInputOpReqInput.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRSetInputOpInput.create(params : TFhirParametersParameter);
+constructor TFHIRSetInputOpReqInput.create(params : TFhirParametersParameter);
 begin
   inherited create();
   FName := params.str['name'];
@@ -6720,13 +6376,13 @@ begin
   loadExtensions(params);
 end;
 
-destructor TFHIRSetInputOpInput.Destroy;
+destructor TFHIRSetInputOpReqInput.Destroy;
 begin
   FValueX.free;
   inherited;
 end;
 
-function TFHIRSetInputOpInput.asParams(name : String) : TFhirParametersParameter;
+function TFHIRSetInputOpReqInput.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -6742,7 +6398,7 @@ begin
   end;
 end;
 
-function TFHIRSetInputOpInput.isKnownName(name : String) : boolean;
+function TFHIRSetInputOpReqInput.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['name', 'value[x]'], name);
 end;
@@ -6750,7 +6406,7 @@ end;
 constructor TFHIRSetInputOpRequest.create;
 begin
   inherited create();
-  FInputList := TAdvList<TFHIRSetInputOpInput>.create;
+  FInputList := TAdvList<TFHIRSetInputOpReqInput>.create;
 end;
 
 procedure TFHIRSetInputOpRequest.load(params : TFHIRParameters);
@@ -6759,7 +6415,7 @@ var
 begin
   for p in params.parameterList do
     if p.name = 'input' then
-      FInputList.Add(TFHIRSetInputOpInput.create(p));{a}
+      FInputList.Add(TFHIRSetInputOpReqInput.create(p));{a}
   loadExtensions(params);
 end;
 
@@ -6776,7 +6432,7 @@ end;
 
 function TFHIRSetInputOpRequest.asParams : TFhirParameters;
 var
-  v1 : TFHIRSetInputOpInput;
+  v1 : TFHIRSetInputOpReqInput;
 begin
   result := TFHIRParameters.create;
   try
@@ -6866,18 +6522,18 @@ begin
   result := false;
 end;
 
-procedure TFHIRSetOutputOpOutput.SetValueX(value : TFhirType);
+procedure TFHIRSetOutputOpRespOutput.SetValueX(value : TFhirType);
 begin
   FValueX.free;
   FValueX := value;
 end;
 
-constructor TFHIRSetOutputOpOutput.create;
+constructor TFHIRSetOutputOpRespOutput.create;
 begin
   inherited create();
 end;
 
-constructor TFHIRSetOutputOpOutput.create(params : TFhirParametersParameter);
+constructor TFHIRSetOutputOpRespOutput.create(params : TFhirParametersParameter);
 begin
   inherited create();
   FName := params.str['name'];
@@ -6885,13 +6541,13 @@ begin
   loadExtensions(params);
 end;
 
-destructor TFHIRSetOutputOpOutput.Destroy;
+destructor TFHIRSetOutputOpRespOutput.Destroy;
 begin
   FValueX.free;
   inherited;
 end;
 
-function TFHIRSetOutputOpOutput.asParams(name : String) : TFhirParametersParameter;
+function TFHIRSetOutputOpRespOutput.asParams(name : String) : TFhirParametersParameter;
 begin
   result := TFHIRParametersParameter.create;
   try
@@ -6907,7 +6563,7 @@ begin
   end;
 end;
 
-function TFHIRSetOutputOpOutput.isKnownName(name : String) : boolean;
+function TFHIRSetOutputOpRespOutput.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['name', 'value[x]'], name);
 end;
@@ -6915,7 +6571,7 @@ end;
 constructor TFHIRSetOutputOpResponse.create;
 begin
   inherited create();
-  FOutputList := TAdvList<TFHIRSetOutputOpOutput>.create;
+  FOutputList := TAdvList<TFHIRSetOutputOpRespOutput>.create;
 end;
 
 procedure TFHIRSetOutputOpResponse.load(params : TFHIRParameters);
@@ -6924,7 +6580,7 @@ var
 begin
   for p in params.parameterList do
     if p.name = 'output' then
-      FOutputList.Add(TFHIRSetOutputOpOutput.create(p));{a}
+      FOutputList.Add(TFHIRSetOutputOpRespOutput.create(p));{a}
   loadExtensions(params);
 end;
 
@@ -6941,7 +6597,7 @@ end;
 
 function TFHIRSetOutputOpResponse.asParams : TFhirParameters;
 var
-  v1 : TFHIRSetOutputOpOutput;
+  v1 : TFHIRSetOutputOpRespOutput;
 begin
   result := TFHIRParameters.create;
   try

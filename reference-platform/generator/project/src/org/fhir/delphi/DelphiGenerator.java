@@ -255,11 +255,11 @@ public class DelphiGenerator {
 
     defCodeOp.classDefs.add("  //Operation "+op.getCode()+" ("+op.getName()+")");
 
-    genOp(op, op.getParameter(), OperationParameterUse.IN, "Request");
-    genOp(op, op.getParameter(), OperationParameterUse.OUT, "Response");
+    genOp(op, op.getParameter(), OperationParameterUse.IN, "Request", "Req");
+    genOp(op, op.getParameter(), OperationParameterUse.OUT, "Response", "Resp");
   }
   
-  private void genOp(OperationDefinition op, List<OperationDefinitionParameterComponent> plist, OperationParameterUse use, String suffix) throws IOException {
+  private void genOp(OperationDefinition op, List<OperationDefinitionParameterComponent> plist, OperationParameterUse use, String suffix, String prefix) throws IOException {
     String name = Utilities.capitalize(getPascalName(op.getCode()));
     StringBuilder fields = new StringBuilder();
     StringBuilder accessors = new StringBuilder();
@@ -278,8 +278,8 @@ public class DelphiGenerator {
         String pt = null;
         boolean complex = false;
         if (p.getType() == null) {
-          pt = "TFHIR"+name+"Op"+Utilities.capitalize(pn);
-          genOp(op, p.getPart(), null, Utilities.capitalize(pn));
+          pt = "TFHIR"+name+"Op"+prefix+Utilities.capitalize(pn);
+          genOp(op, p.getPart(), null, prefix+Utilities.capitalize(pn), prefix);
           complex = true;
         }
         if (pt == null)

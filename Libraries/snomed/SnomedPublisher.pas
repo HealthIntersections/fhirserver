@@ -627,7 +627,7 @@ Begin
       FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, caps, refsets, valueses, active);
       if active Then
       Begin
-        html.StartRowFlip(i);
+        html.StartRow();
         html.AddTableCell(inttostr(iId));
         html.AddTableCell(Screen(FSnomed.Strings.GetEntry(iWork), ''));
         CellConceptRef(html, sPrefix, kind, cdDesc);
@@ -726,7 +726,10 @@ Begin
         FSnomed.Rel.GetRelationship(Outbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
         if (showhist) or active then
         begin
-          html.StartRowFlip(i);
+          if not active then
+            html.StartRow('#EFEFEF')
+          else
+            html.StartRow();
           html.AddTableCellHint(Screen(PN, ''), inttostr(did));
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
           CellConceptRef(html, sPrefix, iWork2, cdDesc);
@@ -756,7 +759,7 @@ Begin
       html.EndTableRow;
       For i := iStart to Min(iStart+MAX_ROWS, High(aMembers)) Do
       Begin
-        html.StartRowFlip(i);
+        html.StartRow();
         html.AddTableCell(GUIDToString(aMembers[i].id));
         case aMembers[i].kind of
           0 {concept} :
@@ -830,6 +833,7 @@ Begin
       html.StartTableRow;
       html.AddTableCell('Inbound Relationships', true);
       html.AddTableCell('Type', true);
+      html.AddTableCell('Active', true);
       html.AddTableCell('Source', true);
       html.AddTableCell('Characteristic', true);
       html.AddTableCell('Refinability', true);
@@ -840,9 +844,13 @@ Begin
         FSnomed.Rel.GetRelationship(Inbounds[i], did, iWork, iWork2, iWork3, module, kind, modifier, date, Active, Defining, Group);
         if (showhist) or (Active) then
         begin
-          html.StartRowFlip(i);
+          if not active then
+            html.StartRow('#EFEFEF')
+          else
+            html.StartRow();
           CellConceptRef(html, sPrefix, iWork, cdDesc);
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
+          html.AddTableCell(BooleanToString(active));
           html.AddTableCellHint(Screen(PN, ''), inttostr(did));
           CellConceptRef(html, sPrefix, kind, cdDesc);
           CellConceptRef(html, sPrefix, modifier, cdDesc);
@@ -1077,7 +1085,7 @@ Begin
       html.StartTable;
       for i := Low(iRefs) To High(iRefs) Do
       begin
-        html.StartRowFlip(i);
+        html.StartRow();
         html.AddTableCell(FSnomed.desc.GetEntry(iRefs[i]));
         html.EndTableRow;
       End;

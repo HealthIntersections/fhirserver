@@ -1679,8 +1679,8 @@ var
   s : String;
   iRefs : TCardinalArray;
   {$IFDEF FHIR3}
-  p : TFHIRLookupOpProperty_;
-  d : TFHIRLookupOpDesignation;
+  p : TFHIRLookupOpRespProperty_;
+  d : TFHIRLookupOpRespDesignation;
   {$ENDIF}
 begin
   index := integer(ctxt)-1;
@@ -1691,56 +1691,56 @@ begin
   {$IFDEF FHIR3}
     if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'COMPONENT';
       p.description := GetConceptDesc(iComponent);
     End;
     if hasProp(props, 'PROPERTY', true) and (iProperty <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'PROPERTY';
       p.description := GetConceptDesc(iProperty);
     End;
     if hasProp(props, 'TIME_ASPCT', true) and (iTimeAspect <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'TIME_ASPCT';
       p.description := GetConceptDesc(iTimeAspect);
     End;
     if hasProp(props, 'SYSTEM', true) and (iSystem <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'SYSTEM';
       p.description := GetConceptDesc(iSystem);
     End;
     if hasProp(props, 'SCALE_TYP', true) and (iScale <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'SCALE_TYP';
       p.description := GetConceptDesc(iScale);
     End;
     if hasProp(props, 'METHOD_TYP', true) and (iMethod <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'METHOD_TYP';
       p.description := GetConceptDesc(iMethod);
     End;
     if hasProp(props, 'CLASS', true) and (iClass <> 0) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'CLASS';
       p.description := GetConceptDesc(iClass);
     End;
     if hasProp(props, 'CLASSTYPE', true) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'CLASSTYPE';
       if iFlags and FLAGS_CLIN > 0 Then
@@ -1755,7 +1755,7 @@ begin
 
     if hasProp(props, 'STATUS', true) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'STATUS';
       if iFlags and FLAGS_HOLD > 0 Then
@@ -1768,7 +1768,7 @@ begin
     Begin
       if iFlags and FLAGS_ROOT > 0 Then
       Begin
-        p := TFHIRLookupOpProperty_.create;
+        p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'Root';
         p.description := 'This is a root of a set';
@@ -1779,7 +1779,7 @@ begin
     Begin
       if iFlags and FLAGS_UNITS > 0 Then
       Begin
-        p := TFHIRLookupOpProperty_.create;
+        p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'UNITSREQUIRED';
         p.description := 'Units are required';
@@ -1788,7 +1788,7 @@ begin
 
     if hasProp(props, 'ORDER_OBS', true) Then
     Begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'ORDER_OBS';
       if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
@@ -1807,7 +1807,7 @@ begin
       for i := Low(iRefs) To High(iRefs) Do
         if iRefs[i] <> 0 Then
         begin
-          d := TFHIRLookupOpDesignation.create;
+          d := TFHIRLookupOpRespDesignation.create;
           resp.designationList.Add(d);
           d.value := Desc.GetEntry(iRefs[i]);
           d.use := TFHIRCoding.Create;

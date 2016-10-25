@@ -458,7 +458,7 @@ Begin
     if iComponent <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Component');
       html.AddTableCell(GetConceptDesc(iComponent));
       html.EndTableRow;
@@ -466,7 +466,7 @@ Begin
     if iProperty <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Property');
       html.AddTableCell(GetConceptDesc(iProperty));
       html.EndTableRow;
@@ -474,7 +474,7 @@ Begin
     if iTimeAspect <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Time Aspect');
       html.AddTableCell(GetConceptDesc(iTimeAspect));
       html.EndTableRow;
@@ -482,7 +482,7 @@ Begin
     if iSystem <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('System');
       html.AddTableCell(GetConceptDesc(iSystem));
       html.EndTableRow;
@@ -490,7 +490,7 @@ Begin
     if iScale <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Scale');
       html.AddTableCell(GetConceptDesc(iScale));
       html.EndTableRow;
@@ -498,7 +498,7 @@ Begin
     if iMethod <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Method');
       html.AddTableCell(GetConceptDesc(iMethod));
       html.EndTableRow;
@@ -506,14 +506,14 @@ Begin
     if iClass <> 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Class');
       html.AddTableCell(GetConceptDesc(iClass));
       html.EndTableRow;
     End;
 
     inc(iCount);
-    html.StartRowFlip(iCount);
+    html.StartRow();
     html.AddTableCell('Type');
     if iFlags and FLAGS_CLIN > 0 Then
       html.AddTableCell('Clinical')
@@ -526,7 +526,7 @@ Begin
     html.EndTableRow;
 
     inc(iCount);
-    html.StartRowFlip(iCount);
+    html.StartRow();
     html.AddTableCell('Status');
     if iFlags and FLAGS_HOLD > 0 Then
       html.AddTableCell('Not yet final')
@@ -537,7 +537,7 @@ Begin
     if iFlags and FLAGS_ROOT > 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Root');
       html.AddTableCell('This is a root of a set');
       html.EndTableRow;
@@ -546,14 +546,14 @@ Begin
     if iFlags and FLAGS_UNITS > 0 Then
     Begin
       inc(iCount);
-      html.StartRowFlip(iCount);
+      html.StartRow();
       html.AddTableCell('Units');
       html.AddTableCell('Units are required');
       html.EndTableRow;
     End;
 
     inc(iCount);
-    html.StartRowFlip(iCount);
+    html.StartRow();
     html.AddTableCell('Order/Obs Status');
     if (iFlags and FLAGS_ORDER> 0 ) and (iFlags and FLAGS_OBS> 0 ) Then
       html.AddTableCell('Both')
@@ -578,7 +578,7 @@ Begin
       for i := Low(iRefs) To High(iRefs) Do
         if iRefs[i] <> 0 Then
         begin
-          html.StartRowFlip(i);
+          html.StartRow();
           html.AddTableCell(FLoinc.desc.GetEntry(iRefs[i]));
           html.EndTableRow;
         End;

@@ -42,7 +42,7 @@ Type
 
     procedure StartTable(borders : boolean; clss : String = '');
     procedure StartTableRow;
-    procedure StartRowFlip(i : integer);
+    procedure StartRow(bgcolor : string = '');
     procedure StartTableCell(span : integer = 1);
     procedure EndTableCell;
     procedure EndTableRow;
@@ -289,9 +289,12 @@ begin
   FBuilder.Append('<pre>'#13#10);
 end;
 
-procedure THtmlPublisher.StartRowFlip(i: integer);
+procedure THtmlPublisher.StartRow(bgcolor : string = '');
 begin
-  FBuilder.Append('<tr>')
+  if (bgcolor <> '') then
+    FBuilder.Append('<tr style="background-color: '+bgcolor+'">')
+  else
+    FBuilder.Append('<tr>')
 end;
 
 procedure THtmlPublisher.StartTable(borders: boolean; clss : String);

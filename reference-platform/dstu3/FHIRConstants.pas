@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-12T21:19:49+11:00
+// FHIR v1.7.0 generated 2016-10-26T07:06:29+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -1226,7 +1226,7 @@ Type
     spGoal_Category, {@enum.value "category" spGoal_Category E.g. Treatment, dietary, behavioral, etc. }
     spGoal_Identifier, {@enum.value "identifier" spGoal_Identifier External Ids for this goal }
     spGoal_Patient, {@enum.value "patient" spGoal_Patient Who this goal is intended for }
-    spGoal_Status, {@enum.value "status" spGoal_Status proposed | planned | accepted | rejected | in-progress | achieved | sustaining | on-hold | cancelled | on-target | ahead-of-target | behind-target }
+    spGoal_Status, {@enum.value "status" spGoal_Status proposed | planned | accepted | rejected | in-progress | achieved | sustaining | on-hold | cancelled | on-target | ahead-of-target | behind-target | entered-in-error }
     spGoal_Subject, {@enum.value "subject" spGoal_Subject Who this goal is intended for }
     spGoal_Targetdate); {@enum.value "targetdate" spGoal_Targetdate Reach goal on or before }
 
@@ -3225,7 +3225,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.7.0';
 
-  FHIR_GENERATED_DATE = '2016-10-12T21:19:49+11:00';
+  FHIR_GENERATED_DATE = '2016-10-26T07:06:29+11:00';
 
 
 

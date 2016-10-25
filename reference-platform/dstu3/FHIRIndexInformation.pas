@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-10-12T21:19:49+11:00
+// FHIR v1.7.0 generated 2016-10-26T07:06:29+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -548,7 +548,7 @@ begin
   indexes.add('ClinicalImpression', 'date', 'When the assessment was documented', SearchParamTypeDATE, [], 'ClinicalImpression.date', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'finding-code', 'What was found', SearchParamTypeTOKEN, [], 'ClinicalImpression.finding.item.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'finding-ref', 'What was found', SearchParamTypeREFERENCE, ['Condition', 'Observation'], 'ClinicalImpression.finding.item.as(Reference)', SearchXpathUsageNormal);
-  indexes.add('ClinicalImpression', 'investigation', 'Record of a specific investigation', SearchParamTypeREFERENCE, ['RiskAssessment', 'FamilyMemberHistory', 'Observation', 'DiagnosticReport', 'ImagingStudy', 'QuestionnaireResponse'], 'ClinicalImpression.investigations.item', SearchXpathUsageNormal);
+  indexes.add('ClinicalImpression', 'investigation', 'Record of a specific investigation', SearchParamTypeREFERENCE, ['RiskAssessment', 'FamilyMemberHistory', 'Observation', 'DiagnosticReport', 'ImagingStudy', 'QuestionnaireResponse'], 'ClinicalImpression.investigation.item', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'patient', 'Patient or group assessed', SearchParamTypeREFERENCE, ['Patient'], 'ClinicalImpression.subject', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'plan', 'Plan of action after assessment', SearchParamTypeREFERENCE, ['Appointment', 'ReferralRequest', 'CarePlan', 'NutritionRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'DiagnosticRequest', 'CommunicationRequest'], 'ClinicalImpression.plan', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'previous', 'Reference to last assessment', SearchParamTypeREFERENCE, ['ClinicalImpression'], 'ClinicalImpression.previous', SearchXpathUsageNormal);
@@ -1385,7 +1385,7 @@ begin
   indexes.add('Goal', 'category', 'E.g. Treatment, dietary, behavioral, etc.', SearchParamTypeTOKEN, [], 'Goal.category', SearchXpathUsageNormal);
   indexes.add('Goal', 'identifier', 'External Ids for this goal', SearchParamTypeTOKEN, [], 'Goal.identifier', SearchXpathUsageNormal);
   indexes.add('Goal', 'patient', 'Who this goal is intended for', SearchParamTypeREFERENCE, ['Patient'], 'Goal.subject', SearchXpathUsageNormal);
-  indexes.add('Goal', 'status', 'proposed | planned | accepted | rejected | in-progress | achieved | sustaining | on-hold | cancelled | on-target | ahead-of-target | behind-target', SearchParamTypeTOKEN, [], 'Goal.status', SearchXpathUsageNormal);
+  indexes.add('Goal', 'status', 'proposed | planned | accepted | rejected | in-progress | achieved | sustaining | on-hold | cancelled | on-target | ahead-of-target | behind-target | entered-in-error', SearchParamTypeTOKEN, [], 'Goal.status', SearchXpathUsageNormal);
   indexes.add('Goal', 'subject', 'Who this goal is intended for', SearchParamTypeREFERENCE, ['Group', 'Organization', 'Patient'], 'Goal.subject', SearchXpathUsageNormal);
   indexes.add('Goal', 'targetdate', 'Reach goal on or before', SearchParamTypeDATE, [], 'Goal.target.as(Date)', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'Goal', ['patient']);

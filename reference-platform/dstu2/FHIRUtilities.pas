@@ -460,13 +460,17 @@ type
     procedure AddParam(name : String; value : boolean); overload;
   end;
 
-  TFHIRExpansionProfileCodeSystemIncludeCodeSystem = class (TAdvObject)
+  TFhirSystemVersionProcessingModeEnum = (SystemVersionProcessingModeDefault, SystemVersionProcessingModeCheck, SystemVersionProcessingModeOverride);
+
+  TFhirExpansionProfileFixedVersion = class (TAdvObject)
   private
     FVersion: String;
     FSystem: String;
+    FMode: TFhirSystemVersionProcessingModeEnum;
   public
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
+    property mode : TFhirSystemVersionProcessingModeEnum read FMode write FMode;
   end;
 
   TFhirExpansionProfile = class (TAdvObject)
@@ -475,12 +479,11 @@ type
     FlimitedExpansion: boolean;
     FdisplayLanguage: String;
     FexcludeNested: boolean;
-    FincludeInactive: boolean;
+    FactiveOnly: boolean;
     FexcludeNotForUI: boolean;
     FexcludePostCoordinated: boolean;
     FincludeDesignations: boolean;
-    FcodeSystemList : TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem>;
-    FincludeInactiveElement: TAdvObject;
+    FcodeSystemList : TAdvList<TFhirExpansionProfileFixedVersion>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -492,13 +495,12 @@ type
     property limitedExpansion : boolean read FlimitedExpansion write FlimitedExpansion;
     property displayLanguage : String read FdisplayLanguage write FdisplayLanguage;
     property includeDesignations : boolean read FincludeDesignations write FincludeDesignations;
-    property includeInactive : boolean read FincludeInactive write FincludeInactive;
-    property includeInactiveElement : TAdvObject read FincludeInactiveElement write FincludeInactiveElement;
+    property activeOnly : boolean read FactiveOnly write FactiveOnly;
     property excludeNested : boolean read FexcludeNested write FexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write FexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write FexcludePostCoordinated;
 
-    property codeSystemList : TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem> read FcodeSystemList;
+    property fixedVersionList : TAdvList<TFhirExpansionProfileFixedVersion> read FcodeSystemList;
     function codeSystem : TFhirExpansionProfile;
     function include : TFhirExpansionProfile;
   end;
@@ -3997,7 +3999,7 @@ end;
 constructor TFhirExpansionProfile.Create;
 begin
   inherited;
-  FcodeSystemList := TAdvList<TFHIRExpansionProfileCodeSystemIncludeCodeSystem>.create;
+  FcodeSystemList := TAdvList<TFhirExpansionProfileFixedVersion>.create;
 end;
 
 destructor TFhirExpansionProfile.Destroy;

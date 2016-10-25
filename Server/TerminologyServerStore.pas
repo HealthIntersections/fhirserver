@@ -1534,17 +1534,17 @@ end;
 
 function TTerminologyServerStore.checkVersion(system, version : String; profile : TFHIRExpansionProfile) : String;
 var
-  t : TFHIRExpansionProfileCodeSystemIncludeCodeSystem;
+  t : TFhirExpansionProfileFixedVersion;
 begin
-  if (profile = nil) or (profile.codeSystem = nil) or (profile.codeSystem.include = nil) then
+  if (profile = nil) then
     exit(version);
 
-  for t in profile.codeSystem.include.codeSystemList do
+  for t in profile.fixedVersionList do
     if (t.system = system) and (t.version <> '') then
     begin
-      if version = '' then
+      if (version = '') or (t.mode = SystemVersionProcessingModeOverride) then
         version := t.version
-      else
+      else if t.mode = SystemVersionProcessingModeCheck then
         raise ETerminologyError.Create('Expansion Profile Error: the version "'+version+'" is inconsistent with the version "'+t.version+'" required by the profile');
     end;
   exit(version);
@@ -2136,8 +2136,8 @@ var
   ccd : TFhirCodeSystemConceptDesignation;
   cp : TFhirCodeSystemConceptProperty;
   pp : TFhirCodeSystemProperty;
-  d : TFHIRLookupOpDesignation;
-  p : TFHIRLookupOpProperty_;
+  d : TFHIRLookupOpRespDesignation;
+  p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
 begin
   {$IFDEF FHIR3}
@@ -2148,7 +2148,7 @@ begin
     parent := getParent(context);
     if (parent <> nil) then
     begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'parent';
       p.value := parent.code;
@@ -2160,7 +2160,7 @@ begin
   begin
     for child in context.conceptList do
     begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'child';
       p.value := child.code;
@@ -2171,7 +2171,7 @@ begin
   if hasProp(props, 'designation', true) then
     for ccd in context.designationList do
     Begin
-      d := TFHIRLookupOpDesignation.create;
+      d := TFHIRLookupOpRespDesignation.create;
       resp.designationList.Add(d);
       d.value := ccd.value;
       d.use := ccd.use.link;
@@ -2183,7 +2183,7 @@ begin
     pp := getProperty(cp.code);
     if hasProp(props, cp.code, true) then
     begin
-      p := TFHIRLookupOpProperty_.create;
+      p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := cp.code;
       p.value := cp.value.primitiveValue;

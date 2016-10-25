@@ -5824,8 +5824,8 @@ begin
        result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
      if (params.str['includeDefinition'] <> '') then
        result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
-     if (params.str['includeInactive'] <> '') then
-       result.includeInactive := StrToBoolDef(params.str['includeInactive'], false);
+     if (params.str['activeOnly'] <> '') then
+       result.activeOnly := StrToBoolDef(params.str['activeOnly'], false);
      if (params.str['excludeNested'] <> '') then
        result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
      if (params.str['excludeNotForUI'] <> '') then

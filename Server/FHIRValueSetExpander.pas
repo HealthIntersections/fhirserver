@@ -196,8 +196,8 @@ begin
       result.expansion.addParam('includeDesignations', profile.includeDesignations);
     if profile.includeDefinition then
       result.expansion.addParam('includeDefinition', profile.includeDefinition);
-    if profile.includeInactive then
-      result.expansion.addParam('includeInactive', profile.includeInactive);
+    if profile.activeOnly then
+      result.expansion.addParam('activeOnly', profile.activeOnly);
     if profile.excludeNested then
       result.expansion.addParam('excludeNested', profile.excludeNested);
     if profile.excludeNotForUI then

@@ -256,8 +256,8 @@ var
 begin
   result := profile.Clone;
   try
-    if (usage.NameElement <> nil) then
-      result.Name := usage.Name;
+    if (usage.sliceNameElement <> nil) then
+      result.sliceName := usage.sliceName;
     if (usage.Label_Element <> nil) then
       result.Label_ := usage.Label_;
     for c in usage.codeList do
@@ -343,7 +343,7 @@ begin
         result.elementList.add(outcome);
         inc(baseCursor);
       end
-      else if (diffMatches.Count = 1) and (slicingHandled or ((diffMatches[0].slicing = nil) and not (isExtension(diffMatches[0]) and (diffMatches[0].name = '')))) then
+      else if (diffMatches.Count = 1) and (slicingHandled or ((diffMatches[0].slicing = nil) and not (isExtension(diffMatches[0]) and (diffMatches[0].slicename = '')))) then
       begin // one matching element in the differential
         log(cpath+': single match in the differential at '+inttostr(diffCursor));
         template := nil;
@@ -375,7 +375,7 @@ begin
         outcome := updateURLs(url, template);
         outcome.path := fixedPath(contextPath, outcome.path);
         updateFromBase(outcome, currentBase);
-        outcome.name := diffMatches[0].Name;
+        outcome.slicename := diffMatches[0].sliceName;
         outcome.slicing := nil;
         updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
         if (outcome.path.endsWith('[x]')) and (outcome.type_List.Count = 1 ) and (outcome.type_List[0].code <> '') then
@@ -419,7 +419,7 @@ begin
         if (not unbounded(currentBase)) and (not isSlicedToOneOnly(diffMatches[0])) then
           // you can only slice an element that doesn't repeat if the sum total of your slices is limited to 1
           // (but you might do that in order to split up constraints by type)
-          raise Exception.create('Attempt to a slice an element that does not repeat: '+currentBase.path+'/'+currentBase.name+' from '+contextName);
+          raise Exception.create('Attempt to a slice an element that does not repeat: '+currentBase.path+'/'+currentBase.slicename+' from '+contextName);
         if (diffMatches[0].slicing = nil) and (not isExtension(currentBase)) then // well, the diff has set up a slice, but hasn't defined it. this is an error
           raise Exception.create('differential does not have a slice: '+currentBase.path);
 
@@ -439,7 +439,7 @@ begin
 
         // differential - if the first one in the list has a name, we'll process it. Else we'll treat it as the base definition of the slice.
         start := 0;
-        if (diffMatches[0].name = '') then
+        if (diffMatches[0].slicename = '') then
         begin
           updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
           if (outcome.type_List.Count = 0) then
@@ -530,12 +530,12 @@ begin
           outcome.slicing := nil;
           if (not outcome.path.startsWith(resultPathBase)) then
             raise Exception.create('Adding wrong path');
-          if (diffMatches[diffpos].name = '') and (diffMatches[diffpos].slicing <> nil) then
+          if (diffMatches[diffpos].slicename = '') and (diffMatches[diffpos].slicing <> nil) then
           begin
             inc(diffpos);
             // todo: check slicing details match
           end;
-          if (diffpos < diffMatches.Count) and (diffMatches[diffpos].name = outcome.name) then
+          if (diffpos < diffMatches.Count) and (diffMatches[diffpos].slicename = outcome.slicename) then
           begin
             // if there's a diff, we update the outcome with diff
             // no? updateFromDefinition(outcome, diffMatches.get(diffpos), profileName, pkp, closed, url);
@@ -573,7 +573,7 @@ begin
         begin
           diffItem := diffMatches[diffpos];
           for baseItem in baseMatches do
-            if (baseItem.name = diffItem.name) then
+            if (baseItem.slicename = diffItem.slicename) then
               raise Exception.create('Named items are out of order in the slice');
           outcome := updateURLs(url, original.clone());
           outcome.path := fixedPath(contextPath, outcome.path);
@@ -731,7 +731,7 @@ begin
   try
     props := item.createPropertyList(true);
     try
-      children := getChildMap(profile, definition.name, definition.path, definition.ContentReference);
+      children := getChildMap(profile, definition.slicename, definition.path, definition.ContentReference);
       try
         if children.Count = 0 then
         begin
@@ -1522,7 +1522,7 @@ end;
 
 function TBaseWorkerContext.getChildMap(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
-  result := FHIRUtilities.getChildMap(profile, element.name, element.path, element.contentReference);
+  result := FHIRUtilities.getChildMap(profile, element.slicename, element.path, element.contentReference);
 end;
 
 function TBaseWorkerContext.getCustomResource(name: String): TFHIRCustomResourceInformation;

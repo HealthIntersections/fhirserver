@@ -867,6 +867,7 @@ var
   analysis : TSnomedAnalysis;
   parts : TArray<String>;
   ss, t : TSnomedServices;
+  pm : TParseMap;
 begin
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
@@ -902,7 +903,12 @@ begin
     FServer.DefSnomed.RecordUse;
     analysis := TSnomedAnalysis.create(FServer.DefSnomed.Link);
     try
-      response.ContentText := analysis.generate;
+      pm := TParseMap.create(request.UnparsedParams);
+      try
+        response.ContentText := analysis.generate(pm);
+      finally
+        pm.Free;
+      end;
       response.ResponseNo := 200;
     finally
       analysis.free;
