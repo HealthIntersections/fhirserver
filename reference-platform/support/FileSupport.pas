@@ -9,7 +9,7 @@ are permitted provided that the following conditions are met:
 
  * Redistributions of source code must retain the above copyright notice, this 
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
+ * Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation 
    and/or other materials provided with the distribution.
  * Neither the name of HL7 nor the names of its contributors may be used to 
@@ -73,6 +73,7 @@ Procedure FileSetReadOnlyAttribute(Const sFilename : String; Const bReadOnly : B
 Function PathFolder(Const sFilename : String) : String; Overload;
 Function FileCopyAttempt(Const sSource, sDestination : String) : Boolean; Overload;
 Function FileCopyForce(Const sSource, sDestination : String) : Boolean; Overload;
+Function ForceFolder(dir: String): Boolean;
 
 Function PathIncludeExtension(Const sFilename, sExtension : String) : String; Overload;
 Function PathExcludeExtension(Const sFilename : String) : String; Overload;
@@ -463,6 +464,35 @@ Begin
 End;
 
 
+Function last(Const s: String; c: Char): Cardinal;
+Var
+  i: Word;
+Begin
+  i := Length(s);
+  Result := 0;
+  While (i > 0) Do
+    Begin
+    If s[i] = c Then
+      Begin
+      Result := i;
+      Exit;
+      End;
+    Dec(i);
+    End;
+End;
+
+Function ForceFolder(dir: String): Boolean;
+Var
+  x: Integer;
+Begin
+  x := last(dir, '\');
+  If x > 1 Then
+    ForceFolder(Copy(dir, 1, x - 1));
+  Result := windows.Createdirectory(PChar(dir), Nil);
+  If Not Result Then
+    If (GetLastError = 183) Then
+      Result := True; // directory existed. ( but thats O.K.)
+End;
 
 
 End. // FileSupport //

@@ -2,7 +2,7 @@ object Form4: TForm4
   Left = 0
   Top = 0
   Caption = 'FhirServer Tools'
-  ClientHeight = 361
+  ClientHeight = 395
   ClientWidth = 711
   Color = clBtnFace
   Constraints.MinHeight = 400
@@ -22,7 +22,7 @@ object Form4: TForm4
     Left = 0
     Top = 0
     Width = 115
-    Height = 361
+    Height = 395
     Align = alLeft
     BevelInner = bvLowered
     BevelOuter = bvNone
@@ -646,7 +646,7 @@ object Form4: TForm4
     Left = 115
     Top = 0
     Width = 596
-    Height = 361
+    Height = 395
     ActivePage = TabSheet1
     Align = alClient
     Style = tsButtons
@@ -673,7 +673,7 @@ object Form4: TForm4
       end
       object Panel3: TPanel
         Left = 0
-        Top = 289
+        Top = 323
         Width = 588
         Height = 41
         Align = alBottom
@@ -796,7 +796,7 @@ object Form4: TForm4
       end
       object Panel4: TPanel
         Left = 0
-        Top = 238
+        Top = 272
         Width = 588
         Height = 51
         Align = alBottom
@@ -837,13 +837,13 @@ object Form4: TForm4
         Left = 0
         Top = 101
         Width = 588
-        Height = 137
+        Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 3
         DesignSize = (
           588
-          137)
+          171)
         object Label2: TLabel
           Left = 10
           Top = 6
@@ -964,6 +964,7 @@ object Form4: TForm4
             'International'
             'US'
             'Australia'
+            'Canada'
             'Spanish'
             'Denmark'
             'Netherlands'
@@ -1025,9 +1026,9 @@ object Form4: TForm4
               'This pane allows you to import SNOMED CT to a pre-processed file' +
               '. Pick an a RF2 distribution, the Snapshot directory, and the co' +
               'ntent will be processed to a ready to use form. The output file ' +
-              'is about 400-500MB, and the process takes about 60min. Once the ' +
-              'process is complete, the file can be listed in the FHIRServer.in' +
-              'i file, [snomed] cache value'
+              'is about 800MB, and the process takes about 60min. Once the proc' +
+              'ess is complete, the file can be listed in the FHIRServer.ini fi' +
+              'le, [snomed] cache value'
             WordWrap = True
             ExplicitWidth = 693
           end
@@ -1039,7 +1040,7 @@ object Form4: TForm4
       ImageIndex = 3
       object Panel20: TPanel
         Left = 0
-        Top = 289
+        Top = 323
         Width = 588
         Height = 41
         Align = alBottom
@@ -1162,7 +1163,7 @@ object Form4: TForm4
       end
       object Panel21: TPanel
         Left = 0
-        Top = 238
+        Top = 272
         Width = 588
         Height = 51
         Align = alBottom
@@ -1231,11 +1232,12 @@ object Form4: TForm4
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
             Caption = 
-              'This pane allows you to combine multiple SNOMED CT editions to a' +
-              ' single release for import. This release allows the FhirServer t' +
-              'o reason across multiple editions (e.g. closure table). You shou' +
-              'ld import all the supported editions, and nominate the resulting' +
-              ' edition as the first in fhirserver.ini'
+              'This pane allows for combining multiple SNOMED CT editions to a ' +
+              'single release for import. This allows a FhirServer to reason ac' +
+              'ross multiple editions (e.g. closure table). Only Grahame Grieve' +
+              ' can run this! (Uses Health Intersections'#39's SCT namespace). If y' +
+              'ou want to support multiple editions of SNOMED CT, contact Graha' +
+              'me'
             WordWrap = True
             ExplicitWidth = 693
           end
@@ -1262,13 +1264,13 @@ object Form4: TForm4
         Left = 0
         Top = 101
         Width = 588
-        Height = 137
+        Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
         DesignSize = (
           588
-          137)
+          171)
         object Label18: TLabel
           Left = 10
           Top = 6
@@ -1433,6 +1435,48 @@ object Form4: TForm4
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnCombinedDestinationClick
         end
+        object Label15: TLabel
+          Left = 10
+          Top = 146
+          Width = 30
+          Height = 13
+          Caption = 'Store:'
+        end
+        object btnCombinedStore: TSpeedButton
+          Left = 555
+          Top = 141
+          Width = 27
+          Height = 28
+          Anchors = [akTop, akRight]
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+            FF00FF0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274
+            AC0274AC097BB2FF00FFFF00FFFF00FF0274AC2EA7E10274AC7ED4FC46BCF449
+            BFF449BFF64ABFF44ABFF64BC0F643BAF036A6D772C9E30274ACFF00FFFF00FF
+            0274AC35AFE50274AC8ADEFF53C9F856CAFA56CAF857CAFA57CAFA58CBFB4FC5
+            F43DADD87ACFE50274ACFF00FF0274AC0274AC3BB4E50274AC92E6FF5DD3FA62
+            D4FA62D4FA62D4FA63D4FA63D5FA59CFF643B4D87FD3E50274AC0274AC2EA7E1
+            0274AC41BBE70274AC96EEFF65DDFA69DEFB68DEFB69DEFB68DEFB69E0FC5FD9
+            F741B6D880D7E50274AC0274AC35AFE50274AC45C1E60274ACEAFFFFA6F8FFAB
+            FAFFACFAFFABFAFFABFAFFADFBFFA1F3FF82D1E6A7E5EF0274AC0274AC3BB4E5
+            0274AC52CCEA0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274
+            AC0274AC0274AC0274AC0274AC41BBE70274AC74E9F874E9F874E9F874E9F874
+            E9F874E9F874E9F874E9F874E9F874E9F80274ACFF00FFFF00FF0274AC45C1E6
+            0274ACD4FEFF96FFFF97FFFF97FFFF99FFFF99FFFF9AFFFF9AFFFF9EFFFF8EFC
+            FF0274ACFF00FFFF00FF0274AC52CCEA0274AC0274ACD4FCFE88FBFE99FCFE47
+            C0DC0274AC0274AC0274AC0274AC0274AC0274ACFF00FFFF00FF0274AC74E9F8
+            74E9F874E9F80274AC0274AC0274AC0274AC74E9F874E9F874E9F80274ACFF00
+            FFFF00FFFF00FFFF00FF0274ACD4FEFF96FFFF97FFFF97FFFF99FFFF99FFFF9A
+            FFFF9AFFFF9EFFFF8EFCFF0274ACFF00FFFF00FFFF00FFFF00FFFF00FF0274AC
+            D4FCFE88FBFE99FCFE47C0DC0274AC0274AC0274AC0274AC0274ACFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FF0274AC0274AC0274AC0274ACFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = btnCombinedStoreClick
+        end
         object edtInternational: TEdit
           Left = 88
           Top = 6
@@ -1457,6 +1501,14 @@ object Form4: TForm4
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
+        end
+        object edtCombinedStore: TEdit
+          Left = 88
+          Top = 144
+          Width = 461
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 3
         end
       end
     end
@@ -1525,7 +1577,7 @@ object Form4: TForm4
       end
       object Panel11: TPanel
         Left = 0
-        Top = 238
+        Top = 272
         Width = 588
         Height = 51
         Align = alBottom
@@ -1564,7 +1616,7 @@ object Form4: TForm4
       end
       object Panel12: TPanel
         Left = 0
-        Top = 289
+        Top = 323
         Width = 588
         Height = 41
         Align = alBottom
@@ -1689,13 +1741,13 @@ object Form4: TForm4
         Left = 0
         Top = 101
         Width = 588
-        Height = 137
+        Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
         DesignSize = (
           588
-          137)
+          171)
         object Label10: TLabel
           Left = 10
           Top = 6
@@ -1880,13 +1932,13 @@ object Form4: TForm4
         Left = 0
         Top = 101
         Width = 588
-        Height = 137
+        Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
         DesignSize = (
           588
-          137)
+          171)
         object Label8: TLabel
           Left = 10
           Top = 6
@@ -1950,7 +2002,7 @@ object Form4: TForm4
       end
       object Panel18: TPanel
         Left = 0
-        Top = 238
+        Top = 272
         Width = 588
         Height = 51
         Align = alBottom
@@ -1989,7 +2041,7 @@ object Form4: TForm4
       end
       object Panel19: TPanel
         Left = 0
-        Top = 289
+        Top = 323
         Width = 588
         Height = 41
         Align = alBottom
@@ -2122,8 +2174,8 @@ object Form4: TForm4
       end>
     Options = [fdoPickFolders, fdoPathMustExist]
     Title = 'Choose SNOMED CT RF2 Snapshot Folder'
-    Left = 353
-    Top = 3
+    Left = 345
+    Top = 11
   end
   object dlgDestination: TFileSaveDialog
     DefaultExtension = '*.cache'

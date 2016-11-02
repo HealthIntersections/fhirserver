@@ -397,7 +397,8 @@ Type
     Property Service[i : integer] : TLOINCServices read GetService; Default;
   End;
 
-function ascopy(s : TBytes; start, length : integer) : String;
+function ascopy(s : TBytes; start, len : integer) : String;
+function utfcopy(s : TBytes; start, length : integer) : String;
 
 
 Implementation
@@ -2182,13 +2183,23 @@ begin
   Move(FMaster[(iIndex*32)+28], stems, 4);
 end;
 
-function ascopy(s : TBytes; start, length : integer) : String;
+function ascopy(s : TBytes; start, len : integer) : String;
 var
   res : AnsiString;
 begin
-  SetLength(res, length);
-  move(s[start], res[1], length);
+  if len = 0 then
+    exit('');
+
+  SetLength(res, len);
+  if (length(s) < start + len) then
+    raise Exception.Create('Read off end of file: '+inttostr(length(s))+' / '+inttostr(start)+':'+inttostr(len));
+  move(s[start], res[1], len);
   result := String(res);
+end;
+
+function utfcopy(s : TBytes; start, length : integer) : String;
+begin
+  result := TEncoding.UTF8.GetString(s, start, length);
 end;
 
 

@@ -2147,13 +2147,16 @@ begin
             base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
           bundle.link_List.AddRelRef('self', base+link);
 
+          offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
+          if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
+            count := SUMMARY_SEARCH_PAGE_LIMIT
+          else
+            count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
+          if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
+            summaryStatus := soCount;
+
           if (summaryStatus <> soCount) then
           begin
-            offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
-            if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
-              count := SUMMARY_SEARCH_PAGE_LIMIT
-            else
-              count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
             if (count < 1) then
               count := SEARCH_PAGE_DEFAULT
             else if (summaryStatus = soSummary) and (Count > SUMMARY_SEARCH_PAGE_LIMIT) then

@@ -38,6 +38,7 @@ Function CreateGUID : TGUID;
 Function GUIDToString(Const aGUID : TGUID) : String;
 Function StringToGUID(Const sGUID: String) : TGUID;
 Function NilGUID : TGUID;
+Function IsNilGUID(const guid : TGUID) : boolean;
 Function GUIDAsOID(Const aGUID : TGUID) : String;
 Function IsGuid(s : String): Boolean;
 function NewGuidURN : String;
@@ -76,6 +77,11 @@ Function NilGUID : TGUID;
 Begin
   Result := StringToGUID('{00000000-0000-0000-0000-000000000000}');
 End;
+
+Function IsNilGUID(const guid : TGUID) : boolean;
+begin
+  result := (guid.D1 = 0) and (guid.D2 = 0) and (guid.D3 = 0);
+end;
 
 Function GUIDAsOID(Const aGUID : TGUID) : String;
 begin

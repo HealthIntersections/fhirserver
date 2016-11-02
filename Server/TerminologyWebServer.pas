@@ -77,7 +77,6 @@ Type
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
-
   end;
 
 implementation
@@ -97,6 +96,7 @@ begin
   html := THtmlPublisher.Create;
   try
     html.Version := SERVER_VERSION;
+    html.Header('Choose SNOMED CT Version');
     html.StartTable(true);
     html.StartTableRow;
     html.AddTableCell('Choose SNOMED Edition');
@@ -112,6 +112,7 @@ begin
       html.EndTableRow;
     end;
     html.EndTable;
+    html.done;
     result := html.output;
   finally
     html.Free;

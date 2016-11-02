@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, Classes,
-  ThreadSupport, GuidSupport, FileSupport,
+  ThreadSupport, GuidSupport, FileSupport, StringSupport,
   AdvGenerics, AdvObjects,
   SnomedServices;
 
@@ -19,6 +19,14 @@ Type
 
     procedure field(s : String);
     procedure endRecord;
+  end;
+
+  TSnomedCombinedStoreEntry = class (TAdvObject)
+  private
+    id : int64;
+  public
+    Constructor create(s : String); overload;
+    Constructor create(i : int64); overload;
   end;
 
   TSnomedCombinedItem = class (TAdvObject)
@@ -37,6 +45,7 @@ Type
     FKind : TSnomedCombinedConcept; // not linked
     FCaps : TSnomedCombinedConcept; // not linked
     FActive : boolean;
+    FLang : byte;
     FValue : String;
   public
     function link : TSnomedCombinedDescription; overload;
@@ -91,6 +100,8 @@ Type
   TSnomedCombinedReferenceSetEntry = class (TAdvObject)
   private
     id : TGuid;
+    date : TSnomedDate;
+    module : int64;
     FItem : TSnomedCombinedItem;
     FValues : TStringList;
   public
@@ -101,6 +112,7 @@ Type
   TSnomedCombinedReferenceSet = class (TAdvObject)
   private
     FName : String;
+    FFilename : String;
     FDefinition : TSnomedCombinedConcept;
     FTypes : TStringList;
     FFields : TStringList;
@@ -112,12 +124,24 @@ Type
     function abbrev : String;
   end;
 
+  TSnomedCombinedDependency = class (TAdvObject)
+  private
+    id : TGuid;
+    FDate : TSnomedDate;
+    source, target : Int64;
+    sourceName, targetName : String;
+    startDate, endDate : TSnomedDate;
+    function key : String;
+  public
+  end;
+
   TSnomedCombiner = class (TAdvObject)
   private
-    FModuleId: int64;
     FInternational: TSnomedServices;
     FOthers: TAdvList<TSnomedServices>;
 
+    FStore : TAdvMap<TSnomedCombinedStoreEntry>;
+    FDependencies : TAdvMap<TSnomedCombinedDependency>;
     FConcepts : TAdvMap<TSnomedCombinedConcept>;
     FDescriptions : TAdvMap<TSnomedCombinedDescription>;
     FRelationships : TAdvMap<TSnomedCombinedRelationship>;
@@ -129,9 +153,19 @@ Type
     FSummary : TStringList;
     FIssues : TStringList;
     FDestination: String;
-    FNextId : int64;
+    FStoreLocation: String;
 
+    nextRelationship : integer;
+    nextDescription : integer;
+    FModuleId : int64;
+    function generateId(k, t : integer) : int64; // t: 0 = concept, 1 = description, 2 = relationship
+    function getDescriptionId(d : String) : int64;
+    function getRelationshipId(s, rt, t : int64; grp : integer) : int64;
     procedure determineTotal;
+
+    procedure loadDependency(svc: TSnomedServices; rm : TSnomedReferenceSetMember);
+    procedure loadDependencies(svc : TSnomedServices); overload;
+    procedure loadDependencies; overload;
 
     function LoadConcept(svc : TSnomedServices; i : integer) : TSnomedCombinedConcept;
     Procedure UpdateConcept(svc : TSnomedServices; i : integer; concept : TSnomedCombinedConcept);
@@ -160,12 +194,18 @@ Type
     procedure forceRelationship(concept : TSnomedCombinedConcept; group : TSnomedCombinedRelationshipGroup; relationship : TSnomedCombinedRelationship);
     function exists(list  : TAdvList<TSnomedCombinedRelationship>; relationship : TSnomedCombinedRelationship) : boolean;
 
+    procedure addToRefSet(rsId, conceptId : UInt64);
     procedure identify;
+
+    procedure updateDependencies;
 
     procedure saveToRF2;
     procedure SetInternational(const Value: TSnomedServices);
     procedure recordIssue(s : String);
     procedure recordSummary(s : String);
+
+    procedure loadStore;
+    procedure saveStore;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -174,13 +214,13 @@ Type
 
     property international : TSnomedServices read FInternational write SetInternational;
     property others : TAdvList<TSnomedServices> read FOthers;
-    property moduleId : int64 read FModuleId write FModuleId;
     property callback : TInstallerCallback read FCallback write FCallback;
 
     property issues : TStringList read FIssues;
     property summary : TStringList read FSummary;
 
     property destination : String read FDestination write FDestination;
+    property store : String read FStoreLocation write FStoreLocation;
   end;
 
 implementation
@@ -322,8 +362,10 @@ end;
 constructor TSnomedCombiner.Create;
 begin
   inherited;
+  FStore := TAdvMap<TSnomedCombinedStoreEntry>.create;
   FOthers := TAdvList<TSnomedServices>.create;
   FConcepts := TAdvMap<TSnomedCombinedConcept>.create(500000);
+  FDependencies := TAdvMap<TSnomedCombinedDependency>.Create;
   FDescriptions := TAdvMap<TSnomedCombinedDescription>.create(1500000);
   FRelationships := TAdvMap<TSnomedCombinedRelationship>.create(3000000);
   FRefSets := TAdvMap<TSnomedCombinedReferenceSet>.create(1000);
@@ -333,8 +375,10 @@ end;
 
 destructor TSnomedCombiner.Destroy;
 begin
+  FStore.Free;
   FRefSets.Free;
   FDescriptions.Free;
+  FDependencies.Free;
   FRelationships.Free;
   FSummary.free;
   FIssues.free;
@@ -378,9 +422,12 @@ end;
 procedure TSnomedCombiner.Execute;
 begin
   // 1. merging
-  FNextId := moduleId+1;
 
   determineTotal;
+  loadStore;
+
+  loadDependencies;
+
   loadConcepts;
   loadDescriptions;
   loadRelationships;
@@ -391,8 +438,10 @@ begin
   classify;
 
   identify;
+  updateDependencies;
 
   // 3. save to RF2
+  saveStore;
   saveToRF2;
 end;
 
@@ -404,6 +453,7 @@ begin
   FTotal := (FInternational.Concept.Count * 2) + FInternational.Desc.Count + FInternational.ChildRelationshipCount + FInternational.Rel.Count + FInternational.RefSetCount;
   for svc in others do
     FTotal := FTotal + (svc.Concept.Count * 2) + svc.Desc.Count + svc.ChildRelationshipCount + svc.Rel.Count + svc.RefSetCount;
+  FTotal := FTotal + 3; // admin overhead
   FCurrent := 0;
   FPercent := 0;
   FLast := GetTickCount;
@@ -420,6 +470,28 @@ begin
   concept.Fflags := flags or concept.Fflags;
   if (concept.FDate < effectiveTime) then
     concept.FDate := effectiveTime;
+end;
+
+procedure TSnomedCombiner.updateDependencies;
+var
+  refset : TSnomedCombinedReferenceSet;
+  fsm : TSnomedCombinedReferenceSetEntry;
+  dep : TSnomedCombinedDependency;
+begin
+  refset := FRefSets['900000000000534007'];
+  refset.FMembers.Clear;
+  for dep in FDependencies.Values do
+  begin
+    fsm := TSnomedCombinedReferenceSetEntry.Create;
+    fsm.id := dep.id;
+    refset.FMembers.add(GUIDToString(fsm.id), fsm);
+    fsm.date := dep.FDate;
+    fsm.module := dep.source;
+    fsm.FItem := FConcepts[inttostr(dep.target)];
+    fsm.FValues := TStringList.create;
+    fsm.FValues.Add(formatDateTime('yyyymmdd', dep.startDate));
+    fsm.FValues.Add(formatDateTime('yyyymmdd', dep.endDate));
+  end;
 end;
 
 function TSnomedCombiner.LoadConcept(svc: TSnomedServices; i: integer): TSnomedCombinedConcept;
@@ -473,6 +545,56 @@ begin
   recordSummary('Total Concepts: '+inttostr(FConcepts.Count));
 end;
 
+procedure TSnomedCombiner.loadDependencies(svc: TSnomedServices);
+var
+  rm : TSnomedReferenceSetMember;
+  rml : TSnomedReferenceSetMemberArray;
+begin
+  rml := svc.getRefSet(900000000000534007);
+  for rm in rml do
+    loadDependency(svc, rm);
+end;
+
+procedure TSnomedCombiner.loadDependencies;
+var
+  svc : TSnomedServices;
+begin
+  step('Checking Dependencies');
+  loadDependencies(international);
+  for svc in others do
+    loadDependencies(svc);
+end;
+
+procedure TSnomedCombiner.loadDependency(svc: TSnomedServices; rm: TSnomedReferenceSetMember);
+var
+  str : TCardinalArray;
+  dep, depE : TSnomedCombinedDependency;
+begin
+  dep := TSnomedCombinedDependency.Create;
+  try
+    dep.id := rm.id;
+    dep.FDate := rm.date;
+    dep.source := svc.Concept.getConceptId(rm.module);
+    dep.target := svc.Concept.getConceptId(rm.Ref);
+    dep.sourceName := svc.GetPNForConcept(rm.module);
+    dep.targetName := svc.GetPNForConcept(rm.Ref);
+    str := svc.Refs.GetReferences(rm.values);
+    dep.startDate := readDate(svc.Strings.GetEntry(str[0]));
+    dep.endDate := readDate(svc.Strings.GetEntry(str[2]));
+    if (FDependencies.TryGetValue(dep.key, depE)) then
+    begin
+      if (dep.startDate <> depE.startDate) then
+        depE.startDate := dep.startDate;
+      if (dep.endDate <> depE.endDate) then
+        depE.endDate := dep.endDate;
+    end
+    else
+      FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
+  finally
+    dep.Free;
+  end;
+end;
+
 function TSnomedCombiner.LoadDescription(svc: TSnomedServices; i: integer): boolean;
 var
   iDesc : Cardinal;
@@ -482,8 +604,9 @@ var
   active : boolean;
   c : TSnomedCombinedConcept;
   d, t : TSnomedCombinedDescription;
+  lang : byte;
 begin
-  svc.Desc.getDescription(i, iDesc, id, date, concept, module, kind, caps, refsets, valueses, active);
+  svc.Desc.getDescription(i, iDesc, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
   cid := svc.Concept.getConceptId(concept);
   if not FConcepts.TryGetValue(inttostr(cid), c) then
     raise Exception.create('no find concept '+inttostr(cid))
@@ -513,6 +636,7 @@ begin
       d.FKind := FConcepts[inttostr(svc.Concept.getConceptId(kind))];
       d.FCaps := FConcepts[inttostr(svc.Concept.getConceptId(caps))];
       d.FActive := active;
+      d.FLang := lang;
       d.FValue := svc.Strings.GetEntry(iDesc);
     end;
   end;
@@ -548,7 +672,7 @@ end;
 
 function TSnomedCombiner.LoadReferenceSet(svc: TSnomedServices; i: integer): boolean;
 var
-  definition, members, dummy, types, t, name, names : cardinal;
+  definition, members, dummy, types, t, iFilename, name, names : cardinal;
   ui, s, uid : string;
   rs : TSnomedCombinedReferenceSet;
   nl, tl, vl :  TCardinalArray;
@@ -558,9 +682,12 @@ var
   j : integer;
   new : boolean;
   item : TSnomedCombinedItem;
+  guid  : TGuid;
 begin
-  svc.RefSetIndex.GetReferenceSet(i, name, definition, members, dummy, types, names);
+  svc.RefSetIndex.GetReferenceSet(i, name, iFilename, definition, members, dummy, types, names);
   ui := svc.GetConceptId(definition);
+  if (ui = '900000000000534007') then
+    s := 'test';
   new := not FRefSets.ContainsKey(ui);
   if new then
   begin
@@ -568,6 +695,7 @@ begin
     FRefSets.Add(ui, rs);
     rs.FDefinition := FConcepts[ui];
     rs.FName := svc.Strings.GetEntry(name);
+    rs.FFilename := svc.Strings.GetEntry(iFilename);
     if rs.FName = '' then
       rs.FName := ui;
   end
@@ -605,13 +733,19 @@ begin
   for m in ml do
   begin
     step('Process Reference Sets for '+svc.EditionName);
-    uid := GuidToString(m.id);
-    if not rs.FMembers.ContainsKey(uid) then
+    guid := m.id;
+    if IsNilGUID(guid) then
+      guid := CreateGUID;
+    uid := GuidToString(guid);
+    if new or not rs.FMembers.ContainsKey(uid) then
     begin
       result := true;
       rm := TSnomedCombinedReferenceSetEntry.Create;
       rs.FMembers.Add(uid, rm);
-      rm.id := m.id;
+      rm.id := guid;
+      rm.date := m.date;
+      if (m.module <> 0) then
+        rm.module := svc.Concept.getConceptId(m.module);
       case m.kind of
         0: rm.FItem := FConcepts[svc.GetConceptId(m.ref)];
         1: rm.FItem := FDescriptions[svc.GetDescriptionId(m.ref)];
@@ -633,8 +767,6 @@ begin
           end;
       end;
     end
-    else if new then
-      recordIssue('Apparent duplicate id '+uid+' in '+rs.FName+' ('+inttostr(rs.FDefinition.id)+')');
   end;
 end;
 
@@ -829,6 +961,33 @@ begin
   FRelnCount := t;
 end;
 
+procedure TSnomedCombiner.loadStore;
+var
+  s, l, r : String;
+  sl : TStringList;
+begin
+  Step('Loading Persistent Identity Store');
+  if FileExists(FStoreLocation) then
+  begin
+    sl := TStringList.Create;
+    try
+      sl.LoadFromFile(FStoreLocation);
+      nextRelationship := StrToInt(sl[0]);
+      nextDescription := StrToInt(sl[1]);
+      sl.Delete(0);
+      sl.Delete(0);
+      for s in sl do
+      begin
+        StringSplit(s, '=', l, r);
+        FStore.Add(r, TSnomedCombinedStoreEntry.Create(l));
+      end;
+    finally
+      sl.Free;
+    end;
+  end;
+  FModuleId := generateId(1, 0);
+end;
+
 procedure TSnomedCombiner.checkForCircles;
 var
   svc : TSnomedServices;
@@ -857,6 +1016,16 @@ begin
   concept := FConcepts[inttostr(root)];
   for child in concept.FChildren do
     checkForCircles(child, [concept]);
+end;
+
+procedure TSnomedCombiner.addToRefSet(rsId, conceptId: UInt64);
+var
+  entry : TSnomedCombinedReferenceSetEntry;
+begin
+  entry := TSnomedCombinedReferenceSetEntry.Create;
+  entry.id := CreateGUID;
+  FRefSets[inttostr(rsId)].FMembers.add(GuidToString(entry.id), entry);
+  entry.FItem := FConcepts[inttostr(conceptId)].link;
 end;
 
 procedure TSnomedCombiner.checkForCircles(focus : TSnomedCombinedConcept; parents : Array of TSnomedCombinedConcept);
@@ -914,6 +1083,21 @@ begin
     result := '0';
 end;
 
+procedure TSnomedCombiner.saveStore;
+var
+  s : String;
+  f : System.Text;
+begin
+  Step('Saving Persistent Identity Store');
+  assignfile(f, FStoreLocation);
+  rewrite(f);
+  writeln(f, nextRelationship);
+  writeln(f, nextDescription);
+  for s in FStore.Keys do
+    writeln(f, inttostr(FStore[s].id)+'='+s);
+  closefile(f);
+end;
+
 procedure TSnomedCombiner.saveToRF2;
 var
   c,d,r : TTabWriter;
@@ -926,6 +1110,7 @@ var
   i : integer;
   rs : TSnomedCombinedReferenceSet;
   rm : TSnomedCombinedReferenceSetEntry;
+  filename : String;
 begin
   step('Sorting Concepts');
   st := TStringList.Create;
@@ -995,7 +1180,7 @@ begin
           d.field(charForBool(desc.FActive));
           d.field(inttostr(desc.FModule));
           d.field(inttostr(concept.id));
-          d.field('en');
+          d.field(codeForLang(desc.FLang));
           d.field(inttostr(desc.FKind.FId));
           d.field(desc.FValue);
           d.field(inttostr(desc.FCaps.FId));
@@ -1029,7 +1214,9 @@ begin
   end;
   for rs in FRefSets.Values do
   begin
-    r := TTabWriter.Create(IncludeTrailingBackslash(destination)+'RefSet\der2_'+rs.abbrev+'RefSet_'+rs.FName+'_'+inttostr(rs.FDefinition.id)+'.txt');
+    filename := IncludeTrailingBackslash(destination)+'RefSet\'+rs.FFilename;
+    ForceFolder(ExtractFilePath(filename));
+    r := TTabWriter.Create(filename);
     try
       r.field('id');
       r.field('effectiveTime');
@@ -1043,9 +1230,15 @@ begin
       for rm in rs.FMembers.Values do
       begin
         r.field(NewGuidId);
-        r.field(formatDateTime('yyyymmdd', rs.FDefinition.FDate));
+        if (rm.Date = 0) then
+          r.field(formatDateTime('yyyymmdd', rs.FDefinition.FDate))
+        else
+          r.field(formatDateTime('yyyymmdd', rm.Date));
         r.field('1');
-        r.field(inttostr(rs.FDefinition.FModule));
+        if (rm.module = 0) then
+          r.field(inttostr(rs.FDefinition.FModule))
+        else
+          r.field(inttostr(rm.module));
         r.field(inttostr(rs.FDefinition.id));
         r.field(inttostr(rm.FItem.FId));
         if (rm.FValues <> nil) then
@@ -1106,19 +1299,57 @@ begin
     begin
       r := TSnomedCombinedRelationship.Create(relationship.source);
       g.FRelationships.Add(r);
-      r.id := FNextId;
-      inc(FNextId);
+      r.id := getRelationshipId(concept.id, relationship.FRelType.id, relationship.FTarget.id, group.FGroup);
       r.FTarget := relationship.FTarget;
       r.FRelType := relationship.FRelType;
       r.FKind := relationship.FKind;
       r.FModifier := relationship.FModifier;
       r.FDate := relationship.FDate;
-      r.FModule := moduleId;
+      r.FModule := FModuleId;
       r.FActive := relationship.FActive;
     end;
   end;
   for child in concept.FChildren do
     forceRelationship(child, group, relationship);
+end;
+
+function TSnomedCombiner.generateId(k, t: integer): int64;
+var
+  s : String;
+begin
+  s := inttostr(k)+inttostr(SCT_FHIR_NS)+'1'+inttostr(t);
+  s := s + genCheckDigit(s);
+  result := StrToInt64(s);
+end;
+
+function TSnomedCombiner.getDescriptionId(d: String): int64;
+var
+  k : TSnomedCombinedStoreEntry;
+begin
+  if FStore.TryGetValue(d, k) then
+    result := k.id
+  else
+  begin
+    inc(nextDescription);
+    result := generateId(nextDescription, 1);
+    FStore.Add(d, TSnomedCombinedStoreEntry.create(result));
+  end;
+end;
+
+function TSnomedCombiner.getRelationshipId(s, rt, t: int64; grp : integer): int64;
+var
+  k : TSnomedCombinedStoreEntry;
+  id : String;
+begin
+  id := inttostr(s)+':'+inttostr(rt)+':'+inttostr(t)+':'+inttostr(grp);
+  if FStore.TryGetValue(id, k) then
+    result := k.id
+  else
+  begin
+    inc(nextRelationship);
+    result := generateId(nextRelationship, 2);
+    FStore.Add(id, TSnomedCombinedStoreEntry.create(result));
+  end;
 end;
 
 procedure TSnomedCombiner.identify;
@@ -1137,30 +1368,29 @@ procedure TSnomedCombiner.identify;
 
     desc := TSnomedCombinedDescription.Create;
     concept.FDescriptions.add(desc);
-    desc.id := FNextId;
-    inc(FNextId);
+    desc.id := getDescriptionId(fsn);
     desc.FDate := trunc(now);
     desc.FModule := FModuleId;
     desc.FKind := FConcepts[inttostr(RF2_MAGIC_FSN)];
     desc.FCaps := FConcepts[inttostr(900000000000448009)];
     desc.FActive := true;
+    desc.Flang := 1;
     desc.FValue := FSN;
 
     desc := TSnomedCombinedDescription.Create;
     concept.FDescriptions.add(desc);
-    desc.id := FNextId;
-    inc(FNextId);
+    desc.id := getDescriptionId(pn);
     desc.FDate := trunc(now);
     desc.FModule := FModuleId;
     desc.FKind := FConcepts[inttostr(900000000000013009)];
     desc.FCaps := FConcepts[inttostr(900000000000448009)];
     desc.FActive := true;
-    desc.FValue := FSN;
+    desc.Flang := 1;
+    desc.FValue := pn;
 
     relationship := TSnomedCombinedRelationship.create(nil);
     concept.group(nil, 0).FRelationships.add(relationship);
-    relationship.id := FNextId;
-    inc(FNextId);
+    relationship.id := getRelationshipId(concept.id, IS_A_MAGIC, parent, 0);
     relationship.FTarget := FConcepts[inttostr(parent)];
     relationship.FRelType := FConcepts[inttostr(IS_A_MAGIC)];
     relationship.FModule := FModuleId;
@@ -1180,8 +1410,7 @@ procedure TSnomedCombiner.identify;
 
     relationship := TSnomedCombinedRelationship.create(nil);
     concept.group(nil, 0).FRelationships.add(relationship);
-    relationship.id := FNextId;
-    inc(FNextId);
+    relationship.id := getRelationshipId(source, reltype, target, 0);
     relationship.FTarget := FConcepts[inttostr(target)];
     relationship.FRelType := FConcepts[inttostr(reltype)];
     relationship.FModule := FModuleId;
@@ -1193,20 +1422,40 @@ procedure TSnomedCombiner.identify;
 var
   rid : int64;
   svc : TSnomedServices;
+  st : TStringList;
+  dep : TSnomedCombinedDependency;
+  s : String;
 begin
   concept(FModuleId, 'Custom Combined Module (core metadata concept)', 'Custom Combined Module', 900000000000443000);
-  rid := FNextId;
-  inc(FNextId);
+  rid := generateId(2, 0);
   concept(rid, 'Combines (linkage concept)', 'Combines', 106237007);
-  relationship(FModuleId, rid, strtoint64(international.EditionId));
+  relationship(FModuleId, rid, StrToInt64(international.EditionId));
   for svc in others do
-    relationship(FModuleId, rid, strtoint64(svc.EditionId));
-
-  // add relationship kind
-  // give it a PN and FSN
-  // make it is-a attribute
-  // make it include the editions
-
+    relationship(FModuleId, rid, StrToInt64(svc.EditionId));
+  st := TStringList.Create;
+  try
+    st.Sorted := true;
+    st.Duplicates := dupIgnore;
+    for dep in FDependencies.Values do
+      st.Add(inttostr(dep.source));
+    for s in st do
+    begin
+      dep := TSnomedCombinedDependency.Create;
+      try
+        dep.id := CreateGUID;
+        dep.FDate := trunc(now);
+        dep.source := FModuleId;
+        dep.target := StrToInt64(s);
+        dep.startDate := trunc(now);
+        dep.endDate := trunc(now);
+        FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
+      finally
+        dep.Free;
+      end;
+    end;
+  finally
+    st.Free;
+  end;
 end;
 
 function TSnomedCombiner.exists(list: TAdvList<TSnomedCombinedRelationship>; relationship: TSnomedCombinedRelationship): boolean;
@@ -1316,6 +1565,27 @@ begin
       end;
     end;
   exit(nil);
+end;
+
+{ TSnomedCombinedDependency }
+
+function TSnomedCombinedDependency.key: String;
+begin
+  result := inttostr(source)+':'+inttostr(target);
+end;
+
+{ TSnomedCombinedStoreEntry }
+
+constructor TSnomedCombinedStoreEntry.create(s: String);
+begin
+  inherited create;
+  id := Strtoint64(s);
+end;
+
+constructor TSnomedCombinedStoreEntry.create(i: int64);
+begin
+  inherited create;
+  id := i;
 end;
 
 end.

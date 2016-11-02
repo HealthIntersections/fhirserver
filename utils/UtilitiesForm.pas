@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, FileSupport, SystemSupport, Inifiles,
+  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, FileSupport, SystemSupport, Inifiles, ShellSupport,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg;
 
 type
@@ -115,6 +115,9 @@ type
     Label14: TLabel;
     edtCombinedDestination: TEdit;
     btnCombinedDestination: TSpeedButton;
+    Label15: TLabel;
+    edtCombinedStore: TEdit;
+    btnCombinedStore: TSpeedButton;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -136,6 +139,7 @@ type
     procedure Image2Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
+    procedure btnCombinedStoreClick(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -185,6 +189,7 @@ begin
   edtInternational.text := ini.ReadString('snomed-combine', 'base', '');
   lbEditions.Items.CommaText := ini.ReadString('snomed-combine', 'editions', '');
   edtCombinedDestination.text := ini.ReadString('snomed-combine', 'dest', '');
+  edtCombinedStore.text := ini.ReadString('snomed-combine', 'store', '');
 
   if lbEditions.Items.Count > 0 then
     lbEditions.Itemindex := 0;
@@ -266,12 +271,13 @@ begin
     0 { International } : result := '900000000000207008';
     1 { US } :  result := '731000124108';
     2 { Australia } : result := '32506021000036107';
-    3 { Spanish } : result := '449081005';
-    4 { Denmark } : result := '554471000005108';
-    5 { Netherlands } : result := '11000146104';
-    6 { Sweden } : result := '45991000052106';
-    7 { UK } : result := '999000041000000102';
-    8 { } : result := inttostr(COMBINED_MODULE_ID);
+    3 { Canada } : result := '20611000087101';
+    4 { Spanish } : result := '449081005';
+    5 { Denmark } : result := '554471000005108';
+    6 { Netherlands } : result := '11000146104';
+    7 { Sweden } : result := '45991000052106';
+    8 { UK } : result := '999000041000000102';
+    9 { } : result := inttostr(COMBINED_MODULE_ID);
   end;
 end;
 
@@ -286,6 +292,18 @@ begin
   Application.ProcessMessages;
   if (wantStop)  then
     abort;
+end;
+
+procedure TForm4.btnCombinedStoreClick(Sender: TObject);
+begin
+  if (edtCombinedStore.text <> '') then
+  begin
+    dlgDestination.filename := edtCombinedStore.text;
+    dlgDestination.DefaultFolder := ExtractFilePath(dlgSource.filename);
+  end;
+  dlgDestination.Title := 'Choose Combined Files Persistent Store';
+  if dlgDestination.Execute then
+    edtCombinedStore.text := dlgDestination.filename;
 end;
 
 procedure TForm4.btnImportSnomedClick(Sender: TObject);
@@ -336,14 +354,20 @@ begin
       btnDestination.enabled := true;
       sctCallback(0, '');
     end;
-    MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
+    if MessageDlg('Successfully Imported SNOMED CT in '+DescribePeriod(now - start)+'. Do you want to Zip it?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      ExecuteLaunch('open', 'c:\program files\7-zip\7z.exe', 'a -mx9 '+changeFileExt(edtDestination.text, '.zip')+' '+edtDestination.text, true, false);
+    end;
   end;
 end;
 
 procedure TForm4.btnDestinationClick(Sender: TObject);
 begin
   if (edtDestination.text <> '') then
+  begin
     dlgDestination.filename := edtDestination.text;
+    dlgDestination.DefaultFolder := ExtractFilePath(dlgDestination.filename);
+  end;
   if dlgDestination.Execute then
     edtDestination.text := dlgDestination.filename;
 end;
@@ -351,7 +375,10 @@ end;
 procedure TForm4.btnSourceClick(Sender: TObject);
 begin
   if (edtSource.text <> '') then
+  begin
     dlgSource.filename := edtSource.text;
+    dlgSource.DefaultFolder := ExtractFilePath(dlgSource.filename);
+  end;
   dlgSource.Title := 'Choose SNOMED CT RF2 Snapshot Folder';
   if dlgSource.Execute then
     edtSource.text := dlgSource.filename;
@@ -407,7 +434,10 @@ end;
 procedure TForm4.btnCombinedDestinationClick(Sender: TObject);
 begin
   if (edtCombinedDestination.text <> '') then
+  begin
     dlgSource.filename := edtCombinedDestination.text;
+    dlgSource.DefaultFolder := ExtractFilePath(dlgSource.filename);
+  end;
   dlgSource.Title := 'Choose Combined Files Destination';
   if dlgSource.Execute then
     edtCombinedDestination.text := dlgSource.filename;
@@ -436,6 +466,7 @@ begin
     ini.WriteString('snomed-combine', 'base', edtInternational.text);
     ini.WriteString('snomed-combine', 'editions', lbEditions.Items.CommaText);
     ini.WriteString('snomed-combine', 'dest', edtCombinedDestination.text);
+    ini.WriteString('snomed-combine', 'store', edtCombinedStore.text);
 
     wantStop := false;
     btnStopCombine.Visible := true;
@@ -450,6 +481,8 @@ begin
     btnCloseCombine.enabled := false;
     btnCombinedDestination.enabled := false;
     edtCombinedDestination.enabled := false;
+    btnCombinedStore.enabled := false;
+    edtCombinedStore.enabled := false;
     try
       start := now;
       cmbCallback(0, 'Loading Editions');
@@ -465,7 +498,7 @@ begin
         end;
         combiner.callback := cmbCallBack;
         combiner.destination := edtCombinedDestination.text;
-        combiner.moduleId := COMBINED_MODULE_ID;
+        combiner.store := edtCombinedStore.text;
         combiner.Execute;
         combiner.issues.SaveToFile('c:\temp\snomed-combination-notes.txt');
         MessageDlg('Successfully Combined SNOMED CT editions in '+DescribePeriod(now - start)+':'+#13#10+combiner.summary.Text, mtInformation, [mbok], 0);
@@ -485,6 +518,8 @@ begin
       btnCloseCombine.enabled := true;
       btnCombinedDestination.enabled := true;
       edtCombinedDestination.enabled := true;
+      btnCombinedStore.enabled := true;
+      edtCombinedStore.enabled := true;
       cmbCallback(0, '');
     end;
 end;

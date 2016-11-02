@@ -67,7 +67,8 @@ Type
 
   TRefSet = class (TAdvName)
   private
-    index : Cardinal;
+    index, filename : Cardinal;
+    noStoreIds : boolean;
     title : String;
     aMembers : TSnomedReferenceSetMemberArray;
     iMemberLength : Integer;
@@ -170,10 +171,10 @@ Type
     procedure ImportSnomed;
     procedure ReadConceptsFile;
     procedure ReadDescriptionsFile;
-    Procedure LoadReferenceSets(path : String; var count : integer); overload;
+    Procedure LoadReferenceSets(pfxLen : integer; path : String; var count : integer); overload;
     Procedure LoadReferenceSets; overload;
     Procedure CloseReferenceSets(); overload;
-    Procedure LoadReferenceSet(sFile : String);
+    Procedure LoadReferenceSet(pfxLen : integer; sFile : String);
     Procedure SeeDesc(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
     Procedure SeeWord(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
     procedure ReadRelationshipsFile;
@@ -187,7 +188,6 @@ Type
 
     Function GetConcept(aId : Uint64; var iIndex : Integer) : TConcept;
     procedure Progress(Step : integer; pct : real; msg : String);
-    function readDate(s: String): TSnomedDate;
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
     procedure SetVersion(s : String);
   public
@@ -356,7 +356,6 @@ End;
 constructor TSnomedImporter.Create;
 begin
   inherited;
-  FImportFormat := TFormatSettings.Create('en-AU');
   FConceptFiles := TStringList.create;
   FRelationshipFiles := TStringList.create;
   FDescriptionFiles := TStringList.create;
@@ -426,6 +425,7 @@ begin
     FWordList.Sorted := True;
     FStemList.Sorted := True;
     FSvc.VersionUri := FVersionUri;
+    FSvc.VersionDate := FVersionDate;
     FStrings := FSvc.Strings;
     FRefs := FSvc.Refs;
     FDesc := FSvc.Desc;
@@ -499,17 +499,6 @@ begin
   finally
     f.Free;
   end;
-end;
-
-function TSnomedImporter.readDate(s : String) : TSnomedDate;
-var
-  d : TDateTime;
-begin
-  assert(s.Length = 8, 'Date length is not 8 ('+s+')');
-  s := copy(s, 7, 2)+'/'+copy(s, 5, 2)+'/'+copy(s, 1, 4);
-  d := StrToDate(s, FImportFormat);
-  assert(trunc(d) < 65535);
-  result := trunc(d);
 end;
 
 Procedure TSnomedImporter.ReadConceptsFile;
@@ -707,7 +696,7 @@ var
   date : TSnomedDate;
   fi : integer;
   active : boolean;
-  iFlag  : Byte;
+  iFlag, lang : Byte;
   Function Next(ch : byte) : integer;
   begin
     inc(iCursor);
@@ -749,6 +738,7 @@ begin
       ascopy(s, iType+1, (iTerm - iType) - 1);
       if not FConcept.FindConcept(StrtoUInt64(ascopy(s, iStatus+1, (iModuleId - iStatus) - 1)), module) then
         raise Exception.Create('Unable to find desc module '+ascopy(s, iStatus+1, (iModuleId - iStatus) - 1));
+      lang := readLang(ascopy(s, iConcept+1, (iLang - iConcept) - 1));
       iKind := StrtoUInt64(ascopy(s, iLang+1, (iType - iLang) - 1));
       if not FConcept.FindConcept(iKind, kind) then
         raise Exception.Create('Unable to find desc type '+ascopy(s, iLang+1, (iType - iLang) - 1));
@@ -761,11 +751,11 @@ begin
       if not FConcept.FindConcept(ucaps, caps) then
         raise Exception.Create('Unable to find caps type '+ascopy(s, iLang+1, (iType - iLang) - 1));
 
-      sDesc := ascopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
+      sDesc := utfcopy(s, iTermStart+1, (iTerm - iTermStart) - 1);
       SeeDesc(sDesc, iConceptIndex, active, iKind = RF2_MAGIC_FSN);
 
       SetLength(oConcept.FDescriptions, length(oConcept.FDescriptions)+1);
-      iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, caps, active);
+      iRef := FDesc.AddDescription(AddString(sDesc), iDescId, date, oConcept.Index, module, kind, caps, active, lang);
       oConcept.FDescriptions[Length(oConcept.FDescriptions)-1] := iRef;
 
       if aIndexLength = Length(aIndex) Then
@@ -932,6 +922,8 @@ Begin
       modifier := GetConceptLocal(iCtype, iRef).Index;
       defining := (kind.Identity = RF2_MAGIC_RELN_DEFINING) or (kind.Identity = RF2_MAGIC_RELN_STATED) or (kind.Identity = RF2_MAGIC_RELN_INFERRED);
 
+      if FRels.containsKey(iRel) then
+        raise Exception.Create('Duplicate relationship id '+inttostr(iRel)+' at line '+inttostr(line));
       iIndex := FRel.AddRelationship(iRel, oSource.Index, oTarget.Index, oRelType.Index, module, kind.Index, modifier, date, active, defining, group);
       FRels.Add(iRel, iIndex);
       if (oRelType.Index = Findex_is_a) and (defining) Then
@@ -1467,7 +1459,7 @@ Begin
 End;
 }
 
-procedure TSnomedImporter.LoadReferenceSets(path : String; var count : integer);
+procedure TSnomedImporter.LoadReferenceSets(pfxLen : integer; path : String; var count : integer);
 var
   sr: TSearchRec;
 begin
@@ -1477,11 +1469,11 @@ begin
       if (sr.Attr = faDirectory) then
       begin
         if not StringStartsWith(sr.Name, '.') then
-          LoadReferenceSets(IncludeTrailingPathDelimiter(path) + sr.Name, count);
+          LoadReferenceSets(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, count);
       end
       else if (sr.Attr <> faDirectory) and (ExtractFileExt(sr.Name) = '.txt') then
       begin
-        LoadReferenceSet(IncludeTrailingPathDelimiter(path) + sr.Name);
+        LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name);
         inc(count);
         Progress(STEP_IMPORT_REFSET, count / 300, '');
       end;
@@ -1501,77 +1493,77 @@ var
   count : integer;
 begin
   count := 0;
-    Progress(STEP_IMPORT_REFSET, 0, 'Importing Reference Sets');
-    if FDirectoryReferenceSets <> '' Then
-      LoadReferenceSets(FDirectoryReferenceSets, count);
-    FStrings.DoneBuild;
-    CloseReferenceSets;
-    Progress(STEP_SORT_REFSET, 0, 'Sorting Reference Sets');
-    FRefsets.SortedBy(CompareRefSetByConcept);
-    Progress(STEP_SORT_REFSET, 0.5, '');
-    FStrings.Reopen;
-    for i := 0 to FRefSets.Count - 1 Do
-    begin
-      refset := FRefsets[i] as TRefSet;
-      FRefsetindex.AddReferenceSet(FStrings.AddString(refset.title), refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes, refset.fieldNames);
-    end;
+  Progress(STEP_IMPORT_REFSET, 0, 'Importing Reference Sets');
+  if FDirectoryReferenceSets <> '' Then
+    LoadReferenceSets(FDirectoryReferenceSets.Length+1, FDirectoryReferenceSets, count);
+  FStrings.DoneBuild;
+  CloseReferenceSets;
+  Progress(STEP_SORT_REFSET, 0, 'Sorting Reference Sets');
+  FRefsets.SortedBy(CompareRefSetByConcept);
+  Progress(STEP_SORT_REFSET, 0.5, '');
+  FStrings.Reopen;
+  for i := 0 to FRefSets.Count - 1 Do
+  begin
+    refset := FRefsets[i] as TRefSet;
+    FRefsetindex.AddReferenceSet(FStrings.AddString(refset.title), refset.filename, refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes, refset.fieldNames);
+  end;
 
-    Progress(STEP_INDEX_REFSET, 0, 'Indexing Reference Sets');
-    for i := 0 to FConcepts.Count - 1 do
-    begin
-      if (i mod 5000 = 0) then
-        Progress(STEP_INDEX_REFSET, i / (FConcepts.Count + FDesc.Count), '');
+  Progress(STEP_INDEX_REFSET, 0, 'Indexing Reference Sets');
+  for i := 0 to FConcepts.Count - 1 do
+  begin
+    if (i mod 5000 = 0) then
+      Progress(STEP_INDEX_REFSET, i / (FConcepts.Count + FDesc.Count), '');
 
-      conc := FConcepts[i] as TConcept;
-      setLength(refs, FRefsets.Count);
-      setLength(vals, FRefsets.Count);
-      c := 0;
-      for j := 0 to FRefsets.Count - 1 do
+    conc := FConcepts[i] as TConcept;
+    setLength(refs, FRefsets.Count);
+    setLength(vals, FRefsets.Count);
+    c := 0;
+    for j := 0 to FRefsets.Count - 1 do
+    begin
+      refset := Frefsets[j] as TRefSet;
+      if refset.contains(conc.index, values) then
       begin
-        refset := Frefsets[j] as TRefSet;
-        if refset.contains(conc.index, values) then
-        begin
-          refs[c] := refset.index;
-          vals[c] := values;
-          inc(c);
-        end;
-      end;
-      Setlength(refs, c);
-      Setlength(vals, c);
-      if c > 0 then
-      begin
-        ndx := FRefs.AddReferences(refs);
-        FConcept.SetRefsets(conc.Index, ndx{, FRefs.AddReferences(vals)});
+        refs[c] := refset.index;
+        vals[c] := values;
+        inc(c);
       end;
     end;
-
-    for i := 0 to FDesc.Count - 1 do
+    Setlength(refs, c);
+    Setlength(vals, c);
+    if c > 0 then
     begin
-      if (i mod 5000 = 0) then
-        Progress(STEP_INDEX_REFSET, (FDesc.Count + i) / (FConcepts.Count + FDesc.Count), '');
+      ndx := FRefs.AddReferences(refs);
+      FConcept.SetRefsets(conc.Index, ndx{, FRefs.AddReferences(vals)});
+    end;
+  end;
 
-      setLength(refs, Frefsets.Count);
-      setLength(vals, Frefsets.Count);
-      c := 0;
-      for j := 0 to Frefsets.Count - 1 do
-      begin
-        refset := Frefsets[j] as TRefSet;
+  for i := 0 to FDesc.Count - 1 do
+  begin
+    if (i mod 5000 = 0) then
+      Progress(STEP_INDEX_REFSET, (FDesc.Count + i) / (FConcepts.Count + FDesc.Count), '');
 
-        if refset.contains(i * DESC_SIZE, values) then
-        begin
-          refs[c] := refset.index;
-          vals[c] := values;
-          inc(c);
-        end;
-      end;
-      Setlength(refs, c);
-      Setlength(vals, c);
-      if c > 0 then
+    setLength(refs, Frefsets.Count);
+    setLength(vals, Frefsets.Count);
+    c := 0;
+    for j := 0 to Frefsets.Count - 1 do
+    begin
+      refset := Frefsets[j] as TRefSet;
+
+      if refset.contains(i * DESC_SIZE, values) then
       begin
-        ndx := FRefs.AddReferences(refs);
-        FDesc.SetRefsets(i * DESC_SIZE, ndx, FRefs.AddReferences(vals));
+        refs[c] := refset.index;
+        vals[c] := values;
+        inc(c);
       end;
     end;
+    Setlength(refs, c);
+    Setlength(vals, c);
+    if c > 0 then
+    begin
+      ndx := FRefs.AddReferences(refs);
+      FDesc.SetRefsets(i * DESC_SIZE, ndx, FRefs.AddReferences(vals));
+    end;
+  end;
 end;
 
 Procedure QuickSortPairs(var a : TSnomedReferenceSetMemberArray);
@@ -1643,11 +1635,12 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
     Descs : TCardinalArray;
     active, defining : boolean;
     date : TSnomedDate;
+    lang : byte;
   Begin
     SetLength(Descs, 0);
     result := '';
     if r.kind = 1 then
-      FDesc.GetDescription(r.Ref, id, identity, date, dummy, module, kind, caps, refsets, valueses, active)
+      FDesc.GetDescription(r.Ref, id, identity, date, dummy, module, kind, caps, refsets, valueses, active, lang)
     Else
     begin
       if r.kind = 2 then
@@ -1665,7 +1658,7 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
       id := 0;
       For i := 0 to Length(Descs)- 1 Do
       Begin
-       FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, caps, refsets, valueses, active);
+       FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, caps, refsets, valueses, active, lang);
        if (active) And (kind = FFSN) Then
          id := id2;
       End;
@@ -1673,7 +1666,7 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
       Begin
         For i := 0 to Length(Descs)- 1 Do
         Begin
-         FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, caps, refsets, valueses, active);
+         FDesc.GetDescription(Descs[i], id2, identity, date, dummy, module, kind, caps, refsets, valueses, active, lang);
          if (active) Then
            id := id2;
         End;
@@ -1741,14 +1734,14 @@ Begin
 End;
 
 
-procedure TSnomedImporter.LoadReferenceSet(sFile: String);
+procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String);
 var
   s : TBytes;
   i, iId, iTime, iDate, iActive, iModule, iRefSetId, iRefComp, l, c : Integer;
-  sId, sActive, sRefSetId, sRefComp : String;
+  sId, sActive, sRefSetId, sRefComp, sModule, sDate : String;
   iRef : UInt64;
 
-  iTermRef, iRefsetRef, iVal, iType : Cardinal;
+  iTermRef, iRefsetRef, iVal, iType, iMod : Cardinal;
   iCursor : UInt64;
 
   bDesc : byte;
@@ -1829,12 +1822,18 @@ begin
       end;
 
       sId := ascopy(s, iId+1, iDate - (iId + 1));
+      if (sId = '') then
+        break;
+
+      sModule := ascopy(s, iActive+1, iModule - (iActive + 1));
+      sDate:= ascopy(s, iDate+1, iTime - (iDate + 1));
       sActive := ascopy(s, iTime+1, iActive - (iTime + 1));
       sRefSetId := ascopy(s, iModule+1, iRefSetId - (iModule + 1));
       sRefComp := ascopy(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
 
-      if (sId = '') then
-        break;
+
+      if not FConcept.FindConcept(StrToUInt64(sModule), iMod) then
+          raise Exception.Create('Module '+sModule+' not found');
       for I := 0 to length(types) - 1 do
       begin
         if (i = 0) then
@@ -1884,6 +1883,7 @@ begin
         if (refset.fieldTypes <> 0) and (refset.fieldTypes <> ti) then
           raise Exception.Create('field types mismatch');
         refset.title := sname;
+        refset.filename := FStrings.AddString(sFile.Substring(pfxLen));
         refset.fieldTypes := ti;
         SetLength(fnames, length(types));
         for i := 0 to length(types) -1 do
@@ -1899,7 +1899,10 @@ begin
         if FConcept.FindConcept(iRef, iTermRef) then
           bDesc := 0
         else if FDescRef.FindDescription(iRef, iTermRef) then
-          bDesc := 1
+        begin
+          bDesc := 1;
+          refset.noStoreIds := true;
+        end
         Else if FRels.TryGetValue(iRef, iTermRef) then
           bDesc := 2
         else
@@ -1915,6 +1918,8 @@ begin
           refset.aMembers[refset.iMemberLength].id := StringToGuid('{'+sId+'}');
           refset.aMembers[refset.iMemberLength].kind := bDesc;
           refset.aMembers[refset.iMemberLength].Ref := iTermRef;
+          refset.aMembers[refset.iMemberLength].module := iMod;
+          refset.aMembers[refset.iMemberLength].date := readDate(sDate);
           if (ti <> 0) then
             refset.aMembers[refset.iMemberLength].Values := FRefs.AddReferences(values);
           inc(refset.iMemberLength);
@@ -1938,9 +1943,9 @@ begin
     refset := Frefsets[i] as TRefSet;
     SetLength(refset.aMembers, refset.iMemberLength);
     QuickSortPairsByName(refset.aMembers);
-    refset.membersByName := FRefsetMembers.AddMembers(refset.aMembers);
+    refset.membersByName := FRefsetMembers.AddMembers(false, refset.aMembers);
     QuickSortPairs(refset.aMembers);
-    refset.membersByRef := FRefsetMembers.AddMembers(refset.aMembers);
+    refset.membersByRef := FRefsetMembers.AddMembers(not refset.noStoreIds, refset.aMembers);
   end;
 end;
 

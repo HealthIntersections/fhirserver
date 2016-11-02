@@ -525,7 +525,7 @@ var
   iId : UInt64;
   iIndex : Cardinal;
   Identity : UInt64;
-  Flags : Byte;
+  Flags, lang : Byte;
   Group : integer;
   ParentIndex : Cardinal;
   DescriptionIndex : Cardinal;
@@ -615,6 +615,7 @@ Begin
     html.StartTableRow;
     html.AddTableCell('Id', true);
     html.AddTableCell('Description', true);
+    html.AddTableCell('Lang', true);
     html.AddTableCell('Type', true);
     html.AddTableCell('Status', true);
     html.AddTableCell('Case?', true);
@@ -624,12 +625,13 @@ Begin
     html.EndTableRow;
     for i := Low(Descriptions) To High(Descriptions) Do
     Begin
-      FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, caps, refsets, valueses, active);
+      FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
       if active Then
       Begin
         html.StartRow();
         html.AddTableCell(inttostr(iId));
         html.AddTableCell(Screen(FSnomed.Strings.GetEntry(iWork), ''));
+        html.AddTableCell(codeForLang(lang));
         CellConceptRef(html, sPrefix, kind, cdDesc);
         if (active) then
           html.AddTableCell('Active')
@@ -752,7 +754,6 @@ Begin
       aMembers := FSnomed.RefSetMembers.GetMembers(iMembers);
       html.StartTable(false);
       html.StartTableRow;
-      html.AddTableCell('UID', true);
       html.AddTableCell('Members', true);
       For i := 0 to length(fields)-1 Do
         html.AddTableCell(FSnomed.Strings.GetEntry(fields[i]), true);
@@ -760,7 +761,6 @@ Begin
       For i := iStart to Min(iStart+MAX_ROWS, High(aMembers)) Do
       Begin
         html.StartRow();
-        html.AddTableCell(GUIDToString(aMembers[i].id));
         case aMembers[i].kind of
           0 {concept} :
             CellConceptRef(html, sPrefix, aMembers[i].Ref, cdDesc);
@@ -1732,12 +1732,12 @@ end;
 
 procedure TSnomedPublisher.RefsetRef(html: THtmlPublisher; const sPrefix: String; iIndex: cardinal);
 var
-  iDefinition, iMembersByName, iMembersByRef, iTypes, iName, iFields: Cardinal;
+  iDefinition, iMembersByName, iMembersByRef, iTypes, iFilename, iName, iFields: Cardinal;
   types : TCardinalArray;
   id : String;
   i : integer;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iName, iDefinition, iMembersByName, iMembersByRef, iTypes, iFields);
+  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iFilename, iName, iDefinition, iMembersByName, iMembersByRef, iTypes, iFields);
   id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
   html.URL(Screen(id+' '+FSnomed.GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
   html.AddTextPlain('(');
@@ -1762,15 +1762,16 @@ var
   active : boolean;
   date : TSnomedDate;
   module, refsets, valueses, kind, caps : Cardinal;
+  lang : byte;
 begin
-  FSnomed.Desc.GetDescription(iDesc, iDescs, id, date, result, module, kind, caps, refsets, valueses, active);
+  FSnomed.Desc.GetDescription(iDesc, iDescs, id, date, result, module, kind, caps, refsets, valueses, active, lang);
 end;
 
 function TSnomedPublisher.GetConceptForRefset(iRefset: Cardinal): Cardinal;
 var
   iDummy : Cardinal;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, result, iDummy, iDummy, iDummy, iDummy);
+  FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, iDummy, result, iDummy, iDummy, iDummy, iDummy);
 end;
 
 
