@@ -55,7 +55,7 @@ begin
   base64 := TIdEncoderMIME.Create(nil);
   hash := TIdHashSHA1.Create;
   try
-    s := base64.EncodeBytes(IndyTextEncoding_ASCII.GetBytes(s));
+    s := base64.EncodeBytes(hash.HashString(s, IndyTextEncoding_ASCII));
   finally
     hash.Free;
     base64.Free;
