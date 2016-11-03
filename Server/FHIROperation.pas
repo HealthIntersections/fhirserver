@@ -994,7 +994,7 @@ begin
     oConf.fhirVersion := FHIR_GENERATED_VERSION;
     oConf.restList.add(TFhirCapabilityStatementRest.Create);
     oConf.restList[0].mode := RestfulCapabilityModeServer;
-    oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/conformance-websockets', request.baseUrl+'websockets');
+    oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', request.baseUrl+'websockets');
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
@@ -1345,7 +1345,7 @@ begin
           if list.count = 0 then
             NoMatch(request, response)
           else if list.Count > 1 then
-            check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
+            check(response, false, 412, lang, GetFhirMessage('DELETE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
           else
           begin
             request.Id := list[0].name;
@@ -5502,6 +5502,10 @@ begin
   begin
     if (TFhirSubscription(resource).status <> SubscriptionStatusRequested) and (request.origin = roRest) then // nil = from the internal system, which is allowed to
       raise Exception.Create('Subscription status must be "requested", not '+TFhirSubscription(resource).statusElement.value);
+    if (TFhirSubscription(resource).channel = nil) then
+      raise Exception.Create('Subscription must have a channel');
+    if (TFhirSubscription(resource).channel.type_ = SubscriptionChannelTypeWebsocket) and not ((TFhirSubscription(resource).channel.payload = '') or StringArrayExistsSensitive(['application/xml+fhir', 'application/fhir+xml', 'application/xml', 'application/json+fhir', 'application/fhir+json', 'application/json'], TFhirSubscription(resource).channel.payload)) then
+      raise Exception.Create('A websocket subscription must have a no payload, or the payload must be application/xml+fhir or application/json+fhir');
     if (TFhirSubscription(resource).status = SubscriptionStatusRequested) then
       TFhirSubscription(resource).status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
   end;
