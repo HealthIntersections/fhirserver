@@ -880,8 +880,8 @@ begin
     finally
       result.Free;
     end;
+    RecordFhirSession(result);
   end;
-  RecordFhirSession(result);
 end;
 
 function TFHIRDataStore.GetSessionByToken(outerToken: String;
