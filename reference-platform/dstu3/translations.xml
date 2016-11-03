@@ -27,13 +27,23 @@ optional so legal codes are for example:
   en     :  English
   fr     :  French
 
-NOTE: while translations on Resources are possible they should be used for rendering purposes
+    NOTE: while translations on Resources are provided they should be used for rendering purposes
       only, and not in the URI, as XML node name, or JSON label.
 -->
 	<!-- Resources -->
 	<item id="Account">
 		<translation lang="en">Account</translation>
 	</item>
+  <item id="ActivityDefinition">
+ 		<translation lang="en">ActivityDefinition</translation>
+	</item>
+  <item id="ActivityGroup">
+ 		<translation lang="en">ActivityGroup</translation>
+	</item>
+  <item id="DecisionSupportServiceModule">
+ 		<translation lang="en">DecisionSupportServiceModule</translation>
+	</item>
+  
 	<item id="AdverseReaction">
 		<translation lang="en">AdverseReaction</translation>
 		<translation lang="zh">不良反应</translation>
@@ -76,6 +86,10 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">SitioDelCuerpo</translation>
 		<translation lang="fr">SiteDeCorps</translation>
 	</item>
+    <item id="Bundle">
+        <translation lang="en">Bundle</translation>
+        <translation lang="fr">Paquet</translation>
+    </item>
 	<item id="NewBundle">
 		<translation lang="en">NewBundle</translation>
 		<translation lang="fr">NouveauPaquet</translation>
@@ -86,6 +100,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">PlanCuidado</translation>
 		<translation lang="fr">PlanDeSoins</translation>
 	</item>
+    <item id="CareTeam">
+        <translation lang="en">CareTeam</translation>
+    </item>
 	<item id="Claim">
 		<translation lang="en">Claim</translation>
 		<translation lang="zh">声称</translation>
@@ -100,6 +117,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">ClinicalImpression</translation>
 		<translation lang="fr">ImpressionClinique</translation>
 	</item>
+    <item id="CodeSystem">
+        <translation lang="en">CodeSystem</translation>
+    </item>
 	<item id="Communication">
 		<translation lang="en">Communication</translation>
 		<translation lang="fr">Communication</translation>
@@ -108,6 +128,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">CommunicationRequest</translation>
 		<translation lang="fr">DemandeDeCommunication</translation>
 	</item>
+    <item id="CompartmentDefinition">
+        <translation lang="en">CompartmentDefinition</translation>
+    </item>
 	<item id="Composition">
 		<translation lang="en">Composition</translation>
 		<translation lang="zh">组合</translation>
@@ -130,11 +153,14 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">Contract</translation>
 		<translation lang="fr">Contrat</translation>
 	</item>
-	<item id="Conformance">
-		<translation lang="en">Conformance</translation>
-		<translation lang="zh">遵从</translation>
+    <item id="CapabilityStatement">
+        <translation lang="en">CapabilityStatement</translation>
+<!--        <translation lang="zh">遵从</translation>
 		<translation lang="es">Conformidad</translation>
-		<translation lang="fr">Conformité</translation>
+        <translation lang="fr">Conformité</translation> -->
+    </item>
+    <item id="Consent">
+        <translation lang="en">Consent</translation>
 	</item>
 	<item id="Coverage">
 		<translation lang="en">Coverage</translation>
@@ -147,12 +173,6 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="zh">公共数据元素</translation>
 		<translation lang="es">ElementoDatos</translation>
 		<translation lang="fr">ElementDonnées</translation>
-	</item>
-	<item id="DecisionSupportServiceModule">
-		<translation lang="en">DecisionSupportServiceModule</translation>
-	</item>
-	<item id="DecisionSupportRule">
-		<translation lang="en">DecisionSupportRule</translation>
 	</item>
 	<item id="DetectedIssue">
 		<translation lang="en">DetectedIssue</translation>
@@ -186,8 +206,8 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">DeviceMetric</translation>
 		<translation lang="fr">MétriqueDispositif</translation>
 	</item>
-	<item id="DiagnosticOrder">
-		<translation lang="en">DiagnosticOrder</translation>
+    <item id="DiagnosticRequest">
+        <translation lang="en">DiagnosticRequest</translation>
 		<translation lang="zh">诊断医嘱</translation>
 		<translation lang="es">OrdenDiagnostica</translation>
 		<translation lang="fr">OrdreDiagnostique</translation>
@@ -259,6 +279,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">Goal</translation>
 		<translation lang="fr">But</translation>
 	</item>
+	<item id="Endpoint">
+		<translation lang="en">Endpoint</translation>
+	</item>
 	<item id="Subscription">
 		<translation lang="en">Subscription</translation>
 		<translation lang="zh">订阅</translation>
@@ -308,9 +331,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">EstudioImagen</translation>
 		<translation lang="fr">EtudeImagerie</translation>
 	</item>
-	<item id="ImagingObjectSelection">
-		<translation lang="en">ImagingObjectSelection</translation>
-		<translation lang="fr">ImagingObjectSelection</translation>
+    <item id="ImagingManifest">
+        <translation lang="en">ImagingManifest</translation>
+        <translation lang="fr">ImagingManifest</translation>
 	</item>
 	<item id="Immunization">
 		<translation lang="en">Immunization</translation>
@@ -334,6 +357,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 	<item id="Library">
 		<translation lang="en">Library</translation>
 	</item>
+    <item id="Linkage">
+        <translation lang="en">Linkage</translation>
+    </item>
 	<item id="List">
 		<translation lang="en">List</translation>
 		<translation lang="zh">列表</translation>
@@ -348,6 +374,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 	<item id="Measure">
 		<translation lang="en">Measure</translation>
 	</item>
+    <item id="MeasureReport">
+        <translation lang="en">MeasureReport</translation>
+    </item>
 	<item id="Media">
 		<translation lang="en">Media</translation>
 		<translation lang="zh">媒体</translation>
@@ -396,18 +425,12 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">Microarray</translation>
 		<translation lang="fr">Microarray</translation>
 	</item>
-	<item id="ModuleMetadata">
-		<translation lang="en">ModuleMetadata</translation>
-	</item>
-	<item id="ModuleDefinition">
-		<translation lang="en">ModuleDefinition</translation>
-	</item>
 	<item id="NamingSystem">
 		<translation lang="en">NamingSystem</translation>
 		<translation lang="fr">SystèmeDeNommage</translation>
 	</item>
-	<item id="NutritionOrder">
-		<translation lang="en">NutritionOrder</translation>
+    <item id="NutritionRequest">
+        <translation lang="en">NutritionRequest</translation>
 		<translation lang="zh">为了营养</translation>
 		<translation lang="es">OrdenNutrición</translation>
 		<translation lang="fr">OrdreNutrition</translation>
@@ -444,9 +467,6 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">RespuestaOrden</translation>
 		<translation lang="fr">RéponseOrdre</translation>
 	</item>
-	<item id="OrderSet">
-		<translation lang="en">OrderSet</translation>
-	</item>
 	<item id="Organization">
 		<translation lang="en">Organization</translation>
 		<translation lang="zh">机构</translation>
@@ -481,12 +501,18 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">Imagen</translation>
 		<translation lang="fr">Image</translation>
 	</item>
+    <item id="PlanDefinition">
+ 		<translation lang="en">PlanDefinition</translation>
+	</item>
 	<item id="Practitioner">
 		<translation lang="en">Practitioner</translation>
 		<translation lang="zh">从业者</translation>
 		<translation lang="es">Practicante</translation>
 		<translation lang="fr">Praticien</translation>
 	</item>
+    <item id="PractitionerRole">
+        <translation lang="en">PractitionerRole</translation>
+    </item>
 	<item id="Procedure">
 		<translation lang="en">Procedure</translation>
 		<translation lang="zh">步骤</translation>
@@ -515,12 +541,12 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">Perfil</translation>
 		<translation lang="fr">Profil</translation>
 	</item>
-	<item id="Protocol">
+    <!--item id="Protocol">
 		<translation lang="en">Protocol</translation>
 		<translation lang="zh">协议</translation>
 		<translation lang="es">Protocolo</translation>
 		<translation lang="fr">Protocol</translation>
-	</item>
+    </item-->
 	<item id="Provenance">
 		<translation lang="en">Provenance</translation>
 		<translation lang="zh">起源</translation>
@@ -559,6 +585,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">Remesa</translation>
 		<translation lang="fr">Remise</translation>
 	</item>
+    <item id="RequestGroup">
+ 		<translation lang="en">RequestGroup</translation>
+	</item>
 	<item id="RiskAssessment">
 		<translation lang="en">RiskAssessment</translation>
 		<translation lang="fr">ÉvaluationRisques</translation>
@@ -576,6 +605,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="zh">安全事件</translation>
 		<translation lang="es">EventoSeguridad</translation>
 		<translation lang="fr">ÉvènementSécurité</translation>
+	</item>
+    <item id="ServiceDefinition">
+        <translation lang="en">ServiceDefinition</translation>
 	</item>
 	<item id="Sequence">
 		<translation lang="en">Sequence</translation>
@@ -631,6 +663,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">Solicitud de Suministro</translation>
 		<translation lang="fr">Demande d'approvisionnement</translation>
 	</item>
+    <item id="Task">
+        <translation lang="en">Task</translation>
+    </item>
 	<item id="User">
 		<translation lang="en">User</translation>
 		<translation lang="zh">用户</translation>
@@ -665,6 +700,9 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="es">VCFVariante</translation>
 		<translation lang="fr">VCFVariante</translation>
 	</item>
+    <item id="StructureMap">
+        <translation lang="en">StructureMap</translation>
+    </item>
 	<item id="StructureDefinition">
 		<translation lang="en">StructureDefinition</translation>
 		<translation lang="fr">DéfinitionStructure</translation>
@@ -673,6 +711,10 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">TestScript</translation>
 		<translation lang="fr">ScriptTest</translation>
 	</item>
+    <item id="TestReport">
+        <translation lang="en">TestReport</translation>
+        <translation lang="fr">RapportTest</translation>
+    </item>
 	<!-- Messages -->
 	<item id="MSG_AUTH_REQUIRED" ecode="true">
 		<translation lang="en">You must authenticate before you can use this service</translation>
@@ -733,13 +775,13 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="MSG_CONTENT_MESSAGE">
 		<translation lang="en">Content can be a resource or a zip file collection of resources and atom feeds (xml or json)</translation>
-		<!--         <translation lang="it">Il contenuto pu� essere una risorsa, un feed atom o un file zip contenente una collezione di risorse e feed atom (xml o json)</translation>
-        <translation lang="nl">Content kan een resource zijn, een atomfeed of een zipbestand met een collectie resources en atomfeeds (xml of json)</translation>
-        <translation lang="zh">内容可以是一个资源、一个原子feed、或一个包含资源和原子feed的压缩文件 (xml 或 json)</translation>
-        <translation lang="pl">Zawartością może być zasób, treść w formacie atom (atom feed) lub plik zip zasobów i treści w formacie atom (xml lub json)</translation>
-        <translation lang="es">El contenido puede ser un recurso, una fuente web (feed) o una colección de recursos y feeds (xml o json)</translation>
-        <translation lang="fr">Le contenu peut être une ressource, un flux atom, ou une archive zip d'un ensemble de ressources et de flux atom (xml ou json)</translation>
-        <translation lang="ru">Контент может быть ресурсом, веб-каналом Atom или zip архивом ресурсов или атомов (xml или json)</translation> -->
+        <!--<translation lang="it">Il contenuto pu� essere una risorsa, un feed atom o un file zip contenente una collezione di risorse e feed atom (xml o json)</translation>-->
+        <translation lang="nl">Content kan een resource zijn of een zipbestand met een collectie resources en atomfeeds (xml of json)</translation>
+        <!--<translation lang="zh">内容可以是一个资源、一个原子feed、或一个包含资源和原子feed的压缩文件 (xml 或 json)</translation>-->
+        <!--<translation lang="pl">Zawartością może być zasób, treść w formacie atom (atom feed) lub plik zip zasobów i treści w formacie atom (xml lub json)</translation>-->
+        <!--<translation lang="es">El contenido puede ser un recurso, una fuente web (feed) o una colección de recursos y feeds (xml o json)</translation>-->
+        <!--<translation lang="fr">Le contenu peut être une ressource, un flux atom, ou une archive zip d'un ensemble de ressources et de flux atom (xml ou json)</translation>-->
+        <!--<translation lang="ru">Контент может быть ресурсом, веб-каналом Atom или zip архивом ресурсов или атомов (xml или json)</translation> -->
 	</item>
 	<item id="MSG_CONTENT_PASTE">
 		<translation lang="en">or just paste your xml or json here</translation>
@@ -768,14 +810,13 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="MSG_CREATED" ecode="true">
 		<translation lang="en">New resource created</translation>
-		<!--        <translation lang="it">risorsa esistente aggiornata</translation>
-        <translation lang="nl">nieuwe resource gemaakt</translation>
-        <translation lang="zh">存在的资源已创建</translation>
-        <translation lang="pl">utworzono istniejący zasób</translation>
-        <translation lang="es">recurso existente creado</translation>
-        <translation lang="fr">ressource existante créée</translation>
-        <translation lang="ru">существующий ресурс создан</translation>
--->
+        <!--<translation lang="it">risorsa esistente aggiornata</translation>-->
+        <translation lang="nl">Nieuwe resource gemaakt</translation>
+        <!--<translation lang="zh">存在的资源已创建</translation>-->
+        <!--<translation lang="pl">utworzono istniejący zasób</translation>-->
+        <!--<translation lang="es">recurso existente creado</translation>-->
+        <!--<translation lang="fr">ressource existante créée</translation>-->
+        <!--<translation lang="ru">существующий ресурс создан</translation>-->
 	</item>
 	<item id="MSG_DATE_FORMAT" ecode="true">
 		<translation lang="en">The Date value %s is not in the correct format (Xml Date Format required)</translation>
@@ -950,6 +991,7 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="MSG_NO_MATCH" ecode="true">
 		<translation lang="en">No Resource found matching the query "%s"</translation>
+        <translation lang="nl">Geen resource gevonden met query "%s"</translation>
 	</item>
 	<item id="MSG_NO_EXIST" ecode="true">
 		<translation lang="en">Resource Id "%s" does not exist</translation>
@@ -1023,9 +1065,11 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
   <item id="MSG_PARAM_INVALID" ecode="true">
     <translation lang="en">Parameter "%s" content is invalid</translation>
+        <translation lang="nl">Waarde van parameter "%s" is ongeldig</translation>
   </item>
   <item id="MSG_PARAM_MODIFIER_INVALID" ecode="true">
     <translation lang="en">Parameter "%s" modifier is invalid</translation>
+        <translation lang="nl">Modifier van parameter "%s" is ongeldig</translation>
   </item>
 	<item id="MSG_RESOURCE_EXAMPLE_PROTECTED" ecode="true">
 		<translation lang="en">Resources with identity "example" cannot be deleted (for testing/training purposes)</translation>
@@ -1068,10 +1112,12 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="MSG_RESOURCE_ID_MISMATCH" ecode="true">
 		<translation lang="en">Resource Id Mismatch</translation>
+        <translation lang="nl">Resource ID's komen niet overeen</translation>
 		<translation lang="fr">Problème de correspondance d'Id de la Ressource</translation>
 	</item>
 	<item id="MSG_RESOURCE_ID_MISSING" ecode="true">
 		<translation lang="en">Resource Id Missing</translation>
+        <translation lang="nl">Resource ID ontbreekt</translation>
 		<translation lang="fr">Id de la Ressource manquante</translation>
 	</item>
 	<item id="MSG_RESOURCE_TYPE_MISMATCH" ecode="true">
@@ -1225,13 +1271,13 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="MSG_WRONG_NS" ecode="true">
 		<translation lang="en">This does not appear to be a FHIR element or resource (wrong namespace "%s")</translation>
-		<!--        <translation lang="it">Questa non sembra essere una risorsa FHIR o un atom feed (namespace errato: "%s")</translation>
-        <translation lang="nl">Dit lijkt geen FHIR resource of een atomfeed te zijn (verkeerde namespace "%s")</translation>
-        <translation lang="zh">这貌似不是一个FHIR元素、资源、或原子feed(错误的命名空间: "%s")</translation>
-        <translation lang="pl">Prawdopodobnie nie jest to element FHIR, zasób, ani treść w formacie atom (niepoprawna przestrzeń nazw "%s")</translation>
-        <translation lang="es">Esto no parece ser un elemento FHIR, recurso o atom feed (namespace incorrecto "%s")</translation>
-        <translation lang="fr">Cet élement ne semble pas être ni un élément FHIR, ni une ressource ni un flux atom (espace de noms "%s" incorrect)</translation>
-        <translation lang="ru">Вероятно не является элементом FHIR, ресурсом или веб-каналом Atom (неверное пространство имён "%s")</translation> -->
+        <!--<translation lang="it">Questa non sembra essere una risorsa FHIR o un atom feed (namespace errato: "%s")</translation>-->
+        <translation lang="nl">Dit lijkt geen FHIR element of resource te zijn (verkeerde namespace "%s")</translation>
+        <!--<translation lang="zh">这貌似不是一个FHIR元素、资源、或原子feed(错误的命名空间: "%s")</translation>-->
+        <!--<translation lang="pl">Prawdopodobnie nie jest to element FHIR, zasób, ani treść w formacie atom (niepoprawna przestrzeń nazw "%s")</translation>-->
+        <!--<translation lang="es">Esto no parece ser un elemento FHIR, recurso o atom feed (namespace incorrecto "%s")</translation>-->
+        <!--<translation lang="fr">Cet élement ne semble pas être ni un élément FHIR, ni une ressource ni un flux atom (espace de noms "%s" incorrect)</translation>-->
+        <!--<translation lang="ru">Вероятно не является элементом FHIR, ресурсом или веб-каналом Atom (неверное пространство имён "%s")</translation> -->
 	</item>
 	<item id="NAME_BINARY">
 		<translation lang="en">Binary Content</translation>
@@ -1564,13 +1610,23 @@ NOTE: while translations on Resources are possible they should be used for rende
 	</item>
 	<item id="UPDATE_MULTIPLE_MATCHES" ecode="true">
 		<translation lang="en">Error: Multiple matches exist for the conditional update</translation>
-		<!--        <translation lang="it">Errore: Trovate corrispondenze multiple per %s parametri di ricerca "%s"</translation>
-        <translation lang="nl">Fout: er is meer dan één resultaat voor %s zoekparameters "%s"</translation>
-        <translation lang="zh">错误: 对于 %s 搜索的参数 "%s"存在多个匹配</translation>
-        <translation lang="pl">Błąd: Istnieją wielokrotne dopasowania dla %s parametrów wyszukiwania "%s"</translation>
-        <translation lang="es">Error: Multiples ocurrencias existen para %s parametros de búsqueda "%s"</translation>
-        <translation lang="fr">Erreur : Plusieurs correspondances existent pour ce paramètre de recherche %s</translation>
-        <translation lang="ru">Ошибка: множественные совпадения для %s с параметрами поиска "%s"</translation> -->
+        <!--<translation lang="it">Errore: Trovate corrispondenze multiple per %s parametri di ricerca "%s"</translation>-->
+        <translation lang="nl">Fout: er is meer dan één resultaat voor de conditionele update</translation>
+        <!--<translation lang="zh">错误: 对于 %s 搜索的参数 "%s"存在多个匹配</translation>-->
+        <!--<translation lang="pl">Błąd: Istnieją wielokrotne dopasowania dla %s parametrów wyszukiwania "%s"</translation>-->
+        <!--<translation lang="es">Error: Multiples ocurrencias existen para %s parametros de búsqueda "%s"</translation>-->
+        <!--<translation lang="fr">Erreur : Plusieurs correspondances existent pour ce paramètre de recherche %s</translation>-->
+        <!--<translation lang="ru">Ошибка: множественные совпадения для %s с параметрами поиска "%s"</translation>-->
+    </item>
+    <item id="DELETE_MULTIPLE_MATCHES" ecode="true">
+        <translation lang="en">Error: Multiple matches exist for the conditional delete</translation>
+        <!--<translation lang="it">Errore: Trovate corrispondenze multiple per %s parametri di ricerca "%s"</translation>-->
+        <translation lang="nl">Fout: er is meer dan één resultaat voor de conditionele delete</translation>
+        <!--<translation lang="zh">错误: 对于 %s 搜索的参数 "%s"存在多个匹配</translation>-->
+        <!--<translation lang="pl">Błąd: Istnieją wielokrotne dopasowania dla %s parametrów wyszukiwania "%s"</translation>-->
+        <!--<translation lang="es">Error: Multiples ocurrencias existen para %s parametros de búsqueda "%s"</translation>-->
+        <!--<translation lang="fr">Erreur : Plusieurs correspondances existent pour ce paramètre de recherche %s</translation>-->
+        <!--<translation lang="ru">Ошибка: множественные совпадения для %s с параметрами поиска "%s"</translation>-->
 	</item>
 	<item id="SEARCH_NONE" ecode="true">
 		<translation lang="en">Error: no processable search found for %s search parameters "%s"</translation>
@@ -1764,9 +1820,5 @@ NOTE: while translations on Resources are possible they should be used for rende
 		<translation lang="en">This Resource</translation>
 		<translation lang="nl">Deze resource</translation>
 		<translation lang="fr">Cette ressource</translation>
-	</item>
-	<item id="Bundle">
-		<translation lang="en">Bundle</translation>
-		<translation lang="fr">Paquet</translation>
 	</item>
 </translations>
