@@ -150,7 +150,7 @@ begin
       logt('Load Snomed from '+s);
       sn := TSnomedServices.Create;
       snomed.Add(sn);
-      sn.Load(s);
+      sn.Load(s.Trim);
       if (def) then
         DefSnomed := sn.Link;
       ProviderClasses.Add(sn.system(nil)+URI_VERSION_BREAK+sn.versionUri, sn.Link);

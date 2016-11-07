@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-11-02T09:20:28+11:00
+// FHIR v1.7.0 generated 2016-11-07T09:33:45+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -91,25 +91,6 @@ Type
     spActivityDefinition_Topic, {@enum.value "topic" spActivityDefinition_Topic Topics associated with the module }
     spActivityDefinition_Url, {@enum.value "url" spActivityDefinition_Url The uri that identifies the activity definition }
     spActivityDefinition_Version); {@enum.value "version" spActivityDefinition_Version The version identifier of the activity definition }
-
-  {@Enum TSearchParamsActivityGroup
-    Search Parameters for ActivityGroup
-  }
-  TSearchParamsActivityGroup = (
-    spActivityGroup__content, {@enum.value "_content" spActivityGroup__content Search on the entire content of the resource }
-    spActivityGroup__id, {@enum.value "_id" spActivityGroup__id Logical id of this artifact }
-    spActivityGroup__lastUpdated, {@enum.value "_lastUpdated" spActivityGroup__lastUpdated When the resource version last changed }
-    spActivityGroup__profile, {@enum.value "_profile" spActivityGroup__profile Profiles this resource claims to conform to }
-    spActivityGroup__query, {@enum.value "_query" spActivityGroup__query A custom search profile that describes a specific defined query operation }
-    spActivityGroup__security, {@enum.value "_security" spActivityGroup__security Security Labels applied to this resource }
-    spActivityGroup__tag, {@enum.value "_tag" spActivityGroup__tag Tags applied to this resource }
-    spActivityGroup__text, {@enum.value "_text" spActivityGroup__text Search on the narrative of the resource }
-    spActivityGroup_Author, {@enum.value "author" spActivityGroup_Author The author of the activity group }
-    spActivityGroup_Context, {@enum.value "context" spActivityGroup_Context The context the activity group applies to }
-    spActivityGroup_Encounter, {@enum.value "encounter" spActivityGroup_Encounter The encounter the activity group applies to }
-    spActivityGroup_Participant, {@enum.value "participant" spActivityGroup_Participant The participant in the activities in the group }
-    spActivityGroup_Patient, {@enum.value "patient" spActivityGroup_Patient The identity of a patient to search for activity groups }
-    spActivityGroup_Subject); {@enum.value "subject" spActivityGroup_Subject The subject that the activity group is about }
 
   {@Enum TSearchParamsAllergyIntolerance
     Search Parameters for AllergyIntolerance
@@ -418,7 +399,6 @@ Type
     spClinicalImpression_Findingref, {@enum.value "finding-ref" spClinicalImpression_Findingref What was found }
     spClinicalImpression_Investigation, {@enum.value "investigation" spClinicalImpression_Investigation Record of a specific investigation }
     spClinicalImpression_Patient, {@enum.value "patient" spClinicalImpression_Patient Patient or group assessed }
-    spClinicalImpression_Plan, {@enum.value "plan" spClinicalImpression_Plan Plan of action after assessment }
     spClinicalImpression_Previous, {@enum.value "previous" spClinicalImpression_Previous Reference to last assessment }
     spClinicalImpression_Problem, {@enum.value "problem" spClinicalImpression_Problem Relevant impressions of patient state }
     spClinicalImpression_Status, {@enum.value "status" spClinicalImpression_Status draft | completed | entered-in-error }
@@ -717,31 +697,6 @@ Type
     spDataElement_Title, {@enum.value "title" spDataElement_Title Text search against the title of the data element }
     spDataElement_Url, {@enum.value "url" spDataElement_Url The uri that identifies the data element }
     spDataElement_Version); {@enum.value "version" spDataElement_Version The version identifier of the data element }
-
-  {@Enum TSearchParamsDecisionSupportServiceModule
-    Search Parameters for DecisionSupportServiceModule
-  }
-  TSearchParamsDecisionSupportServiceModule = (
-    spDecisionSupportServiceModule__content, {@enum.value "_content" spDecisionSupportServiceModule__content Search on the entire content of the resource }
-    spDecisionSupportServiceModule__id, {@enum.value "_id" spDecisionSupportServiceModule__id Logical id of this artifact }
-    spDecisionSupportServiceModule__lastUpdated, {@enum.value "_lastUpdated" spDecisionSupportServiceModule__lastUpdated When the resource version last changed }
-    spDecisionSupportServiceModule__profile, {@enum.value "_profile" spDecisionSupportServiceModule__profile Profiles this resource claims to conform to }
-    spDecisionSupportServiceModule__query, {@enum.value "_query" spDecisionSupportServiceModule__query A custom search profile that describes a specific defined query operation }
-    spDecisionSupportServiceModule__security, {@enum.value "_security" spDecisionSupportServiceModule__security Security Labels applied to this resource }
-    spDecisionSupportServiceModule__tag, {@enum.value "_tag" spDecisionSupportServiceModule__tag Tags applied to this resource }
-    spDecisionSupportServiceModule__text, {@enum.value "_text" spDecisionSupportServiceModule__text Search on the narrative of the resource }
-    spDecisionSupportServiceModule_Date, {@enum.value "date" spDecisionSupportServiceModule_Date The decision support service module publication date }
-    spDecisionSupportServiceModule_Description, {@enum.value "description" spDecisionSupportServiceModule_Description Text search against the description of the decision support service module }
-    spDecisionSupportServiceModule_Effective, {@enum.value "effective" spDecisionSupportServiceModule_Effective Effective time associated with the decision support service module }
-    spDecisionSupportServiceModule_Identifier, {@enum.value "identifier" spDecisionSupportServiceModule_Identifier External identifiers for the decision support service module }
-    spDecisionSupportServiceModule_Jurisdiction, {@enum.value "jurisdiction" spDecisionSupportServiceModule_Jurisdiction Intended jurisdiction for decision support service module }
-    spDecisionSupportServiceModule_Name, {@enum.value "name" spDecisionSupportServiceModule_Name Name of the decision support service module }
-    spDecisionSupportServiceModule_Publisher, {@enum.value "publisher" spDecisionSupportServiceModule_Publisher Name of the publisher of the decision support service module }
-    spDecisionSupportServiceModule_Status, {@enum.value "status" spDecisionSupportServiceModule_Status The current status of the decision support service module }
-    spDecisionSupportServiceModule_Title, {@enum.value "title" spDecisionSupportServiceModule_Title Text search against the title of the decision support service module }
-    spDecisionSupportServiceModule_Topic, {@enum.value "topic" spDecisionSupportServiceModule_Topic Topics associated with the module }
-    spDecisionSupportServiceModule_Url, {@enum.value "url" spDecisionSupportServiceModule_Url The uri that identifies the decision support service module }
-    spDecisionSupportServiceModule_Version); {@enum.value "version" spDecisionSupportServiceModule_Version The version identifier of the decision support service module }
 
   {@Enum TSearchParamsDetectedIssue
     Search Parameters for DetectedIssue
@@ -1635,26 +1590,27 @@ Type
     spMedicationDispense_Whenhandedover, {@enum.value "whenhandedover" spMedicationDispense_Whenhandedover Returns dispenses handed over on this date }
     spMedicationDispense_Whenprepared); {@enum.value "whenprepared" spMedicationDispense_Whenprepared Returns dispenses prepared on this date }
 
-  {@Enum TSearchParamsMedicationOrder
-    Search Parameters for MedicationOrder
+  {@Enum TSearchParamsMedicationRequest
+    Search Parameters for MedicationRequest
   }
-  TSearchParamsMedicationOrder = (
-    spMedicationOrder__content, {@enum.value "_content" spMedicationOrder__content Search on the entire content of the resource }
-    spMedicationOrder__id, {@enum.value "_id" spMedicationOrder__id Logical id of this artifact }
-    spMedicationOrder__lastUpdated, {@enum.value "_lastUpdated" spMedicationOrder__lastUpdated When the resource version last changed }
-    spMedicationOrder__profile, {@enum.value "_profile" spMedicationOrder__profile Profiles this resource claims to conform to }
-    spMedicationOrder__query, {@enum.value "_query" spMedicationOrder__query A custom search profile that describes a specific defined query operation }
-    spMedicationOrder__security, {@enum.value "_security" spMedicationOrder__security Security Labels applied to this resource }
-    spMedicationOrder__tag, {@enum.value "_tag" spMedicationOrder__tag Tags applied to this resource }
-    spMedicationOrder__text, {@enum.value "_text" spMedicationOrder__text Search on the narrative of the resource }
-    spMedicationOrder_Code, {@enum.value "code" spMedicationOrder_Code Return prescriptions of this medication code }
-    spMedicationOrder_Datewritten, {@enum.value "datewritten" spMedicationOrder_Datewritten Return prescriptions written on this date }
-    spMedicationOrder_Encounter, {@enum.value "encounter" spMedicationOrder_Encounter Return prescriptions with this encounter identifier }
-    spMedicationOrder_Identifier, {@enum.value "identifier" spMedicationOrder_Identifier Return prescriptions with this external identifier }
-    spMedicationOrder_Medication, {@enum.value "medication" spMedicationOrder_Medication Return prescriptions of this medication reference }
-    spMedicationOrder_Patient, {@enum.value "patient" spMedicationOrder_Patient The identity of a patient to list orders  for }
-    spMedicationOrder_Prescriber, {@enum.value "prescriber" spMedicationOrder_Prescriber Returns prescriptions prescribed by this prescriber }
-    spMedicationOrder_Status); {@enum.value "status" spMedicationOrder_Status Status of the prescription }
+  TSearchParamsMedicationRequest = (
+    spMedicationRequest__content, {@enum.value "_content" spMedicationRequest__content Search on the entire content of the resource }
+    spMedicationRequest__id, {@enum.value "_id" spMedicationRequest__id Logical id of this artifact }
+    spMedicationRequest__lastUpdated, {@enum.value "_lastUpdated" spMedicationRequest__lastUpdated When the resource version last changed }
+    spMedicationRequest__profile, {@enum.value "_profile" spMedicationRequest__profile Profiles this resource claims to conform to }
+    spMedicationRequest__query, {@enum.value "_query" spMedicationRequest__query A custom search profile that describes a specific defined query operation }
+    spMedicationRequest__security, {@enum.value "_security" spMedicationRequest__security Security Labels applied to this resource }
+    spMedicationRequest__tag, {@enum.value "_tag" spMedicationRequest__tag Tags applied to this resource }
+    spMedicationRequest__text, {@enum.value "_text" spMedicationRequest__text Search on the narrative of the resource }
+    spMedicationRequest_Code, {@enum.value "code" spMedicationRequest_Code Return prescriptions of this medication code }
+    spMedicationRequest_Context, {@enum.value "context" spMedicationRequest_Context Return prescriptions with this encounter or episode of care identifier }
+    spMedicationRequest_Datewritten, {@enum.value "datewritten" spMedicationRequest_Datewritten Return prescriptions written on this date }
+    spMedicationRequest_Identifier, {@enum.value "identifier" spMedicationRequest_Identifier Return prescriptions with this external identifier }
+    spMedicationRequest_Intendeddispenser, {@enum.value "intendeddispenser" spMedicationRequest_Intendeddispenser Returns prescriptions intended to be dispensed by this Organization }
+    spMedicationRequest_Medication, {@enum.value "medication" spMedicationRequest_Medication Return prescriptions of this medication reference }
+    spMedicationRequest_Patient, {@enum.value "patient" spMedicationRequest_Patient The identity of a patient to list orders  for }
+    spMedicationRequest_Prescriber, {@enum.value "prescriber" spMedicationRequest_Prescriber Returns prescriptions prescribed by this prescriber }
+    spMedicationRequest_Status); {@enum.value "status" spMedicationRequest_Status Status of the prescription }
 
   {@Enum TSearchParamsMedicationStatement
     Search Parameters for MedicationStatement
@@ -2083,11 +2039,14 @@ Type
     spProcedureRequest__security, {@enum.value "_security" spProcedureRequest__security Security Labels applied to this resource }
     spProcedureRequest__tag, {@enum.value "_tag" spProcedureRequest__tag Tags applied to this resource }
     spProcedureRequest__text, {@enum.value "_text" spProcedureRequest__text Search on the narrative of the resource }
+    spProcedureRequest_Bodysite, {@enum.value "body-site" spProcedureRequest_Bodysite What part of body to perform on }
+    spProcedureRequest_Code, {@enum.value "code" spProcedureRequest_Code What procedure to perform }
     spProcedureRequest_Encounter, {@enum.value "encounter" spProcedureRequest_Encounter Encounter request created during }
     spProcedureRequest_Identifier, {@enum.value "identifier" spProcedureRequest_Identifier A unique identifier of the Procedure Request }
     spProcedureRequest_Orderer, {@enum.value "orderer" spProcedureRequest_Orderer Who made request }
     spProcedureRequest_Patient, {@enum.value "patient" spProcedureRequest_Patient Search by subject - a patient }
     spProcedureRequest_Performer, {@enum.value "performer" spProcedureRequest_Performer Who should perform the procedure }
+    spProcedureRequest_Status, {@enum.value "status" spProcedureRequest_Status proposed | draft | requested | received | accepted | in-progress | completed | suspended | rejected | aborted }
     spProcedureRequest_Subject); {@enum.value "subject" spProcedureRequest_Subject Search by subject }
 
   {@Enum TSearchParamsProcessRequest
@@ -2246,6 +2205,25 @@ Type
     spRelatedPerson_Phone, {@enum.value "phone" spRelatedPerson_Phone A value in a phone contact }
     spRelatedPerson_Phonetic, {@enum.value "phonetic" spRelatedPerson_Phonetic A portion of name using some kind of phonetic matching algorithm }
     spRelatedPerson_Telecom); {@enum.value "telecom" spRelatedPerson_Telecom The value in any kind of contact }
+
+  {@Enum TSearchParamsRequestGroup
+    Search Parameters for RequestGroup
+  }
+  TSearchParamsRequestGroup = (
+    spRequestGroup__content, {@enum.value "_content" spRequestGroup__content Search on the entire content of the resource }
+    spRequestGroup__id, {@enum.value "_id" spRequestGroup__id Logical id of this artifact }
+    spRequestGroup__lastUpdated, {@enum.value "_lastUpdated" spRequestGroup__lastUpdated When the resource version last changed }
+    spRequestGroup__profile, {@enum.value "_profile" spRequestGroup__profile Profiles this resource claims to conform to }
+    spRequestGroup__query, {@enum.value "_query" spRequestGroup__query A custom search profile that describes a specific defined query operation }
+    spRequestGroup__security, {@enum.value "_security" spRequestGroup__security Security Labels applied to this resource }
+    spRequestGroup__tag, {@enum.value "_tag" spRequestGroup__tag Tags applied to this resource }
+    spRequestGroup__text, {@enum.value "_text" spRequestGroup__text Search on the narrative of the resource }
+    spRequestGroup_Author, {@enum.value "author" spRequestGroup_Author The author of the request group }
+    spRequestGroup_Context, {@enum.value "context" spRequestGroup_Context The context the request group applies to }
+    spRequestGroup_Encounter, {@enum.value "encounter" spRequestGroup_Encounter The encounter the request group applies to }
+    spRequestGroup_Participant, {@enum.value "participant" spRequestGroup_Participant The participant in the requests in the group }
+    spRequestGroup_Patient, {@enum.value "patient" spRequestGroup_Patient The identity of a patient to search for request groups }
+    spRequestGroup_Subject); {@enum.value "subject" spRequestGroup_Subject The subject that the request group is about }
 
   {@Enum TSearchParamsRiskAssessment
     Search Parameters for RiskAssessment
@@ -2649,11 +2627,10 @@ Type
     spVisionPrescription_Prescriber); {@enum.value "prescriber" spVisionPrescription_Prescriber Who authorizes the vision product }
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'ActivityGroup', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DecisionSupportServiceModule', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 
-      'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DiagnosticRequest', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 
+      'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionRequest', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RequestGroup', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'activitydefinition',
-     'activitygroup',
      'allergyintolerance',
      'appointment',
      'appointmentresponse',
@@ -2679,7 +2656,6 @@ Const
      'contract',
      'coverage',
      'dataelement',
-     'decisionsupportservicemodule',
      'detectedissue',
      'device',
      'devicecomponent',
@@ -2720,7 +2696,7 @@ Const
      'medication',
      'medicationadministration',
      'medicationdispense',
-     'medicationorder',
+     'medicationrequest',
      'medicationstatement',
      'messageheader',
      'namingsystem',
@@ -2746,6 +2722,7 @@ Const
      'questionnaireresponse',
      'referralrequest',
      'relatedperson',
+     'requestgroup',
      'riskassessment',
      'schedule',
      'searchparameter',
@@ -2768,7 +2745,6 @@ Const
      
   CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, TFhirAccount,
      TFhirActivityDefinition,
-     TFhirActivityGroup,
      TFhirAllergyIntolerance,
      TFhirAppointment,
      TFhirAppointmentResponse,
@@ -2794,7 +2770,6 @@ Const
      TFhirContract,
      TFhirCoverage,
      TFhirDataElement,
-     TFhirDecisionSupportServiceModule,
      TFhirDetectedIssue,
      TFhirDevice,
      TFhirDeviceComponent,
@@ -2835,7 +2810,7 @@ Const
      TFhirMedication,
      TFhirMedicationAdministration,
      TFhirMedicationDispense,
-     TFhirMedicationOrder,
+     TFhirMedicationRequest,
      TFhirMedicationStatement,
      TFhirMessageHeader,
      TFhirNamingSystem,
@@ -2861,6 +2836,7 @@ Const
      TFhirQuestionnaireResponse,
      TFhirReferralRequest,
      TFhirRelatedPerson,
+     TFhirRequestGroup,
      TFhirRiskAssessment,
      TFhirSchedule,
      TFhirSearchParameter,
@@ -2883,7 +2859,6 @@ Const
      
   ALL_RESOURCE_TYPES = [frtAccount,
      frtActivityDefinition,
-     frtActivityGroup,
      frtAllergyIntolerance,
      frtAppointment,
      frtAppointmentResponse,
@@ -2909,7 +2884,6 @@ Const
      frtContract,
      frtCoverage,
      frtDataElement,
-     frtDecisionSupportServiceModule,
      frtDetectedIssue,
      frtDevice,
      frtDeviceComponent,
@@ -2950,7 +2924,7 @@ Const
      frtMedication,
      frtMedicationAdministration,
      frtMedicationDispense,
-     frtMedicationOrder,
+     frtMedicationRequest,
      frtMedicationStatement,
      frtMessageHeader,
      frtNamingSystem,
@@ -2976,6 +2950,7 @@ Const
      frtQuestionnaireResponse,
      frtReferralRequest,
      frtRelatedPerson,
+     frtRequestGroup,
      frtRiskAssessment,
      frtSchedule,
      frtSearchParameter,
@@ -2998,7 +2973,6 @@ Const
      
   ALL_RESOURCE_TYPE_NAMES : Array of String = ['Account',
      'ActivityDefinition',
-     'ActivityGroup',
      'AllergyIntolerance',
      'Appointment',
      'AppointmentResponse',
@@ -3024,7 +2998,6 @@ Const
      'Contract',
      'Coverage',
      'DataElement',
-     'DecisionSupportServiceModule',
      'DetectedIssue',
      'Device',
      'DeviceComponent',
@@ -3065,7 +3038,7 @@ Const
      'Medication',
      'MedicationAdministration',
      'MedicationDispense',
-     'MedicationOrder',
+     'MedicationRequest',
      'MedicationStatement',
      'MessageHeader',
      'NamingSystem',
@@ -3091,6 +3064,7 @@ Const
      'QuestionnaireResponse',
      'ReferralRequest',
      'RelatedPerson',
+     'RequestGroup',
      'RiskAssessment',
      'Schedule',
      'SearchParameter',
@@ -3113,7 +3087,6 @@ Const
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
   CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
-  CODES_TSearchParamsActivityGroup : Array[TSearchParamsActivityGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'context', 'encounter', 'participant', 'patient', 'subject');
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'reporter', 'route', 'severity', 'status', 'type');
   CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
   CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
@@ -3127,7 +3100,7 @@ Const
   CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'participant', 'patient', 'status', 'subject', 'type');
   CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'facility', 'identifier', 'insurer', 'organization', 'patient', 'priority', 'provider', 'use');
   CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'paymentdate', 'request');
-  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'investigation', 'patient', 'plan', 'previous', 'problem', 'status', 'subject');
+  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
   CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'content', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'system', 'title', 'url', 'version');
   CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'context', 'identifier', 'medium', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
   CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'encounter', 'identifier', 'medium', 'patient', 'priority', 'recipient', 'requested', 'requester', 'sender', 'status', 'subject', 'time');
@@ -3139,7 +3112,6 @@ Const
   CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'subject', 'topic', 'ttopic');
   CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'beneficiary', 'dependent', 'identifier', 'issuer', 'planholder', 'sequence', 'type');
   CODES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'objectClass', 'objectClassProperty', 'publisher', 'status', 'stringency', 'title', 'url', 'version');
-  CODES_TSearchParamsDecisionSupportServiceModule : Array[TSearchParamsDecisionSupportServiceModule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'type', 'udicarrier', 'url');
   CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'parent', 'source', 'type');
@@ -3180,7 +3152,7 @@ Const
   CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'container', 'form', 'ingredient', 'ingredient-code', 'manufacturer', 'package-item', 'package-item-code');
   CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'device', 'effective-time', 'encounter', 'identifier', 'medication', 'not-given', 'patient', 'performer', 'prescription', 'reason-given', 'reason-not-given', 'status');
   CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'destination', 'dispenser', 'identifier', 'medication', 'patient', 'prescription', 'receiver', 'responsibleparty', 'status', 'type', 'whenhandedover', 'whenprepared');
-  CODES_TSearchParamsMedicationOrder : Array[TSearchParamsMedicationOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'datewritten', 'encounter', 'identifier', 'medication', 'patient', 'prescriber', 'status');
+  CODES_TSearchParamsMedicationRequest : Array[TSearchParamsMedicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'datewritten', 'identifier', 'intendeddispenser', 'medication', 'patient', 'prescriber', 'status');
   CODES_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'effective', 'identifier', 'medication', 'patient', 'source', 'status');
   CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'data', 'destination', 'destination-uri', 'enterer', 'event', 'receiver', 'response-id', 'responsible', 'source', 'source-uri', 'target', 'timestamp');
   CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'replaced-by', 'responsible', 'status', 'telecom', 'type', 'value');
@@ -3197,7 +3169,7 @@ Const
   CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'location', 'name', 'organization', 'phone', 'phonetic', 'role', 'specialty', 'telecom');
   CODES_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'email', 'identifier', 'location', 'organization', 'phone', 'practitioner', 'role', 'specialty', 'telecom');
   CODES_TSearchParamsProcedure : Array[TSearchParamsProcedure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'date', 'encounter', 'identifier', 'location', 'patient', 'performer', 'subject');
-  CODES_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'encounter', 'identifier', 'orderer', 'patient', 'performer', 'subject');
+  CODES_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'body-site', 'code', 'encounter', 'identifier', 'orderer', 'patient', 'performer', 'status', 'subject');
   CODES_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'identifier', 'organization', 'provider');
   CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'request-organization', 'request-provider');
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'end', 'entity', 'entity-type', 'location', 'patient', 'sig', 'start', 'target', 'userid');
@@ -3205,6 +3177,7 @@ Const
   CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'parent', 'patient', 'questionnaire', 'source', 'status', 'subject');
   CODES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'basedon', 'category', 'context', 'date', 'parent', 'patient', 'priority', 'recipient', 'requester', 'specialty', 'status', 'type');
   CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
+  CODES_TSearchParamsRequestGroup : Array[TSearchParamsRequestGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'context', 'encounter', 'participant', 'patient', 'subject');
   CODES_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'condition', 'date', 'encounter', 'identifier', 'method', 'patient', 'performer', 'subject');
   CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
   CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'component', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
@@ -3225,7 +3198,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.7.0';
 
-  FHIR_GENERATED_DATE = '2016-11-02T09:20:28+11:00';
+  FHIR_GENERATED_DATE = '2016-11-07T09:33:45+11:00';
 
 
 

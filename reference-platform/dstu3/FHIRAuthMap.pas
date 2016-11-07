@@ -17,9 +17,8 @@ const
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
     tcOther, // frtNull
-    tcFinancial , // frtAccount Account
-    tcOther, // ActivityDefinition ActivityDefinition
-    tcOther, // ActivityGroup ActivityGroup
+    tcFinancial , // frtAccount Account frtAccount
+    tcOther, // ActivityDefinition ActivityDefinition frtActivityDefinition
     tcClinical , // frtAllergyIntolerance AllergyIntolerance
     tcSchedule , // frtAppointment Appointment
     tcSchedule , // frtAppointmentResponse AppointmentResponse
@@ -131,6 +130,7 @@ const
     tcOther , // frtValueSet,
     tcClinical,// frtVisionPrescription,
     tcOther); // frtCustom
+
 
 
 

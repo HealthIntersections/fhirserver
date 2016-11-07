@@ -54,7 +54,7 @@ Type
 const
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
-  ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
+  ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
 
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;

@@ -4,11 +4,11 @@ interface
 
 uses
   SysUtils, Classes, Math,
-  StringSupport, EncodeSupport, ParseMap,
-  AdvStringBuilders, AdvObjectLists,
+  StringSupport, EncodeSupport, ParseMap, TextUtilities,
+  AdvStringBuilders, AdvObjectLists, AdvJson, AdvZipParts, AdvZipWriters, AdvMemories,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRParser,
   SnomedServices, FHIRParserBase,
-  AdvObjects, AdvFiles;
+  AdvObjects, AdvFiles, AdvNameBuffers;
 
 type
   TRelationship = class (TAdvObject)
@@ -35,11 +35,36 @@ type
     function getById(id : cardinal) : TRelationship;
   end;
 
+  TProperty = record
+    relid : cardinal;
+    target : cardinal;
+    group : integer;
+  end;
+  TPropertyArray = array of TProperty;
+
+  TColumnSourceType = (stCid, stTerm, stMastercid, stReltarget, stRefset);
+  TColumnKeyType = (ktRelId);
+  TColumnFieldDisplay = (fvString, fvCid);
+
+  TColumnDetail = record
+    srcType : TColumnSourceType;
+    keyType : TColumnKeyType;
+    members : TSnomedReferenceSetMemberArray;
+    reltype : byte;
+    lang : cardinal;
+    target : cardinal;
+    field : integer;
+    display : TColumnFieldDisplay;
+  end;
+  TColumnDetailArray = array of TColumnDetail;
+
   TSnomedAnalysis = class (TAdvObject)
   private
     FSnomed : TSnomedServices;
     FRoots : TCardinalArray;
     Handled : TCardinalArray;
+    FColumns : TColumnDetailArray;
+
 //    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
 //    function CreateRef(root, index : Cardinal) : TFhirReference;
     procedure listRelationships(iIndex : cardinal; list : TRelationshipList);
@@ -49,14 +74,21 @@ type
 
     function tref(index : integer): String;
     procedure assess(b : TAdvStringBuilder; id : String);
-    function getProps(id, prop : cardinal) : TCardinalArray;
+    function getProps(id, prop : cardinal) : TPropertyArray;
     procedure listChildren(id : cardinal; list : TStringList);
-    procedure processTree(b : TAdvStringBuilder; id : string; props : TStringList);
+    function prepSubColumn(json : TJsonObject) : TColumnDetail;
+    procedure processSubColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child, relid, target : cardinal);
+    procedure processSubTable(parts : TAdvZipPartList; json : TJsonObject; children : TStringList);
+    function prepColumn(json : TJsonObject) : TColumnDetail;
+    procedure processColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child : cardinal);
+    procedure processTable(parts : TAdvZipPartList; json : TJsonObject);
+    procedure processScript(buf : TAdvNameBuffer; script : string);
+    procedure cleanUpColumn(detail : TColumnDetail);
   public
     Constructor Create(snomed : TSnomedServices); overload;
     Destructor Destroy; override;
 
-    function generate(params : TParseMap) : String;
+    function generate(params : TParseMap) : TAdvNameBuffer;
   end;
 
 implementation
@@ -227,7 +259,7 @@ begin
   inherited;
 end;
 
-function TSnomedAnalysis.generate(params : TParseMap): String;
+function TSnomedAnalysis.generate(params : TParseMap): TAdvNameBuffer;
 var
   b : TAdvStringBuilder;
   st : TStringList;
@@ -318,28 +350,23 @@ begin
     b.appendLine('');
 
 
-    if params.VarExists('base') then
+    if params.VarExists('script') then
     begin
-      st := TStringList.Create;
+      result := TAdvNameBuffer.Create;
       try
-        st.CommaText := params.GetVar('props');
-        b.AppendLine('<form method="GET">');
-        b.AppendLine('<p>Regenerate: </p><p>');
-        b.AppendLine(' Base Concept: <input type="text" name="base" value="'+params.GetVar('base')+'"> (concept id)</br>');
-        b.AppendLine(' Properties: <input type="text" name="props" value="'+st.commatext+'"> (comma separated list of concept ids)</br>');
-        b.AppendLine('<input type="submit" value="build"></br>');
-        b.AppendLine('</p></form method="GET">');
-        processTree(b, params.GetVar('base'), st);
+        processScript(result, params.GetVar('script'));
+        result.Link;
       finally
-        st.Free;
+        result.Free;
       end;
+      exit;
     end
     else if params.VarExists('scan') then
     begin
       st := TStringList.Create;
       try
         st.CommaText := params.GetVar('scan');
-        b.AppendLine('<form method="GET">');
+        b.AppendLine('<form method="POST">');
         b.AppendLine('<p>Rescan: </p><p>');
         b.AppendLine(' Candidate Concepts: <input type="text" name="scan" value="'+st.commatext+'"> (comma separated list of concept ids)</br>');
         b.AppendLine('<input type="submit" value="scan"></br>');
@@ -365,9 +392,9 @@ begin
       b.AppendLine('<input type="submit" value="scan"></br>');
       b.AppendLine('</p></form method="GET">');
       b.AppendLine('<form method="GET">');
-      b.AppendLine('<p>Generate a table: </p><p>');
-      b.AppendLine(' Base Concept: <input type="text" name="base" value="123038009"> (concept id)</br>');
-      b.AppendLine(' Properties: <input type="text" name="props" value="370133003,118169006,118171006,118170007,118168003,123005000,260686004"> (comma separated list of concept ids)</br>');
+      b.AppendLine('<p>Generate a set of tables: </p><p>');
+      b.AppendLine(' script: <br/> <textarea name="script" rows=20 cols=80>');
+      b.AppendLine(' </textarea><br/>');
       b.AppendLine('<input type="submit" value="build"></br>');
       b.AppendLine('</p></form method="GET">');
     end;
@@ -403,7 +430,10 @@ begin
     b.appendLine('</body>');
     b.appendLine('</html>');
 
-    result := b.AsString;
+    result := TAdvNameBuffer.Create;
+    result.Name := 'text/html';
+    result.Encoding := TEncoding.UTF8;
+    result.AsUnicode := b.AsString;
   finally
     b.Free;
   end;
@@ -447,7 +477,7 @@ end;
 //  SetLength(result, c);
 //end;
 //
-function TSnomedAnalysis.getProps(id, prop: cardinal): TCardinalArray;
+function TSnomedAnalysis.getProps(id, prop: cardinal): TPropertyArray;
 var
   Identity : UInt64;
   Flags : Byte;
@@ -473,7 +503,9 @@ begin
       if {(group = 0) and }active and (RelType = prop) then
       begin
         SetLength(result, length(result)+1);
-        result[length(result)-1] := target;
+        result[length(result)-1].relid := c;
+        result[length(result)-1].target := target;
+        result[length(result)-1].group := group;
       end;
     end;
   end;
@@ -668,59 +700,296 @@ begin
   end;
 end;
 
-procedure TSnomedAnalysis.processTree(b: TAdvStringBuilder; id: string; props: TStringList);
+function TSnomedAnalysis.prepColumn(json: TJsonObject): TColumnDetail;
 var
-  index, c, iid, d : cardinal;
-  propCs : array of cardinal;
-  p : TCardinalArray;
-  i : integer;
-  children : TStringList;
+  src : String;
 begin
-  FSnomed.Concept.FindConcept(StrToUInt64(id), index);
-  SetLength(propCs, props.Count);
-  for I := 0 to props.Count - 1 do
+  src := json['source'];
+  if (src = 'cid') then
+    result.srcType := stCid
+  else if (src = 'term') then
   begin
-    FSnomed.Concept.FindConcept(StrToUInt64(props[i]), c);
-    propCs[i] := c;
-  end;
-
-  b.Append('<table class="grid">'+#13#10);
-  b.Append(' <tr><td>'+tref(index)+'</td>');
-  for c in propCs do
-    b.Append('<td>'+tref(c)+'</td>');
-  b.Append('</tr>'+#13#10);
-  children := TStringList.create;
-  try
-    listChildren(index, children);
-    children.sort;
-    for I := 0 to children.count - 1 do
+    result.srcType := stTerm;
+    if json['refset'] <> '' then
     begin
-      iid := cardinal(children.objects[i]);
-      b.Append(' <tr><td>'+tref(iid)+'</td>');
-      for c in propCs do
+      if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), result.lang) then
+        raise Exception.Create('Language refset '+json['refset']+' not found');
+    end
+  end
+  else if (src = 'rel-target') then
+  begin
+    result.srcType := stRelTarget;
+    if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), result.target) then
+      raise Exception.Create('Relationship type '+json['rel-type']+' not found');
+  end
+  else
+    raise Exception.Create('Unknown column source '+src);
+end;
+
+procedure TSnomedAnalysis.processColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child: cardinal);
+var
+  props : TPropertyArray;
+begin
+  case det.srcType of
+    stCid:tbl.Append(FSnomed.GetConceptId(child));
+    stTerm:tbl.Append(FSnomed.GetDisplayName(child, FSnomed.RefSetIndex.GetRefSetByConcept(det.lang)));
+    stRelTarget:
       begin
-        b.Append('<td>');
-        p := getProps(iid, c);
-        if (length(p) <= 1) then
-        begin
-          for d in p do
-            b.Append(tref(d)+' ');
-        end
-        else
-        begin
-          b.Append('<ul>');
-          for d in p do
-            b.Append('<li>'+tref(d)+'</li>');
-          b.Append('</ul>');
-        end;
-        b.Append('</td>');
+      props := getProps(child, det.target);
+      if length(props) > 1 then
+        raise Exception.Create('Relationship type '+json['rel-type']+': multiple relationships found for '+FSnomed.GetConceptId(child));
+      if length(props) = 1 then
+        tbl.Append(FSnomed.GetConceptId(props[0].target));
       end;
-      b.Append('</tr>'+#13#10);
+  end;
+end;
+
+procedure TSnomedAnalysis.processScript(buf : TAdvNameBuffer; script : string);
+var
+  json : TJsonObject;
+  n : TJsonNode;
+  parts : TAdvZipPartList;
+  zip : TAdvZipWriter;
+begin
+  parts := TAdvZipPartList.Create;
+  try
+    json := TJSONParser.Parse(script);
+    try
+      if json['snomed-table-script-version'] <> '1.0' then
+        raise Exception.Create('Script could not be understood');
+
+      for n in json.arr['tables'] do
+        processTable(parts, n as TJsonObject);
+    finally
+      json.Free;
+    end;
+    zip := TAdvZipWriter.Create;
+    try
+      zip.Stream := TAdvMemoryStream.Create;
+      TAdvMemoryStream(zip.Stream).Buffer := buf.Link;
+      buf.Name := 'application/zip';
+      zip.Parts := parts.Link;
+      zip.WriteZip;
+    finally
+      zip.Free;
     end;
   finally
-    children.free;
+    parts.Free;
   end;
-  b.Append('</table>'+#13#10);
+end;
+
+procedure TSnomedAnalysis.processTable(parts : TAdvZipPartList; json : TJsonObject);
+var
+  tbl : TAdvStringBuilder;
+  root, child : cardinal;
+  children : TStringList;
+  i, j : integer;
+  n : TJsonNode;
+  det : TColumnDetail;
+  part : TAdvZipPart;
+//  index, c, , d : cardinal;
+//  propCs : array of cardinal;
+//  p : TCardinalArray;
+begin
+  FSnomed.Concept.FindConcept(StrToUInt64(json['root']), root);
+
+  tbl := TAdvStringBuilder.Create;
+  try
+    children := TStringList.create;
+    try
+      listChildren(root, children);
+      children.sort;
+
+      j := 0;
+      SetLength(FColumns, json.arr['columns'].Count);
+      for n in json.arr['columns'] do
+      begin
+        if j > 0 then
+          tbl.Append(#9);
+        tbl.Append(TJsonObject(n)['name']);
+        FColumns[j] := prepColumn(TJsonObject(n));
+        inc(j);
+      end;
+      tbl.Append(#10);
+
+      for i := 0 to children.count - 1 do
+      begin
+        child := cardinal(children.objects[i]);
+        j := 0;
+        for n in json.arr['columns'] do
+        begin
+          if j > 0 then
+            tbl.Append(#9);
+          processColumn(TJsonObject(n), tbl, FColumns[j], child);
+          inc(j);
+        end;
+        tbl.Append(#10);
+      end;
+      part := TAdvZipPart.Create;
+      parts.Add(part);
+      part.Name := json['name']+'.txt';
+      part.Encoding := TEncoding.UTF8;
+      part.AsUnicode := tbl.AsString;
+      for det in FColumns do
+        cleanUpColumn(det);
+
+      for n in json.arr['subtables'] do
+        processSubTable(parts, TJsonObject(n), children);
+    finally
+      children.free;
+    end;
+  finally
+    tbl.Free;
+  end;
+end;
+
+function TSnomedAnalysis.prepSubColumn(json : TJsonObject) : TColumnDetail;
+var
+  src, key : String;
+  refset : cardinal;
+  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
+  names : TCardinalArray;
+  i : integer;
+begin
+  src := json['source'];
+  if (src = 'master-cid') then
+    result.srcType := stMastercid
+  else if (src = 'rel-target') then
+    result.srcType := stReltarget
+  else if (src = 'refset') then
+  begin
+    result.srcType := stRefset;
+    if not FSnomed.Concept.FindConcept(StrToInt64(json['refset']), refset) then
+      raise Exception.Create('Specified refset '+json['refset']+' not found');
+    refset := FSnomed.RefSetIndex.GetRefSetByConcept(refset);
+    FSnomed.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    result.members := FSnomed.RefSetMembers.GetMembers(iMembersByRef);
+    key := json['key'];
+    if key = 'rel-id' then
+    begin
+      result.keyType := ktRelId;
+      result.reltype := 2
+    end
+    else
+      raise Exception.Create('Unknown refset key '+key);
+    names := FSnomed.Refs.GetReferences(iFieldNames);
+    result.field := -1;
+    for i := 0 to length(names) - 1 do
+      if FSnomed.Strings.GetEntry(names[i]) = json['field'] then
+        result.field := i;
+    if result.field = -1 then
+      raise Exception.Create('Refset lookup: unable to find field name '+json['field']);
+    if (json['display'] = '') then
+      result.display := fvString
+    else if (json['display'] = 'string') then
+      result.display := fvString
+    else if (json['display'] = 'cid') then
+      result.display := fvCid
+    else
+      raise Exception.Create('Refset lookup: unknown field display '+json['field']);
+  end
+  else
+    raise Exception.Create('Unknown column source '+src);
+end;
+
+procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child, relid, target: cardinal);
+var
+  src, key : String;
+  kb : byte;
+  lang, rt, refset, k : cardinal;
+  props, vl : TCardinalArray;
+  members : TSnomedReferenceSetMemberArray;
+  m : TSnomedReferenceSetMember;
+  i1, i2 : string;
+begin
+  case det.srcType of
+    stMastercid : tbl.Append(FSnomed.GetConceptId(child));
+    stReltarget : tbl.Append(FSnomed.GetConceptId(target));
+    stRefset :
+      begin
+        case det.keyType of
+          ktRelId : k := relid;
+        end;
+        for m in det.members do
+        begin
+          if (m.kind = det.reltype) and (m.Ref = k) then
+          begin
+            vl := FSnomed.Refs.GetReferences(m.values);
+            case vl[det.field*2+1] of
+            1 {concept} :
+              if (det.display = fvString) then
+                tbl.Append(FSnomed.GetDisplayName(vl[det.field*2], det.lang))
+              else
+                tbl.Append(FSnomed.GetConceptId(vl[det.field*2]));
+            2 {desc}    : tbl.Append(FSnomed.GetDescriptionId(vl[det.field*2]));
+            3 {rel}     : tbl.Append('??');
+            4 {integer} : tbl.Append(inttostr(vl[det.field*2]));
+            5 {string}  : tbl.Append(FSnomed.Strings.GetEntry(vl[det.field*2]));
+          else
+            raise exception.create('Unknown Cell Type '+inttostr(vl[det.field*2+1]));
+          end;
+          end;
+        end;
+      end;
+  end;
+end;
+
+procedure TSnomedAnalysis.processSubTable(parts : TAdvZipPartList; json : TJsonObject; children : TStringList);
+var
+  tbl : TAdvStringBuilder;
+  child : cardinal;
+  i, j, t : integer;
+  n : TJsonNode;
+  rt : cardinal;
+  props : TPropertyArray;
+  prop : TProperty;
+  det : TColumnDetail;
+  part : TAdvZipPart;
+begin
+  tbl := TAdvStringBuilder.Create;
+  try
+    j := 0;
+    for n in json.arr['columns'] do
+    begin
+      if j > 0 then
+        tbl.Append(#9);
+      tbl.Append(TJsonObject(n)['name']);
+      FColumns[j] := prepSubColumn(TJsonObject(n));
+      inc(j);
+    end;
+    tbl.Append(#10);
+
+    if not FSnomed.Concept.FindConcept(StrToInt64(json['rel-type']), rt) then
+      raise Exception.Create('Relationship type '+json['rel-type']+' not found');
+    t := 0;
+    for i := 0 to children.count - 1 do
+    begin
+      child := cardinal(children.objects[i]);
+      props := getProps(child, rt);
+      inc(t, length(props));
+      for prop in props do
+      begin
+        j := 0;
+        for n in json.arr['columns'] do
+        begin
+          if j > 0 then
+            tbl.Append(#9);
+          processSubColumn(TJsonObject(n), tbl, FColumns[j], child, prop.relid, prop.target);
+          inc(j);
+        end;
+        tbl.Append(#10);
+      end;
+    end;
+    for det in FColumns do
+      cleanUpColumn(det);
+    part := TAdvZipPart.Create;
+    parts.Add(part);
+    part.Name := json['name']+'.txt';
+    part.Encoding := TEncoding.UTF8;
+    part.AsUnicode := tbl.AsString;
+  finally
+    tbl.Free;
+  end;
 end;
 
 procedure TSnomedAnalysis.registerSCTRoots(ids: array of String);
@@ -766,6 +1035,10 @@ end;
 //
 //  !
 //end;
+
+procedure TSnomedAnalysis.cleanUpColumn(detail: TColumnDetail);
+begin
+end;
 
 { TRelationshipList }
 

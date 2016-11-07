@@ -251,8 +251,8 @@ uses
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
   FHIRLog in 'FHIRLog.pas',
   Logging in 'Logging.pas',
-
-  FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas';
+  FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas',
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

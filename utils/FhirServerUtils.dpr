@@ -225,7 +225,8 @@ uses
   MPISearch in '..\Server\MPISearch.pas',
   SearchProcessor in '..\Server\SearchProcessor.pas',
   FHIRSearchSyntax in '..\Server\FHIRSearchSyntax.pas',
-  SnomedCombiner in 'SnomedCombiner.pas';
+  SnomedCombiner in 'SnomedCombiner.pas',
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
 
 {$R *.res}
 

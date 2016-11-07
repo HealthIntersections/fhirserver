@@ -233,7 +233,8 @@ uses
   ServerUtilities in '..\Server\ServerUtilities.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
   Logging in '..\Server\Logging.pas',
-  ServerAdaptations in '..\Server\ServerAdaptations.pas';
+  ServerAdaptations in '..\Server\ServerAdaptations.pas',
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
 
 var
   runner : ITestRunner;

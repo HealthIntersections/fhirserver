@@ -352,7 +352,7 @@ begin
 End;
 
 
-Function GetRelGroup(iGroup : Byte):String;
+Function GetRelGroup(iGroup : cardinal):String;
 Begin
   if iGroup = 0 Then
     result := ''
@@ -721,6 +721,7 @@ Begin
       html.AddTableCell('Characteristic', true);
       html.AddTableCell('Refinability', true);
       html.AddTableCell('Group', true);
+      html.AddTableCell('Values', true);
       html.EndTableRow;
 
       for i := Low(Outbounds) To High(Outbounds) Do
@@ -742,6 +743,7 @@ Begin
           CellConceptRef(html, sPrefix, kind, cdDesc);
           CellConceptRef(html, sPrefix, modifier, cdDesc);
           html.AddTableCell(' '+GetRelGroup(Group));
+          html.AddTableCell(FSnomed.getRelationshipValues(Outbounds[i]));
           html.EndTableRow;
         end;
       End;

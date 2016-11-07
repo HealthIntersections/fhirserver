@@ -6766,7 +6766,6 @@ begin
   try
     patient := nil;
     try
-
       // first, we have to convert from the patient id to a compartment id
       if manager.FindResource('Patient', request.Id, false, rkey, request, response, '') then
       begin
@@ -6834,7 +6833,7 @@ begin
             raise Exception.Create('No Patient resource found in patient compartment');
           bundle.deleteEntry(patient);
           bundle.entryList.Insert(0).resource := patient.Link;
-          bundle.entryList[0].fullurl := AppendForwardSlash(base)+'Patient/'+id;
+          bundle.entryList[0].fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
 
           bundle.meta := TFhirMeta.Create;
           bundle.meta.lastUpdated := NowUTC;

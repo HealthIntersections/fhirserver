@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-11-02T09:20:28+11:00
+// FHIR v1.7.0 generated 2016-11-07T09:33:45+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -909,83 +909,6 @@ Type
     property return : TFhirConceptMap read FReturn write SetReturn;
   end;
 
-  //Operation evaluate (Evaluate)
-  TFHIREvaluateOpRequest = class (TFHIROperationRequest)
-  private
-    FRequestId : String;
-    FEvaluateAtDateTime : TDateAndTime;
-    FInputParameters : TFhirParameters;
-    FInputDataList : TAdvList<TFhirResource>;
-    FPatient : TFhirReference;
-    FEncounter : TFhirReference;
-    FInitiatingOrganization : TFhirReference;
-    FInitiatingPerson : TFhirReference;
-    FUserType : TFhirCodeableConcept;
-    FUserLanguage : TFhirCodeableConcept;
-    FUserTaskContext : TFhirCodeableConcept;
-    FReceivingOrganization : TFhirReference;
-    FReceivingPerson : TFhirReference;
-    FRecipientType : TFhirCodeableConcept;
-    FRecipientLanguage : TFhirCodeableConcept;
-    FSetting : TFhirCodeableConcept;
-    FSettingContext : TFhirCodeableConcept;
-    procedure SetEvaluateAtDateTime(value : TDateAndTime);
-    procedure SetInputParameters(value : TFhirParameters);
-    procedure SetPatient(value : TFhirReference);
-    procedure SetEncounter(value : TFhirReference);
-    procedure SetInitiatingOrganization(value : TFhirReference);
-    procedure SetInitiatingPerson(value : TFhirReference);
-    procedure SetUserType(value : TFhirCodeableConcept);
-    procedure SetUserLanguage(value : TFhirCodeableConcept);
-    procedure SetUserTaskContext(value : TFhirCodeableConcept);
-    procedure SetReceivingOrganization(value : TFhirReference);
-    procedure SetReceivingPerson(value : TFhirReference);
-    procedure SetRecipientType(value : TFhirCodeableConcept);
-    procedure SetRecipientLanguage(value : TFhirCodeableConcept);
-    procedure SetSetting(value : TFhirCodeableConcept);
-    procedure SetSettingContext(value : TFhirCodeableConcept);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property requestId : String read FRequestId write FRequestId;
-    property evaluateAtDateTime : TDateAndTime read FEvaluateAtDateTime write SetEvaluateAtDateTime;
-    property inputParameters : TFhirParameters read FInputParameters write SetInputParameters;
-    property inputDataList : TAdvList<TFhirResource> read FInputDataList;
-    property patient : TFhirReference read FPatient write SetPatient;
-    property encounter : TFhirReference read FEncounter write SetEncounter;
-    property initiatingOrganization : TFhirReference read FInitiatingOrganization write SetInitiatingOrganization;
-    property initiatingPerson : TFhirReference read FInitiatingPerson write SetInitiatingPerson;
-    property userType : TFhirCodeableConcept read FUserType write SetUserType;
-    property userLanguage : TFhirCodeableConcept read FUserLanguage write SetUserLanguage;
-    property userTaskContext : TFhirCodeableConcept read FUserTaskContext write SetUserTaskContext;
-    property receivingOrganization : TFhirReference read FReceivingOrganization write SetReceivingOrganization;
-    property receivingPerson : TFhirReference read FReceivingPerson write SetReceivingPerson;
-    property recipientType : TFhirCodeableConcept read FRecipientType write SetRecipientType;
-    property recipientLanguage : TFhirCodeableConcept read FRecipientLanguage write SetRecipientLanguage;
-    property setting : TFhirCodeableConcept read FSetting write SetSetting;
-    property settingContext : TFhirCodeableConcept read FSettingContext write SetSettingContext;
-  end;
-
-  TFHIREvaluateOpResponse = class (TFHIROperationResponse)
-  private
-    FReturn : TFhirGuidanceResponse;
-    procedure SetReturn(value : TFhirGuidanceResponse);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property return : TFhirGuidanceResponse read FReturn write SetReturn;
-  end;
-
   //Operation everything (Fetch Encounter Record)
   TFHIREverythingOpRequest = class (TFHIROperationRequest)
   private
@@ -1343,6 +1266,83 @@ Type
     function asParams : TFHIRParameters; override;
     property link_ : TFhirBinary read FLink_ write SetLink_;
     property issues : TFhirOperationOutcome read FIssues write SetIssues;
+  end;
+
+  //Operation evaluate (Evaluate)
+  TFHIREvaluateOpRequest = class (TFHIROperationRequest)
+  private
+    FRequestId : String;
+    FEvaluateAtDateTime : TDateAndTime;
+    FInputParameters : TFhirParameters;
+    FInputDataList : TAdvList<TFhirResource>;
+    FPatient : TFhirReference;
+    FEncounter : TFhirReference;
+    FInitiatingOrganization : TFhirReference;
+    FInitiatingPerson : TFhirReference;
+    FUserType : TFhirCodeableConcept;
+    FUserLanguage : TFhirCodeableConcept;
+    FUserTaskContext : TFhirCodeableConcept;
+    FReceivingOrganization : TFhirReference;
+    FReceivingPerson : TFhirReference;
+    FRecipientType : TFhirCodeableConcept;
+    FRecipientLanguage : TFhirCodeableConcept;
+    FSetting : TFhirCodeableConcept;
+    FSettingContext : TFhirCodeableConcept;
+    procedure SetEvaluateAtDateTime(value : TDateAndTime);
+    procedure SetInputParameters(value : TFhirParameters);
+    procedure SetPatient(value : TFhirReference);
+    procedure SetEncounter(value : TFhirReference);
+    procedure SetInitiatingOrganization(value : TFhirReference);
+    procedure SetInitiatingPerson(value : TFhirReference);
+    procedure SetUserType(value : TFhirCodeableConcept);
+    procedure SetUserLanguage(value : TFhirCodeableConcept);
+    procedure SetUserTaskContext(value : TFhirCodeableConcept);
+    procedure SetReceivingOrganization(value : TFhirReference);
+    procedure SetReceivingPerson(value : TFhirReference);
+    procedure SetRecipientType(value : TFhirCodeableConcept);
+    procedure SetRecipientLanguage(value : TFhirCodeableConcept);
+    procedure SetSetting(value : TFhirCodeableConcept);
+    procedure SetSettingContext(value : TFhirCodeableConcept);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property requestId : String read FRequestId write FRequestId;
+    property evaluateAtDateTime : TDateAndTime read FEvaluateAtDateTime write SetEvaluateAtDateTime;
+    property inputParameters : TFhirParameters read FInputParameters write SetInputParameters;
+    property inputDataList : TAdvList<TFhirResource> read FInputDataList;
+    property patient : TFhirReference read FPatient write SetPatient;
+    property encounter : TFhirReference read FEncounter write SetEncounter;
+    property initiatingOrganization : TFhirReference read FInitiatingOrganization write SetInitiatingOrganization;
+    property initiatingPerson : TFhirReference read FInitiatingPerson write SetInitiatingPerson;
+    property userType : TFhirCodeableConcept read FUserType write SetUserType;
+    property userLanguage : TFhirCodeableConcept read FUserLanguage write SetUserLanguage;
+    property userTaskContext : TFhirCodeableConcept read FUserTaskContext write SetUserTaskContext;
+    property receivingOrganization : TFhirReference read FReceivingOrganization write SetReceivingOrganization;
+    property receivingPerson : TFhirReference read FReceivingPerson write SetReceivingPerson;
+    property recipientType : TFhirCodeableConcept read FRecipientType write SetRecipientType;
+    property recipientLanguage : TFhirCodeableConcept read FRecipientLanguage write SetRecipientLanguage;
+    property setting : TFhirCodeableConcept read FSetting write SetSetting;
+    property settingContext : TFhirCodeableConcept read FSettingContext write SetSettingContext;
+  end;
+
+  TFHIREvaluateOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirCarePlan;
+    procedure SetReturn(value : TFhirCarePlan);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirCarePlan read FReturn write SetReturn;
   end;
 
   //Operation questionnaire (Build Questionnaire)
@@ -4196,253 +4196,6 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
-procedure TFHIREvaluateOpRequest.SetEvaluateAtDateTime(value : TDateAndTime);
-begin
-  FEvaluateAtDateTime.free;
-  FEvaluateAtDateTime := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetInputParameters(value : TFhirParameters);
-begin
-  FInputParameters.free;
-  FInputParameters := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetPatient(value : TFhirReference);
-begin
-  FPatient.free;
-  FPatient := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetEncounter(value : TFhirReference);
-begin
-  FEncounter.free;
-  FEncounter := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetInitiatingOrganization(value : TFhirReference);
-begin
-  FInitiatingOrganization.free;
-  FInitiatingOrganization := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetInitiatingPerson(value : TFhirReference);
-begin
-  FInitiatingPerson.free;
-  FInitiatingPerson := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetUserType(value : TFhirCodeableConcept);
-begin
-  FUserType.free;
-  FUserType := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetUserLanguage(value : TFhirCodeableConcept);
-begin
-  FUserLanguage.free;
-  FUserLanguage := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetUserTaskContext(value : TFhirCodeableConcept);
-begin
-  FUserTaskContext.free;
-  FUserTaskContext := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetReceivingOrganization(value : TFhirReference);
-begin
-  FReceivingOrganization.free;
-  FReceivingOrganization := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetReceivingPerson(value : TFhirReference);
-begin
-  FReceivingPerson.free;
-  FReceivingPerson := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetRecipientType(value : TFhirCodeableConcept);
-begin
-  FRecipientType.free;
-  FRecipientType := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetRecipientLanguage(value : TFhirCodeableConcept);
-begin
-  FRecipientLanguage.free;
-  FRecipientLanguage := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetSetting(value : TFhirCodeableConcept);
-begin
-  FSetting.free;
-  FSetting := value;
-end;
-
-procedure TFHIREvaluateOpRequest.SetSettingContext(value : TFhirCodeableConcept);
-begin
-  FSettingContext.free;
-  FSettingContext := value;
-end;
-
-constructor TFHIREvaluateOpRequest.create;
-begin
-  inherited create();
-  FInputDataList := TAdvList<TFhirResource>.create;
-end;
-
-procedure TFHIREvaluateOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  FRequestId := params.str['requestId'];
-  FEvaluateAtDateTime := (params.param['evaluateAtDateTime'].value as TFHIRDateTime).value;
-  FInputParameters := (params.res['inputParameters'] as TFhirParameters).Link;{ob.5a}
-  for p in params.parameterList do
-    if p.name = 'inputData' then
-      FInputDataList.Add((p.resource as TFhirResource).Link);{ob.2}
-  FPatient := (params.param['patient'].value as TFhirReference).Link; {ob.5d}
-  FEncounter := (params.param['encounter'].value as TFhirReference).Link; {ob.5d}
-  FInitiatingOrganization := (params.param['initiatingOrganization'].value as TFhirReference).Link; {ob.5d}
-  FInitiatingPerson := (params.param['initiatingPerson'].value as TFhirReference).Link; {ob.5d}
-  FUserType := (params.param['userType'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FUserLanguage := (params.param['userLanguage'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FUserTaskContext := (params.param['userTaskContext'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FReceivingOrganization := (params.param['receivingOrganization'].value as TFhirReference).Link; {ob.5d}
-  FReceivingPerson := (params.param['receivingPerson'].value as TFhirReference).Link; {ob.5d}
-  FRecipientType := (params.param['recipientType'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FRecipientLanguage := (params.param['recipientLanguage'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FSetting := (params.param['setting'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FSettingContext := (params.param['settingContext'].value as TFhirCodeableConcept).Link; {ob.5d}
-  loadExtensions(params);
-end;
-
-procedure TFHIREvaluateOpRequest.load(params : TParseMap);
-begin
-  FRequestId := params.getVar('requestId');
-  loadExtensions(params);
-end;
-
-destructor TFHIREvaluateOpRequest.Destroy;
-begin
-  FEvaluateAtDateTime.free;
-  FInputParameters.free;
-  FInputDataList.free;
-  FPatient.free;
-  FEncounter.free;
-  FInitiatingOrganization.free;
-  FInitiatingPerson.free;
-  FUserType.free;
-  FUserLanguage.free;
-  FUserTaskContext.free;
-  FReceivingOrganization.free;
-  FReceivingPerson.free;
-  FRecipientType.free;
-  FRecipientLanguage.free;
-  FSetting.free;
-  FSettingContext.free;
-  inherited;
-end;
-
-function TFHIREvaluateOpRequest.asParams : TFhirParameters;
-var
-  v1 : TFhirResource;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FRequestId <> '') then
-      result.addParameter('requestId', TFHIRId.create(FRequestId));{oz.5f}
-    if (FEvaluateAtDateTime <> nil) then
-      result.addParameter('evaluateAtDateTime', TFHIRDateTime.create(FEvaluateAtDateTime));{oz.5e}
-    if (FInputParameters <> nil) then
-      result.addParameter('inputParameters', FInputParameters.Link);{oz.5a}
-    for v1 in FInputDataList do
-      result.AddParameter('inputData', v1.Link);
-    if (FPatient <> nil) then
-      result.addParameter('patient', FPatient.Link);{oz.5d}
-    if (FEncounter <> nil) then
-      result.addParameter('encounter', FEncounter.Link);{oz.5d}
-    if (FInitiatingOrganization <> nil) then
-      result.addParameter('initiatingOrganization', FInitiatingOrganization.Link);{oz.5d}
-    if (FInitiatingPerson <> nil) then
-      result.addParameter('initiatingPerson', FInitiatingPerson.Link);{oz.5d}
-    if (FUserType <> nil) then
-      result.addParameter('userType', FUserType.Link);{oz.5d}
-    if (FUserLanguage <> nil) then
-      result.addParameter('userLanguage', FUserLanguage.Link);{oz.5d}
-    if (FUserTaskContext <> nil) then
-      result.addParameter('userTaskContext', FUserTaskContext.Link);{oz.5d}
-    if (FReceivingOrganization <> nil) then
-      result.addParameter('receivingOrganization', FReceivingOrganization.Link);{oz.5d}
-    if (FReceivingPerson <> nil) then
-      result.addParameter('receivingPerson', FReceivingPerson.Link);{oz.5d}
-    if (FRecipientType <> nil) then
-      result.addParameter('recipientType', FRecipientType.Link);{oz.5d}
-    if (FRecipientLanguage <> nil) then
-      result.addParameter('recipientLanguage', FRecipientLanguage.Link);{oz.5d}
-    if (FSetting <> nil) then
-      result.addParameter('setting', FSetting.Link);{oz.5d}
-    if (FSettingContext <> nil) then
-      result.addParameter('settingContext', FSettingContext.Link);{oz.5d}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIREvaluateOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['requestId', 'evaluateAtDateTime', 'inputParameters', 'inputData', 'patient', 'encounter', 'initiatingOrganization', 'initiatingPerson', 'userType', 'userLanguage', 'userTaskContext', 'receivingOrganization', 'receivingPerson', 'recipientType', 'recipientLanguage', 'setting', 'settingContext'], name);
-end;
-
-procedure TFHIREvaluateOpResponse.SetReturn(value : TFhirGuidanceResponse);
-begin
-  FReturn.free;
-  FReturn := value;
-end;
-
-constructor TFHIREvaluateOpResponse.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIREvaluateOpResponse.load(params : TFHIRParameters);
-begin
-  FReturn := (params.res['return'] as TFhirGuidanceResponse).Link;{ob.5a}
-  loadExtensions(params);
-end;
-
-procedure TFHIREvaluateOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIREvaluateOpResponse.Destroy;
-begin
-  FReturn.free;
-  inherited;
-end;
-
-function TFHIREvaluateOpResponse.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FReturn <> nil) then
-      result.addParameter('return', FReturn.Link);{oz.5a}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIREvaluateOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['return'], name);
-end;
-
 constructor TFHIREverythingOpRequest.create;
 begin
   inherited create();
@@ -5484,6 +5237,253 @@ end;
 function TFHIRPopulatelinkOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['link', 'issues'], name);
+end;
+
+procedure TFHIREvaluateOpRequest.SetEvaluateAtDateTime(value : TDateAndTime);
+begin
+  FEvaluateAtDateTime.free;
+  FEvaluateAtDateTime := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetInputParameters(value : TFhirParameters);
+begin
+  FInputParameters.free;
+  FInputParameters := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetPatient(value : TFhirReference);
+begin
+  FPatient.free;
+  FPatient := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetEncounter(value : TFhirReference);
+begin
+  FEncounter.free;
+  FEncounter := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetInitiatingOrganization(value : TFhirReference);
+begin
+  FInitiatingOrganization.free;
+  FInitiatingOrganization := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetInitiatingPerson(value : TFhirReference);
+begin
+  FInitiatingPerson.free;
+  FInitiatingPerson := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetUserType(value : TFhirCodeableConcept);
+begin
+  FUserType.free;
+  FUserType := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetUserLanguage(value : TFhirCodeableConcept);
+begin
+  FUserLanguage.free;
+  FUserLanguage := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetUserTaskContext(value : TFhirCodeableConcept);
+begin
+  FUserTaskContext.free;
+  FUserTaskContext := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetReceivingOrganization(value : TFhirReference);
+begin
+  FReceivingOrganization.free;
+  FReceivingOrganization := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetReceivingPerson(value : TFhirReference);
+begin
+  FReceivingPerson.free;
+  FReceivingPerson := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetRecipientType(value : TFhirCodeableConcept);
+begin
+  FRecipientType.free;
+  FRecipientType := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetRecipientLanguage(value : TFhirCodeableConcept);
+begin
+  FRecipientLanguage.free;
+  FRecipientLanguage := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetSetting(value : TFhirCodeableConcept);
+begin
+  FSetting.free;
+  FSetting := value;
+end;
+
+procedure TFHIREvaluateOpRequest.SetSettingContext(value : TFhirCodeableConcept);
+begin
+  FSettingContext.free;
+  FSettingContext := value;
+end;
+
+constructor TFHIREvaluateOpRequest.create;
+begin
+  inherited create();
+  FInputDataList := TAdvList<TFhirResource>.create;
+end;
+
+procedure TFHIREvaluateOpRequest.load(params : TFHIRParameters);
+var
+  p : TFhirParametersParameter;
+begin
+  FRequestId := params.str['requestId'];
+  FEvaluateAtDateTime := (params.param['evaluateAtDateTime'].value as TFHIRDateTime).value;
+  FInputParameters := (params.res['inputParameters'] as TFhirParameters).Link;{ob.5a}
+  for p in params.parameterList do
+    if p.name = 'inputData' then
+      FInputDataList.Add((p.resource as TFhirResource).Link);{ob.2}
+  FPatient := (params.param['patient'].value as TFhirReference).Link; {ob.5d}
+  FEncounter := (params.param['encounter'].value as TFhirReference).Link; {ob.5d}
+  FInitiatingOrganization := (params.param['initiatingOrganization'].value as TFhirReference).Link; {ob.5d}
+  FInitiatingPerson := (params.param['initiatingPerson'].value as TFhirReference).Link; {ob.5d}
+  FUserType := (params.param['userType'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FUserLanguage := (params.param['userLanguage'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FUserTaskContext := (params.param['userTaskContext'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FReceivingOrganization := (params.param['receivingOrganization'].value as TFhirReference).Link; {ob.5d}
+  FReceivingPerson := (params.param['receivingPerson'].value as TFhirReference).Link; {ob.5d}
+  FRecipientType := (params.param['recipientType'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FRecipientLanguage := (params.param['recipientLanguage'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FSetting := (params.param['setting'].value as TFhirCodeableConcept).Link; {ob.5d}
+  FSettingContext := (params.param['settingContext'].value as TFhirCodeableConcept).Link; {ob.5d}
+  loadExtensions(params);
+end;
+
+procedure TFHIREvaluateOpRequest.load(params : TParseMap);
+begin
+  FRequestId := params.getVar('requestId');
+  loadExtensions(params);
+end;
+
+destructor TFHIREvaluateOpRequest.Destroy;
+begin
+  FEvaluateAtDateTime.free;
+  FInputParameters.free;
+  FInputDataList.free;
+  FPatient.free;
+  FEncounter.free;
+  FInitiatingOrganization.free;
+  FInitiatingPerson.free;
+  FUserType.free;
+  FUserLanguage.free;
+  FUserTaskContext.free;
+  FReceivingOrganization.free;
+  FReceivingPerson.free;
+  FRecipientType.free;
+  FRecipientLanguage.free;
+  FSetting.free;
+  FSettingContext.free;
+  inherited;
+end;
+
+function TFHIREvaluateOpRequest.asParams : TFhirParameters;
+var
+  v1 : TFhirResource;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FRequestId <> '') then
+      result.addParameter('requestId', TFHIRId.create(FRequestId));{oz.5f}
+    if (FEvaluateAtDateTime <> nil) then
+      result.addParameter('evaluateAtDateTime', TFHIRDateTime.create(FEvaluateAtDateTime));{oz.5e}
+    if (FInputParameters <> nil) then
+      result.addParameter('inputParameters', FInputParameters.Link);{oz.5a}
+    for v1 in FInputDataList do
+      result.AddParameter('inputData', v1.Link);
+    if (FPatient <> nil) then
+      result.addParameter('patient', FPatient.Link);{oz.5d}
+    if (FEncounter <> nil) then
+      result.addParameter('encounter', FEncounter.Link);{oz.5d}
+    if (FInitiatingOrganization <> nil) then
+      result.addParameter('initiatingOrganization', FInitiatingOrganization.Link);{oz.5d}
+    if (FInitiatingPerson <> nil) then
+      result.addParameter('initiatingPerson', FInitiatingPerson.Link);{oz.5d}
+    if (FUserType <> nil) then
+      result.addParameter('userType', FUserType.Link);{oz.5d}
+    if (FUserLanguage <> nil) then
+      result.addParameter('userLanguage', FUserLanguage.Link);{oz.5d}
+    if (FUserTaskContext <> nil) then
+      result.addParameter('userTaskContext', FUserTaskContext.Link);{oz.5d}
+    if (FReceivingOrganization <> nil) then
+      result.addParameter('receivingOrganization', FReceivingOrganization.Link);{oz.5d}
+    if (FReceivingPerson <> nil) then
+      result.addParameter('receivingPerson', FReceivingPerson.Link);{oz.5d}
+    if (FRecipientType <> nil) then
+      result.addParameter('recipientType', FRecipientType.Link);{oz.5d}
+    if (FRecipientLanguage <> nil) then
+      result.addParameter('recipientLanguage', FRecipientLanguage.Link);{oz.5d}
+    if (FSetting <> nil) then
+      result.addParameter('setting', FSetting.Link);{oz.5d}
+    if (FSettingContext <> nil) then
+      result.addParameter('settingContext', FSettingContext.Link);{oz.5d}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIREvaluateOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['requestId', 'evaluateAtDateTime', 'inputParameters', 'inputData', 'patient', 'encounter', 'initiatingOrganization', 'initiatingPerson', 'userType', 'userLanguage', 'userTaskContext', 'receivingOrganization', 'receivingPerson', 'recipientType', 'recipientLanguage', 'setting', 'settingContext'], name);
+end;
+
+procedure TFHIREvaluateOpResponse.SetReturn(value : TFhirCarePlan);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+constructor TFHIREvaluateOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIREvaluateOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirCarePlan).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIREvaluateOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIREvaluateOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+
+function TFHIREvaluateOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIREvaluateOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return'], name);
 end;
 
 constructor TFHIRQuestionnaireOpRequest.create;

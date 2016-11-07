@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   ParseMap,
   EncodeSupport, StringSupport,
-  AdvObjects, AdvStringMatches,
+  AdvObjects, AdvStringMatches, AdvNameBuffers,
   IdContext, IdCustomHTTPServer,
   FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
@@ -869,6 +869,7 @@ var
   parts : TArray<String>;
   ss, t : TSnomedServices;
   pm : TParseMap;
+  buf : TAdvNameBuffer;
 begin
   if request.Document.StartsWith('/snomed/tool/') then // FHIR build process support
   begin
@@ -906,7 +907,14 @@ begin
     try
       pm := TParseMap.create(request.UnparsedParams);
       try
-        response.ContentText := analysis.generate(pm);
+        buf := analysis.generate(pm);
+        try
+          response.ContentType := buf.Name;
+          response.ContentStream := TBytesStream.Create(buf.AsBytes);
+          response.FreeContentStream := true;
+        finally
+          buf.free;
+        end;
       finally
         pm.Free;
       end;

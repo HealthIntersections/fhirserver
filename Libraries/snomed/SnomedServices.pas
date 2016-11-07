@@ -379,6 +379,7 @@ Type
   Public
     Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
+    Function GetRefSetByConcept(iIndex : Cardinal) : Cardinal;
     Function Count : Integer;
 
     Procedure StartBuild;
@@ -562,6 +563,7 @@ operations
     function isPrimitive(index : Cardinal) : boolean;
     function IsActive(index : Cardinal) : boolean;
     function DebugDesc(index : cardinal) : String;
+    function getRelationshipValues(index : cardinal) : String;
 
     // simplified interface for consumers
     Function ConceptExists(conceptId : String) : Boolean;
@@ -2659,6 +2661,19 @@ begin
   Move(FMaster[iIndex+24], iFieldNames, 4);
 end;
 
+function TSnomedReferenceSetIndex.GetRefSetByConcept(iIndex: Cardinal): Cardinal;
+var
+  i, v : Cardinal;
+begin
+  result := 0;
+  For i := 0 to Count - 1 Do
+  begin
+    Move(FMaster[i * REFSET_SIZE], v, 4);
+    if v = iIndex Then
+      exit(i);
+  End;
+end;
+
 procedure TSnomedReferenceSetIndex.StartBuild;
 begin
   FBuilder := TAdvBytesBuilder.Create;
@@ -3543,6 +3558,40 @@ var
 begin
   Rel.GetRelationship(iRel, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
   result := inttostr(identity);
+end;
+
+function TSnomedServices.getRelationshipValues(index: cardinal): String;
+var
+  i, j : integer;
+  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
+  members : TSnomedReferenceSetMemberArray;
+  member : TSnomedReferenceSetMember;
+  tl, vl : TCardinalArray;
+begin
+  result := '';
+  for i := 0 to FRefSetIndex.Count - 1 do
+  begin
+    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    members := FRefSetMembers.GetMembers(iMembersByRef);
+    for member in members do
+      if (member.kind = 2) and (member.Ref = index) then
+      begin
+        tl := Refs.GetReferences(iFieldTypes);
+        vl := Refs.GetReferences(member.values);
+        for j := 0 to length(tl) - 1 do
+          case vl[j*2+1] of
+            1 {concept} : result := result + ' '+GetConceptId(vl[j*2]);
+            2 {desc}    : result := result + ' '+GetDescriptionId(vl[j*2]);
+            3 {rel}     : result := result + ' '+GetRelationshipId(vl[j*2]);
+            4 {integer} : result := result + ' '+inttostr(vl[j*2]);
+            5 {string}  : result := result + ' '+Strings.GetEntry(vl[j*2]);
+          else
+            raise exception.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
+          end;
+        result := result.trim;
+        exit();
+      end;
+  end;
 end;
 
 function TSnomedServices.ParseExpression(source: String): TSnomedExpression;
