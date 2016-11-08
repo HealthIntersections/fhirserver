@@ -42,8 +42,8 @@ type
   end;
   TPropertyArray = array of TProperty;
 
-  TColumnSourceType = (stCid, stTerm, stMastercid, stReltarget, stRefset);
-  TColumnKeyType = (ktRelId);
+  TColumnSourceType = (stCid, stTerm, stMastercid, stReltarget, stSibling, stRefset);
+  TColumnKeyType = (ktRelId, ktSiblingId);
   TColumnFieldDisplay = (fvString, fvCid);
 
   TColumnDetail = record
@@ -53,10 +53,14 @@ type
     reltype : byte;
     lang : cardinal;
     target : cardinal;
+    sibling : cardinal;
     field : integer;
     display : TColumnFieldDisplay;
   end;
   TColumnDetailArray = array of TColumnDetail;
+  TSnomedRelationship = record
+    relid, reltype, source, target, group : cardinal;
+  end;
 
   TSnomedAnalysis = class (TAdvObject)
   private
@@ -75,9 +79,10 @@ type
     function tref(index : integer): String;
     procedure assess(b : TAdvStringBuilder; id : String);
     function getProps(id, prop : cardinal) : TPropertyArray;
+    function findRelationshipInGroup(concept, group, siblingtype : cardinal; relationship : TSnomedRelationship) : boolean;
     procedure listChildren(id : cardinal; list : TStringList);
     function prepSubColumn(json : TJsonObject) : TColumnDetail;
-    procedure processSubColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child, relid, target : cardinal);
+    procedure processSubColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child, relid, target, group : cardinal);
     procedure processSubTable(parts : TAdvZipPartList; json : TJsonObject; children : TStringList);
     function prepColumn(json : TJsonObject) : TColumnDetail;
     procedure processColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child : cardinal);
@@ -257,6 +262,34 @@ destructor TSnomedAnalysis.destroy;
 begin
   FSnomed.Free;
   inherited;
+end;
+
+function TSnomedAnalysis.findRelationshipInGroup(concept, group, siblingtype: cardinal; relationship: TSnomedRelationship): boolean;
+var
+  outboundIndex, o : cardinal;
+  outbounds : TCardinalArray;
+  identity : UInt64;
+  Source, Target, RelType, module, kind, modifier : Cardinal;
+  date : TSnomedDate;
+  Active, Defining : Boolean;
+  Grp : integer;
+begin
+  result := false;
+  outboundIndex := FSnomed.Concept.GetOutbounds(concept);
+  outbounds := FSnomed.Refs.GetReferences(outboundIndex);
+  for o in outbounds do
+  begin
+    FSnomed.Rel.GetRelationship(o, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Grp);
+    if (grp = group) and (RelType = siblingtype) then
+    begin
+      result := true;
+      relationship.relid := o;
+      relationship.reltype := reltype;
+      relationship.source := source;
+      relationship.target := target;
+      relationship.group := grp;
+    end;
+  end;
 end;
 
 function TSnomedAnalysis.generate(params : TParseMap): TAdvNameBuffer;
@@ -856,6 +889,12 @@ begin
     result.srcType := stMastercid
   else if (src = 'rel-target') then
     result.srcType := stReltarget
+  else if (src = 'sibling') then
+  begin
+    result.srcType := stSibling;
+    if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
+      raise Exception.Create('sibling-type '+json['sibling-type']+' not found');
+  end
   else if (src = 'refset') then
   begin
     result.srcType := stRefset;
@@ -868,7 +907,14 @@ begin
     if key = 'rel-id' then
     begin
       result.keyType := ktRelId;
-      result.reltype := 2
+      result.reltype := 2;
+    end
+    else if key = 'sibling-id' then
+    begin
+      result.keyType := ktSiblingId;
+      result.reltype := 0;
+      if not FSnomed.Concept.FindConcept(StrToInt64(json['sibling-type']), result.sibling) then
+        raise Exception.Create('sibling-type '+json['sibling-type']+' not found');
     end
     else
       raise Exception.Create('Unknown refset key '+key);
@@ -890,25 +936,41 @@ begin
   end
   else
     raise Exception.Create('Unknown column source '+src);
+
 end;
 
-procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child, relid, target: cardinal);
+procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child, relid, target, group: cardinal);
 var
-  src, key : String;
+  src, key, s : String;
   kb : byte;
   lang, rt, refset, k : cardinal;
   props, vl : TCardinalArray;
   members : TSnomedReferenceSetMemberArray;
   m : TSnomedReferenceSetMember;
   i1, i2 : string;
+  relationship : TSnomedRelationship;
 begin
   case det.srcType of
     stMastercid : tbl.Append(FSnomed.GetConceptId(child));
     stReltarget : tbl.Append(FSnomed.GetConceptId(target));
+    stSibling :
+      begin
+      if findRelationshipInGroup(child, group, det.sibling, relationship) then
+        tbl.Append(FSnomed.GetConceptId(relationship.target))
+      else
+        tbl.Append('');
+      end;
     stRefset :
       begin
+        s := '';
         case det.keyType of
           ktRelId : k := relid;
+          ktSiblingId : begin
+            if findRelationshipInGroup(child, group, det.sibling, relationship) then
+              k := relationship.target
+            else
+              k := 0;
+          end;
         end;
         for m in det.members do
         begin
@@ -918,18 +980,19 @@ begin
             case vl[det.field*2+1] of
             1 {concept} :
               if (det.display = fvString) then
-                tbl.Append(FSnomed.GetDisplayName(vl[det.field*2], det.lang))
+                s := FSnomed.GetDisplayName(vl[det.field*2], det.lang)
               else
-                tbl.Append(FSnomed.GetConceptId(vl[det.field*2]));
-            2 {desc}    : tbl.Append(FSnomed.GetDescriptionId(vl[det.field*2]));
-            3 {rel}     : tbl.Append('??');
-            4 {integer} : tbl.Append(inttostr(vl[det.field*2]));
-            5 {string}  : tbl.Append(FSnomed.Strings.GetEntry(vl[det.field*2]));
+                s := FSnomed.GetConceptId(vl[det.field*2]);
+            2 {desc}    : s := FSnomed.GetDescriptionId(vl[det.field*2]);
+            3 {rel}     : s := '??';
+            4 {integer} : s := inttostr(vl[det.field*2]);
+            5 {string}  : s := FSnomed.Strings.GetEntry(vl[det.field*2]);
           else
             raise exception.create('Unknown Cell Type '+inttostr(vl[det.field*2+1]));
           end;
           end;
         end;
+        tbl.Append(s);
       end;
   end;
 end;
@@ -945,7 +1008,26 @@ var
   prop : TProperty;
   det : TColumnDetail;
   part : TAdvZipPart;
+  grpCondType, grpCondValue : cardinal;
+  l, r : String;
+  rel : TSnomedRelationship;
 begin
+  grpCondType := 0;
+  grpCondValue := 0;
+  if json['group-condition'] <> '' then
+  begin
+    if json['group-condition'].Contains('=') then
+    begin
+      StringSplit(json['group-condition'], '=', l, r);
+      if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondType) then
+        raise Exception.Create('Specified group condition '+r+' not found');
+      if not FSnomed.Concept.FindConcept(StrToInt64(l), grpCondValue) then
+        raise Exception.Create('Specified group condition value '+r+' not found');
+    end
+    else if not FSnomed.Concept.FindConcept(StrToInt64(json['group-condition']), grpCondType) then
+      raise Exception.Create('Specified group condition '+json['group-condition']+' not found');
+  end;
+
   tbl := TAdvStringBuilder.Create;
   try
     j := 0;
@@ -966,15 +1048,23 @@ begin
     begin
       child := cardinal(children.objects[i]);
       props := getProps(child, rt);
-      inc(t, length(props));
       for prop in props do
       begin
+        if (grpCondType > 0) then
+        begin
+          if not findRelationshipInGroup(child, prop.group, grpCondType, rel) then
+            continue
+          else if (grpCondValue > 0) and (grpCondValue <> grpCondValue) then
+            continue;
+        end;
+
         j := 0;
+        inc(t);
         for n in json.arr['columns'] do
         begin
           if j > 0 then
             tbl.Append(#9);
-          processSubColumn(TJsonObject(n), tbl, FColumns[j], child, prop.relid, prop.target);
+          processSubColumn(TJsonObject(n), tbl, FColumns[j], child, prop.relid, prop.target, prop.group);
           inc(j);
         end;
         tbl.Append(#10);
