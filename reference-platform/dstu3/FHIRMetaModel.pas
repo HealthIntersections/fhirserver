@@ -1052,7 +1052,7 @@ var
   child : TFHIRMMElement;
 begin
   inherited;
-  props := FProperty.getChildProperties(Name, FType);
+  props := FProperty.getChildProperties(Name, GetType);
   try
     for p in props do
       if p.isList then
@@ -1068,6 +1068,8 @@ begin
           list.free;
         end;
       end
+      else if p.isPrimitive(GetType) then
+        oList.add(TFHIRProperty.create(self, p.name, p.typeCode, p.isList, nil, value))
       else
         oList.add(TFHIRProperty.create(self, p.name, p.typeCode, p.isList, nil, getNamedChild(p.name).Link));
   finally
