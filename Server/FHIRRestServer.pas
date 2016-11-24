@@ -1613,13 +1613,13 @@ begin
       qa := r as TFhirQuestionnaireResponse;
       q := (FindContainedResource(qa, qa.questionnaire) as TFhirQuestionnaire).link;
       if q = nil then
-        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.reference.Substring(1)+'"');
+        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF}.Substring(1)+'"');
 
       // convert to xhtml
       s := transform1(q, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
-      qa.questionnaire.reference := 'Questionnaire/'+qa.questionnaire.reference.Substring(1);
+      qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF} := 'Questionnaire/'+qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF}.Substring(1);
       qa.containedList.Clear;
       json := TFHIRJsonComposer.Create(request.context.link, request.Lang);
       try

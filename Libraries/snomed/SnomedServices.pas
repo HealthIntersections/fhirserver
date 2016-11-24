@@ -2826,11 +2826,11 @@ var
   id : String;
 begin
   // is this a correct reference?
-  if (url.StartsWith('http://snomed.info/sct?fhir_vs=')) then
+  if (url.StartsWith('http://snomed.info/sct?fhir_vs')) then
     id := url.Substring(url.IndexOf('?'))
-  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'?fhir_vs=')) then
+  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'?fhir_vs')) then
     id := url.Substring(url.IndexOf('?'))
-  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'/version/'+FVersion+'?fhir_vs=')) then
+  else if (url.StartsWith('http://snomed.info/sct/'+FEdition+'/version/'+FVersion+'?fhir_vs')) then
     id := url.Substring(url.IndexOf('?'))
   else
     exit(nil);

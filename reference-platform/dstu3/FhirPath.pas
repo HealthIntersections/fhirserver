@@ -2989,10 +2989,13 @@ begin
         raise lexer.error('Found '+lexer.current+' expecting a valid token name');
       if (lexer.current = '(') then
       begin
-        if not StringArrayExistsSensitive(CODES_TFHIRPathFunctions, result.Name) then
+        if StringArrayExistsSensitive(CODES_TFHIRPathFunctions, result.Name) then
+          result.FunctionId := TFHIRPathFunction(StringArrayIndexOfSensitive(CODES_TFHIRPathFunctions, result.Name))
+        else if result.Name = 'descendents' then
+          result.FunctionId := pfDescendants
+        else
           raise lexer.error('The name '+result.Name+' is not a valid function name');
         result.kind := enkFunction;
-        result.FunctionId := TFHIRPathFunction(StringArrayIndexOfSensitive(CODES_TFHIRPathFunctions, result.Name));
         lexer.next;
         while lexer.current <> ')' do
         begin

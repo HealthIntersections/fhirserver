@@ -11,6 +11,7 @@ import org.hl7.fhir.dstu3.formats.XmlParser;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
+import org.hl7.fhir.dstu3.model.CodeType;
 import org.hl7.fhir.dstu3.model.CompartmentDefinition;
 import org.hl7.fhir.dstu3.model.CompartmentDefinition.CompartmentDefinitionResourceComponent;
 import org.hl7.fhir.dstu3.model.OperationDefinition;
@@ -106,9 +107,22 @@ public class DefinitionsLoader3 {
   }
 
   private void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), new VersionConvertor_10_20(null).convertSearchParamType(sp.getType()), 
-        sp.getTarget(), new VersionConvertor_10_20(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
-    def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
+    for (CodeType ct : sp.getBase()) {
+      SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), new VersionConvertor_10_20(null).convertSearchParamType(sp.getType()), 
+          sp.getTarget(), new VersionConvertor_10_20(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+      def.getResourceByName(ct.asStringValue()).getSearchParams().put(spd.getCode(), spd);
+    }
+  }
+
+  
+  private String pickDescription(String description, String rn) {
+    String[] list = description.split("\\* ");
+    for (String entry : list) {
+      String[] parts = entry.split("\\:");
+      if (parts.length == 2 && parts[0].contains(rn))
+        return parts[1].trim();
+    }
+    return description;
   }
 
   private void processResource(Definitions def, StructureDefinition sd, Map<String, ValueSet> vsmap) throws Exception {

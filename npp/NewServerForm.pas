@@ -60,8 +60,8 @@ type
   private
     { Private declarations }
     FIndex : integer;
-    FConformance : TFhirConformance;
-    procedure loadConformance;
+    FCapabilityStatement : TFhirCapabilityStatement;
+    procedure loadCapabilityStatement;
     function hookIndex(c : TFHIRCoding) : integer;
     procedure listHooks(list : TAdvList<TRegisteredCDSHook>);
     procedure loadHooks;
@@ -85,9 +85,9 @@ procedure TRegisterServerForm.btnFetchClick(Sender: TObject);
 var
   authorize, token : String;
 begin
-  if FConformance = nil then
-    loadConformance;
-  if usesSmartOnFHIR(FConformance, authorize, token) then
+  if FCapabilityStatement = nil then
+    loadCapabilityStatement;
+  if usesSmartOnFHIR(FCapabilityStatement, authorize, token) then
   begin
     edtAuthorize.Text := authorize;
     edtToken.Text := token;
@@ -119,7 +119,7 @@ begin
     end;
 end;
 
-procedure TRegisterServerForm.loadConformance;
+procedure TRegisterServerForm.loadCapabilityStatement;
 var
   client : TFhirClient;
 begin
@@ -128,7 +128,7 @@ begin
     client := TFhirClient.Create(nil, edtServer.text, true);
     try
       client.timeout := 5000;
-      FConformance := client.conformance(false);
+      FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
     end;
@@ -137,7 +137,7 @@ begin
     client := TFhirClient.Create(nil, edtServer.text, false);
     try
       client.timeout := 5000;
-      FConformance := client.conformance(false);
+      FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
     end;
@@ -174,11 +174,11 @@ var
   ext : TFHIRExtension;
   i : integer;
 begin
-  if FConformance = nil then
-    loadConformance;
+  if FCapabilityStatement = nil then
+    loadCapabilityStatement;
   for i := 0 to clHooks.Items.Count - 1 do
     clHooks.Checked[i] := false;
-  for ext in FConformance.extensionList do
+  for ext in FCapabilityStatement.extensionList do
     if ext.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity' then
     begin
       i := hookIndex(ext.value as TFHIRCoding);
@@ -189,15 +189,15 @@ end;
 
 procedure TRegisterServerForm.Button3Click(Sender: TObject);
 begin
-  if FConformance = nil then
-    loadConformance;
-  if FConformance.formatList.hasCode('application/json+fhir') then
+  if FCapabilityStatement = nil then
+    loadCapabilityStatement;
+  if FCapabilityStatement.formatList.hasCode('application/json+fhir') then
     cbxFormat.ItemIndex := 2
-  else if FConformance.formatList.hasCode('application/xml+fhir') then
+  else if FCapabilityStatement.formatList.hasCode('application/xml+fhir') then
     cbxFormat.ItemIndex := 1
-  else if FConformance.formatList.hasCode('json') then
+  else if FCapabilityStatement.formatList.hasCode('json') then
     cbxFormat.ItemIndex := 2
-  else if FConformance.formatList.hasCode('xml') then
+  else if FCapabilityStatement.formatList.hasCode('xml') then
     cbxFormat.ItemIndex := 1
   else
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
@@ -220,7 +220,7 @@ end;
 
 procedure TRegisterServerForm.FormDestroy(Sender: TObject);
 begin
-  FConformance.Free;
+  FCapabilityStatement.Free;
   inherited;
 end;
 
@@ -247,17 +247,17 @@ end;
 procedure TRegisterServerForm.loadHooks;
 var
   ext, iext : TFhirExtension;
-  rest : TFhirConformanceRest;
+  rest : TFhirCapabilityStatementRest;
   name : String;
   c : TFHIRCoding;
   err : String;
 begin
   clHooks.items.Clear;
 
-  if FConformance = nil then
+  if FCapabilityStatement = nil then
     exit;
 
-  for rest in FConformance.restList do
+  for rest in FCapabilityStatement.restList do
     for ext in rest.extensionList do
       if ext.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity' then
       begin
@@ -321,7 +321,7 @@ begin
     cbxFormat.ItemIndex := ord(server.format);
 
     try
-      loadConformance;
+      loadCapabilityStatement;
     except
 
     end;

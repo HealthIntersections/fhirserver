@@ -80,7 +80,7 @@ type
     FWorker : TWorkerContext;
     FValidator : TFHIRValidator;
     FClient : TFHIRClient;
-    FConformance : TFHIRConformance;
+    FCapabilityStatement : TFhirCapabilityStatement;
     init : boolean;
     FLastSrc : String;
     FLastRes : TFHIRResource;
@@ -377,7 +377,7 @@ begin
     s := s + 'init: '+BoolToStr(FNpp.init)+#13#10;
     s := s + 'validator: '+ inttohex(cardinal(FNpp.FValidator), 8)+ #13#10;
     s := s + 'client: '+ inttohex(cardinal(FNpp.FClient), 8)+ #13#10;
-    s := s + 'conformance: '+ inttohex(cardinal(FNpp.FConformance), 8)+ #13#10;
+    s := s + 'conformance: '+ inttohex(cardinal(FNpp.FCapabilityStatement), 8)+ #13#10;
     s := s + 'server: '+ inttohex(cardinal(FNpp.FCurrentServer), 8)+ #13#10;
   except
     on e : exception do
@@ -671,12 +671,12 @@ begin
         begin
           try
             FClient.json := false;
-            FConformance := FClient.conformance(false);
+            FCapabilityStatement := FClient.conformance(false);
           except
             FClient.json := not FClient.Json;
-            FConformance := FClient.conformance(false);
+            FCapabilityStatement := FClient.conformance(false);
           end;
-          FConformance.checkCompatible();
+          FCapabilityStatement.checkCompatible();
           if (Assigned(FHIRToolbox)) then
             if FClient.smartToken = nil then
               FHIRToolbox.connected(server.name, server.fhirEndpoint, '', '')
@@ -713,8 +713,8 @@ begin
   FCurrentServer := nil;
   FClient.Free;
   FClient := nil;
-  FConformance.Free;
-  FConformance := nil;
+  FCapabilityStatement.Free;
+  FCapabilityStatement := nil;
 end;
 
 
@@ -929,7 +929,7 @@ begin
   loadValidator;
   if not assigned(FetchResourceFrm) then
     FetchResourceFrm := TFetchResourceFrm.create(self);
-  FetchResourceFrm.Conformance := FConformance.link;
+  FetchResourceFrm.Conformance := FCapabilityStatement.link;
   FetchResourceFrm.Client := FClient.link;
   FetchResourceFrm.Profiles := TFHIRPluginValidatorContext(FWorker).Profiles.Link;
   if FetchResourceFrm.ShowModal = mrOk then
@@ -1306,7 +1306,7 @@ begin
     matches.Free;
     errorSorter.Free;
     FClient.Free;
-    FConformance.Free;
+    FCapabilityStatement.Free;
     FreeAndNil(FetchResourceFrm);
     FreeAndNil(FHIRToolbox);
     FreeAndNil(FHIRVisualizer);

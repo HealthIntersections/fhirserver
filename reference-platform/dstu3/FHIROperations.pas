@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-11-07T09:33:45+11:00
+// FHIR v1.7.0 generated 2016-11-17T07:00:35+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1183,7 +1183,7 @@ Type
     property issues : TFhirOperationOutcome read FIssues write SetIssues;
   end;
 
-  //Operation populatehtml (Geneate HTML for Questionnaire)
+  //Operation populatehtml (Generate HTML for Questionnaire)
   TFHIRPopulatehtmlOpRequest = class (TFHIROperationRequest)
   private
     FIdentifier : String;

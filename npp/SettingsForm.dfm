@@ -142,7 +142,6 @@ inherited SettingForm: TSettingForm
             Width = 265
             Height = 17
             Caption = 'DSTU2 Final Version'
-            Enabled = False
             TabOrder = 1
           end
         end

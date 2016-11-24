@@ -1,3 +1,8 @@
+{
+todo:
+ - support for descendent-of, ValueSet.compose.inactive
+
+}
 unit TerminologyServer;
 
 interface

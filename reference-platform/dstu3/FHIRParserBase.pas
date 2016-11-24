@@ -1685,8 +1685,8 @@ Header(Session, FBaseURL, lang, version)+
         if (links <> nil) and (links.Matches['edit-form'] <> '') then
           if (oResource is TFHIRQuestionnaireResponse) then
           begin
-            if (TFHIRQuestionnaireResponse(oResource).questionnaire <> nil) then
-              s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(oResource).questionnaire.reference+'">see the questionnaire</a>)')
+            if (TFHIRQuestionnaireResponse(oResource).questionnaire <> '') then
+              s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(oResource).questionnaire+'">see the questionnaire</a>)')
           end
           else
             s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+links.Matches['edit-form']+'">see resources underlying that</a>)');
@@ -2100,8 +2100,8 @@ Header(Session, FBaseURL, lang, FVersion)+
         if e.tags['edit-form'] <> '' then
           if (r is TFHIRQuestionnaireResponse) then
           begin
-            if (TFHIRQuestionnaireResponse(r).questionnaire <> nil) then
-              s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(r).questionnaire.reference+'">see the questionnaire</a>)')
+            if (TFHIRQuestionnaireResponse(r).questionnaire <> '') then
+              s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(r).questionnaire+'">see the questionnaire</a>)')
           end
           else
             s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or just see <a href="'+e.tags['edit-form']+'">the Questionnaire</a>)');

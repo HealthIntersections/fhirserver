@@ -112,7 +112,13 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
         s.append("''");
       else
         s.append(c);
-    return s.toString();
+    String r = s.toString();
+    int i = 250;
+    while (i < r.length()) {
+      r = r.substring(0, i)+"'+'"+r.substring(i);
+      i = i + 253;
+    }
+    return r;
   }
 
   public void finish() throws Exception {

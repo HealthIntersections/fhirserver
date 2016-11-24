@@ -15,7 +15,7 @@ Type
   private
     FUrl : String;
     FServer : TFHIRClient;
-    FConfStmt : TFHIRConformance;
+    FCapabilityStatement : TFHIRCapabilityStatement;
     FValueSets : TAdvMap<TFHIRValueSet>;
     FCodeSystems : TAdvMap<TFHIRCodeSystem>;
     procedure checkClient;
@@ -31,8 +31,8 @@ Type
     function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
-    function supportsSystem(system : string) : boolean; override;
-    function validateCode(system, code, display : String) : TValidationResult; override;
+    function supportsSystem(system, version : string) : boolean; override;
+    function validateCode(system, version, code, display : String) : TValidationResult; override;
     function validateCode(system, code, version : String; vs : TFHIRValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
@@ -45,15 +45,15 @@ implementation
 
 procedure TFHIRPluginValidatorContext.checkClient;
 begin
-  if (FServer = nil) or (FConfStmt = nil) then
+  if (FServer = nil) or (FCapabilityStatement = nil) then
   begin
     if FServer <> nil then
       FServer.Free;
     FServer := TFhirClient.Create(self.link, FUrl, true);
     FServer.timeout := 5000;
-    FConfStmt := FServer.conformance(true);
-    if FConfStmt.fhirVersion <> FHIR_GENERATED_VERSION then
-      raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FConfStmt.fhirVersion+' / '+FHIR_GENERATED_VERSION+')');
+    FCapabilityStatement := FServer.conformance(true);
+    if FCapabilityStatement.fhirVersion <> FHIR_GENERATED_VERSION then
+      raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR_GENERATED_VERSION+')');
   end;
 end;
 
@@ -69,7 +69,7 @@ destructor TFHIRPluginValidatorContext.Destroy;
 begin
   FValueSets.Free;
   FServer.Free;
-  FConfStmt.Free;
+  FCapabilityStatement.Free;
   FCodeSystems.Free;
   inherited;
 end;
@@ -148,19 +148,19 @@ begin
     inherited;
 end;
 
-function TFHIRPluginValidatorContext.supportsSystem(system: string): boolean;
+function TFHIRPluginValidatorContext.supportsSystem(system, version: string): boolean;
 var
   ex : TFhirExtension;
 begin
   CheckClient;
   result := FCodeSystems.ContainsKey(system);
   if (not result) then
-    for ex in FConfStmt.extensionList do
+    for ex in FCapabilityStatement.extensionList do
       if (ex.url = 'http://hl7.org/fhir/StructureDefinition/conformance-common-supported-system') and (ex.value is TFHIRString) and (TFHIRString(ex.value).value = system) then
         result := true;
 end;
 
-function TFHIRPluginValidatorContext.validateCode(system, code, display: String): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(system, version, code, display: String): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
   cs : TFHIRCodeSystem;

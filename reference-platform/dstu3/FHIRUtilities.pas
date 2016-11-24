@@ -83,7 +83,8 @@ function languageMatches(spec, possible : String) : boolean;
 
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
-function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource;
+function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource; overload;
+function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource; overload;
 function LoadFromFormParam(worker : TWorkerContext; part : TMimePart; lang : String) : TFhirResource;
 function LoadDTFromFormParam(worker : TWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
@@ -890,6 +891,19 @@ begin
   result := nil;
   for i := 0 to resource.containedList.Count - 1 do
     if ('#'+resource.containedList[i].Id = ref.reference) then
+    begin
+      result := resource.containedList[i];
+      exit;
+    end;
+end;
+
+function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to resource.containedList.Count - 1 do
+    if ('#'+resource.containedList[i].Id = ref) then
     begin
       result := resource.containedList[i];
       exit;
