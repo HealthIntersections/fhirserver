@@ -524,7 +524,7 @@ begin
   if src.StartsWith('<?') then
     s := '?>'
   else if src.StartsWith('<!--') then
-    s := '!>'
+    s := '->'
   else if src.StartsWith('<!DOCTYPE') then
     s := ']>'
   else
@@ -552,6 +552,8 @@ begin
         splitElement(src);
       s := splitElement(src);
       if s.Contains('"http://hl7.org/fhir"') then
+        result := ffXml
+      else if s.Contains('''http://hl7.org/fhir''') then
         result := ffXml
     end
     else if src[1] = '{' then
@@ -659,6 +661,7 @@ begin
         OpMessage('Connecting to Server', 'Connecting to Server '+server.fhirEndpoint);
         FClient := TFhirClient.Create(FWorker.link, server.fhirEndpoint, false);
         FClient.timeout := 5000;
+        FClient.allowR2 := true;
         ok := true;
         if server.SmartOnFHIR then
           if not DoSmartOnFHIR(server) then

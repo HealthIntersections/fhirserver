@@ -51,6 +51,7 @@ begin
       FServer.Free;
     FServer := TFhirClient.Create(self.link, FUrl, true);
     FServer.timeout := 5000;
+    FServer.allowR2 := true;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_GENERATED_VERSION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR_GENERATED_VERSION+')');

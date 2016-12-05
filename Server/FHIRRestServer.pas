@@ -1613,13 +1613,13 @@ begin
       qa := r as TFhirQuestionnaireResponse;
       q := (FindContainedResource(qa, qa.questionnaire) as TFhirQuestionnaire).link;
       if q = nil then
-        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF}.Substring(1)+'"');
+        raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.reference.Substring(1)+'"');
 
       // convert to xhtml
       s := transform1(q, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
-      qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF} := 'Questionnaire/'+qa.questionnaire{$IFDEF FHIR2}.reference{$ENDIF}.Substring(1);
+      qa.questionnaire.reference := 'Questionnaire/'+qa.questionnaire.reference.Substring(1);
       qa.containedList.Clear;
       json := TFHIRJsonComposer.Create(request.context.link, request.Lang);
       try
@@ -2054,6 +2054,7 @@ begin
       begin
         if context <> nil then
           context.progress(trunc(100 * (i - iStart) / (iEnd - iStart)));
+        writeln('Parse '+rdr.Parts[i].name);
         if rdr.Parts[i].name.EndsWith('.json') then
           p := TFHIRJsonParser.create(FFhirStore.Validator.Context.Link, lang)
         else if rdr.Parts[i].name.EndsWith('.map') then
@@ -3156,11 +3157,6 @@ begin
     sleep(1000);
     if not FServer.DataStore.ForLoad then
     begin
-      if FServer.FActive then
-      begin
-        FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
-        FServer.FFhirStore.ProcessSubscriptions;
-      end;
       if (not terminated) then
       begin
         try
@@ -3168,6 +3164,16 @@ begin
           FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
         except
         end;
+        try
+          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
+          FServer.FFhirStore.ProcessObservations;
+        except
+        end;
+      end;
+      if FServer.FActive then
+      begin
+        FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
+        FServer.FFhirStore.ProcessSubscriptions;
       end;
       if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
       begin

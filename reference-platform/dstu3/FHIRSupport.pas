@@ -1548,10 +1548,12 @@ begin
   result := TFhirHumanName.create;
   try
     result.useElement := CheckEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, use);
-    result.familyList.addItem(family);
+    result.family := family;
     result.givenList.addItem(given);
-    result.prefixList.addItem(prefix);
-    result.suffixList.addItem(suffix);
+    if (prefix <> '') then
+      result.prefixList.addItem(prefix);
+    if (suffix <> '') then
+      result.suffixList.addItem(suffix);
     result.link;
   finally
     result.free;

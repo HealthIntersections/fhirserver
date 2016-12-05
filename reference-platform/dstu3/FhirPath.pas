@@ -449,22 +449,23 @@ begin
   FLog := TStringBuilder.Create;
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
-  for sd in worker.allStructures do
-    if (sd.kind <> StructureDefinitionKindLogical) then
-    begin
-      {$IFDEF FHIR3}
-      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
-        allTypes.add(sd.id);
-      if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
-        primitiveTypes.add(sd.id);
-      {$ELSE}
-      raise Exception.Create('Debug this');
-      if (sd.constrainedType = DefinedTypesNull) then
-        allTypes.add(sd.id);
-      if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
-        primitiveTypes.add(sd.id);
-      {$ENDIF}
-  end;
+  if (worker <> nil) then
+    for sd in worker.allStructures do
+      if (sd.kind <> StructureDefinitionKindLogical) then
+      begin
+        {$IFDEF FHIR3}
+        if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
+          allTypes.add(sd.id);
+        if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
+          primitiveTypes.add(sd.id);
+        {$ELSE}
+        raise Exception.Create('Debug this');
+        if (sd.constrainedType = DefinedTypesNull) then
+          allTypes.add(sd.id);
+        if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
+          primitiveTypes.add(sd.id);
+        {$ENDIF}
+    end;
 end;
 
 procedure TFHIRExpressionEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRExpressionNode; op : boolean; input1, input2, outcome: TFHIRBaseList);

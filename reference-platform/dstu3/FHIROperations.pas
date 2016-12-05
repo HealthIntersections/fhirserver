@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-11-17T07:00:35+11:00
+// FHIR v1.7.0 generated 2016-12-05T21:55:41+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -53,6 +53,7 @@ Type
     FVersion : String;
     FCoding : TFhirCoding;
     FDate : TDateAndTime;
+    FDisplayLanguage : String;
     FProperty_List : TList<String>;
     procedure SetCoding(value : TFhirCoding);
     procedure SetDate(value : TDateAndTime);
@@ -69,6 +70,7 @@ Type
     property version : String read FVersion write FVersion;
     property coding : TFhirCoding read FCoding write SetCoding;
     property date : TDateAndTime read FDate write SetDate;
+    property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
     property property_List : TList<String> read FProperty_List;
   end;
 
@@ -374,7 +376,7 @@ Type
   //Operation validate-code (Value Set based Validation)
   TFHIRValidateCodeOpRequest = class (TFHIROperationRequest)
   private
-    FIdentifier : String;
+    FUrl : String;
     FContext : String;
     FValueSet : TFhirValueSet;
     FCode : String;
@@ -385,6 +387,7 @@ Type
     FCodeableConcept : TFhirCodeableConcept;
     FDate : TDateAndTime;
     FAbstract : Boolean;
+    FDisplayLanguage : String;
     procedure SetValueSet(value : TFhirValueSet);
     procedure SetCoding(value : TFhirCoding);
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
@@ -397,7 +400,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property identifier : String read FIdentifier write FIdentifier;
+    property url : String read FUrl write FUrl;
     property context : String read FContext write FContext;
     property valueSet : TFhirValueSet read FValueSet write SetValueSet;
     property code : String read FCode write FCode;
@@ -408,6 +411,7 @@ Type
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
     property date : TDateAndTime read FDate write SetDate;
     property abstract : Boolean read FAbstract write FAbstract;
+    property displayLanguage : String read FDisplayLanguage write FDisplayLanguage;
   end;
 
   TFHIRValidateCodeOpResponse = class (TFHIROperationResponse)
@@ -1052,10 +1056,14 @@ Type
   //Operation stats (Observation Statistics)
   TFHIRStatsOpRequest = class (TFHIROperationRequest)
   private
-    FPatient : String;
-    FCode : String;
+    FSubject : String;
+    FCodeList : TList<String>;
+    FSystem : String;
+    FCodingList : TAdvList<TFhirCoding>;
     FDuration : String;
+    FPeriod : TFhirPeriod;
     FParamsList : TList<String>;
+    procedure SetPeriod(value : TFhirPeriod);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -1064,15 +1072,19 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property patient : String read FPatient write FPatient;
-    property code : String read FCode write FCode;
+    property subject : String read FSubject write FSubject;
+    property codeList : TList<String> read FCodeList;
+    property system : String read FSystem write FSystem;
+    property codingList : TAdvList<TFhirCoding> read FCodingList;
     property duration : String read FDuration write FDuration;
+    property period : TFhirPeriod read FPeriod write SetPeriod;
     property paramsList : TList<String> read FParamsList;
   end;
 
   TFHIRStatsOpResponse = class (TFHIROperationResponse)
   private
-    FObsList : TAdvList<TFhirObservation>;
+    FReturnList : TAdvList<TFhirObservation>;
+    FSourceList : TAdvList<TFhirObservation>;
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -1081,7 +1093,8 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property obsList : TAdvList<TFhirObservation> read FObsList;
+    property returnList : TAdvList<TFhirObservation> read FReturnList;
+    property sourceList : TAdvList<TFhirObservation> read FSourceList;
   end;
 
   //Operation match (Find patient matches using MPI based logic)
@@ -1332,8 +1345,8 @@ Type
 
   TFHIREvaluateOpResponse = class (TFHIROperationResponse)
   private
-    FReturn : TFhirCarePlan;
-    procedure SetReturn(value : TFhirCarePlan);
+    FReturn : TFhirGuidanceResponse;
+    procedure SetReturn(value : TFhirGuidanceResponse);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -1342,7 +1355,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property return : TFhirCarePlan read FReturn write SetReturn;
+    property return : TFhirGuidanceResponse read FReturn write SetReturn;
   end;
 
   //Operation questionnaire (Build Questionnaire)
@@ -1766,6 +1779,7 @@ begin
   FVersion := params.str['version'];
   FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   FDate := (params.param['date'].value as TFHIRDateTime).value;
+  FDisplayLanguage := params.str['displayLanguage'];
   for p in params.parameterList do
     if p.name = 'property' then
       FProperty_List.Add((p.value as TFhirCode).value);{ob.1}
@@ -1777,6 +1791,7 @@ begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
+  FDisplayLanguage := params.getVar('displayLanguage');
   loadExtensions(params);
 end;
 
@@ -1804,6 +1819,8 @@ begin
       result.addParameter('coding', FCoding.Link);{oz.5d}
     if (FDate <> nil) then
       result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
+    if (FDisplayLanguage <> '') then
+      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));{oz.5f}
     for v1 in FProperty_List do
       result.AddParameter('property', TFhirCode.create(v1));
     writeExtensions(result);
@@ -1815,7 +1832,7 @@ end;
 
 function TFHIRLookupOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['code', 'system', 'version', 'coding', 'date', 'property'], name);
+  result := StringArrayExists(['code', 'system', 'version', 'coding', 'date', 'displayLanguage', 'property'], name);
 end;
 
 procedure TFHIRLookupOpRespDesignation.SetUse(value : TFhirCoding);
@@ -2669,7 +2686,7 @@ end;
 
 procedure TFHIRValidateCodeOpRequest.load(params : TFHIRParameters);
 begin
-  FIdentifier := params.str['identifier'];
+  FUrl := params.str['url'];
   FContext := params.str['context'];
   FValueSet := (params.res['valueSet'] as TFhirValueSet).Link;{ob.5a}
   FCode := params.str['code'];
@@ -2680,18 +2697,20 @@ begin
   FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
   FDate := (params.param['date'].value as TFHIRDateTime).value;
   FAbstract := params.bool['abstract'];
+  FDisplayLanguage := params.str['displayLanguage'];
   loadExtensions(params);
 end;
 
 procedure TFHIRValidateCodeOpRequest.load(params : TParseMap);
 begin
-  FIdentifier := params.getVar('identifier');
+  FUrl := params.getVar('url');
   FContext := params.getVar('context');
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplay := params.getVar('display');
   FAbstract := StrToBool(params.getVar('abstract'));
+  FDisplayLanguage := params.getVar('displayLanguage');
   loadExtensions(params);
 end;
 
@@ -2708,8 +2727,8 @@ function TFHIRValidateCodeOpRequest.asParams : TFhirParameters;
 begin
   result := TFHIRParameters.create;
   try
-    if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
+    if (FUrl <> '') then
+      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
     if (FContext <> '') then
       result.addParameter('context', TFHIRUri.create(FContext));{oz.5f}
     if (FValueSet <> nil) then
@@ -2729,6 +2748,8 @@ begin
     if (FDate <> nil) then
       result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
       result.addParameter('abstract', TFHIRBoolean.create(FAbstract));{oz.5f}
+    if (FDisplayLanguage <> '') then
+      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -2738,7 +2759,7 @@ end;
 
 function TFHIRValidateCodeOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['identifier', 'context', 'valueSet', 'code', 'system', 'version', 'display', 'coding', 'codeableConcept', 'date', 'abstract'], name);
+  result := StringArrayExists(['url', 'context', 'valueSet', 'code', 'system', 'version', 'display', 'coding', 'codeableConcept', 'date', 'abstract', 'displayLanguage'], name);
 end;
 
 constructor TFHIRValidateCodeOpResponse.create;
@@ -4603,9 +4624,17 @@ begin
   result := StringArrayExists(['return'], name);
 end;
 
+procedure TFHIRStatsOpRequest.SetPeriod(value : TFhirPeriod);
+begin
+  FPeriod.free;
+  FPeriod := value;
+end;
+
 constructor TFHIRStatsOpRequest.create;
 begin
   inherited create();
+  FCodeList := TList<String>.create;
+  FCodingList := TAdvList<TFhirCoding>.create;
   FParamsList := TList<String>.create;
 end;
 
@@ -4613,9 +4642,16 @@ procedure TFHIRStatsOpRequest.load(params : TFHIRParameters);
 var
   p : TFhirParametersParameter;
 begin
-  FPatient := params.str['patient'];
-  FCode := params.str['code'];
+  FSubject := params.str['subject'];
+  for p in params.parameterList do
+    if p.name = 'code' then
+      FCodeList.Add((p.value as TFhirString).value);{ob.1}
+  FSystem := params.str['system'];
+  for p in params.parameterList do
+    if p.name = 'coding' then
+      FCodingList.Add((p.value as TFhirCoding).Link);{a}
   FDuration := params.str['duration'];
+  FPeriod := (params.param['period'].value as TFhirPeriod).Link; {ob.5d}
   for p in params.parameterList do
     if p.name = 'params' then
       FParamsList.Add((p.value as TFhirCode).value);{ob.1}
@@ -4624,14 +4660,17 @@ end;
 
 procedure TFHIRStatsOpRequest.load(params : TParseMap);
 begin
-  FPatient := params.getVar('patient');
-  FCode := params.getVar('code');
+  FSubject := params.getVar('subject');
+  FSystem := params.getVar('system');
   FDuration := params.getVar('duration');
   loadExtensions(params);
 end;
 
 destructor TFHIRStatsOpRequest.Destroy;
 begin
+  FCodeList.free;
+  FCodingList.free;
+  FPeriod.free;
   FParamsList.free;
   inherited;
 end;
@@ -4639,17 +4678,25 @@ end;
 function TFHIRStatsOpRequest.asParams : TFhirParameters;
 var
   v1 : String;
+  v2 : TFhirCoding;
+  v3 : String;
 begin
   result := TFHIRParameters.create;
   try
-    if (FPatient <> '') then
-      result.addParameter('patient', TFHIRId.create(FPatient));{oz.5f}
-    if (FCode <> '') then
-      result.addParameter('code', TFHIRString.create(FCode));{oz.5f}
+    if (FSubject <> '') then
+      result.addParameter('subject', TFHIRUri.create(FSubject));{oz.5f}
+    for v1 in FCodeList do
+      result.AddParameter('code', TFhirString.create(v1));
+    if (FSystem <> '') then
+      result.addParameter('system', TFHIRUri.create(FSystem));{oz.5f}
+    for v2 in FCodingList do
+      result.AddParameter('coding', v2.Link);
     if (FDuration <> '') then
       result.addParameter('duration', TFHIRDecimal.create(FDuration));{oz.5f}
-    for v1 in FParamsList do
-      result.AddParameter('params', TFhirCode.create(v1));
+    if (FPeriod <> nil) then
+      result.addParameter('period', FPeriod.Link);{oz.5d}
+    for v3 in FParamsList do
+      result.AddParameter('params', TFhirCode.create(v3));
     writeExtensions(result);
     result.link;
   finally
@@ -4659,13 +4706,14 @@ end;
 
 function TFHIRStatsOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['patient', 'code', 'duration', 'params'], name);
+  result := StringArrayExists(['subject', 'code', 'system', 'coding', 'duration', 'period', 'params'], name);
 end;
 
 constructor TFHIRStatsOpResponse.create;
 begin
   inherited create();
-  FObsList := TAdvList<TFhirObservation>.create;
+  FReturnList := TAdvList<TFhirObservation>.create;
+  FSourceList := TAdvList<TFhirObservation>.create;
 end;
 
 procedure TFHIRStatsOpResponse.load(params : TFHIRParameters);
@@ -4673,8 +4721,11 @@ var
   p : TFhirParametersParameter;
 begin
   for p in params.parameterList do
-    if p.name = 'obs' then
-      FObsList.Add((p.resource as TFhirObservation).Link);{ob.2}
+    if p.name = 'return' then
+      FReturnList.Add((p.resource as TFhirObservation).Link);{ob.2}
+  for p in params.parameterList do
+    if p.name = 'source' then
+      FSourceList.Add((p.resource as TFhirObservation).Link);{ob.2}
   loadExtensions(params);
 end;
 
@@ -4685,18 +4736,22 @@ end;
 
 destructor TFHIRStatsOpResponse.Destroy;
 begin
-  FObsList.free;
+  FReturnList.free;
+  FSourceList.free;
   inherited;
 end;
 
 function TFHIRStatsOpResponse.asParams : TFhirParameters;
 var
   v1 : TFhirObservation;
+  v2 : TFhirObservation;
 begin
   result := TFHIRParameters.create;
   try
-    for v1 in FObsList do
-      result.AddParameter('obs', v1.Link);
+    for v1 in FReturnList do
+      result.AddParameter('return', v1.Link);
+    for v2 in FSourceList do
+      result.AddParameter('source', v2.Link);
     writeExtensions(result);
     result.link;
   finally
@@ -4706,7 +4761,7 @@ end;
 
 function TFHIRStatsOpResponse.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['obs'], name);
+  result := StringArrayExists(['return', 'source'], name);
 end;
 
 procedure TFHIRMatchOpRequest.SetPatient(value : TFhirPatient);
@@ -5440,7 +5495,7 @@ begin
   result := StringArrayExists(['requestId', 'evaluateAtDateTime', 'inputParameters', 'inputData', 'patient', 'encounter', 'initiatingOrganization', 'initiatingPerson', 'userType', 'userLanguage', 'userTaskContext', 'receivingOrganization', 'receivingPerson', 'recipientType', 'recipientLanguage', 'setting', 'settingContext'], name);
 end;
 
-procedure TFHIREvaluateOpResponse.SetReturn(value : TFhirCarePlan);
+procedure TFHIREvaluateOpResponse.SetReturn(value : TFhirGuidanceResponse);
 begin
   FReturn.free;
   FReturn := value;
@@ -5453,7 +5508,7 @@ end;
 
 procedure TFHIREvaluateOpResponse.load(params : TFHIRParameters);
 begin
-  FReturn := (params.res['return'] as TFhirCarePlan).Link;{ob.5a}
+  FReturn := (params.res['return'] as TFhirGuidanceResponse).Link;{ob.5a}
   loadExtensions(params);
 end;
 

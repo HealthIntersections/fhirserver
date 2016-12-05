@@ -115,7 +115,6 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\FHIRServer2.exe
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -136,7 +135,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Seattle
         description = "Compile the Server (DSTU2)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -243,7 +241,6 @@ begin
       begin
         captureoutput = true
         description = "Add Map (2)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -268,7 +265,6 @@ begin
       begin
         captureoutput = true
         description = "Sign the Server (64)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -294,7 +290,6 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\FHIRServer3.exe
         id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -315,7 +310,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Seattle
         description = "Compile the Server (DSTU3)"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -422,7 +416,6 @@ begin
       begin
         captureoutput = true
         description = "Add Map (3)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -447,7 +440,6 @@ begin
       begin
         captureoutput = true
         description = "Sign the Server (64)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -473,7 +465,6 @@ begin
       begin
         deletehidden = false
         deletereadonly = false
-        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\Exec\\FHIRServerUtils.exe
         id = {71963D09-2A47-4E6A-908F-CFC669A9CBF2}
@@ -494,7 +485,6 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Seattle
         description = "Compile the ServerUtils"
-        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -601,7 +591,6 @@ begin
       begin
         captureoutput = true
         description = "Add Map (3)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -626,7 +615,6 @@ begin
       begin
         captureoutput = true
         description = "Sign the Server (64)"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -653,7 +641,6 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set AppVerName in Inno Script"
-        enabled = false
         id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
         inifile = C:\\work\\fhirserver\\install\\install.iss
         newvalue = 1.0.%BuildCount%
@@ -666,7 +653,6 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set OutputFilename in Inno Script"
-        enabled = false
         id = {4CCDCB7F-C397-47A0-A936-0D320AF5B9D9}
         inifile = C:\\work\\fhirserver\\install\\install.iss
         newvalue = fhirserver3-1.0.%BuildCount%
@@ -677,7 +663,6 @@ begin
       action.innosetup.execute
       begin
         description = "Build the server install"
-        enabled = false
         id = {8413CA91-F62B-48D7-952E-8CEF6C236C73}
         innoversion = Inno5
         scriptfile = C:\\work\\fhirserver\\install\\install.iss
@@ -690,7 +675,6 @@ begin
       begin
         captureoutput = true
         description = "Sign the server install"
-        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false

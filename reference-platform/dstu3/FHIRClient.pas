@@ -72,6 +72,7 @@ Type
     FTimeout: cardinal;
     FUseIndy: boolean;
     FWorker : TWorkerContext;
+    FAllowR2: boolean;
 
 //    FLastUpdated : TDateAndTime;
     procedure status(msg : String);
@@ -89,6 +90,8 @@ Type
     function GetHeader(name : String) : String;
     function exchangeIndy(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
     function exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
+  protected
+    function Convert(stream : TStream) : TStream; virtual;
   public
     constructor Create(worker : TWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -100,6 +103,7 @@ Type
     property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
     property timeout : cardinal read FTimeout write SetTimeout;
     property UseIndy : boolean read FUseIndy write FUseIndy; // set this to true for a service, but you may have problems with SSL
+    property allowR2 : boolean read FAllowR2 write FAllowR2;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
@@ -140,6 +144,26 @@ begin
 end;
 
 { TFhirClient }
+
+function TFhirClient.Convert(stream: TStream): TStream;
+var
+  s : String;
+begin
+  if FALlowR2 then
+  begin
+    s := StreamToString(stream, TEncoding.UTF8);
+    if s.Contains('<Conformance') then
+    begin
+      s := s.Replace('<Conformance', '<CapabilityStatement');
+      s := s.Replace('</Conformance', '</CapabilityStatement');
+      s := s.Replace('"Conformance"', '"CapabilityStatement"');
+      s := s.Replace('"DiagnosticOrder"', '"DiagnosticRequest"');
+    end;
+    result := TStringStream.Create(s, TEncoding.UTF8)
+  end
+  else
+    result := stream;
+end;
 
 constructor TFhirClient.create(worker : TWorkerContext; url: String; json : boolean);
 begin
@@ -363,7 +387,7 @@ end;
 
 function TFhirClient.fetchResource(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct : String = ''): TFhirResource;
 var
-  ret : TStream;
+  ret, conv : TStream;
   p : TFHIRParser;
 begin
   ret := exchange(url, verb, source, ct);
@@ -372,15 +396,20 @@ begin
       result := nil
     else
     begin
-//      StreamToFile(ret, 'c:\temp\file.txt');
-      p := CreateParser(ret);
+      conv := Convert(ret);
       try
-        p.parse;
-        if (p.resource = nil) then
-          raise Exception.create('No response bundle');
-        result := p.resource.link;
+        p := CreateParser(conv);
+        try
+          p.parse;
+          if (p.resource = nil) then
+            raise Exception.create('No response bundle');
+          result := p.resource.link;
+        finally
+          p.free;
+        end;
       finally
-        p.free;
+        if (conv <> ret) then
+          conv.free;
       end;
     end;
   finally

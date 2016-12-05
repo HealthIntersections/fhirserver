@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport,
+  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport, DecimalSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers,
@@ -40,7 +40,7 @@ uses
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
-  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller;
+  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices;
 
 const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -87,6 +87,8 @@ Type
     FLastResourceKey: integer;
     FLastEntryKey: integer;
     FLastCompartmentKey: integer;
+    FLastObservationKey : integer;
+    FLastObservationQueueKey : integer;
     FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
     FResConfig: TAdvMap<TFHIRResourceConfig>;
@@ -131,6 +133,16 @@ Type
     procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TAdvBuffer; b : TStringBuilder);
 
     procedure loadCustomResources(guides : TAdvStringSet);
+    procedure StoreObservation(conn: TKDBConnection; key : integer);
+    procedure UnStoreObservation(conn: TKDBConnection; key : integer);
+    procedure ProcessObservation(conn: TKDBConnection; key : integer);
+    function loadResource(conn: TKDBConnection; key : integer) : TFhirResource;
+    function resolveReference(conn: TKDBConnection; ref : string) : Integer;
+    function resolveConcept(conn: TKDBConnection; c : TFHIRCoding) : Integer; overload;
+    function resolveConcept(conn: TKDBConnection; sys, code : String) : Integer; overload;
+    procedure ProcessObservationValue(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRType);
+    procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantity);
+    procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
   public
     constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer; loadStore : boolean);
     Destructor Destroy; Override;
@@ -152,11 +164,12 @@ Type
     function NextResourceKeyGetId(aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
+    function nextObservationKey : integer;
     Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
-    procedure DropResource(key, vkey: integer; id, resource: string; indexer: TFhirIndexManager);
+    procedure DropResource(key, vkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TKDBConnection);
     procedure RegisterConsentRecord(session: TFhirSession);
     function KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
     Property Validator: TFHIRValidator read FValidator;
@@ -181,6 +194,7 @@ Type
       write FFormalURLSecureClosed;
     function ResourceTypeKeyForName(name: String): integer;
     procedure ProcessSubscriptions;
+    procedure ProcessObservations;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     {$IFDEF FHIR3}
     function getMaps : TAdvMap<TFHIRStructureMap>;
@@ -298,18 +312,16 @@ begin
     conn := FDB.GetConnection('setup');
     try
       FLastSessionKey := conn.CountSQL('Select max(SessionKey) from Sessions');
-      FLastVersionKey := conn.CountSQL
-        ('Select Max(ResourceVersionKey) from Versions');
-      FLastTagVersionKey :=
-        conn.CountSQL('Select Max(ResourceTagKey) from VersionTags');
+      FLastVersionKey := conn.CountSQL('Select Max(ResourceVersionKey) from Versions');
+      FLastTagVersionKey := conn.CountSQL('Select Max(ResourceTagKey) from VersionTags');
       FLastSearchKey := conn.CountSQL('Select Max(SearchKey) from Searches');
       FLastTagKey := conn.CountSQL('Select Max(TagKey) from Tags');
       FLastResourceKey := conn.CountSQL('select Max(ResourceKey) from Ids');
       FLastEntryKey := conn.CountSQL('select max(EntryKey) from indexEntries');
-      FLastCompartmentKey :=
-        conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
-      conn.execSQL('Update Sessions set Closed = ' +
-        DBGetDate(conn.Owner.Platform) + ' where Closed = null');
+      FLastCompartmentKey := conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
+      FLastObservationKey := conn.CountSQL('select max(ObservationKey) from Observations');
+      FLastObservationQueueKey := conn.CountSQL('select max(ObservationQueueKey) from ObservationQueue');
+      conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
       conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
       conn.Prepare;
@@ -1441,6 +1453,46 @@ begin
   end;
 end;
 
+function TFHIRDataStore.resolveConcept(conn: TKDBConnection; c: TFHIRCoding): Integer;
+begin
+  if (c.system <> '') and (c.code <> '') then
+    result := resolveConcept(conn, c.system, c.code)
+  else
+    result := 0;
+end;
+
+function TFHIRDataStore.resolveConcept(conn: TKDBConnection; sys, code : String): Integer;
+begin
+  result := 0;
+  conn.SQL := 'Select ConceptKey from Concepts where URL = '''+sqlWrapString(sys)+''' and Code = '''+sqlWrapString(code)+'''';
+  conn.Prepare;
+  conn.Execute;
+  if conn.FetchNext then
+    result := conn.ColIntegerByName['ConceptKey'];
+  conn.Terminate;
+  if (result = 0) then
+  begin
+    result := FTerminologyServer.NextConceptKey;
+    conn.execSQL('insert into Concepts (ConceptKey, URL, Code, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(sys)+''', '''+SQLWrapString(code)+''', 1)');
+  end;
+end;
+
+function TFHIRDataStore.resolveReference(conn: TKDBConnection; ref: string): Integer;
+var
+  parts : TArray<String>;
+begin
+  result := 0;
+  parts := ref.Split(['/']);
+  if length(parts) = 2 then
+  begin
+    conn.SQL := 'Select ResourceKey from Ids, Types where Ids.Id = '''+sqlWrapString(parts[1])+''' and Types.ResourceName = '''+sqlWrapString(parts[0])+''' and Types.ResourceTypeKey = Ids.ResourceTypeKey';
+    conn.Prepare;
+    conn.Execute;
+    if conn.FetchNext then
+      result := conn.ColIntegerByName['ResourceKey'];
+  end;
+end;
+
 function TFHIRDataStore.ResourceTypeKeyForName(name: String): integer;
 begin
   FLock.Lock('ResourceTypeKeyForName');
@@ -1653,6 +1705,12 @@ begin
   end;
 end;
 
+procedure TFHIRDataStore.UnStoreObservation(conn: TKDBConnection; key: integer);
+begin
+  inc(FLastObservationQueueKey);
+  conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 0)');
+end;
+
 procedure TFHIRDataStore.SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
 begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
@@ -1678,12 +1736,20 @@ begin
     {$ENDIF}
     if resource.ResourceType = frtNamingSystem then
       FNamingSystems.AddOrSetValue(inttostr(key), TFHIRNamingSystem(resource).Link);
+    if not reload and (resource.ResourceType = frtObservation) then
+      StoreObservation(conn, key);
   finally
     FLock.Unlock;
   end;
 end;
 
-procedure TFHIRDataStore.DropResource(key, vkey: integer; id: string; resource: String; indexer: TFhirIndexManager);
+procedure TFHIRDataStore.StoreObservation(conn: TKDBConnection; key: integer);
+begin
+  inc(FLastObservationQueueKey);
+  conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 1)');
+end;
+
+procedure TFHIRDataStore.DropResource(key, vkey: integer; id: string; resource: String; indexer: TFhirIndexManager; conn: TKDBConnection);
 var
   i: integer;
   aType : TFhirResourceType;
@@ -1706,6 +1772,8 @@ begin
     finally
       FLock.Unlock;
     end;
+    if (aType = frtObservation) then
+      UnstoreObservation(conn, key);
   end;
 end;
 
@@ -1769,6 +1837,218 @@ begin
     end;
   finally
     request.free;
+  end;
+end;
+
+procedure TFHIRDataStore.ProcessObservation(conn: TKDBConnection; key: integer);
+var
+  rk : integer;
+  deleted : boolean;
+  obs : TFHIRObservation;
+  cmp : TFhirObservationComponent;
+  cc : TFHIRCodeableConcept;
+  c, c1 : TFHIRCoding;
+  subj, concept, subConcept : integer;
+  dt, dtMin, dtMax : TDateTime;
+begin
+  conn.sql := 'Select ResourceKey, Status from ObservationQueue where ObservationQueueKey = '+inttostr(key);
+  conn.prepare;
+  conn.Execute;
+  conn.FetchNext;
+  rk := conn.ColIntegerByName['ResourceKey'];
+  deleted := conn.ColIntegerByName['Status'] = 0;
+  conn.Terminate;
+  conn.ExecSQL('Delete from Observations where ResourceKey = '+inttostr(rk));
+  if not deleted then
+  begin
+    obs := loadResource(conn, rk) as TFHIRObservation;
+    try
+      if (obs.subject <> nil) and (obs.subject.reference <> '') and not isAbsoluteUrl(obs.subject.reference) and
+        (obs.effective <> nil) then
+      begin
+        subj := resolveReference(conn, obs.subject.reference);
+        if (subj <> 0) then
+        begin
+          for c in obs.code.codingList do
+          begin
+            concept := resolveConcept(conn, c);
+            if (concept <> 0) then
+            begin
+              if obs.effective is TFHIRDateTime then
+              begin
+                dt := (obs.effective as TFHIRDateTime).value.AsUTCDateTime;
+                dtMin := (obs.effective as TFHIRDateTime).value.AsUTCDateTimeMin;
+                dtMax := (obs.effective as TFHIRDateTime).value.AsUTCDateTimeMax;
+              end
+              else
+              begin
+                dt := 0;
+                dtMin := (obs.effective as TFHIRPeriod).start.AsUTCDateTimeMin;
+                dtMax := (obs.effective as TFHIRPeriod).end_.AsUTCDateTimeMax;
+              end;
+              if (obs.value <> nil) then
+                ProcessObservationValue(conn, rk, subj, concept, 0, dt, dtMin, dtMax, obs.value)
+              else if (obs.dataAbsentReason <> nil) then
+                ProcessObservationValue(conn, rk, subj, concept, 0, dt, dtMin, dtMax, obs.dataAbsentReason);
+              for cmp in obs.componentList do
+                for c1 in cmp.code.codingList do
+                begin
+                  subConcept := resolveConcept(conn, c1);
+                  if (subConcept <> 0) then
+                    if (cmp.value <> nil) then
+                      ProcessObservationValue(conn, rk, subj, concept, subConcept, dt, dtMin, dtMax, cmp.value)
+                    else if (cmp.dataAbsentReason <> nil) then
+                      ProcessObservationValue(conn, rk, subj, concept, subConcept, dt, dtMin, dtMax, cmp.dataAbsentReason);
+              end;
+            end;
+          end;
+        end;
+      end;
+
+//             ' ObservationKey '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  // internal primary key
+//       ' ResourceKey    '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource this came from
+//       ' SubjectKey     '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // id of resource this observation is about
+//       ' ConceptKey     '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // observation.code
+//       ' SubConceptKey  '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+      // observation.code
+//       ' DateTime       '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+        // observation.effectiveTime Stated (null = range)
+//       ' DateTimeMin    '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // observation.effectiveTime Min
+//       ' DateTimeMax    '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // observation.effectiveTime Max
+//       ' Value          '+DBFloatType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+                 // stated value (if available)
+//       ' ValueUnit      '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+             // stated units (if available)
+//       ' Canonical      '+DBFloatType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+             // canonical value (if units)
+//       ' CanonicalUnit  '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+         // canonical units (if canonical value)
+//       ' ValueConcept   '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+          // if observation is a concept (or a data missing value)
+
+    finally
+      obs.Free;
+    end;
+  end;
+end;
+
+procedure TFHIRDataStore.ProcessObservations;
+var
+  conn : TKDBConnection;
+  key : integer;
+  cutoff : TDateTime;
+begin
+  cutoff := now + (DATETIME_MINUTE_ONE / 2);
+  repeat
+    conn := FDB.GetConnection('Observations');
+    try
+      key := conn.CountSQL('Select min(ObservationQueueKey) from ObservationQueue');
+      if key > 0 then
+      begin
+        processObservation(conn, key);
+        conn.ExecSQL('Delete from ObservationQueue where ObservationQueueKey = '+inttostr(key));
+      end;
+      conn.release;
+    except
+      on e : exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
+    end;
+  until (key = 0) or (now > cutoff);
+end;
+
+procedure TFHIRDataStore.ProcessObservationValue(conn: TKDBConnection; key, subj, concept, subconcept: integer; dt, dtMin, dtMax: TDateTime; value: TFHIRType);
+begin
+  if value is TFHIRQuantity then
+    ProcessObservationValueQty(conn, key, subj, concept, subconcept, dt, dtMin, dtMax, value as TFhirQuantity)
+  else if value is TFhirCodeableConcept then
+    ProcessObservationValueCode(conn, key, subj, concept, subconcept, dt, dtMin, dtMax, value as TFhirCodeableConcept)
+end;
+
+procedure TFHIRDataStore.ProcessObservationValueCode(conn: TKDBConnection; key, subj, concept, subconcept: integer; dt, dtMin, dtMax: TDateTime; value: TFHIRCodeableConcept);
+var
+  c : TFHIRCoding;
+  ck : Integer;
+begin
+  for c in value.codingList do
+  begin
+    ck := resolveConcept(conn, c);
+    if (ck <> 0) then
+    begin
+      conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, ConceptKey, SubConceptKey, DateTime, DateTimeMin, DateTimeMax, ValueConcept) VALUES' +
+                   '                         (:key, :rkey, :subj, :concept, :subConcept, :dt, :dtMin, :dtMax, :val)';
+      conn.Prepare;
+      conn.BindInteger('key', nextObservationKey);
+      conn.BindInteger('rkey', key);
+      conn.BindInteger('subj', subj);
+      conn.BindInteger('concept', concept);
+      if subconcept = 0 then
+        conn.BindNull('subConcept')
+      else
+        conn.BindInteger('subConcept', key);
+      if dt = 0 then
+        conn.BindNull('dt')
+      else
+        conn.BindTimeStamp('dt', DateTimeToTS(dt));
+      conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
+      conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
+      conn.BindInteger('val', ck);
+      conn.Execute;
+      conn.Terminate;
+    end;
+  end;
+end;
+
+procedure TFHIRDataStore.ProcessObservationValueQty(conn: TKDBConnection; key, subj, concept, subconcept: integer; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantity);
+var
+  val, cval : TSmartDecimal;
+  upS, upC : TUcumPair;
+  vU, cU : Integer;
+begin
+  if (value.value <> '') and (value.code <> '') and (value.system <> '') then
+  begin
+    val := TSmartDecimal.ValueOf(value.value);
+    vu := resolveConcept(conn, value.system, value.code);
+    if (value.system = 'http://unitsofmeasure.org') then
+    begin
+      upS := TUcumPair.Create(val, value.code);
+      try
+        upC := FTerminologyServer.Ucum.getCanonicalForm(upS);
+        cval := upC.Value;
+        cu := resolveConcept(conn, 'http://unitsofmeasure.org', upC.UnitCode);
+      finally
+        upS.Free;
+        upC.Free;
+      end;
+    end
+    else
+      Cu := 0;
+    conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, ConceptKey, SubConceptKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit) VALUES' +
+                 '                         (:key, :rkey, :subj, :concept, :subConcept, :dt, :dtMin, :dtMax, :v, :vu, :c, :cu)';
+    conn.Prepare;
+    conn.BindInteger('key', nextObservationKey);
+    conn.BindInteger('rkey', key);
+    conn.BindInteger('subj', subj);
+    conn.BindInteger('concept', concept);
+    if subconcept = 0 then
+      conn.BindNull('subConcept')
+    else
+      conn.BindInteger('subConcept', key);
+    if dt = 0 then
+      conn.BindNull('dt')
+    else
+      conn.BindTimeStamp('dt', DateTimeToTS(dt));
+    conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
+    conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
+    conn.BindDouble('v', val.asDouble);
+    conn.BindInteger('vu', vu);
+    if (cu = 0) then
+    begin
+      conn.BindNull('c');
+      conn.BindNull('cu');
+    end
+    else
+    begin
+      conn.BindDouble('c', cval.asDouble);
+      conn.BindInteger('cu', cu);
+    end;
+    conn.Execute;
+    conn.Terminate;
   end;
 end;
 
@@ -1880,6 +2160,17 @@ begin
   try
     inc(FLastEntryKey);
     result := FLastEntryKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRDataStore.nextObservationKey: integer;
+begin
+  FLock.Lock('nextObservationKey');
+  try
+    inc(FLastObservationKey);
+    result := FLastObservationKey;
   finally
     FLock.Unlock;
   end;
@@ -2042,6 +2333,29 @@ begin
   end;
   FTotalResourceCount := i;
   FTerminologyServer.Loading := false;
+end;
+
+function TFHIRDataStore.loadResource(conn: TKDBConnection; key: integer): TFhirResource;
+var
+  parser: TFHIRParser;
+  mem: TBytes;
+begin
+  conn.SQL :=
+    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
+    + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
+    'Ids.ResourceTypeKey = Types.ResourceTypeKey and Ids.ResourceKey = '+inttostr(key)+' and Versions.Status < 2';
+  conn.Prepare;
+  conn.Execute;
+  if not conn.FetchNext then
+    raise Exception.Create('unable to find resource '+inttostr(key));
+  mem := conn.ColBlobByName['JsonContent'];
+  parser := MakeParser(Validator.Context, 'en', ffJson, mem, xppDrop);
+  try
+    result := parser.resource.Link;
+  finally
+    parser.Free;
+  end;
+  conn.terminate;
 end;
 
 function TFHIRDataStore.LookupCode(system, version, code: String): String;

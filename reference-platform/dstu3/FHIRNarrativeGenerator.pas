@@ -1798,9 +1798,9 @@ begin
         s.append(p.value);
         s.append(' ');
       end;
-      for p in name.familyList do
+      if name.family <> '' then
       begin
-        s.append(p.value);
+        s.append(name.family);
         s.append(' ');
       end;
     end;

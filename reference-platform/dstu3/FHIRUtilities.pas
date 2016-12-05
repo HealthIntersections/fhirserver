@@ -1419,8 +1419,7 @@ begin
     result := '';
     for i := 0 to name.givenList.Count - 1 do
       result := result + name.givenList[i].value+' ';
-    for i := 0 to name.familyList.Count - 1 do
-      result := result + name.familyList[i].value+' ';
+    result := result + name.family+' ';
   end;
 end;
 
@@ -3377,7 +3376,7 @@ begin
     TFHIRHumanName(element).use := NameUseUsual;
     TFHIRHumanName(element).text := 'prefix given family';
     TFHIRHumanName(element).givenList.add('%given%');
-    TFHIRHumanName(element).familyList.add('%family%');
+    TFHIRHumanName(element).family := '%family%';
     TFHIRHumanName(element).prefixList.add('%prefix%');
   end
   else if element.FhirType = 'Address' then

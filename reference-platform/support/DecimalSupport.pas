@@ -112,6 +112,7 @@ Type
     Function AsInt64 : Int64;
     Property AsScientific : String read GetValueScientific;
     Property AsDecimal : String read GetValuedecimal;
+    function AsDouble : Double;
 
     // properties
     Function IsZero : Boolean;
@@ -1090,6 +1091,11 @@ begin
   if r > m then
     raise exception.create('Unable to represent '+AsString+' as an unsigned 4 byte number');
   result := r;
+end;
+
+function TSmartDecimalHelper.AsDouble: Double;
+begin
+  result := StrToFloat(AsScientific);
 end;
 
 function TSmartDecimalHelper.AsInt64: Int64;

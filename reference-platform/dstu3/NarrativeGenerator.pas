@@ -1019,9 +1019,9 @@ begin
         s.append(v.givenList[i].Value);
         s.append(' ');
       end;
-      for i := 0 to v.familyList.Count - 1 do
+      if v.family <> '' then
       begin
-        s.append(v.familyList[i].Value);
+        s.append(v.family);
         s.append(' ');
       end;
     end;

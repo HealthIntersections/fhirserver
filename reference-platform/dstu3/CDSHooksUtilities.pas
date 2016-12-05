@@ -1229,6 +1229,7 @@ begin
           FClient := TFhirClient.Create(nil, server.fhirEndpoint, true);
           try
             FClient.timeout := 15000;
+            FClient.allowR2 := true;
             FClient.smartToken := token.link;
             pin := Frequest.AsParams;
             try

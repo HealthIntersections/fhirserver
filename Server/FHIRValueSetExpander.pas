@@ -45,9 +45,10 @@ uses
 
 const
   UPPER_LIMIT_NO_TEXT = 10000;
-  UPPER_LIMIT_TEXT = 1000;
+  UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
 
-  // won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
+  FHIR_VERSION_CANONICAL_SPLIT = {$IFDEF FHIR2} '?version=' {$ELSE} '|' {$ENDIF};
+
 
 Type
   TFHIRValueSetExpander = class (TAdvObject)
@@ -358,7 +359,7 @@ begin
   begin
     param := params.Append;
     param.name := 'version';
-    param.value := TFHIRUri.Create(source.system+'?version='+source.version);
+    param.value := TFHIRUri.Create(source.system+FHIR_VERSION_CANONICAL_SPLIT+source.version);
   end;
   for i := 0 to defines.count - 1 do
   begin

@@ -168,7 +168,7 @@ Type
     procedure loadQueue(conn : TKDBConnection);
     procedure SeeResource(key, vkey : Integer; id : String; created : boolean; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
     procedure DropResource(key, vkey : Integer);
-    procedure Process; // spend up to a minute working on subscriptions
+    procedure Process; // spend up to 30 seconds working on subscriptions
     procedure HandleWebSocket(connection : TIdWebSocket);
 
     Property Database : TKDBManager read FDatabase write FDatabase;
@@ -685,7 +685,7 @@ begin
   if EmptyQueue then
     exit;
   try
-    finish := now + DATETIME_MINUTE_ONE;
+    finish := now + (DATETIME_MINUTE_ONE / 2);
     repeat
       conn := FDatabase.GetConnection('process subscription');
       try

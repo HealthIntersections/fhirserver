@@ -3297,12 +3297,13 @@ begin
   parts := TAdvList<TFHIRMMElement>.Create();
   try
     focus.getNamedChildren('family', parts);
-    if (rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, parts.count = fixed.familyList.count, 'Expected ' + inttostr(fixed.familyList.count) + ' but found ' +
-      inttostr(parts.count) + ' family elements')) then
+    if fixed.family <> '' then
     begin
-      for i := 0 to parts.count - 1 do
-        checkFixedValue(ctxt, path + '.family', parts[i], fixed.familyList[i], 'family');
-    end;
+      if rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, parts.count.Size = 1, 'Expected a family name, but found none') then
+        checkFixedValue(ctxt, path + '.family', parts[0], fixed.familyElement, 'family');
+    end
+    else
+      rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, parts.count.Size = 0, 'Expected no family name, but found one');
     focus.getNamedChildren('given', parts);
     if (rule(ctxt, IssueTypeVALUE, focus.locStart, focus.locEnd, path, parts.count = fixed.GivenList.count, 'Expected ' + inttostr(fixed.GivenList.count) + ' but found ' +
       inttostr(parts.count) + ' given elements')) then

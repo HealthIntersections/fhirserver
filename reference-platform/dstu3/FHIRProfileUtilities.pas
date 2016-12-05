@@ -253,6 +253,7 @@ var
   c : TFHIRCoding;
   s : TFHIRString;
   cc : TFhirElementDefinitionConstraint;
+  ex : TFhirElementDefinitionExample;
 begin
   result := profile.Clone;
   try
@@ -282,8 +283,8 @@ begin
       result.Fixed := usage.Fixed;
     if (usage.PatternElement <> nil) then
       result.Pattern := usage.Pattern;
-    if (usage.ExampleElement <> nil) then
-      result.Example := usage.Example;
+    for ex in usage.exampleList do
+      result.ExampleList.add(ex.clone);
     if (usage.MinValueElement <> nil) then
       result.MinValue := usage.MinValue;
     if (usage.MaxValueElement <> nil) then
@@ -754,8 +755,8 @@ begin
                 item.setProperty(prop.Name, ed.pattern.link)
               else if (ed.defaultValue <> nil) then
                 item.setProperty(prop.Name, ed.defaultValue.link)
-              else if (ed.example <> nil) then
-                item.setProperty(prop.Name, ed.example.link)
+              else if (ed.exampleList.count > 0) then
+                item.setProperty(prop.Name, ed.exampleList[0].link)
               else if (wantGenerate(prop.name, ed.path) or (ed.min <> '0')) then
               begin
                 case ed.type_List.Count of
@@ -1124,13 +1125,14 @@ end;
 procedure TProfileUtilities.updateFromDefinition(dest, source : TFhirElementDefinition; pn : String; trimDifferential : boolean; purl :  String);
 var
   base, derived : TFhirElementDefinition;
-  isExtension, ok : boolean;
+  isExtension, ok, found : boolean;
   s : TFHIRString;
   expBase, expDerived, vsBase, vsDerived: TFHIRValueSet;
   ts, td : TFhirElementDefinitionType;
   b : TStringList;
   ms, md : TFhirElementDefinitionMapping;
   cs : TFhirElementDefinitionConstraint;
+  ex, exS : TFhirElementDefinitionExample;
 
 begin
   // we start with a clone of the base profile ('dest') and we copy from the profile ('source')
@@ -1268,14 +1270,18 @@ begin
         derived.pattern.Tags[DERIVATION_EQUALS] := 'true';
     end;
 
-    if (derived.Example <> nil) then
+    for ex in derived.exampleList do
     begin
-      if (not compareDeep(derived.example, base.example, false)) then
-        base.example := derived.example.clone()
+      found := false;
+      for exS in base.exampleList do
+        if (compareDeep(ex, exS, false)) then
+            found := true;
+      if (not found) then
+        base.exampleList.add(ex.clone())
       else if (trimDifferential) then
-        derived.example := nil
+        derived.exampleList.DeleteByReference(ex)
       else
-        derived.example.Tags[DERIVATION_EQUALS] := 'true';
+        ex.Tags[DERIVATION_EQUALS] := 'true';
     end;
 
     if (derived.MaxLengthElement <> nil) then

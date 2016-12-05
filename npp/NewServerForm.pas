@@ -128,6 +128,7 @@ begin
     client := TFhirClient.Create(nil, edtServer.text, true);
     try
       client.timeout := 5000;
+      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
@@ -137,6 +138,7 @@ begin
     client := TFhirClient.Create(nil, edtServer.text, false);
     try
       client.timeout := 5000;
+      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
@@ -194,6 +196,10 @@ begin
   if FCapabilityStatement.formatList.hasCode('application/json+fhir') then
     cbxFormat.ItemIndex := 2
   else if FCapabilityStatement.formatList.hasCode('application/xml+fhir') then
+    cbxFormat.ItemIndex := 1
+  else if FCapabilityStatement.formatList.hasCode('application/fhir+json') then
+    cbxFormat.ItemIndex := 2
+  else if FCapabilityStatement.formatList.hasCode('application/fhir+xml') then
     cbxFormat.ItemIndex := 1
   else if FCapabilityStatement.formatList.hasCode('json') then
     cbxFormat.ItemIndex := 2

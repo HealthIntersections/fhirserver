@@ -759,10 +759,10 @@ begin
     types := [SearchParamTypeString, SearchParamTypeToken, SearchParamTypeDate, SearchParamTypeReference, SearchParamTypeUri];
   if not (ndx.SearchType in types) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing string');
-  if ndx.SearchType = SearchParamTypeString then
-    value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)))
-  else if (length(value) > INDEX_ENTRY_LENGTH) then
-     raise exception.create('string too long for indexing: '+value+ ' ('+inttostr(length(value))+' chars)');
+//  if ndx.SearchType = SearchParamTypeString then
+    value := lowercase(RemoveAccents(copy(value, 1, INDEX_ENTRY_LENGTH)));
+//  else if (length(value) > INDEX_ENTRY_LENGTH) then
+//     raise exception.create('string too long for indexing: '+value+ ' ('+inttostr(length(value))+' chars)');
   FEntries.add(key, parent, ndx, 0, value, '', 0, frtNull, ndx.SearchType);
 end;
 
@@ -904,7 +904,9 @@ begin
             else
               work := transform(match, ndx.mapping);
             try
-              case ndx.Usage of
+              if ndx.FSearchType = SearchParamTypeComposite then
+                // ignore for now
+              else case ndx.Usage of
                 SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
                 SearchXpathUsageNormal:
                   begin
@@ -1474,14 +1476,23 @@ end;
 procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirHumanName; name, phoneticName: String);
 var
   i : integer;
+  s : String;
+  n : TFhirString;
 begin
   if (value = nil) then
     exit;
   if (name <> '') then
   begin
     index(aType, key, parent, value.text, name);
-    for i := 0 to value.familyList.count - 1 do
-      index(aType, key, parent, value.familyList[i], name);
+    {$IFDEF FHIR2}
+    for n in value.familyList do
+      for s in n.value.Split([' ', '-']) do
+        index(aType, key, parent, s, name);
+    {$ELSE}
+    if value.family <> '' then
+      for s in value.family.Split([' ', '-']) do
+        index(aType, key, parent, s, name);
+    {$ENDIF}
     for i := 0 to value.givenList.count - 1 do
       index(aType, key, parent, value.givenList[i], name);
     for i := 0 to value.prefixList.count - 1 do
@@ -1492,8 +1503,15 @@ begin
 
   if phoneticName <> '' then
   begin
-    for i := 0 to value.familyList.count - 1 do
-      index(aType, key, parent, EncodeNYSIIS(value.familyList[i].value), phoneticName);
+    {$IFDEF FHIR2}
+    for n in value.familyList do
+      for s in n.value.Split([' ', '-']) do
+        index(aType, key, parent, EncodeNYSIIS(s), phoneticName);
+    {$ELSE}
+    if value.family <> '' then
+      for s in value.family.Split([' ', '-']) do
+        index(aType, key, parent, EncodeNYSIIS(s), phoneticName);
+    {$ENDIF}
     for i := 0 to value.givenList.count - 1 do
       index(aType, key, parent, EncodeNYSIIS(value.givenList[i].value), phoneticName);
     for i := 0 to value.prefixList.count - 1 do

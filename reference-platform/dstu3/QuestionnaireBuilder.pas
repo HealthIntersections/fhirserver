@@ -310,7 +310,8 @@ begin
   begin
     // no identifier - this is transient
     FQuestionnaire.xmlId := nextId('qs');
-    FAnswers.questionnaire := '#'+FQuestionnaire.xmlId;
+    FAnswers.questionnaire := TFHIRReference.Create;
+    FAnswers.questionnaire.reference := '#'+FQuestionnaire.xmlId;
     FAnswers.containedList.Add(FQuestionnaire.Link);
     FAnswers.status := QuestionnaireAnswersStatusInProgress;
     FAnswers.ItemList.Add(TFhirQuestionnaireResponseItem.Create);

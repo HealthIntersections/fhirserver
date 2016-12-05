@@ -604,6 +604,18 @@ type
     procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+
+  TFhirObservationStatsOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
   {$ENDIF}
 
 implementation
@@ -661,6 +673,7 @@ begin
   {$IFDEF FHIR3}
   FOperations.add(TFhirActivateOperation.create);
   FOperations.add(TFhirSubsumesOperation.create);
+  FOperations.add(TFhirObservationStatsOperation.create);
   {$ENDIF}
 end;
 
@@ -900,33 +913,6 @@ begin
     param.definition := url;
     param.documentation := d;
     param.type_ := t;
-    for a in tgts do
-      param.targetList.Append.value := a;
-    param.modifierList.Append.value := 'missing';
-    case t of
-      SearchParamTypeNumber: ; // no params
-      SearchParamTypeDate: ; // no params
-      SearchParamTypeString:
-        begin
-        param.modifierList.Append.value := 'exact';
-        param.modifierList.Append.value := 'contains';
-        end;
-      SearchParamTypeToken:
-        begin
-        param.modifierList.Append.value := 'text';
-        param.modifierList.Append.value := 'in';
-        param.modifierList.Append.value := 'not-in';
-        end;
-      SearchParamTypeReference:
-        param.modifierList.Append.value := 'type';
-      SearchParamTypeComposite: ; // nothing
-      SearchParamTypeQuantity: ; // no params
-      SearchParamTypeUri:
-        begin
-        param.modifierList.Append.value := 'above';
-        param.modifierList.Append.value := 'below';
-        end;
-    end;
     srch.add(param.link);
   finally
     param.free;
@@ -1089,7 +1075,8 @@ begin
 //                html.append('<br/>search</td><td><ul>');
               for i := 0 to FRepository.Indexes.Indexes.count - 1 do
                 if (FRepository.Indexes.Indexes[i].ResourceType = a) then
-                  addParam(res.searchParamList, html, FRepository.Indexes.Indexes[i].Name, FRepository.Indexes.Indexes[i].uri, FRepository.Indexes.Indexes[i].Description, FRepository.Indexes.Indexes[i].SearchType, FRepository.Indexes.Indexes[i].TargetTypes);
+                  if FRepository.Indexes.Indexes[i].Name <> '_query' then
+                    addParam(res.searchParamList, html, FRepository.Indexes.Indexes[i].Name, FRepository.Indexes.Indexes[i].uri, FRepository.Indexes.Indexes[i].Description, FRepository.Indexes.Indexes[i].SearchType, FRepository.Indexes.Indexes[i].TargetTypes);
 
 //              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
               addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
@@ -1427,7 +1414,7 @@ begin
         CommitTags(tags, key);
         FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
         CreateIndexer;
-        FRepository.DropResource(ResourceKey, key, request.Id, request.ResourceName, FIndexer);
+        FRepository.DropResource(ResourceKey, key, request.Id, request.ResourceName, FIndexer, FConnection);
         response.HTTPCode := 204;
         response.Message := GetFhirMessage('MSG_DELETED_DONE', lang);
         if request.resource <> nil then
@@ -6110,9 +6097,9 @@ begin
             vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
-          else if params.hasParameter('identifier') then
+          else if params.hasParameter('url') then
           begin
-            url := params.str['identifier'];
+            url := params.str['url'];
             if (url.startsWith('ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
@@ -6384,6 +6371,70 @@ begin
 end;
 
 function TFhirSubsumesOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+{ TFhirObservationStatsOperation }
+
+function TFhirObservationStatsOperation.Name: String;
+begin
+  result := 'stats';
+end;
+
+function TFhirObservationStatsOperation.owningResource: TFhirResourceType;
+begin
+  result := frtObservation;
+end;
+
+function TFhirObservationStatsOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtObservation];
+end;
+
+function TFhirObservationStatsOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  req : TFHIRStatsOpRequest;
+  resp : TFHIRStatsOpResponse;
+  resourceKey : integer;
+  cs : TFhirCodeSystem;
+  cacheId : string;
+  needSecure : boolean;
+begin
+  try
+    manager.NotFound(request, response);
+    req := TFHIRStatsOpRequest.create();
+    try
+      if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
+        req.load(request.Resource as TFHIRParameters)
+      else
+        req.load(request.Parameters);
+
+    finally
+      req.Free;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirObservationStatsOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Observation-Stats';
+end;
+
+function TFhirObservationStatsOperation.isWrite: boolean;
 begin
   result := false;
 end;
