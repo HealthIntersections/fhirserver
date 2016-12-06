@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-12-05T21:55:41+11:00
+// FHIR v1.8.0 generated 2016-12-05T23:49:31+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -876,11 +876,12 @@ Type
     spDiagnosticRequest_Eventdate, {@enum.value "event-date" spDiagnosticRequest_Eventdate When service should occur }
     spDiagnosticRequest_Filler, {@enum.value "filler" spDiagnosticRequest_Filler Desired performer for service }
     spDiagnosticRequest_Identifier, {@enum.value "identifier" spDiagnosticRequest_Identifier Business identifier for request/order }
+    spDiagnosticRequest_Intent, {@enum.value "intent" spDiagnosticRequest_Intent proposal | plan | original-order |reflex-order }
     spDiagnosticRequest_Patient, {@enum.value "patient" spDiagnosticRequest_Patient Individual the service is ordered for }
+    spDiagnosticRequest_Priority, {@enum.value "priority" spDiagnosticRequest_Priority routine | urgent | asap | stat }
     spDiagnosticRequest_Replaces, {@enum.value "replaces" spDiagnosticRequest_Replaces Request takes the place of referenced completed or terminated requests }
     spDiagnosticRequest_Requester, {@enum.value "requester" spDiagnosticRequest_Requester Who/what is requesting service? }
     spDiagnosticRequest_Requisition, {@enum.value "requisition" spDiagnosticRequest_Requisition Composite request this is part of }
-    spDiagnosticRequest_Stage, {@enum.value "stage" spDiagnosticRequest_Stage proposal | plan | original-order |reflex-order }
     spDiagnosticRequest_Status, {@enum.value "status" spDiagnosticRequest_Status entered-in-error | draft | active |suspended | completed? }
     spDiagnosticRequest_Subject); {@enum.value "subject" spDiagnosticRequest_Subject Individual the service is ordered for }
 
@@ -3230,7 +3231,7 @@ Const
   CODES_TSearchParamsDeviceUseRequest : Array[TSearchParamsDeviceUseRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author-date', 'based-on', 'code', 'definition', 'device', 'encounter', 'event-date', 'filler', 'identifier', 'patient', 'replaces', 'requester', 'requisition', 'stage', 'status', 'subject');
   CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'patient', 'subject');
   CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'date', 'diagnosis', 'encounter', 'identifier', 'image', 'issued', 'patient', 'performer', 'request', 'result', 'specimen', 'status', 'subject');
-  CODES_TSearchParamsDiagnosticRequest : Array[TSearchParamsDiagnosticRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author-date', 'based-on', 'code', 'definition', 'encounter', 'event-date', 'filler', 'identifier', 'patient', 'replaces', 'requester', 'requisition', 'stage', 'status', 'subject');
+  CODES_TSearchParamsDiagnosticRequest : Array[TSearchParamsDiagnosticRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author-date', 'based-on', 'code', 'definition', 'encounter', 'event-date', 'filler', 'identifier', 'intent', 'patient', 'priority', 'replaces', 'requester', 'requisition', 'status', 'subject');
   CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'content-ref', 'created', 'description', 'identifier', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
   CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authenticator', 'author', 'class', 'created', 'custodian', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'indexed', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
   CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'facility', 'identifier', 'organization', 'patient', 'provider');
@@ -3310,9 +3311,9 @@ Const
   CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
-  FHIR_GENERATED_VERSION = '1.7.0';
+  FHIR_GENERATED_VERSION = '1.8.0';
 
-  FHIR_GENERATED_DATE = '2016-12-05T21:55:41+11:00';
+  FHIR_GENERATED_DATE = '2016-12-05T23:49:31+11:00';
 
 
 

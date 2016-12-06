@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-12-05T21:55:41+11:00
+// FHIR v1.8.0 generated 2016-12-05T23:49:31+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -1018,7 +1018,7 @@ begin
   indexes.add('DiagnosticRequest', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('DiagnosticRequest', 'author-date', 'When the request transitioned to being actionable', SearchParamTypeDATE, [], 'DiagnosticRequest.authored', SearchXpathUsageNormal);
+  indexes.add('DiagnosticRequest', 'author-date', 'When the request transitioned to being actionable', SearchParamTypeDATE, [], 'DiagnosticRequest.authoredOn', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'based-on', 'Plan/proposal/order fulfilled by this request', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DiagnosticRequest.basedOn', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'code', 'What?s being requested/ordered', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.condition.code | AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Procedure.code | List.code | DiagnosticRequest.code | DeviceUseRequest.device.as(CodeableConcept) | Observation.code | Observation.component.code |'+' DiagnosticReport.code | Condition.code', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'definition', 'Protocol or definition followed by this request', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DiagnosticRequest.definition', SearchXpathUsageNormal);
@@ -1026,11 +1026,12 @@ begin
   indexes.add('DiagnosticRequest', 'event-date', 'When service should occur', SearchParamTypeDATE, [], 'DiagnosticRequest.occurrence.as(DateTime) | DiagnosticRequest.occurrence.as(Period)', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'filler', 'Desired performer for service', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'DiagnosticRequest.performer', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'identifier', 'Business identifier for request/order', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.identifier | List.identifier | DiagnosticRequest.identifier | Immunization.id'+'entifier | VisionPrescription.identifier | ProcedureRequest.identifier | DeviceUseRequest.identifier | Observation.identifier | DiagnosticReport.identifier | NutritionRequest.identifier | Condition.identifier | Composition.identifier | DetectedIssue.'+'identifier | SupplyDelivery.identifier', SearchXpathUsageNormal);
+  indexes.add('DiagnosticRequest', 'intent', 'proposal | plan | original-order |reflex-order', SearchParamTypeTOKEN, [], 'DiagnosticRequest.intent', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'patient', 'Individual the service is ordered for', SearchParamTypeREFERENCE, ['Patient'], 'ReferralRequest.patient | DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | SupplyRequest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory'+'.patient | Encounter.patient | DeviceUseStatement.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeOfCare.patient | Procedure.subject | List.subject | DiagnosticRequest.subject | Immunization.patient | VisionPrescription.patient | Pro'+'cedureRequest.subject | DeviceUseRequest.subject | Flag.subject | Observation.subject | DiagnosticReport.subject | NutritionRequest.patient | Condition.subject | Composition.subject | DetectedIssue.patient | SupplyDelivery.patient | ClinicalImpressio'+'n.subject', SearchXpathUsageNormal);
+  indexes.add('DiagnosticRequest', 'priority', 'routine | urgent | asap | stat', SearchParamTypeTOKEN, [], 'DiagnosticRequest.priority', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'replaces', 'Request takes the place of referenced completed or terminated requests', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DiagnosticRequest.replaces', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'requester', 'Who/what is requesting service?', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device'], 'DiagnosticRequest.requester', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'requisition', 'Composite request this is part of', SearchParamTypeTOKEN, [], 'DiagnosticRequest.requisition', SearchXpathUsageNormal);
-  indexes.add('DiagnosticRequest', 'stage', 'proposal | plan | original-order |reflex-order', SearchParamTypeTOKEN, [], 'DiagnosticRequest.stage', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'status', 'entered-in-error | draft | active |suspended | completed?', SearchParamTypeTOKEN, [], 'DiagnosticRequest.status', SearchXpathUsageNormal);
   indexes.add('DiagnosticRequest', 'subject', 'Individual the service is ordered for', SearchParamTypeREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'DiagnosticRequest.subject', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'DiagnosticRequest', ['subject', 'filler']);

@@ -46,6 +46,7 @@ const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
   OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
   IMPL_COOKIE_PREFIX = 'implicit-';
+  MAXSQLDATE = 365 * 3000;
 
 Type
   TQuestionnaireCache = class(TAdvObject)
@@ -1883,8 +1884,14 @@ begin
               else
               begin
                 dt := 0;
-                dtMin := (obs.effective as TFHIRPeriod).start.AsUTCDateTimeMin;
-                dtMax := (obs.effective as TFHIRPeriod).end_.AsUTCDateTimeMax;
+                if (obs.effective as TFHIRPeriod).start = nil then
+                  dtMin := 0
+                else
+                  dtMin := (obs.effective as TFHIRPeriod).start.AsUTCDateTimeMin;
+                if (obs.effective as TFHIRPeriod).end_ = nil then
+                  dtMax := MAXSQLDATE
+                else
+                  dtMax := (obs.effective as TFHIRPeriod).end_.AsUTCDateTimeMax;
               end;
               if (obs.value <> nil) then
                 ProcessObservationValue(conn, rk, subj, concept, 0, dt, dtMin, dtMax, obs.value)
@@ -1980,7 +1987,7 @@ begin
       if subconcept = 0 then
         conn.BindNull('subConcept')
       else
-        conn.BindInteger('subConcept', key);
+        conn.BindInteger('subConcept', subconcept);
       if dt = 0 then
         conn.BindNull('dt')
       else
@@ -2028,7 +2035,7 @@ begin
     if subconcept = 0 then
       conn.BindNull('subConcept')
     else
-      conn.BindInteger('subConcept', key);
+      conn.BindInteger('subConcept', subconcept);
     if dt = 0 then
       conn.BindNull('dt')
     else

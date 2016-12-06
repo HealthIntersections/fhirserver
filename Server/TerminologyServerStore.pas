@@ -14,11 +14,8 @@ uses
 
 const
   URI_VERSION_BREAK = '#';
+
 Type
-
-  ETerminologySetup = class (Exception);
-  ETerminologyError = class (Exception);
-
   TConceptAdornment = class (TAdvStringList)
   private
     FParent: TFHIRCodeSystemConcept;

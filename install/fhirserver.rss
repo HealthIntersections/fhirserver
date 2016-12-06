@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.99 2016-11-21</title>
+		<item><title>FHIRServer release 1.0.100 2016-12-05</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.100.exe</link>
+			<description>2016-12-05 (v1.0.100): UPdate to STU3 QA candidate</description>
+		</item>
+<item><title>FHIRServer release 1.0.99 2016-11-21</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.99.exe</link>
 			<description>2016-11-21 (v1.0.99): Fix bug in DSTU2 server</description>
 		</item>
-<item><title>FHIRServer release 1.0.98 2016-11-17</title>
+		<item><title>FHIRServer release 1.0.98 2016-11-17</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.98.exe</link>
 			<description>2016-11-17 (v1.0.98): fix bug in SCT implicit value sets</description>
 		</item>

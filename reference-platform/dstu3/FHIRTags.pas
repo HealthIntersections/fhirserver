@@ -69,6 +69,7 @@ type
     // operational stuff to do with transaction scope management
     property TransactionId : String read FTransactionId write FTransactionId;
     property ConfirmedStored : boolean read FConfirmedStored write FConfirmedStored;
+    function describe : String; override;
   end;
 
   TFHIRTagList = class (TAdvObject)
@@ -93,6 +94,7 @@ type
     function addTag(key : integer; kind : TFHIRTagCategory; system, code, display : String) : TFHIRTag;
     procedure add(tag : TFHIRTag);
     function asHeader : String;
+    function describe : String;
   end;
 
 implementation
@@ -101,6 +103,11 @@ uses
   FHIRUtilities;
 
 { TFHIRTag }
+
+function TFHIRTag.describe: String;
+begin
+  result := inttostr(ord(FCategory))+':'+system+'::'+code;
+end;
 
 function TFHIRTag.Link: TFHIRTag;
 begin
@@ -126,6 +133,15 @@ begin
       tcSecurity: meta.securityList.RemoveCoding(t.system, t.code);
       tcProfile: meta.profileList.removeUri(t.code);
     end;
+end;
+
+function TFHIRTagList.describe: String;
+var
+  item : TFHIRTag;
+begin
+  result := '';
+  for item in FList do
+    result := result +', '+item.describe;
 end;
 
 Destructor TFHIRTagList.Destroy;
@@ -166,7 +182,6 @@ end;
 
 function TFHIRTagList.asHeader: String;
 begin
-  raise Exception.Create('Not Done Yet');
 end;
 
 function TFHIRTagList.GetCount: Integer;

@@ -363,7 +363,7 @@ type
     Function PerformQuery(path : String):TFHIRBaseList;
     function hasType(t : String) : boolean; overload;
     function hasType(tl : Array of String) : boolean; overload;
-    function describe : String;
+    function describe : String; virtual;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
     function toString : String; override;
   published

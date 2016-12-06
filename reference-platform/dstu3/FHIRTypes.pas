@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-12-05T21:55:41+11:00
+// FHIR v1.8.0 generated 2016-12-05T23:49:31+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -1377,9 +1377,10 @@ Type
     RequestStatusDraft, {@enum.value RequestStatusDraft  }
     RequestStatusActive, {@enum.value RequestStatusActive  }
     RequestStatusSuspended, {@enum.value RequestStatusSuspended  }
+    RequestStatusCancelled, {@enum.value RequestStatusCancelled  }
     RequestStatusCompleted, {@enum.value RequestStatusCompleted  }
     RequestStatusEnteredInError, {@enum.value RequestStatusEnteredInError  }
-    RequestStatusCancelled); {@enum.value RequestStatusCancelled  }
+    RequestStatusUnknown); {@enum.value RequestStatusUnknown  }
   TFhirRequestStatusEnumList = set of TFhirRequestStatusEnum;
 
   {@Enum TFhirDiagnosticReportStatusEnum
@@ -1395,6 +1396,32 @@ Type
     DiagnosticReportStatusCancelled, {@enum.value DiagnosticReportStatusCancelled  }
     DiagnosticReportStatusEnteredInError); {@enum.value DiagnosticReportStatusEnteredInError  }
   TFhirDiagnosticReportStatusEnumList = set of TFhirDiagnosticReportStatusEnum;
+
+  {@Enum TFhirRequestIntentEnum
+    The kind of diagnostic request from http://hl7.org/fhir/ValueSet/request-intent
+  }
+  TFhirRequestIntentEnum = (
+    RequestIntentNull,  {@enum.value RequestIntentNull Value is missing from Instance }
+    RequestIntentProposal, {@enum.value RequestIntentProposal  }
+    RequestIntentPlan, {@enum.value RequestIntentPlan  }
+    RequestIntentOrder, {@enum.value RequestIntentOrder  }
+    RequestIntentOriginalOrder, {@enum.value RequestIntentOriginalOrder  }
+    RequestIntentReflexOrder, {@enum.value RequestIntentReflexOrder  }
+    RequestIntentFillerOrder, {@enum.value RequestIntentFillerOrder  }
+    RequestIntentInstanceOrder, {@enum.value RequestIntentInstanceOrder  }
+    RequestIntentOption); {@enum.value RequestIntentOption  }
+  TFhirRequestIntentEnumList = set of TFhirRequestIntentEnum;
+
+  {@Enum TFhirRequestPriorityEnum
+    Identifies the level of importance to be assigned to actioning the request from http://hl7.org/fhir/ValueSet/request-priority
+  }
+  TFhirRequestPriorityEnum = (
+    RequestPriorityNull,  {@enum.value RequestPriorityNull Value is missing from Instance }
+    RequestPriorityRoutine, {@enum.value RequestPriorityRoutine  }
+    RequestPriorityUrgent, {@enum.value RequestPriorityUrgent  }
+    RequestPriorityStat, {@enum.value RequestPriorityStat  }
+    RequestPriorityAsap); {@enum.value RequestPriorityAsap  }
+  TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
 
   {@Enum TFhirDocumentReferenceStatusEnum
     The status of the document reference. from http://hl7.org/fhir/ValueSet/document-reference-status
@@ -2108,7 +2135,6 @@ Type
     ItemTypeNull,  {@enum.value ItemTypeNull Value is missing from Instance }
     ItemTypeGroup, {@enum.value ItemTypeGroup  }
     ItemTypeDisplay, {@enum.value ItemTypeDisplay  }
-    ItemTypeQuestion, {@enum.value ItemTypeQuestion  }
     ItemTypeBoolean, {@enum.value ItemTypeBoolean  }
     ItemTypeDecimal, {@enum.value ItemTypeDecimal  }
     ItemTypeInteger, {@enum.value ItemTypeInteger  }
@@ -2430,32 +2456,6 @@ Type
     TaskStatusCompleted, {@enum.value TaskStatusCompleted  }
     TaskStatusEnteredInError); {@enum.value TaskStatusEnteredInError  }
   TFhirTaskStatusEnumList = set of TFhirTaskStatusEnum;
-
-  {@Enum TFhirRequestIntentEnum
-    Distinguishes whether the task is a proposal, plan or full order from http://hl7.org/fhir/ValueSet/request-intent
-  }
-  TFhirRequestIntentEnum = (
-    RequestIntentNull,  {@enum.value RequestIntentNull Value is missing from Instance }
-    RequestIntentProposal, {@enum.value RequestIntentProposal  }
-    RequestIntentPlan, {@enum.value RequestIntentPlan  }
-    RequestIntentOrder, {@enum.value RequestIntentOrder  }
-    RequestIntentOriginalOrder, {@enum.value RequestIntentOriginalOrder  }
-    RequestIntentReflexOrder, {@enum.value RequestIntentReflexOrder  }
-    RequestIntentFillerOrder, {@enum.value RequestIntentFillerOrder  }
-    RequestIntentInstanceOrder, {@enum.value RequestIntentInstanceOrder  }
-    RequestIntentOption); {@enum.value RequestIntentOption  }
-  TFhirRequestIntentEnumList = set of TFhirRequestIntentEnum;
-
-  {@Enum TFhirRequestPriorityEnum
-    The task's priority from http://hl7.org/fhir/ValueSet/request-priority
-  }
-  TFhirRequestPriorityEnum = (
-    RequestPriorityNull,  {@enum.value RequestPriorityNull Value is missing from Instance }
-    RequestPriorityRoutine, {@enum.value RequestPriorityRoutine  }
-    RequestPriorityUrgent, {@enum.value RequestPriorityUrgent  }
-    RequestPriorityStat, {@enum.value RequestPriorityStat  }
-    RequestPriorityAsap); {@enum.value RequestPriorityAsap  }
-  TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
 
   {@Enum TFhirReportStatusCodesEnum
     The execution status of the TestReport. from http://hl7.org/fhir/ValueSet/report-status-codes
@@ -13194,10 +13194,14 @@ Const
   SYSTEMS_TFhirMetricCalibrationTypeEnum : Array[TFhirMetricCalibrationTypeEnum] of String = ('', 'http://hl7.org/fhir/metric-calibration-type', 'http://hl7.org/fhir/metric-calibration-type', 'http://hl7.org/fhir/metric-calibration-type', 'http://hl7.org/fhir/metric-calibration-type');
   CODES_TFhirMetricCalibrationStateEnum : Array[TFhirMetricCalibrationStateEnum] of String = ('', 'not-calibrated', 'calibration-required', 'calibrated', 'unspecified');
   SYSTEMS_TFhirMetricCalibrationStateEnum : Array[TFhirMetricCalibrationStateEnum] of String = ('', 'http://hl7.org/fhir/metric-calibration-state', 'http://hl7.org/fhir/metric-calibration-state', 'http://hl7.org/fhir/metric-calibration-state', 'http://hl7.org/fhir/metric-calibration-state');
-  CODES_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'draft', 'active', 'suspended', 'completed', 'entered-in-error', 'cancelled');
-  SYSTEMS_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status');
+  CODES_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'draft', 'active', 'suspended', 'cancelled', 'completed', 'entered-in-error', 'unknown');
+  SYSTEMS_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status');
   CODES_TFhirDiagnosticReportStatusEnum : Array[TFhirDiagnosticReportStatusEnum] of String = ('', 'registered', 'partial', 'final', 'corrected', 'appended', 'cancelled', 'entered-in-error');
   SYSTEMS_TFhirDiagnosticReportStatusEnum : Array[TFhirDiagnosticReportStatusEnum] of String = ('', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status', 'http://hl7.org/fhir/diagnostic-report-status');
+  CODES_TFhirRequestIntentEnum : Array[TFhirRequestIntentEnum] of String = ('', 'proposal', 'plan', 'order', 'original-order', 'reflex-order', 'filler-order', 'instance-order', 'option');
+  SYSTEMS_TFhirRequestIntentEnum : Array[TFhirRequestIntentEnum] of String = ('', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent');
+  CODES_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'routine', 'urgent', 'stat', 'asap');
+  SYSTEMS_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority');
   CODES_TFhirDocumentReferenceStatusEnum : Array[TFhirDocumentReferenceStatusEnum] of String = ('', 'current', 'superseded', 'entered-in-error');
   SYSTEMS_TFhirDocumentReferenceStatusEnum : Array[TFhirDocumentReferenceStatusEnum] of String = ('', 'http://hl7.org/fhir/document-reference-status', 'http://hl7.org/fhir/document-reference-status', 'http://hl7.org/fhir/document-reference-status');
   CODES_TFhirDocumentRelationshipTypeEnum : Array[TFhirDocumentRelationshipTypeEnum] of String = ('', 'replaces', 'transforms', 'signs', 'appends');
@@ -13317,8 +13321,8 @@ Const
   SYSTEMS_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role');
   CODES_TFhirQuestionnaireStatusEnum : Array[TFhirQuestionnaireStatusEnum] of String = ('', 'draft', 'published', 'retired');
   SYSTEMS_TFhirQuestionnaireStatusEnum : Array[TFhirQuestionnaireStatusEnum] of String = ('', 'http://hl7.org/fhir/questionnaire-status', 'http://hl7.org/fhir/questionnaire-status', 'http://hl7.org/fhir/questionnaire-status');
-  CODES_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'group', 'display', 'question', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'instant', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
-  SYSTEMS_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type');
+  CODES_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'group', 'display', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'instant', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
+  SYSTEMS_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type');
   CODES_TFhirQuestionnaireAnswersStatusEnum : Array[TFhirQuestionnaireAnswersStatusEnum] of String = ('', 'in-progress', 'completed', 'amended', 'entered-in-error');
   SYSTEMS_TFhirQuestionnaireAnswersStatusEnum : Array[TFhirQuestionnaireAnswersStatusEnum] of String = ('', 'http://hl7.org/fhir/questionnaire-answers-status', 'http://hl7.org/fhir/questionnaire-answers-status', 'http://hl7.org/fhir/questionnaire-answers-status', 'http://hl7.org/fhir/questionnaire-answers-status');
   CODES_TFhirReferralstatusEnum : Array[TFhirReferralstatusEnum] of String = ('', 'draft', 'active', 'cancelled', 'completed', 'entered-in-error');
@@ -13369,10 +13373,6 @@ Const
   SYSTEMS_TFhirSupplyrequestStatusEnum : Array[TFhirSupplyrequestStatusEnum] of String = ('', 'http://hl7.org/fhir/supplyrequest-status', 'http://hl7.org/fhir/supplyrequest-status', 'http://hl7.org/fhir/supplyrequest-status', 'http://hl7.org/fhir/supplyrequest-status');
   CODES_TFhirTaskStatusEnum : Array[TFhirTaskStatusEnum] of String = ('', 'draft', 'requested', 'received', 'accepted', 'rejected', 'ready', 'cancelled', 'in-progress', 'on-hold', 'failed', 'completed', 'entered-in-error');
   SYSTEMS_TFhirTaskStatusEnum : Array[TFhirTaskStatusEnum] of String = ('', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status', 'http://hl7.org/fhir/task-status');
-  CODES_TFhirRequestIntentEnum : Array[TFhirRequestIntentEnum] of String = ('', 'proposal', 'plan', 'order', 'original-order', 'reflex-order', 'filler-order', 'instance-order', 'option');
-  SYSTEMS_TFhirRequestIntentEnum : Array[TFhirRequestIntentEnum] of String = ('', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent', 'http://hl7.org/fhir/request-intent');
-  CODES_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'routine', 'urgent', 'stat', 'asap');
-  SYSTEMS_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority');
   CODES_TFhirReportStatusCodesEnum : Array[TFhirReportStatusCodesEnum] of String = ('', 'complete', 'pending', 'error');
   SYSTEMS_TFhirReportStatusCodesEnum : Array[TFhirReportStatusCodesEnum] of String = ('', 'http://hl7.org/fhir/report-status-codes', 'http://hl7.org/fhir/report-status-codes', 'http://hl7.org/fhir/report-status-codes');
   CODES_TFhirReportParticipantTypeEnum : Array[TFhirReportParticipantTypeEnum] of String = ('', 'test-engine', 'client', 'server');
@@ -13568,6 +13568,10 @@ Function TFhirRequestStatusEnumListAsInteger(aSet : TFhirRequestStatusEnumList) 
 Function IntegerAsTFhirRequestStatusEnumList(i : integer) : TFhirRequestStatusEnumList; overload;
 Function TFhirDiagnosticReportStatusEnumListAsInteger(aSet : TFhirDiagnosticReportStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirDiagnosticReportStatusEnumList(i : integer) : TFhirDiagnosticReportStatusEnumList; overload;
+Function TFhirRequestIntentEnumListAsInteger(aSet : TFhirRequestIntentEnumList) : Integer; overload;
+Function IntegerAsTFhirRequestIntentEnumList(i : integer) : TFhirRequestIntentEnumList; overload;
+Function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer; overload;
+Function IntegerAsTFhirRequestPriorityEnumList(i : integer) : TFhirRequestPriorityEnumList; overload;
 Function TFhirDocumentReferenceStatusEnumListAsInteger(aSet : TFhirDocumentReferenceStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirDocumentReferenceStatusEnumList(i : integer) : TFhirDocumentReferenceStatusEnumList; overload;
 Function TFhirDocumentRelationshipTypeEnumListAsInteger(aSet : TFhirDocumentRelationshipTypeEnumList) : Integer; overload;
@@ -13738,10 +13742,6 @@ Function TFhirSupplyrequestStatusEnumListAsInteger(aSet : TFhirSupplyrequestStat
 Function IntegerAsTFhirSupplyrequestStatusEnumList(i : integer) : TFhirSupplyrequestStatusEnumList; overload;
 Function TFhirTaskStatusEnumListAsInteger(aSet : TFhirTaskStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirTaskStatusEnumList(i : integer) : TFhirTaskStatusEnumList; overload;
-Function TFhirRequestIntentEnumListAsInteger(aSet : TFhirRequestIntentEnumList) : Integer; overload;
-Function IntegerAsTFhirRequestIntentEnumList(i : integer) : TFhirRequestIntentEnumList; overload;
-Function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer; overload;
-Function IntegerAsTFhirRequestPriorityEnumList(i : integer) : TFhirRequestPriorityEnumList; overload;
 Function TFhirReportStatusCodesEnumListAsInteger(aSet : TFhirReportStatusCodesEnumList) : Integer; overload;
 Function IntegerAsTFhirReportStatusCodesEnumList(i : integer) : TFhirReportStatusCodesEnumList; overload;
 Function TFhirReportParticipantTypeEnumListAsInteger(aSet : TFhirReportParticipantTypeEnumList) : Integer; overload;
@@ -34950,6 +34950,60 @@ begin
  end;
 
 
+function TFhirRequestIntentEnumListAsInteger(aSet : TFhirRequestIntentEnumList) : Integer;
+var
+  a : TFhirRequestIntentEnum;
+begin
+  result := 0;
+  for a := low(TFhirRequestIntentEnum) to high(TFhirRequestIntentEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirRequestIntentEnumList(i : Integer) : TFhirRequestIntentEnumList;
+var
+  aLoop : TFhirRequestIntentEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirRequestIntentEnum) to high(TFhirRequestIntentEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer;
+var
+  a : TFhirRequestPriorityEnum;
+begin
+  result := 0;
+  for a := low(TFhirRequestPriorityEnum) to high(TFhirRequestPriorityEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirRequestPriorityEnumList(i : Integer) : TFhirRequestPriorityEnumList;
+var
+  aLoop : TFhirRequestPriorityEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirRequestPriorityEnum) to high(TFhirRequestPriorityEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirDocumentReferenceStatusEnumListAsInteger(aSet : TFhirDocumentReferenceStatusEnumList) : Integer;
 var
   a : TFhirDocumentReferenceStatusEnum;
@@ -37237,60 +37291,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirTaskStatusEnum) to high(TFhirTaskStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirRequestIntentEnumListAsInteger(aSet : TFhirRequestIntentEnumList) : Integer;
-var
-  a : TFhirRequestIntentEnum;
-begin
-  result := 0;
-  for a := low(TFhirRequestIntentEnum) to high(TFhirRequestIntentEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirRequestIntentEnumList(i : Integer) : TFhirRequestIntentEnumList;
-var
-  aLoop : TFhirRequestIntentEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirRequestIntentEnum) to high(TFhirRequestIntentEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer;
-var
-  a : TFhirRequestPriorityEnum;
-begin
-  result := 0;
-  for a := low(TFhirRequestPriorityEnum) to high(TFhirRequestPriorityEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirRequestPriorityEnumList(i : Integer) : TFhirRequestPriorityEnumList;
-var
-  aLoop : TFhirRequestPriorityEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirRequestPriorityEnum) to high(TFhirRequestPriorityEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

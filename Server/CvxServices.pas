@@ -156,7 +156,7 @@ end;
 
 function TCvxServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 procedure TCvxServices.Displays(code : String; list : TStringList; lang : String);
@@ -251,12 +251,12 @@ end;
 
 function TCvxServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by Cvx'); // Cvx doesn't have formal subsumption property, so this is not used
+  raise ETerminologySetup.Create('locateIsA not supported by Cvx'); // Cvx doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -267,12 +267,12 @@ end;
 
 function TCvxServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.subsumesTest(codeA, codeB: String): String;
@@ -282,27 +282,27 @@ end;
 
 function TCvxServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 function TCvxServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 procedure TCvxServices.Close(ctxt: TCodeSystemProviderContext);
@@ -317,7 +317,7 @@ end;
 
 procedure TCvxServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  raise ETerminologySetup.Create('not done yet');
 end;
 
 { TCvxPrep }

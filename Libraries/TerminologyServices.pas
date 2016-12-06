@@ -10,6 +10,9 @@ uses
   YuStemmer;
 
 Type
+  ETerminologySetup = class (Exception);
+  ETerminologyError = class (Exception);
+
   TFhirFilterOperatorEnum = FHIRTypes.TFhirFilterOperatorEnum;
 
   TCodeSystemProviderContext = class (TAdvObject)

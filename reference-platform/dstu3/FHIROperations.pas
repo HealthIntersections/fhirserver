@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.7.0 generated 2016-12-05T21:55:41+11:00
+// FHIR v1.8.0 generated 2016-12-05T23:49:31+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1223,8 +1223,9 @@ Type
 
   TFHIRPopulatehtmlOpResponse = class (TFHIROperationResponse)
   private
-    FForm : String;
+    FForm : TFhirBinary;
     FIssues : TFhirOperationOutcome;
+    procedure SetForm(value : TFhirBinary);
     procedure SetIssues(value : TFhirOperationOutcome);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -1234,7 +1235,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property form : String read FForm write FForm;
+    property form : TFhirBinary read FForm write SetForm;
     property issues : TFhirOperationOutcome read FIssues write SetIssues;
   end;
 
@@ -1265,9 +1266,8 @@ Type
 
   TFHIRPopulatelinkOpResponse = class (TFHIROperationResponse)
   private
-    FLink_ : TFhirBinary;
+    FLink_ : String;
     FIssues : TFhirOperationOutcome;
-    procedure SetLink_(value : TFhirBinary);
     procedure SetIssues(value : TFhirOperationOutcome);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -1277,7 +1277,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property link_ : TFhirBinary read FLink_ write SetLink_;
+    property link_ : String read FLink_ write FLink_;
     property issues : TFhirOperationOutcome read FIssues write SetIssues;
   end;
 
@@ -5114,6 +5114,12 @@ begin
   result := StringArrayExists(['identifier', 'questionnaire', 'questionnaireRef', 'content', 'local'], name);
 end;
 
+procedure TFHIRPopulatehtmlOpResponse.SetForm(value : TFhirBinary);
+begin
+  FForm.free;
+  FForm := value;
+end;
+
 procedure TFHIRPopulatehtmlOpResponse.SetIssues(value : TFhirOperationOutcome);
 begin
   FIssues.free;
@@ -5127,19 +5133,19 @@ end;
 
 procedure TFHIRPopulatehtmlOpResponse.load(params : TFHIRParameters);
 begin
-  FForm := params.str['form'];
+  FForm := (params.res['form'] as TFhirBinary).Link;{ob.5a}
   FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
   loadExtensions(params);
 end;
 
 procedure TFHIRPopulatehtmlOpResponse.load(params : TParseMap);
 begin
-  FForm := params.getVar('form');
   loadExtensions(params);
 end;
 
 destructor TFHIRPopulatehtmlOpResponse.Destroy;
 begin
+  FForm.free;
   FIssues.free;
   inherited;
 end;
@@ -5148,8 +5154,8 @@ function TFHIRPopulatehtmlOpResponse.asParams : TFhirParameters;
 begin
   result := TFHIRParameters.create;
   try
-    if (FForm <> '') then
-      result.addParameter('form', TFHIRUri.create(FForm));{oz.5f}
+    if (FForm <> nil) then
+      result.addParameter('form', FForm.Link);{oz.5a}
     if (FIssues <> nil) then
       result.addParameter('issues', FIssues.Link);{oz.5a}
     writeExtensions(result);
@@ -5238,12 +5244,6 @@ begin
   result := StringArrayExists(['identifier', 'questionnaire', 'questionnaireRef', 'content', 'local'], name);
 end;
 
-procedure TFHIRPopulatelinkOpResponse.SetLink_(value : TFhirBinary);
-begin
-  FLink_.free;
-  FLink_ := value;
-end;
-
 procedure TFHIRPopulatelinkOpResponse.SetIssues(value : TFhirOperationOutcome);
 begin
   FIssues.free;
@@ -5257,19 +5257,19 @@ end;
 
 procedure TFHIRPopulatelinkOpResponse.load(params : TFHIRParameters);
 begin
-  FLink_ := (params.res['link'] as TFhirBinary).Link;{ob.5a}
+  FLink_ := params.str['link'];
   FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
   loadExtensions(params);
 end;
 
 procedure TFHIRPopulatelinkOpResponse.load(params : TParseMap);
 begin
+  FLink_ := params.getVar('link');
   loadExtensions(params);
 end;
 
 destructor TFHIRPopulatelinkOpResponse.Destroy;
 begin
-  FLink_.free;
   FIssues.free;
   inherited;
 end;
@@ -5278,8 +5278,8 @@ function TFHIRPopulatelinkOpResponse.asParams : TFhirParameters;
 begin
   result := TFHIRParameters.create;
   try
-    if (FLink_ <> nil) then
-      result.addParameter('link', FLink_.Link);{oz.5a}
+    if (FLink_ <> '') then
+      result.addParameter('link', TFHIRUri.create(FLink_));{oz.5f}
     if (FIssues <> nil) then
       result.addParameter('issues', FIssues.Link);{oz.5a}
     writeExtensions(result);

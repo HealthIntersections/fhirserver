@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
