@@ -105,7 +105,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-        <Debugger_RunParams>-xnoload -remount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -load &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g</Debugger_RunParams>
+        <Debugger_RunParams>-xnoload -xremount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -load &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_3\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>

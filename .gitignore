@@ -12,12 +12,8 @@ __history
 bin/*
 *.local.ini
 *.rdp
-
-
 *.bak
 web/QuestionnaireToHTML.xslt
-*.rsm
-*.rsm
 *.rsm
 Exec/auth.ini
 Exec/local.healthintersections.com.au.key

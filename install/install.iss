@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.100
+AppVerName=1.0.102
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.100
+OutputBaseFilename=fhirserver3-1.0.102
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -95,15 +95,15 @@ Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";                
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: "{app}";       DestName: validation.json.zip; Components: r2; Flags: ignoreversion  
 Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";              DestDir: {app}\web;                                    Components: r3; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                 DestDir: {app}\load;    DestName: fhir.json.zip;       Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\core\output\definitions.json.zip";             DestDir: {app}\web;     DestName: us-core.json.zip;    Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\daf\output\definitions.json.zip";              DestDir: {app}\web;     DestName: daf.json.zip;        Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\meds\output\definitions.json.zip";             DestDir: {app}\web;     DestName: meds.json.zip;       Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\definitions.json.zip";  DestDir: {app}\web;     DestName: ccda.json.zip;       Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                DestDir: {app}\load;    DestName: us-core.json.zip;    Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                 DestDir: {app}\load;    DestName: daf.json.zip;        Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\meds\output\examples.json.zip";                DestDir: {app}\load;    DestName: meds.json.zip;       Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";     DestDir: {app}\load;    DestName: ccda.json.zip;       Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_256.cache";                      DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc_256.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
