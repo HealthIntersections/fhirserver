@@ -5836,7 +5836,8 @@ begin
      result.free;
    end;
   finally
-    exp.free;
+    if not res then
+      exp.free;
   end;
 end;
 
@@ -6109,7 +6110,7 @@ begin
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
-            vs := params['valueSet'] as TFhirValueSet
+            vs := params['valueSet'].Link as TFhirValueSet
           else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
             vs := request.Resource.Link as TFhirValueSet
           else if params.hasParameter('context') then
