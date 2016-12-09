@@ -265,7 +265,8 @@ uses
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
   FHIRLog in 'FHIRLog.pas',
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas',
-  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

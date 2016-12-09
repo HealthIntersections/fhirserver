@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.8.0 generated 2016-12-05T23:49:31+11:00
+// FHIR v1.8.0 generated 2016-12-09T23:04:35+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1063,6 +1063,7 @@ Type
     FDuration : String;
     FPeriod : TFhirPeriod;
     FParamsList : TList<String>;
+    FInclude : Boolean;
     procedure SetPeriod(value : TFhirPeriod);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -1079,6 +1080,7 @@ Type
     property duration : String read FDuration write FDuration;
     property period : TFhirPeriod read FPeriod write SetPeriod;
     property paramsList : TList<String> read FParamsList;
+    property include : Boolean read FInclude write FInclude;
   end;
 
   TFHIRStatsOpResponse = class (TFHIROperationResponse)
@@ -1787,11 +1789,15 @@ begin
 end;
 
 procedure TFHIRLookupOpRequest.load(params : TParseMap);
+var
+  s : String;
 begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplayLanguage := params.getVar('displayLanguage');
+  for s in params.getVar('property').Split([';']) do
+    FProperty_List.add(s); 
   loadExtensions(params);
 end;
 
@@ -2274,7 +2280,7 @@ begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FMode := params.getVar('mode');
-  FCompositional := StrToBool(params.getVar('compositional'));
+  FCompositional := StrToBoolDef(params.getVar('compositional'), false);
   loadExtensions(params);
 end;
 
@@ -2550,14 +2556,14 @@ begin
   FProfile := params.getVar('profile');
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
-  FIncludeDesignations := StrToBool(params.getVar('includeDesignations'));
-  FIncludeDefinition := StrToBool(params.getVar('includeDefinition'));
-  FActiveOnly := StrToBool(params.getVar('activeOnly'));
-  FExcludeNested := StrToBool(params.getVar('excludeNested'));
-  FExcludeNotForUI := StrToBool(params.getVar('excludeNotForUI'));
-  FExcludePostCoordinated := StrToBool(params.getVar('excludePostCoordinated'));
+  FIncludeDesignations := StrToBoolDef(params.getVar('includeDesignations'), false);
+  FIncludeDefinition := StrToBoolDef(params.getVar('includeDefinition'), false);
+  FActiveOnly := StrToBoolDef(params.getVar('activeOnly'), false);
+  FExcludeNested := StrToBoolDef(params.getVar('excludeNested'), false);
+  FExcludeNotForUI := StrToBoolDef(params.getVar('excludeNotForUI'), false);
+  FExcludePostCoordinated := StrToBoolDef(params.getVar('excludePostCoordinated'), false);
   FDisplayLanguage := params.getVar('displayLanguage');
-  FLimitedExpansion := StrToBool(params.getVar('limitedExpansion'));
+  FLimitedExpansion := StrToBoolDef(params.getVar('limitedExpansion'), false);
   loadExtensions(params);
 end;
 
@@ -2709,7 +2715,7 @@ begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplay := params.getVar('display');
-  FAbstract := StrToBool(params.getVar('abstract'));
+  FAbstract := StrToBoolDef(params.getVar('abstract'), false);
   FDisplayLanguage := params.getVar('displayLanguage');
   loadExtensions(params);
 end;
@@ -2777,7 +2783,7 @@ end;
 
 procedure TFHIRValidateCodeOpResponse.load(params : TParseMap);
 begin
-  FResult := StrToBool(params.getVar('result'));
+  FResult := StrToBoolDef(params.getVar('result'), false);
   FMessage := params.getVar('message');
   FDisplay := params.getVar('display');
   loadExtensions(params);
@@ -3447,8 +3453,12 @@ begin
 end;
 
 procedure TFHIRSubsetOpRequest.load(params : TParseMap);
+var
+  s : String;
 begin
   FServer := params.getVar('server');
+  for s in params.getVar('resource').Split([';']) do
+    FResourceList.add(s); 
   loadExtensions(params);
 end;
 
@@ -3753,7 +3763,7 @@ end;
 
 procedure TFHIRDocumentOpRequest.load(params : TParseMap);
 begin
-  FPersist := StrToBool(params.getVar('persist'));
+  FPersist := StrToBoolDef(params.getVar('persist'), false);
   loadExtensions(params);
 end;
 
@@ -3906,7 +3916,7 @@ begin
   FSource := params.getVar('source');
   FTarget := params.getVar('target');
   FTargetsystem := params.getVar('targetsystem');
-  FReverse := StrToBool(params.getVar('reverse'));
+  FReverse := StrToBoolDef(params.getVar('reverse'), false);
   loadExtensions(params);
 end;
 
@@ -4082,7 +4092,7 @@ end;
 
 procedure TFHIRTranslateOpResponse.load(params : TParseMap);
 begin
-  FResult := StrToBool(params.getVar('result'));
+  FResult := StrToBoolDef(params.getVar('result'), false);
   FMessage := params.getVar('message');
   loadExtensions(params);
 end;
@@ -4546,7 +4556,7 @@ end;
 
 procedure TFHIRProcessMessageOpRequest.load(params : TParseMap);
 begin
-  FAsync := StrToBool(params.getVar('async'));
+  FAsync := StrToBoolDef(params.getVar('async'), false);
   FResponseUrl := params.getVar('response-url');
   loadExtensions(params);
 end;
@@ -4655,14 +4665,22 @@ begin
   for p in params.parameterList do
     if p.name = 'params' then
       FParamsList.Add((p.value as TFhirCode).value);{ob.1}
+  FInclude := params.bool['include'];
   loadExtensions(params);
 end;
 
 procedure TFHIRStatsOpRequest.load(params : TParseMap);
+var
+  s : String;
 begin
   FSubject := params.getVar('subject');
+  for s in params.getVar('code').Split([';']) do
+    FCodeList.add(s); 
   FSystem := params.getVar('system');
   FDuration := params.getVar('duration');
+  for s in params.getVar('params').Split([';']) do
+    FParamsList.add(s); 
+  FInclude := StrToBoolDef(params.getVar('include'), false);
   loadExtensions(params);
 end;
 
@@ -4697,6 +4715,7 @@ begin
       result.addParameter('period', FPeriod.Link);{oz.5d}
     for v3 in FParamsList do
       result.AddParameter('params', TFhirCode.create(v3));
+      result.addParameter('include', TFHIRBoolean.create(FInclude));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -4706,7 +4725,7 @@ end;
 
 function TFHIRStatsOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['subject', 'code', 'system', 'coding', 'duration', 'period', 'params'], name);
+  result := StringArrayExists(['subject', 'code', 'system', 'coding', 'duration', 'period', 'params', 'include'], name);
 end;
 
 constructor TFHIRStatsOpResponse.create;
@@ -4942,7 +4961,7 @@ end;
 procedure TFHIRPopulateOpRequest.load(params : TParseMap);
 begin
   FIdentifier := params.getVar('identifier');
-  FLocal := StrToBool(params.getVar('local'));
+  FLocal := StrToBoolDef(params.getVar('local'), false);
   loadExtensions(params);
 end;
 
@@ -5075,7 +5094,7 @@ end;
 procedure TFHIRPopulatehtmlOpRequest.load(params : TParseMap);
 begin
   FIdentifier := params.getVar('identifier');
-  FLocal := StrToBool(params.getVar('local'));
+  FLocal := StrToBoolDef(params.getVar('local'), false);
   loadExtensions(params);
 end;
 
@@ -5205,7 +5224,7 @@ end;
 procedure TFHIRPopulatelinkOpRequest.load(params : TParseMap);
 begin
   FIdentifier := params.getVar('identifier');
-  FLocal := StrToBool(params.getVar('local'));
+  FLocal := StrToBoolDef(params.getVar('local'), false);
   loadExtensions(params);
 end;
 
@@ -5560,7 +5579,7 @@ begin
   FIdentifier := params.getVar('identifier');
   FProfile := params.getVar('profile');
   FUrl := params.getVar('url');
-  FSupportedOnly := StrToBool(params.getVar('supportedOnly'));
+  FSupportedOnly := StrToBoolDef(params.getVar('supportedOnly'), false);
   loadExtensions(params);
 end;
 

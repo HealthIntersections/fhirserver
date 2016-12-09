@@ -63,6 +63,9 @@ Type
     procedure Grow(ACount: Integer);
     procedure GrowCheck(ACount: Integer); inline;
     procedure DoDelete(Index: Integer; Notification: TCollectionNotification);
+    procedure MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
+    procedure QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+    procedure DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
@@ -861,6 +864,61 @@ begin
   FItems[NewIndex] := temp;
 end;
 
+procedure TAdvList<T>.DoQuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+Var
+  I, J, K : Integer;
+  temp : T;
+Begin
+  Repeat
+    I := L;
+    J := R;
+    K := (L + R) Shr 1;
+
+    Repeat
+      While Comparer.Compare(Values[I], Values[K]) > 0 Do
+        Inc(I);
+
+      While Comparer.Compare(Values[J], Values[K]) < 0 Do
+        Dec(J);
+
+      If I <= J Then
+      Begin
+        temp := Values[i];
+        Values[i] := Values[j];
+        Values[j] := temp;
+
+        // Keep K as the index of the original middle element as it might get exchanged.
+        If I = K Then
+          K := J
+        Else If J = K Then
+          K := I;
+
+        Inc(I);
+        Dec(J);
+      End;
+    Until I > J;
+
+    If L < J Then
+      DoQuickSort(Values, Comparer, L, J);
+
+    L := I;
+  Until I >= R;
+End;
+
+procedure TAdvList<T>.QuickSort(var Values: array of T; const Comparer: IComparer<T>; L, R: Integer);
+Begin
+  If R-L > 1 Then
+    DoQuickSort(Values, Comparer, l, R);
+end;
+
+
+procedure TAdvList<T>.MySort(var Values: array of T; const Comparer: IComparer<T>; Index, Count: Integer);
+begin
+  if Count <= 1 then
+    Exit;
+  QuickSort(Values, Comparer, Index, Index + Count - 1);
+end;
+
 procedure TAdvList<T>.Reverse;
 var
   tmp: T;
@@ -880,12 +938,12 @@ end;
 
 procedure TAdvList<T>.Sort;
 begin
-  TArray.Sort<T>(FItems, FComparer, 0, Count);
+  MySort(FItems, FComparer, 0, Count);
 end;
 
 procedure TAdvList<T>.Sort(const AComparer: IComparer<T>);
 begin
-  TArray.Sort<T>(FItems, AComparer, 0, Count);
+  MySort(FItems, AComparer, 0, Count);
 end;
 
 // no ownership on the array - it cannot be kept alive after the list is freed

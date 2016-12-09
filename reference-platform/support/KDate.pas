@@ -1559,7 +1559,7 @@ begin
     Hour := DTHour;
     Minute := DTMinute;
     Second := DTSecond;
-    Fraction := DTFraction * 1000000;
+    Fraction := 0; // DTFraction * 1000000;
     end;
 end;
 

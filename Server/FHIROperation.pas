@@ -33,7 +33,7 @@ interface
 
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   RegExpr, KDate, HL7V2DateSupport, DateAndTime, ParseMap, KCritSct, TextUtilities, ZLib,
   DateSupport, StringSupport, EncodeSupport, GuidSupport, BytesSupport, ThreadSupport,
   KDBManager, KDBDialects,
@@ -48,7 +48,7 @@ uses
   FHIRStructureMapUtilities,
   {$ENDIF}
   {$ENDIF}
-  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
+  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch, ObservationStatsEvaluator;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -205,6 +205,7 @@ type
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>;
+    function loadResources(keys : TList<integer>) : TAdvList<TFHIRResource>;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
     function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean;
@@ -606,6 +607,9 @@ type
   end;
 
   TFhirObservationStatsOperation = class (TFHIROperation)
+  private
+    function resolvePatient(manager: TFhirOperationManager; request: TFHIRRequest; ref : String) : integer;
+    function resolveParameter(code : String): TObservationStatsParameter;
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -2989,6 +2993,46 @@ begin
     end;
   finally
     crs.free;
+  end;
+end;
+
+function TFhirOperationManager.loadResources(keys: TList<integer>): TAdvList<TFHIRResource>;
+var
+  parser : TFHIRParser;
+  s : TBytes;
+  sb : TAdvStringBuilder;
+  k : integer;
+begin
+  result := TAdvList<TFHIRResource>.create;
+  try
+    sb := TAdvStringBuilder.create;
+    try
+      for k in keys do
+        sb.CommaAdd(inttostr(k));
+
+      FConnection.SQL := 'Select JsonContent from Versions where ResourceKey in ('+sb.AsString+') order by ResourceVersionKey desc';
+      FConnection.Prepare;
+      try
+        FConnection.Execute;
+        while FConnection.FetchNext do
+        begin
+          s := FConnection.ColBlobByName['JsonContent'];
+          parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+          try
+            result.Add(parser.resource.Link);
+          finally
+            parser.free;
+          end;
+        end;
+      finally
+        FConnection.Terminate;
+      end;
+    finally
+      sb.Free;
+    end;
+    result.link;
+  finally
+    result.Free;
   end;
 end;
 
@@ -6388,6 +6432,29 @@ begin
   result := frtObservation;
 end;
 
+function TFhirObservationStatsOperation.resolvePatient(manager: TFhirOperationManager; request: TFHIRRequest; ref: String): integer;
+var
+  parts : TArray<String>;
+begin
+  parts := ref.Split(['/']);
+  if length(parts) <> 2 then
+    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
+  if NOT manager.FindResource(parts[0], parts[1], false, result, request, nil, '') then
+    result := 0;
+end;
+
+
+function TFhirObservationStatsOperation.resolveParameter(code: String): TObservationStatsParameter;
+var
+  i  : integer;
+begin
+  i := StringArrayIndexOfSensitive(CODES_TObservationStatsParameter, code);
+  if i = -1 then
+    raise Exception.Create('Unknown parameter '+code);
+  result := TObservationStatsParameter(i);
+end;
+
+
 function TFhirObservationStatsOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtObservation];
@@ -6402,10 +6469,12 @@ procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; ma
 var
   req : TFHIRStatsOpRequest;
   resp : TFHIRStatsOpResponse;
-  resourceKey : integer;
-  cs : TFhirCodeSystem;
-  cacheId : string;
-  needSecure : boolean;
+  s : string;
+  ose : TObservationStatsEvaluator;
+  c : TFhirCoding;
+  p : TObservationStatsParameter;
+  list : TAdvList<TFHIRResource>;
+  res : TFHIRResource;
 begin
   try
     manager.NotFound(request, response);
@@ -6415,6 +6484,55 @@ begin
         req.load(request.Resource as TFHIRParameters)
       else
         req.load(request.Parameters);
+
+      ose := TObservationStatsEvaluator.create(manager.Connection);
+      try
+        ose.subject := req.subject;
+        ose.subjectKey := resolvePatient(manager, request, req.subject);
+        for s in req.codeList do
+          ose.concepts.add(TFHIRCoding.Create(req.system, s));
+        for c in req.codingList do
+          ose.concepts.add(c.Link);
+        if (ose.concepts.empty) then
+          raise Exception.Create('no code or coding found');
+        if (req.duration <> '') then
+        begin
+          ose.start := UniversalDateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
+          ose.finish := UniversalDateTime;
+        end
+        else if (req.period <> nil) then
+        begin
+          if (req.period.start = nil) then
+            raise Exception.Create('Period.start is required');
+          ose.start := req.period.start.AsUTCDateTime;
+          if (req.period.end_ = nil) then
+            raise Exception.Create('Period.end is required');
+          ose.finish := req.period.end_.AsUTCDateTime;
+        end
+        else
+          raise Exception.Create('duration or period is required');
+        if (req.paramsList.Count = 0) then
+          raise Exception.Create('at least one parameter is required');
+
+        for s in req.paramsList do
+          ose.parameters := ose.parameters + [resolveParameter(s)];
+
+        ose.execute;
+        if (req.include) then
+        begin
+          list := manager.loadResources(ose.Observations);
+          try
+            for res in list do
+              ose.Resp.sourceList.Add(res.link as TFhirObservation)
+          finally
+            list.Free;
+          end;
+        end;
+
+        response.Resource := ose.resp.asParams;
+      finally
+        ose.Free;
+      end;
 
     finally
       req.Free;

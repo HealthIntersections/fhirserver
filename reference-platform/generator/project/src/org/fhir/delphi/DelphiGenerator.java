@@ -271,7 +271,7 @@ public class DelphiGenerator {
     StringBuilder gencreate = new StringBuilder();
     StringBuilder names = new StringBuilder();
     List<String> vars = new ArrayList<String>();
-    
+    boolean usesS = false;
     for (OperationDefinitionParameterComponent p : plist) {
       if (use == null || p.getUse() == use) {
         String pn = getPascalName(p.getName());
@@ -310,6 +310,9 @@ public class DelphiGenerator {
             params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
             create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as TFhir"+Utilities.capitalize(p.getType())+").value);{ob.1}\r\n");
             params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType())+".create("+v+"));\r\n");
+            screate.append("  for s in params.getVar('"+p.getName()+"').Split([';']) do\r\n");
+            screate.append("    F"+Utilities.capitalize(pn)+"List.add(s); \r\n");
+            usesS = true;
            
           } else {
             fields.append("    F"+Utilities.capitalize(pn)+"List : TAdvList<"+pt+">;\r\n");
@@ -328,6 +331,7 @@ public class DelphiGenerator {
             } else if (isPrimitive(p.getType())) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add(p.value.Link);{c}\r\n");
               params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
+              screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false); - 3\r\n");
             } else if (complex) {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".create(p));{a}\r\n");
               params.append("      result.AddParameter("+v+".asParams('"+p.getName()+"'));\r\n");
@@ -372,7 +376,7 @@ public class DelphiGenerator {
             params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType())+".create(F"+Utilities.capitalize(pn)+"));{oz.5f}\r\n");
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
-              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBool(params.getVar('"+p.getName()+"'));\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false);\r\n");
             } else {
               create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
               screate.append("  F"+Utilities.capitalize(pn)+" := params.getVar('"+p.getName()+"');\r\n");
@@ -433,6 +437,7 @@ public class DelphiGenerator {
         "  loadExtensions(params);\r\n"+
         "end;\r\n");
       defCodeOp.classImpls.add("procedure TFHIR"+name+"Op"+suffix+".load(params : TParseMap);\r\n"+
+          (usesS ? "var\r\n  s : String;\r\n" : "")+
           "begin\r\n"+
           screate.toString()+
           "  loadExtensions(params);\r\n"+

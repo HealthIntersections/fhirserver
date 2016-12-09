@@ -159,7 +159,7 @@ begin
           try
             ver := db.Lookup('Config', 'ConfigKey', '8', 'Value', '');
             if (ver <> Version) then
-              result := StrToPchar('dbv')
+              result := StrToPchar(ver)
             else
               result := nil;
           except
