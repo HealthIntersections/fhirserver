@@ -42,6 +42,8 @@ uses
 
 const
   TAG_FHIR_SYSTEM = 'http://healthintersections.com.au/fhir/tags';
+  TAG_TEST_SYSTEM = TAG_FHIR_SYSTEM;
+  TAG_TEST_CODE = 'for-testing';
 //  TAG_FHIR_SYSTEM_PROFILES = 'http://healthintersections.com.au/fhir/profiles'; // code will be a uri
 
 //  TAG_READONLY = 'read-only';
@@ -93,6 +95,8 @@ type
     function hasTag(category : TFHIRTagCategory; system, code : String) : boolean;
     function addTag(key : integer; kind : TFHIRTagCategory; system, code, display : String) : TFHIRTag;
     procedure add(tag : TFHIRTag);
+    function hasTestingTag : boolean;
+    procedure forceTestingTag;
     function asHeader : String;
     function describe : String;
   end;
@@ -202,6 +206,12 @@ begin
     end;
 end;
 
+procedure TFHIRTagList.forceTestingTag;
+begin
+  if not hasTestingTag then
+    addTag(0, tcTag, TAG_TEST_SYSTEM, TAG_TEST_CODE, 'For Testing Only');
+end;
+
 function TFHIRTagList.GetTag(index: integer): TFHIRTag;
 begin
   result := FList[index];
@@ -210,6 +220,11 @@ end;
 function TFHIRTagList.hasTag(category : TFHIRTagCategory; system, code: String): boolean;
 begin
   result := findTag(category, system, code) <> nil;
+end;
+
+function TFHIRTagList.hasTestingTag: boolean;
+begin
+  result := hasTag(tcTag, TAG_TEST_SYSTEM, TAG_TEST_CODE);
 end;
 
 function TFHIRTagList.json: TArray<byte>;

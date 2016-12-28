@@ -35,6 +35,40 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {
 todo:
+STU3 draft:
+ - check using UTF-8 in URLs
+ - check prepfer = operation outcome
+ - check turtle support
+ - check versioning in capabilities statement
+ - check elements & summary on read/vread
+ - check delete return codes
+ - changes to id element on update
+ - check conditional delete flag.
+ - search on multiple resource types
+ - check over transaction handling
+ - dateTIme parameter on history
+ - check use of 401 instead of 403
+ - check handling of unsupported parameters
+ - check implementations of sa and be prefixes in search
+ - review searching on names
+ - check search by canonical URL and version
+ - add searching for token system|
+ - reverse chaining
+ - check _list parameter
+ - check sorting
+ - check handling count = 0
+ - composite search parameter work
+ - test flag support
+ - check document operation
+ - check handling binary parameter
+ - update FHIRPath
+ - string validation rules
+
+
+
+
+
+
 Add reverse chaining
 Grahame, I see you don't respond to either of the following:
  http://hl7connect.healthintersections.com.au/svc/fhir/condition/search?subject=patient/350
@@ -266,7 +300,8 @@ uses
   FHIRLog in 'FHIRLog.pas',
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
-  ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas';
+  ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',
+  OpenMHealthServer in 'OpenMHealthServer.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

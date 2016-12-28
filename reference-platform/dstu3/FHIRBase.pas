@@ -599,7 +599,8 @@ type
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
     pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
-    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension);
+    pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse, pfCombine, pfType, pfOfType,
+    pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo);
 
   TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup);
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
@@ -613,7 +614,8 @@ const
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
     'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
-    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension');
+    'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse', 'combine', 'type', 'ofType',
+    'elementDefinition', 'slice', 'checkModifiers', 'conformsTo');
 
 type
   TFHIRTypeDetails = class (TAdvObject)

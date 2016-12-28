@@ -237,6 +237,15 @@ type
     function funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcToday(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
     function funcNow(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcType(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+    function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
 
 
     function equals(left, right : TFHIRBase) : boolean;  overload;
@@ -414,6 +423,15 @@ begin
     pfNow: checkParamCount(lexer, location, exp, 0);
     pfResolve: checkParamCount(lexer, location, exp, 0);
     pfExtension: checkParamCount(lexer, location, exp, 1);
+    pfAllFalse: checkParamCount(lexer, location, exp, 0);
+    pfAnyFalse: checkParamCount(lexer, location, exp, 0);
+    pfCombine: checkParamCount(lexer, location, exp, 1);
+    pfType: checkParamCount(lexer, location, exp, 0);
+    pfOfType: checkParamCount(lexer, location, exp, 1);
+    pfElementDefinition: checkParamCount(lexer, location, exp, 0);
+    pfSlice: checkParamCount(lexer, location, exp, 2);
+    pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
+    pfConformsTo: checkParamCount(lexer, location, exp, 1);
   end;
 end;
 
@@ -1614,6 +1632,230 @@ begin
   end;
 end;
 
+function TFHIRExpressionEngine.funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+var
+  item : TFHIRBase;
+  pc, res : TFHIRBaseList;
+  all, v : boolean;
+begin
+  result := TFHIRBaseList.Create();
+  try
+    if (exp.Parameters.count = 1) then
+    begin
+      all := true;
+      pc := TFHIRBaseList.Create;
+      try
+        for item in focus do
+        begin
+          pc.Clear;
+          pc.Add(item.Link);
+          res := execute(context, pc, exp.Parameters[0], false);
+          try
+            if convertToBoolean(res) then
+            begin
+              all := false;
+              break;
+            end;
+          finally
+            res.Free;
+          end;
+        end;
+      finally
+        pc.Free;
+      end;
+      result.add(TFhirBoolean.Create(all));
+    end
+    else // (exp.getParameters().size() == 0)
+    begin
+      all := true;
+      for item in focus do
+      begin
+        v := false;
+        if (item is TFHIRBoolean) then
+          v := TFHIRBoolean(item).value
+        else
+          v := item <> nil;
+        if (v) then
+        begin
+          all := false;
+          break;
+        end;
+      end;
+      result.add(TFhirBoolean.Create(all));
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+var
+  item : TFHIRBase;
+  pc, res : TFHIRBaseList;
+  any, v : boolean;
+begin
+  result := TFHIRBaseList.Create();
+  try
+    if (exp.Parameters.count = 1) then
+    begin
+      any := false;
+      pc := TFHIRBaseList.Create;
+      try
+        for item in focus do
+        begin
+          pc.Clear;
+          pc.Add(item.Link);
+          res := execute(context, pc, exp.Parameters[0], false);
+          try
+            if not convertToBoolean(res) then
+            begin
+              any := true;
+              break;
+            end;
+          finally
+            res.Free;
+          end;
+        end;
+      finally
+        pc.Free;
+      end;
+      result.add(TFhirBoolean.Create(any));
+    end
+    else // (exp.getParameters().size() == 0)
+    begin
+      any := false;
+      for item in focus do
+      begin
+        v := false;
+        if (item is TFHIRBoolean) then
+          v := TFHIRBoolean(item).value
+        else
+          v := item <> nil;
+        if (not v) then
+        begin
+          any := true;
+          break;
+        end;
+      end;
+      result.add(TFhirBoolean.Create(any));
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+var
+  item : TFHIRBase;
+  res : TFHIRBaseList;
+begin
+  result := TFHIRBaseList.create;
+  try
+    for item in focus do
+      result.add(item.link);
+    res := execute(context, focus, exp.Parameters[0], false);
+    try
+      for item in res do
+        result.add(item.link);
+    finally
+      res.free;
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRExpressionEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+var
+  n1 : TFhirBaseList;
+  tn : String;
+  b : TFHIRBase;
+begin
+  n1 := execute(context, focus, exp.Parameters[0], false);
+  try
+    tn := convertToString(n1);
+    result := TFHIRBaseList.Create;
+    try
+      for b in focus do
+        if (b.hasType(tn)) then
+          result.add(b.Link);
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    n1.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRExpressionEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFHIRExpressionEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+var
+  n1, me, u : TFhirBaseList;
+  item, e, b : TFHIRBase;
+  urlm, urlt : String;
+  found, ok : boolean;
+begin
+  n1 := execute(context, focus, exp.Parameters[0], false);
+  try
+    for item in focus do
+    begin
+      me := TFhirBaseList.Create;
+      try
+        ListChildrenByName(item, 'modifierExtension', me);
+        ok := true;
+        for e in me do
+        begin
+          u := TFhirBaseList.Create;
+          try
+            ListChildrenByName(e, 'url', u);
+            urlm := convertToString(u);
+            found := false;
+            for b in n1 do
+            begin
+              urlt := b.toString;
+              found := urlm = urlt;
+            end;
+            if not found then
+              ok := false;
+          finally
+            u.Free;
+          end;
+        end;
+        result := TFHIRBaseList.Create();
+        result.add(TFhirBoolean.Create(ok));
+      finally
+        me.Free;
+      end;
+    end;
+  finally
+    n1.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp : TFHIRExpressionNode) : TFHIRBaseList;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+
 function isBoolean(list : TFHIRBaselist; b : boolean) : boolean;
 begin
   result := (list.count = 1) and (list[0] is TFHIRBoolean) and (TFHIRBoolean(list[0]).value = b);
@@ -2600,6 +2842,15 @@ begin
     pfNow : result := funcNow(context, focus, exp);
     pfResolve: result := funcResolve(context, focus, exp);
     pfExtension: result := funcExtension(context, focus, exp);
+    pfAllFalse: result := funcAllFalse(context, focus, exp);
+    pfAnyFalse: result := funcAnyFalse(context, focus, exp);
+    pfCombine: result := funcCombine(context, focus, exp);
+    pfType: result := funcType(context, focus, exp);
+    pfOfType: result := funcOfType(context, focus, exp);
+    pfElementDefinition: result := funcElementDefinition(context, focus, exp);
+    pfSlice: result := funcSlice(context, focus, exp);
+    pfCheckModifiers: result := funcCheckModifiers(context, focus, exp);
+    pfConformsTo: result := funcConformsTo(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
   end;
@@ -2859,6 +3110,43 @@ begin
         begin
         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
         result := TFHIRTypeDetails.create(csSINGLETON, ['Extension']);
+        end;
+      pfAllFalse:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
+      pfAnyFalse:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
+      pfCombine:
+        begin
+        result := TFHIRTypeDetails.create(csUNORDERED, []);
+        result.update(focus);
+        result.update(paramTypes[0]);
+        end;
+      pfType:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['SimpleTypeInfo']);
+      pfOfType:
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
+        result := TFHIRTypeDetails.create(focus.CollectionStatus, ['*']);
+        end;
+      pfElementDefinition:
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
+        result := TFHIRTypeDetails.create(csSINGLETON, ['ElementDefinition']);
+        end;
+      pfSlice:
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string', 'string'])]);
+        result := focus.Link;
+        end;
+      pfCheckModifiers:
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csUNORDERED, ['string'])]);
+        result := focus.Link;
+        end;
+      pfConformsTo:
+        begin
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
         end;
     else
       raise EFHIRPath.create('not Implemented yet?');

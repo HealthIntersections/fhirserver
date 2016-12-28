@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+{testing-todo}
 
 
 uses
@@ -44,11 +45,12 @@ uses
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
   {$IFDEF FHIR3}
+  ObservationStatsEvaluator,
   {$IFNDEF FHIR2}
   FHIRStructureMapUtilities,
   {$ENDIF}
   {$ENDIF}
-  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch, ObservationStatsEvaluator;
+  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -60,8 +62,6 @@ const
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
 type
-  TCreateIdState = (idNoNew, idMaybeNew, idIsNew);
-
   TOperationContext = class (TAdvObject)
   private
     FUpload : boolean;
@@ -110,7 +110,6 @@ type
     function ignore : boolean;
     function deleted : boolean;
     function summary : string;
-
   end;
 
   TFHIRTransactionEntryList = class (TAdvNameList)
@@ -138,7 +137,6 @@ type
   public
     Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
   end;
-
 
   TReferenceList = class (TStringList)
   public
@@ -191,7 +189,7 @@ type
     function hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
     function hasConfidentialitySecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
 
-    procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
+    procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; adaptor : TFHIRFormatAdaptor; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean;
     function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
     function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
@@ -214,8 +212,8 @@ type
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
-    function GetNewResourceId(aType : String; var id : string; var key : integer):Boolean;
-    function AddNewResourceId(aType, id : string; var resourceKey : integer) : Boolean;
+    function GetNewResourceId(aType : String; ForTesting : boolean; var id : string; var key : integer):Boolean;
+    function AddNewResourceId(aType, id, lang : string; forTesting : boolean; var resourceKey : integer) : Boolean;
     Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResource; path : String);
     Procedure LoadTags(tags : TFHIRTagList; ResourceKey : integer);
     procedure CommitTags(tags : TFHIRTagList; key : integer);
@@ -893,7 +891,7 @@ begin
     fcmdDelete : ExecuteDelete(request, response);
     fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
     fcmdSearch : ExecuteSearch(request, response);
-    fcmdCreate : result := ExecuteCreate(context, request, response, idNoNew, 0);
+    fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
     fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
     fcmdTransaction : ExecuteTransaction(context, request, response);
     fcmdBatch : ExecuteBatch(context, request, response);
@@ -1167,7 +1165,7 @@ begin
 
     ok := checkOkToStore(request, response, needSecure);
 
-    if ok and FRepository.Validate and not context.upload and (request.Session <> nil) then
+    if ok and FRepository.Validate and not context.upload and (request.Session <> nil) and (request.adaptor = nil) then
     begin
       if not ExecuteValidation(request, response, 'Create Resource '+request.ResourceName+'/'+request.Id+' ('+request.originalId+')') then
         ok := false
@@ -1196,43 +1194,52 @@ begin
       end;
     end;
 
-    if not ok then
-      // nothing
-    else if (idState = idMaybeNew) and (request.Id <> '') then
-    begin
-      sId := request.Id;
-      if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
-        ok := false;
-    end
-    else if (idState = idIsNew) then
-    begin
-      sid := request.id;
-      resourceKey := iAssignedKey;
-    end
-    else if not check(response, GetNewResourceId(request.ResourceName, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
-       ok := false
-
-    else
-      request.resource.id := sId;
-
-    if ok then
-      if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
-        ok := false;
-
-    if ok then
-    begin
-
-      if request.resource.meta = nil then
-        request.resource.meta := TFhirMeta.Create;
-      request.Resource.meta.lastUpdated := NowUTC;
-      request.Resource.meta.versionId := '1';
-      updateProvenance(request.Provenance, request.ResourceName, sid, '1');
-      tnow := request.Resource.meta.lastUpdated.AsUTC;
+    if request.resource.meta = nil then
+      request.resource.meta := TFhirMeta.Create;
+    request.Resource.meta.lastUpdated := NowUTC;
+    request.Resource.meta.versionId := '1';
+    updateProvenance(request.Provenance, request.ResourceName, sid, '1');
+    tnow := request.Resource.meta.lastUpdated.AsUTC;
+    try
+      checkNotRedacted(request.Resource.meta, 'Creating resource');
+      tags := TFHIRTagList.create;
       try
-        checkNotRedacted(request.Resource.meta, 'Creating resource');
-        tags := TFHIRTagList.create;
-        try
-          tags.readTags(request.resource.meta);
+        tags.readTags(request.resource.meta);
+        if (request.hasTestingTag) then
+          tags.forceTestingTag;
+        if not ok then
+          // nothing
+        else if (idState = idCheckNew) then
+        begin
+          sId := request.Id;
+          if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
+            not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+              ok := false;
+        end
+        else if (idState = idMaybeNew) and (request.Id <> '') then
+        begin
+          sId := request.Id;
+          if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+            ok := false;
+        end
+        else if (idState = idIsNew) then
+        begin
+          sid := request.id;
+          resourceKey := iAssignedKey;
+        end
+        else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
+           ok := false
+
+        else
+          request.resource.id := sId;
+
+        if ok then
+          if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
+            ok := false;
+
+        if ok then
+        begin
+
 
           checkProposedContent(request, request.Resource, tags);
           result := sId;
@@ -1241,8 +1248,8 @@ begin
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
 
-          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, '+
-                  'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :sec, :tb, :xc, :xs, :jc, :js)';
+          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
+                  'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
           FConnection.prepare;
           try
             FConnection.BindInteger('k', key);
@@ -1258,6 +1265,7 @@ begin
               FConnection.BindInteger('s', 0);
             FConnection.BindInteger('f', 2);
             FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
             FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
             markRedacted(request.Resource.meta);
@@ -1286,14 +1294,14 @@ begin
 
           response.id := sId;
           response.versionId := '1';
-        finally
-          tags.free;
+          if request.Provenance <> nil then
+            SaveProvenance(request.Session, request.Provenance);
         end;
       finally
-        tnow.Free;
+        tags.free;
       end;
-        if request.Provenance <> nil then
-          SaveProvenance(request.Session, request.Provenance);
+    finally
+      tnow.Free;
     end;
     if request.ResourceEnum <> frtAuditEvent then // else you never stop
       AuditRest(request.session, request.requestId, request.ip, request.ResourceName, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
@@ -1630,7 +1638,7 @@ begin
       if offset < 0 then
         offset := 0;
 
-      chooseField(response.Format, soFull, field, comp, needsObject);
+      chooseField(response.Format, soFull, request.Adaptor, field, comp, needsObject);
       if (not needsObject) then
         comp := nil;
 
@@ -1712,7 +1720,7 @@ begin
     begin
       if (length(request.id) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments) then
       begin
-        chooseField(response.Format, request.Summary, field, comp, needsObject);
+        chooseField(response.Format, request.Summary, request.Adaptor, field, comp, needsObject);
         FConnection.SQL := 'Select Secure, StatedDate, VersionId, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
         FConnection.Prepare;
         try
@@ -2168,7 +2176,7 @@ begin
                 bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
 
-            chooseField(response.Format, summaryStatus, field, comp, needsObject);
+            chooseField(response.Format, summaryStatus, request.Adaptor, field, comp, needsObject);
             if (not needsObject) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
 
@@ -2332,6 +2340,8 @@ begin
           request.resource.meta := TFhirMeta.Create;
         tags.ReadTags(request.resource.meta);
         LoadTags(tags, ResourceKey);
+        if (request.hasTestingTag) then
+          tags.forceTestingTag;
         tags.writeTags(request.resource.meta);
         if checkOkToStore(request, response, needSecure) then
         begin
@@ -2353,7 +2363,7 @@ begin
           // to do: merging
 
           FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, TransactionDate, StatedDate, Format, VersionId, Status, '+
-            'SessionKey, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :sec, :tb, :xc, :xs, :jc, :js)';
+            'SessionKey, ForTesting, Secure, Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :td, :sd, :f, :v, 1, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
           FConnection.prepare;
           try
             FConnection.BindInteger('k', key);
@@ -2368,6 +2378,7 @@ begin
             else
               FConnection.BindInteger('s', request.Session.Key);
             FConnection.BindInteger('f', 2);
+            FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlobFromBytes('tb', tags.json);
             FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
             FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
@@ -2716,7 +2727,7 @@ begin
       if (length(request.id) <= ID_LENGTH) and (length(request.subid) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments) then
       begin
         VersionNotFound(request, response);
-        chooseField(response.Format, request.Summary, field, comp, needsObject);
+        chooseField(response.Format, request.Summary, request.Adaptor, field, comp, needsObject);
 
         FConnection.SQL := 'Select Secure, VersionId, StatedDate, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' and VersionId = :v';
         FConnection.Prepare;
@@ -2816,19 +2827,33 @@ begin
   ext.addExtension('activity', TCDSHooks.identifierView);
 end;
 
-function TFhirOperationManager.AddNewResourceId(aType, id : string; var resourceKey : integer) : Boolean;
+function TFhirOperationManager.AddNewResourceId(aType, id, lang : string; forTesting : boolean; var resourceKey : integer) : Boolean;
 var
   itype : integer;
+  exists : boolean;
 begin
   iType := FRepository.ResConfig[aType].key;// FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+CODES_TFHIRResourceType[aType]+'''');
   result := iType > 0;
   if result then
   begin
     resourceKey := FRepository.NextResourceKeySetId(aType, id);
-    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted) values (:k, :r, :i, null, 0)';
+
+    FConnection.SQL := 'Select ResourceKey from Ids where ResourceTypeKey = :r and Id = :i';
+    FConnection.Prepare;
+    FConnection.BindInteger('r', itype);
+    FConnection.BindString('i', id);
+    FConnection.Execute;
+    exists := FConnection.fetchNext;
+    FConnection.Terminate;
+
+    if exists then
+      raise ERestfulException.create('TFhirOperationManager', 'AddNewResourceId', StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [id, aType]), 404, IssueTypeDuplicate);
+
+    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
     FConnection.Prepare;
     FConnection.BindInteger('k', resourceKey);
     FConnection.BindInteger('r', itype);
+    FConnection.BindIntegerFromBoolean('ft', forTesting);
     FConnection.BindString('i', id);
     FConnection.Execute;
     FConnection.Terminate;
@@ -2838,7 +2863,7 @@ begin
   end;
 End;
 
-function TFhirOperationManager.getNewResourceId(aType: String; var id: string; var key: integer): Boolean;
+function TFhirOperationManager.getNewResourceId(aType: String; ForTesting : boolean; var id: string; var key: integer): Boolean;
 var
   itype : integer;
   guid : boolean;
@@ -2867,11 +2892,12 @@ begin
       key := FRepository.NextResourceKeyGetId(aType, id);
       FConnection.ExecSQL('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(iType), 1);
     end;
-    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted) values (:k, :r, :i, null, 0)';
+    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
     FConnection.Prepare;
     FConnection.BindInteger('k', key);
     FConnection.BindInteger('r', itype);
     FConnection.BindString('i', id);
+    FConnection.BindIntegerFromBoolean('ft', ForTesting);
     FConnection.Execute;
     FConnection.Terminate;
     FConnection.ExecSQL('update IndexEntries set target = '+inttostr(key)+' where SpaceKey = '+inttostr(iType)+' and value = '''+id+'''');
@@ -3588,7 +3614,7 @@ begin
 
             if id.state = tesCreate then
             begin
-              if not GetNewResourceId(entry.resource.fhirType,  sId, k) then
+              if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},  sId, k) then
                 raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
               id.id := sId;
               id.key := k;
@@ -3612,7 +3638,7 @@ begin
                 else if list.Count = 0 then
                 begin
                   id.state := tesCreate;
-                  if not GetNewResourceId(entry.resource.fhirType,  sId, k) then
+                  if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},   sId, k) then
                     raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
                   id.id := sId;
                   id.key := k;
@@ -3725,7 +3751,7 @@ begin
         tesIgnore: ; // yup, ignore it
         tesCreate:
           begin
-            if not GetNewResourceId(entry.resource.FhirType,  sId, k) then
+            if not GetNewResourceId(entry.resource.FhirType,  false {testing-todo},  sId, k) then
               raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
             id.id := sId;
             id.key := k;
@@ -4129,7 +4155,7 @@ begin
           dest.request := src.request.Clone;
           request.reset;
           url := request.preAnalyse(src.request.url);
-          request.analyse(CODES_TFhirHttpVerbEnum[src.request.method], url, dummy);
+          request.analyse(CODES_TFhirHttpVerbEnum[src.request.method], url, dummy, nil);
           request.IfNoneMatch := src.request.ifNoneMatch;
           if src.request.ifModifiedSince <> nil then
             request.IfModifiedSince := src.request.ifModifiedSince.AsUTCDateTime;
@@ -5567,13 +5593,14 @@ begin
   end;
 end;
 
-procedure TFhirOperationManager.chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean);
+procedure TFhirOperationManager.chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; adaptor : TFHIRFormatAdaptor; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean)
+;
 var
   s : String;
 begin
   fieldName := '';
   comp := nil;
-  needsObject := false;
+  needsObject := adaptor <> nil;
 
   if aFormat = ffJson then
   begin
@@ -6952,7 +6979,7 @@ begin
             id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary, request.strictSearch, reverse);
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
-          manager.chooseField(response.Format, wantsummary, field, prsr, needsObject);
+          manager.chooseField(response.Format, wantsummary, request.Adaptor, field, prsr, needsObject);
 
           manager.FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
               'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+

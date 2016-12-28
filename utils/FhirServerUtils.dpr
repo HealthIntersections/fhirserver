@@ -226,7 +226,8 @@ uses
   SearchProcessor in '..\Server\SearchProcessor.pas',
   FHIRSearchSyntax in '..\Server\FHIRSearchSyntax.pas',
   SnomedCombiner in 'SnomedCombiner.pas',
-  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas';
 
 {$R *.res}
 

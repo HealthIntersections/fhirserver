@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices, OpenMHealthServer;
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -138,6 +138,7 @@ Type
     FThread : TFhirServerMaintenanceThread;
     FActive : boolean;
     FAuthServer : TAuth2Server;
+    FAdaptors : TAdvMap<TFHIRFormatAdaptor>;
 
     carry : TAdvZipReader;
     carryName : String;
@@ -380,6 +381,8 @@ Begin
   FAuthServer.AdminEmail := FAdminEmail;
   FAuthServer.EndPoint := OAuthPath(true);
 
+  FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
+  FAdaptors.Add('dataPoints', TOpenMHealthAdaptor.Create);
 
   if (FPort <> 0) and (FSSLPort <> 0) then
     logt('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
@@ -406,6 +409,7 @@ End;
 Destructor TFhirWebServer.Destroy;
 Begin
   carry.Free;
+  FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
   FSCIMServer.Free;
   FTerminologyWebServer.free;
   FIni.Free;
@@ -790,7 +794,6 @@ begin
       HandleRequest(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
-
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
     else if FTerminologyWebServer.handlesRequest(request.Document) then
@@ -1910,7 +1913,7 @@ Begin
 
     if not redirect then
     begin
-      oRequest.analyse(sCommand, sURL, relativeReferenceAdjustment);
+      oRequest.analyse(sCommand, sURL, relativeReferenceAdjustment, FAdaptors);
 
       if (oRequest.CommandType <> fcmdNull)  then
       begin
@@ -1950,6 +1953,8 @@ Begin
 //!              TFhirBinary(oRequest.Resource).Content.loadFromStream(oPostStream);
 //!              TFhirBinary(oRequest.Resource).ContentType := sContentType;
             end
+            else if (oRequest.Adaptor <> nil) then
+              oRequest.Adaptor.Load(oRequest, oPostStream)
             else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/json-patch+json') then
             begin
               oRequest.patchJson := TJsonParser.ParseNode(oPostStream) as TJsonArray
@@ -2147,6 +2152,11 @@ begin
           if StrToBoolDef(orequest.Parameters.GetVar('no-attachment'), false) then
             response.ContentDisposition := 'attachment;';
           response.Expires := Now + 0.25;
+        end
+        else if (oRequest.Adaptor <> nil) then
+        begin
+          oRequest.Adaptor.compose(oResponse, stream);
+          response.ContentType := oRequest.Adaptor.MimeType;
         end
         else
         begin

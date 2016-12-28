@@ -139,6 +139,9 @@ Type
       }
     procedure IncrementDay;
 
+    function add(length : TDateTime) : TDateAndTime;
+    function subtract(length : TDateTime) : TDateAndTime;
+
       {@Member FormatTimeStamp
       Returns the date and time in the format specified.
       <PRE>
@@ -287,6 +290,16 @@ end;
 destructor TDateAndTime.Destroy;
 begin
   inherited;
+end;
+
+function TDateAndTime.add(length: TDateTime): TDateAndTime;
+begin
+  result := TDateAndTime.CreateUTC(GetdateTime + length);
+  result.FPrecision := FPrecision;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := FTimezoneType;
+  result.FTimeZoneHours := FTimeZoneHours;
+  result.FTimezoneMins := FTimezoneMins;
 end;
 
 function TDateAndTime.AllValid(var err : String): Boolean;
@@ -1151,6 +1164,16 @@ end;
 function TDateAndTime.source: String;
 begin
   result := FSource;
+end;
+
+function TDateAndTime.subtract(length: TDateTime): TDateAndTime;
+begin
+  result := TDateAndTime.CreateUTC(GetdateTime - length);
+  result.FPrecision := FPrecision;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := FTimezoneType;
+  result.FTimeZoneHours := FTimeZoneHours;
+  result.FTimezoneMins := FTimezoneMins;
 end;
 
 end.

@@ -38,7 +38,7 @@ interface
 uses
   SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
-  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
+  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher,
@@ -213,6 +213,13 @@ type
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
+  end;
+
+  TFhirQuantityHelper = class helper for TFhirQuantity
+  public
+    function asDuration : TDateTime;
+    class function fromDuration(v : TDateTime) : TFhirQuantity;
+    class function fromPair(v : Double; units : String) : TFhirQuantity;
   end;
 
   TFHIRResourceHelper = class helper for TFHIRResource
@@ -461,6 +468,14 @@ type
     function hasOid(oid : String) : boolean;
     function getUri : String;
   end;
+
+  TFHIRObservationHelper = class helper for TFHIRObservation
+  public
+    function addComponent(system, code: String) : TFhirObservationComponent;
+    function getComponent(system, code: String; var comp : TFhirObservationComponent) : boolean; overload;
+    function getComponent(system : String; var comp : TFhirObservationComponent) : boolean; overload;
+  end;
+
 
 
 function Path(const parts : array of String) : String;
@@ -1913,6 +1928,8 @@ begin
     result := TFhirCode(self.ExtensionList.Item(ndx).value).value
   else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
     result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
+    result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.AsXML
   else
     result := '';
 end;
@@ -2028,6 +2045,8 @@ begin
     result := TFhirCode(self.ExtensionList.Item(ndx).value).value
   else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
     result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
+    result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.AsXML
   else
     result := '';
 end;
@@ -4128,6 +4147,122 @@ begin
     result := def
   else
     result := props.Contains(name);
+end;
+
+{ TFHIRObservationHelper }
+
+function TFHIRObservationHelper.addComponent(system, code: String): TFhirObservationComponent;
+var
+  c : TFHIRCoding;
+begin
+  result := self.componentList.Append;
+  result.code := TFhirCodeableConcept.Create;
+  c := result.code.codingList.Append;
+  c.system := system;
+  c.code := code;
+end;
+
+function TFHIRObservationHelper.getComponent(system, code: String; var comp: TFhirObservationComponent): boolean;
+var
+  t : TFhirObservationComponent;
+begin
+  comp := nil;
+  result := false;
+  for t in self.componentList do
+    if (t.code.codingList[0].system = system) and (t.code.codingList[0].code = code) then
+    begin
+      comp := t;
+      exit(true);
+    end;
+end;
+
+function TFHIRObservationHelper.getComponent(system: String; var comp: TFhirObservationComponent): boolean;
+var
+  t : TFhirObservationComponent;
+begin
+  comp := nil;
+  result := false;
+  for t in self.componentList do
+    if (t.code.codingList[0].system = system) then
+    begin
+      comp := t;
+      exit(true);
+    end;
+end;
+
+{ TFhirQuantityHelper }
+
+function TFhirQuantityHelper.asDuration: TDateTime;
+var
+  v : Double;
+begin
+  if system <> 'http://unitsofmeasure.org' then
+    raise Exception.Create('Unknown units system "'+system+'" trying to process quantity as a duration');
+  if not IsNumericString(value) then
+    raise Exception.Create('invalid value "'+value+'" trying to process quantity as a duration');
+  v := TSmartDecimal.ValueOf(value).AsDouble;
+  if (code = 'ps') then
+    result := v * (DATETIME_MILLISECOND_ONE / 1000000000)
+  else if (code = 'ns') then
+    result := v * (DATETIME_MILLISECOND_ONE / 1000000)
+  else if (code = 'us') then
+    result := v * (DATETIME_MILLISECOND_ONE / 1000)
+  else if (code = 'ms') then
+    result := v * DATETIME_MILLISECOND_ONE
+  else if (code = 's') then
+    result := v * DATETIME_SECOND_ONE
+  else if (code = 'min') then
+    result := v * DATETIME_MINUTE_ONE
+  else if (code = 'h') then
+    result := v * DATETIME_HOUR_ONE
+  else if (code = 'd') then
+    result := v * 1
+  else if (code = 'wk') then
+    result := v * 7
+  else if (code = 'mo') then
+    result := v * 30
+  else if (code = 'a') then
+    result := v * 365.25
+  else
+    raise Exception.Create('invalid UCUM unit "'+code+'" trying to process quantity as a duration');
+end;
+
+class function TFhirQuantityHelper.fromDuration(v : TDateTime): TFhirQuantity;
+begin
+  if v > 365 then
+    result := fromPair(v/365.25, 'a')
+  else if (v > 30) then
+    result := fromPair(v/30, 'mo')
+  else if (v > 7) then
+    result := fromPair(v * 7, 'wk')
+  else if (v > 1) then
+    result := fromPair(v, 'd')
+  else if (v > DATETIME_HOUR_ONE) then
+    result := fromPair(v / DATETIME_HOUR_ONE, 'h')
+  else if (v > DATETIME_MINUTE_ONE) then
+    result := fromPair(v / DATETIME_MINUTE_ONE, 'min')
+  else if (v > DATETIME_SECOND_ONE) then
+    result := fromPair(v / DATETIME_SECOND_ONE, 's')
+  else if (v > DATETIME_MILLISECOND_ONE) then
+    result := fromPair(v / DATETIME_MILLISECOND_ONE, 'ms')
+  else if (v > (DATETIME_MILLISECOND_ONE / 1000)) then
+    result := fromPair(v / (DATETIME_MILLISECOND_ONE / 1000), 'us')
+  else if (v > (DATETIME_MILLISECOND_ONE / 1000000)) then
+    result := fromPair(v / (DATETIME_MILLISECOND_ONE / 1000000), 'ns')
+  else
+    result := fromPair(v / (DATETIME_MILLISECOND_ONE / 1000000000), 'ps');
+end;
+
+class function TFhirQuantityHelper.fromPair(v: Double; units: String): TFhirQuantity;
+begin
+  result := TFhirQuantity.Create;
+  try
+    result.value := FloatToStr(v);
+    result.system := 'http://unitsofmeasure.org/';
+    result.code := units;
+  finally
+    result.Free;
+  end;
 end;
 
 end.

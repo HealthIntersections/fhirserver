@@ -3371,7 +3371,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbOpenClick
     end
     object tbPut: TToolButton
-      Left = 374
+      Left = 420
       Top = 0
       Hint = 'PUT resource to existing ID'
       Enabled = False
@@ -3394,7 +3394,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbTransactionClick
     end
     object tbServerValidate: TToolButton
-      Left = 466
+      Left = 489
       Top = 0
       Hint = 'Validate resource on server'
       Enabled = False
@@ -3411,7 +3411,7 @@ inherited FHIRToolbox: TFHIRToolbox
       Style = tbsSeparator
     end
     object ToolButton16: TToolButton
-      Left = 474
+      Left = 520
       Top = 0
       Hint = 'Configure Tools'
       Caption = 'ToolButton16'
@@ -3419,7 +3419,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = ToolButton16Click
     end
     object pnlMessage: TPanel
-      Left = 528
+      Left = 543
       Top = 0
       Width = 201
       Height = 22
@@ -3443,7 +3443,7 @@ inherited FHIRToolbox: TFHIRToolbox
     Left = 764
     Top = 4
     Bitmap = {
-      494C010113009800A00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010113009800A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       00000000001E454545AB4B4B4BD1363736DB323332D9383838DC22647CFF2264

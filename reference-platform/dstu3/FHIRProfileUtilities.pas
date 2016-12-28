@@ -1535,7 +1535,10 @@ function TBaseWorkerContext.getCustomResource(name: String): TFHIRCustomResource
 begin
   FLock.Lock;
   try
-    result := FCustomResources[name].Link;
+    if FCustomResources.TryGetValue(name, result) then
+      result.Link
+    else
+      result := nil;
   finally
     FLock.Unlock;
   end;

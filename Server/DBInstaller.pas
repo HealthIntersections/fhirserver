@@ -44,7 +44,8 @@ const
 //  ServerDBVersion = 6; // added reverse to search entries table
 //  ServerDBVersion = 7; // changed compartment table. breaking change
 //  ServerDBVersion = 8; // added ImplementationGuide column to Types table
-  ServerDBVersion = 9; // added Observations Table
+//  ServerDBVersion = 9; // added Observations Table
+  ServerDBVersion = 10; // added ForTesting flag
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -407,6 +408,7 @@ Begin
        ' originalId nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MasterResourceKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' MostRecent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' ForTesting int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Deleted int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Ids', 'ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Ids', 'ResourceTypeKey', 'Types', 'ResourceTypeKey', 'FK_ResType_TypeKey'));
@@ -428,6 +430,7 @@ Begin
        ' Secure int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SessionKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' AuditKey int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' ForTesting int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Tags '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' XmlContent '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' XmlSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -538,6 +541,8 @@ Begin
        ' Value2 nchar(210) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Flag '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, false)+', '+#13#10+
        ' Target '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' SrcTesting int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' TgtTesting int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Concept '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Extension nchar(5) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Xhtml '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -962,6 +967,13 @@ begin
   begin
     CreateObservations;
     CreateObservationQueue;
+  end;
+  if (version < 10) then
+  begin
+    Fconn.ExecSQL('ALTER TABLE Versions ADD ForTesting int NULL');
+    Fconn.ExecSQL('ALTER TABLE Ids ADD ForTesting int NULL');
+    Fconn.ExecSQL('ALTER TABLE IndexEntries ADD SrcTesting int NULL');
+    Fconn.ExecSQL('ALTER TABLE IndexEntries ADD TgtTesting int NULL');
   end;
 
   Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');

@@ -247,6 +247,7 @@ Type
     FValidationInfo : TWorkerContext;
     FTerminologyServer : TTerminologyServer;
     FResConfig: TAdvMap<TFHIRResourceConfig>;
+    FforTesting : boolean;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
@@ -1023,6 +1024,7 @@ var
   dummy : string;
 begin
   checkTags(resource, tags);
+  FforTesting := tags.hasTestingTag;
   FEntries.clear;
   FEntries.FKeyEvent := FKeyEvent;
 
@@ -1062,17 +1064,18 @@ begin
 
   if resource is TFhirDomainResource then
   begin
-    FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Flag, Extension, Xhtml) values (:k, :i, :r, 1, ''html'', :xb)';
+    FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
     FSpaces.FDB.prepare;
     FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
     FSpaces.FDB.BindInteger('i', FInfo.FNarrativeIndex);
     FSpaces.FDB.BindInteger('r', key);
+    FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
     FSpaces.FDB.BindBlobFromBytes('xb', EncodeXhtml(TFhirDomainResource(resource)));
     FSpaces.FDB.execute;
     FSpaces.FDB.terminate;
   end;
 
-  FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :f, :t, :c)';
+  FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, SrcTesting, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :ft, :f, :t, :c)';
   FSpaces.FDB.prepare;
   for i := 0 to FEntries.Count - 1 Do
   begin
@@ -1101,6 +1104,7 @@ begin
       FSpaces.FDB.BindNull('s')
     else
       FSpaces.FDB.BindInteger('s', entry.FRefType);
+    FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
     FSpaces.FDB.BindString('v', entry.FValue1);
     FSpaces.FDB.BindString('v2', entry.FValue2);
     if (entry.Target = 0) or (entry.Target = FMasterKey) then
@@ -1621,11 +1625,12 @@ begin
       ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType]);
       target := FKeyEvent(ktResource, contained.fhirType, id);
       FSpaces.FDB.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
-      FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
+      FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey, ForTesting) values (:k, :r, :i, null, '+inttostr(FMasterKey)+', :ft)';
       FSpaces.FDB.Prepare;
       FSpaces.FDB.BindInteger('k', target);
       FSpaces.FDB.BindInteger('r', ref);
       FSpaces.FDB.BindString('i', id);
+      FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
       FSpaces.FDB.Execute;
       FSpaces.FDB.Terminate;
       {$IFDEF FHIR3}
