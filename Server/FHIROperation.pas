@@ -1546,10 +1546,10 @@ begin
       begin
         prior := DTReadDateTZ('yyyy-mm-ddThh:nn:ss.zzzzzz', request.Parameters.Value[request.Parameters.VarName(i)], false);
         FConnection.SQL := FConnection.SQL + ' and StatedDate <= :prior ';
-        base := base +'_prior='+request.Parameters.Value[request.Parameters.VarName(i)];
+        base := base +'&_prior='+request.Parameters.Value[request.Parameters.VarName(i)];
       end;
     if (prior = MIN_DATE) then
-      base := base +'_prior='+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss''Z''', UniversalDateTime, FormatSettings);
+      base := base +'&_prior='+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss''Z''', UniversalDateTime, FormatSettings);
 
     FConnection.SQL := FConnection.SQL+' order by ResourceVersionKey DESC';
     sql := FConnection.SQL;
@@ -1648,6 +1648,8 @@ begin
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
         bundle.total := inttostr(total);
         bundle.Tags['sql'] := sql;
+        bundle.meta := TFHIRMeta.create;
+        bundle.meta.lastUpdated := NowUTC;
         bundle.link_List.AddRelRef('self', base+link);
 
         bundle.link_List.AddRelRef('self', base+link);

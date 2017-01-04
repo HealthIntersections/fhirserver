@@ -63,6 +63,7 @@ STU3 draft:
  - check handling binary parameter
  - update FHIRPath
  - string validation rules
+ - Both _include and _revInclude use the wild card "*" for the search parameter name, indicating that any search parameter of type=reference be included.
 
 
 

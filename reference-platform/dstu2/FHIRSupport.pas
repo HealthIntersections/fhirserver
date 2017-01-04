@@ -73,12 +73,29 @@ Const
 
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
+  TCreateIdState = (idNoNew, idMaybeNew, idIsNew, idCheckNew);
   {$M+}
 
   TFHIRCompartment = class (TAdvObject)
   private
   public
 
+  end;
+
+  TFHIRRequest = class;
+  TFHIRResponse = class;
+
+  TFHIRFormatAdaptor = {abstract} class (TAdvObject)
+  public
+    Function Link : TFHIRFormatAdaptor; Overload;
+
+    function ResourceName : String; virtual; abstract;
+    function NewIdStatus : TCreateIdState; virtual; abstract;
+    procedure load(req : TFHIRRequest; stream : TStream); virtual; abstract;
+    procedure compose(response : TFHIRResponse; stream : TStream); virtual; abstract;
+    function MimeType : String; virtual; abstract;
+
+    procedure editSearch(req : TFHIRRequest); virtual; abstract;
   end;
 
   TFHIRCompartmentList = class (TAdvList<TFHIRCompartment>)
@@ -292,6 +309,7 @@ Type
     FrequestId: String;
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
+    FAdaptor: TFHIRFormatAdaptor;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -301,6 +319,7 @@ Type
     procedure SetPatchJson(const Value: TJsonArray);
     function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
     procedure SetResourceName(const Value: String);
+    procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
   Public
     Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
@@ -323,12 +342,14 @@ Type
     function canGetUser : boolean;
     procedure reset;
     property Context : TWorkerContext read FWorker;
+    property Adaptor : TFHIRFormatAdaptor read FAdaptor write SetAdaptor;
+    function NewIdStatus : TCreateIdState;
 
     // main rest function. Set the following things before calling this:
     // form
     // also, the base must be stipped out before calling this
     function preAnalyse(url : String) : String;
-    procedure analyse(sCommand, sUrl : String; out relativeReferenceAdjustment : integer);
+    procedure analyse(sCommand, sUrl : String; out relativeReferenceAdjustment : integer; adaptors : TAdvMap<TFHIRFormatAdaptor>);
 
     Property DefaultSearch : boolean read FDefaultSearch write FDefaultSearch;
 
@@ -338,6 +359,7 @@ Type
     }
     property Parameters : TParseMap read FParams;
 
+    function hasTestingTag : boolean;
     {!Script Show}
 
   published
@@ -841,7 +863,7 @@ begin
 end;
 
 
-procedure TFHIRRequest.analyse(sCommand, sUrl: String; out relativeReferenceAdjustment : integer);
+procedure TFHIRRequest.analyse(sCommand, sUrl: String; out relativeReferenceAdjustment : integer; adaptors : TAdvMap<TFHIRFormatAdaptor>);
 Var
   sId, sType : String;
   aResourceType : TFHIRResourceType;
@@ -1186,6 +1208,7 @@ end;
 
 destructor TFHIRRequest.Destroy;
 begin
+  FAdaptor.Free;
   FCompartmentInformation.free;
   FCustom.Free;
   FWorker.Free;
@@ -1198,6 +1221,11 @@ begin
   FForm.Free;
   FParams.Free;
   inherited;
+end;
+
+function TFHIRRequest.hasTestingTag: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRRequest.Link: TFHIRRequest;
@@ -1240,6 +1268,14 @@ begin
   result := CODES_TFHIRCommandType[CommandType]+'\('+CODES_TFHIRFormat[PostFormat]+')'+ResourceName+'\'+Id;
   if SubId <> '' then
     result := result + '\'+SubId;
+end;
+
+function TFHIRRequest.NewIdStatus: TCreateIdState;
+begin
+  if (Adaptor <> nil) then
+    result := Adaptor.NewIdStatus
+  else
+    result := idNoNew;
 end;
 
 procedure TFHIRRequest.processParams;
@@ -1288,6 +1324,12 @@ begin
   FIfModifiedSince := 0;
   FIfNoneExist := '';
   FSummary := soFull;
+end;
+
+procedure TFHIRRequest.SetAdaptor(const Value: TFHIRFormatAdaptor);
+begin
+  FAdaptor.Free;
+  FAdaptor := Value;
 end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
@@ -1968,6 +2010,13 @@ begin
   else
     raise Exception.Create('Unknown compartment');
   end;
+end;
+
+{ TFHIRFormatAdaptor }
+
+function TFHIRFormatAdaptor.Link: TFHIRFormatAdaptor;
+begin
+  result := TFHIRFormatAdaptor(inherited Link);
 end;
 
 end.

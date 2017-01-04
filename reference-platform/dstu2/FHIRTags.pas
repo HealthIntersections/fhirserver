@@ -93,6 +93,8 @@ type
     function addTag(key : integer; kind : TFHIRTagCategory; system, code, display : String) : TFHIRTag;
     procedure add(tag : TFHIRTag);
     function asHeader : String;
+    function hasTestingTag : boolean;
+    procedure forceTestingTag;
   end;
 
 implementation
@@ -187,6 +189,11 @@ begin
     end;
 end;
 
+procedure TFHIRTagList.forceTestingTag;
+begin
+
+end;
+
 function TFHIRTagList.GetTag(index: integer): TFHIRTag;
 begin
   result := FList[index];
@@ -195,6 +202,11 @@ end;
 function TFHIRTagList.hasTag(category : TFHIRTagCategory; system, code: String): boolean;
 begin
   result := findTag(category, system, code) <> nil;
+end;
+
+function TFHIRTagList.hasTestingTag: boolean;
+begin
+  result := false;
 end;
 
 function TFHIRTagList.json: TArray<byte>;

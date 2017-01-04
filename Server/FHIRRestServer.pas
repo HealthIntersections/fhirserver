@@ -49,7 +49,7 @@ Uses
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices, OpenMHealthServer;
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices {$IFDEF FHIR3}, OpenMHealthServer{$ENDIF};
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -382,7 +382,9 @@ Begin
   FAuthServer.EndPoint := OAuthPath(true);
 
   FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
+  {$IFDEF FHIR3}
   FAdaptors.Add('dataPoints', TOpenMHealthAdaptor.Create);
+  {$ENDIF}
 
   if (FPort <> 0) and (FSSLPort <> 0) then
     logt('Web Server: http = '+inttostr(FPort)+', https = '+inttostr(FSSLPort))
