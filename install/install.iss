@@ -93,8 +93,9 @@ Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion r
 ; Spec & IGs
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";                DestDir: "{app}\load";                                 Components: r2; Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: "{app}";       DestName: validation.json.zip; Components: r2; Flags: ignoreversion  
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";              DestDir: {app}\web;                                    Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                 DestDir: {app}\load;    DestName: fhir.json.zip;       Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.2017Jan\build\publish\definitions.json.zip";              DestDir: {app}\web;                                    Components: r3; Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.2017Jan\build\publish\examples-json.zip";                 DestDir: {app}\load;    DestName: fhir.json.zip;       Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\sql\nucc.xml";                                              DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3; Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                DestDir: {app}\load;    DestName: us-core.json.zip;    Components: r3; Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                 DestDir: {app}\load;    DestName: daf.json.zip;        Components: r3; Flags: ignoreversion
 ;Source: "C:\work\org.hl7.fhir.us\meds\output\examples.json.zip";                DestDir: {app}\load;    DestName: meds.json.zip;       Components: r3; Flags: ignoreversion

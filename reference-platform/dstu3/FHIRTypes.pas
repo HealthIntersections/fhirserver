@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.8.0 generated 2016-12-09T23:04:35+11:00
+// FHIR v1.8.0 generated 2016-12-23T09:49:47+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -11489,11 +11489,11 @@ Type
     property humanElement : TFhirString read FHuman write SetHuman;
 
     {@member expression
-      Typed access to A [FHIRPath](http://hl7.org/fluentpath) expression of constraint that can be executed to see if this constraint is met.
+      Typed access to A [FluentPath](http://hl7.org/fluentpath) expression of constraint that can be executed to see if this constraint is met.
     }
     property expression : String read GetExpressionST write SetExpressionST;
     {@member expressionElement
-      A [FHIRPath](http://hl7.org/fluentpath) expression of constraint that can be executed to see if this constraint is met.
+      A [FluentPath](http://hl7.org/fluentpath) expression of constraint that can be executed to see if this constraint is met.
     }
     property expressionElement : TFhirString read FExpression write SetExpression;
 

@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.8.0 generated 2016-12-09T23:04:35+11:00
+// FHIR v1.8.0 generated 2016-12-23T09:49:47+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1063,7 +1063,7 @@ Type
     FDuration : String;
     FPeriod : TFhirPeriod;
     FParamsList : TList<String>;
-    FInclude : Boolean;
+    FInclude: boolean;
     procedure SetPeriod(value : TFhirPeriod);
   protected
     function isKnownName(name : String) : boolean; override;
@@ -1080,7 +1080,7 @@ Type
     property duration : String read FDuration write FDuration;
     property period : TFhirPeriod read FPeriod write SetPeriod;
     property paramsList : TList<String> read FParamsList;
-    property include : Boolean read FInclude write FInclude;
+    property include : boolean read FInclude write FInclude;
   end;
 
   TFHIRStatsOpResponse = class (TFHIROperationResponse)
@@ -4665,7 +4665,6 @@ begin
   for p in params.parameterList do
     if p.name = 'params' then
       FParamsList.Add((p.value as TFhirCode).value);{ob.1}
-  FInclude := params.bool['include'];
   loadExtensions(params);
 end;
 
@@ -4680,7 +4679,6 @@ begin
   FDuration := params.getVar('duration');
   for s in params.getVar('params').Split([';']) do
     FParamsList.add(s); 
-  FInclude := StrToBoolDef(params.getVar('include'), false);
   loadExtensions(params);
 end;
 
@@ -4715,7 +4713,6 @@ begin
       result.addParameter('period', FPeriod.Link);{oz.5d}
     for v3 in FParamsList do
       result.AddParameter('params', TFhirCode.create(v3));
-      result.addParameter('include', TFHIRBoolean.create(FInclude));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -4725,7 +4722,7 @@ end;
 
 function TFHIRStatsOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['subject', 'code', 'system', 'coding', 'duration', 'period', 'params', 'include'], name);
+  result := StringArrayExists(['subject', 'code', 'system', 'coding', 'duration', 'period', 'params'], name);
 end;
 
 constructor TFHIRStatsOpResponse.create;
