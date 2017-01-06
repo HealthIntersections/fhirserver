@@ -234,7 +234,9 @@ uses
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
   Logging in '..\Server\Logging.pas',
   ServerAdaptations in '..\Server\ServerAdaptations.pas',
-  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas',
+  OpenMHealthServer in '..\Server\OpenMHealthServer.pas';
 
 var
   runner : ITestRunner;
