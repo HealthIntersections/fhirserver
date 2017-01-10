@@ -859,11 +859,11 @@ Begin
 
   lbl := TLabel.Create(ServicePage);
   lbl.Caption := 'Start Up Type:';
-  lbl.Top := 190;
+  lbl.Top := 130;
   lbl.Parent := ServicePage.Surface;
 
   cbxStartup := TNewComboBox.Create(ServicePage);
-  cbxStartup.Top := 216;
+  cbxStartup.Top := 150;
   cbxStartup.Width := ServicePage.SurfaceWidth;
   cbxStartup.Parent := ServicePage.Surface;
   cbxStartup.Style := csDropDownList;
@@ -1083,11 +1083,11 @@ begin
 
   lbl := TLabel.Create(SctPage);
   lbl.Caption := 'Module:';
-  lbl.Top := 80;
+  lbl.Top := 60;
   lbl.Parent := SctPage.Surface;
 
   cbxModule := TNewComboBox.Create(SctPage);
-  cbxModule.Top := 110;
+  cbxModule.Top := 82;
   cbxModule.Width := SctPage.SurfaceWidth;
   cbxModule.Parent := SctPage.Surface;
   cbxModule.Style := csDropDownList;
@@ -1103,12 +1103,12 @@ begin
 
   lbl := TLabel.Create(SctPage);
   lbl.Caption := 'Version (YYYYMMDD):';
-  lbl.Top := 180;
+  lbl.Top := 110;
   lbl.Parent := SctPage.Surface;
   sctVersion := TNewEdit.Create(SctPage);
   sctVersion.Parent := SctPage.Surface;
   sctVersion.Width := SctPage.SurfaceWidth;
-  sctVersion.Top := 210;
+  sctVersion.Top := 132;
   sctVersion.Left := 0;
   sctVersion.Text := '';
   
@@ -1131,113 +1131,113 @@ Begin
   lbl.Parent := WebPage.Surface;
   webHostName := TNewEdit.Create(WebPage);
   webHostName.Parent := WebPage.Surface;
-  webHostName.Width := 450;
+  webHostName.Width := WebPage.Surface.width - 100;
   webHostName.Top := 0;
-  webHostName.Left := 160;
+  webHostName.Left := 100;
   webHostName.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'HTTP (unsecure access)';
-  lbl.Top := 50;
+  lbl.Top := 30;
   lbl.Left := 0;
   lbl.Font.Style := [fsBold];
   lbl.Parent := WebPage.Surface;
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Port (def: 80)';
-  lbl.Top := 78;
+  lbl.Top := 58;
   lbl.Left := 10;
   lbl.Parent := WebPage.Surface;
   webOpenPort := TNewEdit.Create(WebPage);
   webOpenPort.Parent := WebPage.Surface;
   webOpenPort.Width := 60;
-  webOpenPort.Top := 74;
-  webOpenPort.Left := 120;
+  webOpenPort.Top := 54;
+  webOpenPort.Left := 90;
   webOpenPort.Text := '80';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Path (e.g. /open)';
-  lbl.Top := 78;
-  lbl.Left := 200;
+  lbl.Top := 58;
+  lbl.Left := 170;
   lbl.Parent := WebPage.Surface;
   webOpenPath := TNewEdit.Create(WebPage);
   webOpenPath.Parent := WebPage.Surface;
-  webOpenPath.Width := 280;
-  webOpenPath.Top := 74;
-  webOpenPath.Left := 330;
+  webOpenPath.Width := WebPage.Surface.width - 280;
+  webOpenPath.Top := 54;
+  webOpenPath.Left := 280;
   webOpenPath.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'HTTPS (SSL access)';
-  lbl.Top := 130;
-  lbl.Left := 00;
+  lbl.Top := 86;
+  lbl.Left := 0;
   lbl.Font.Style := [fsBold];
   lbl.Parent := WebPage.Surface;
 
   lbl := TLabel.Create(WebPage);
-  lbl.Caption := 'Port (def: 80)';
-  lbl.Top := 158;
+  lbl.Caption := 'Port (def: 443)';
+  lbl.Top := 114;
   lbl.Left := 10;
   lbl.Parent := WebPage.Surface;
   webSecurePort := TNewEdit.Create(WebPage);
   webSecurePort.Parent := WebPage.Surface;
   webSecurePort.Width := 60;
-  webSecurePort.Top := 154;
-  webSecurePort.Left := 120;
+  webSecurePort.Top := 110;
+  webSecurePort.Left := 90;
   webSecurePort.Text := '443';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Path (e.g. /secure)';
-  lbl.Top := 158;
-  lbl.Left := 200;
+  lbl.Top := 114;
+  lbl.Left := 170;
   lbl.Parent := WebPage.Surface;
   webSecurePath := TNewEdit.Create(WebPage);
   webSecurePath.Parent := WebPage.Surface;
-  webSecurePath.Width := 280;
-  webSecurePath.Top := 154;
-  webSecurePath.Left := 330;
+  webSecurePath.Width := WebPage.Surface.width - 280;
+  webSecurePath.Top := 110;
+  webSecurePath.Left := 280;
   webSecurePath.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Cert File';
-  lbl.Top := 200;
+  lbl.Top := 136;
   lbl.Left := 10;
   lbl.Parent := WebPage.Surface;
 
   certFile := TNewEdit.Create(WebPage);
   certFile.Parent := WebPage.Surface;
-  certFile.Width := 480;
-  certFile.Top := 196;
-  certFile.Left := 130;
+  certFile.Width := WebPage.Surface.width - 90;
+  certFile.Top := 132;
+  certFile.Left := 90;
   certFile.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'CA Cert File';
-  lbl.Top := 230;
+  lbl.Top := 158;
   lbl.Left := 10;
   lbl.Parent := WebPage.Surface;
   caCertFile := TNewEdit.Create(WebPage);
   caCertFile.Parent := WebPage.Surface;
-  caCertFile.Width := 480;
-  caCertFile.Top := 226;
-  caCertFile.Left := 130;
+  caCertFile.Width := WebPage.Surface.width - 90;
+  caCertFile.Top := 154;
+  caCertFile.Left := 90;
   caCertFile.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Cert Password';
-  lbl.Top := 260;
+  lbl.Top := 180;
   lbl.Left := 10;
   lbl.Parent := WebPage.Surface;
   certPWord := TNewEdit.Create(WebPage);
   certPWord.Parent := WebPage.Surface;
-  certPWord.Width := 480;
-  certPWord.Top := 256;
-  certPWord.Left := 130;
+  certPWord.Width := WebPage.Surface.width - 90;
+  certPWord.Top := 176;
+  certPWord.Left := 90;
   certPWord.Text := '';
 
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Use openSSL to generate the certificates and get them counter signed'
-  lbl.Top := 305;
+  lbl.Top := 210;
   lbl.Left := 0;
   lbl.Width := WebPage.Surface.Width;
   lbl.Autosize := false;

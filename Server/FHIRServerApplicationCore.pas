@@ -301,21 +301,22 @@ end;
 
 Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);
 var
-  dbn : String;
+  dbn,ddr : String;
   ver : integer;
   conn : TKDBConnection;
   dbi : TFHIRDatabaseInstaller;
   meta : TKDBMetaData;
 begin
   dbn := FIni.ReadString('database', 'database', '');
+  ddr := FIni.ReadString('database', 'driver', 'SQL Server Native Client 11.0');
   if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
      dbn := FIni.ReadString('database', 'database'+FHIR_GENERATED_VERSION, '');
   if TestMode then
-    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
     logt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
-    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr,
       FIni.ReadString('database', 'server', ''), dbn,
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end
@@ -598,7 +599,6 @@ begin
         db.callback := callback;
         db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
         db.Bases.Add('http://hl7.org/fhir');
-        db.TextIndexing := not FindCmdLineSwitch('no-text-index');
         db.Install(scim);
       finally
         db.free;

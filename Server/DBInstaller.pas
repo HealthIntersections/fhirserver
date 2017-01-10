@@ -67,7 +67,6 @@ Type
     FTransactions: boolean;
     FBases: TStringList;
     FSupportSystemHistory: boolean;
-    FTextIndexing: boolean;
     FTxPath : String;
     procedure CreateResourceCompartments;
     procedure CreateResourceConfig;
@@ -111,7 +110,6 @@ Type
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
     Procedure Upgrade(version : integer);
-    Property TextIndexing : boolean read FTextIndexing write FTextIndexing;
     property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
@@ -640,10 +638,11 @@ end;
 
 procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
-  if TextIndexing then
-  begin
+  try
     FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
     FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+  except
+    // well, we ignore this; it fails on SQLServer Expression, in which case _text search parameter won't work
   end;
 end;
 
