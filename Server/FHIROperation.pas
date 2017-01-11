@@ -6179,7 +6179,7 @@ begin
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
+              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then

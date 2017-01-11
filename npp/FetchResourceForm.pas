@@ -741,9 +741,10 @@ begin
   lbl.Left := 5;
   lbl.Width := form.Canvas.TextWidth(lbl.Caption);
 
-  hasMod := false;
-  for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
-    if modc in definition.modifier then
+//  todo: fetch the search parameter definitions?
+//  hasMod := false;
+//  for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
+//    if modc in definition.modifier then
       hasMod := true;
 
   case definition.type_ of
@@ -766,7 +767,7 @@ begin
     modlist.Style := csDropDownList;
     modlist.Items.Add('');
     for modc := low(TFhirSearchModifierCodeEnum) to high(TFhirSearchModifierCodeEnum) do
-      if modc in definition.modifier then
+// todo - use search parameter definition      if modc in definition.modifier then
         modlist.Items.Add(':'+CODES_TFhirSearchModifierCodeEnum[modc]);
   end;
 end;
