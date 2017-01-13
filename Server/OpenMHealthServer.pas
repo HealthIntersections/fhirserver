@@ -203,7 +203,7 @@ var
   obj : TJsonObject;
 begin
   // id --> resource.id.
-  obs.id := hdr['id']; // though this will be overwritten
+  obs.id := hdr['id'];
 
   // creation_date_time --> extension on metadata. What is the significance of this value? why does it matter? or is it actually last_updated?
   ext := obs.meta.extensionList.Append;

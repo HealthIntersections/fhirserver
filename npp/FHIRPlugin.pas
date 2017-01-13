@@ -509,8 +509,6 @@ begin
     else
       raise Exception.Create('not done yet');
     end;
-
-
 end;
 
 function SplitElement(var src : String) : String;
