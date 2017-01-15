@@ -51,7 +51,6 @@ Type
     FDb : TKDBManager;
     FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
-    FWebSource : String;
 
     FNotServing : boolean;
     FLoadStore : boolean;
@@ -63,7 +62,6 @@ Type
     procedure StopRestServer;
     procedure UnloadTerminologies;
     procedure CloseDatabase;
-    function dbExists : Boolean;
     procedure validate;
     procedure InstallerCallBack(i : integer; s : String);
     procedure cb(i : integer; s : WideString);
@@ -225,29 +223,6 @@ begin
   FIni := TIniFile.Create(AIniName);
 end;
 
-function TFHIRService.dbExists: Boolean;
-var
-  conn : TKDBConnection;
-  meta : TKDBMetaData;
-begin
-  conn := FDb.GetConnection('test');
-  try
-    meta := conn.FetchMetaData;
-    try
-      result := meta.HasTable('Config');
-    finally
-      meta.free;
-    end;
-    conn.Release;
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      result := false;
-    end;
-  end;
-end;
-
 destructor TFHIRService.Destroy;
 begin
   CloseDatabase;
@@ -384,11 +359,11 @@ begin
   result := s;
   if FolderExists(result) then
     if first then
-      result := IncludeTrailingBackslash(s)+'examples-json.zip'
+      result := IncludeTrailingPathDelimiter(s)+'examples-json.zip'
     else
-      result := IncludeTrailingBackslash(s)+'examples.json.zip';
+      result := IncludeTrailingPathDelimiter(s)+'examples.json.zip';
   if not FileExists(result) then
-    result := IncludeTrailingBackslash(ExtractFilePath(fn))+s;
+    result := IncludeTrailingPathDelimiter(ExtractFilePath(fn))+s;
   if not FileExists(result) then
     raise Exception.Create('Unable to find file '+s);
 end;
@@ -419,7 +394,7 @@ begin
   end;
   {$ELSE}
   if FolderExists(fn) then
-    fn := IncludeTrailingBackslash(fn)+'load.ini';
+    fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
   logt('Load database from sources listed in '+fn);
   if not FileExists(fn) then
     raise Exception.Create('Load Ini file '+fn+' not found');

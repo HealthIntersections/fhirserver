@@ -66,7 +66,6 @@ type
   private
     FSnomed : TSnomedServices;
     FRoots : TCardinalArray;
-    Handled : TCardinalArray;
     FColumns : TColumnDetailArray;
 
 //    function CreateCC(index : Cardinal) : TFhirCodeableConcept;
@@ -76,7 +75,6 @@ type
 //    function intersection(one, two : TCardinalArray) : TCardinalArray;
     procedure registerSCTRoots(ids : Array of String);
 
-    function tref(index : integer): String;
     procedure assess(b : TAdvStringBuilder; id : String);
     function getProps(id, prop : cardinal) : TPropertyArray;
     function findRelationshipInGroup(concept, group, siblingtype : cardinal; relationship : TSnomedRelationship) : boolean;
@@ -112,7 +110,6 @@ var
 //  iId : UInt64;
 //  iIndex : Cardinal;
 //  Identity : UInt64;
-  Flags : Byte;
   Active, Defining : boolean;
   Group : integer;
 //  ParentIndex : Cardinal;
@@ -941,15 +938,13 @@ end;
 
 procedure TSnomedAnalysis.processSubColumn(json: TJsonObject; tbl: TAdvStringBuilder; det : TColumnDetail; child, relid, target, group: cardinal);
 var
-  src, key, s : String;
-  kb : byte;
-  lang, rt, refset, k : cardinal;
-  props, vl : TCardinalArray;
-  members : TSnomedReferenceSetMemberArray;
+  s : String;
+  k : cardinal;
+  vl : TCardinalArray;
   m : TSnomedReferenceSetMember;
-  i1, i2 : string;
   relationship : TSnomedRelationship;
 begin
+  k := 0;
   case det.srcType of
     stMastercid : tbl.Append(FSnomed.GetConceptId(child));
     stReltarget : tbl.Append(FSnomed.GetConceptId(target));
@@ -1096,15 +1091,6 @@ begin
       raise Exception.Create('not defined: '+ids[i]);
     FRoots[i] := iIndex;
   end;
-end;
-
-function TSnomedAnalysis.tref(index: integer): String;
-var
-  id, text : String;
-begin
-  id := FSnomed.GetConceptId(index);
-  text := FSnomed.GetDisplayName(index, 0);
-  result := '<a href="/snomed/'+FSnomed.EditionId+'/?type=snomed&id='+id+'">'+text+'</a>';
 end;
 
 //Procedure TSnomedPublisher.CellConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; bShowId : Boolean; iDesc : Cardinal = 0);

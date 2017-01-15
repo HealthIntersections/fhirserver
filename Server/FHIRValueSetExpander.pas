@@ -411,7 +411,6 @@ end;
 
 function TFHIRValueSetExpander.passesImportFilter(importHash: TStringList; system, code: string): boolean;
 var
-  s : String;
   i : integer;
 begin
   if importHash = nil then
@@ -504,7 +503,6 @@ var
   i : integer;
   c : TFhirValueSetExpansionContains;
   s : String;
-  dep : TStringList;
   param : TFhirValueSetExpansionParameter;
 begin
   for param in vs.expansion.parameterList do

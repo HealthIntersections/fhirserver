@@ -951,9 +951,6 @@ end;
 
 
 procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
-var
-  m : TKDBMetaData;
-  t : TKDBTable;
 begin
   if version > ServerDBVersion then
     raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');

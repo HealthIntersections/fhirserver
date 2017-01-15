@@ -133,9 +133,9 @@ Type
     FCanonical : TStringList;
     FDefinitions : TFHIRStructureDefinitionList;
   public
-    constructor create; overload; override;
-    constructor create(profile : String); overload;
-    constructor create(profile : TFHIRStructureDefinition); overload;
+    constructor Create; overload; override;
+    constructor Create(profile : String); overload;
+    constructor Create(profile : TFHIRStructureDefinition); overload;
     destructor Destroy; override;
   end;
 
@@ -534,7 +534,6 @@ end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String);
 var
-  p: TFHIRStructureDefinition;
   profiles : TValidationProfileSet;
 begin
   profiles := TValidationProfileSet.create(profile);
@@ -2574,7 +2573,7 @@ begin
     vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
     if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
     begin
-      res := FContext.validateCode(SYSTEM_NOT_APPLICABLE, value, '', vs);
+      res := FContext.validateCode(SYSTEM_NOT_APPLICABLE, '', value, vs);
       try
         if (not res.isOk()) then
         begin

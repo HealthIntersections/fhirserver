@@ -438,7 +438,7 @@ begin
           logt('Load Store');
           LoadExistingResources(conn);
           logt('Check Definitions');
-  //        checkDefinitions();
+          checkDefinitions();
         end;
         logt('Load Subscription Queue');
         FSubscriptionManager.LoadQueue(conn);
@@ -1847,7 +1847,6 @@ var
   deleted : boolean;
   obs : TFHIRObservation;
   cmp : TFhirObservationComponent;
-  cc : TFHIRCodeableConcept;
   c, c1 : TFHIRCoding;
   subj, concept, subConcept : integer;
   dt, dtMin, dtMax : TDateTime;

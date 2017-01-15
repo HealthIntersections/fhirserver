@@ -105,7 +105,6 @@ type
     procedure checkPrefix(pname : String); overload;
     procedure checkPrefix(obj : TRDFTriple);  overload;
     function hasSection(sn : String) : boolean;
-    function matches(url, prefixUri, prefix : String) : String;
     procedure writeTurtlePrefixes(b : TStringBuilder; header : boolean);
     procedure writeTurtleSection(b : TStringBuilder; section : TRDFSection);
     procedure writeNTripleSection(b : TStringBuilder; section : TRDFSection);
@@ -113,7 +112,7 @@ type
     procedure writeNTriple(b: TStringBuilder; url1, url2, url3: String);
     function fullUrl(s: String): String;
   public
-    Constructor Create;
+    Constructor Create; override;
     Destructor Destroy; override;
     function Link : TRDFGenerator; overload;
 
@@ -470,7 +469,6 @@ function TRDFGenerator.sorted(list: TEnumerable<String>): TArray<String>;
 var
   sort : TStringList;
   s : String;
-  i : integer;
 begin
   sort := TStringList.Create;
   try
@@ -480,16 +478,6 @@ begin
     result := sort.ToStringArray;
   finally
     sort.Free;
-  end;
-end;
-
-function TRDFGenerator.matches(url, prefixUri, prefix: String): String;
-begin
-  result := '';
-  if (url.startsWith(prefixUri)) then
-  begin
-    Fprefixes.AddOrSetValue(prefix, prefixUri);
-    result := prefix+':'+jsonEscape(url.substring(prefixUri.length), false);
   end;
 end;
 
@@ -592,7 +580,6 @@ end;
 procedure TRDFGenerator.writeNTripleSection(b: TStringBuilder; section: TRDFSection);
 var
   subject : TRDFSubject;
-  s : string;
 begin
   for subject in section.FSubjects do
   begin

@@ -93,7 +93,6 @@ Type
     FStatus : UInt64;
     Flag : Byte;
     FDate : TSnomedDate;
-    FSN : String;
     FInBounds : TRelationshipArray;
     FOutbounds : TRelationshipArray;
     FActiveParents : TCardinalArray;
@@ -127,7 +126,6 @@ Type
     FDescriptionFiles : TStringList;
     OverallCount : Integer;
     ClosureCount : Integer;
-    FImportFormat : TFormatSettings;
 
     FStringsTemp : TStringList;
     FConcepts : TAdvObjectList;
@@ -861,7 +859,6 @@ var
   i_c, i_r : Integer;
   iGroup, group: integer;
   iIndex : cardinal;
-  sGroup : String;
   active, defining : boolean;
 
   iRel : UInt64;
@@ -1193,7 +1190,6 @@ var
   o : TCardinalArray;
   src, tgt, rel, w1,w2,w3 : Cardinal;
   date : TSnomedDate;
-  flg : Byte;
   grp : Integer;
   did : UInt64;
   active, defining : boolean;
@@ -1626,7 +1622,6 @@ Procedure TSnomedImporter.QuickSortPairsByName(var a : TSnomedReferenceSetMember
     id, id2 : cardinal;
     i : Integer;
     Identity : UInt64;
-    Flags : Byte;
 //    Parents : Cardinal;
     Descriptions : Cardinal;
 //    Inbounds : Cardinal;

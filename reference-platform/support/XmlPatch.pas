@@ -101,7 +101,7 @@ end;
 class procedure TXmlPatchEngine.replace(doc : IXMLDOMDocument2; op : IXMLDOMElement; targetRoot : IXMLDOMNode);
 var
   matches : IXMLDOMNodeList;
-  n, ce, elem : IXMLDOMElement;
+  n, ce : IXMLDOMElement;
   sel : String;
   i : integer;
 begin

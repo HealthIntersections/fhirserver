@@ -126,7 +126,7 @@ end;
 
 procedure TOpenMHealthAdaptor.editSearch(req: TFHIRRequest);
 var
-  s, p : String;
+  p : String;
 begin
   if req.Parameters.GetVar('schema_namespace') <> 'omh' then
     raise Exception.Create('Unknown schema namespace');

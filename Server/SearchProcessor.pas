@@ -1018,6 +1018,8 @@ begin
                 SearchParamTypeReference : ProcessReferenceParam(Result, name, modifier, value, key, types);
                 SearchParamTypeQuantity : ProcessQuantityParam(Result, name, modifier, value, key, types);
                 SearchParamTypeNumber : ProcessNumberParam(Result, name, modifier, value, key, types);
+                SearchParamTypeNull : if (name = '_id') then
+                  ProcessTokenParam(Result, name, modifier, value, key, types);
               else if type_ <> SearchParamTypeNull then
                 raise exception.create('not done yet: type = '+CODES_TFhirSearchParamTypeEnum[type_]);
               end;

@@ -305,7 +305,7 @@ uses
   OpenMHealthServer in 'OpenMHealthServer.pas';
 
 begin
-  logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';
+  logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
   if ParamCount = 0 then
   begin
     filelog := true;

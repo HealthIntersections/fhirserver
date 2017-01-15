@@ -16,7 +16,7 @@ uses
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
   CountryCodeServices, AreaCodeServices,
   FHIRValueSetChecker, ClosureManager, ServerAdaptations,
-  TerminologyServerStore;
+  TerminologyServerStore, SnomedExpressions;
 
 Type
   TTerminologyServer = class (TTerminologyServerStore)
@@ -70,6 +70,9 @@ Type
     Function MakeChecker(uri : string; profile : TFhirExpansionProfile) : TValueSetChecker;
     function getDisplayForCode(system, version, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
+    {$IFDEF FHIR3}
+    procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
+    {$ENDIF}
 
     // closures
     function InitClosure(name : String) : String;
@@ -546,7 +549,6 @@ end;
 
 function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
 var
-  vs : TFhirValueSet;
   cs : TFhirCodeSystem;
   cp : TCodeSystemProvider;
   lct : TCodeSystemProviderContext;
@@ -611,7 +613,98 @@ begin
   end;
 end;
 
+{$IFDEF FHIR3}
+procedure TTerminologyServer.composeCode(req: TFHIRComposeOpRequest; resp: TFHIRComposeOpResponse);
+var
+  prop : TFHIRComposeOpReqProperty_;
+  cs : TCodeSystemProvider;
+  s : string;
+  first : boolean;
+  exp : TSnomedExpression;
+  list : TAdvList<TMatchingConcept>;
+  mc : TMatchingConcept;
+  match : TFHIRComposeOpRespMatch;
+  ref : TSnomedRefinementGroup;
+  unmatch : TFHIRComposeOpRespUnmatched;
+  function isValidCode(s : String) : boolean;
+  var
+    ctxt : TCodeSystemProviderContext;
+  begin
+    ctxt := cs.locate(s);
+    result := ctxt <> nil;
+    cs.Close(ctxt);
+  end;
+begin
+  cs := getProvider(req.system, req.version, nil);
+  try
+    s := '';
+    for prop in req.property_List do
+    begin
+      if prop.code = 'focus' then
+        if not isValidCode(prop.value) then
+          raise Exception.Create('invalid snomed value :'+prop.value)
+        else
+          s := prop.value;
+    end;
+    if s = '' then
+      raise Exception.Create('no focus found');
 
+    first := true;
+    for prop in req.property_List do
+    begin
+      if prop.code <> 'focus' then
+      begin
+        if not isValidCode(prop.code) then
+          raise Exception.Create('invalid snomed code :'+prop.code);
+        if not isValidCode(prop.value) then
+          raise Exception.Create('invalid snomed value :'+prop.value);
+        if prop.subpropertyList.Count > 0 then
+          raise Exception.Create('invalid sub-property');
+        if first then
+          s := s + ':'+ prop.code+'='+prop.value
+        else
+          s := s + ','+ prop.code+'='+prop.value;
+        first := false;
+      end;
+    end;
+    if not req.exact then
+      raise Exception.Create('Only ''machine'' is supported for mode');
+    exp := TSnomedServices(cs).parseExpression(s);
+    try
+      list := TSnomedServices(cs).condenseExpression(exp);
+      try
+        for mc in list do
+        begin
+          match := TFHIRComposeOpRespMatch.Create;
+          resp.matchList.add(match);
+          match.code := TFhirCoding.Create('http://snomed.info/sct', mc.matched);
+          match.code.display := cs.getDisplay(mc.matched, '');
+          for ref in mc.Unmatched do
+          begin
+            unmatch := TFHIRComposeOpRespUnmatched.Create;
+            match.unmatchedList.Add(unmatch);
+            if ref.refinements.Count = 1 then
+            begin
+              unmatch.code := ref.refinements[0].name.code;
+              unmatch.value := ref.refinements[0].value.ToString;
+            end
+            else
+            begin
+              raise Exception.Create('not done yet');
+            end;
+          end;
+        end;
+      finally
+        list.free;
+      end;
+    finally
+      exp.free;
+    end;
+  finally
+    cs.free;
+  end;
+end;
+{$ENDIF}
 
 function TTerminologyServer.getCodeDefinition(c : TFhirCodeSystemConcept; code : string) : TFhirCodeSystemConcept;
 var
@@ -1152,9 +1245,6 @@ end;
 function TTerminologyServer.translate(cm: TLoadedConceptMap; coding: TFhirCoding): TFHIRParameters;
 var
   op : TFHIROperationOutcome;
-  list : TLoadedConceptMapList;
-  i : integer;
-  p : TFhirParameters;
   g : TFhirConceptMapGroup;
   em : TFhirConceptMapGroupElement;
   map : TFhirConceptMapGroupElementTarget;

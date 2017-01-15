@@ -45,7 +45,7 @@ Uses
   IdZLibCompressorBase, IdCompressorZLib, IdZlib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
-  TerminologyWebServer, AuthServer,
+  TerminologyWebServer, AuthServer, TwilioClient,
 
   FHIRTypes, fhirresources, fhirparser, fhirconstants,
   fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
@@ -117,6 +117,7 @@ Type
     FBasePath : String;
     FSecurePath : String;
     FHost : String;
+    HostSms : String;
     FSourcePath : String;
     FName : String;
     FPlainServer : TIdHTTPServer;
@@ -208,6 +209,7 @@ Type
     function DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
+    procedure smsStatus(msg : String);
   Public
     Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; loadStore : boolean);
     Destructor Destroy; Override;
@@ -300,6 +302,7 @@ Begin
   FName := Name;
   FIni := TIniFile.Create(ini);
   FHost := FIni.ReadString('web', 'host', '');
+  HostSms := FIni.ReadString('sms', 'owner', '');
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
   FPatientViewServers := TDictionary<String, String>.create;
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
@@ -521,8 +524,35 @@ Begin
   FStartTime := GetTickCount;
   StartServer(active);
   if (active) then
+  begin
     FThread := TFhirServerMaintenanceThread.create(self);
+    smsStatus('The server '+DataStore.FormalURLPlain+' for '+DataStore.OwnerName+' has started');
+  end;
 End;
+
+procedure TFhirWebServer.smsStatus(msg : String);
+var
+  client : TTwilioClient;
+begin
+  try
+    client := TTwilioClient.Create;
+    try
+      client.Account := DataStore.SubscriptionManager.SMSAccount;
+      if (client.Account <> '') and (HostSms <> '') then
+      begin
+        client.Token := DataStore.SubscriptionManager.SMSToken;
+        client.From := DataStore.SubscriptionManager.SMSFrom;
+        client.dest := HostSms;
+        client.Body := msg;
+        client.send;
+      end;
+    finally
+      client.Free;
+    end;
+  except
+  end;
+end;
+
 
 procedure TFhirWebServer.startHooks(ctxt: TFHIRWebServerPatientViewContext; patient: TFHIRPatient; url : String);
 var
@@ -561,6 +591,7 @@ end;
 
 Procedure TFhirWebServer.Stop;
 Begin
+  smsStatus('The server '+DataStore.FormalURLPlain+' for '+DataStore.OwnerName+' is stopping');
   if FThread <> nil then
     FThread.Terminate;
   StopServer;
@@ -1532,6 +1563,8 @@ var
 //  hookid : String;
   hooks : TFHIRWebServerPatientViewContext;
 begin
+  result := 0;
+
   id := request.Id.Substring(13);
   FLock.Lock;
   try
@@ -3163,46 +3196,53 @@ end;
 
 procedure TFhirServerMaintenanceThread.Execute;
 begin
-  CoInitialize(nil);
-  repeat
-    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'sleeping';
-    sleep(1000);
-    if not FServer.DataStore.ForLoad then
-    begin
-      if (not terminated) then
-      begin
-        try
-          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
-          FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
-        except
-        end;
-        try
-          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
-          FServer.FFhirStore.ProcessObservations;
-        except
-        end;
-      end;
-      if FServer.FActive then
-      begin
-        FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
-        FServer.FFhirStore.ProcessSubscriptions;
-      end;
-      if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
-      begin
-        try
-          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
-          FServer.FFhirStore.Sweep;
-        except
-        end;
-        FLastSweep := now;
-      end;
-    end;
-  until Terminated;
+  Writeln('Starting TFhirServerMaintenanceThread');
   try
-    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'dead';
+    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'starting';
+    CoInitialize(nil);
+    repeat
+      FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'sleeping';
+      sleep(1000);
+      if not FServer.DataStore.ForLoad then
+      begin
+        if (not terminated) then
+        begin
+          try
+            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
+            FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
+          except
+          end;
+          try
+            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
+            FServer.FFhirStore.ProcessObservations;
+          except
+          end;
+        end;
+        if FServer.FActive then
+        begin
+          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
+          FServer.FFhirStore.ProcessSubscriptions;
+        end;
+        if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
+        begin
+          try
+            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
+            FServer.FFhirStore.Sweep;
+          except
+          end;
+          FLastSweep := now;
+        end;
+      end;
+    until Terminated;
+    try
+      FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'dead';
+    except
+    end;
+    CoUninitialize;
+    Writeln('Ending TFhirServerMaintenanceThread');
   except
+    Writeln('Failing TFhirServerMaintenanceThread');
   end;
-  CoUninitialize;
 end;
 
 function TFhirWebServer.transform1(resource: TFhirResource; lang, xslt: String; saveOnly : boolean): string;

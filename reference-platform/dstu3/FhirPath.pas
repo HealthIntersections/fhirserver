@@ -652,8 +652,6 @@ begin
 end;
 
 function TFHIRExpressionEngine.equivalent(left, right: TFHIRBase): boolean;
-var
-  ok : boolean;
 begin
   if (left.hasType('integer') and right.hasType('integer')) then
     result := equals(left, right)
@@ -943,7 +941,6 @@ end;
 
 function TFHIRExpressionEngine.funcContains(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   res : TFHIRBaseList;
   sw : String;
 begin
@@ -1023,7 +1020,6 @@ end;
 
 function TFHIRExpressionEngine.funcEndsWith(context: TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   res : TFHIRBaseList;
   sw : String;
 begin
@@ -1145,7 +1141,6 @@ end;
 
 function TFHIRExpressionEngine.funcLength(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   s : String;
 begin
   result := TFHIRBaseList.Create();
@@ -1349,7 +1344,6 @@ end;
 
 function TFHIRExpressionEngine.funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   res : TFHIRBaseList;
   sw : String;
 begin
@@ -1407,13 +1401,13 @@ end;
 
 function TFHIRExpressionEngine.funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRBaseList; exp: TFHIRExpressionNode): TFHIRBaseList;
 var
-  item : TFHIRBase;
   s, sw : String;
   n1, n2 : TFhirBaseList;
   i1, i2 : integer;
 begin
   n1 := nil;
   n2 := nil;
+  i2 := 0;
   result := TFHIRBaseList.Create;
   try
     n1 := execute(context, focus, exp.Parameters[0], false);
@@ -1813,6 +1807,7 @@ var
   urlm, urlt : String;
   found, ok : boolean;
 begin
+  result := nil;
   n1 := execute(context, focus, exp.Parameters[0], false);
   try
     for item in focus do
@@ -2163,7 +2158,6 @@ end;
 function TFHIRExpressionEngine.opGreater(left, right: TFHIRBaseList): TFHIRBaseList;
 var
   l, r : TFHIRBase;
-  sl, sr, tl, tr : String;
   lUnit, rUnit : TFHIRBaseList;
 begin
   result := TFHIRBaseList.create;

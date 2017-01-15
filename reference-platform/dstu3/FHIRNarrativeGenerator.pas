@@ -542,6 +542,7 @@ var
   v: TBaseWrapper;
   first: boolean;
 begin
+  v := nil;
   if (children.Empty) then
   begin
     displayHints := readDisplayHints(defn);

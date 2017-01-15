@@ -529,9 +529,7 @@ end;
 
 procedure TSCIMUser.copyFrom(source: TSCIMUser);
 var
-  i : integer;
   n : string;
-  jn : TJsonNode;
 begin
   // copy from the source unless exists in the dest
   for n in source.FJson.properties.Keys do
