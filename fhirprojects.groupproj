@@ -21,13 +21,13 @@
         <Projects Include="install\helper\installer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="reference-platform\dstu1\dstu1.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="reference-platform\dstu3\fhirtests3.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="reference-platform\dstu1\dstu1.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -92,15 +92,6 @@
     <Target Name="installer:Make">
         <MSBuild Projects="install\helper\installer.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dstu1">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj"/>
-    </Target>
-    <Target Name="dstu1:Clean">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="dstu1:Make">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Make"/>
-    </Target>
     <Target Name="fhirtests3">
         <MSBuild Projects="reference-platform\dstu3\fhirtests3.dproj"/>
     </Target>
@@ -119,14 +110,23 @@
     <Target Name="fhirtests2:Make">
         <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
     </Target>
+    <Target Name="dstu1">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj"/>
+    </Target>
+    <Target Name="dstu1:Clean">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dstu1:Make">
+        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRServer3;FHIRServer2;FHIRServerTests;FhirServerUtils;fhirnpp;installer;dstu1;fhirtests3;fhirtests2"/>
+        <CallTarget Targets="FHIRServer3;FHIRServer2;FHIRServerTests;FhirServerUtils;fhirnpp;installer;fhirtests3;fhirtests2;dstu1"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRServer3:Clean;FHIRServer2:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;fhirnpp:Clean;installer:Clean;dstu1:Clean;fhirtests3:Clean;fhirtests2:Clean"/>
+        <CallTarget Targets="FHIRServer3:Clean;FHIRServer2:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;fhirnpp:Clean;installer:Clean;fhirtests3:Clean;fhirtests2:Clean;dstu1:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRServer3:Make;FHIRServer2:Make;FHIRServerTests:Make;FhirServerUtils:Make;fhirnpp:Make;installer:Make;dstu1:Make;fhirtests3:Make;fhirtests2:Make"/>
+        <CallTarget Targets="FHIRServer3:Make;FHIRServer2:Make;FHIRServerTests:Make;FhirServerUtils:Make;fhirnpp:Make;installer:Make;fhirtests3:Make;fhirtests2:Make;dstu1:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

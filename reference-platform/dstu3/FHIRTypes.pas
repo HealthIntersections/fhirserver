@@ -22,7 +22,7 @@ unit FHIRTypes;
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
   IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
@@ -2688,7 +2688,7 @@ Type
     Procedure SetIdST(value : String);
     function GetExtensionList : TFhirExtensionList;
     function GetHasExtensionList : Boolean;
-  
+
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -2701,6 +2701,7 @@ Type
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function makeProperty(propName : string): TFHIRObject; override;
     function fhirType : string; override;
+    function getId : String; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
     {!script show}
@@ -3088,26 +3089,26 @@ Type
        Insert an existing FhirEnum before the designated index (0 = first item)
     }
     procedure InsertItem(index : Integer; value : TFhirEnum);
-    
+
     {@member Item
        Get the iIndexth FhirEnum. (0 = first item)
     }
-    
+
     {@member Item
        Get the iIndexth FhirEnum. (0 = first item)
     }
     procedure SetItemByIndex(index : Integer; value : TFhirEnum);
-    
+
     {@member Count
       The number of items in the collection
     }
     function Item(index : Integer) : TFhirEnum;
-    
+
     {@member Count
       The number of items in the collection
     }
     function Count : Integer; Overload;
-    
+
     {@member remove
       Remove the indexth item. The first item is index 0.
     }
@@ -3116,14 +3117,14 @@ Type
       Remove All Items from the list
     }
     procedure ClearItems;
-    
+
     Property FhirEnums[index : Integer] : TFhirEnum read GetItemN write SetItemN; default;
   End;
 
 
   {@Class TFhirDate : TFhirPrimitiveType
     a complex Date - has an Id attribute, and extensions.
-    
+
     Used where a FHIR element is a Date, and extensions
   }
   TFhirDate = class (TFhirPrimitiveType)
@@ -3137,7 +3138,7 @@ Type
   Public
     constructor Create(value : TDateAndTime); overload;
     Destructor Destroy; override;
-    
+
     {!script hide}
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
@@ -13907,6 +13908,11 @@ begin
 end;
 
 
+function TFhirElement.getId: String;
+begin
+  result := id;
+end;
+
 { TFhirElementListEnumerator }
 
 Constructor TFhirElementListEnumerator.Create(list : TFhirElementList);
@@ -14606,11 +14612,11 @@ begin
   else
   begin
     o := TFhirDate(other);
-    result := o.value = value;
+    result := o.value.Equal(value);
   end;
 end;
 
-function TFhirDate.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDate.equalsShallow(other : TFHIRBase) : boolean;
 var
   o : TFhirDate;
 begin
@@ -14621,7 +14627,7 @@ begin
   else
   begin
     o := TFhirDate(other);
-    result := o.value = value;
+    result := o.value.Equals(value);
   end;
 end;
 
@@ -14817,7 +14823,7 @@ begin
     result := FValue.asXml;
 end;
 
-function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean;
 var
   o : TFhirDateTime;
 begin
@@ -14828,7 +14834,7 @@ begin
   else
   begin
     o := TFhirDateTime(other);
-    result := o.value = value;
+    result := o.value.Equals(value);
   end;
 end;
 
