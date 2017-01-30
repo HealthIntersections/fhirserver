@@ -51,7 +51,6 @@ Type
     FDb : TKDBManager;
     FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
-    FWebSource : String;
 
     FNotServing : boolean;
     FLoadStore : boolean;
@@ -63,7 +62,6 @@ Type
     procedure StopRestServer;
     procedure UnloadTerminologies;
     procedure CloseDatabase;
-    function dbExists : Boolean;
     procedure validate;
     procedure InstallerCallBack(i : integer; s : String);
     procedure cb(i : integer; s : WideString);
@@ -225,29 +223,6 @@ begin
   FIni := TIniFile.Create(AIniName);
 end;
 
-function TFHIRService.dbExists: Boolean;
-var
-  conn : TKDBConnection;
-  meta : TKDBMetaData;
-begin
-  conn := FDb.GetConnection('test');
-  try
-    meta := conn.FetchMetaData;
-    try
-      result := meta.HasTable('Config');
-    finally
-      meta.free;
-    end;
-    conn.Release;
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      result := false;
-    end;
-  end;
-end;
-
 destructor TFHIRService.Destroy;
 begin
   CloseDatabase;
@@ -301,21 +276,22 @@ end;
 
 Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);
 var
-  dbn : String;
+  dbn,ddr : String;
   ver : integer;
   conn : TKDBConnection;
   dbi : TFHIRDatabaseInstaller;
   meta : TKDBMetaData;
 begin
   dbn := FIni.ReadString('database', 'database', '');
+  ddr := FIni.ReadString('database', 'driver', 'SQL Server Native Client 11.0');
   if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
      dbn := FIni.ReadString('database', 'database'+FHIR_GENERATED_VERSION, '');
   if TestMode then
-    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0', '(local)', 'fhir-test', '', '')
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
   else if FIni.ReadString('database', 'type', '') = 'mssql' then
   begin
     logt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
-    FDb := TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr,
       FIni.ReadString('database', 'server', ''), dbn,
       FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
   end
@@ -383,11 +359,11 @@ begin
   result := s;
   if FolderExists(result) then
     if first then
-      result := IncludeTrailingBackslash(s)+'examples-json.zip'
+      result := IncludeTrailingPathDelimiter(s)+'examples-json.zip'
     else
-      result := IncludeTrailingBackslash(s)+'examples.json.zip';
+      result := IncludeTrailingPathDelimiter(s)+'examples.json.zip';
   if not FileExists(result) then
-    result := IncludeTrailingBackslash(ExtractFilePath(fn))+s;
+    result := IncludeTrailingPathDelimiter(ExtractFilePath(fn))+s;
   if not FileExists(result) then
     raise Exception.Create('Unable to find file '+s);
 end;
@@ -418,7 +394,7 @@ begin
   end;
   {$ELSE}
   if FolderExists(fn) then
-    fn := IncludeTrailingBackslash(fn)+'load.ini';
+    fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
   logt('Load database from sources listed in '+fn);
   if not FileExists(fn) then
     raise Exception.Create('Load Ini file '+fn+' not found');
@@ -598,7 +574,6 @@ begin
         db.callback := callback;
         db.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
         db.Bases.Add('http://hl7.org/fhir');
-        db.TextIndexing := not FindCmdLineSwitch('no-text-index');
         db.Install(scim);
       finally
         db.free;

@@ -369,7 +369,7 @@ type
     function hasType(tl : Array of String) : boolean; overload;
     function describe : String; virtual;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); virtual;
-    function toString : String; override;
+    function ToString : String; override;
   published
     {@member comments
       comments from the XML stream. No support for comments in JSON
@@ -680,7 +680,7 @@ type
     Constructor Create(uniqueId : Integer);
     Destructor Destroy; override;
 
-    function toString : String; override;
+    function ToString : String; override;
     function Link : TFHIRExpressionNode; overload;
     function checkName : boolean;
 

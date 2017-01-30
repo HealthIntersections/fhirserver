@@ -33,7 +33,7 @@ Type
     function expand(vs : TFhirValueSet) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
     function validateCode(system, version, code, display : String) : TValidationResult; override;
-    function validateCode(system, code, version : String; vs : TFHIRValueSet) : TValidationResult; override;
+    function validateCode(system, version, code : String; vs : TFHIRValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; override;
   end;
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-function TFHIRPluginValidatorContext.validateCode(system, code, version: String; vs: TFHIRValueSet): TValidationResult;
+function TFHIRPluginValidatorContext.validateCode(system, version, code: String; vs: TFHIRValueSet): TValidationResult;
 var
   pIn, pOut : TFhirParameters;
   def : TFhirCodeSystemConcept;

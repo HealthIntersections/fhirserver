@@ -142,6 +142,7 @@ end;
 
 function TFHIROperationObject.asParams(name : String): TFHIRParametersParameter;
 begin
+  result := nil;
 end;
 
 constructor TFHIROperationObject.create;

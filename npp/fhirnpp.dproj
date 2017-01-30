@@ -83,11 +83,15 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
-        <DCC_UnitSearchPath>C:\work\Components\vtree\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\work\Components\treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_2_32</DCC_DcuOutput>
         <Debugger_HostApplication>C:\Program Files (x86)\Notepad++\notepad++.exe</Debugger_HostApplication>
+<<<<<<< HEAD
         <DCC_ExeOutput>C:\Users\Graha\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
+=======
+        <DCC_ExeOutput>%USERPROFILE%\AppData\Roaming\Notepad++\plugins</DCC_ExeOutput>
+>>>>>>> 2b728e9f8bc961ca45f4330e7aee1979ab7bf3d1
         <Manifest_File>None</Manifest_File>
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_Build>0</VerInfo_Build>
@@ -238,7 +242,7 @@
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
-        <DCCReference Include="..\..\Components\vtree\Source\VirtualTrees.pas"/>
+        <DCCReference Include="..\..\Components\treeview\Source\VirtualTrees.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRPath.pas"/>
         <DCCReference Include="FHIRPathDocumentation.pas">
             <Form>FHIRPathDocumentationForm</Form>

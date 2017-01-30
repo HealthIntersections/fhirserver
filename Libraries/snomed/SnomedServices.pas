@@ -447,6 +447,21 @@ operations
 
   TSnomedServicesRenderOption = (sroMinimal, sroAsIs, sroFillMissing, sroReplaceAll);
 
+  TSnomedRefinementGroupMatchState = (gmsNoMatch, gmsIdentical, gmsSubsumed);
+
+  TMatchingConcept = class (TAdvObject)
+  private
+    FMatched : String;
+    FUnmatched : TAdvList<TSnomedRefinementGroup>;
+  public
+    Constructor Create(match : String); overload;
+    Constructor Create(match : String; nonmatched : TAdvList<TSnomedRefinementGroup>); overload;
+    Destructor Destroy; override;
+
+    property matched : String read FMatched;
+    property Unmatched : TAdvList<TSnomedRefinementGroup> read FUnmatched;
+  end;
+
   TSnomedServices = class (TCodeSystemProvider)
   Private
     FEdition : String;
@@ -501,11 +516,16 @@ operations
 
 //    function findRefinement(ref: cardinal; b : TSnomedExpression): TSnomedExpression;
 //    procedure findRefinements(exp: TSnomedExpression; relationship, focus: Cardinal);
-    function findMatchingGroup(r : TSnomedRefinementGroup; exp : TSnomedExpression) : TSnomedRefinementGroup;
+    function findMatchingGroup(r : TSnomedRefinementGroup; exp : TSnomedExpression) : TSnomedRefinementGroup; overload;
+    function findMatchingGroup(r : TSnomedRefinementGroup; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroup; overload;
+    function groupsMatch(a, b : TSnomedRefinementGroup): boolean;
     function subsumesGroup(a, b : TSnomedRefinementGroup): boolean;
     function subsumesConcept(a, b : TSnomedConcept): boolean;
 
     procedure createDefinedExpr(reference : Cardinal; exp : TSnomedExpression; ancestor : boolean); overload;
+    procedure findMatchingConcepts(list : TAdvList<TMatchingConcept>; reference : cardinal; refinements : TAdvList<TSnomedRefinementGroup>);
+    function checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TAdvList<TSnomedRefinementGroup>; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
+    function listNonMatchingGroups(tgt, src : TAdvList<TSnomedRefinementGroup>) : TAdvList<TSnomedRefinementGroup>;
     procedure mergeRefinements(list : TAdvList<TSnomedRefinement>);
     function mergeGroups(grp1, grp2 : TSnomedRefinementGroup) : boolean;
     procedure rationaliseExpr(exp: TSnomedExpression);
@@ -625,6 +645,7 @@ operations
     function displayExpression(source : TSnomedExpression) : String;  overload;
     function expressionsEquivalent(a, b : TSnomedExpression; var msg : String) : boolean;  overload;
     function normaliseExpression(exp : TSnomedExpression) : TSnomedExpression;  overload;
+    function condenseExpression(exp : TSnomedExpression) : TAdvList<TMatchingConcept>;  overload;
     function expressionSubsumes(a, b : TSnomedExpression) : boolean;  overload;
     function createNormalForm(reference : Cardinal) : TSnomedExpression; overload;
 
@@ -2013,6 +2034,42 @@ var
   i : cardinal;
 begin
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
+end;
+
+function TSnomedServices.condenseExpression(exp: TSnomedExpression): TAdvList<TMatchingConcept>;
+var
+  grps : TAdvList<TSnomedRefinementGroup>;
+  ref : TSnomedRefinement;
+  grp : TSnomedRefinementGroup;
+begin
+  grps := TAdvList<TSnomedRefinementGroup>.create;
+  try
+    grps.AddAll(exp.refinementGroups);
+    for ref in exp.refinements do
+    begin
+      grp := TSnomedRefinementGroup.Create;
+      grps.Add(grp);
+      grp.refinements.Add(ref.Link);
+    end;
+
+    result := TAdvList<TMatchingConcept>.create;
+    try
+      if (exp.concepts.Count = 1) then
+      begin
+        if grps.Count = 0 then
+          result.Add(TMatchingConcept.Create(exp.concepts[0].code))
+        else
+          findMatchingConcepts(result, exp.concepts[0].reference, grps);
+      end;
+      if result.Empty then
+        raise Exception.Create('No matches found for '+exp.ToString);
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    grps.Free;
+  end;
 end;
 
 function TSnomedServices.FindStem(s: String; var index: Integer): Boolean;
@@ -3594,6 +3651,27 @@ begin
   end;
 end;
 
+function TSnomedServices.groupsMatch(a, b: TSnomedRefinementGroup): boolean;
+var
+  refs, reft, t : TSnomedRefinement;
+  msg, e1, e2 : String;
+begin
+  for refs in a.refinements do
+  begin
+    reft := nil;
+    for t in b.refinements do
+      if refs.name.matches(t.name) then
+        reft := t;
+    if reft = nil then
+      exit(false);
+    e1 := renderExpression(refs.value, sroAsIs);
+    e2 := renderExpression(reft.value, sroAsIs);
+    if not expressionsEquivalent(refs.value, reft.value, msg) then
+      exit(false);
+  end;
+  result := true;
+end;
+
 function TSnomedServices.ParseExpression(source: String): TSnomedExpression;
 var
   prsr : TSnomedExpressionParser;
@@ -4085,6 +4163,109 @@ begin
   result := (a.reference <> NO_REFERENCE) and (b.reference <> NO_REFERENCE) and Subsumes(a.reference, b.reference);
 end;
 
+procedure TSnomedServices.findMatchingConcepts(list: TAdvList<TMatchingConcept>; reference: cardinal; refinements: TAdvList<TSnomedRefinementGroup>);
+var
+  children : TCardinalArray;
+  child : Cardinal;
+  exp : TSnomedExpression;
+  allMatched, oneUnMatched : boolean;
+  grp : TSnomedRefinementGroup;
+  state : TSnomedRefinementGroupMatchState;
+  ref : TSnomedRefinement;
+  grps, grpNM : TAdvList<TSnomedRefinementGroup>;
+  s : String;
+begin
+  children := GetConceptChildren(reference);
+  for child in children do
+  begin
+    s := GetConceptId(child);
+    exp := TSnomedExpression.create;
+    try
+      createDefinedExpr(child, exp, false);
+      for ref in exp.refinements do
+      begin
+        grp := TSnomedRefinementGroup.Create;
+        exp.refinementGroups.Add(grp);
+        grp.refinements.add(ref.Link);
+      end;
+      exp.refinements.clear;
+
+      allMatched := true;
+      oneUnMatched := false;
+      grps := TAdvList<TSnomedRefinementGroup>.create;
+      try
+        for grp in exp.refinementGroups do
+        begin
+          state := checkGroupStateInRefinements(grp, refinements, grps);
+          if (state = gmsNoMatch) then
+            oneUnMatched := true
+          else if state <> gmsIdentical then
+            allMatched := false;
+        end;
+
+        if (oneUnMatched) then
+          // neither this nor any of the children will ever match
+        else if (allMatched) and (grps.count > 0) then
+        begin
+          // this reference is a complete match. stop here
+          list.Add(TMatchingConcept.Create(s));
+        end
+        else
+        begin
+          // get the list of non-matches
+          grpNM := listNonMatchingGroups(refinements, grps);
+          try
+            if (grpNM.Count < refinements.Count) then
+              list.Add(TMatchingConcept.Create(s, grpNM));
+            findMatchingConcepts(list, child, grpNM);
+          finally
+            grpNM.Free;
+          end;
+        end;
+      finally
+        grps.Free;
+      end;
+    finally
+      exp.Free;
+    end;
+  end;
+end;
+
+function TSnomedServices.checkGroupStateInRefinements(grp : TSnomedRefinementGroup; refinements : TAdvList<TSnomedRefinementGroup>; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroupMatchState;
+var
+  g : TSnomedRefinementGroup;
+begin
+  result := gmsNoMatch;
+  for g in refinements do
+  begin
+    if groupsMatch(grp, g) then
+    begin
+      grps.add(g.link);
+      exit(gmsIdentical);
+    end
+    else if subsumesGroup(grp, g) then
+      exit(gmsSubsumed);
+  end;
+end;
+
+function TSnomedServices.listNonMatchingGroups(tgt, src : TAdvList<TSnomedRefinementGroup>) : TAdvList<TSnomedRefinementGroup>;
+var
+  g, r : TSnomedRefinementGroup;
+begin
+  result := TAdvList<TSnomedRefinementGroup>.create;
+  try
+    for g in tgt do
+    begin
+      r := findMatchingGroup(g, src);
+      if (r = nil) then
+        result.Add(g.Link);
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TSnomedServices.findMatchingGroup(r : TSnomedRefinementGroup; exp : TSnomedExpression) : TSnomedRefinementGroup;
 var
   t : TSnomedRefinementGroup;
@@ -4094,6 +4275,31 @@ begin
   //  a matching group is where the target contains all the attributes of the source group
   result := nil;
   for t in exp.refinementGroups do
+  begin
+    all := true;
+    for refs in r.refinements do
+    begin
+      match := false;
+      for reft in t.refinements do
+        if refs.name.matches(reft.name) then
+          match := true;
+      if not match then
+        all := false;
+    end;
+    if (all) then
+      exit(t);
+  end;
+end;
+
+function TSnomedServices.findMatchingGroup(r : TSnomedRefinementGroup; grps : TAdvList<TSnomedRefinementGroup>) : TSnomedRefinementGroup;
+var
+  t : TSnomedRefinementGroup;
+  refs, reft : TSnomedRefinement;
+  all, match : boolean;
+begin
+  //  a matching group is where the target contains all the attributes of the source group
+  result := nil;
+  for t in grps do
   begin
     all := true;
     for refs in r.refinements do
@@ -4520,6 +4726,29 @@ begin
   else
     result := '??';
   end;
+end;
+
+{ TMatchingConcept }
+
+constructor TMatchingConcept.Create(match : String);
+begin
+  inherited Create;
+  FMatched := match;
+  FUnmatched := TAdvList<TSnomedRefinementGroup>.create;
+end;
+
+constructor TMatchingConcept.Create(match : String; nonmatched: TAdvList<TSnomedRefinementGroup>);
+begin
+  inherited Create;
+  FMatched := match;
+  FUnmatched := TAdvList<TSnomedRefinementGroup>.create;
+  FUnmatched.AddAll(nonmatched);
+end;
+
+destructor TMatchingConcept.Destroy;
+begin
+  FUnmatched.Free;
+  inherited;
 end;
 
 initialization

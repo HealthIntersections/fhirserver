@@ -68,7 +68,7 @@ type
     FCallback : TInstallerCallback;
     FMessage : String;
   public
-    constructor Create; overload;
+    constructor Create; overload; override;
     constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
 
     property upload : boolean read FUpload write FUpload;
@@ -353,6 +353,18 @@ type
   end;
 
 {$IFDEF FHIR3}
+  TFhirCodeSystemComposeOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
   TFhirSubsumesOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -675,6 +687,7 @@ begin
   {$IFDEF FHIR3}
   FOperations.add(TFhirActivateOperation.create);
   FOperations.add(TFhirSubsumesOperation.create);
+  FOperations.add(TFhirCodeSystemComposeOperation.create);
   FOperations.add(TFhirObservationStatsOperation.create);
   {$ENDIF}
 end;
@@ -907,7 +920,6 @@ end;
 procedure TFhirOperationManager.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 var
   param : TFhirCapabilityStatementRestResourceSearchParam;
-  a : string;
 begin
   param := TFhirCapabilityStatementRestResourceSearchParam.create;
   try
@@ -1401,8 +1413,8 @@ begin
         for i := 0 to tags.count - 1 do
           FRepository.RegisterTag(tags[i], FConnection);
 
-        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, Tags) values '+
-                                                             '(:k,:rk, :sd, :td, :v, :f, 2, :s, 0, :t)';
+        FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, Secure, ForTesting, Tags) values '+
+                                                             '(:k,:rk, :sd, :td, :v, :f, 2, :s, 0, 0, :t)';
         FConnection.prepare;
         try
           FConnection.BindInteger('k', key);
@@ -2440,6 +2452,7 @@ var
   xml : IXMLDOMDocument2;
   ms : TAdvMemoryStream;
 begin
+  result := false;
   json := nil;
   nvid := 0;
   key := 0;
@@ -2997,6 +3010,7 @@ var
   cr : TFHIRCustomResourceInformation;
   sp : TFhirSearchParameter;
 begin
+  result := false;
   crs := TAdvList<TFHIRCustomResourceInformation>.create;
   try
     ig := GetResourceByKey(key, needsSecure) as TFHIRImplementationGuide;
@@ -5555,8 +5569,9 @@ end;
 
 
 procedure TFhirOperationManager.checkProposedContent(request : TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
+var
+  l, r : String;
 begin
-
   if resource is TFhirSubscription then
   begin
     if (TFhirSubscription(resource).status <> SubscriptionStatusRequested) and (request.origin = roRest) then // nil = from the internal system, which is allowed to
@@ -5567,6 +5582,9 @@ begin
       raise Exception.Create('A websocket subscription must have a no payload, or the payload must be application/xml+fhir or application/json+fhir');
     if (TFhirSubscription(resource).status = SubscriptionStatusRequested) then
       TFhirSubscription(resource).status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
+    StringSplit(TFhirSubscription(resource).criteria, '?', l, r);
+    if (StringArrayIndexOfSensitive(CODES_TFhirResourceType, l) < 1) or (r = '') then
+      raise Exception.Create('Criteria is not valid');
   end;
   if (resource is TFhirOperationDefinition) then
   begin
@@ -6179,7 +6197,7 @@ begin
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('identifier'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
+              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
@@ -6234,7 +6252,7 @@ end;
 
 function TFhirExpandValueSetOperation.formalURL: String;
 begin
-  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-expand';
+  result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-expand';
 end;
 
 function TFhirExpandValueSetOperation.isWrite: boolean;
@@ -6329,9 +6347,9 @@ end;
 function TFhirLookupCodeSystemOperation.formalURL: String;
 begin
   {$IFDEF FHIR3}
-  result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
-  {$ELSE}
   result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup';
+  {$ELSE}
+  result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
   {$ENDIF}
 end;
 
@@ -6341,6 +6359,99 @@ begin
 end;
 
 {$IFDEF FHIR3}
+{ TFhirCodeSystemComposeOperation }
+
+function TFhirCodeSystemComposeOperation.Name: String;
+begin
+  result := 'compose';
+end;
+
+function TFhirCodeSystemComposeOperation.owningResource: TFhirResourceType;
+begin
+  result := frtCodeSystem;
+end;
+
+function TFhirCodeSystemComposeOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtCodeSystem];
+end;
+
+function TFhirCodeSystemComposeOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirCodeSystemComposeOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  req : TFHIRComposeOpRequest;
+  resp : TFHIRComposeOpResponse;
+  resourceKey : integer;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    begin
+      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments)) then
+      begin
+        req := TFHIRComposeOpRequest.Create;
+        try
+          if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
+            req.load(request.Resource as TFHIRParameters)
+          else
+            req.load(request.Parameters);
+
+          // first, we have to identify the Code System
+          if request.Id <> '' then // and it must exist, because of the check above
+            raise Exception.Create('Specifying a code system is not supported (only snomed-ct is supported)');
+          if req.system <> 'http://snomed.info/sct' then
+            raise Exception.Create('Only snomed-ct is supported)');
+          // ok, it's snomed
+          resp := TFHIRComposeOpResponse.Create;
+          try
+            try
+              manager.FRepository.TerminologyServer.composeCode(req, resp);
+              response.Body := '';
+              response.LastModifiedDate := now;
+              response.Resource := resp.asParams;
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+            except
+              on e : Exception do
+              begin
+                response.HTTPCode := 400;
+                response.Message := 'Error';
+                response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeCodeInvalid);
+              end;
+            end;
+          finally
+            resp.Free;
+          end;
+        finally
+          req.Free;
+        end;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirCodeSystemComposeOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-compose';
+end;
+
+function TFhirCodeSystemComposeOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
 { TFhirSubsumesSystemOperation }
 
 function TFhirSubsumesOperation.Name: String;
@@ -6497,11 +6608,9 @@ end;
 procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRStatsOpRequest;
-  resp : TFHIRStatsOpResponse;
   s : string;
   ose : TObservationStatsEvaluator;
   c : TFhirCoding;
-  p : TObservationStatsParameter;
   list : TAdvList<TFHIRResource>;
   res : TFHIRResource;
 begin
@@ -7389,7 +7498,6 @@ var
   coding : TFhirCoding;
 //  abstractOk : boolean;
   params : TFhirParameters;
-  needSecure : boolean;
 begin
   try
     manager.NotFound(request, response);

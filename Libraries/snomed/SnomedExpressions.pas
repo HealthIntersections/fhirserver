@@ -11,6 +11,7 @@ const
 
 Type
   ESnomedServices = class (Exception);
+  ESnomedParser = class (Exception);
 
   TSnomedRefinementGroup = class;
   TSnomedRefinement = class;
@@ -33,7 +34,7 @@ Type
     FLiteral: String;
     FDecimal: String;
   public
-    Constructor Create; overload;
+    Constructor Create; overload; override;
     Constructor Create(reference : cardinal); overload;
 
     Function Link : TSnomedConcept; overload;
@@ -754,16 +755,22 @@ begin
   end
   else
   begin
-    result := TSnomedExpression.create;
-    try
-      result.start := cursor;
-      result.concepts.Add(concept);
-      result.stop := cursor;
-      ws;
-      result.link;
-    finally
-      result.free;
-    end;
+    result := expression;
+//    result := TSnomedExpression.create;
+//    try
+//      result.start := cursor;
+//      result.concepts.Add(concept);
+//      result.stop := cursor;
+//      ws;
+//      while peek = '+' do
+//      begin
+//        gchar('+');
+//        result.concepts.Add(concept);
+//      end;
+//      result.link;
+//    finally
+//      result.free;
+//    end;
   end;
 end;
 
@@ -847,8 +854,11 @@ begin
 end;
 
 procedure TSnomedExpressionParser.fixed(c : char);
+var
+  b : boolean;
 begin
-  rule(gchar(c), 'Expected character "'+c+'"');
+  b := gchar(c);
+  rule(b, 'Expected character "'+c+'" but found '+peek);
   ws;
 end;
 
@@ -920,7 +930,7 @@ end;
 procedure TSnomedExpressionParser.rule(test : boolean; message : String);
 begin
   if not test then
-    raise ESnomedServices.Create(message+' at character '+inttostr(cursor));
+    raise ESnomedParser.Create(message+' at character '+inttostr(cursor));
 end;
 
 function TSnomedExpressionParser.stringConstant: String;

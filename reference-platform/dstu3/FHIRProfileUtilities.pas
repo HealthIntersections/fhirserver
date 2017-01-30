@@ -726,6 +726,7 @@ var
   value : TFhirElement;
   coding : TFhirCoding;
 begin
+  result := nil;
   if stack.Contains(definition) then
     exit; // prevent recursion
   stack.Add(definition.Link);
@@ -916,7 +917,6 @@ function TProfileUtilities.updateURLs(url : String; element : TFhirElementDefini
 var
   defn : TFhirElementDefinition;
   t : TFhirElementDefinitionType;
-  tp : TFhirUri;
 begin
   if (element <> nil) then
   begin

@@ -130,7 +130,7 @@ uses
   ParseMap in '..\reference-platform\Support\ParseMap.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu3\SmartOnFhirUtilities.pas',
   FetchResourceForm in 'FetchResourceForm.pas' {FetchResourceFrm},
-  VirtualTrees in '..\..\Components\vtree\Source\VirtualTrees.pas',
+  VirtualTrees in '..\..\Components\treeview\Source\VirtualTrees.pas',
   FHIRPath in '..\reference-platform\dstu3\FHIRPath.pas',
   FHIRPathDocumentation in 'FHIRPathDocumentation.pas' {FHIRPathDocumentationForm},
   MimeMessage in '..\reference-platform\Support\MimeMessage.pas',

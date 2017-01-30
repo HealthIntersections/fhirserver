@@ -62,29 +62,20 @@ Type
   Private
     FLock : TAdvExclusiveCriticalSection;
     FBuffer : TAdvStringList;
-    FId : Integer;
-    FUse : Integer;
     FFilename : String;
     FFilenameCanChange : Boolean;
     FPolicy : TLoggerPolicy;
-    FMinSize: Cardinal;
 
-    Procedure Initialise;
     Function Header : String;
 
-    Procedure AnalyseFileName;
     Function ProcessFileName : String;
 
-    Procedure StartLogging(WantAppend: Boolean);
     Procedure ActualLog(Const s: String);
 
     Procedure FlushLogQueue;
     Procedure CutFile(sName : String);
     Procedure CycleFile(sName : String);
-    Function GetFileSize: Cardinal;
 
-    Function GetLogFileContents(Offset, Length: Cardinal): String;
-    Procedure ClearLogFile;
   Public
     Constructor Create(filename : String);
     Destructor Destroy; Override;
@@ -129,27 +120,6 @@ Begin
       '=================================================================' + #13#10
   Else
     Result := '';
-End;
-
-Procedure TLogger.Initialise;
-Begin
-  FMinSize := Length(Header);
-  AnalyseFileName;
-  If not FFilenameCanChange Then
-    StartLogging(Not FPolicy.Clear);
-End;
-
-Procedure TLogger.ClearLogFile;
-Begin
-  FLock.Lock;
-  Try
-    If FBuffer <> Nil Then
-      FBuffer.Clear;
-    DeleteFile(FFilename);
-    StartLogging(False);
-  Finally
-    FLock.UnLock;
-  End;
 End;
 
 Procedure TLogger.FlushLogQueue;
@@ -223,25 +193,6 @@ Begin
   If Not Result Then
     If (GetLastError = 183) Then
       Result := True; // directory existed. ( but thats O.K.)
-End;
-
-Procedure TLogger.StartLogging(WantAppend: Boolean);
-Var
-  attributes: Integer;
-Begin
-
-  If Not FFilenameCanChange Then
-
-  CreateDir(ExtractFilePath(FFilename));
-  If fileexists(FFileName) And Not WantAppend Then
-  Begin
-    Attributes := FileGetAttr(fFileName);
-    Attributes := Attributes And Not faReadOnly;
-    FileSetAttr(FFileName, Attributes);
-    DeleteFile(PChar(FFileName));
-  End;
-  If Not FileExists(FFileName) Then
-    ActualLog(Header);
 End;
 
 
@@ -333,42 +284,6 @@ Begin
   DeleteFile(PChar(sName + '.tmp'));
 End;
 
-Function TLogger.GetLogFileContents(Offset, Length: Cardinal): String;
-Var
-  rf: THandle;
-  readlength: Cardinal;
-Begin
-  FLock.Lock;
-  Try
-    rf := CreateFile(PChar(FFilename), GENERIC_READ, FILE_SHARE_READ, Nil, OPEN_EXISTING, 0, 0);
-    If rf = INVALID_HANDLE_VALUE Then
-      Result := SysErrorMessage(GetLastError)
-    Else
-      Begin
-      SetFilePointer(rf, Offset, Nil, FILE_BEGIN);
-      SetLength(Result, Length);
-      ReadFile(rf, Result[1], Length, readlength, Nil);
-      SetLength(Result, ReadLength);
-      CloseHandle(rf);
-      End;
-  Finally
-    FLock.UnLock;
-  End;
-End;
-
-Function TLogger.GetFileSize: Cardinal;
-Var
-  f: HFile;
-Begin
-  f := CreateFile(PChar(FFilename), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_EXISTING, 0, 0);
-  If f = INVALID_HANDLE_VALUE Then
-    Result := $FFFFFFFF
-  Else
-    Begin
-    Result := windows.GetFileSize(f, Nil);
-    CLoseHandle(f);
-    End;
-End;
 
 Procedure TLogger.CycleFile(sName : String);
 Var
@@ -426,11 +341,6 @@ constructor TLoggerPolicy.Create;
 begin
   inherited;
   FFullPolicy := lfpChop;
-end;
-
-procedure TLogger.AnalyseFileName;
-begin
-  FFilenameCanChange := pos('$', FFilename) > 0;
 end;
 
 

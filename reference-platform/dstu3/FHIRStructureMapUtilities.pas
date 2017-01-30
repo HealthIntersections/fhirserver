@@ -624,12 +624,12 @@ var
   map : TFhirConceptMap;
   id, n, v : String;
   prefixes : TDictionary<String, String>;
-  g : TFhirConceptMapGroup;
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
   vs, vc, vt : String;
   eq : TFhirConceptMapEquivalenceEnum;
 begin
+  tgt := nil;
   lexer.token('conceptmap');
   map := TFhirConceptMap.create;
   result.ContainedList.add(map);
@@ -1448,6 +1448,7 @@ var
   tgt : TFhirConceptMapGroupElementTarget;
 begin
   b := TAdvList<TFHIRBase>.create;
+  g := nil;
   src := TFHIRCoding.create;
   try
     if (source.isPrimitive()) then

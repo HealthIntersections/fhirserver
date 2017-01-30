@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.8.0 generated 2016-12-09T23:04:35+11:00
+// FHIR v1.8.0 generated 2017-01-15T08:48:46+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -83,10 +83,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property language : String read FLanguage write FLanguage;
     property use : TFhirCoding read FUse write SetUse;
     property value : String read FValue write FValue;
@@ -100,10 +100,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
     property description : String read FDescription write FDescription;
@@ -118,10 +118,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
     property description : String read FDescription write FDescription;
@@ -199,10 +199,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
   end;
@@ -215,10 +215,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
     property subpropertyList : TAdvList<TFHIRComposeOpReqSubproperty> read FSubpropertyList;
@@ -229,7 +229,7 @@ Type
     FSystem : String;
     FVersion : String;
     FProperty_List : TAdvList<TFHIRComposeOpReqProperty_>;
-    FMode : String;
+    FExact : Boolean;
     FCompositional : Boolean;
   protected
     function isKnownName(name : String) : boolean; override;
@@ -242,7 +242,7 @@ Type
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property property_List : TAdvList<TFHIRComposeOpReqProperty_> read FProperty_List;
-    property mode : String read FMode write FMode;
+    property exact : Boolean read FExact write FExact;
     property compositional : Boolean read FCompositional write FCompositional;
   end;
 
@@ -253,10 +253,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
   end;
@@ -269,10 +269,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
     property value : String read FValue write FValue;
     property property_List : TAdvList<TFHIRComposeOpRespProperty_> read FProperty_List;
@@ -281,19 +281,18 @@ Type
   TFHIRComposeOpRespMatch = class (TFHIROperationObject)
   private
     FCode : TFhirCoding;
-    FUnmatched : TFHIRComposeOpRespUnmatched;
+    FUnmatchedList : TAdvList<TFHIRComposeOpRespUnmatched>;
     FComment : String;
     procedure SetCode(value : TFhirCoding);
-    procedure SetUnmatched(value : TFHIRComposeOpRespUnmatched);
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property code : TFhirCoding read FCode write SetCode;
-    property unmatched : TFHIRComposeOpRespUnmatched read FUnmatched write SetUnmatched;
+    property unmatchedList : TAdvList<TFHIRComposeOpRespUnmatched> read FUnmatchedList;
     property comment : String read FComment write FComment;
   end;
 
@@ -783,10 +782,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property element : String read FElement write FElement;
     property concept : TFhirCodeableConcept read FConcept write SetConcept;
   end;
@@ -833,10 +832,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property element : String read FElement write FElement;
     property concept : TFhirCoding read FConcept write SetConcept;
   end;
@@ -851,10 +850,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property equivalence : String read FEquivalence write FEquivalence;
     property concept : TFhirCoding read FConcept write SetConcept;
     property productList : TAdvList<TFHIRTranslateOpRespProduct> read FProductList;
@@ -1672,10 +1671,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property name : String read FName write FName;
     property valueX : TFhirType read FValueX write SetValueX;
   end;
@@ -1727,10 +1726,10 @@ Type
   protected
     function isKnownName(name : String) : boolean; override;
   public
-    constructor Create; overload;
-    constructor Create(params : TFhirParametersParameter); overload;
+    constructor Create; overload; override;
+    constructor Create(params : TFhirParametersParameter); overload; override;
     destructor Destroy; override;
-    function asParams(name : String) : TFHIRParametersParameter;
+    function asParams(name : String) : TFHIRParametersParameter; override;
     property name : String read FName write FName;
     property valueX : TFhirType read FValueX write SetValueX;
   end;
@@ -2270,7 +2269,7 @@ begin
   for p in params.parameterList do
     if p.name = 'property' then
       FProperty_List.Add(TFHIRComposeOpReqProperty_.create(p));{a}
-  FMode := params.str['mode'];
+  FExact := params.bool['exact'];
   FCompositional := params.bool['compositional'];
   loadExtensions(params);
 end;
@@ -2279,7 +2278,7 @@ procedure TFHIRComposeOpRequest.load(params : TParseMap);
 begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
-  FMode := params.getVar('mode');
+  FExact := StrToBoolDef(params.getVar('exact'), false);
   FCompositional := StrToBoolDef(params.getVar('compositional'), false);
   loadExtensions(params);
 end;
@@ -2302,8 +2301,7 @@ begin
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     for v1 in FProperty_List do
       result.AddParameter(v1.asParams('property'));
-    if (FMode <> '') then
-      result.addParameter('mode', TFHIRCode.create(FMode));{oz.5f}
+      result.addParameter('exact', TFHIRBoolean.create(FExact));{oz.5f}
       result.addParameter('compositional', TFHIRBoolean.create(FCompositional));{oz.5f}
     writeExtensions(result);
     result.link;
@@ -2314,7 +2312,7 @@ end;
 
 function TFHIRComposeOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['system', 'version', 'property', 'mode', 'compositional'], name);
+  result := StringArrayExists(['system', 'version', 'property', 'exact', 'compositional'], name);
 end;
 
 procedure TFHIRComposeOpRespMatch.SetCode(value : TFhirCoding);
@@ -2413,22 +2411,22 @@ begin
   result := StringArrayExists(['code', 'value', 'property'], name);
 end;
 
-procedure TFHIRComposeOpRespMatch.SetUnmatched(value : TFHIRComposeOpRespUnmatched);
-begin
-  FUnmatched.free;
-  FUnmatched := value;
-end;
-
 constructor TFHIRComposeOpRespMatch.create;
 begin
   inherited create();
+  FUnmatchedList := TAdvList<TFHIRComposeOpRespUnmatched>.create;
 end;
 
 constructor TFHIRComposeOpRespMatch.create(params : TFhirParametersParameter);
+var
+  p : TFhirParametersParameter;
 begin
   inherited create();
+  FUnmatchedList := TAdvList<TFHIRComposeOpRespUnmatched>.create;
   FCode := (params.param['code'].value as TFhirCoding).Link; {ob.5d}
-  FUnmatched := TFHIRComposeOpRespUnmatched.create(params.param['unmatched']); {ob.5c}
+  for p in params.partList do
+    if p.name = 'unmatched' then
+      FUnmatchedList.Add(TFHIRComposeOpRespUnmatched.create(p));{a}
   FComment := params.str['comment'];
   loadExtensions(params);
 end;
@@ -2436,19 +2434,21 @@ end;
 destructor TFHIRComposeOpRespMatch.Destroy;
 begin
   FCode.free;
-  FUnmatched.free;
+  FUnmatchedList.free;
   inherited;
 end;
 
 function TFHIRComposeOpRespMatch.asParams(name : String) : TFhirParametersParameter;
+var
+  v1 : TFHIRComposeOpRespUnmatched;
 begin
   result := TFHIRParametersParameter.create;
   try
     result.name := name;
     if (FCode <> nil) then
       result.addParameter('code', FCode.Link);{oz.5d}
-    if (FUnmatched <> nil) then
-      result.addParameter(FUnmatched.asParams('unmatched'));{oz.5c}
+    for v1 in FUnmatchedList do
+      result.AddParameter(v1.asParams('unmatched'));
     if (FComment <> '') then
       result.addParameter('comment', TFHIRString.create(FComment));{oz.5f}
     writeExtensions(result);

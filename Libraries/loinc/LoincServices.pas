@@ -1673,7 +1673,7 @@ end;
 procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
 var
   index, i : integer;
-  iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
+  iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;

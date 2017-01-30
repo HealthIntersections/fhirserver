@@ -579,7 +579,7 @@ begin
       http.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
       if subst.channel.header <> '' then
-        http.Request.RawHeaders.Add(subst.channel.header);
+        http.Request.CustomHeaders.Add(subst.channel.header);
       http.Post(subst.channel.endpoint, stream);
     finally
       ssl.Free;
@@ -630,7 +630,6 @@ var
   key : integer;
   comp : TFHIRComposer;
   b : TMemoryStream;
-  bytes : TBytes;
 begin
   b := TMemoryStream.Create;
   try
@@ -994,7 +993,7 @@ var
   p : TParseMap;
 begin
   StringSplit(criteria, '?', l, r);
-  p := TParseMap.create(r, true);
+  p := TParseMap.create('_type='+l+'&'+r, true);
   try
     sql := FOnExecuteSearch(typekey, '', '', p, conn);
     result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;

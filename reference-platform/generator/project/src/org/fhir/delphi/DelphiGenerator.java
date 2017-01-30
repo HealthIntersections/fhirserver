@@ -394,10 +394,10 @@ public class DelphiGenerator {
             "  protected\r\n"+
             "    function isKnownName(name : String) : boolean; override;\r\n"+
             "  public\r\n"+
-            "    constructor Create; overload;\r\n"+
-            "    constructor Create(params : TFhirParametersParameter); overload;\r\n"+
+            "    constructor Create; overload; override;\r\n"+
+            "    constructor Create(params : TFhirParametersParameter); overload; override;\r\n"+
             "    destructor Destroy; override;\r\n"+
-            "    function asParams(name : String) : TFHIRParametersParameter;\r\n"+
+            "    function asParams(name : String) : TFHIRParametersParameter; override;\r\n"+
             properties.toString()+
         "  end;\r\n");
     else
@@ -2551,7 +2551,10 @@ public class DelphiGenerator {
                 setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := propValue as "+tn+"{4a}\r\n");
               else {
                 setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+" := propValue as "+tn+"{4b}\r\n");
-                makeprops.append("  else if (propName = '"+e.getName()+"') then begin "+propV.substring(1)+" := "+tn+".create(); result := "+propV.substring(1)+"; end{4b}\r\n");
+                if (typeIsAbstract(e.typeCode()))
+                  makeprops.append("  else if (propName = '"+e.getName()+"') then raise Exception.create('Cannot make property "+propV.substring(1)+"')\r\n");
+                else
+                  makeprops.append("  else if (propName = '"+e.getName()+"') then begin "+propV.substring(1)+" := "+tn+".create(); result := "+propV.substring(1)+"; end{4b}\r\n");
               }
             else
               if (!simpleTypes.containsKey(tn)) {
@@ -2645,6 +2648,10 @@ public class DelphiGenerator {
         }
       }
     }
+  }
+
+  private boolean typeIsAbstract(String type) {
+    return Utilities.existsInList(type, "Element", "BackboneElement", "Resource", "DomainResource");
   }
 
   private TypeRef lastTypeNotDerived(List<TypeRef> types) {

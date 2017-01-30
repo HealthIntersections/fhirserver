@@ -577,9 +577,7 @@ end;
 
 function TFhirClient.exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
 var
-  comp : TFHIRParser;
   ok : boolean;
-  cnt : String;
   op : TFHIROperationOutcome;
   code : integer;
   procedure processException;

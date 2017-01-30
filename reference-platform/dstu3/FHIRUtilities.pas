@@ -3872,7 +3872,6 @@ end;
 
 function TFhirCodeSystemHelper.locate(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept : TFhirCodeSystemConcept) : boolean;
 var
-  i : integer;
   c : TFhirCodeSystemConcept;
 begin
   result := false;

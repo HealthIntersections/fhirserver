@@ -293,7 +293,7 @@ type
   public
     function parse(r : TFHIRResource) : TFHIRMMElement; overload;
     function parse(r : TFHIRBase) : TFHIRMMElement; overload;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload;
+    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; override;
   end;
 
   TFHIRCustomResource = class (TFHIRResource)
@@ -304,11 +304,11 @@ type
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function GetResourceType : TFhirResourceType; override;
-    function isMetaDataBased : boolean; override;
   public
     constructor Create(root : TFHIRMMElement);
     Destructor Destroy; override;
 
+    function isMetaDataBased : boolean; override;
     class function CreateFromBase(context : TWorkerContext; base : TFHIRBase) : TFHIRCustomResource;
 
     property Root : TFHIRMMElement read FRoot write SetRoot;
@@ -317,7 +317,7 @@ type
     function Clone : TFHIRCustomResource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
     function makeProperty(propName : string) : TFHIRObject; override;
-    function FhirType : string; override;
+    function fhirType : string; override;
     function equalsDeep(other : TFHIRBase) : boolean; override;
     function equalsShallow(other : TFHIRBase) : boolean; override;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); override;
@@ -477,7 +477,7 @@ end;
 
 function TFHIRMMProperty.hasType(elementName: String): boolean;
 var
-  t, tail, name : String;
+  t, tail : String;
   all : boolean;
   tr : TFhirElementDefinitionType;
 begin
@@ -684,6 +684,7 @@ var
   all : boolean;
   tr : TFhirElementDefinitionType;
 begin
+  all := false;
   ed := definition;
   sd := structure;
   children := getChildMap(sd, ed);
@@ -1164,10 +1165,6 @@ begin
 end;
 
 function TFHIRMMParserBase.getDefinition(line, col: integer; ns, name: String): TFHIRStructureDefinition;
-var
-  sd : TFHIRStructureDefinition;
-  sdl : TFHIRStructureDefinitionList;
-  sns : String;
 begin
   result := nil;
   if (ns = '') then
@@ -1949,8 +1946,6 @@ begin
 end;
 
 procedure TFHIRMMJsonParser.checkObject(obj: TJsonObject; path : String);
-var
-  found : boolean;
 begin
   if (FPolicy = fvpEVERYTHING) and (obj.properties.count = 0) then
     logError(obj.LocationStart.Line, obj.LocationStart.Col, path, IssueTypeINVALID, 'Object must have some content', IssueSeverityERROR);
@@ -2460,7 +2455,6 @@ var
   properties : TAdvList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   name : String;
-  tr : TFHIRElementDefinitionType;
   list : TFHIRObjectList;
   o : TFHIRObject;
   n : TFHIRMMElement;

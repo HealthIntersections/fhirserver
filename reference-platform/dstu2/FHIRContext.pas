@@ -47,7 +47,7 @@ type
     function expand(vs : TFhirValueSet) : TFHIRValueSet; virtual; abstract;
     function supportsSystem(system, version : string) : boolean; virtual; abstract;
     function validateCode(system, version, code, display : String) : TValidationResult; overload; virtual; abstract;
-    function validateCode(system, code, version : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
+    function validateCode(system, version, code : String; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; virtual; abstract;
     function getChildMap(profile : TFHIRStructureDefinition; element : TFhirElementDefinition) : TFHIRElementDefinitionList; virtual;  abstract;

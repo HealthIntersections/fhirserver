@@ -306,7 +306,7 @@ uses
   DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
 
 begin
-  logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';
+  logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
   if ParamCount = 0 then
   begin
     filelog := true;
