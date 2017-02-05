@@ -2,8 +2,13 @@
 EditorSecs=62558
 DesignerSecs=1
 InspectorSecs=11
+<<<<<<< HEAD
+CompileSecs=10380127
+OtherSecs=3072
+=======
 CompileSecs=10430595
 OtherSecs=3121
+>>>>>>> 2b728e9f8bc961ca45f4330e7aee1979ab7bf3d1
 StartTime=20/12/2015 7:09:50 PM
 RealKeys=0
 EffectiveKeys=0

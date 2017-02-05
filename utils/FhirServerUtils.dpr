@@ -227,7 +227,8 @@ uses
   FHIRSearchSyntax in '..\Server\FHIRSearchSyntax.pas',
   SnomedCombiner in 'SnomedCombiner.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
-  ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas';
+  ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas',
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
 
 {$R *.res}
 

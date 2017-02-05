@@ -152,7 +152,8 @@ uses
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
   InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
-  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas';
+  FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
 
 {$R *.res}
 

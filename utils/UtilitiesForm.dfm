@@ -793,6 +793,15 @@ object Form4: TForm4
           Visible = False
           OnClick = btnStopClick
         end
+        object Button1: TButton
+          Left = 144
+          Top = 6
+          Width = 75
+          Height = 25
+          Caption = 'Button1'
+          TabOrder = 3
+          OnClick = Button1Click
+        end
       end
       object Panel4: TPanel
         Left = 0

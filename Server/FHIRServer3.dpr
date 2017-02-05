@@ -302,7 +302,8 @@ uses
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',
-  OpenMHealthServer in 'OpenMHealthServer.pas';
+  OpenMHealthServer in 'OpenMHealthServer.pas',
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

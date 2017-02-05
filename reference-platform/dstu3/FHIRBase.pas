@@ -168,6 +168,7 @@ type
     Property Class_ : TClass read FClass;
     Property IsList : boolean read FIsList;
     Property Values : TFHIRObjectList read FList;
+    procedure forceValues;
   End;
 
 
@@ -186,10 +187,12 @@ type
   TFHIRPropertyList = class (TAdvObjectList)
   private
     Function GetProperty(iIndex : Integer) : TFHIRProperty;
+    Function GetPropertyByName(name : String) : TFHIRProperty;
   public
     function Link : TFHIRPropertyList; overload;
     function GetEnumerator : TFHIRPropertyListEnumerator;
     Property Properties[iIndex : Integer] : TFHIRProperty read GetProperty; default;
+    Property ByName[name : String] : TFHIRProperty read GetPropertyByName;
   End;
 
 
@@ -356,6 +359,7 @@ type
     function HasXmlCommentsEnd : Boolean;
     function HasComments : Boolean;
     function fhirType : String; virtual;
+    function getId : String; virtual;
     function isPrimitive : boolean; virtual;
     function hasPrimitiveValue : boolean; virtual;
     function primitiveValue : string; virtual;
@@ -786,6 +790,11 @@ begin
   if FCommentsStart = nil then
     FCommentsStart := TAdvStringList.Create;
   result := FCommentsStart;
+end;
+
+function TFHIRBase.getId: String;
+begin
+  raise Exception.Create('"fhirType" is not overridden in '+className);
 end;
 
 procedure TFHIRBase.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
@@ -1716,6 +1725,12 @@ begin
   inherited;
 end;
 
+procedure TFHIRProperty.forceValues;
+begin
+  if FList = nil then
+    FList := TFHIRObjectList.Create;
+end;
+
 function TFHIRProperty.GetHasValue: Boolean;
 begin
   result := (FList <> nil) and (Flist.Count > 0);
@@ -1743,6 +1758,16 @@ end;
 function TFHIRPropertyList.GetProperty(iIndex: Integer): TFHIRProperty;
 begin
   result := TFHIRProperty(ObjectByIndex[iIndex]);
+end;
+
+function TFHIRPropertyList.GetPropertyByName(name: String): TFHIRProperty;
+var
+  p : TFHIRProperty;
+begin
+  result := nil;
+  for p in self do
+    if (p.Name = name) then
+      exit(p);
 end;
 
 function TFHIRPropertyList.Link: TFHIRPropertyList;

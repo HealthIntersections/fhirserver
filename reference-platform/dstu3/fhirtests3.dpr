@@ -11,10 +11,6 @@ uses
   IdSSLOpenSSLHeaders,
   DecimalTests in '..\support\tests\DecimalTests.pas',
   JWTTests in '..\Support\tests\JWTTests.pas',
-//  JsonTests in '..\support\Tests\JsonTests.pas',
-//  XmlTests in '..\support\Tests\XmlTests.pas',
-//  FHIRParserTests in 'tests\FHIRParserTests.pas',
-//  FluentPathTests in 'tests\FluentPathTests.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   AdvFactories in '..\support\AdvFactories.pas',
   AdvControllers in '..\support\AdvControllers.pas',
@@ -121,7 +117,8 @@ uses
   FHIRUtilities in 'FHIRUtilities.pas',
   FHIRPath in 'FHIRPath.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
-  ShellSupport in '..\support\ShellSupport.pas';
+  ShellSupport in '..\support\ShellSupport.pas',
+  DifferenceEngine in 'DifferenceEngine.pas';
 
 var
   s: String;
