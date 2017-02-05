@@ -153,7 +153,8 @@ uses
   InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
-  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
+  ResDisplayForm in 'ResDisplayForm.pas' {ResourceDisplayForm};
 
 {$R *.res}
 

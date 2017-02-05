@@ -386,14 +386,14 @@ type
 
   TFhirParametersHelper = class helper for TFhirParameters
   private
-    function GetNamedParameter(name: String): TFhirBase;
+    function GetNamedParameter(name: String): TFHIRObject;
     function GetStringParameter(name: String): String;
     function GetBooleanParameter(name: String): boolean;
     function GetResourceParameter(name: String): TFHIRResource;
     function GetParameterParameter(name: String): TFhirParametersParameter;
   public
     function hasParameter(name : String):Boolean;
-    Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    Property NamedParameter[name : String] : TFHIRObject read GetNamedParameter; default;
     Property res[name : String] : TFHIRResource read GetResourceParameter;
     Property str[name : String] : String read GetStringParameter;
     Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
@@ -408,12 +408,12 @@ type
 
   TFhirParametersParameterHelper = class helper for TFhirParametersParameter
   private
-    function GetNamedParameter(name: String): TFhirBase;
+    function GetNamedParameter(name: String): TFHIRObject;
     function GetStringParameter(name: String): String;
     function GetParameterParameter(name: String): TFhirParametersParameter;
   public
     function hasParameter(name : String):Boolean;
-    Property NamedParameter[name : String] : TFhirBase read GetNamedParameter; default;
+    Property NamedParameter[name : String] : TFHIRObject read GetNamedParameter; default;
     Property str[name : String] : String read GetStringParameter;
     Property param[name : String] : TFhirParametersParameter read GetParameterParameter;
     procedure AddParameter(name: String; value: TFhirType); overload;
@@ -2603,7 +2603,7 @@ end;
 
 function TFhirParametersHelper.GetBooleanParameter(name: String): boolean;
 var
-  v : TFhirBase;
+  v : TFHIRObject;
 begin
   v := NamedParameter[name];
   if (v = nil) then
@@ -2620,7 +2620,7 @@ begin
     result := (v as TFhirBoolean).value;
 end;
 
-function TFhirParametersHelper.GetNamedParameter(name: String): TFhirBase;
+function TFhirParametersHelper.GetNamedParameter(name: String): TFHIRObject;
 var
   i: Integer;
 begin
@@ -2667,7 +2667,7 @@ end;
 
 function TFhirParametersHelper.GetStringParameter(name: String): String;
 var
-  v : TFhirBase;
+  v : TFHIRObject;
 begin
   v := NamedParameter[name];
   if (v = nil) then
@@ -2740,7 +2740,7 @@ begin
   p.value := TFhirString.Create(value);
 end;
 
-function TFhirParametersParameterHelper.GetNamedParameter(name: String): TFhirBase;
+function TFhirParametersParameterHelper.GetNamedParameter(name: String): TFHIRObject;
 var
   i: Integer;
 begin
@@ -3495,9 +3495,9 @@ begin
     result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
     obj.Free;
   end
-  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRMarkdown.create(TFHIRBase(obj).primitiveValue);
+    result := TFHIRMarkdown.create(TFHIRObject(obj).primitiveValue);
     obj.Free;
   end
   else
@@ -3516,9 +3516,9 @@ begin
     result := TFHIRString.create(TFHIRMMElement(obj).value);
     obj.Free;
   end
-  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRString.create(TFHIRBase(obj).primitiveValue);
+    result := TFHIRString.create(TFHIRObject(obj).primitiveValue);
     obj.Free;
   end
   else
@@ -3553,9 +3553,9 @@ begin
     result := TFHIRUri.create(TFHIRMMElement(obj).value);
     obj.Free;
   end
-  else if (obj is TFHIRBase) and (TFHIRBase(obj).isPrimitive) then
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
-    result := TFHIRUri.create(TFHIRBase(obj).primitiveValue);
+    result := TFHIRUri.create(TFHIRObject(obj).primitiveValue);
     obj.Free;
   end
   else

@@ -424,7 +424,7 @@ begin
 
         // the order here is important: specification resources must be loaded prior to stored resources
         {$IFDEF FHIR3}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.2017Jan\build\publish\definitions.json.zip');
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
         {$ELSE}
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
         {$ENDIF}

@@ -108,7 +108,7 @@ type
   private
     { Private declarations }
     FResource : TFHIRResource;
-    FContext : TFHIRBase;
+    FContext : TFHIRObject;
     FFormat : TFHIRFormat;
     FExpression : TFHIRExpressionNode;
     FEngine : TFHIRExpressionEngine;
@@ -123,12 +123,13 @@ type
     FFreq : Int64;
     FStartLast : Int64;
     FTypes : TFHIRTypeDetails;
-    FOutcome : TFHIRBaseList;
+    FOutcome : TFHIRSelectionList;
 
     procedure ResetNode(Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 
-    procedure Compose(memo : TMemo; obj : TFHIRBase; name : String); overload;
-    procedure Compose(memo : TMemo; obj : TFHIRBaseList; name, def : String); overload;
+    procedure Compose(memo : TMemo; obj : TFHIRObject; name : String); overload;
+    procedure Compose(memo : TMemo; obj : TFHIRObjectList; name, def : String); overload;
+    procedure Compose(memo : TMemo; obj : TFHIRSelectionList; name, def : String); overload;
     procedure ApplyMarks;
     procedure SaveMarks;
     procedure Log(s : String);
@@ -150,8 +151,8 @@ var
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
     services : TWorkerContext;
-    resource : TFHIRResource; context : TFHIRBase; path : String; fmt : TFHIRFormat;
-    out types : TFHIRTypeDetails; out items : TFHIRBaseList) : boolean;
+    resource : TFHIRResource; context : TFHIRObject; path : String; fmt : TFHIRFormat;
+    out types : TFHIRTypeDetails; out items : TFHIRSelectionList) : boolean;
 
 implementation
 
@@ -194,8 +195,8 @@ end;
 
 function RunPathDebugger(owner : {$IFDEF NPPUNICODE}TNppPlugin{$ELSE} TComponent {$ENDIF};
     services : TWorkerContext;
-    resource : TFHIRResource; context : TFHIRBase; path : String; fmt : TFHIRFormat;
-    out types : TFHIRTypeDetails; out items : TFHIRBaseList) : boolean;
+    resource : TFHIRResource; context : TFHIRObject; path : String; fmt : TFHIRFormat;
+    out types : TFHIRTypeDetails; out items : TFHIRSelectionList) : boolean;
 begin
   FHIRPathDebuggerForm := TFHIRPathDebuggerForm.Create(owner);
   try
@@ -418,6 +419,18 @@ begin
   FMode := emAbort;
 end;
 
+procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRSelectionList; name, def: String);
+var
+  ol : TFHIRObjectList;
+begin
+  ol := obj.asValues;
+  try
+    compose(memo, ol, name, def);
+  finally
+    ol.Free;
+  end;
+end;
+
 procedure TFHIRPathDebuggerForm.btnNextClick(Sender: TObject);
 begin
   FMode := emNext;
@@ -446,7 +459,7 @@ begin
   vtExpressions.InvalidateChildren(vtExpressions.RootNode.FirstChild, true);
 end;
 
-procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRBaseList; name, def: String);
+procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRObjectList; name, def: String);
 var
   comp : TFHIRComposer;
 begin
@@ -466,7 +479,7 @@ begin
   end;
 end;
 
-procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRBase; name : String);
+procedure TFHIRPathDebuggerForm.Compose(memo: TMemo; obj: TFHIRObject; name : String);
 var
   comp : TFHIRComposer;
 begin

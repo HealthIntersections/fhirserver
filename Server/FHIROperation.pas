@@ -43,7 +43,8 @@ uses
 
   FHIRBase, FHIRContext, FHIRSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRParserBase,
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
-  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities, FHIRMetamodel,
+  FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
+  FHIRMetamodel, DifferenceEngine,
   {$IFDEF FHIR3}
   ObservationStatsEvaluator,
   {$IFNDEF FHIR2}
@@ -574,6 +575,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirDiffOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
   {$IFNDEF FHIR2}
   TServerTransformerServices = class (TTransformerServices)
   private
@@ -681,6 +694,7 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.create);
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
+  FOperations.add(TFhirDiffOperation.create);
   {$IFNDEF FHIR2}
   FOperations.add(TFhirTransformOperation.create);
   {$ENDIF}
@@ -8820,6 +8834,100 @@ begin
   result := ALL_RESOURCE_TYPES;
 end;
 
+{ TFhirDiffOperation }
+
+function TFhirDiffOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirDiffOperation.Execute(context : TOperationContext; manager: TFhirOperationManager; request: TFHIRRequest; response: TFHIRResponse);
+var
+  resourceKey : Integer;
+  resourceVersionKey : Integer;
+//  i : integer;
+//  tags : TFHIRTagList;
+//  t : string;
+  ok : boolean;
+  blob : TBytes;
+  diff : TDifferenceEngine;
+  parser : TFHIRParser;
+//  deleted : boolean;
+//  meta : TFhirMeta;
+//  c : TFhirCoding;
+begin
+  try
+    ok := true;
+    if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      ok := false;
+    if ok then
+      manager.NotFound(request, response);
+    if ok and not manager.FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments) then
+      ok := false;
+    if ok and not manager.check(response, request.Resource <> nil, 400, request.lang, 'A resource to compare must be posted', IssueTypeRequired) then
+      ok := false;
+    if not ok then
+      // nothing
+    else
+    begin
+      resourceVersionKey := StrToInt(manager.Connection.Lookup('Ids', 'ResourceKey', inttostr(Resourcekey), 'MostRecent', '0'));
+      manager.FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+      manager.FConnection.prepare;
+      manager.FConnection.Execute;
+      if not manager.FConnection.FetchNext then
+        raise Exception.Create('Internal Error fetching content');
+      blob := manager.FConnection.ColBlobByName['JsonContent'];
+      manager.FConnection.Terminate;
+      parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
+      try
+        diff := TDifferenceEngine.create(manager.FRepository.ValidatorContext.Link);
+        try
+          response.Resource := diff.generateDifference(parser.resource, request.Resource);
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+        finally
+          diff.Free;
+        end;
+      finally
+        parser.free;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, 'diff', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, 'diff', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirDiffOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Resource-diff';
+end;
+
+function TFhirDiffOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirDiffOperation.Name: String;
+begin
+  result := 'diff';
+end;
+
+function TFhirDiffOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirDiffOperation.Types: TFhirResourceTypeSet;
+begin
+  result := ALL_RESOURCE_TYPES;
+end;
+
 { TFhirCurrentTestScriptOperation }
 
 function TFhirCurrentTestScriptOperation.CreateDefinition(base: String): TFHIROperationDefinition;
@@ -8886,7 +8994,7 @@ var
   lib : TAdvMap<TFHIRStructureMap>;
   map : TFHIRStructureMap;
   utils : TFHIRStructureMapUtilities;
-  outcome : TFHIRBase;
+  outcome : TFHIRObject;
 //  params : TFhirParameters;
 //  sdParam, sdBase : TFhirStructureDefinition;
 //  utils : TProfileUtilities;

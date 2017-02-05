@@ -255,12 +255,12 @@ end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.xml', 2, ffXml);
+  validate('build\tests\validation-examples\list-empty1.xml', 3, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty2;
 begin
-  validate('build\tests\validation-examples\list-empty2.xml', 2, ffXml);
+  validate('build\tests\validation-examples\list-empty2.xml', 3, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListUnknownAttr;
@@ -403,7 +403,7 @@ end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.json', 2, ffJson);
+  validate('build\tests\validation-examples\list-empty1.json', 3, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty2;

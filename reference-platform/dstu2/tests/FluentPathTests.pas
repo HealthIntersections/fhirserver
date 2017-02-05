@@ -120,7 +120,7 @@ var
   input, expression, s, tn : String;
   fail, ok : boolean;
   res : TFHIRResource;
-  outcome : TFHIRBaseList;
+  outcome : TFHIRSelectionList;
   node : TFHIRExpressionNode;
   p : TFHIRXmlParser;
   f :  TFileStream;
@@ -164,7 +164,7 @@ begin
         on e:Exception do
         begin
           Assert.IsTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
-          outcome := TFHIRBaseList.create;
+          outcome := TFHIRSelectionList.create;
         end;
       end;
       if (TMsXmlParser.GetAttribute(test, 'predicate') = 'true') then
@@ -185,12 +185,12 @@ begin
         begin
           tn := IXMLDomElement(expected[i]).getAttribute('type');
           if (tn <> '') then
-            Assert.isTrue(tn = outcome[i].fhirType(), StringFormat('Outcome %d: Type should be %s but was %s', [i, tn, outcome[i].fhirType()]));
+            Assert.isTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s', [i, tn, outcome[i].value.fhirType()]));
           s := IXMLDomElement(expected[i]).Text;
           if (s <> '') then
           begin
-            Assert.isTrue(outcome[i] is TFHIRPrimitiveType, StringFormat('Outcome %d: Value should be a primitive type but was %s', [i, outcome[i].fhirType()]));
-            Assert.isTrue(s = TFHIRPrimitiveType(outcome[i]).StringValue, StringFormat('Outcome %d: Value should be %s but was %s', [i, s, outcome[i].toString()]));
+            Assert.isTrue(outcome[i].value is TFHIRPrimitiveType, StringFormat('Outcome %d: Value should be a primitive type but was %s', [i, outcome[i].value.fhirType()]));
+            Assert.isTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s', [i, s, outcome[i].value.toString()]));
           end;
         end;
       finally

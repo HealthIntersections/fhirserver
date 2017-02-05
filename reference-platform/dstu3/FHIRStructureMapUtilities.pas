@@ -19,7 +19,7 @@ type
   private
     Fname: String;
     Fmode: TVariableMode;
-    Fobj: TFHIRBase;
+    Fobj: TFHIRObject;
   public
     Destructor Destroy; override;
 
@@ -28,7 +28,7 @@ type
 
     property mode : TVariableMode read Fmode write Fmode;
     property name : String read Fname write Fname;
-    property obj : TFHIRBase read Fobj write Fobj;
+    property obj : TFHIRObject read Fobj write Fobj;
   end;
 
   TVariables = class (TAdvObject)
@@ -39,9 +39,9 @@ type
     destructor Destroy; override;
 
     function Link : TVariables; overload;
-		procedure add(mode : TVariableMode; name : String; obj : TFHIRBase);
+		procedure add(mode : TVariableMode; name : String; obj : TFHIRObject);
 		function copy : TVariables;
-		function get(mode : TVariableMode; name : String) : TFHIRBase;
+		function get(mode : TVariableMode; name : String) : TFHIRObject;
   end;
 
   TTransformerServices = class abstract (TAdvObject)
@@ -86,17 +86,17 @@ type
     procedure parseParameter(target : TFHIRStructureMapGroupRuleTarget; lexer : TFHIRPathLexer);
 
     procedure log(s : String);
-    procedure getChildrenByName(item : TFHIRBase; name : String; result : TAdvList<TFHIRBase>);
-    function runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRBase;
+    procedure getChildrenByName(item : TFHIRObject; name : String; result : TAdvList<TFHIRObject>);
+    function runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
     procedure executeGroup(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup);
     procedure executeRule(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; group : TFHIRStructureMapGroup; rule : TFHIRStructureMapGroupRule);
     function analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
     procedure processTarget(appInfo : TAdvObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
     procedure executeDependency(indent : String; appInfo : TAdvObject; map : TFHIRStructureMap; vin : TVariables; group : TFHIRStructureMapGroup; dependent : TFHIRStructureMapGroupRuleDependent);
     function getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
-    function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRBase;
-    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRBase; overload;
-    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRBase; conceptMapUrl : String; fieldToReturn : String): TFHIRBase; overload;
+    function getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
+    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
+    function translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
   public
     constructor Create(context : TWorkerContext; lib : TAdvMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
@@ -106,7 +106,7 @@ type
     function render(map : TFHIRStructureMap) : String; overload;
     function render(map : TFHIRConceptMap) : String; overload;
 	  function parse(text : String) : TFHIRStructureMap;
-    procedure transform(appInfo : TAdvObject; source : TFHIRBase; map : TFHIRStructureMap; target : TFHIRBase);
+    procedure transform(appInfo : TAdvObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
   end;
 
 
@@ -301,21 +301,16 @@ end;
 
 procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
 begin
-  if (not rs.Required) then
-    b.append('optional ');
   b.append(rs.Context);
   if (rs.Element <> '') then
   begin
     b.append('.');
     b.append(rs.Element);
   end;
-  if (rs.ListMode <> MapListModeNull) then
+  if (rs.ListMode <> MapSourceListModeNull) then
   begin
     b.append(' ');
-    if (rs.ListMode = MapListModeShare) then
-      b.append('only_one')
-    else
-      b.append(CODES_TFhirMapListModeEnum[rs.ListMode]);
+    b.append(CODES_TFhirMapSourceListModeEnum[rs.ListMode]);
   end;
   if (rs.Variable <> '') then
   begin
@@ -338,7 +333,7 @@ procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIR
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
-  lm : TFhirMapListModeEnum;
+  lm : TFhirMapTargetListModeEnum;
 begin
   b.append(rt.Context);
   if (rt.Element <> '')  then
@@ -382,12 +377,12 @@ begin
     b.append(' as ');
     b.append(rt.Variable);
   end;
-  for lm := low(TFhirMapListModeEnum) to high(TFhirMapListModeEnum) do
+  for lm := low(TFhirMapTargetListModeEnum) to high(TFhirMapTargetListModeEnum) do
     if lm in rt.listMode then
     begin
       b.append(' ');
-      b.append(CODES_TFhirMapListModeEnum[lm]);
-      if (lm = MapListModeShare) then
+      b.append(CODES_TFhirMapTargetListModeEnum[lm]);
+      if (lm = MapTargetListModeShare) then
       begin
         b.append(' ');
         b.append(rt.ListRuleId);
@@ -886,25 +881,14 @@ var
   node : TFHIRExpressionNode;
 begin
   source := rule.sourceList.Append;
-  if (lexer.hasToken('optional')) then
-    lexer.next()
-  else
-    source.Required := true;
   source.Context := lexer.take();
-  source.contextType := MapContextTypeVariable;
   if (lexer.hasToken('.')) then
   begin
     lexer.token('.');
     source.Element := lexer.take();
   end;
   if StringArrayExistsInsensitive(['first', 'last', 'only_one'], lexer.current) then
-    if (lexer.current = 'only_one') then
-    begin
-      source.ListMode := MapListModeShare;
-      lexer.take();
-    end
-    else
-      source.ListMode := TFhirMapListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapListModeEnum));
+    source.ListMode := TFhirMapSourceListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapSourceListModeEnum));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
@@ -996,14 +980,14 @@ begin
   begin
     if (lexer.current = 'share') then
     begin
-      target.listMode := target.listMode + [MapListModeSHARE];
+      target.listMode := target.listMode + [MapTargetListModeSHARE];
       lexer.next();
       target.ListRuleId := lexer.take();
     end
     else if (lexer.current = 'first') then
-      target.listMode := target.listMode + [MapListModeFirst]
+      target.listMode := target.listMode + [MapTargetListModeFirst]
     else
-      target.listMode := target.listMode + [MapListModeLAST];
+      target.listMode := target.listMode + [MapTargetListModeLAST];
     lexer.next();
   end;
 end;
@@ -1032,7 +1016,7 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.transform(appInfo : TAdvObject; source : TFHIRBase; map : TFHIRStructureMap; target : TFHIRBase);
+procedure TFHIRStructureMapUtilities.transform(appInfo : TAdvObject; source : TFHIRObject; map : TFHIRStructureMap; target : TFHIRObject);
 var
   vars : TVariables;
 begin
@@ -1109,7 +1093,7 @@ var
   input : TFHIRStructureMapGroupInput;
   vr : TFHIRString;
   mode : TVariableMode;
-  vv : TFHIRBase;
+  vv : TFHIRObject;
 begin
   targetMap := nil;
   target := nil;
@@ -1174,17 +1158,17 @@ begin
 end;
 
 
-procedure TFHIRStructureMapUtilities.getChildrenByName(item : TFHIRBase; name : String; result : TAdvList<TFHIRBase>);
+procedure TFHIRStructureMapUtilities.getChildrenByName(item : TFHIRObject; name : String; result : TAdvList<TFHIRObject>);
 var
-  v : TFHIRObject;
-  list : TFHIRObjectList;
+  v : TFHIRSelection;
+  list : TFHIRSelectionList;
 begin
-  list := TFHIRObjectList.create;
+  list := TFHIRSelectionList.create;
   try
     item.ListChildrenByName(name, list);
     for v in list do
-			if (v <> nil) then
-				result.add(v.Link as TFhirBase);
+			if (v.value <> nil) then
+				result.add(v.value.Link as TFHIRObject);
   finally
     list.Free;
   end;
@@ -1206,9 +1190,9 @@ end;
 
 function TFHIRStructureMapUtilities.analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
 var
-  b, r : TFhirBase;
+  b, r : TFHIRObject;
   expr : TFHIRExpressionNode;
-  items : TAdvList<TFHIRBase>;
+  items : TAdvList<TFHIRObject>;
   v : TVariables;
 begin
   b := vars.get(vmINPUT, src.Context);
@@ -1241,7 +1225,7 @@ begin
       raise Exception.create('Check condition failed');
   end;
 
-  items := TAdvList<TFHIRBase>.create;
+  items := TAdvList<TFHIRObject>.create;
   try
     if (src.Element = '') then
       items.add(b.link)
@@ -1272,7 +1256,7 @@ end;
 
 procedure TFHIRStructureMapUtilities.processTarget(appInfo : TAdvObject; vars : TVariables; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget);
 var
-  dest, v : TFHIRBase;
+  dest, v : TFHIRObject;
 begin
   dest := vars.get(vmOUTPUT, tgt.Context);
   if (dest = nil) then
@@ -1288,7 +1272,10 @@ begin
         dest.setProperty(tgt.Element, v.Link);
     end
     else
-      v := dest.makeProperty(tgt.Element).link as TFHIRBase;
+    begin
+      v := dest.createPropertyValue(tgt.Element) as TFHIRObject;
+      dest.setProperty(tgt.element, v.link);
+    end;
     if (tgt.Variable <> '') and (v <> nil) then
       vars.add(vmOUTPUT, tgt.variable, v.Link);
   finally
@@ -1296,14 +1283,14 @@ begin
   end;
 end;
 
-function TFHIRStructureMapUtilities.runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRBase;
+function TFHIRStructureMapUtilities.runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
 var
   factory : TFhirResourceFactory;
   expr : TFHIRExpressionNode;
-  v : TFHIRBaseList;
+  v : TFHIRSelectionList;
   src, len : String;
   l : integer;
-  b : TFHIRBase;
+  b : TFHIRObject;
 begin
   case tgt.Transform of
     MapTransformCreate :
@@ -1331,7 +1318,7 @@ begin
         try
           if (v.count <> 1) then
             raise Exception.create('evaluation of '+expr.toString()+' returned '+Integer.toString(v.count)+' objects');
-          result := v[0].Link;
+          result := v[0].value.Link;
         finally
           v.Free;
         end;
@@ -1392,7 +1379,7 @@ end;
 
 function TFHIRStructureMapUtilities.getParamString(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : String;
 var
-  b : TFHIRBase;
+  b : TFHIRObject;
 begin
   b := getParam(vars, parameter);
   if (b = nil) or not b.hasPrimitiveValue() then
@@ -1407,7 +1394,7 @@ begin
     FServices.log(s);
 end;
 
-function TFHIRStructureMapUtilities.getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRBase;
+function TFHIRStructureMapUtilities.getParam(vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameter) : TFHIRObject;
 var
   p : TFhirType;
 begin
@@ -1423,9 +1410,9 @@ begin
 end;
 
 
-function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRBase;
+function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject;
 var
-  src : TFHIRBase;
+  src : TFHIRObject;
   id, fld : String;
 begin
   src := getParam(vars, parameter[0]);
@@ -1434,10 +1421,10 @@ begin
   result := translate(appInfo, map, src, id, fld);
 end;
 
-function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRBase; conceptMapUrl : String; fieldToReturn : String): TFHIRBase;
+function TFHIRStructureMapUtilities.translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject;
 var
   src, outcome : TFHIRCoding;
-  b : TAdvList<TFHIRBase>;
+  b : TAdvList<TFHIRObject>;
   uri, message : String;
   cmap : TFhirConceptMap;
   r : TFHIRResource;
@@ -1447,7 +1434,7 @@ var
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
 begin
-  b := TAdvList<TFHIRBase>.create;
+  b := TAdvList<TFHIRObject>.create;
   g := nil;
   src := TFHIRCoding.create;
   try
@@ -1612,7 +1599,7 @@ begin
   inherited;
 end;
 
-procedure TVariables.add(mode: TVariableMode; name: String; obj: TFHIRBase);
+procedure TVariables.add(mode: TVariableMode; name: String; obj: TFHIRObject);
 var
   v, vv : TVariable;
 begin
@@ -1643,7 +1630,7 @@ begin
   end;
 end;
 
-function TVariables.get(mode: TVariableMode; name: String): TFHIRBase;
+function TVariables.get(mode: TVariableMode; name: String): TFHIRObject;
 var
   v : TVariable;
 begin

@@ -36,7 +36,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2015-12-21T14:12:27+11:00
+// FHIR v1.0.2 generated 2016-05-27T22:57:07+10:00
 
 uses
   SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase, DateAndTime, RDFUtilities, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, AdvStringMatches;
@@ -52,8 +52,8 @@ Type
     Function ParseBackboneElementChild(element : TFhirBackboneElement; path : string; child : IXmlDomElement) : boolean;
     Function ParseElementChild(element : TFhirElement; path : string; child : IXmlDomElement) : boolean;
     function ParseEnum(Const aNames, aSystems : Array Of String; path : String; element : IXmlDomElement) : TFhirEnum;
-    function ParseDate(element : IXmlDomElement; path : string) : TFhirDate;
     function ParseDateTime(element : IXmlDomElement; path : string) : TFhirDateTime;
+    function ParseDate(element : IXmlDomElement; path : string) : TFhirDate;
     function ParseString(element : IXmlDomElement; path : string) : TFhirString;
     function ParseInteger(element : IXmlDomElement; path : string) : TFhirInteger;
     function ParseUri(element : IXmlDomElement; path : string) : TFhirUri;
@@ -65,8 +65,8 @@ Type
     function ParseCode(element : IXmlDomElement; path : string) : TFhirCode;
     function ParseOid(element : IXmlDomElement; path : string) : TFhirOid;
     function ParseUuid(element : IXmlDomElement; path : string) : TFhirUuid;
-    function ParseUnsignedInt(element : IXmlDomElement; path : string) : TFhirUnsignedInt;
     function ParseMarkdown(element : IXmlDomElement; path : string) : TFhirMarkdown;
+    function ParseUnsignedInt(element : IXmlDomElement; path : string) : TFhirUnsignedInt;
     function ParseId(element : IXmlDomElement; path : string) : TFhirId;
     function ParsePositiveInt(element : IXmlDomElement; path : string) : TFhirPositiveInt;
 
@@ -93,10 +93,10 @@ Type
     function ParseSignatureChild(element : TFhirSignature; path : string; child : IXmlDomElement) : boolean;
     function ParseSampledData(element : IXmlDomElement; path : string) : TFhirSampledData;
     function ParseSampledDataChild(element : TFhirSampledData; path : string; child : IXmlDomElement) : boolean;
-    function ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
-    function ParseQuantityChild(element : TFhirQuantity; path : string; child : IXmlDomElement) : boolean;
     function ParsePeriod(element : IXmlDomElement; path : string) : TFhirPeriod;
     function ParsePeriodChild(element : TFhirPeriod; path : string; child : IXmlDomElement) : boolean;
+    function ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
+    function ParseQuantityChild(element : TFhirQuantity; path : string; child : IXmlDomElement) : boolean;
     function ParseAttachment(element : IXmlDomElement; path : string) : TFhirAttachment;
     function ParseAttachmentChild(element : TFhirAttachment; path : string; child : IXmlDomElement) : boolean;
     function ParseRatio(element : IXmlDomElement; path : string) : TFhirRatio;
@@ -109,16 +109,12 @@ Type
     function ParseCodeableConceptChild(element : TFhirCodeableConcept; path : string; child : IXmlDomElement) : boolean;
     function ParseHumanName(element : IXmlDomElement; path : string) : TFhirHumanName;
     function ParseHumanNameChild(element : TFhirHumanName; path : string; child : IXmlDomElement) : boolean;
-    function ParseContactPoint(element : IXmlDomElement; path : string) : TFhirContactPoint;
-    function ParseContactPointChild(element : TFhirContactPoint; path : string; child : IXmlDomElement) : boolean;
     function ParseMeta(element : IXmlDomElement; path : string) : TFhirMeta;
     function ParseMetaChild(element : TFhirMeta; path : string; child : IXmlDomElement) : boolean;
+    function ParseContactPoint(element : IXmlDomElement; path : string) : TFhirContactPoint;
+    function ParseContactPointChild(element : TFhirContactPoint; path : string; child : IXmlDomElement) : boolean;
     function ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
     function ParseAddressChild(element : TFhirAddress; path : string; child : IXmlDomElement) : boolean;
-    function ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
-    function ParseTimingRepeatChild(element : TFhirTimingRepeat; path : string; child : IXmlDomElement) : boolean;
-    function ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
-    function ParseTimingChild(element : TFhirTiming; path : string; child : IXmlDomElement) : boolean;
     function ParseElementDefinitionSlicing(element : IXmlDomElement; path : string) : TFhirElementDefinitionSlicing;
     function ParseElementDefinitionSlicingChild(element : TFhirElementDefinitionSlicing; path : string; child : IXmlDomElement) : boolean;
     function ParseElementDefinitionBase(element : IXmlDomElement; path : string) : TFhirElementDefinitionBase;
@@ -133,6 +129,10 @@ Type
     function ParseElementDefinitionMappingChild(element : TFhirElementDefinitionMapping; path : string; child : IXmlDomElement) : boolean;
     function ParseElementDefinition(element : IXmlDomElement; path : string) : TFhirElementDefinition;
     function ParseElementDefinitionChild(element : TFhirElementDefinition; path : string; child : IXmlDomElement) : boolean;
+    function ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
+    function ParseTimingRepeatChild(element : TFhirTimingRepeat; path : string; child : IXmlDomElement) : boolean;
+    function ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
+    function ParseTimingChild(element : TFhirTiming; path : string; child : IXmlDomElement) : boolean;
 
     function ParseAccount(element : IXmlDomElement; path : string) : TFhirAccount;
     function ParseAccountChild(element : TFhirAccount; path : string; child : IXmlDomElement) : boolean;
@@ -348,8 +348,8 @@ Type
     function ParseDeviceMetricCalibrationChild(element : TFhirDeviceMetricCalibration; path : string; child : IXmlDomElement) : boolean;
     function ParseDeviceMetric(element : IXmlDomElement; path : string) : TFhirDeviceMetric;
     function ParseDeviceMetricChild(element : TFhirDeviceMetric; path : string; child : IXmlDomElement) : boolean;
-    function ParseDeviceUseRequest(element : IXmlDomElement; path : string) : TFhirDeviceUseRequest;
-    function ParseDeviceUseRequestChild(element : TFhirDeviceUseRequest; path : string; child : IXmlDomElement) : boolean;
+    function ParseDeviceRequest(element : IXmlDomElement; path : string) : TFhirDeviceRequest;
+    function ParseDeviceRequestChild(element : TFhirDeviceRequest; path : string; child : IXmlDomElement) : boolean;
     function ParseDeviceUseStatement(element : IXmlDomElement; path : string) : TFhirDeviceUseStatement;
     function ParseDeviceUseStatementChild(element : TFhirDeviceUseStatement; path : string; child : IXmlDomElement) : boolean;
     function ParseDiagnosticOrderEvent(element : IXmlDomElement; path : string) : TFhirDiagnosticOrderEvent;
@@ -755,7 +755,7 @@ Type
     function ParseResource(element : IxmlDomElement; path : String) : TFhirResource; override;
     function ParseDataType(element : IXmlDomElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
-    function ParseFragment(element : IxmlDomElement) : TFhirBase; overload;
+    function ParseFragment(element : IxmlDomElement) : TFHIRObject; overload;
   end;
 
   TFHIRXmlComposer = class (TFHIRXmlComposerBase)
@@ -767,8 +767,8 @@ Type
     Procedure ComposeElementChildren(xml : TXmlBuilder; element : TFhirElement);
     Procedure ComposeBackboneElementChildren(xml : TXmlBuilder; element : TFhirBackboneElement);
     Procedure ComposeEnum(xml : TXmlBuilder; name : String; value : TFhirEnum; Const aNames : Array Of String);
-    Procedure ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
     Procedure ComposeDateTime(xml : TXmlBuilder; name : String; value : TFhirDateTime);
+    Procedure ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
     Procedure ComposeString(xml : TXmlBuilder; name : String; value : TFhirString);
     Procedure ComposeInteger(xml : TXmlBuilder; name : String; value : TFhirInteger);
     Procedure ComposeUri(xml : TXmlBuilder; name : String; value : TFhirUri);
@@ -780,8 +780,8 @@ Type
     Procedure ComposeCode(xml : TXmlBuilder; name : String; value : TFhirCode);
     Procedure ComposeOid(xml : TXmlBuilder; name : String; value : TFhirOid);
     Procedure ComposeUuid(xml : TXmlBuilder; name : String; value : TFhirUuid);
-    Procedure ComposeUnsignedInt(xml : TXmlBuilder; name : String; value : TFhirUnsignedInt);
     Procedure ComposeMarkdown(xml : TXmlBuilder; name : String; value : TFhirMarkdown);
+    Procedure ComposeUnsignedInt(xml : TXmlBuilder; name : String; value : TFhirUnsignedInt);
     Procedure ComposeId(xml : TXmlBuilder; name : String; value : TFhirId);
     Procedure ComposePositiveInt(xml : TXmlBuilder; name : String; value : TFhirPositiveInt);
 
@@ -808,10 +808,10 @@ Type
     procedure ComposeSignatureChildren(xml : TXmlBuilder; elem : TFhirSignature);
     procedure ComposeSampledData(xml : TXmlBuilder; name : string; elem : TFhirSampledData);
     procedure ComposeSampledDataChildren(xml : TXmlBuilder; elem : TFhirSampledData);
-    procedure ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
-    procedure ComposeQuantityChildren(xml : TXmlBuilder; elem : TFhirQuantity);
     procedure ComposePeriod(xml : TXmlBuilder; name : string; elem : TFhirPeriod);
     procedure ComposePeriodChildren(xml : TXmlBuilder; elem : TFhirPeriod);
+    procedure ComposeQuantity(xml : TXmlBuilder; name : string; elem : TFhirQuantity);
+    procedure ComposeQuantityChildren(xml : TXmlBuilder; elem : TFhirQuantity);
     procedure ComposeAttachment(xml : TXmlBuilder; name : string; elem : TFhirAttachment);
     procedure ComposeAttachmentChildren(xml : TXmlBuilder; elem : TFhirAttachment);
     procedure ComposeRatio(xml : TXmlBuilder; name : string; elem : TFhirRatio);
@@ -824,16 +824,12 @@ Type
     procedure ComposeCodeableConceptChildren(xml : TXmlBuilder; elem : TFhirCodeableConcept);
     procedure ComposeHumanName(xml : TXmlBuilder; name : string; elem : TFhirHumanName);
     procedure ComposeHumanNameChildren(xml : TXmlBuilder; elem : TFhirHumanName);
-    procedure ComposeContactPoint(xml : TXmlBuilder; name : string; elem : TFhirContactPoint);
-    procedure ComposeContactPointChildren(xml : TXmlBuilder; elem : TFhirContactPoint);
     procedure ComposeMeta(xml : TXmlBuilder; name : string; elem : TFhirMeta);
     procedure ComposeMetaChildren(xml : TXmlBuilder; elem : TFhirMeta);
+    procedure ComposeContactPoint(xml : TXmlBuilder; name : string; elem : TFhirContactPoint);
+    procedure ComposeContactPointChildren(xml : TXmlBuilder; elem : TFhirContactPoint);
     procedure ComposeAddress(xml : TXmlBuilder; name : string; elem : TFhirAddress);
     procedure ComposeAddressChildren(xml : TXmlBuilder; elem : TFhirAddress);
-    procedure ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
-    procedure ComposeTimingRepeatChildren(xml : TXmlBuilder; elem : TFhirTimingRepeat);
-    procedure ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
-    procedure ComposeTimingChildren(xml : TXmlBuilder; elem : TFhirTiming);
     procedure ComposeElementDefinitionSlicing(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionSlicing);
     procedure ComposeElementDefinitionSlicingChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionSlicing);
     procedure ComposeElementDefinitionBase(xml : TXmlBuilder; name : string; elem : TFhirElementDefinitionBase);
@@ -848,6 +844,10 @@ Type
     procedure ComposeElementDefinitionMappingChildren(xml : TXmlBuilder; elem : TFhirElementDefinitionMapping);
     procedure ComposeElementDefinition(xml : TXmlBuilder; name : string; elem : TFhirElementDefinition);
     procedure ComposeElementDefinitionChildren(xml : TXmlBuilder; elem : TFhirElementDefinition);
+    procedure ComposeTimingRepeat(xml : TXmlBuilder; name : string; elem : TFhirTimingRepeat);
+    procedure ComposeTimingRepeatChildren(xml : TXmlBuilder; elem : TFhirTimingRepeat);
+    procedure ComposeTiming(xml : TXmlBuilder; name : string; elem : TFhirTiming);
+    procedure ComposeTimingChildren(xml : TXmlBuilder; elem : TFhirTiming);
 
     procedure ComposeAccount(xml : TXmlBuilder; name : string; elem : TFhirAccount);
     procedure ComposeAccountChildren(xml : TXmlBuilder; elem : TFhirAccount);
@@ -1063,8 +1063,8 @@ Type
     procedure ComposeDeviceMetricCalibrationChildren(xml : TXmlBuilder; elem : TFhirDeviceMetricCalibration);
     procedure ComposeDeviceMetric(xml : TXmlBuilder; name : string; elem : TFhirDeviceMetric);
     procedure ComposeDeviceMetricChildren(xml : TXmlBuilder; elem : TFhirDeviceMetric);
-    procedure ComposeDeviceUseRequest(xml : TXmlBuilder; name : string; elem : TFhirDeviceUseRequest);
-    procedure ComposeDeviceUseRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceUseRequest);
+    procedure ComposeDeviceRequest(xml : TXmlBuilder; name : string; elem : TFhirDeviceRequest);
+    procedure ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
     procedure ComposeDeviceUseStatement(xml : TXmlBuilder; name : string; elem : TFhirDeviceUseStatement);
     procedure ComposeDeviceUseStatementChildren(xml : TXmlBuilder; elem : TFhirDeviceUseStatement);
     procedure ComposeDiagnosticOrderEvent(xml : TXmlBuilder; name : string; elem : TFhirDiagnosticOrderEvent);
@@ -1468,7 +1468,7 @@ Type
     procedure ComposeVisionPrescription(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescription);
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource; links : TFhirBundleLinkList); override;
-    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase); override;
+    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
 
   TFHIRJsonParser = class (TFHIRJsonParserBase)
@@ -1482,10 +1482,10 @@ Type
     procedure ParseBackboneElementProperties(jsn : TJsonObject; element : TFhirBackboneElement);
     procedure ParseEnum(path, value : string; jsn : TJsonObject; ctxt : TFHIRObjectList; Const aNames, aSystems : Array Of String); overload;
     function ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;
-    procedure ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseDate(value : string; jsn : TJsonObject) : TFHIRDate; overload;
     procedure ParseDateTime(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseDateTime(value : string; jsn : TJsonObject) : TFHIRDateTime; overload;
+    procedure ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseDate(value : string; jsn : TJsonObject) : TFHIRDate; overload;
     procedure ParseString(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseString(value : string; jsn : TJsonObject) : TFHIRString; overload;
     procedure ParseInteger(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
@@ -1508,10 +1508,10 @@ Type
     function ParseOid(value : string; jsn : TJsonObject) : TFHIROid; overload;
     procedure ParseUuid(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseUuid(value : string; jsn : TJsonObject) : TFHIRUuid; overload;
-    procedure ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
-    function ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt; overload;
     procedure ParseMarkdown(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseMarkdown(value : string; jsn : TJsonObject) : TFHIRMarkdown; overload;
+    procedure ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
+    function ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt; overload;
     procedure ParseId(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
     function ParseId(value : string; jsn : TJsonObject) : TFHIRId; overload;
     procedure ParsePositiveInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList); overload;
@@ -1547,12 +1547,12 @@ Type
     function ParseSampledData(jsn : TJsonObject) : TFhirSampledData; overload;
     procedure ParseSampledDataProperties(jsn : TJsonObject; result : TFhirSampledData); overload;
     procedure ParseSampledData(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseQuantity(jsn : TJsonObject) : TFhirQuantity; overload;
-    procedure ParseQuantityProperties(jsn : TJsonObject; result : TFhirQuantity); overload;
-    procedure ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParsePeriod(jsn : TJsonObject) : TFhirPeriod; overload;
     procedure ParsePeriodProperties(jsn : TJsonObject; result : TFhirPeriod); overload;
     procedure ParsePeriod(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseQuantity(jsn : TJsonObject) : TFhirQuantity; overload;
+    procedure ParseQuantityProperties(jsn : TJsonObject; result : TFhirQuantity); overload;
+    procedure ParseQuantity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAttachment(jsn : TJsonObject) : TFhirAttachment; overload;
     procedure ParseAttachmentProperties(jsn : TJsonObject; result : TFhirAttachment); overload;
     procedure ParseAttachment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1571,21 +1571,15 @@ Type
     function ParseHumanName(jsn : TJsonObject) : TFhirHumanName; overload;
     procedure ParseHumanNameProperties(jsn : TJsonObject; result : TFhirHumanName); overload;
     procedure ParseHumanName(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint; overload;
-    procedure ParseContactPointProperties(jsn : TJsonObject; result : TFhirContactPoint); overload;
-    procedure ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseMeta(jsn : TJsonObject) : TFhirMeta; overload;
     procedure ParseMetaProperties(jsn : TJsonObject; result : TFhirMeta); overload;
     procedure ParseMeta(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint; overload;
+    procedure ParseContactPointProperties(jsn : TJsonObject; result : TFhirContactPoint); overload;
+    procedure ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAddress(jsn : TJsonObject) : TFhirAddress; overload;
     procedure ParseAddressProperties(jsn : TJsonObject; result : TFhirAddress); overload;
     procedure ParseAddress(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat; overload; {b\}
-    procedure ParseTimingRepeatProperties(jsn : TJsonObject; result : TFhirTimingRepeat); overload; {b\}
-    procedure ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseTiming(jsn : TJsonObject) : TFhirTiming; overload;
-    procedure ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming); overload;
-    procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseElementDefinitionSlicing(jsn : TJsonObject) : TFhirElementDefinitionSlicing; overload; {b\}
     procedure ParseElementDefinitionSlicingProperties(jsn : TJsonObject; result : TFhirElementDefinitionSlicing); overload; {b\}
     procedure ParseElementDefinitionSlicing(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1607,6 +1601,12 @@ Type
     function ParseElementDefinition(jsn : TJsonObject) : TFhirElementDefinition; overload;
     procedure ParseElementDefinitionProperties(jsn : TJsonObject; result : TFhirElementDefinition); overload;
     procedure ParseElementDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat; overload; {b\}
+    procedure ParseTimingRepeatProperties(jsn : TJsonObject; result : TFhirTimingRepeat); overload; {b\}
+    procedure ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseTiming(jsn : TJsonObject) : TFhirTiming; overload;
+    procedure ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming); overload;
+    procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 
     function ParseAccount(jsn : TJsonObject) : TFhirAccount; overload;
     procedure ParseAccountProperties(jsn : TJsonObject; result : TFhirAccount); overload;
@@ -1929,9 +1929,9 @@ Type
     function ParseDeviceMetric(jsn : TJsonObject) : TFhirDeviceMetric; overload;
     procedure ParseDeviceMetricProperties(jsn : TJsonObject; result : TFhirDeviceMetric); overload;
     procedure ParseDeviceMetric(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseDeviceUseRequest(jsn : TJsonObject) : TFhirDeviceUseRequest; overload;
-    procedure ParseDeviceUseRequestProperties(jsn : TJsonObject; result : TFhirDeviceUseRequest); overload;
-    procedure ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest; overload;
+    procedure ParseDeviceRequestProperties(jsn : TJsonObject; result : TFhirDeviceRequest); overload;
+    procedure ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceUseStatement(jsn : TJsonObject) : TFhirDeviceUseStatement; overload;
     procedure ParseDeviceUseStatementProperties(jsn : TJsonObject; result : TFhirDeviceUseStatement); overload;
     procedure ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -2538,7 +2538,7 @@ Type
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
-    function ParseFragment(jsn : TJsonObject; type_ : String) : TFhirBase;  overload;
+    function ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;  overload;
   end;
 
   TFHIRJsonComposer = class (TFHIRJsonComposerBase)
@@ -2550,10 +2550,10 @@ Type
     Procedure ComposeBackboneElementProperties(json : TJSONWriter; elem : TFhirBackboneElement);
     Procedure ComposeEnumValue(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
     Procedure ComposeEnumProps(json : TJSONWriter; name : String; value : TFhirEnum; Const aNames : Array Of String; inArray : boolean);
-    Procedure ComposeDateValue(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
-    Procedure ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
     Procedure ComposeDateTimeValue(json : TJSONWriter; name : String; value : TFhirDateTime; inArray : boolean);
     Procedure ComposeDateTimeProps(json : TJSONWriter; name : String; value : TFhirDateTime; inArray : boolean);
+    Procedure ComposeDateValue(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
+    Procedure ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
     Procedure ComposeStringValue(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
     Procedure ComposeStringProps(json : TJSONWriter; name : String; value : TFhirString; inArray : boolean);
     Procedure ComposeIntegerValue(json : TJSONWriter; name : String; value : TFhirInteger; inArray : boolean);
@@ -2576,10 +2576,10 @@ Type
     Procedure ComposeOidProps(json : TJSONWriter; name : String; value : TFhirOid; inArray : boolean);
     Procedure ComposeUuidValue(json : TJSONWriter; name : String; value : TFhirUuid; inArray : boolean);
     Procedure ComposeUuidProps(json : TJSONWriter; name : String; value : TFhirUuid; inArray : boolean);
-    Procedure ComposeUnsignedIntValue(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
-    Procedure ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
     Procedure ComposeMarkdownValue(json : TJSONWriter; name : String; value : TFhirMarkdown; inArray : boolean);
     Procedure ComposeMarkdownProps(json : TJSONWriter; name : String; value : TFhirMarkdown; inArray : boolean);
+    Procedure ComposeUnsignedIntValue(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
+    Procedure ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
     Procedure ComposeIdValue(json : TJSONWriter; name : String; value : TFhirId; inArray : boolean);
     Procedure ComposeIdProps(json : TJSONWriter; name : String; value : TFhirId; inArray : boolean);
     Procedure ComposePositiveIntValue(json : TJSONWriter; name : String; value : TFhirPositiveInt; inArray : boolean);
@@ -2597,19 +2597,17 @@ Type
     procedure ComposeReference(json : TJSONWriter; name : string; elem : TFhirReference; noObj : boolean = false);
     procedure ComposeSignature(json : TJSONWriter; name : string; elem : TFhirSignature; noObj : boolean = false);
     procedure ComposeSampledData(json : TJSONWriter; name : string; elem : TFhirSampledData; noObj : boolean = false);
-    procedure ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
     procedure ComposePeriod(json : TJSONWriter; name : string; elem : TFhirPeriod; noObj : boolean = false);
+    procedure ComposeQuantity(json : TJSONWriter; name : string; elem : TFhirQuantity; noObj : boolean = false);
     procedure ComposeAttachment(json : TJSONWriter; name : string; elem : TFhirAttachment; noObj : boolean = false);
     procedure ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
     procedure ComposeRange(json : TJSONWriter; name : string; elem : TFhirRange; noObj : boolean = false);
     procedure ComposeAnnotation(json : TJSONWriter; name : string; elem : TFhirAnnotation; noObj : boolean = false);
     procedure ComposeCodeableConcept(json : TJSONWriter; name : string; elem : TFhirCodeableConcept; noObj : boolean = false);
     procedure ComposeHumanName(json : TJSONWriter; name : string; elem : TFhirHumanName; noObj : boolean = false);
-    procedure ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
     procedure ComposeMeta(json : TJSONWriter; name : string; elem : TFhirMeta; noObj : boolean = false);
+    procedure ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
     procedure ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
-    procedure ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
-    procedure ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
     procedure ComposeElementDefinitionSlicing(json : TJSONWriter; name : string; elem : TFhirElementDefinitionSlicing; noObj : boolean = false);
     procedure ComposeElementDefinitionBase(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBase; noObj : boolean = false);
     procedure ComposeElementDefinitionType(json : TJSONWriter; name : string; elem : TFhirElementDefinitionType; noObj : boolean = false);
@@ -2617,6 +2615,8 @@ Type
     procedure ComposeElementDefinitionBinding(json : TJSONWriter; name : string; elem : TFhirElementDefinitionBinding; noObj : boolean = false);
     procedure ComposeElementDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirElementDefinitionMapping; noObj : boolean = false);
     procedure ComposeElementDefinition(json : TJSONWriter; name : string; elem : TFhirElementDefinition; noObj : boolean = false);
+    procedure ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
+    procedure ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
 
     procedure ComposeAccount(json : TJSONWriter; name : string; elem : TFhirAccount; noObj : boolean = false);
     procedure ComposeAllergyIntoleranceReaction(json : TJSONWriter; name : string; elem : TFhirAllergyIntoleranceReaction; noObj : boolean = false);
@@ -2725,7 +2725,7 @@ Type
     procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
     procedure ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
     procedure ComposeDeviceMetric(json : TJSONWriter; name : string; elem : TFhirDeviceMetric; noObj : boolean = false);
-    procedure ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
+    procedure ComposeDeviceRequest(json : TJSONWriter; name : string; elem : TFhirDeviceRequest; noObj : boolean = false);
     procedure ComposeDeviceUseStatement(json : TJSONWriter; name : string; elem : TFhirDeviceUseStatement; noObj : boolean = false);
     procedure ComposeDiagnosticOrderEvent(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderEvent; noObj : boolean = false);
     procedure ComposeDiagnosticOrderItem(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderItem; noObj : boolean = false);
@@ -2928,7 +2928,7 @@ Type
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
-    procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRBase); override;
+    procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
 
   TFHIRRDFComposer = class (TFHIRRDFComposerBase)
@@ -2938,8 +2938,8 @@ Type
 
 
     Procedure ComposeEnum(parent :  TRDFComplex; parentType, name : String; value : TFhirEnum; Const aNames, aSystems : Array Of String; index : integer);
-    Procedure ComposeDate(parent :  TRDFComplex; parentType, name : String; value : TFhirDate; index : integer);
     Procedure ComposeDateTime(parent :  TRDFComplex; parentType, name : String; value : TFhirDateTime; index : integer);
+    Procedure ComposeDate(parent :  TRDFComplex; parentType, name : String; value : TFhirDate; index : integer);
     Procedure ComposeString(parent :  TRDFComplex; parentType, name : String; value : TFhirString; index : integer);
     Procedure ComposeInteger(parent :  TRDFComplex; parentType, name : String; value : TFhirInteger; index : integer);
     Procedure ComposeUri(parent :  TRDFComplex; parentType, name : String; value : TFhirUri; index : integer);
@@ -2951,8 +2951,8 @@ Type
     Procedure ComposeCode(parent :  TRDFComplex; parentType, name : String; value : TFhirCode; index : integer);
     Procedure ComposeOid(parent :  TRDFComplex; parentType, name : String; value : TFhirOid; index : integer);
     Procedure ComposeUuid(parent :  TRDFComplex; parentType, name : String; value : TFhirUuid; index : integer);
-    Procedure ComposeUnsignedInt(parent :  TRDFComplex; parentType, name : String; value : TFhirUnsignedInt; index : integer);
     Procedure ComposeMarkdown(parent :  TRDFComplex; parentType, name : String; value : TFhirMarkdown; index : integer);
+    Procedure ComposeUnsignedInt(parent :  TRDFComplex; parentType, name : String; value : TFhirUnsignedInt; index : integer);
     Procedure ComposeId(parent :  TRDFComplex; parentType, name : String; value : TFhirId; index : integer);
     Procedure ComposePositiveInt(parent :  TRDFComplex; parentType, name : String; value : TFhirPositiveInt; index : integer);
 
@@ -2970,19 +2970,17 @@ Type
     procedure ComposeReference(parent :  TRDFComplex; parentType, name : String; elem : TFhirReference; index : integer);
     procedure ComposeSignature(parent :  TRDFComplex; parentType, name : String; elem : TFhirSignature; index : integer);
     procedure ComposeSampledData(parent :  TRDFComplex; parentType, name : String; elem : TFhirSampledData; index : integer);
-    procedure ComposeQuantity(parent :  TRDFComplex; parentType, name : String; elem : TFhirQuantity; index : integer);
     procedure ComposePeriod(parent :  TRDFComplex; parentType, name : String; elem : TFhirPeriod; index : integer);
+    procedure ComposeQuantity(parent :  TRDFComplex; parentType, name : String; elem : TFhirQuantity; index : integer);
     procedure ComposeAttachment(parent :  TRDFComplex; parentType, name : String; elem : TFhirAttachment; index : integer);
     procedure ComposeRatio(parent :  TRDFComplex; parentType, name : String; elem : TFhirRatio; index : integer);
     procedure ComposeRange(parent :  TRDFComplex; parentType, name : String; elem : TFhirRange; index : integer);
     procedure ComposeAnnotation(parent :  TRDFComplex; parentType, name : String; elem : TFhirAnnotation; index : integer);
     procedure ComposeCodeableConcept(parent :  TRDFComplex; parentType, name : String; elem : TFhirCodeableConcept; index : integer);
     procedure ComposeHumanName(parent :  TRDFComplex; parentType, name : String; elem : TFhirHumanName; index : integer);
-    procedure ComposeContactPoint(parent :  TRDFComplex; parentType, name : String; elem : TFhirContactPoint; index : integer);
     procedure ComposeMeta(parent :  TRDFComplex; parentType, name : String; elem : TFhirMeta; index : integer);
+    procedure ComposeContactPoint(parent :  TRDFComplex; parentType, name : String; elem : TFhirContactPoint; index : integer);
     procedure ComposeAddress(parent :  TRDFComplex; parentType, name : String; elem : TFhirAddress; index : integer);
-    procedure ComposeTimingRepeat(parent :  TRDFComplex; parentType, name : String; elem : TFhirTimingRepeat; index : integer);
-    procedure ComposeTiming(parent :  TRDFComplex; parentType, name : String; elem : TFhirTiming; index : integer);
     procedure ComposeElementDefinitionSlicing(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinitionSlicing; index : integer);
     procedure ComposeElementDefinitionBase(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinitionBase; index : integer);
     procedure ComposeElementDefinitionType(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinitionType; index : integer);
@@ -2990,6 +2988,8 @@ Type
     procedure ComposeElementDefinitionBinding(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinitionBinding; index : integer);
     procedure ComposeElementDefinitionMapping(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinitionMapping; index : integer);
     procedure ComposeElementDefinition(parent :  TRDFComplex; parentType, name : String; elem : TFhirElementDefinition; index : integer);
+    procedure ComposeTimingRepeat(parent :  TRDFComplex; parentType, name : String; elem : TFhirTimingRepeat; index : integer);
+    procedure ComposeTiming(parent :  TRDFComplex; parentType, name : String; elem : TFhirTiming; index : integer);
 
 
     procedure ComposeAccount(parent :  TRDFComplex; parentType, name : String; elem : TFhirAccount; index : integer);
@@ -3099,7 +3099,7 @@ Type
     procedure ComposeDeviceComponent(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceComponent; index : integer);
     procedure ComposeDeviceMetricCalibration(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceMetricCalibration; index : integer);
     procedure ComposeDeviceMetric(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceMetric; index : integer);
-    procedure ComposeDeviceUseRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseRequest; index : integer);
+    procedure ComposeDeviceRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceRequest; index : integer);
     procedure ComposeDeviceUseStatement(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseStatement; index : integer);
     procedure ComposeDiagnosticOrderEvent(parent :  TRDFComplex; parentType, name : String; elem : TFhirDiagnosticOrderEvent; index : integer);
     procedure ComposeDiagnosticOrderItem(parent :  TRDFComplex; parentType, name : String; elem : TFhirDiagnosticOrderItem; index : integer);
@@ -3316,7 +3316,6 @@ var
 begin
   result := TFhirElement.create;
   try
-    parseElementAttributes(result, path, element);
     result.id := GetAttribute(element, 'id');{x.4}
     child := FirstChild(element);
     while (child <> nil) do
@@ -3325,7 +3324,6 @@ begin
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
-    closeOutElement(result, element);
 
     result.link;
   finally
@@ -3337,11 +3335,9 @@ procedure TFHIRXmlComposer.ComposeElement(xml : TXmlBuilder; name : String; elem
 begin
   if (elem = nil) then
     exit;
-  composeElementAttributes(xml, elem);
   Attribute(xml, 'id', elem.id  );
   xml.open(name);
   composeElementChildren(xml, elem);
-  closeOutElement(xml, elem);
   xml.close(name);
 end;
 
@@ -3702,103 +3698,6 @@ begin
   composeElement(this, parentType, name, value, index);
 end;
 
-function TFHIRXmlParser.ParseDate(element : IXmlDomElement; path : string) : TFhirDate;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirDate.create;
-  try
-    ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseDate(value, jsn)) {1};
-end;
-
-function TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject) : TFHIRDate;
-begin
-  result := TFhirDate.Create;
-  try
-     result.value := toTDateAndTime(value);
-    if (jsn <> nil) then
-      parseElementProperties(jsn, result);
-    result.Link;
-  finally
-    result.Free;
-  end;
-end;
-
-Procedure TFHIRXmlComposer.ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
-begin
-  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then
-    exit;
-  composeElementAttributes(xml, value);
-  if (value.value <> nil) then
-    attribute(xml, 'value', asString(value.value));
-  xml.open(name);
-  composeElementChildren(xml, value);
-  closeOutElement(xml, value);
-  xml.close(name);
-end;
-
-Procedure TFHIRJsonComposer.ComposeDateValue(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
-begin
-  if (value = nil) or (value.value = nil) then
-  begin
-    if inArray then
-      propNull(json, name);
-    exit;
-  end
-  else
-    prop(json, name, asString(value.value));
-end;
-
-Procedure TFHIRJsonComposer.ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
-begin
-  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
-  begin
-    if inArray then
-      propNull(json, name);
-    exit;
-  end
-  else
-  begin
-    if (inArray) then
-      json.valueObject('')
-    else
-      json.valueObject('_'+name);
-    ComposeElementProperties(json, value);
-    json.finishObject;
-  end;
-end;
-
-Procedure TFHIRRDFComposer.ComposeDate(parent :  TRDFComplex; parentType, name : String; value : TFhirDate; index : integer);
-var
-  this : TRDFComplex;
-begin
-  if (value = nil) then
-    exit;
-  this := parent.predicate('fhir:'+parentType+'.'+name);
-  this.predicate('a', 'fhir:date');
-  this.predicate('fhir:value', ttlLiteral(asString(value.value)));
-  composeElement(this, parentType, name, value, index);
-end;
-
 function TFHIRXmlParser.ParseDateTime(element : IXmlDomElement; path : string) : TFhirDateTime;
 var
   child : IXMLDOMElement;
@@ -3892,6 +3791,103 @@ begin
     exit;
   this := parent.predicate('fhir:'+parentType+'.'+name);
   this.predicate('a', 'fhir:dateTime');
+  this.predicate('fhir:value', ttlLiteral(asString(value.value)));
+  composeElement(this, parentType, name, value, index);
+end;
+
+function TFHIRXmlParser.ParseDate(element : IXmlDomElement; path : string) : TFhirDate;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirDate.create;
+  try
+    ParseElementAttributes(result, path, element);
+    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDate(value, jsn)) {1};
+end;
+
+function TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject) : TFHIRDate;
+begin
+  result := TFhirDate.Create;
+  try
+     result.value := toTDateAndTime(value);
+    if (jsn <> nil) then
+      parseElementProperties(jsn, result);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+Procedure TFHIRXmlComposer.ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
+begin
+  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then
+    exit;
+  composeElementAttributes(xml, value);
+  if (value.value <> nil) then
+    attribute(xml, 'value', asString(value.value));
+  xml.open(name);
+  composeElementChildren(xml, value);
+  closeOutElement(xml, value);
+  xml.close(name);
+end;
+
+Procedure TFHIRJsonComposer.ComposeDateValue(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
+begin
+  if (value = nil) or (value.value = nil) then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+    prop(json, name, asString(value.value));
+end;
+
+Procedure TFHIRJsonComposer.ComposeDateProps(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
+begin
+  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+  begin
+    if (inArray) then
+      json.valueObject('')
+    else
+      json.valueObject('_'+name);
+    ComposeElementProperties(json, value);
+    json.finishObject;
+  end;
+end;
+
+Procedure TFHIRRDFComposer.ComposeDate(parent :  TRDFComplex; parentType, name : String; value : TFhirDate; index : integer);
+var
+  this : TRDFComplex;
+begin
+  if (value = nil) then
+    exit;
+  this := parent.predicate('fhir:'+parentType+'.'+name);
+  this.predicate('a', 'fhir:date');
   this.predicate('fhir:value', ttlLiteral(asString(value.value)));
   composeElement(this, parentType, name, value, index);
 end;
@@ -4954,102 +4950,6 @@ begin
   composeElement(this, parentType, name, value, index);
 end;
 
-function TFHIRXmlParser.ParseUnsignedInt(element : IXmlDomElement; path : string) : TFhirUnsignedInt;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirUnsignedInt.create;
-  try
-    ParseElementAttributes(result, path, element);
-    result.value := GetAttribute(element, 'value');
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if Not ParseElementChild(result, path, child) then
-         UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseUnsignedInt(value, jsn)) {1};
-end;
-
-function TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt;
-begin
-  result := TFhirUnsignedInt.Create;
-  try
-    result.value := value;
-    if (jsn <> nil) then
-      parseElementProperties(jsn, result);
-    result.Link;
-  finally
-    result.Free;
-  end;
-end;
-
-Procedure TFHIRXmlComposer.ComposeUnsignedInt(xml : TXmlBuilder; name : String; value : TFhirUnsignedInt);
-begin
-  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
-    exit;
-  composeElementAttributes(xml, value);
-  attribute(xml, 'value', value.value);
-  xml.open(name);
-  composeElementChildren(xml, value);
-  closeOutElement(xml, value);
-  xml.close(name);
-end;
-
-Procedure TFHIRJsonComposer.ComposeUnsignedIntValue(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
-begin
-  if (value = nil) or (value.value = '') then
-  begin
-    if inArray then
-      propNull(json, name);
-    exit;
-  end
-  else
-    propNumber(json, name, value.value);
-end;
-
-Procedure TFHIRJsonComposer.ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
-begin
-  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
-  begin
-    if inArray then
-      propNull(json, name);
-    exit;
-  end
-  else
-  begin
-    if (inArray) then
-      json.valueObject('')
-    else
-      json.valueObject('_'+name);
-    ComposeElementProperties(json, value);
-    json.finishObject;
-  end;
-end;
-
-Procedure TFHIRRDFComposer.ComposeUnsignedInt(parent :  TRDFComplex; parentType, name : String; value : TFhirUnsignedInt; index : integer);
-var
-  this : TRDFComplex;
-begin
-  if (value = nil) then
-    exit;
-  this := parent.predicate('fhir:'+parentType+'.'+name);
-  this.predicate('a', 'fhir:unsignedInt');
-  this.predicate('fhir:value', ttlLiteral(asString(value.value)));
-  composeElement(this, parentType, name, value, index);
-end;
-
 function TFHIRXmlParser.ParseMarkdown(element : IXmlDomElement; path : string) : TFhirMarkdown;
 var
   child : IXMLDOMElement;
@@ -5142,6 +5042,102 @@ begin
     exit;
   this := parent.predicate('fhir:'+parentType+'.'+name);
   this.predicate('a', 'fhir:markdown');
+  this.predicate('fhir:value', ttlLiteral(asString(value.value)));
+  composeElement(this, parentType, name, value, index);
+end;
+
+function TFHIRXmlParser.ParseUnsignedInt(element : IXmlDomElement; path : string) : TFhirUnsignedInt;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirUnsignedInt.create;
+  try
+    ParseElementAttributes(result, path, element);
+    result.value := GetAttribute(element, 'value');
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if Not ParseElementChild(result, path, child) then
+         UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseUnsignedInt(value, jsn)) {1};
+end;
+
+function TFHIRJsonParser.ParseUnsignedInt(value : string; jsn : TJsonObject) : TFHIRUnsignedInt;
+begin
+  result := TFhirUnsignedInt.Create;
+  try
+    result.value := value;
+    if (jsn <> nil) then
+      parseElementProperties(jsn, result);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+Procedure TFHIRXmlComposer.ComposeUnsignedInt(xml : TXmlBuilder; name : String; value : TFhirUnsignedInt);
+begin
+  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then
+    exit;
+  composeElementAttributes(xml, value);
+  attribute(xml, 'value', value.value);
+  xml.open(name);
+  composeElementChildren(xml, value);
+  closeOutElement(xml, value);
+  xml.close(name);
+end;
+
+Procedure TFHIRJsonComposer.ComposeUnsignedIntValue(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
+begin
+  if (value = nil) or (value.value = '') then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+    propNumber(json, name, value.value);
+end;
+
+Procedure TFHIRJsonComposer.ComposeUnsignedIntProps(json : TJSONWriter; name : String; value : TFhirUnsignedInt; inArray : boolean);
+begin
+  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then
+  begin
+    if inArray then
+      propNull(json, name);
+    exit;
+  end
+  else
+  begin
+    if (inArray) then
+      json.valueObject('')
+    else
+      json.valueObject('_'+name);
+    ComposeElementProperties(json, value);
+    json.finishObject;
+  end;
+end;
+
+Procedure TFHIRRDFComposer.ComposeUnsignedInt(parent :  TRDFComplex; parentType, name : String; value : TFhirUnsignedInt; index : integer);
+var
+  this : TRDFComplex;
+begin
+  if (value = nil) then
+    exit;
+  this := parent.predicate('fhir:'+parentType+'.'+name);
+  this.predicate('a', 'fhir:unsignedInt');
   this.predicate('fhir:value', ttlLiteral(asString(value.value)));
   composeElement(this, parentType, name, value, index);
 end;
@@ -5457,18 +5453,18 @@ begin
         element.value := ParseOid(child, path+'.valueOid') {c}
       else if (child.baseName = 'valueUuid') then
         element.value := ParseUuid(child, path+'.valueUuid') {c}
-      else if (child.baseName = 'valueUnsignedInt') then
-        element.value := ParseUnsignedInt(child, path+'.valueUnsignedInt') {c}
       else if (child.baseName = 'valueMarkdown') then
         element.value := ParseMarkdown(child, path+'.valueMarkdown') {c}
+      else if (child.baseName = 'valueUnsignedInt') then
+        element.value := ParseUnsignedInt(child, path+'.valueUnsignedInt') {c}
       else if (child.baseName = 'valueId') then
         element.value := ParseId(child, path+'.valueId') {c}
       else if (child.baseName = 'valuePositiveInt') then
         element.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
-      else if (child.baseName = 'valueDate') then
-        element.value := ParseDate(child, path+'.valueDate') {c}
       else if (child.baseName = 'valueDateTime') then
         element.value := ParseDateTime(child, path+'.valueDateTime') {c}
+      else if (child.baseName = 'valueDate') then
+        element.value := ParseDate(child, path+'.valueDate') {c}
       else if (child.baseName = 'valueString') then
         element.value := ParseString(child, path+'.valueString') {c}
       else if (child.baseName = 'valueInteger') then
@@ -5495,10 +5491,10 @@ begin
         element.value := ParseSignature(child, path+'.valueSignature') {eSignature}
       else if (child.baseName = 'valueSampledData') then
         element.value := ParseSampledData(child, path+'.valueSampledData') {eSampledData}
-      else if (child.baseName = 'valueQuantity') then
-        element.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valuePeriod') then
         element.value := ParsePeriod(child, path+'.valuePeriod') {ePeriod}
+      else if (child.baseName = 'valueQuantity') then
+        element.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAttachment') then
         element.value := ParseAttachment(child, path+'.valueAttachment') {eAttachment}
       else if (child.baseName = 'valueRatio') then
@@ -5511,16 +5507,16 @@ begin
         element.value := ParseCodeableConcept(child, path+'.valueCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'valueHumanName') then
         element.value := ParseHumanName(child, path+'/valueHumanName') {f}
-      else if (child.baseName = 'valueContactPoint') then
-        element.value := ParseContactPoint(child, path+'/valueContactPoint') {f}
       else if (child.baseName = 'valueMeta') then
         element.value := ParseMeta(child, path+'/valueMeta') {f}
+      else if (child.baseName = 'valueContactPoint') then
+        element.value := ParseContactPoint(child, path+'/valueContactPoint') {f}
       else if (child.baseName = 'valueAddress') then
         element.value := ParseAddress(child, path+'/valueAddress') {f}
-      else if (child.baseName = 'valueTiming') then
-        element.value := ParseTiming(child, path+'/valueTiming') {f}
       else if (child.baseName = 'valueElementDefinition') then
         element.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
+      else if (child.baseName = 'valueTiming') then
+        element.value := ParseTiming(child, path+'/valueTiming') {f}
       else if (child.baseName = 'resource') then
         element.resource := ParseInnerResource(child, path+'/resource') {b}
       else if (child.baseName = 'part') then
@@ -5553,18 +5549,18 @@ begin
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
     ComposeUuid(xml, 'valueUuid', TFhirUuid(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'valueUnsignedInt', TFhirUnsignedInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'valueMarkdown', TFhirMarkdown(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'valueUnsignedInt', TFhirUnsignedInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) {1} then
     ComposeId(xml, 'valueId', TFhirId(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
-    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
+    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(xml, 'valueString', TFhirString(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirInteger) {1} then
@@ -5591,10 +5587,10 @@ begin
     ComposeSignature(xml, 'valueSignature', TFhirSignature(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) {8} then
     ComposePeriod(xml, 'valuePeriod', TFhirPeriod(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
@@ -5607,16 +5603,16 @@ begin
     ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(xml, 'valueMeta', TFhirMeta(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
     ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
-    ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value));
+    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
+    ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeInnerResource(xml, 'resource', elem, elem.resource);{x.2a}
   if SummaryOption in [soFull, soSummary, soText, soData] then
@@ -5651,18 +5647,18 @@ begin
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
         result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
-    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
         result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
+        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueId') or jsn.has('_valueId') then
         result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
         result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
-    if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
         result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+    if jsn.has('valueDate') or jsn.has('_valueDate') then
+        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueString') or jsn.has('_valueString') then
         result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
@@ -5689,10 +5685,10 @@ begin
         result.value := ParseSignature(jsn.vObj['valueSignature']);
     if jsn.has('valueSampledData') {a7} then
         result.value := ParseSampledData(jsn.vObj['valueSampledData']);
-    if jsn.has('valueQuantity') {a7} then
-        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valuePeriod') {a7} then
         result.value := ParsePeriod(jsn.vObj['valuePeriod']);
+    if jsn.has('valueQuantity') {a7} then
+        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAttachment') {a7} then
         result.value := ParseAttachment(jsn.vObj['valueAttachment']);
     if jsn.has('valueRatio') {a7} then
@@ -5705,16 +5701,16 @@ begin
         result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
-    if jsn.has('valueContactPoint') {a9} then
-        result.value := ParseContactPoint(jsn.vObj['valueContactPoint']);
     if jsn.has('valueMeta') {a9} then
         result.value := ParseMeta(jsn.vObj['valueMeta']);
+    if jsn.has('valueContactPoint') {a9} then
+        result.value := ParseContactPoint(jsn.vObj['valueContactPoint']);
     if jsn.has('valueAddress') {a9} then
         result.value := ParseAddress(jsn.vObj['valueAddress']);
-    if jsn.has('valueTiming') {a9} then
-        result.value := ParseTiming(jsn.vObj['valueTiming']);
     if jsn.has('valueElementDefinition') {a9} then
         result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
+    if jsn.has('valueTiming') {a9} then
+        result.value := ParseTiming(jsn.vObj['valueTiming']);
     if jsn.has('resource') then
         result.resource := ParseInnerResource(jsn.vObj['resource']);{q}
     if jsn.has('part') then
@@ -5748,15 +5744,15 @@ begin
     ComposeUuidValue(json, 'valueUuid', TFhirUuid(elem.value), false);
     ComposeUuidProps(json, 'valueUuid', TFhirUuid(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false);
-    ComposeUnsignedIntProps(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'valueMarkdown', TFhirMarkdown(elem.value), false);
     ComposeMarkdownProps(json, 'valueMarkdown', TFhirMarkdown(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false);
+    ComposeUnsignedIntProps(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) then
   begin
@@ -5768,15 +5764,15 @@ begin
     ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
     ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
-    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
     ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
+    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) then
   begin
@@ -5828,10 +5824,10 @@ begin
     ComposeSignature(json, 'valueSignature', TFhirSignature(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) then
     ComposeSampledData(json, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) then
     ComposePeriod(json, 'valuePeriod', TFhirPeriod(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) then
     ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
@@ -5844,16 +5840,16 @@ begin
     ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) then
     ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
-    ComposeContactPoint(json, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) then
     ComposeMeta(json, 'valueMeta', TFhirMeta(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
+    ComposeContactPoint(json, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
     ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
-    ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value));
+    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
+    ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeInnerResource(json, 'resource', elem, elem.resource); {a}
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.partList.Count > 0) then
@@ -5889,18 +5885,18 @@ begin
     ComposeOid(this, 'ParametersParameter', 'valueOid', TFhirOid(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
     ComposeUuid(this, 'ParametersParameter', 'valueUuid', TFhirUuid(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ParametersParameter', 'valueUnsignedInt', TFhirUnsignedInt(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ParametersParameter', 'valueMarkdown', TFhirMarkdown(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ParametersParameter', 'valueUnsignedInt', TFhirUnsignedInt(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) {1} then
     ComposeId(this, 'ParametersParameter', 'valueId', TFhirId(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ParametersParameter', 'valuePositiveInt', TFhirPositiveInt(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
-    ComposeDate(this, 'ParametersParameter', 'valueDate', TFhirDate(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ParametersParameter', 'valueDateTime', TFhirDateTime(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
+    ComposeDate(this, 'ParametersParameter', 'valueDate', TFhirDate(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(this, 'ParametersParameter', 'valueString', TFhirString(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirInteger) {1} then
@@ -5927,10 +5923,10 @@ begin
     ComposeSignature(this, 'ParametersParameter', 'valueSignature', TFhirSignature(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ParametersParameter', 'valueSampledData', TFhirSampledData(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ParametersParameter', 'valueQuantity', TFhirQuantity(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) {8} then
     ComposePeriod(this, 'ParametersParameter', 'valuePeriod', TFhirPeriod(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ParametersParameter', 'valueQuantity', TFhirQuantity(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ParametersParameter', 'valueAttachment', TFhirAttachment(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
@@ -5943,16 +5939,16 @@ begin
     ComposeCodeableConcept(this, 'ParametersParameter', 'valueCodeableConcept', TFhirCodeableConcept(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ParametersParameter', 'valueHumanName', TFhirHumanName(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ParametersParameter', 'valueContactPoint', TFhirContactPoint(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(this, 'ParametersParameter', 'valueMeta', TFhirMeta(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ParametersParameter', 'valueContactPoint', TFhirContactPoint(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
     ComposeAddress(this, 'ParametersParameter', 'valueAddress', TFhirAddress(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
-    ComposeTiming(this, 'ParametersParameter', 'valueTiming', TFhirTiming(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ParametersParameter', 'valueElementDefinition', TFhirElementDefinition(elem.value), -1);
+    ComposeElementDefinition(this, 'ParametersParameter', 'valueElementDefinition', TFhirElementDefinition(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
+    ComposeTiming(this, 'ParametersParameter', 'valueTiming', TFhirTiming(elem.value), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeResource(this, 'ParametersParameter', 'resource', elem.resourceElement, -1);{x.2c}
   if SummaryOption in [soFull, soSummary, soText, soData] then
@@ -6207,18 +6203,18 @@ begin
         element.value := ParseOid(child, path+'.valueOid') {c}
       else if (child.baseName = 'valueUuid') then
         element.value := ParseUuid(child, path+'.valueUuid') {c}
-      else if (child.baseName = 'valueUnsignedInt') then
-        element.value := ParseUnsignedInt(child, path+'.valueUnsignedInt') {c}
       else if (child.baseName = 'valueMarkdown') then
         element.value := ParseMarkdown(child, path+'.valueMarkdown') {c}
+      else if (child.baseName = 'valueUnsignedInt') then
+        element.value := ParseUnsignedInt(child, path+'.valueUnsignedInt') {c}
       else if (child.baseName = 'valueId') then
         element.value := ParseId(child, path+'.valueId') {c}
       else if (child.baseName = 'valuePositiveInt') then
         element.value := ParsePositiveInt(child, path+'.valuePositiveInt') {c}
-      else if (child.baseName = 'valueDate') then
-        element.value := ParseDate(child, path+'.valueDate') {c}
       else if (child.baseName = 'valueDateTime') then
         element.value := ParseDateTime(child, path+'.valueDateTime') {c}
+      else if (child.baseName = 'valueDate') then
+        element.value := ParseDate(child, path+'.valueDate') {c}
       else if (child.baseName = 'valueString') then
         element.value := ParseString(child, path+'.valueString') {c}
       else if (child.baseName = 'valueInteger') then
@@ -6245,10 +6241,10 @@ begin
         element.value := ParseSignature(child, path+'.valueSignature') {eSignature}
       else if (child.baseName = 'valueSampledData') then
         element.value := ParseSampledData(child, path+'.valueSampledData') {eSampledData}
-      else if (child.baseName = 'valueQuantity') then
-        element.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valuePeriod') then
         element.value := ParsePeriod(child, path+'.valuePeriod') {ePeriod}
+      else if (child.baseName = 'valueQuantity') then
+        element.value := ParseQuantity(child, path+'.valueQuantity') {eQuantity}
       else if (child.baseName = 'valueAttachment') then
         element.value := ParseAttachment(child, path+'.valueAttachment') {eAttachment}
       else if (child.baseName = 'valueRatio') then
@@ -6261,16 +6257,16 @@ begin
         element.value := ParseCodeableConcept(child, path+'.valueCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'valueHumanName') then
         element.value := ParseHumanName(child, path+'/valueHumanName') {f}
-      else if (child.baseName = 'valueContactPoint') then
-        element.value := ParseContactPoint(child, path+'/valueContactPoint') {f}
       else if (child.baseName = 'valueMeta') then
         element.value := ParseMeta(child, path+'/valueMeta') {f}
+      else if (child.baseName = 'valueContactPoint') then
+        element.value := ParseContactPoint(child, path+'/valueContactPoint') {f}
       else if (child.baseName = 'valueAddress') then
         element.value := ParseAddress(child, path+'/valueAddress') {f}
-      else if (child.baseName = 'valueTiming') then
-        element.value := ParseTiming(child, path+'/valueTiming') {f}
       else if (child.baseName = 'valueElementDefinition') then
         element.value := ParseElementDefinition(child, path+'/valueElementDefinition') {f}
+      else if (child.baseName = 'valueTiming') then
+        element.value := ParseTiming(child, path+'/valueTiming') {f}
       else if Not ParseElementChild(element, path, child) then
     result := false;
 end;
@@ -6296,18 +6292,18 @@ begin
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
     ComposeUuid(xml, 'valueUuid', TFhirUuid(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'valueUnsignedInt', TFhirUnsignedInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'valueMarkdown', TFhirMarkdown(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'valueUnsignedInt', TFhirUnsignedInt(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) {1} then
     ComposeId(xml, 'valueId', TFhirId(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'valuePositiveInt', TFhirPositiveInt(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
-    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
+    ComposeDate(xml, 'valueDate', TFhirDate(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(xml, 'valueString', TFhirString(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirInteger) {1} then
@@ -6334,10 +6330,10 @@ begin
     ComposeSignature(xml, 'valueSignature', TFhirSignature(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) {8} then
     ComposePeriod(xml, 'valuePeriod', TFhirPeriod(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'valueAttachment', TFhirAttachment(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
@@ -6350,16 +6346,16 @@ begin
     ComposeCodeableConcept(xml, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(xml, 'valueMeta', TFhirMeta(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
     ComposeAddress(xml, 'valueAddress', TFhirAddress(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
-    ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value));
+    ComposeElementDefinition(xml, 'valueElementDefinition', TFhirElementDefinition(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
+    ComposeTiming(xml, 'valueTiming', TFhirTiming(elem.value));
 end;
 
 procedure TFHIRJsonParser.ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -6389,18 +6385,18 @@ begin
         result.value := ParseOid(jsn['valueOid'], jsn.vObj['_valueOid']);
     if jsn.has('valueUuid') or jsn.has('_valueUuid') then
         result.value := ParseUuid(jsn['valueUuid'], jsn.vObj['_valueUuid']);
-    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
-        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueMarkdown') or jsn.has('_valueMarkdown') then
         result.value := ParseMarkdown(jsn['valueMarkdown'], jsn.vObj['_valueMarkdown']);
+    if jsn.has('valueUnsignedInt') or jsn.has('_valueUnsignedInt') then
+        result.value := ParseUnsignedInt(jsn['valueUnsignedInt'], jsn.vObj['_valueUnsignedInt']);
     if jsn.has('valueId') or jsn.has('_valueId') then
         result.value := ParseId(jsn['valueId'], jsn.vObj['_valueId']);
     if jsn.has('valuePositiveInt') or jsn.has('_valuePositiveInt') then
         result.value := ParsePositiveInt(jsn['valuePositiveInt'], jsn.vObj['_valuePositiveInt']);
-    if jsn.has('valueDate') or jsn.has('_valueDate') then
-        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
         result.value := ParseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
+    if jsn.has('valueDate') or jsn.has('_valueDate') then
+        result.value := ParseDate(jsn['valueDate'], jsn.vObj['_valueDate']);
     if jsn.has('valueString') or jsn.has('_valueString') then
         result.value := ParseString(jsn['valueString'], jsn.vObj['_valueString']);
     if jsn.has('valueInteger') or jsn.has('_valueInteger') then
@@ -6427,10 +6423,10 @@ begin
         result.value := ParseSignature(jsn.vObj['valueSignature']);
     if jsn.has('valueSampledData') {a7} then
         result.value := ParseSampledData(jsn.vObj['valueSampledData']);
-    if jsn.has('valueQuantity') {a7} then
-        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valuePeriod') {a7} then
         result.value := ParsePeriod(jsn.vObj['valuePeriod']);
+    if jsn.has('valueQuantity') {a7} then
+        result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueAttachment') {a7} then
         result.value := ParseAttachment(jsn.vObj['valueAttachment']);
     if jsn.has('valueRatio') {a7} then
@@ -6443,16 +6439,16 @@ begin
         result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
     if jsn.has('valueHumanName') {a9} then
         result.value := ParseHumanName(jsn.vObj['valueHumanName']);
-    if jsn.has('valueContactPoint') {a9} then
-        result.value := ParseContactPoint(jsn.vObj['valueContactPoint']);
     if jsn.has('valueMeta') {a9} then
         result.value := ParseMeta(jsn.vObj['valueMeta']);
+    if jsn.has('valueContactPoint') {a9} then
+        result.value := ParseContactPoint(jsn.vObj['valueContactPoint']);
     if jsn.has('valueAddress') {a9} then
         result.value := ParseAddress(jsn.vObj['valueAddress']);
-    if jsn.has('valueTiming') {a9} then
-        result.value := ParseTiming(jsn.vObj['valueTiming']);
     if jsn.has('valueElementDefinition') {a9} then
         result.value := ParseElementDefinition(jsn.vObj['valueElementDefinition']);
+    if jsn.has('valueTiming') {a9} then
+        result.value := ParseTiming(jsn.vObj['valueTiming']);
 end;
 
 procedure TFHIRJsonComposer.ComposeExtension(json : TJSONWriter; name : string; elem : TFhirExtension; noObj : boolean = false);
@@ -6480,15 +6476,15 @@ begin
     ComposeUuidValue(json, 'valueUuid', TFhirUuid(elem.value), false);
     ComposeUuidProps(json, 'valueUuid', TFhirUuid(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false);
-    ComposeUnsignedIntProps(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'valueMarkdown', TFhirMarkdown(elem.value), false);
     ComposeMarkdownProps(json, 'valueMarkdown', TFhirMarkdown(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false);
+    ComposeUnsignedIntProps(json, 'valueUnsignedInt', TFhirUnsignedInt(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) then
   begin
@@ -6500,15 +6496,15 @@ begin
     ComposePositiveIntValue(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false);
     ComposePositiveIntProps(json, 'valuePositiveInt', TFhirPositiveInt(elem.value), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
-    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
     ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'valueDate', TFhirDate(elem.value), false);
+    ComposeDateProps(json, 'valueDate', TFhirDate(elem.value), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) then
   begin
@@ -6560,10 +6556,10 @@ begin
     ComposeSignature(json, 'valueSignature', TFhirSignature(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) then
     ComposeSampledData(json, 'valueSampledData', TFhirSampledData(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
-    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) then
     ComposePeriod(json, 'valuePeriod', TFhirPeriod(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) then
+    ComposeQuantity(json, 'valueQuantity', TFhirQuantity(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) then
     ComposeAttachment(json, 'valueAttachment', TFhirAttachment(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) then
@@ -6576,16 +6572,16 @@ begin
     ComposeCodeableConcept(json, 'valueCodeableConcept', TFhirCodeableConcept(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) then
     ComposeHumanName(json, 'valueHumanName', TFhirHumanName(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
-    ComposeContactPoint(json, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) then
     ComposeMeta(json, 'valueMeta', TFhirMeta(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) then
+    ComposeContactPoint(json, 'valueContactPoint', TFhirContactPoint(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) then
     ComposeAddress(json, 'valueAddress', TFhirAddress(elem.value))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
-    ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value));
+    ComposeElementDefinition(json, 'valueElementDefinition', TFhirElementDefinition(elem.value))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) then
+    ComposeTiming(json, 'valueTiming', TFhirTiming(elem.value));
   if not noObj then json.finishObject;
 end;
 
@@ -6611,18 +6607,18 @@ begin
     ComposeOid(this, 'Extension', 'valueOid', TFhirOid(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUuid) {1} then
     ComposeUuid(this, 'Extension', 'valueUuid', TFhirUuid(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'Extension', 'valueUnsignedInt', TFhirUnsignedInt(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'Extension', 'valueMarkdown', TFhirMarkdown(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'Extension', 'valueUnsignedInt', TFhirUnsignedInt(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirId) {1} then
     ComposeId(this, 'Extension', 'valueId', TFhirId(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'Extension', 'valuePositiveInt', TFhirPositiveInt(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
-    ComposeDate(this, 'Extension', 'valueDate', TFhirDate(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDateTime) {1} then
     ComposeDateTime(this, 'Extension', 'valueDateTime', TFhirDateTime(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirDate) {1} then
+    ComposeDate(this, 'Extension', 'valueDate', TFhirDate(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirString) {1} then
     ComposeString(this, 'Extension', 'valueString', TFhirString(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirInteger) {1} then
@@ -6649,10 +6645,10 @@ begin
     ComposeSignature(this, 'Extension', 'valueSignature', TFhirSignature(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirSampledData) {8} then
     ComposeSampledData(this, 'Extension', 'valueSampledData', TFhirSampledData(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'Extension', 'valueQuantity', TFhirQuantity(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirPeriod) {8} then
     ComposePeriod(this, 'Extension', 'valuePeriod', TFhirPeriod(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'Extension', 'valueQuantity', TFhirQuantity(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAttachment) {8} then
     ComposeAttachment(this, 'Extension', 'valueAttachment', TFhirAttachment(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirRatio) {8} then
@@ -6665,16 +6661,16 @@ begin
     ComposeCodeableConcept(this, 'Extension', 'valueCodeableConcept', TFhirCodeableConcept(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirHumanName) {9} then
     ComposeHumanName(this, 'Extension', 'valueHumanName', TFhirHumanName(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'Extension', 'valueContactPoint', TFhirContactPoint(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirMeta) {9} then
     ComposeMeta(this, 'Extension', 'valueMeta', TFhirMeta(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'Extension', 'valueContactPoint', TFhirContactPoint(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirAddress) {9} then
     ComposeAddress(this, 'Extension', 'valueAddress', TFhirAddress(elem.value), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
-    ComposeTiming(this, 'Extension', 'valueTiming', TFhirTiming(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'Extension', 'valueElementDefinition', TFhirElementDefinition(elem.value), -1);
+    ComposeElementDefinition(this, 'Extension', 'valueElementDefinition', TFhirElementDefinition(elem.value), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirTiming) {9} then
+    ComposeTiming(this, 'Extension', 'valueTiming', TFhirTiming(elem.value), -1);
 end;
 
 function TFHIRXmlParser.ParseNarrative(element : IXmlDomElement; path : string) : TFhirNarrative;
@@ -7567,6 +7563,121 @@ begin
     ComposeString(this, 'SampledData', 'data', elem.dataElement, -1);{x.2c}
 end;
 
+function TFHIRXmlParser.ParsePeriod(element : IXmlDomElement; path : string) : TFhirPeriod;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirPeriod.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParsePeriodChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParsePeriodChild(element : TFhirPeriod; path : string; child : IXmlDomElement) : boolean;
+begin
+  result := true;
+      if (child.baseName = 'start') then
+        element.startElement := ParseDateTime(child, path+'/start') {b}
+      else if (child.baseName = 'end') then
+        element.end_Element := ParseDateTime(child, path+'/end') {b}
+      else if Not ParseElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposePeriod(xml : TXmlBuilder; name : String; elem : TFhirPeriod);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composePeriodChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposePeriodChildren(xml : TXmlBuilder; elem : TFhirPeriod);
+begin
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTime(xml, 'start', elem.startElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTime(xml, 'end', elem.end_Element);{x.2b}
+end;
+
+procedure TFHIRJsonParser.ParsePeriod(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParsePeriod(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParsePeriod(jsn : TJsonObject) : TFhirPeriod;
+begin
+  result := TFhirPeriod.create;
+  try
+    ParsePeriodProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParsePeriodProperties(jsn : TJsonObject; result : TFhirPeriod);
+begin
+    ParseElementProperties(jsn, result);
+    if jsn.has('start') or jsn.has('_start') then
+        result.startElement := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
+    if jsn.has('end') or jsn.has('_end') then
+        result.end_Element := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposePeriod(json : TJSONWriter; name : string; elem : TFhirPeriod; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElement(json, '', elem, true);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTimeValue(json, 'start', elem.startElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTimeProps(json, 'start', elem.startElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTimeValue(json, 'end', elem.end_Element, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTimeProps(json, 'end', elem.end_Element, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRRDFComposer.ComposePeriod(parent :  TRDFComplex; parentType, name : String; elem : TFhirPeriod; index : integer);
+var
+  this : TRDFComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.predicate('fhir:'+parentType+'.'+name);
+    this.predicate('a', 'fhir:Period');
+  end;
+  composeElement(this, 'Period', name, elem, index);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTime(this, 'Period', 'start', elem.startElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeDateTime(this, 'Period', 'end', elem.end_Element, -1);{x.2c}
+end;
+
 function TFHIRXmlParser.ParseQuantity(element : IXmlDomElement; path : string) : TFhirQuantity;
 var
   child : IXMLDOMElement;
@@ -7725,121 +7836,6 @@ begin
     if elem.unit_Element <> nil then
       ComposeString(cb, 'ConceptBase', 'text', elem.unit_Element, -1);
   end;
-end;
-
-function TFHIRXmlParser.ParsePeriod(element : IXmlDomElement; path : string) : TFhirPeriod;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirPeriod.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParsePeriodChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParsePeriodChild(element : TFhirPeriod; path : string; child : IXmlDomElement) : boolean;
-begin
-  result := true;
-      if (child.baseName = 'start') then
-        element.startElement := ParseDateTime(child, path+'/start') {b}
-      else if (child.baseName = 'end') then
-        element.end_Element := ParseDateTime(child, path+'/end') {b}
-      else if Not ParseElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposePeriod(xml : TXmlBuilder; name : String; elem : TFhirPeriod);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composePeriodChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposePeriodChildren(xml : TXmlBuilder; elem : TFhirPeriod);
-begin
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTime(xml, 'start', elem.startElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTime(xml, 'end', elem.end_Element);{x.2b}
-end;
-
-procedure TFHIRJsonParser.ParsePeriod(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParsePeriod(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParsePeriod(jsn : TJsonObject) : TFhirPeriod;
-begin
-  result := TFhirPeriod.create;
-  try
-    ParsePeriodProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParsePeriodProperties(jsn : TJsonObject; result : TFhirPeriod);
-begin
-    ParseElementProperties(jsn, result);
-    if jsn.has('start') or jsn.has('_start') then
-        result.startElement := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
-    if jsn.has('end') or jsn.has('_end') then
-        result.end_Element := ParseDateTime(jsn['end'], jsn.vObj['_end']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposePeriod(json : TJSONWriter; name : string; elem : TFhirPeriod; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElement(json, '', elem, true);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTimeValue(json, 'start', elem.startElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTimeProps(json, 'start', elem.startElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTimeValue(json, 'end', elem.end_Element, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTimeProps(json, 'end', elem.end_Element, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRRDFComposer.ComposePeriod(parent :  TRDFComplex; parentType, name : String; elem : TFhirPeriod; index : integer);
-var
-  this : TRDFComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:Period');
-  end;
-  composeElement(this, 'Period', name, elem, index);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTime(this, 'Period', 'start', elem.startElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeDateTime(this, 'Period', 'end', elem.end_Element, -1);{x.2c}
 end;
 
 function TFHIRXmlParser.ParseAttachment(element : IXmlDomElement; path : string) : TFhirAttachment;
@@ -8783,155 +8779,6 @@ begin
     ComposePeriod(this, 'HumanName', 'period', elem.periodElement, -1);{x.2c}
 end;
 
-function TFHIRXmlParser.ParseContactPoint(element : IXmlDomElement; path : string) : TFhirContactPoint;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirContactPoint.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseContactPointChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseContactPointChild(element : TFhirContactPoint; path : string; child : IXmlDomElement) : boolean;
-begin
-  result := true;
-      if (child.baseName = 'system') then
-        element.systemElement := ParseEnum(CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum, path+'/system', child){1a}
-      else if (child.baseName = 'value') then
-        element.valueElement := ParseString(child, path+'/value') {b}
-      else if (child.baseName = 'use') then
-        element.useElement := ParseEnum(CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum, path+'/use', child){1a}
-      else if (child.baseName = 'rank') then
-        element.rankElement := ParsePositiveInt(child, path+'/rank') {b}
-      else if (child.baseName = 'period') then
-        element.period := ParsePeriod(child, path+'/period') {b}
-      else if Not ParseElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeContactPoint(xml : TXmlBuilder; name : String; elem : TFhirContactPoint);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeContactPointChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeContactPointChildren(xml : TXmlBuilder; elem : TFhirContactPoint);
-begin
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(xml, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(xml, 'value', elem.valueElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePositiveInt(xml, 'rank', elem.rankElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePeriod(xml, 'period', elem.period);{x.2a}
-end;
-
-procedure TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseContactPoint(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint;
-begin
-  result := TFhirContactPoint.create;
-  try
-    ParseContactPointProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseContactPointProperties(jsn : TJsonObject; result : TFhirContactPoint);
-begin
-    ParseElementProperties(jsn, result);
-    if jsn.has('system') or jsn.has('_system')  then
-      result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
-    if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
-    if jsn.has('use') or jsn.has('_use')  then
-      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum);
-    if jsn.has('rank') or jsn.has('_rank') then
-        result.rankElement := ParsePositiveInt(jsn['rank'], jsn.vObj['_rank']);{q}
-    if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElement(json, '', elem, true);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumValue(json, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumProps(json, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringValue(json, 'value', elem.valueElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringProps(json, 'value', elem.valueElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePositiveIntValue(json, 'rank', elem.rankElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePositiveIntProps(json, 'rank', elem.rankElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePeriod(json, 'period', elem.period); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRRDFComposer.ComposeContactPoint(parent :  TRDFComplex; parentType, name : String; elem : TFhirContactPoint; index : integer);
-var
-  this : TRDFComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:ContactPoint');
-  end;
-  composeElement(this, 'ContactPoint', name, elem, index);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(this, 'ContactPoint', 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum, -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(this, 'ContactPoint', 'value', elem.valueElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-     ComposeEnum(this, 'ContactPoint', 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum, -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePositiveInt(this, 'ContactPoint', 'rank', elem.rankElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposePeriod(this, 'ContactPoint', 'period', elem.periodElement, -1);{x.2c}
-end;
-
 function TFHIRXmlParser.ParseMeta(element : IXmlDomElement; path : string) : TFhirMeta;
 var
   child : IXMLDOMElement;
@@ -9120,6 +8967,155 @@ begin
   if SummaryOption in [soFull, soSummary, soText, soData] then
     for i := 0 to elem.tagList.Count - 1 do
       ComposeCoding(false, this, 'Meta', 'tag', elem.tagList[i], i);
+end;
+
+function TFHIRXmlParser.ParseContactPoint(element : IXmlDomElement; path : string) : TFhirContactPoint;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirContactPoint.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseContactPointChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseContactPointChild(element : TFhirContactPoint; path : string; child : IXmlDomElement) : boolean;
+begin
+  result := true;
+      if (child.baseName = 'system') then
+        element.systemElement := ParseEnum(CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum, path+'/system', child){1a}
+      else if (child.baseName = 'value') then
+        element.valueElement := ParseString(child, path+'/value') {b}
+      else if (child.baseName = 'use') then
+        element.useElement := ParseEnum(CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum, path+'/use', child){1a}
+      else if (child.baseName = 'rank') then
+        element.rankElement := ParsePositiveInt(child, path+'/rank') {b}
+      else if (child.baseName = 'period') then
+        element.period := ParsePeriod(child, path+'/period') {b}
+      else if Not ParseElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeContactPoint(xml : TXmlBuilder; name : String; elem : TFhirContactPoint);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeContactPointChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeContactPointChildren(xml : TXmlBuilder; elem : TFhirContactPoint);
+begin
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(xml, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeString(xml, 'value', elem.valueElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(xml, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveInt(xml, 'rank', elem.rankElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePeriod(xml, 'period', elem.period);{x.2a}
+end;
+
+procedure TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseContactPoint(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint;
+begin
+  result := TFhirContactPoint.create;
+  try
+    ParseContactPointProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseContactPointProperties(jsn : TJsonObject; result : TFhirContactPoint);
+begin
+    ParseElementProperties(jsn, result);
+    if jsn.has('system') or jsn.has('_system')  then
+      result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
+    if jsn.has('value') or jsn.has('_value') then
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+    if jsn.has('use') or jsn.has('_use')  then
+      result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum);
+    if jsn.has('rank') or jsn.has('_rank') then
+        result.rankElement := ParsePositiveInt(jsn['rank'], jsn.vObj['_rank']);{q}
+    if jsn.has('period') then
+        result.period := ParsePeriod(jsn.vObj['period']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElement(json, '', elem, true);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumValue(json, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumProps(json, 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeStringValue(json, 'value', elem.valueElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeStringProps(json, 'value', elem.valueElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveIntValue(json, 'rank', elem.rankElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveIntProps(json, 'rank', elem.rankElement, false);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePeriod(json, 'period', elem.period); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRRDFComposer.ComposeContactPoint(parent :  TRDFComplex; parentType, name : String; elem : TFhirContactPoint; index : integer);
+var
+  this : TRDFComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.predicate('fhir:'+parentType+'.'+name);
+    this.predicate('a', 'fhir:ContactPoint');
+  end;
+  composeElement(this, 'ContactPoint', name, elem, index);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(this, 'ContactPoint', 'system', elem.SystemElement, CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum, -1);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeString(this, 'ContactPoint', 'value', elem.valueElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+     ComposeEnum(this, 'ContactPoint', 'use', elem.UseElement, CODES_TFhirContactPointUseEnum, SYSTEMS_TFhirContactPointUseEnum, -1);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveInt(this, 'ContactPoint', 'rank', elem.rankElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePeriod(this, 'ContactPoint', 'period', elem.periodElement, -1);{x.2c}
 end;
 
 function TFHIRXmlParser.ParseAddress(element : IXmlDomElement; path : string) : TFhirAddress;
@@ -9358,399 +9354,6 @@ begin
     ComposeString(this, 'Address', 'country', elem.countryElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposePeriod(this, 'Address', 'period', elem.periodElement, -1);{x.2c}
-end;
-
-function TFHIRXmlParser.ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirTimingRepeat.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseTimingRepeatChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseTimingRepeatChild(element : TFhirTimingRepeat; path : string; child : IXmlDomElement) : boolean;
-begin
-  result := true;
-      if (child.baseName = 'boundsQuantity') then
-        element.bounds := ParseQuantity(child, path+'/boundsQuantity'){x.3}
-      else if (child.baseName = 'boundsRange') then
-        element.bounds := ParseRange(child, path+'/boundsRange'){x.3}
-      else if (child.baseName = 'boundsPeriod') then
-        element.bounds := ParsePeriod(child, path+'/boundsPeriod'){x.3}
-      else if (child.baseName = 'count') then
-        element.countElement := ParseInteger(child, path+'/count') {b}
-      else if (child.baseName = 'duration') then
-        element.durationElement := ParseDecimal(child, path+'/duration') {b}
-      else if (child.baseName = 'durationMax') then
-        element.durationMaxElement := ParseDecimal(child, path+'/durationMax') {b}
-      else if (child.baseName = 'durationUnits') then
-        element.durationUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, path+'/durationUnits', child){1a}
-      else if (child.baseName = 'frequency') then
-        element.frequencyElement := ParseInteger(child, path+'/frequency') {b}
-      else if (child.baseName = 'frequencyMax') then
-        element.frequencyMaxElement := ParseInteger(child, path+'/frequencyMax') {b}
-      else if (child.baseName = 'period') then
-        element.periodElement := ParseDecimal(child, path+'/period') {b}
-      else if (child.baseName = 'periodMax') then
-        element.periodMaxElement := ParseDecimal(child, path+'/periodMax') {b}
-      else if (child.baseName = 'periodUnits') then
-        element.periodUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, path+'/periodUnits', child){1a}
-      else if (child.baseName = 'when') then
-        element.whenElement := ParseEnum(CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum, path+'/when', child){1a}
-      else if Not ParseElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeTimingRepeat(xml : TXmlBuilder; name : String; elem : TFhirTimingRepeat);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeTimingRepeatChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeTimingRepeatChildren(xml : TXmlBuilder; elem : TFhirTimingRepeat);
-begin
-  composeElementChildren(xml, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
-    ComposeQuantity(xml, 'boundsQuantity', TFhirQuantity(elem.bounds))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
-    ComposeRange(xml, 'boundsRange', TFhirRange(elem.bounds))
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
-    ComposePeriod(xml, 'boundsPeriod', TFhirPeriod(elem.bounds));
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'count', elem.countElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(xml, 'duration', elem.durationElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(xml, 'durationMax', elem.durationMaxElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(xml, 'period', elem.periodElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(xml, 'periodMax', elem.periodMaxElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum);
-end;
-
-procedure TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseTimingRepeat(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat;
-begin
-  result := TFhirTimingRepeat.create;
-  try
-    ParseTimingRepeatProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseTimingRepeatProperties(jsn : TJsonObject; result : TFhirTimingRepeat);
-begin
-    ParseElementProperties(jsn, result);
-    if jsn.has('boundsQuantity') {a4} then
-      result.bounds := ParseQuantity(jsn.vObj['boundsQuantity']);
-    if jsn.has('boundsRange') {a4} then
-      result.bounds := ParseRange(jsn.vObj['boundsRange']);
-    if jsn.has('boundsPeriod') {a4} then
-      result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
-    if jsn.has('count') or jsn.has('_count') then
-        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
-    if jsn.has('duration') or jsn.has('_duration') then
-        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
-    if jsn.has('durationMax') or jsn.has('_durationMax') then
-        result.durationMaxElement := ParseDecimal(jsn['durationMax'], jsn.vObj['_durationMax']);{q}
-    if jsn.has('durationUnits') or jsn.has('_durationUnits')  then
-      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
-    if jsn.has('frequency') or jsn.has('_frequency') then
-        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
-    if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
-        result.frequencyMaxElement := ParseInteger(jsn['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
-    if jsn.has('period') or jsn.has('_period') then
-        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
-    if jsn.has('periodMax') or jsn.has('_periodMax') then
-        result.periodMaxElement := ParseDecimal(jsn['periodMax'], jsn.vObj['_periodMax']);{q}
-    if jsn.has('periodUnits') or jsn.has('_periodUnits')  then
-      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
-    if jsn.has('when') or jsn.has('_when')  then
-      result.whenElement := parseEnum(jsn.path+'/when', jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum);
-end;
-
-procedure TFHIRJsonComposer.ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElementProperties(json, elem);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) then 
-    ComposeQuantity(json, 'boundsQuantity', TFhirQuantity(elem.bounds)) 
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) then 
-    ComposeRange(json, 'boundsRange', TFhirRange(elem.bounds)) 
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) then 
-    ComposePeriod(json, 'boundsPeriod', TFhirPeriod(elem.bounds)) ;
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'count', elem.countElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'count', elem.countElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalValue(json, 'duration', elem.durationElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalProps(json, 'duration', elem.durationElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalValue(json, 'durationMax', elem.durationMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalProps(json, 'durationMax', elem.durationMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIntegerProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalValue(json, 'period', elem.periodElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalProps(json, 'period', elem.periodElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalValue(json, 'periodMax', elem.periodMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimalProps(json, 'periodMax', elem.periodMaxElement, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRRDFComposer.ComposeTimingRepeat(parent :  TRDFComplex; parentType, name : String; elem : TFhirTimingRepeat; index : integer);
-var
-  this : TRDFComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:TimingRepeat');
-  end;
-  composeElement(this, 'TimingRepeat', name, elem, index);
-  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
-    ComposeQuantity(this, 'TimingRepeat', 'boundsQuantity', TFhirQuantity(elem.bounds), -1)
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
-    ComposeRange(this, 'TimingRepeat', 'boundsRange', TFhirRange(elem.bounds), -1)
-  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
-    ComposePeriod(this, 'TimingRepeat', 'boundsPeriod', TFhirPeriod(elem.bounds), -1);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(this, 'TimingRepeat', 'count', elem.countElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(this, 'TimingRepeat', 'duration', elem.durationElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(this, 'TimingRepeat', 'durationMax', elem.durationMaxElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'TimingRepeat', 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, -1);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(this, 'TimingRepeat', 'frequency', elem.frequencyElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInteger(this, 'TimingRepeat', 'frequencyMax', elem.frequencyMaxElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(this, 'TimingRepeat', 'period', elem.periodElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDecimal(this, 'TimingRepeat', 'periodMax', elem.periodMaxElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'TimingRepeat', 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, -1);
-  if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'TimingRepeat', 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum, -1);
-end;
-
-function TFHIRXmlParser.ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
-var
-  child : IXMLDOMElement;
-begin
-  result := TFhirTiming.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseTimingChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseTimingChild(element : TFhirTiming; path : string; child : IXmlDomElement) : boolean;
-begin
-  result := true;
-      if (child.baseName = 'event') then
-        element.eventList.Add(ParseDateTime(child, path+'/event')){y.2}
-      else if (child.baseName = 'repeat') then
-        element.repeat_ := ParseTimingRepeat(child, path+'/repeat') {b}
-      else if (child.baseName = 'code') then
-        element.code := ParseCodeableConcept(child, path+'/code') {b}
-      else if Not ParseElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeTiming(xml : TXmlBuilder; name : String; elem : TFhirTiming);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeTimingChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeTimingChildren(xml : TXmlBuilder; elem : TFhirTiming);
-var
-  i : integer;
-begin
-  composeElementChildren(xml, elem);
-  if SummaryOption in [soFull, soSummary, soText, soData] then
-    for i := 0 to elem.eventList.Count - 1 do
-      ComposeDateTime(xml, 'event', elem.eventList[i]);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeTimingRepeat(xml, 'repeat', elem.repeat_);{x.2a}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
-end;
-
-procedure TFHIRJsonParser.ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseTiming(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseTiming(jsn : TJsonObject) : TFhirTiming;
-begin
-  result := TFhirTiming.create;
-  try
-    ParseTimingProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming);
-begin
-    ParseElementProperties(jsn, result);
-      if jsn.has('event') or jsn.has('_event') then
-      iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], result.eventList, parseDateTime);
-    if jsn.has('repeat') then
-        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q}
-    if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeElement(json, '', elem, true);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.eventList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.eventList.Count - 1 do
-    begin
-      ext := ext or ((elem.eventList[i].id <> '') or (elem.eventList[i].hasExtensionList) {no-comments or (elem.eventList[i].hasComments)});
-      val := val or (elem.eventList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('event');
-      for i := 0 to elem.eventList.Count - 1 do
-        ComposeDateTimeValue(json, '',elem.eventList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_event');
-      for i := 0 to elem.eventList.Count - 1 do
-        ComposeDateTimeProps(json, '',elem.eventList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeTimingRepeat(json, 'repeat', elem.repeat_); {a}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRRDFComposer.ComposeTiming(parent :  TRDFComplex; parentType, name : String; elem : TFhirTiming; index : integer);
-var
-  this : TRDFComplex;
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:Timing');
-  end;
-  composeElement(this, 'Timing', name, elem, index);
-  if SummaryOption in [soFull, soSummary, soText, soData] then
-    for i := 0 to elem.eventList.Count - 1 do
-      ComposeDateTime(this, 'Timing', 'event', elem.eventList[i], i);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeTimingRepeat(this, 'Timing', 'repeat', elem.repeat_Element, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeCodeableConcept(this, 'Timing', 'code', elem.codeElement, -1);{x.2c}
 end;
 
 function TFHIRXmlParser.ParseElementDefinitionSlicing(element : IXmlDomElement; path : string) : TFhirElementDefinitionSlicing;
@@ -10708,18 +10311,18 @@ begin
         element.defaultValue := ParseOid(child, path+'.defaultValueOid') {c}
       else if (child.baseName = 'defaultValueUuid') then
         element.defaultValue := ParseUuid(child, path+'.defaultValueUuid') {c}
-      else if (child.baseName = 'defaultValueUnsignedInt') then
-        element.defaultValue := ParseUnsignedInt(child, path+'.defaultValueUnsignedInt') {c}
       else if (child.baseName = 'defaultValueMarkdown') then
         element.defaultValue := ParseMarkdown(child, path+'.defaultValueMarkdown') {c}
+      else if (child.baseName = 'defaultValueUnsignedInt') then
+        element.defaultValue := ParseUnsignedInt(child, path+'.defaultValueUnsignedInt') {c}
       else if (child.baseName = 'defaultValueId') then
         element.defaultValue := ParseId(child, path+'.defaultValueId') {c}
       else if (child.baseName = 'defaultValuePositiveInt') then
         element.defaultValue := ParsePositiveInt(child, path+'.defaultValuePositiveInt') {c}
-      else if (child.baseName = 'defaultValueDate') then
-        element.defaultValue := ParseDate(child, path+'.defaultValueDate') {c}
       else if (child.baseName = 'defaultValueDateTime') then
         element.defaultValue := ParseDateTime(child, path+'.defaultValueDateTime') {c}
+      else if (child.baseName = 'defaultValueDate') then
+        element.defaultValue := ParseDate(child, path+'.defaultValueDate') {c}
       else if (child.baseName = 'defaultValueString') then
         element.defaultValue := ParseString(child, path+'.defaultValueString') {c}
       else if (child.baseName = 'defaultValueInteger') then
@@ -10746,10 +10349,10 @@ begin
         element.defaultValue := ParseSignature(child, path+'.defaultValueSignature') {eSignature}
       else if (child.baseName = 'defaultValueSampledData') then
         element.defaultValue := ParseSampledData(child, path+'.defaultValueSampledData') {eSampledData}
-      else if (child.baseName = 'defaultValueQuantity') then
-        element.defaultValue := ParseQuantity(child, path+'.defaultValueQuantity') {eQuantity}
       else if (child.baseName = 'defaultValuePeriod') then
         element.defaultValue := ParsePeriod(child, path+'.defaultValuePeriod') {ePeriod}
+      else if (child.baseName = 'defaultValueQuantity') then
+        element.defaultValue := ParseQuantity(child, path+'.defaultValueQuantity') {eQuantity}
       else if (child.baseName = 'defaultValueAttachment') then
         element.defaultValue := ParseAttachment(child, path+'.defaultValueAttachment') {eAttachment}
       else if (child.baseName = 'defaultValueRatio') then
@@ -10762,16 +10365,16 @@ begin
         element.defaultValue := ParseCodeableConcept(child, path+'.defaultValueCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'defaultValueHumanName') then
         element.defaultValue := ParseHumanName(child, path+'/defaultValueHumanName') {f}
-      else if (child.baseName = 'defaultValueContactPoint') then
-        element.defaultValue := ParseContactPoint(child, path+'/defaultValueContactPoint') {f}
       else if (child.baseName = 'defaultValueMeta') then
         element.defaultValue := ParseMeta(child, path+'/defaultValueMeta') {f}
+      else if (child.baseName = 'defaultValueContactPoint') then
+        element.defaultValue := ParseContactPoint(child, path+'/defaultValueContactPoint') {f}
       else if (child.baseName = 'defaultValueAddress') then
         element.defaultValue := ParseAddress(child, path+'/defaultValueAddress') {f}
-      else if (child.baseName = 'defaultValueTiming') then
-        element.defaultValue := ParseTiming(child, path+'/defaultValueTiming') {f}
       else if (child.baseName = 'defaultValueElementDefinition') then
         element.defaultValue := ParseElementDefinition(child, path+'/defaultValueElementDefinition') {f}
+      else if (child.baseName = 'defaultValueTiming') then
+        element.defaultValue := ParseTiming(child, path+'/defaultValueTiming') {f}
       else if (child.baseName = 'meaningWhenMissing') then
         element.meaningWhenMissingElement := ParseMarkdown(child, path+'/meaningWhenMissing') {b}
       else if (child.baseName = 'fixedCode') then
@@ -10780,18 +10383,18 @@ begin
         element.fixed := ParseOid(child, path+'.fixedOid') {c}
       else if (child.baseName = 'fixedUuid') then
         element.fixed := ParseUuid(child, path+'.fixedUuid') {c}
-      else if (child.baseName = 'fixedUnsignedInt') then
-        element.fixed := ParseUnsignedInt(child, path+'.fixedUnsignedInt') {c}
       else if (child.baseName = 'fixedMarkdown') then
         element.fixed := ParseMarkdown(child, path+'.fixedMarkdown') {c}
+      else if (child.baseName = 'fixedUnsignedInt') then
+        element.fixed := ParseUnsignedInt(child, path+'.fixedUnsignedInt') {c}
       else if (child.baseName = 'fixedId') then
         element.fixed := ParseId(child, path+'.fixedId') {c}
       else if (child.baseName = 'fixedPositiveInt') then
         element.fixed := ParsePositiveInt(child, path+'.fixedPositiveInt') {c}
-      else if (child.baseName = 'fixedDate') then
-        element.fixed := ParseDate(child, path+'.fixedDate') {c}
       else if (child.baseName = 'fixedDateTime') then
         element.fixed := ParseDateTime(child, path+'.fixedDateTime') {c}
+      else if (child.baseName = 'fixedDate') then
+        element.fixed := ParseDate(child, path+'.fixedDate') {c}
       else if (child.baseName = 'fixedString') then
         element.fixed := ParseString(child, path+'.fixedString') {c}
       else if (child.baseName = 'fixedInteger') then
@@ -10818,10 +10421,10 @@ begin
         element.fixed := ParseSignature(child, path+'.fixedSignature') {eSignature}
       else if (child.baseName = 'fixedSampledData') then
         element.fixed := ParseSampledData(child, path+'.fixedSampledData') {eSampledData}
-      else if (child.baseName = 'fixedQuantity') then
-        element.fixed := ParseQuantity(child, path+'.fixedQuantity') {eQuantity}
       else if (child.baseName = 'fixedPeriod') then
         element.fixed := ParsePeriod(child, path+'.fixedPeriod') {ePeriod}
+      else if (child.baseName = 'fixedQuantity') then
+        element.fixed := ParseQuantity(child, path+'.fixedQuantity') {eQuantity}
       else if (child.baseName = 'fixedAttachment') then
         element.fixed := ParseAttachment(child, path+'.fixedAttachment') {eAttachment}
       else if (child.baseName = 'fixedRatio') then
@@ -10834,34 +10437,34 @@ begin
         element.fixed := ParseCodeableConcept(child, path+'.fixedCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'fixedHumanName') then
         element.fixed := ParseHumanName(child, path+'/fixedHumanName') {f}
-      else if (child.baseName = 'fixedContactPoint') then
-        element.fixed := ParseContactPoint(child, path+'/fixedContactPoint') {f}
       else if (child.baseName = 'fixedMeta') then
         element.fixed := ParseMeta(child, path+'/fixedMeta') {f}
+      else if (child.baseName = 'fixedContactPoint') then
+        element.fixed := ParseContactPoint(child, path+'/fixedContactPoint') {f}
       else if (child.baseName = 'fixedAddress') then
         element.fixed := ParseAddress(child, path+'/fixedAddress') {f}
-      else if (child.baseName = 'fixedTiming') then
-        element.fixed := ParseTiming(child, path+'/fixedTiming') {f}
       else if (child.baseName = 'fixedElementDefinition') then
         element.fixed := ParseElementDefinition(child, path+'/fixedElementDefinition') {f}
+      else if (child.baseName = 'fixedTiming') then
+        element.fixed := ParseTiming(child, path+'/fixedTiming') {f}
       else if (child.baseName = 'patternCode') then
         element.pattern := ParseCode(child, path+'.patternCode') {c}
       else if (child.baseName = 'patternOid') then
         element.pattern := ParseOid(child, path+'.patternOid') {c}
       else if (child.baseName = 'patternUuid') then
         element.pattern := ParseUuid(child, path+'.patternUuid') {c}
-      else if (child.baseName = 'patternUnsignedInt') then
-        element.pattern := ParseUnsignedInt(child, path+'.patternUnsignedInt') {c}
       else if (child.baseName = 'patternMarkdown') then
         element.pattern := ParseMarkdown(child, path+'.patternMarkdown') {c}
+      else if (child.baseName = 'patternUnsignedInt') then
+        element.pattern := ParseUnsignedInt(child, path+'.patternUnsignedInt') {c}
       else if (child.baseName = 'patternId') then
         element.pattern := ParseId(child, path+'.patternId') {c}
       else if (child.baseName = 'patternPositiveInt') then
         element.pattern := ParsePositiveInt(child, path+'.patternPositiveInt') {c}
-      else if (child.baseName = 'patternDate') then
-        element.pattern := ParseDate(child, path+'.patternDate') {c}
       else if (child.baseName = 'patternDateTime') then
         element.pattern := ParseDateTime(child, path+'.patternDateTime') {c}
+      else if (child.baseName = 'patternDate') then
+        element.pattern := ParseDate(child, path+'.patternDate') {c}
       else if (child.baseName = 'patternString') then
         element.pattern := ParseString(child, path+'.patternString') {c}
       else if (child.baseName = 'patternInteger') then
@@ -10888,10 +10491,10 @@ begin
         element.pattern := ParseSignature(child, path+'.patternSignature') {eSignature}
       else if (child.baseName = 'patternSampledData') then
         element.pattern := ParseSampledData(child, path+'.patternSampledData') {eSampledData}
-      else if (child.baseName = 'patternQuantity') then
-        element.pattern := ParseQuantity(child, path+'.patternQuantity') {eQuantity}
       else if (child.baseName = 'patternPeriod') then
         element.pattern := ParsePeriod(child, path+'.patternPeriod') {ePeriod}
+      else if (child.baseName = 'patternQuantity') then
+        element.pattern := ParseQuantity(child, path+'.patternQuantity') {eQuantity}
       else if (child.baseName = 'patternAttachment') then
         element.pattern := ParseAttachment(child, path+'.patternAttachment') {eAttachment}
       else if (child.baseName = 'patternRatio') then
@@ -10904,34 +10507,34 @@ begin
         element.pattern := ParseCodeableConcept(child, path+'.patternCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'patternHumanName') then
         element.pattern := ParseHumanName(child, path+'/patternHumanName') {f}
-      else if (child.baseName = 'patternContactPoint') then
-        element.pattern := ParseContactPoint(child, path+'/patternContactPoint') {f}
       else if (child.baseName = 'patternMeta') then
         element.pattern := ParseMeta(child, path+'/patternMeta') {f}
+      else if (child.baseName = 'patternContactPoint') then
+        element.pattern := ParseContactPoint(child, path+'/patternContactPoint') {f}
       else if (child.baseName = 'patternAddress') then
         element.pattern := ParseAddress(child, path+'/patternAddress') {f}
-      else if (child.baseName = 'patternTiming') then
-        element.pattern := ParseTiming(child, path+'/patternTiming') {f}
       else if (child.baseName = 'patternElementDefinition') then
         element.pattern := ParseElementDefinition(child, path+'/patternElementDefinition') {f}
+      else if (child.baseName = 'patternTiming') then
+        element.pattern := ParseTiming(child, path+'/patternTiming') {f}
       else if (child.baseName = 'exampleCode') then
         element.example := ParseCode(child, path+'.exampleCode') {c}
       else if (child.baseName = 'exampleOid') then
         element.example := ParseOid(child, path+'.exampleOid') {c}
       else if (child.baseName = 'exampleUuid') then
         element.example := ParseUuid(child, path+'.exampleUuid') {c}
-      else if (child.baseName = 'exampleUnsignedInt') then
-        element.example := ParseUnsignedInt(child, path+'.exampleUnsignedInt') {c}
       else if (child.baseName = 'exampleMarkdown') then
         element.example := ParseMarkdown(child, path+'.exampleMarkdown') {c}
+      else if (child.baseName = 'exampleUnsignedInt') then
+        element.example := ParseUnsignedInt(child, path+'.exampleUnsignedInt') {c}
       else if (child.baseName = 'exampleId') then
         element.example := ParseId(child, path+'.exampleId') {c}
       else if (child.baseName = 'examplePositiveInt') then
         element.example := ParsePositiveInt(child, path+'.examplePositiveInt') {c}
-      else if (child.baseName = 'exampleDate') then
-        element.example := ParseDate(child, path+'.exampleDate') {c}
       else if (child.baseName = 'exampleDateTime') then
         element.example := ParseDateTime(child, path+'.exampleDateTime') {c}
+      else if (child.baseName = 'exampleDate') then
+        element.example := ParseDate(child, path+'.exampleDate') {c}
       else if (child.baseName = 'exampleString') then
         element.example := ParseString(child, path+'.exampleString') {c}
       else if (child.baseName = 'exampleInteger') then
@@ -10958,10 +10561,10 @@ begin
         element.example := ParseSignature(child, path+'.exampleSignature') {eSignature}
       else if (child.baseName = 'exampleSampledData') then
         element.example := ParseSampledData(child, path+'.exampleSampledData') {eSampledData}
-      else if (child.baseName = 'exampleQuantity') then
-        element.example := ParseQuantity(child, path+'.exampleQuantity') {eQuantity}
       else if (child.baseName = 'examplePeriod') then
         element.example := ParsePeriod(child, path+'.examplePeriod') {ePeriod}
+      else if (child.baseName = 'exampleQuantity') then
+        element.example := ParseQuantity(child, path+'.exampleQuantity') {eQuantity}
       else if (child.baseName = 'exampleAttachment') then
         element.example := ParseAttachment(child, path+'.exampleAttachment') {eAttachment}
       else if (child.baseName = 'exampleRatio') then
@@ -10974,34 +10577,34 @@ begin
         element.example := ParseCodeableConcept(child, path+'.exampleCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'exampleHumanName') then
         element.example := ParseHumanName(child, path+'/exampleHumanName') {f}
-      else if (child.baseName = 'exampleContactPoint') then
-        element.example := ParseContactPoint(child, path+'/exampleContactPoint') {f}
       else if (child.baseName = 'exampleMeta') then
         element.example := ParseMeta(child, path+'/exampleMeta') {f}
+      else if (child.baseName = 'exampleContactPoint') then
+        element.example := ParseContactPoint(child, path+'/exampleContactPoint') {f}
       else if (child.baseName = 'exampleAddress') then
         element.example := ParseAddress(child, path+'/exampleAddress') {f}
-      else if (child.baseName = 'exampleTiming') then
-        element.example := ParseTiming(child, path+'/exampleTiming') {f}
       else if (child.baseName = 'exampleElementDefinition') then
         element.example := ParseElementDefinition(child, path+'/exampleElementDefinition') {f}
+      else if (child.baseName = 'exampleTiming') then
+        element.example := ParseTiming(child, path+'/exampleTiming') {f}
       else if (child.baseName = 'minValueCode') then
         element.minValue := ParseCode(child, path+'.minValueCode') {c}
       else if (child.baseName = 'minValueOid') then
         element.minValue := ParseOid(child, path+'.minValueOid') {c}
       else if (child.baseName = 'minValueUuid') then
         element.minValue := ParseUuid(child, path+'.minValueUuid') {c}
-      else if (child.baseName = 'minValueUnsignedInt') then
-        element.minValue := ParseUnsignedInt(child, path+'.minValueUnsignedInt') {c}
       else if (child.baseName = 'minValueMarkdown') then
         element.minValue := ParseMarkdown(child, path+'.minValueMarkdown') {c}
+      else if (child.baseName = 'minValueUnsignedInt') then
+        element.minValue := ParseUnsignedInt(child, path+'.minValueUnsignedInt') {c}
       else if (child.baseName = 'minValueId') then
         element.minValue := ParseId(child, path+'.minValueId') {c}
       else if (child.baseName = 'minValuePositiveInt') then
         element.minValue := ParsePositiveInt(child, path+'.minValuePositiveInt') {c}
-      else if (child.baseName = 'minValueDate') then
-        element.minValue := ParseDate(child, path+'.minValueDate') {c}
       else if (child.baseName = 'minValueDateTime') then
         element.minValue := ParseDateTime(child, path+'.minValueDateTime') {c}
+      else if (child.baseName = 'minValueDate') then
+        element.minValue := ParseDate(child, path+'.minValueDate') {c}
       else if (child.baseName = 'minValueString') then
         element.minValue := ParseString(child, path+'.minValueString') {c}
       else if (child.baseName = 'minValueInteger') then
@@ -11028,10 +10631,10 @@ begin
         element.minValue := ParseSignature(child, path+'.minValueSignature') {eSignature}
       else if (child.baseName = 'minValueSampledData') then
         element.minValue := ParseSampledData(child, path+'.minValueSampledData') {eSampledData}
-      else if (child.baseName = 'minValueQuantity') then
-        element.minValue := ParseQuantity(child, path+'.minValueQuantity') {eQuantity}
       else if (child.baseName = 'minValuePeriod') then
         element.minValue := ParsePeriod(child, path+'.minValuePeriod') {ePeriod}
+      else if (child.baseName = 'minValueQuantity') then
+        element.minValue := ParseQuantity(child, path+'.minValueQuantity') {eQuantity}
       else if (child.baseName = 'minValueAttachment') then
         element.minValue := ParseAttachment(child, path+'.minValueAttachment') {eAttachment}
       else if (child.baseName = 'minValueRatio') then
@@ -11044,34 +10647,34 @@ begin
         element.minValue := ParseCodeableConcept(child, path+'.minValueCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'minValueHumanName') then
         element.minValue := ParseHumanName(child, path+'/minValueHumanName') {f}
-      else if (child.baseName = 'minValueContactPoint') then
-        element.minValue := ParseContactPoint(child, path+'/minValueContactPoint') {f}
       else if (child.baseName = 'minValueMeta') then
         element.minValue := ParseMeta(child, path+'/minValueMeta') {f}
+      else if (child.baseName = 'minValueContactPoint') then
+        element.minValue := ParseContactPoint(child, path+'/minValueContactPoint') {f}
       else if (child.baseName = 'minValueAddress') then
         element.minValue := ParseAddress(child, path+'/minValueAddress') {f}
-      else if (child.baseName = 'minValueTiming') then
-        element.minValue := ParseTiming(child, path+'/minValueTiming') {f}
       else if (child.baseName = 'minValueElementDefinition') then
         element.minValue := ParseElementDefinition(child, path+'/minValueElementDefinition') {f}
+      else if (child.baseName = 'minValueTiming') then
+        element.minValue := ParseTiming(child, path+'/minValueTiming') {f}
       else if (child.baseName = 'maxValueCode') then
         element.maxValue := ParseCode(child, path+'.maxValueCode') {c}
       else if (child.baseName = 'maxValueOid') then
         element.maxValue := ParseOid(child, path+'.maxValueOid') {c}
       else if (child.baseName = 'maxValueUuid') then
         element.maxValue := ParseUuid(child, path+'.maxValueUuid') {c}
-      else if (child.baseName = 'maxValueUnsignedInt') then
-        element.maxValue := ParseUnsignedInt(child, path+'.maxValueUnsignedInt') {c}
       else if (child.baseName = 'maxValueMarkdown') then
         element.maxValue := ParseMarkdown(child, path+'.maxValueMarkdown') {c}
+      else if (child.baseName = 'maxValueUnsignedInt') then
+        element.maxValue := ParseUnsignedInt(child, path+'.maxValueUnsignedInt') {c}
       else if (child.baseName = 'maxValueId') then
         element.maxValue := ParseId(child, path+'.maxValueId') {c}
       else if (child.baseName = 'maxValuePositiveInt') then
         element.maxValue := ParsePositiveInt(child, path+'.maxValuePositiveInt') {c}
-      else if (child.baseName = 'maxValueDate') then
-        element.maxValue := ParseDate(child, path+'.maxValueDate') {c}
       else if (child.baseName = 'maxValueDateTime') then
         element.maxValue := ParseDateTime(child, path+'.maxValueDateTime') {c}
+      else if (child.baseName = 'maxValueDate') then
+        element.maxValue := ParseDate(child, path+'.maxValueDate') {c}
       else if (child.baseName = 'maxValueString') then
         element.maxValue := ParseString(child, path+'.maxValueString') {c}
       else if (child.baseName = 'maxValueInteger') then
@@ -11098,10 +10701,10 @@ begin
         element.maxValue := ParseSignature(child, path+'.maxValueSignature') {eSignature}
       else if (child.baseName = 'maxValueSampledData') then
         element.maxValue := ParseSampledData(child, path+'.maxValueSampledData') {eSampledData}
-      else if (child.baseName = 'maxValueQuantity') then
-        element.maxValue := ParseQuantity(child, path+'.maxValueQuantity') {eQuantity}
       else if (child.baseName = 'maxValuePeriod') then
         element.maxValue := ParsePeriod(child, path+'.maxValuePeriod') {ePeriod}
+      else if (child.baseName = 'maxValueQuantity') then
+        element.maxValue := ParseQuantity(child, path+'.maxValueQuantity') {eQuantity}
       else if (child.baseName = 'maxValueAttachment') then
         element.maxValue := ParseAttachment(child, path+'.maxValueAttachment') {eAttachment}
       else if (child.baseName = 'maxValueRatio') then
@@ -11114,16 +10717,16 @@ begin
         element.maxValue := ParseCodeableConcept(child, path+'.maxValueCodeableConcept') {eCodeableConcept}
       else if (child.baseName = 'maxValueHumanName') then
         element.maxValue := ParseHumanName(child, path+'/maxValueHumanName') {f}
-      else if (child.baseName = 'maxValueContactPoint') then
-        element.maxValue := ParseContactPoint(child, path+'/maxValueContactPoint') {f}
       else if (child.baseName = 'maxValueMeta') then
         element.maxValue := ParseMeta(child, path+'/maxValueMeta') {f}
+      else if (child.baseName = 'maxValueContactPoint') then
+        element.maxValue := ParseContactPoint(child, path+'/maxValueContactPoint') {f}
       else if (child.baseName = 'maxValueAddress') then
         element.maxValue := ParseAddress(child, path+'/maxValueAddress') {f}
-      else if (child.baseName = 'maxValueTiming') then
-        element.maxValue := ParseTiming(child, path+'/maxValueTiming') {f}
       else if (child.baseName = 'maxValueElementDefinition') then
         element.maxValue := ParseElementDefinition(child, path+'/maxValueElementDefinition') {f}
+      else if (child.baseName = 'maxValueTiming') then
+        element.maxValue := ParseTiming(child, path+'/maxValueTiming') {f}
       else if (child.baseName = 'maxLength') then
         element.maxLengthElement := ParseInteger(child, path+'/maxLength') {b}
       else if (child.baseName = 'condition') then
@@ -11202,18 +10805,18 @@ begin
     ComposeOid(xml, 'defaultValueOid', TFhirOid(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUuid) {1} then
     ComposeUuid(xml, 'defaultValueUuid', TFhirUuid(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'defaultValueMarkdown', TFhirMarkdown(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirId) {1} then
     ComposeId(xml, 'defaultValueId', TFhirId(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) {1} then
-    ComposeDate(xml, 'defaultValueDate', TFhirDate(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'defaultValueDateTime', TFhirDateTime(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) {1} then
+    ComposeDate(xml, 'defaultValueDate', TFhirDate(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirString) {1} then
     ComposeString(xml, 'defaultValueString', TFhirString(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirInteger) {1} then
@@ -11240,10 +10843,10 @@ begin
     ComposeSignature(xml, 'defaultValueSignature', TFhirSignature(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'defaultValueSampledData', TFhirSampledData(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPeriod) {8} then
     ComposePeriod(xml, 'defaultValuePeriod', TFhirPeriod(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'defaultValueAttachment', TFhirAttachment(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) {8} then
@@ -11256,16 +10859,16 @@ begin
     ComposeCodeableConcept(xml, 'defaultValueCodeableConcept', TFhirCodeableConcept(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'defaultValueHumanName', TFhirHumanName(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'defaultValueMeta', TFhirMeta(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) {9} then
     ComposeAddress(xml, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
-    ComposeTiming(xml, 'defaultValueTiming', TFhirTiming(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue));
+    ComposeElementDefinition(xml, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
+    ComposeTiming(xml, 'defaultValueTiming', TFhirTiming(elem.defaultValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeMarkdown(xml, 'meaningWhenMissing', elem.meaningWhenMissingElement);{x.2b}
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
@@ -11274,18 +10877,18 @@ begin
     ComposeOid(xml, 'fixedOid', TFhirOid(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUuid) {1} then
     ComposeUuid(xml, 'fixedUuid', TFhirUuid(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'fixedMarkdown', TFhirMarkdown(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirId) {1} then
     ComposeId(xml, 'fixedId', TFhirId(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) {1} then
-    ComposeDate(xml, 'fixedDate', TFhirDate(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'fixedDateTime', TFhirDateTime(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) {1} then
+    ComposeDate(xml, 'fixedDate', TFhirDate(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirString) {1} then
     ComposeString(xml, 'fixedString', TFhirString(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirInteger) {1} then
@@ -11312,10 +10915,10 @@ begin
     ComposeSignature(xml, 'fixedSignature', TFhirSignature(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'fixedSampledData', TFhirSampledData(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPeriod) {8} then
     ComposePeriod(xml, 'fixedPeriod', TFhirPeriod(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'fixedAttachment', TFhirAttachment(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) {8} then
@@ -11328,34 +10931,34 @@ begin
     ComposeCodeableConcept(xml, 'fixedCodeableConcept', TFhirCodeableConcept(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'fixedHumanName', TFhirHumanName(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'fixedContactPoint', TFhirContactPoint(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMeta) {9} then
     ComposeMeta(xml, 'fixedMeta', TFhirMeta(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'fixedContactPoint', TFhirContactPoint(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) {9} then
     ComposeAddress(xml, 'fixedAddress', TFhirAddress(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
-    ComposeTiming(xml, 'fixedTiming', TFhirTiming(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed));
+    ComposeElementDefinition(xml, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
+    ComposeTiming(xml, 'fixedTiming', TFhirTiming(elem.fixed));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
     ComposeCode(xml, 'patternCode', TFhirCode(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirOid) {1} then
     ComposeOid(xml, 'patternOid', TFhirOid(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUuid) {1} then
     ComposeUuid(xml, 'patternUuid', TFhirUuid(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'patternMarkdown', TFhirMarkdown(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirId) {1} then
     ComposeId(xml, 'patternId', TFhirId(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'patternPositiveInt', TFhirPositiveInt(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) {1} then
-    ComposeDate(xml, 'patternDate', TFhirDate(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'patternDateTime', TFhirDateTime(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) {1} then
+    ComposeDate(xml, 'patternDate', TFhirDate(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirString) {1} then
     ComposeString(xml, 'patternString', TFhirString(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirInteger) {1} then
@@ -11382,10 +10985,10 @@ begin
     ComposeSignature(xml, 'patternSignature', TFhirSignature(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'patternSampledData', TFhirSampledData(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPeriod) {8} then
     ComposePeriod(xml, 'patternPeriod', TFhirPeriod(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'patternAttachment', TFhirAttachment(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) {8} then
@@ -11398,34 +11001,34 @@ begin
     ComposeCodeableConcept(xml, 'patternCodeableConcept', TFhirCodeableConcept(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'patternHumanName', TFhirHumanName(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'patternContactPoint', TFhirContactPoint(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMeta) {9} then
     ComposeMeta(xml, 'patternMeta', TFhirMeta(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'patternContactPoint', TFhirContactPoint(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) {9} then
     ComposeAddress(xml, 'patternAddress', TFhirAddress(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
-    ComposeTiming(xml, 'patternTiming', TFhirTiming(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'patternElementDefinition', TFhirElementDefinition(elem.pattern));
+    ComposeElementDefinition(xml, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
+    ComposeTiming(xml, 'patternTiming', TFhirTiming(elem.pattern));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
     ComposeCode(xml, 'exampleCode', TFhirCode(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirOid) {1} then
     ComposeOid(xml, 'exampleOid', TFhirOid(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUuid) {1} then
     ComposeUuid(xml, 'exampleUuid', TFhirUuid(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'exampleMarkdown', TFhirMarkdown(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirId) {1} then
     ComposeId(xml, 'exampleId', TFhirId(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'examplePositiveInt', TFhirPositiveInt(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) {1} then
-    ComposeDate(xml, 'exampleDate', TFhirDate(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'exampleDateTime', TFhirDateTime(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) {1} then
+    ComposeDate(xml, 'exampleDate', TFhirDate(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirString) {1} then
     ComposeString(xml, 'exampleString', TFhirString(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirInteger) {1} then
@@ -11452,10 +11055,10 @@ begin
     ComposeSignature(xml, 'exampleSignature', TFhirSignature(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'exampleSampledData', TFhirSampledData(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPeriod) {8} then
     ComposePeriod(xml, 'examplePeriod', TFhirPeriod(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'exampleAttachment', TFhirAttachment(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) {8} then
@@ -11468,34 +11071,34 @@ begin
     ComposeCodeableConcept(xml, 'exampleCodeableConcept', TFhirCodeableConcept(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'exampleHumanName', TFhirHumanName(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'exampleContactPoint', TFhirContactPoint(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMeta) {9} then
     ComposeMeta(xml, 'exampleMeta', TFhirMeta(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'exampleContactPoint', TFhirContactPoint(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) {9} then
     ComposeAddress(xml, 'exampleAddress', TFhirAddress(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
-    ComposeTiming(xml, 'exampleTiming', TFhirTiming(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'exampleElementDefinition', TFhirElementDefinition(elem.example));
+    ComposeElementDefinition(xml, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
+    ComposeTiming(xml, 'exampleTiming', TFhirTiming(elem.example));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
     ComposeCode(xml, 'minValueCode', TFhirCode(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirOid) {1} then
     ComposeOid(xml, 'minValueOid', TFhirOid(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUuid) {1} then
     ComposeUuid(xml, 'minValueUuid', TFhirUuid(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'minValueMarkdown', TFhirMarkdown(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirId) {1} then
     ComposeId(xml, 'minValueId', TFhirId(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) {1} then
-    ComposeDate(xml, 'minValueDate', TFhirDate(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'minValueDateTime', TFhirDateTime(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) {1} then
+    ComposeDate(xml, 'minValueDate', TFhirDate(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirString) {1} then
     ComposeString(xml, 'minValueString', TFhirString(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirInteger) {1} then
@@ -11522,10 +11125,10 @@ begin
     ComposeSignature(xml, 'minValueSignature', TFhirSignature(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'minValueSampledData', TFhirSampledData(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPeriod) {8} then
     ComposePeriod(xml, 'minValuePeriod', TFhirPeriod(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'minValueAttachment', TFhirAttachment(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) {8} then
@@ -11538,34 +11141,34 @@ begin
     ComposeCodeableConcept(xml, 'minValueCodeableConcept', TFhirCodeableConcept(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'minValueHumanName', TFhirHumanName(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'minValueContactPoint', TFhirContactPoint(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'minValueMeta', TFhirMeta(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'minValueContactPoint', TFhirContactPoint(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) {9} then
     ComposeAddress(xml, 'minValueAddress', TFhirAddress(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
-    ComposeTiming(xml, 'minValueTiming', TFhirTiming(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue));
+    ComposeElementDefinition(xml, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
+    ComposeTiming(xml, 'minValueTiming', TFhirTiming(elem.minValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
     ComposeCode(xml, 'maxValueCode', TFhirCode(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirOid) {1} then
     ComposeOid(xml, 'maxValueOid', TFhirOid(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUuid) {1} then
     ComposeUuid(xml, 'maxValueUuid', TFhirUuid(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(xml, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMarkdown) {1} then
     ComposeMarkdown(xml, 'maxValueMarkdown', TFhirMarkdown(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(xml, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirId) {1} then
     ComposeId(xml, 'maxValueId', TFhirId(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(xml, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) {1} then
-    ComposeDate(xml, 'maxValueDate', TFhirDate(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDateTime) {1} then
     ComposeDateTime(xml, 'maxValueDateTime', TFhirDateTime(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) {1} then
+    ComposeDate(xml, 'maxValueDate', TFhirDate(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirString) {1} then
     ComposeString(xml, 'maxValueString', TFhirString(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirInteger) {1} then
@@ -11592,10 +11195,10 @@ begin
     ComposeSignature(xml, 'maxValueSignature', TFhirSignature(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSampledData) {8} then
     ComposeSampledData(xml, 'maxValueSampledData', TFhirSampledData(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
-    ComposeQuantity(xml, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPeriod) {8} then
     ComposePeriod(xml, 'maxValuePeriod', TFhirPeriod(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
+    ComposeQuantity(xml, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAttachment) {8} then
     ComposeAttachment(xml, 'maxValueAttachment', TFhirAttachment(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) {8} then
@@ -11608,16 +11211,16 @@ begin
     ComposeCodeableConcept(xml, 'maxValueCodeableConcept', TFhirCodeableConcept(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirHumanName) {9} then
     ComposeHumanName(xml, 'maxValueHumanName', TFhirHumanName(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(xml, 'maxValueContactPoint', TFhirContactPoint(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMeta) {9} then
     ComposeMeta(xml, 'maxValueMeta', TFhirMeta(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(xml, 'maxValueContactPoint', TFhirContactPoint(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) {9} then
     ComposeAddress(xml, 'maxValueAddress', TFhirAddress(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) {9} then
-    ComposeTiming(xml, 'maxValueTiming', TFhirTiming(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(xml, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue));
+    ComposeElementDefinition(xml, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) {9} then
+    ComposeTiming(xml, 'maxValueTiming', TFhirTiming(elem.maxValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeInteger(xml, 'maxLength', elem.maxLengthElement);{x.2b}
   if SummaryOption in [soFull, soSummary, soText, soData] then
@@ -11696,18 +11299,18 @@ begin
         result.defaultValue := ParseOid(jsn['defaultValueOid'], jsn.vObj['_defaultValueOid']);
     if jsn.has('defaultValueUuid') or jsn.has('_defaultValueUuid') then
         result.defaultValue := ParseUuid(jsn['defaultValueUuid'], jsn.vObj['_defaultValueUuid']);
-    if jsn.has('defaultValueUnsignedInt') or jsn.has('_defaultValueUnsignedInt') then
-        result.defaultValue := ParseUnsignedInt(jsn['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
     if jsn.has('defaultValueMarkdown') or jsn.has('_defaultValueMarkdown') then
         result.defaultValue := ParseMarkdown(jsn['defaultValueMarkdown'], jsn.vObj['_defaultValueMarkdown']);
+    if jsn.has('defaultValueUnsignedInt') or jsn.has('_defaultValueUnsignedInt') then
+        result.defaultValue := ParseUnsignedInt(jsn['defaultValueUnsignedInt'], jsn.vObj['_defaultValueUnsignedInt']);
     if jsn.has('defaultValueId') or jsn.has('_defaultValueId') then
         result.defaultValue := ParseId(jsn['defaultValueId'], jsn.vObj['_defaultValueId']);
     if jsn.has('defaultValuePositiveInt') or jsn.has('_defaultValuePositiveInt') then
         result.defaultValue := ParsePositiveInt(jsn['defaultValuePositiveInt'], jsn.vObj['_defaultValuePositiveInt']);
-    if jsn.has('defaultValueDate') or jsn.has('_defaultValueDate') then
-        result.defaultValue := ParseDate(jsn['defaultValueDate'], jsn.vObj['_defaultValueDate']);
     if jsn.has('defaultValueDateTime') or jsn.has('_defaultValueDateTime') then
         result.defaultValue := ParseDateTime(jsn['defaultValueDateTime'], jsn.vObj['_defaultValueDateTime']);
+    if jsn.has('defaultValueDate') or jsn.has('_defaultValueDate') then
+        result.defaultValue := ParseDate(jsn['defaultValueDate'], jsn.vObj['_defaultValueDate']);
     if jsn.has('defaultValueString') or jsn.has('_defaultValueString') then
         result.defaultValue := ParseString(jsn['defaultValueString'], jsn.vObj['_defaultValueString']);
     if jsn.has('defaultValueInteger') or jsn.has('_defaultValueInteger') then
@@ -11734,10 +11337,10 @@ begin
         result.defaultValue := ParseSignature(jsn.vObj['defaultValueSignature']);
     if jsn.has('defaultValueSampledData') {a7} then
         result.defaultValue := ParseSampledData(jsn.vObj['defaultValueSampledData']);
-    if jsn.has('defaultValueQuantity') {a7} then
-        result.defaultValue := ParseQuantity(jsn.vObj['defaultValueQuantity']);
     if jsn.has('defaultValuePeriod') {a7} then
         result.defaultValue := ParsePeriod(jsn.vObj['defaultValuePeriod']);
+    if jsn.has('defaultValueQuantity') {a7} then
+        result.defaultValue := ParseQuantity(jsn.vObj['defaultValueQuantity']);
     if jsn.has('defaultValueAttachment') {a7} then
         result.defaultValue := ParseAttachment(jsn.vObj['defaultValueAttachment']);
     if jsn.has('defaultValueRatio') {a7} then
@@ -11750,16 +11353,16 @@ begin
         result.defaultValue := ParseCodeableConcept(jsn.vObj['defaultValueCodeableConcept']);
     if jsn.has('defaultValueHumanName') {a9} then
         result.defaultValue := ParseHumanName(jsn.vObj['defaultValueHumanName']);
-    if jsn.has('defaultValueContactPoint') {a9} then
-        result.defaultValue := ParseContactPoint(jsn.vObj['defaultValueContactPoint']);
     if jsn.has('defaultValueMeta') {a9} then
         result.defaultValue := ParseMeta(jsn.vObj['defaultValueMeta']);
+    if jsn.has('defaultValueContactPoint') {a9} then
+        result.defaultValue := ParseContactPoint(jsn.vObj['defaultValueContactPoint']);
     if jsn.has('defaultValueAddress') {a9} then
         result.defaultValue := ParseAddress(jsn.vObj['defaultValueAddress']);
-    if jsn.has('defaultValueTiming') {a9} then
-        result.defaultValue := ParseTiming(jsn.vObj['defaultValueTiming']);
     if jsn.has('defaultValueElementDefinition') {a9} then
         result.defaultValue := ParseElementDefinition(jsn.vObj['defaultValueElementDefinition']);
+    if jsn.has('defaultValueTiming') {a9} then
+        result.defaultValue := ParseTiming(jsn.vObj['defaultValueTiming']);
     if jsn.has('meaningWhenMissing') or jsn.has('_meaningWhenMissing') then
         result.meaningWhenMissingElement := ParseMarkdown(jsn['meaningWhenMissing'], jsn.vObj['_meaningWhenMissing']);{q}
     if jsn.has('fixedCode') or jsn.has('_fixedCode') then
@@ -11768,18 +11371,18 @@ begin
         result.fixed := ParseOid(jsn['fixedOid'], jsn.vObj['_fixedOid']);
     if jsn.has('fixedUuid') or jsn.has('_fixedUuid') then
         result.fixed := ParseUuid(jsn['fixedUuid'], jsn.vObj['_fixedUuid']);
-    if jsn.has('fixedUnsignedInt') or jsn.has('_fixedUnsignedInt') then
-        result.fixed := ParseUnsignedInt(jsn['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
     if jsn.has('fixedMarkdown') or jsn.has('_fixedMarkdown') then
         result.fixed := ParseMarkdown(jsn['fixedMarkdown'], jsn.vObj['_fixedMarkdown']);
+    if jsn.has('fixedUnsignedInt') or jsn.has('_fixedUnsignedInt') then
+        result.fixed := ParseUnsignedInt(jsn['fixedUnsignedInt'], jsn.vObj['_fixedUnsignedInt']);
     if jsn.has('fixedId') or jsn.has('_fixedId') then
         result.fixed := ParseId(jsn['fixedId'], jsn.vObj['_fixedId']);
     if jsn.has('fixedPositiveInt') or jsn.has('_fixedPositiveInt') then
         result.fixed := ParsePositiveInt(jsn['fixedPositiveInt'], jsn.vObj['_fixedPositiveInt']);
-    if jsn.has('fixedDate') or jsn.has('_fixedDate') then
-        result.fixed := ParseDate(jsn['fixedDate'], jsn.vObj['_fixedDate']);
     if jsn.has('fixedDateTime') or jsn.has('_fixedDateTime') then
         result.fixed := ParseDateTime(jsn['fixedDateTime'], jsn.vObj['_fixedDateTime']);
+    if jsn.has('fixedDate') or jsn.has('_fixedDate') then
+        result.fixed := ParseDate(jsn['fixedDate'], jsn.vObj['_fixedDate']);
     if jsn.has('fixedString') or jsn.has('_fixedString') then
         result.fixed := ParseString(jsn['fixedString'], jsn.vObj['_fixedString']);
     if jsn.has('fixedInteger') or jsn.has('_fixedInteger') then
@@ -11806,10 +11409,10 @@ begin
         result.fixed := ParseSignature(jsn.vObj['fixedSignature']);
     if jsn.has('fixedSampledData') {a7} then
         result.fixed := ParseSampledData(jsn.vObj['fixedSampledData']);
-    if jsn.has('fixedQuantity') {a7} then
-        result.fixed := ParseQuantity(jsn.vObj['fixedQuantity']);
     if jsn.has('fixedPeriod') {a7} then
         result.fixed := ParsePeriod(jsn.vObj['fixedPeriod']);
+    if jsn.has('fixedQuantity') {a7} then
+        result.fixed := ParseQuantity(jsn.vObj['fixedQuantity']);
     if jsn.has('fixedAttachment') {a7} then
         result.fixed := ParseAttachment(jsn.vObj['fixedAttachment']);
     if jsn.has('fixedRatio') {a7} then
@@ -11822,34 +11425,34 @@ begin
         result.fixed := ParseCodeableConcept(jsn.vObj['fixedCodeableConcept']);
     if jsn.has('fixedHumanName') {a9} then
         result.fixed := ParseHumanName(jsn.vObj['fixedHumanName']);
-    if jsn.has('fixedContactPoint') {a9} then
-        result.fixed := ParseContactPoint(jsn.vObj['fixedContactPoint']);
     if jsn.has('fixedMeta') {a9} then
         result.fixed := ParseMeta(jsn.vObj['fixedMeta']);
+    if jsn.has('fixedContactPoint') {a9} then
+        result.fixed := ParseContactPoint(jsn.vObj['fixedContactPoint']);
     if jsn.has('fixedAddress') {a9} then
         result.fixed := ParseAddress(jsn.vObj['fixedAddress']);
-    if jsn.has('fixedTiming') {a9} then
-        result.fixed := ParseTiming(jsn.vObj['fixedTiming']);
     if jsn.has('fixedElementDefinition') {a9} then
         result.fixed := ParseElementDefinition(jsn.vObj['fixedElementDefinition']);
+    if jsn.has('fixedTiming') {a9} then
+        result.fixed := ParseTiming(jsn.vObj['fixedTiming']);
     if jsn.has('patternCode') or jsn.has('_patternCode') then
         result.pattern := ParseCode(jsn['patternCode'], jsn.vObj['_patternCode']);
     if jsn.has('patternOid') or jsn.has('_patternOid') then
         result.pattern := ParseOid(jsn['patternOid'], jsn.vObj['_patternOid']);
     if jsn.has('patternUuid') or jsn.has('_patternUuid') then
         result.pattern := ParseUuid(jsn['patternUuid'], jsn.vObj['_patternUuid']);
-    if jsn.has('patternUnsignedInt') or jsn.has('_patternUnsignedInt') then
-        result.pattern := ParseUnsignedInt(jsn['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
     if jsn.has('patternMarkdown') or jsn.has('_patternMarkdown') then
         result.pattern := ParseMarkdown(jsn['patternMarkdown'], jsn.vObj['_patternMarkdown']);
+    if jsn.has('patternUnsignedInt') or jsn.has('_patternUnsignedInt') then
+        result.pattern := ParseUnsignedInt(jsn['patternUnsignedInt'], jsn.vObj['_patternUnsignedInt']);
     if jsn.has('patternId') or jsn.has('_patternId') then
         result.pattern := ParseId(jsn['patternId'], jsn.vObj['_patternId']);
     if jsn.has('patternPositiveInt') or jsn.has('_patternPositiveInt') then
         result.pattern := ParsePositiveInt(jsn['patternPositiveInt'], jsn.vObj['_patternPositiveInt']);
-    if jsn.has('patternDate') or jsn.has('_patternDate') then
-        result.pattern := ParseDate(jsn['patternDate'], jsn.vObj['_patternDate']);
     if jsn.has('patternDateTime') or jsn.has('_patternDateTime') then
         result.pattern := ParseDateTime(jsn['patternDateTime'], jsn.vObj['_patternDateTime']);
+    if jsn.has('patternDate') or jsn.has('_patternDate') then
+        result.pattern := ParseDate(jsn['patternDate'], jsn.vObj['_patternDate']);
     if jsn.has('patternString') or jsn.has('_patternString') then
         result.pattern := ParseString(jsn['patternString'], jsn.vObj['_patternString']);
     if jsn.has('patternInteger') or jsn.has('_patternInteger') then
@@ -11876,10 +11479,10 @@ begin
         result.pattern := ParseSignature(jsn.vObj['patternSignature']);
     if jsn.has('patternSampledData') {a7} then
         result.pattern := ParseSampledData(jsn.vObj['patternSampledData']);
-    if jsn.has('patternQuantity') {a7} then
-        result.pattern := ParseQuantity(jsn.vObj['patternQuantity']);
     if jsn.has('patternPeriod') {a7} then
         result.pattern := ParsePeriod(jsn.vObj['patternPeriod']);
+    if jsn.has('patternQuantity') {a7} then
+        result.pattern := ParseQuantity(jsn.vObj['patternQuantity']);
     if jsn.has('patternAttachment') {a7} then
         result.pattern := ParseAttachment(jsn.vObj['patternAttachment']);
     if jsn.has('patternRatio') {a7} then
@@ -11892,34 +11495,34 @@ begin
         result.pattern := ParseCodeableConcept(jsn.vObj['patternCodeableConcept']);
     if jsn.has('patternHumanName') {a9} then
         result.pattern := ParseHumanName(jsn.vObj['patternHumanName']);
-    if jsn.has('patternContactPoint') {a9} then
-        result.pattern := ParseContactPoint(jsn.vObj['patternContactPoint']);
     if jsn.has('patternMeta') {a9} then
         result.pattern := ParseMeta(jsn.vObj['patternMeta']);
+    if jsn.has('patternContactPoint') {a9} then
+        result.pattern := ParseContactPoint(jsn.vObj['patternContactPoint']);
     if jsn.has('patternAddress') {a9} then
         result.pattern := ParseAddress(jsn.vObj['patternAddress']);
-    if jsn.has('patternTiming') {a9} then
-        result.pattern := ParseTiming(jsn.vObj['patternTiming']);
     if jsn.has('patternElementDefinition') {a9} then
         result.pattern := ParseElementDefinition(jsn.vObj['patternElementDefinition']);
+    if jsn.has('patternTiming') {a9} then
+        result.pattern := ParseTiming(jsn.vObj['patternTiming']);
     if jsn.has('exampleCode') or jsn.has('_exampleCode') then
         result.example := ParseCode(jsn['exampleCode'], jsn.vObj['_exampleCode']);
     if jsn.has('exampleOid') or jsn.has('_exampleOid') then
         result.example := ParseOid(jsn['exampleOid'], jsn.vObj['_exampleOid']);
     if jsn.has('exampleUuid') or jsn.has('_exampleUuid') then
         result.example := ParseUuid(jsn['exampleUuid'], jsn.vObj['_exampleUuid']);
-    if jsn.has('exampleUnsignedInt') or jsn.has('_exampleUnsignedInt') then
-        result.example := ParseUnsignedInt(jsn['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
     if jsn.has('exampleMarkdown') or jsn.has('_exampleMarkdown') then
         result.example := ParseMarkdown(jsn['exampleMarkdown'], jsn.vObj['_exampleMarkdown']);
+    if jsn.has('exampleUnsignedInt') or jsn.has('_exampleUnsignedInt') then
+        result.example := ParseUnsignedInt(jsn['exampleUnsignedInt'], jsn.vObj['_exampleUnsignedInt']);
     if jsn.has('exampleId') or jsn.has('_exampleId') then
         result.example := ParseId(jsn['exampleId'], jsn.vObj['_exampleId']);
     if jsn.has('examplePositiveInt') or jsn.has('_examplePositiveInt') then
         result.example := ParsePositiveInt(jsn['examplePositiveInt'], jsn.vObj['_examplePositiveInt']);
-    if jsn.has('exampleDate') or jsn.has('_exampleDate') then
-        result.example := ParseDate(jsn['exampleDate'], jsn.vObj['_exampleDate']);
     if jsn.has('exampleDateTime') or jsn.has('_exampleDateTime') then
         result.example := ParseDateTime(jsn['exampleDateTime'], jsn.vObj['_exampleDateTime']);
+    if jsn.has('exampleDate') or jsn.has('_exampleDate') then
+        result.example := ParseDate(jsn['exampleDate'], jsn.vObj['_exampleDate']);
     if jsn.has('exampleString') or jsn.has('_exampleString') then
         result.example := ParseString(jsn['exampleString'], jsn.vObj['_exampleString']);
     if jsn.has('exampleInteger') or jsn.has('_exampleInteger') then
@@ -11946,10 +11549,10 @@ begin
         result.example := ParseSignature(jsn.vObj['exampleSignature']);
     if jsn.has('exampleSampledData') {a7} then
         result.example := ParseSampledData(jsn.vObj['exampleSampledData']);
-    if jsn.has('exampleQuantity') {a7} then
-        result.example := ParseQuantity(jsn.vObj['exampleQuantity']);
     if jsn.has('examplePeriod') {a7} then
         result.example := ParsePeriod(jsn.vObj['examplePeriod']);
+    if jsn.has('exampleQuantity') {a7} then
+        result.example := ParseQuantity(jsn.vObj['exampleQuantity']);
     if jsn.has('exampleAttachment') {a7} then
         result.example := ParseAttachment(jsn.vObj['exampleAttachment']);
     if jsn.has('exampleRatio') {a7} then
@@ -11962,34 +11565,34 @@ begin
         result.example := ParseCodeableConcept(jsn.vObj['exampleCodeableConcept']);
     if jsn.has('exampleHumanName') {a9} then
         result.example := ParseHumanName(jsn.vObj['exampleHumanName']);
-    if jsn.has('exampleContactPoint') {a9} then
-        result.example := ParseContactPoint(jsn.vObj['exampleContactPoint']);
     if jsn.has('exampleMeta') {a9} then
         result.example := ParseMeta(jsn.vObj['exampleMeta']);
+    if jsn.has('exampleContactPoint') {a9} then
+        result.example := ParseContactPoint(jsn.vObj['exampleContactPoint']);
     if jsn.has('exampleAddress') {a9} then
         result.example := ParseAddress(jsn.vObj['exampleAddress']);
-    if jsn.has('exampleTiming') {a9} then
-        result.example := ParseTiming(jsn.vObj['exampleTiming']);
     if jsn.has('exampleElementDefinition') {a9} then
         result.example := ParseElementDefinition(jsn.vObj['exampleElementDefinition']);
+    if jsn.has('exampleTiming') {a9} then
+        result.example := ParseTiming(jsn.vObj['exampleTiming']);
     if jsn.has('minValueCode') or jsn.has('_minValueCode') then
         result.minValue := ParseCode(jsn['minValueCode'], jsn.vObj['_minValueCode']);
     if jsn.has('minValueOid') or jsn.has('_minValueOid') then
         result.minValue := ParseOid(jsn['minValueOid'], jsn.vObj['_minValueOid']);
     if jsn.has('minValueUuid') or jsn.has('_minValueUuid') then
         result.minValue := ParseUuid(jsn['minValueUuid'], jsn.vObj['_minValueUuid']);
-    if jsn.has('minValueUnsignedInt') or jsn.has('_minValueUnsignedInt') then
-        result.minValue := ParseUnsignedInt(jsn['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
     if jsn.has('minValueMarkdown') or jsn.has('_minValueMarkdown') then
         result.minValue := ParseMarkdown(jsn['minValueMarkdown'], jsn.vObj['_minValueMarkdown']);
+    if jsn.has('minValueUnsignedInt') or jsn.has('_minValueUnsignedInt') then
+        result.minValue := ParseUnsignedInt(jsn['minValueUnsignedInt'], jsn.vObj['_minValueUnsignedInt']);
     if jsn.has('minValueId') or jsn.has('_minValueId') then
         result.minValue := ParseId(jsn['minValueId'], jsn.vObj['_minValueId']);
     if jsn.has('minValuePositiveInt') or jsn.has('_minValuePositiveInt') then
         result.minValue := ParsePositiveInt(jsn['minValuePositiveInt'], jsn.vObj['_minValuePositiveInt']);
-    if jsn.has('minValueDate') or jsn.has('_minValueDate') then
-        result.minValue := ParseDate(jsn['minValueDate'], jsn.vObj['_minValueDate']);
     if jsn.has('minValueDateTime') or jsn.has('_minValueDateTime') then
         result.minValue := ParseDateTime(jsn['minValueDateTime'], jsn.vObj['_minValueDateTime']);
+    if jsn.has('minValueDate') or jsn.has('_minValueDate') then
+        result.minValue := ParseDate(jsn['minValueDate'], jsn.vObj['_minValueDate']);
     if jsn.has('minValueString') or jsn.has('_minValueString') then
         result.minValue := ParseString(jsn['minValueString'], jsn.vObj['_minValueString']);
     if jsn.has('minValueInteger') or jsn.has('_minValueInteger') then
@@ -12016,10 +11619,10 @@ begin
         result.minValue := ParseSignature(jsn.vObj['minValueSignature']);
     if jsn.has('minValueSampledData') {a7} then
         result.minValue := ParseSampledData(jsn.vObj['minValueSampledData']);
-    if jsn.has('minValueQuantity') {a7} then
-        result.minValue := ParseQuantity(jsn.vObj['minValueQuantity']);
     if jsn.has('minValuePeriod') {a7} then
         result.minValue := ParsePeriod(jsn.vObj['minValuePeriod']);
+    if jsn.has('minValueQuantity') {a7} then
+        result.minValue := ParseQuantity(jsn.vObj['minValueQuantity']);
     if jsn.has('minValueAttachment') {a7} then
         result.minValue := ParseAttachment(jsn.vObj['minValueAttachment']);
     if jsn.has('minValueRatio') {a7} then
@@ -12032,34 +11635,34 @@ begin
         result.minValue := ParseCodeableConcept(jsn.vObj['minValueCodeableConcept']);
     if jsn.has('minValueHumanName') {a9} then
         result.minValue := ParseHumanName(jsn.vObj['minValueHumanName']);
-    if jsn.has('minValueContactPoint') {a9} then
-        result.minValue := ParseContactPoint(jsn.vObj['minValueContactPoint']);
     if jsn.has('minValueMeta') {a9} then
         result.minValue := ParseMeta(jsn.vObj['minValueMeta']);
+    if jsn.has('minValueContactPoint') {a9} then
+        result.minValue := ParseContactPoint(jsn.vObj['minValueContactPoint']);
     if jsn.has('minValueAddress') {a9} then
         result.minValue := ParseAddress(jsn.vObj['minValueAddress']);
-    if jsn.has('minValueTiming') {a9} then
-        result.minValue := ParseTiming(jsn.vObj['minValueTiming']);
     if jsn.has('minValueElementDefinition') {a9} then
         result.minValue := ParseElementDefinition(jsn.vObj['minValueElementDefinition']);
+    if jsn.has('minValueTiming') {a9} then
+        result.minValue := ParseTiming(jsn.vObj['minValueTiming']);
     if jsn.has('maxValueCode') or jsn.has('_maxValueCode') then
         result.maxValue := ParseCode(jsn['maxValueCode'], jsn.vObj['_maxValueCode']);
     if jsn.has('maxValueOid') or jsn.has('_maxValueOid') then
         result.maxValue := ParseOid(jsn['maxValueOid'], jsn.vObj['_maxValueOid']);
     if jsn.has('maxValueUuid') or jsn.has('_maxValueUuid') then
         result.maxValue := ParseUuid(jsn['maxValueUuid'], jsn.vObj['_maxValueUuid']);
-    if jsn.has('maxValueUnsignedInt') or jsn.has('_maxValueUnsignedInt') then
-        result.maxValue := ParseUnsignedInt(jsn['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
     if jsn.has('maxValueMarkdown') or jsn.has('_maxValueMarkdown') then
         result.maxValue := ParseMarkdown(jsn['maxValueMarkdown'], jsn.vObj['_maxValueMarkdown']);
+    if jsn.has('maxValueUnsignedInt') or jsn.has('_maxValueUnsignedInt') then
+        result.maxValue := ParseUnsignedInt(jsn['maxValueUnsignedInt'], jsn.vObj['_maxValueUnsignedInt']);
     if jsn.has('maxValueId') or jsn.has('_maxValueId') then
         result.maxValue := ParseId(jsn['maxValueId'], jsn.vObj['_maxValueId']);
     if jsn.has('maxValuePositiveInt') or jsn.has('_maxValuePositiveInt') then
         result.maxValue := ParsePositiveInt(jsn['maxValuePositiveInt'], jsn.vObj['_maxValuePositiveInt']);
-    if jsn.has('maxValueDate') or jsn.has('_maxValueDate') then
-        result.maxValue := ParseDate(jsn['maxValueDate'], jsn.vObj['_maxValueDate']);
     if jsn.has('maxValueDateTime') or jsn.has('_maxValueDateTime') then
         result.maxValue := ParseDateTime(jsn['maxValueDateTime'], jsn.vObj['_maxValueDateTime']);
+    if jsn.has('maxValueDate') or jsn.has('_maxValueDate') then
+        result.maxValue := ParseDate(jsn['maxValueDate'], jsn.vObj['_maxValueDate']);
     if jsn.has('maxValueString') or jsn.has('_maxValueString') then
         result.maxValue := ParseString(jsn['maxValueString'], jsn.vObj['_maxValueString']);
     if jsn.has('maxValueInteger') or jsn.has('_maxValueInteger') then
@@ -12086,10 +11689,10 @@ begin
         result.maxValue := ParseSignature(jsn.vObj['maxValueSignature']);
     if jsn.has('maxValueSampledData') {a7} then
         result.maxValue := ParseSampledData(jsn.vObj['maxValueSampledData']);
-    if jsn.has('maxValueQuantity') {a7} then
-        result.maxValue := ParseQuantity(jsn.vObj['maxValueQuantity']);
     if jsn.has('maxValuePeriod') {a7} then
         result.maxValue := ParsePeriod(jsn.vObj['maxValuePeriod']);
+    if jsn.has('maxValueQuantity') {a7} then
+        result.maxValue := ParseQuantity(jsn.vObj['maxValueQuantity']);
     if jsn.has('maxValueAttachment') {a7} then
         result.maxValue := ParseAttachment(jsn.vObj['maxValueAttachment']);
     if jsn.has('maxValueRatio') {a7} then
@@ -12102,16 +11705,16 @@ begin
         result.maxValue := ParseCodeableConcept(jsn.vObj['maxValueCodeableConcept']);
     if jsn.has('maxValueHumanName') {a9} then
         result.maxValue := ParseHumanName(jsn.vObj['maxValueHumanName']);
-    if jsn.has('maxValueContactPoint') {a9} then
-        result.maxValue := ParseContactPoint(jsn.vObj['maxValueContactPoint']);
     if jsn.has('maxValueMeta') {a9} then
         result.maxValue := ParseMeta(jsn.vObj['maxValueMeta']);
+    if jsn.has('maxValueContactPoint') {a9} then
+        result.maxValue := ParseContactPoint(jsn.vObj['maxValueContactPoint']);
     if jsn.has('maxValueAddress') {a9} then
         result.maxValue := ParseAddress(jsn.vObj['maxValueAddress']);
-    if jsn.has('maxValueTiming') {a9} then
-        result.maxValue := ParseTiming(jsn.vObj['maxValueTiming']);
     if jsn.has('maxValueElementDefinition') {a9} then
         result.maxValue := ParseElementDefinition(jsn.vObj['maxValueElementDefinition']);
+    if jsn.has('maxValueTiming') {a9} then
+        result.maxValue := ParseTiming(jsn.vObj['maxValueTiming']);
     if jsn.has('maxLength') or jsn.has('_maxLength') then
         result.maxLengthElement := ParseInteger(jsn['maxLength'], jsn.vObj['_maxLength']);{q}
       if jsn.has('condition') or jsn.has('_condition') then
@@ -12261,15 +11864,15 @@ begin
     ComposeUuidValue(json, 'defaultValueUuid', TFhirUuid(elem.defaultValue), false);
     ComposeUuidProps(json, 'defaultValueUuid', TFhirUuid(elem.defaultValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), false);
-    ComposeUnsignedIntProps(json, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'defaultValueMarkdown', TFhirMarkdown(elem.defaultValue), false);
     ComposeMarkdownProps(json, 'defaultValueMarkdown', TFhirMarkdown(elem.defaultValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), false);
+    ComposeUnsignedIntProps(json, 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirId) then
   begin
@@ -12281,15 +11884,15 @@ begin
     ComposePositiveIntValue(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false);
     ComposePositiveIntProps(json, 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'defaultValueDate', TFhirDate(elem.defaultValue), false);
-    ComposeDateProps(json, 'defaultValueDate', TFhirDate(elem.defaultValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'defaultValueDateTime', TFhirDateTime(elem.defaultValue), false);
     ComposeDateTimeProps(json, 'defaultValueDateTime', TFhirDateTime(elem.defaultValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'defaultValueDate', TFhirDate(elem.defaultValue), false);
+    ComposeDateProps(json, 'defaultValueDate', TFhirDate(elem.defaultValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirString) then
   begin
@@ -12341,10 +11944,10 @@ begin
     ComposeSignature(json, 'defaultValueSignature', TFhirSignature(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSampledData) then
     ComposeSampledData(json, 'defaultValueSampledData', TFhirSampledData(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) then
-    ComposeQuantity(json, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPeriod) then
     ComposePeriod(json, 'defaultValuePeriod', TFhirPeriod(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) then
+    ComposeQuantity(json, 'defaultValueQuantity', TFhirQuantity(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAttachment) then
     ComposeAttachment(json, 'defaultValueAttachment', TFhirAttachment(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) then
@@ -12357,16 +11960,16 @@ begin
     ComposeCodeableConcept(json, 'defaultValueCodeableConcept', TFhirCodeableConcept(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirHumanName) then
     ComposeHumanName(json, 'defaultValueHumanName', TFhirHumanName(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) then
-    ComposeContactPoint(json, 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMeta) then
     ComposeMeta(json, 'defaultValueMeta', TFhirMeta(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) then
+    ComposeContactPoint(json, 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) then
     ComposeAddress(json, 'defaultValueAddress', TFhirAddress(elem.defaultValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) then
-    ComposeTiming(json, 'defaultValueTiming', TFhirTiming(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue));
+    ComposeElementDefinition(json, 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) then
+    ComposeTiming(json, 'defaultValueTiming', TFhirTiming(elem.defaultValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeMarkdownValue(json, 'meaningWhenMissing', elem.meaningWhenMissingElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -12386,15 +11989,15 @@ begin
     ComposeUuidValue(json, 'fixedUuid', TFhirUuid(elem.fixed), false);
     ComposeUuidProps(json, 'fixedUuid', TFhirUuid(elem.fixed), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), false);
-    ComposeUnsignedIntProps(json, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'fixedMarkdown', TFhirMarkdown(elem.fixed), false);
     ComposeMarkdownProps(json, 'fixedMarkdown', TFhirMarkdown(elem.fixed), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), false);
+    ComposeUnsignedIntProps(json, 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirId) then
   begin
@@ -12406,15 +12009,15 @@ begin
     ComposePositiveIntValue(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false);
     ComposePositiveIntProps(json, 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'fixedDate', TFhirDate(elem.fixed), false);
-    ComposeDateProps(json, 'fixedDate', TFhirDate(elem.fixed), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'fixedDateTime', TFhirDateTime(elem.fixed), false);
     ComposeDateTimeProps(json, 'fixedDateTime', TFhirDateTime(elem.fixed), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'fixedDate', TFhirDate(elem.fixed), false);
+    ComposeDateProps(json, 'fixedDate', TFhirDate(elem.fixed), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirString) then
   begin
@@ -12466,10 +12069,10 @@ begin
     ComposeSignature(json, 'fixedSignature', TFhirSignature(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSampledData) then
     ComposeSampledData(json, 'fixedSampledData', TFhirSampledData(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) then
-    ComposeQuantity(json, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPeriod) then
     ComposePeriod(json, 'fixedPeriod', TFhirPeriod(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) then
+    ComposeQuantity(json, 'fixedQuantity', TFhirQuantity(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAttachment) then
     ComposeAttachment(json, 'fixedAttachment', TFhirAttachment(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) then
@@ -12482,16 +12085,16 @@ begin
     ComposeCodeableConcept(json, 'fixedCodeableConcept', TFhirCodeableConcept(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirHumanName) then
     ComposeHumanName(json, 'fixedHumanName', TFhirHumanName(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) then
-    ComposeContactPoint(json, 'fixedContactPoint', TFhirContactPoint(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMeta) then
     ComposeMeta(json, 'fixedMeta', TFhirMeta(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) then
+    ComposeContactPoint(json, 'fixedContactPoint', TFhirContactPoint(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) then
     ComposeAddress(json, 'fixedAddress', TFhirAddress(elem.fixed))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) then
-    ComposeTiming(json, 'fixedTiming', TFhirTiming(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed));
+    ComposeElementDefinition(json, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) then
+    ComposeTiming(json, 'fixedTiming', TFhirTiming(elem.fixed));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) then
   begin
     ComposeCodeValue(json, 'patternCode', TFhirCode(elem.pattern), false);
@@ -12507,15 +12110,15 @@ begin
     ComposeUuidValue(json, 'patternUuid', TFhirUuid(elem.pattern), false);
     ComposeUuidProps(json, 'patternUuid', TFhirUuid(elem.pattern), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), false);
-    ComposeUnsignedIntProps(json, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'patternMarkdown', TFhirMarkdown(elem.pattern), false);
     ComposeMarkdownProps(json, 'patternMarkdown', TFhirMarkdown(elem.pattern), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), false);
+    ComposeUnsignedIntProps(json, 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirId) then
   begin
@@ -12527,15 +12130,15 @@ begin
     ComposePositiveIntValue(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false);
     ComposePositiveIntProps(json, 'patternPositiveInt', TFhirPositiveInt(elem.pattern), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'patternDate', TFhirDate(elem.pattern), false);
-    ComposeDateProps(json, 'patternDate', TFhirDate(elem.pattern), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'patternDateTime', TFhirDateTime(elem.pattern), false);
     ComposeDateTimeProps(json, 'patternDateTime', TFhirDateTime(elem.pattern), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'patternDate', TFhirDate(elem.pattern), false);
+    ComposeDateProps(json, 'patternDate', TFhirDate(elem.pattern), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirString) then
   begin
@@ -12587,10 +12190,10 @@ begin
     ComposeSignature(json, 'patternSignature', TFhirSignature(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSampledData) then
     ComposeSampledData(json, 'patternSampledData', TFhirSampledData(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) then
-    ComposeQuantity(json, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPeriod) then
     ComposePeriod(json, 'patternPeriod', TFhirPeriod(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) then
+    ComposeQuantity(json, 'patternQuantity', TFhirQuantity(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAttachment) then
     ComposeAttachment(json, 'patternAttachment', TFhirAttachment(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) then
@@ -12603,16 +12206,16 @@ begin
     ComposeCodeableConcept(json, 'patternCodeableConcept', TFhirCodeableConcept(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirHumanName) then
     ComposeHumanName(json, 'patternHumanName', TFhirHumanName(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) then
-    ComposeContactPoint(json, 'patternContactPoint', TFhirContactPoint(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMeta) then
     ComposeMeta(json, 'patternMeta', TFhirMeta(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) then
+    ComposeContactPoint(json, 'patternContactPoint', TFhirContactPoint(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) then
     ComposeAddress(json, 'patternAddress', TFhirAddress(elem.pattern))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) then
-    ComposeTiming(json, 'patternTiming', TFhirTiming(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'patternElementDefinition', TFhirElementDefinition(elem.pattern));
+    ComposeElementDefinition(json, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) then
+    ComposeTiming(json, 'patternTiming', TFhirTiming(elem.pattern));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) then
   begin
     ComposeCodeValue(json, 'exampleCode', TFhirCode(elem.example), false);
@@ -12628,15 +12231,15 @@ begin
     ComposeUuidValue(json, 'exampleUuid', TFhirUuid(elem.example), false);
     ComposeUuidProps(json, 'exampleUuid', TFhirUuid(elem.example), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), false);
-    ComposeUnsignedIntProps(json, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'exampleMarkdown', TFhirMarkdown(elem.example), false);
     ComposeMarkdownProps(json, 'exampleMarkdown', TFhirMarkdown(elem.example), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), false);
+    ComposeUnsignedIntProps(json, 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirId) then
   begin
@@ -12648,15 +12251,15 @@ begin
     ComposePositiveIntValue(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false);
     ComposePositiveIntProps(json, 'examplePositiveInt', TFhirPositiveInt(elem.example), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'exampleDate', TFhirDate(elem.example), false);
-    ComposeDateProps(json, 'exampleDate', TFhirDate(elem.example), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'exampleDateTime', TFhirDateTime(elem.example), false);
     ComposeDateTimeProps(json, 'exampleDateTime', TFhirDateTime(elem.example), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'exampleDate', TFhirDate(elem.example), false);
+    ComposeDateProps(json, 'exampleDate', TFhirDate(elem.example), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirString) then
   begin
@@ -12708,10 +12311,10 @@ begin
     ComposeSignature(json, 'exampleSignature', TFhirSignature(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSampledData) then
     ComposeSampledData(json, 'exampleSampledData', TFhirSampledData(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) then
-    ComposeQuantity(json, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPeriod) then
     ComposePeriod(json, 'examplePeriod', TFhirPeriod(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) then
+    ComposeQuantity(json, 'exampleQuantity', TFhirQuantity(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAttachment) then
     ComposeAttachment(json, 'exampleAttachment', TFhirAttachment(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) then
@@ -12724,16 +12327,16 @@ begin
     ComposeCodeableConcept(json, 'exampleCodeableConcept', TFhirCodeableConcept(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirHumanName) then
     ComposeHumanName(json, 'exampleHumanName', TFhirHumanName(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) then
-    ComposeContactPoint(json, 'exampleContactPoint', TFhirContactPoint(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMeta) then
     ComposeMeta(json, 'exampleMeta', TFhirMeta(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) then
+    ComposeContactPoint(json, 'exampleContactPoint', TFhirContactPoint(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) then
     ComposeAddress(json, 'exampleAddress', TFhirAddress(elem.example))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) then
-    ComposeTiming(json, 'exampleTiming', TFhirTiming(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'exampleElementDefinition', TFhirElementDefinition(elem.example));
+    ComposeElementDefinition(json, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) then
+    ComposeTiming(json, 'exampleTiming', TFhirTiming(elem.example));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) then
   begin
     ComposeCodeValue(json, 'minValueCode', TFhirCode(elem.minValue), false);
@@ -12749,15 +12352,15 @@ begin
     ComposeUuidValue(json, 'minValueUuid', TFhirUuid(elem.minValue), false);
     ComposeUuidProps(json, 'minValueUuid', TFhirUuid(elem.minValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), false);
-    ComposeUnsignedIntProps(json, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'minValueMarkdown', TFhirMarkdown(elem.minValue), false);
     ComposeMarkdownProps(json, 'minValueMarkdown', TFhirMarkdown(elem.minValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), false);
+    ComposeUnsignedIntProps(json, 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirId) then
   begin
@@ -12769,15 +12372,15 @@ begin
     ComposePositiveIntValue(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false);
     ComposePositiveIntProps(json, 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'minValueDate', TFhirDate(elem.minValue), false);
-    ComposeDateProps(json, 'minValueDate', TFhirDate(elem.minValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'minValueDateTime', TFhirDateTime(elem.minValue), false);
     ComposeDateTimeProps(json, 'minValueDateTime', TFhirDateTime(elem.minValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'minValueDate', TFhirDate(elem.minValue), false);
+    ComposeDateProps(json, 'minValueDate', TFhirDate(elem.minValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirString) then
   begin
@@ -12829,10 +12432,10 @@ begin
     ComposeSignature(json, 'minValueSignature', TFhirSignature(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSampledData) then
     ComposeSampledData(json, 'minValueSampledData', TFhirSampledData(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) then
-    ComposeQuantity(json, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPeriod) then
     ComposePeriod(json, 'minValuePeriod', TFhirPeriod(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) then
+    ComposeQuantity(json, 'minValueQuantity', TFhirQuantity(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAttachment) then
     ComposeAttachment(json, 'minValueAttachment', TFhirAttachment(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) then
@@ -12845,16 +12448,16 @@ begin
     ComposeCodeableConcept(json, 'minValueCodeableConcept', TFhirCodeableConcept(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirHumanName) then
     ComposeHumanName(json, 'minValueHumanName', TFhirHumanName(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) then
-    ComposeContactPoint(json, 'minValueContactPoint', TFhirContactPoint(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMeta) then
     ComposeMeta(json, 'minValueMeta', TFhirMeta(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) then
+    ComposeContactPoint(json, 'minValueContactPoint', TFhirContactPoint(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) then
     ComposeAddress(json, 'minValueAddress', TFhirAddress(elem.minValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) then
-    ComposeTiming(json, 'minValueTiming', TFhirTiming(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue));
+    ComposeElementDefinition(json, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) then
+    ComposeTiming(json, 'minValueTiming', TFhirTiming(elem.minValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) then
   begin
     ComposeCodeValue(json, 'maxValueCode', TFhirCode(elem.maxValue), false);
@@ -12870,15 +12473,15 @@ begin
     ComposeUuidValue(json, 'maxValueUuid', TFhirUuid(elem.maxValue), false);
     ComposeUuidProps(json, 'maxValueUuid', TFhirUuid(elem.maxValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) then
-  begin
-    ComposeUnsignedIntValue(json, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), false);
-    ComposeUnsignedIntProps(json, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMarkdown) then
   begin
     ComposeMarkdownValue(json, 'maxValueMarkdown', TFhirMarkdown(elem.maxValue), false);
     ComposeMarkdownProps(json, 'maxValueMarkdown', TFhirMarkdown(elem.maxValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) then
+  begin
+    ComposeUnsignedIntValue(json, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), false);
+    ComposeUnsignedIntProps(json, 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirId) then
   begin
@@ -12890,15 +12493,15 @@ begin
     ComposePositiveIntValue(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false);
     ComposePositiveIntProps(json, 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), false)
   end
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) then
-  begin
-    ComposeDateValue(json, 'maxValueDate', TFhirDate(elem.maxValue), false);
-    ComposeDateProps(json, 'maxValueDate', TFhirDate(elem.maxValue), false)
-  end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDateTime) then
   begin
     ComposeDateTimeValue(json, 'maxValueDateTime', TFhirDateTime(elem.maxValue), false);
     ComposeDateTimeProps(json, 'maxValueDateTime', TFhirDateTime(elem.maxValue), false)
+  end
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) then
+  begin
+    ComposeDateValue(json, 'maxValueDate', TFhirDate(elem.maxValue), false);
+    ComposeDateProps(json, 'maxValueDate', TFhirDate(elem.maxValue), false)
   end
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirString) then
   begin
@@ -12950,10 +12553,10 @@ begin
     ComposeSignature(json, 'maxValueSignature', TFhirSignature(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSampledData) then
     ComposeSampledData(json, 'maxValueSampledData', TFhirSampledData(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) then
-    ComposeQuantity(json, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPeriod) then
     ComposePeriod(json, 'maxValuePeriod', TFhirPeriod(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) then
+    ComposeQuantity(json, 'maxValueQuantity', TFhirQuantity(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAttachment) then
     ComposeAttachment(json, 'maxValueAttachment', TFhirAttachment(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) then
@@ -12966,16 +12569,16 @@ begin
     ComposeCodeableConcept(json, 'maxValueCodeableConcept', TFhirCodeableConcept(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirHumanName) then
     ComposeHumanName(json, 'maxValueHumanName', TFhirHumanName(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) then
-    ComposeContactPoint(json, 'maxValueContactPoint', TFhirContactPoint(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMeta) then
     ComposeMeta(json, 'maxValueMeta', TFhirMeta(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) then
+    ComposeContactPoint(json, 'maxValueContactPoint', TFhirContactPoint(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) then
     ComposeAddress(json, 'maxValueAddress', TFhirAddress(elem.maxValue))
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) then
-    ComposeTiming(json, 'maxValueTiming', TFhirTiming(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) then
-    ComposeElementDefinition(json, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue));
+    ComposeElementDefinition(json, 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) then
+    ComposeTiming(json, 'maxValueTiming', TFhirTiming(elem.maxValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIntegerValue(json, 'maxLength', elem.maxLengthElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
@@ -13095,18 +12698,18 @@ begin
     ComposeOid(this, 'ElementDefinition', 'defaultValueOid', TFhirOid(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'defaultValueUuid', TFhirUuid(elem.defaultValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'defaultValueMarkdown', TFhirMarkdown(elem.defaultValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'defaultValueUnsignedInt', TFhirUnsignedInt(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'defaultValueId', TFhirId(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'defaultValuePositiveInt', TFhirPositiveInt(elem.defaultValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'defaultValueDate', TFhirDate(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'defaultValueDateTime', TFhirDateTime(elem.defaultValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'defaultValueDate', TFhirDate(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'defaultValueString', TFhirString(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirInteger) {1} then
@@ -13133,10 +12736,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'defaultValueSignature', TFhirSignature(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'defaultValueSampledData', TFhirSampledData(elem.defaultValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'defaultValueQuantity', TFhirQuantity(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'defaultValuePeriod', TFhirPeriod(elem.defaultValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'defaultValueQuantity', TFhirQuantity(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'defaultValueAttachment', TFhirAttachment(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirRatio) {8} then
@@ -13149,16 +12752,16 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'defaultValueCodeableConcept', TFhirCodeableConcept(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'defaultValueHumanName', TFhirHumanName(elem.defaultValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'defaultValueMeta', TFhirMeta(elem.defaultValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'defaultValueContactPoint', TFhirContactPoint(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'defaultValueAddress', TFhirAddress(elem.defaultValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'defaultValueTiming', TFhirTiming(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'defaultValueElementDefinition', TFhirElementDefinition(elem.defaultValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'defaultValueTiming', TFhirTiming(elem.defaultValue), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeMarkdown(this, 'ElementDefinition', 'meaningWhenMissing', elem.meaningWhenMissingElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
@@ -13167,18 +12770,18 @@ begin
     ComposeOid(this, 'ElementDefinition', 'fixedOid', TFhirOid(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'fixedUuid', TFhirUuid(elem.fixed), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'fixedMarkdown', TFhirMarkdown(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'fixedUnsignedInt', TFhirUnsignedInt(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'fixedId', TFhirId(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'fixedPositiveInt', TFhirPositiveInt(elem.fixed), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'fixedDate', TFhirDate(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'fixedDateTime', TFhirDateTime(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'fixedDate', TFhirDate(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'fixedString', TFhirString(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirInteger) {1} then
@@ -13205,10 +12808,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'fixedSignature', TFhirSignature(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'fixedSampledData', TFhirSampledData(elem.fixed), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'fixedQuantity', TFhirQuantity(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'fixedPeriod', TFhirPeriod(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'fixedQuantity', TFhirQuantity(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'fixedAttachment', TFhirAttachment(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirRatio) {8} then
@@ -13221,34 +12824,34 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'fixedCodeableConcept', TFhirCodeableConcept(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'fixedHumanName', TFhirHumanName(elem.fixed), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'fixedContactPoint', TFhirContactPoint(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'fixedMeta', TFhirMeta(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'fixedContactPoint', TFhirContactPoint(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'fixedAddress', TFhirAddress(elem.fixed), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'fixedTiming', TFhirTiming(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'fixedElementDefinition', TFhirElementDefinition(elem.fixed), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'fixedElementDefinition', TFhirElementDefinition(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'fixedTiming', TFhirTiming(elem.fixed), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'patternCode', TFhirCode(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'patternOid', TFhirOid(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'patternUuid', TFhirUuid(elem.pattern), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'patternMarkdown', TFhirMarkdown(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'patternUnsignedInt', TFhirUnsignedInt(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'patternId', TFhirId(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'patternPositiveInt', TFhirPositiveInt(elem.pattern), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'patternDate', TFhirDate(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'patternDateTime', TFhirDateTime(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'patternDate', TFhirDate(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'patternString', TFhirString(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirInteger) {1} then
@@ -13275,10 +12878,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'patternSignature', TFhirSignature(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'patternSampledData', TFhirSampledData(elem.pattern), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'patternQuantity', TFhirQuantity(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'patternPeriod', TFhirPeriod(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'patternQuantity', TFhirQuantity(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'patternAttachment', TFhirAttachment(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirRatio) {8} then
@@ -13291,34 +12894,34 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'patternCodeableConcept', TFhirCodeableConcept(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'patternHumanName', TFhirHumanName(elem.pattern), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'patternContactPoint', TFhirContactPoint(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'patternMeta', TFhirMeta(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'patternContactPoint', TFhirContactPoint(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'patternAddress', TFhirAddress(elem.pattern), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'patternTiming', TFhirTiming(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'patternElementDefinition', TFhirElementDefinition(elem.pattern), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'patternElementDefinition', TFhirElementDefinition(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'patternTiming', TFhirTiming(elem.pattern), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'exampleCode', TFhirCode(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'exampleOid', TFhirOid(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'exampleUuid', TFhirUuid(elem.example), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'exampleMarkdown', TFhirMarkdown(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'exampleUnsignedInt', TFhirUnsignedInt(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'exampleId', TFhirId(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'examplePositiveInt', TFhirPositiveInt(elem.example), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'exampleDate', TFhirDate(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'exampleDateTime', TFhirDateTime(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'exampleDate', TFhirDate(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'exampleString', TFhirString(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirInteger) {1} then
@@ -13345,10 +12948,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'exampleSignature', TFhirSignature(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'exampleSampledData', TFhirSampledData(elem.example), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'exampleQuantity', TFhirQuantity(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'examplePeriod', TFhirPeriod(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'exampleQuantity', TFhirQuantity(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'exampleAttachment', TFhirAttachment(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirRatio) {8} then
@@ -13361,34 +12964,34 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'exampleCodeableConcept', TFhirCodeableConcept(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'exampleHumanName', TFhirHumanName(elem.example), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'exampleContactPoint', TFhirContactPoint(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'exampleMeta', TFhirMeta(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'exampleContactPoint', TFhirContactPoint(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'exampleAddress', TFhirAddress(elem.example), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'exampleTiming', TFhirTiming(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'exampleElementDefinition', TFhirElementDefinition(elem.example), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'exampleElementDefinition', TFhirElementDefinition(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'exampleTiming', TFhirTiming(elem.example), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'minValueCode', TFhirCode(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'minValueOid', TFhirOid(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'minValueUuid', TFhirUuid(elem.minValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'minValueMarkdown', TFhirMarkdown(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'minValueUnsignedInt', TFhirUnsignedInt(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'minValueId', TFhirId(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'minValuePositiveInt', TFhirPositiveInt(elem.minValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'minValueDate', TFhirDate(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'minValueDateTime', TFhirDateTime(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'minValueDate', TFhirDate(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'minValueString', TFhirString(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirInteger) {1} then
@@ -13415,10 +13018,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'minValueSignature', TFhirSignature(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'minValueSampledData', TFhirSampledData(elem.minValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'minValueQuantity', TFhirQuantity(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'minValuePeriod', TFhirPeriod(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'minValueQuantity', TFhirQuantity(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'minValueAttachment', TFhirAttachment(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirRatio) {8} then
@@ -13431,34 +13034,34 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'minValueCodeableConcept', TFhirCodeableConcept(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'minValueHumanName', TFhirHumanName(elem.minValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'minValueContactPoint', TFhirContactPoint(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'minValueMeta', TFhirMeta(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'minValueContactPoint', TFhirContactPoint(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'minValueAddress', TFhirAddress(elem.minValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'minValueTiming', TFhirTiming(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'minValueElementDefinition', TFhirElementDefinition(elem.minValue), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'minValueElementDefinition', TFhirElementDefinition(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'minValueTiming', TFhirTiming(elem.minValue), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'maxValueCode', TFhirCode(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'maxValueOid', TFhirOid(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUuid) {1} then
     ComposeUuid(this, 'ElementDefinition', 'maxValueUuid', TFhirUuid(elem.maxValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) {1} then
-    ComposeUnsignedInt(this, 'ElementDefinition', 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMarkdown) {1} then
     ComposeMarkdown(this, 'ElementDefinition', 'maxValueMarkdown', TFhirMarkdown(elem.maxValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirUnsignedInt) {1} then
+    ComposeUnsignedInt(this, 'ElementDefinition', 'maxValueUnsignedInt', TFhirUnsignedInt(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirId) {1} then
     ComposeId(this, 'ElementDefinition', 'maxValueId', TFhirId(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPositiveInt) {1} then
     ComposePositiveInt(this, 'ElementDefinition', 'maxValuePositiveInt', TFhirPositiveInt(elem.maxValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) {1} then
-    ComposeDate(this, 'ElementDefinition', 'maxValueDate', TFhirDate(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDateTime) {1} then
     ComposeDateTime(this, 'ElementDefinition', 'maxValueDateTime', TFhirDateTime(elem.maxValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirDate) {1} then
+    ComposeDate(this, 'ElementDefinition', 'maxValueDate', TFhirDate(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirString) {1} then
     ComposeString(this, 'ElementDefinition', 'maxValueString', TFhirString(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirInteger) {1} then
@@ -13485,10 +13088,10 @@ begin
     ComposeSignature(this, 'ElementDefinition', 'maxValueSignature', TFhirSignature(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirSampledData) {8} then
     ComposeSampledData(this, 'ElementDefinition', 'maxValueSampledData', TFhirSampledData(elem.maxValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
-    ComposeQuantity(this, 'ElementDefinition', 'maxValueQuantity', TFhirQuantity(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirPeriod) {8} then
     ComposePeriod(this, 'ElementDefinition', 'maxValuePeriod', TFhirPeriod(elem.maxValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirQuantity) {8} then
+    ComposeQuantity(this, 'ElementDefinition', 'maxValueQuantity', TFhirQuantity(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAttachment) {8} then
     ComposeAttachment(this, 'ElementDefinition', 'maxValueAttachment', TFhirAttachment(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirRatio) {8} then
@@ -13501,16 +13104,16 @@ begin
     ComposeCodeableConcept(this, 'ElementDefinition', 'maxValueCodeableConcept', TFhirCodeableConcept(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirHumanName) {9} then
     ComposeHumanName(this, 'ElementDefinition', 'maxValueHumanName', TFhirHumanName(elem.maxValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) {9} then
-    ComposeContactPoint(this, 'ElementDefinition', 'maxValueContactPoint', TFhirContactPoint(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirMeta) {9} then
     ComposeMeta(this, 'ElementDefinition', 'maxValueMeta', TFhirMeta(elem.maxValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirContactPoint) {9} then
+    ComposeContactPoint(this, 'ElementDefinition', 'maxValueContactPoint', TFhirContactPoint(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirAddress) {9} then
     ComposeAddress(this, 'ElementDefinition', 'maxValueAddress', TFhirAddress(elem.maxValue), -1)
-  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'maxValueTiming', TFhirTiming(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirElementDefinition) {9} then
-    ComposeElementDefinition(this, 'ElementDefinition', 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue), -1);
+    ComposeElementDefinition(this, 'ElementDefinition', 'maxValueElementDefinition', TFhirElementDefinition(elem.maxValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirTiming) {9} then
+    ComposeTiming(this, 'ElementDefinition', 'maxValueTiming', TFhirTiming(elem.maxValue), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeInteger(this, 'ElementDefinition', 'maxLength', elem.maxLengthElement, -1);{x.2c}
   if SummaryOption in [soFull, soSummary, soText, soData] then
@@ -13530,6 +13133,399 @@ begin
   if SummaryOption in [soFull, soSummary, soText, soData] then
     for i := 0 to elem.mappingList.Count - 1 do
       ComposeElementDefinitionMapping(this, 'ElementDefinition', 'mapping', elem.mappingList[i], i);
+end;
+
+function TFHIRXmlParser.ParseTimingRepeat(element : IXmlDomElement; path : string) : TFhirTimingRepeat;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirTimingRepeat.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseTimingRepeatChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseTimingRepeatChild(element : TFhirTimingRepeat; path : string; child : IXmlDomElement) : boolean;
+begin
+  result := true;
+      if (child.baseName = 'boundsQuantity') then
+        element.bounds := ParseQuantity(child, path+'/boundsQuantity'){x.3}
+      else if (child.baseName = 'boundsRange') then
+        element.bounds := ParseRange(child, path+'/boundsRange'){x.3}
+      else if (child.baseName = 'boundsPeriod') then
+        element.bounds := ParsePeriod(child, path+'/boundsPeriod'){x.3}
+      else if (child.baseName = 'count') then
+        element.countElement := ParseInteger(child, path+'/count') {b}
+      else if (child.baseName = 'duration') then
+        element.durationElement := ParseDecimal(child, path+'/duration') {b}
+      else if (child.baseName = 'durationMax') then
+        element.durationMaxElement := ParseDecimal(child, path+'/durationMax') {b}
+      else if (child.baseName = 'durationUnits') then
+        element.durationUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, path+'/durationUnits', child){1a}
+      else if (child.baseName = 'frequency') then
+        element.frequencyElement := ParseInteger(child, path+'/frequency') {b}
+      else if (child.baseName = 'frequencyMax') then
+        element.frequencyMaxElement := ParseInteger(child, path+'/frequencyMax') {b}
+      else if (child.baseName = 'period') then
+        element.periodElement := ParseDecimal(child, path+'/period') {b}
+      else if (child.baseName = 'periodMax') then
+        element.periodMaxElement := ParseDecimal(child, path+'/periodMax') {b}
+      else if (child.baseName = 'periodUnits') then
+        element.periodUnitsElement := ParseEnum(CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, path+'/periodUnits', child){1a}
+      else if (child.baseName = 'when') then
+        element.whenElement := ParseEnum(CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum, path+'/when', child){1a}
+      else if Not ParseElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeTimingRepeat(xml : TXmlBuilder; name : String; elem : TFhirTimingRepeat);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeTimingRepeatChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeTimingRepeatChildren(xml : TXmlBuilder; elem : TFhirTimingRepeat);
+begin
+  composeElementChildren(xml, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
+    ComposeQuantity(xml, 'boundsQuantity', TFhirQuantity(elem.bounds))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
+    ComposeRange(xml, 'boundsRange', TFhirRange(elem.bounds))
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
+    ComposePeriod(xml, 'boundsPeriod', TFhirPeriod(elem.bounds));
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(xml, 'count', elem.countElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(xml, 'duration', elem.durationElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(xml, 'durationMax', elem.durationMaxElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(xml, 'frequency', elem.frequencyElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(xml, 'frequencyMax', elem.frequencyMaxElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(xml, 'period', elem.periodElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(xml, 'periodMax', elem.periodMaxElement);{x.2b}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum);
+end;
+
+procedure TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTimingRepeat(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat;
+begin
+  result := TFhirTimingRepeat.create;
+  try
+    ParseTimingRepeatProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseTimingRepeatProperties(jsn : TJsonObject; result : TFhirTimingRepeat);
+begin
+    ParseElementProperties(jsn, result);
+    if jsn.has('boundsQuantity') {a4} then
+      result.bounds := ParseQuantity(jsn.vObj['boundsQuantity']);
+    if jsn.has('boundsRange') {a4} then
+      result.bounds := ParseRange(jsn.vObj['boundsRange']);
+    if jsn.has('boundsPeriod') {a4} then
+      result.bounds := ParsePeriod(jsn.vObj['boundsPeriod']);
+    if jsn.has('count') or jsn.has('_count') then
+        result.countElement := ParseInteger(jsn['count'], jsn.vObj['_count']);{q}
+    if jsn.has('duration') or jsn.has('_duration') then
+        result.durationElement := ParseDecimal(jsn['duration'], jsn.vObj['_duration']);{q}
+    if jsn.has('durationMax') or jsn.has('_durationMax') then
+        result.durationMaxElement := ParseDecimal(jsn['durationMax'], jsn.vObj['_durationMax']);{q}
+    if jsn.has('durationUnits') or jsn.has('_durationUnits')  then
+      result.durationUnitsElement := parseEnum(jsn.path+'/durationUnits', jsn['durationUnits'], jsn.vObj['_durationUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+    if jsn.has('frequency') or jsn.has('_frequency') then
+        result.frequencyElement := ParseInteger(jsn['frequency'], jsn.vObj['_frequency']);{q}
+    if jsn.has('frequencyMax') or jsn.has('_frequencyMax') then
+        result.frequencyMaxElement := ParseInteger(jsn['frequencyMax'], jsn.vObj['_frequencyMax']);{q}
+    if jsn.has('period') or jsn.has('_period') then
+        result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
+    if jsn.has('periodMax') or jsn.has('_periodMax') then
+        result.periodMaxElement := ParseDecimal(jsn['periodMax'], jsn.vObj['_periodMax']);{q}
+    if jsn.has('periodUnits') or jsn.has('_periodUnits')  then
+      result.periodUnitsElement := parseEnum(jsn.path+'/periodUnits', jsn['periodUnits'], jsn.vObj['_periodUnits'], CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum);
+    if jsn.has('when') or jsn.has('_when')  then
+      result.whenElement := parseEnum(jsn.path+'/when', jsn['when'], jsn.vObj['_when'], CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum);
+end;
+
+procedure TFHIRJsonComposer.ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) then 
+    ComposeQuantity(json, 'boundsQuantity', TFhirQuantity(elem.bounds)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) then 
+    ComposeRange(json, 'boundsRange', TFhirRange(elem.bounds)) 
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) then 
+    ComposePeriod(json, 'boundsPeriod', TFhirPeriod(elem.bounds)) ;
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerValue(json, 'count', elem.countElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerProps(json, 'count', elem.countElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalValue(json, 'duration', elem.durationElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalProps(json, 'duration', elem.durationElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalValue(json, 'durationMax', elem.durationMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalProps(json, 'durationMax', elem.durationMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIntegerProps(json, 'frequencyMax', elem.frequencyMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalValue(json, 'period', elem.periodElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalProps(json, 'period', elem.periodElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalValue(json, 'periodMax', elem.periodMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimalProps(json, 'periodMax', elem.periodMaxElement, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRRDFComposer.ComposeTimingRepeat(parent :  TRDFComplex; parentType, name : String; elem : TFhirTimingRepeat; index : integer);
+var
+  this : TRDFComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.predicate('fhir:'+parentType+'.'+name);
+    this.predicate('a', 'fhir:TimingRepeat');
+  end;
+  composeElement(this, 'TimingRepeat', name, elem, index);
+  if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirQuantity) {6} then
+    ComposeQuantity(this, 'TimingRepeat', 'boundsQuantity', TFhirQuantity(elem.bounds), -1)
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirRange) {6} then
+    ComposeRange(this, 'TimingRepeat', 'boundsRange', TFhirRange(elem.bounds), -1)
+  else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bounds is TFhirPeriod) {6} then
+    ComposePeriod(this, 'TimingRepeat', 'boundsPeriod', TFhirPeriod(elem.bounds), -1);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(this, 'TimingRepeat', 'count', elem.countElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(this, 'TimingRepeat', 'duration', elem.durationElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(this, 'TimingRepeat', 'durationMax', elem.durationMaxElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'TimingRepeat', 'durationUnits', elem.DurationUnitsElement, CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, -1);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(this, 'TimingRepeat', 'frequency', elem.frequencyElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInteger(this, 'TimingRepeat', 'frequencyMax', elem.frequencyMaxElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(this, 'TimingRepeat', 'period', elem.periodElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDecimal(this, 'TimingRepeat', 'periodMax', elem.periodMaxElement, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'TimingRepeat', 'periodUnits', elem.PeriodUnitsElement, CODES_TFhirUnitsOfTimeEnum, SYSTEMS_TFhirUnitsOfTimeEnum, -1);
+  if (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'TimingRepeat', 'when', elem.WhenElement, CODES_TFhirEventTimingEnum, SYSTEMS_TFhirEventTimingEnum, -1);
+end;
+
+function TFHIRXmlParser.ParseTiming(element : IXmlDomElement; path : string) : TFhirTiming;
+var
+  child : IXMLDOMElement;
+begin
+  result := TFhirTiming.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseTimingChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseTimingChild(element : TFhirTiming; path : string; child : IXmlDomElement) : boolean;
+begin
+  result := true;
+      if (child.baseName = 'event') then
+        element.eventList.Add(ParseDateTime(child, path+'/event')){y.2}
+      else if (child.baseName = 'repeat') then
+        element.repeat_ := ParseTimingRepeat(child, path+'/repeat') {b}
+      else if (child.baseName = 'code') then
+        element.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if Not ParseElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeTiming(xml : TXmlBuilder; name : String; elem : TFhirTiming);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeTimingChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeTimingChildren(xml : TXmlBuilder; elem : TFhirTiming);
+var
+  i : integer;
+begin
+  composeElementChildren(xml, elem);
+  if SummaryOption in [soFull, soSummary, soText, soData] then
+    for i := 0 to elem.eventList.Count - 1 do
+      ComposeDateTime(xml, 'event', elem.eventList[i]);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeTimingRepeat(xml, 'repeat', elem.repeat_);{x.2a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
+end;
+
+procedure TFHIRJsonParser.ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseTiming(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseTiming(jsn : TJsonObject) : TFhirTiming;
+begin
+  result := TFhirTiming.create;
+  try
+    ParseTimingProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming);
+begin
+    ParseElementProperties(jsn, result);
+      if jsn.has('event') or jsn.has('_event') then
+      iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], result.eventList, parseDateTime);
+    if jsn.has('repeat') then
+        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q}
+    if jsn.has('code') then
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElement(json, '', elem, true);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.eventList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.eventList.Count - 1 do
+    begin
+      ext := ext or ((elem.eventList[i].id <> '') or (elem.eventList[i].hasExtensionList) {no-comments or (elem.eventList[i].hasComments)});
+      val := val or (elem.eventList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('event');
+      for i := 0 to elem.eventList.Count - 1 do
+        ComposeDateTimeValue(json, '',elem.eventList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_event');
+      for i := 0 to elem.eventList.Count - 1 do
+        ComposeDateTimeProps(json, '',elem.eventList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeTimingRepeat(json, 'repeat', elem.repeat_); {a}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRRDFComposer.ComposeTiming(parent :  TRDFComplex; parentType, name : String; elem : TFhirTiming; index : integer);
+var
+  this : TRDFComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.predicate('fhir:'+parentType+'.'+name);
+    this.predicate('a', 'fhir:Timing');
+  end;
+  composeElement(this, 'Timing', name, elem, index);
+  if SummaryOption in [soFull, soSummary, soText, soData] then
+    for i := 0 to elem.eventList.Count - 1 do
+      ComposeDateTime(this, 'Timing', 'event', elem.eventList[i], i);
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeTimingRepeat(this, 'Timing', 'repeat', elem.repeat_Element, -1);{x.2c}
+  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeCodeableConcept(this, 'Timing', 'code', elem.codeElement, -1);{x.2c}
 end;
 
 function TFHIRXmlParser.ParseAccount(element : IXmlDomElement; path : string) : TFhirAccount;
@@ -23048,7 +23044,7 @@ begin
   begin
     json.valueArray('plan');
     for i := 0 to elem.planList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.planList[i]); {z - Reference(CarePlan|Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)}
+      ComposeReference{Resource}(json, '', elem.planList[i]); {z - Reference(CarePlan|Appointment|CommunicationRequest|DeviceRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
@@ -32745,17 +32741,17 @@ begin
       ComposeDeviceMetricCalibration(this, 'DeviceMetric', 'calibration', elem.calibrationList[i], i);
 end;
 
-function TFHIRXmlParser.ParseDeviceUseRequest(element : IXmlDomElement; path : string) : TFhirDeviceUseRequest;
+function TFHIRXmlParser.ParseDeviceRequest(element : IXmlDomElement; path : string) : TFhirDeviceRequest;
 var
   child : IXMLDOMElement;
 begin
-  result := TFhirDeviceUseRequest.create;
+  result := TFhirDeviceRequest.create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceUseRequestChild(result, path, child) then
+      if not ParseDeviceRequestChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -32767,7 +32763,7 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceUseRequestChild(element : TFhirDeviceUseRequest; path : string; child : IXmlDomElement) : boolean;
+function TFHIRXmlParser.ParseDeviceRequestChild(element : TFhirDeviceRequest; path : string; child : IXmlDomElement) : boolean;
 begin
   result := true;
       if (child.baseName = 'bodySiteCodeableConcept') then
@@ -32806,18 +32802,18 @@ begin
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceUseRequest(xml : TXmlBuilder; name : String; elem : TFhirDeviceUseRequest);
+procedure TFHIRXmlComposer.ComposeDeviceRequest(xml : TXmlBuilder; name : String; elem : TFhirDeviceRequest);
 begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
   xml.open(name);
-  composeDeviceUseRequestChildren(xml, elem);
+  composeDeviceRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceUseRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceUseRequest);
+procedure TFHIRXmlComposer.ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
 var
   i : integer;
 begin
@@ -32860,23 +32856,23 @@ begin
      ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum);
 end;
 
-procedure TFHIRJsonParser.ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceUseRequest(jsn)); {2}
+  ctxt.add(ParseDeviceRequest(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceUseRequest(jsn : TJsonObject) : TFhirDeviceUseRequest;
+function TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest;
 begin
-  result := TFhirDeviceUseRequest.create;
+  result := TFhirDeviceRequest.create;
   try
-    ParseDeviceUseRequestProperties(jsn, result);
+    ParseDeviceRequestProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceUseRequestProperties(jsn : TJsonObject; result : TFhirDeviceUseRequest);
+procedure TFHIRJsonParser.ParseDeviceRequestProperties(jsn : TJsonObject; result : TFhirDeviceRequest);
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('bodySiteCodeableConcept') {a4} then
@@ -32913,7 +32909,7 @@ begin
       result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum);
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceRequest(json : TJSONWriter; name : string; elem : TFhirDeviceRequest; noObj : boolean = false);
 var
   i : integer;
   ext : boolean;
@@ -33004,7 +33000,7 @@ begin
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, false);
 end;
 
-procedure TFHIRRDFComposer.ComposeDeviceUseRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseRequest; index : integer);
+procedure TFHIRRDFComposer.ComposeDeviceRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceRequest; index : integer);
 var
   this : TRDFComplex;
   i : integer;
@@ -33016,45 +33012,45 @@ begin
   else
   begin
     this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:DeviceUseRequest');
+    this.predicate('a', 'fhir:DeviceRequest');
   end;
-  composeDomainResource(this, 'DeviceUseRequest', name, elem, index);
+  composeDomainResource(this, 'DeviceRequest', name, elem, index);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySite is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'DeviceUseRequest', 'bodySiteCodeableConcept', TFhirCodeableConcept(elem.bodySite), -1)
+    ComposeCodeableConcept(this, 'DeviceRequest', 'bodySiteCodeableConcept', TFhirCodeableConcept(elem.bodySite), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySite is TFhirReference) {2} then
-    ComposeReference(this, 'DeviceUseRequest', 'bodySiteReference', TFhirReference(elem.bodySite), -1);
+    ComposeReference(this, 'DeviceRequest', 'bodySiteReference', TFhirReference(elem.bodySite), -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'DeviceUseRequest', 'status', elem.StatusElement, CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum, -1);
+     ComposeEnum(this, 'DeviceRequest', 'status', elem.StatusElement, CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirDevice}(this, 'DeviceUseRequest', 'device', elem.deviceElement, -1);{x.2c}
+    ComposeReference{TFhirDevice}(this, 'DeviceRequest', 'device', elem.deviceElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirEncounter}(this, 'DeviceUseRequest', 'encounter', elem.encounterElement, -1);{x.2c}
+    ComposeReference{TFhirEncounter}(this, 'DeviceRequest', 'encounter', elem.encounterElement, -1);{x.2c}
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(this, 'DeviceUseRequest', 'identifier', elem.identifierList[i], i);
+      ComposeIdentifier(this, 'DeviceRequest', 'identifier', elem.identifierList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.indicationList.Count - 1 do
-      ComposeCodeableConcept(this, 'DeviceUseRequest', 'indication', elem.indicationList[i], i);
+      ComposeCodeableConcept(this, 'DeviceRequest', 'indication', elem.indicationList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.notesList.Count - 1 do
-      ComposeString(this, 'DeviceUseRequest', 'notes', elem.notesList[i], i);
+      ComposeString(this, 'DeviceRequest', 'notes', elem.notesList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.prnReasonList.Count - 1 do
-      ComposeCodeableConcept(this, 'DeviceUseRequest', 'prnReason', elem.prnReasonList[i], i);
+      ComposeCodeableConcept(this, 'DeviceRequest', 'prnReason', elem.prnReasonList[i], i);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'DeviceUseRequest', 'orderedOn', elem.orderedOnElement, -1);{x.2c}
+    ComposeDateTime(this, 'DeviceRequest', 'orderedOn', elem.orderedOnElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'DeviceUseRequest', 'recordedOn', elem.recordedOnElement, -1);{x.2c}
+    ComposeDateTime(this, 'DeviceRequest', 'recordedOn', elem.recordedOnElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirPatient}(this, 'DeviceUseRequest', 'subject', elem.subjectElement, -1);{x.2c}
+    ComposeReference{TFhirPatient}(this, 'DeviceRequest', 'subject', elem.subjectElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirTiming) {6} then
-    ComposeTiming(this, 'DeviceUseRequest', 'timingTiming', TFhirTiming(elem.timing), -1)
+    ComposeTiming(this, 'DeviceRequest', 'timingTiming', TFhirTiming(elem.timing), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirPeriod) {6} then
-    ComposePeriod(this, 'DeviceUseRequest', 'timingPeriod', TFhirPeriod(elem.timing), -1)
+    ComposePeriod(this, 'DeviceRequest', 'timingPeriod', TFhirPeriod(elem.timing), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirDateTime) {6} then
-    ComposeDateTime(this, 'DeviceUseRequest', 'timingDateTime', TFhirDateTime(elem.timing), -1);
+    ComposeDateTime(this, 'DeviceRequest', 'timingDateTime', TFhirDateTime(elem.timing), -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'DeviceUseRequest', 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum, -1);
+     ComposeEnum(this, 'DeviceRequest', 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum, -1);
 end;
 
 function TFHIRXmlParser.ParseDeviceUseStatement(element : IXmlDomElement; path : string) : TFhirDeviceUseStatement;
@@ -70059,8 +70055,8 @@ begin
     result := ParseDeviceComponent(element, path+'/DeviceComponent')
   else if element.baseName = 'DeviceMetric' Then
     result := ParseDeviceMetric(element, path+'/DeviceMetric')
-  else if element.baseName = 'DeviceUseRequest' Then
-    result := ParseDeviceUseRequest(element, path+'/DeviceUseRequest')
+  else if element.baseName = 'DeviceRequest' Then
+    result := ParseDeviceRequest(element, path+'/DeviceRequest')
   else if element.baseName = 'DeviceUseStatement' Then
     result := ParseDeviceUseStatement(element, path+'/DeviceUseStatement')
   else if element.baseName = 'DiagnosticOrder' Then
@@ -70229,7 +70225,7 @@ begin
     frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource));
     frtDeviceComponent: ComposeDeviceComponent(xml, 'DeviceComponent', TFhirDeviceComponent(resource));
     frtDeviceMetric: ComposeDeviceMetric(xml, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceUseRequest: ComposeDeviceUseRequest(xml, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
+    frtDeviceRequest: ComposeDeviceRequest(xml, 'DeviceRequest', TFhirDeviceRequest(resource));
     frtDeviceUseStatement: ComposeDeviceUseStatement(xml, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
     frtDiagnosticOrder: ComposeDiagnosticOrder(xml, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
     frtDiagnosticReport: ComposeDiagnosticReport(xml, 'DiagnosticReport', TFhirDiagnosticReport(resource));
@@ -70360,8 +70356,8 @@ begin
     result := ParseDeviceComponent(jsn)
   else if s = 'DeviceMetric' Then
     result := ParseDeviceMetric(jsn)
-  else if s = 'DeviceUseRequest' Then
-    result := ParseDeviceUseRequest(jsn)
+  else if s = 'DeviceRequest' Then
+    result := ParseDeviceRequest(jsn)
   else if s = 'DeviceUseStatement' Then
     result := ParseDeviceUseStatement(jsn)
   else if s = 'DiagnosticOrder' Then
@@ -70498,7 +70494,7 @@ begin
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;
 
-function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFhirBase;
+function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;
 begin
    if (type_ = 'TFhirElement') then
     result := parseElement(jsn)
@@ -70520,10 +70516,10 @@ begin
     result := parseSignature(jsn)
   else if (type_ = 'TFhirSampledData') then
     result := parseSampledData(jsn)
-  else if (type_ = 'TFhirQuantity') then
-    result := parseQuantity(jsn)
   else if (type_ = 'TFhirPeriod') then
     result := parsePeriod(jsn)
+  else if (type_ = 'TFhirQuantity') then
+    result := parseQuantity(jsn)
   else if (type_ = 'TFhirAttachment') then
     result := parseAttachment(jsn)
   else if (type_ = 'TFhirRatio') then
@@ -70536,16 +70532,16 @@ begin
     result := parseCodeableConcept(jsn)
   else if (type_ = 'TFhirHumanName') then
     result := parseHumanName(jsn)
-  else if (type_ = 'TFhirContactPoint') then
-    result := parseContactPoint(jsn)
   else if (type_ = 'TFhirMeta') then
     result := parseMeta(jsn)
+  else if (type_ = 'TFhirContactPoint') then
+    result := parseContactPoint(jsn)
   else if (type_ = 'TFhirAddress') then
     result := parseAddress(jsn)
-  else if (type_ = 'TFhirTiming') then
-    result := parseTiming(jsn)
   else if (type_ = 'TFhirElementDefinition') then
     result := parseElementDefinition(jsn)
+  else if (type_ = 'TFhirTiming') then
+    result := parseTiming(jsn)
   else if (type_ = 'TFhirAccount') then
     result := parseAccount(jsn)
   else if (type_ = 'TFhirAllergyIntolerance') then
@@ -70598,8 +70594,8 @@ begin
     result := parseDeviceComponent(jsn)
   else if (type_ = 'TFhirDeviceMetric') then
     result := parseDeviceMetric(jsn)
-  else if (type_ = 'TFhirDeviceUseRequest') then
-    result := parseDeviceUseRequest(jsn)
+  else if (type_ = 'TFhirDeviceRequest') then
+    result := parseDeviceRequest(jsn)
   else if (type_ = 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(jsn)
   else if (type_ = 'TFhirDiagnosticOrder') then
@@ -70736,7 +70732,7 @@ begin
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
 
-function TFHIRXmlParser.ParseFragment(element : IXMLDOMElement) : TFhirBase;
+function TFHIRXmlParser.ParseFragment(element : IXMLDOMElement) : TFHIRObject;
 begin
    if SameText(element.NodeName, 'TFhirElement') then
     result := parseElement(element, element.nodeName)
@@ -70758,10 +70754,10 @@ begin
     result := parseSignature(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirSampledData') then
     result := parseSampledData(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirQuantity') then
-    result := parseQuantity(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirPeriod') then
     result := parsePeriod(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirQuantity') then
+    result := parseQuantity(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAttachment') then
     result := parseAttachment(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirRatio') then
@@ -70774,16 +70770,16 @@ begin
     result := parseCodeableConcept(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirHumanName') then
     result := parseHumanName(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirContactPoint') then
-    result := parseContactPoint(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirMeta') then
     result := parseMeta(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirContactPoint') then
+    result := parseContactPoint(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAddress') then
     result := parseAddress(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirTiming') then
-    result := parseTiming(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirElementDefinition') then
     result := parseElementDefinition(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirTiming') then
+    result := parseTiming(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAccount') then
     result := parseAccount(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirAllergyIntolerance') then
@@ -70836,8 +70832,8 @@ begin
     result := parseDeviceComponent(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDeviceMetric') then
     result := parseDeviceMetric(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirDeviceUseRequest') then
-    result := parseDeviceUseRequest(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirDeviceRequest') then
+    result := parseDeviceRequest(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDiagnosticOrder') then
@@ -70990,10 +70986,10 @@ begin
     result := parseSignature(jsn)
   else if (type_ = TFhirSampledData) then
     result := parseSampledData(jsn)
-  else if (type_ = TFhirQuantity) then
-    result := parseQuantity(jsn)
   else if (type_ = TFhirPeriod) then
     result := parsePeriod(jsn)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(jsn)
   else if (type_ = TFhirAttachment) then
     result := parseAttachment(jsn)
   else if (type_ = TFhirRatio) then
@@ -71006,16 +71002,16 @@ begin
     result := parseCodeableConcept(jsn)
   else if (type_ = TFhirHumanName) then
     result := parseHumanName(jsn)
-  else if (type_ = TFhirContactPoint) then
-    result := parseContactPoint(jsn)
   else if (type_ = TFhirMeta) then
     result := parseMeta(jsn)
+  else if (type_ = TFhirContactPoint) then
+    result := parseContactPoint(jsn)
   else if (type_ = TFhirAddress) then
     result := parseAddress(jsn)
-  else if (type_ = TFhirTiming) then
-    result := parseTiming(jsn)
   else if (type_ = TFhirElementDefinition) then
     result := parseElementDefinition(jsn)
+  else if (type_ = TFhirTiming) then
+    result := parseTiming(jsn)
   else
     raise Exception.create('Unknown Type');
 end;
@@ -71038,10 +71034,10 @@ begin
     result := parseSignature(element, name)
   else if (type_ = TFhirSampledData) then
     result := parseSampledData(element, name)
-  else if (type_ = TFhirQuantity) then
-    result := parseQuantity(element, name)
   else if (type_ = TFhirPeriod) then
     result := parsePeriod(element, name)
+  else if (type_ = TFhirQuantity) then
+    result := parseQuantity(element, name)
   else if (type_ = TFhirAttachment) then
     result := parseAttachment(element, name)
   else if (type_ = TFhirRatio) then
@@ -71054,26 +71050,26 @@ begin
     result := parseCodeableConcept(element, name)
   else if (type_ = TFhirHumanName) then
     result := parseHumanName(element, name)
-  else if (type_ = TFhirContactPoint) then
-    result := parseContactPoint(element, name)
   else if (type_ = TFhirMeta) then
     result := parseMeta(element, name)
+  else if (type_ = TFhirContactPoint) then
+    result := parseContactPoint(element, name)
   else if (type_ = TFhirAddress) then
     result := parseAddress(element, name)
-  else if (type_ = TFhirTiming) then
-    result := parseTiming(element, name)
   else if (type_ = TFhirElementDefinition) then
     result := parseElementDefinition(element, name)
+  else if (type_ = TFhirTiming) then
+    result := parseTiming(element, name)
   else
     raise Exception.create('Unknown Type');
 end;
 
-procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRBase);
+procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject);
 begin
-   if (base is TFhirDate) then
-    composeDate(xml, name,  TFhirDate(base))
-  else if (base is TFhirDateTime) then
+   if (base is TFhirDateTime) then
     composeDateTime(xml, name,  TFhirDateTime(base))
+  else if (base is TFhirDate) then
+    composeDate(xml, name,  TFhirDate(base))
   else if (base is TFhirString) then
     composeString(xml, name,  TFhirString(base))
   else if (base is TFhirInteger) then
@@ -71096,10 +71092,10 @@ begin
     composeOid(xml, name,  TFhirOid(base))
   else if (base is TFhirUuid) then
     composeUuid(xml, name,  TFhirUuid(base))
-  else if (base is TFhirUnsignedInt) then
-    composeUnsignedInt(xml, name,  TFhirUnsignedInt(base))
   else if (base is TFhirMarkdown) then
     composeMarkdown(xml, name,  TFhirMarkdown(base))
+  else if (base is TFhirUnsignedInt) then
+    composeUnsignedInt(xml, name,  TFhirUnsignedInt(base))
   else if (base is TFhirId) then
     composeId(xml, name,  TFhirId(base))
   else if (base is TFhirPositiveInt) then
@@ -71122,10 +71118,10 @@ begin
     composeSignature(xml, name,  TFhirSignature(base))
   else if (base is TFhirSampledData) then
     composeSampledData(xml, name,  TFhirSampledData(base))
-  else if (base is TFhirQuantity) then
-    composeQuantity(xml, name,  TFhirQuantity(base))
   else if (base is TFhirPeriod) then
     composePeriod(xml, name,  TFhirPeriod(base))
+  else if (base is TFhirQuantity) then
+    composeQuantity(xml, name,  TFhirQuantity(base))
   else if (base is TFhirAttachment) then
     composeAttachment(xml, name,  TFhirAttachment(base))
   else if (base is TFhirRatio) then
@@ -71138,16 +71134,12 @@ begin
     composeCodeableConcept(xml, name,  TFhirCodeableConcept(base))
   else if (base is TFhirHumanName) then
     composeHumanName(xml, name,  TFhirHumanName(base))
-  else if (base is TFhirContactPoint) then
-    composeContactPoint(xml, name,  TFhirContactPoint(base))
   else if (base is TFhirMeta) then
     composeMeta(xml, name,  TFhirMeta(base))
+  else if (base is TFhirContactPoint) then
+    composeContactPoint(xml, name,  TFhirContactPoint(base))
   else if (base is TFhirAddress) then
     composeAddress(xml, name,  TFhirAddress(base))
-  else if (base is TFhirTimingRepeat) then
-    composeTimingRepeat(xml, name,  TFhirTimingRepeat(base))
-  else if (base is TFhirTiming) then
-    composeTiming(xml, name,  TFhirTiming(base))
   else if (base is TFhirElementDefinitionSlicing) then
     composeElementDefinitionSlicing(xml, name,  TFhirElementDefinitionSlicing(base))
   else if (base is TFhirElementDefinitionBase) then
@@ -71162,6 +71154,10 @@ begin
     composeElementDefinitionMapping(xml, name,  TFhirElementDefinitionMapping(base))
   else if (base is TFhirElementDefinition) then
     composeElementDefinition(xml, name,  TFhirElementDefinition(base))
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(xml, name,  TFhirTimingRepeat(base))
+  else if (base is TFhirTiming) then
+    composeTiming(xml, name,  TFhirTiming(base))
   else if (base is TFhirAccount) then
     composeAccount(xml, name,  TFhirAccount(base))
   else if (base is TFhirAllergyIntoleranceReaction) then
@@ -71376,8 +71372,8 @@ begin
     composeDeviceMetricCalibration(xml, name,  TFhirDeviceMetricCalibration(base))
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(xml, name,  TFhirDeviceMetric(base))
-  else if (base is TFhirDeviceUseRequest) then
-    composeDeviceUseRequest(xml, name,  TFhirDeviceUseRequest(base))
+  else if (base is TFhirDeviceRequest) then
+    composeDeviceRequest(xml, name,  TFhirDeviceRequest(base))
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(xml, name,  TFhirDeviceUseStatement(base))
   else if (base is TFhirDiagnosticOrderEvent) then
@@ -71784,12 +71780,12 @@ begin
     raise Exception.create('Unknown Type '+base.className);
 end;
 
-procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRBase);
+procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
 begin
-   if (base is TFhirDate) then
-    composeDateValue(json, name, TFhirDate(base), false)
-  else if (base is TFhirDateTime) then
+   if (base is TFhirDateTime) then
     composeDateTimeValue(json, name, TFhirDateTime(base), false)
+  else if (base is TFhirDate) then
+    composeDateValue(json, name, TFhirDate(base), false)
   else if (base is TFhirString) then
     composeStringValue(json, name, TFhirString(base), false)
   else if (base is TFhirInteger) then
@@ -71812,10 +71808,10 @@ begin
     composeOidValue(json, name, TFhirOid(base), false)
   else if (base is TFhirUuid) then
     composeUuidValue(json, name, TFhirUuid(base), false)
-  else if (base is TFhirUnsignedInt) then
-    composeUnsignedIntValue(json, name, TFhirUnsignedInt(base), false)
   else if (base is TFhirMarkdown) then
     composeMarkdownValue(json, name, TFhirMarkdown(base), false)
+  else if (base is TFhirUnsignedInt) then
+    composeUnsignedIntValue(json, name, TFhirUnsignedInt(base), false)
   else if (base is TFhirId) then
     composeIdValue(json, name, TFhirId(base), false)
   else if (base is TFhirPositiveInt) then
@@ -71838,10 +71834,10 @@ begin
     composeSignature(json, name, TFhirSignature(base), false)
   else if (base is TFhirSampledData) then
     composeSampledData(json, name, TFhirSampledData(base), false)
-  else if (base is TFhirQuantity) then
-    composeQuantity(json, name, TFhirQuantity(base), false)
   else if (base is TFhirPeriod) then
     composePeriod(json, name, TFhirPeriod(base), false)
+  else if (base is TFhirQuantity) then
+    composeQuantity(json, name, TFhirQuantity(base), false)
   else if (base is TFhirAttachment) then
     composeAttachment(json, name, TFhirAttachment(base), false)
   else if (base is TFhirRatio) then
@@ -71854,16 +71850,12 @@ begin
     composeCodeableConcept(json, name, TFhirCodeableConcept(base), false)
   else if (base is TFhirHumanName) then
     composeHumanName(json, name, TFhirHumanName(base), false)
-  else if (base is TFhirContactPoint) then
-    composeContactPoint(json, name, TFhirContactPoint(base), false)
   else if (base is TFhirMeta) then
     composeMeta(json, name, TFhirMeta(base), false)
+  else if (base is TFhirContactPoint) then
+    composeContactPoint(json, name, TFhirContactPoint(base), false)
   else if (base is TFhirAddress) then
     composeAddress(json, name, TFhirAddress(base), false)
-  else if (base is TFhirTimingRepeat) then
-    composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
-  else if (base is TFhirTiming) then
-    composeTiming(json, name, TFhirTiming(base), false)
   else if (base is TFhirElementDefinitionSlicing) then
     composeElementDefinitionSlicing(json, name, TFhirElementDefinitionSlicing(base), false)
   else if (base is TFhirElementDefinitionBase) then
@@ -71878,6 +71870,10 @@ begin
     composeElementDefinitionMapping(json, name, TFhirElementDefinitionMapping(base), false)
   else if (base is TFhirElementDefinition) then
     composeElementDefinition(json, name, TFhirElementDefinition(base), false)
+  else if (base is TFhirTimingRepeat) then
+    composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
+  else if (base is TFhirTiming) then
+    composeTiming(json, name, TFhirTiming(base), false)
   else if (base is TFhirAccount) then
     composeAccount(json, name, TFhirAccount(base), false)
   else if (base is TFhirAllergyIntoleranceReaction) then
@@ -72092,8 +72088,8 @@ begin
     composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(json, name, TFhirDeviceMetric(base), false)
-  else if (base is TFhirDeviceUseRequest) then
-    composeDeviceUseRequest(json, name, TFhirDeviceUseRequest(base), false)
+  else if (base is TFhirDeviceRequest) then
+    composeDeviceRequest(json, name, TFhirDeviceRequest(base), false)
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(json, name, TFhirDeviceUseStatement(base), false)
   else if (base is TFhirDiagnosticOrderEvent) then
@@ -72533,7 +72529,7 @@ begin
     frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
     frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
     frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceUseRequest: ComposeDeviceUseRequest(json, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
+    frtDeviceRequest: ComposeDeviceRequest(json, 'DeviceRequest', TFhirDeviceRequest(resource));
     frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
     frtDiagnosticOrder: ComposeDiagnosticOrder(json, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
     frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
@@ -72640,7 +72636,7 @@ begin
     frtDevice: ComposeDevice(this, '', 'Device', TFhirDevice(resource), -1);
     frtDeviceComponent: ComposeDeviceComponent(this, '', 'DeviceComponent', TFhirDeviceComponent(resource), -1);
     frtDeviceMetric: ComposeDeviceMetric(this, '', 'DeviceMetric', TFhirDeviceMetric(resource), -1);
-    frtDeviceUseRequest: ComposeDeviceUseRequest(this, '', 'DeviceUseRequest', TFhirDeviceUseRequest(resource), -1);
+    frtDeviceRequest: ComposeDeviceRequest(this, '', 'DeviceRequest', TFhirDeviceRequest(resource), -1);
     frtDeviceUseStatement: ComposeDeviceUseStatement(this, '', 'DeviceUseStatement', TFhirDeviceUseStatement(resource), -1);
     frtDiagnosticOrder: ComposeDiagnosticOrder(this, '', 'DiagnosticOrder', TFhirDiagnosticOrder(resource), -1);
     frtDiagnosticReport: ComposeDiagnosticReport(this, '', 'DiagnosticReport', TFhirDiagnosticReport(resource), -1);

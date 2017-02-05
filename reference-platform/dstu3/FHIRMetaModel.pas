@@ -115,7 +115,7 @@ type
    * name, maybe a stated type, maybe an id, and either a value or child elements
    * (one or the other, but not both or neither)
    *}
-  TFHIRMMElement = class (TFHIRBase)
+  TFHIRMMElement = class (TFHIRObject)
   private
 	  FComments : TStringList;// not relevant for production, but useful in documentation
 	  FName : String;
@@ -169,7 +169,7 @@ type
     function hasComments : boolean;
     function hasValue : boolean;
     function hasIndex : boolean;
-    procedure GetChildrenByName(name : String; children : TFHIRObjectList); override;
+    procedure GetChildrenByName(name : String; children : TFHIRSelectionList); override;
     procedure getNamedChildrenWithWildcard(name : String; children : TAdvList<TFHIRMMElement>);
     function getNamedChild(name : String) : TFHIRMMElement;
     procedure getNamedChildren(name : String; list : TAdvList<TFHIRMMElement>);
@@ -187,7 +187,7 @@ type
     function hasPrimitiveValue : boolean; override;
     function fhirType : String; override;
     function primitiveValue : String; override;
-    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); override;
+    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); override;
    	procedure listChildren(list : TAdvList<TFHIRMMProperty>);
     function isEmpty : boolean;
   end;
@@ -276,7 +276,7 @@ type
 
     procedure composeElement(e : TFHIRMMElement); overload;
     procedure composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement); overload;
-    procedure composeList(path : String; list : TFHIRObjectList);
+    procedure composeList(path : String; list : TFHIRSelectionList);
     procedure primitiveValue(name : String; item : TFHIRMMElement);
     procedure composeElement(path : String; element : TFHIRMMElement); overload;
 
@@ -289,10 +289,10 @@ type
 
   TFHIRMMResourceLoader = class (TFHIRMMParserBase)
   private
-   	procedure parseChildren(path : String; obj : TFHIRBase; context : TFHIRMMElement);
+   	procedure parseChildren(path : String; obj : TFHIRObject; context : TFHIRMMElement);
   public
     function parse(r : TFHIRResource) : TFHIRMMElement; overload;
-    function parse(r : TFHIRBase) : TFHIRMMElement; overload;
+    function parse(r : TFHIRObject) : TFHIRMMElement; overload;
     procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String); overload; override;
   end;
 
@@ -301,7 +301,7 @@ type
     FRoot: TFHIRMMElement;
     procedure SetRoot(const Value: TFHIRMMElement);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function GetResourceType : TFhirResourceType; override;
   public
@@ -309,18 +309,18 @@ type
     Destructor Destroy; override;
 
     function isMetaDataBased : boolean; override;
-    class function CreateFromBase(context : TWorkerContext; base : TFHIRBase) : TFHIRCustomResource;
+    class function CreateFromBase(context : TWorkerContext; base : TFHIRObject) : TFHIRCustomResource;
 
     property Root : TFHIRMMElement read FRoot write SetRoot;
     procedure Assign(oSource : TAdvObject); override;
     function Link : TFHIRCustomResource; overload;
     function Clone : TFHIRCustomResource; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
-    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRBase>); override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); override;
   end;
 
 
@@ -820,7 +820,7 @@ begin
   result := FValue <> '';
 end;
 
-procedure TFHIRMMElement.getChildrenByName(name: String; children: TFHIRObjectList);
+procedure TFHIRMMElement.getChildrenByName(name: String; children: TFHIRSelectionList);
 var
   child : TFHIRMMElement;
 begin
@@ -901,7 +901,7 @@ begin
   result := GetType;
 end;
 
-procedure TFHIRMMElement.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
+procedure TFHIRMMElement.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRObject>);
 var
   child : TFHIRMMElement;
   tn : String;
@@ -2258,7 +2258,7 @@ end;
 
 procedure TFHIRMMJsonParser.composeElement(path : String; e : TFHIRMMElement; done : TAdvStringSet; child : TFHIRMMElement);
 var
-  list : TFHIRObjectList;
+  list : TFHIRSelectionList;
   islist: boolean;
 begin
   if child.elementProp <> nil then
@@ -2271,7 +2271,7 @@ begin
   else if not (done.contains(child.Name)) then
   begin
     done.add(child.Name);
-    list := TFHIRObjectList.create;
+    list := TFHIRSelectionList.create;
     try
       e.getChildrenByName(child.Name, list);
       composeList(path, list);
@@ -2281,15 +2281,15 @@ begin
   end;
 end;
 
-procedure TFHIRMMJsonParser.composeList(path : String; list : TFHIRObjectList);
+procedure TFHIRMMJsonParser.composeList(path : String; list : TFHIRSelectionList);
 var
   item, child : TFHIRMMElement;
   name : String;
   complex, prim : boolean;
-  o : TFHIRObject;
+  o : TFHIRSelection;
   done : TAdvStringSet;
 begin
-  item := list[0] as TFHIRMMElement;
+  item := list[0].value as TFHIRMMElement;
   // there will be at least one element
   name := item.Name;
   complex := true;
@@ -2299,7 +2299,7 @@ begin
     complex := false;
     for o in list do
     begin
-      item := o as TFHIRMMElement;
+      item := o.value as TFHIRMMElement;
       if (item.hasValue()) then
         prim := true;
       if (item.hasChildren()) {no-comments or (item.hasComments())} then
@@ -2310,7 +2310,7 @@ begin
       json.ValueArray(name);
       for o in list do
       begin
-        item := o as TFHIRMMElement;
+        item := o.value as TFHIRMMElement;
         if (item.hasValue()) then
           primitiveValue('', item)
         else
@@ -2325,7 +2325,7 @@ begin
     json.ValueArray(name);
     for o in list do
     begin
-      item := o as TFHIRMMElement;
+      item := o.value as TFHIRMMElement;
       if (item.hasChildren()) then
       begin
         json.ValueObject;
@@ -2423,7 +2423,7 @@ begin
   raise Exception.create('not implemented');
 end;
 
-function TFHIRMMResourceLoader.parse(r: TFHIRBase): TFHIRMMElement;
+function TFHIRMMResourceLoader.parse(r: TFHIRObject): TFHIRMMElement;
 var
   name, path : String;
   sd : TFHIRStructureDefinition;
@@ -2450,46 +2450,46 @@ begin
   end;
 end;
 
-procedure TFHIRMMResourceLoader.parseChildren(path: String; obj: TFHIRBase; context: TFHIRMMElement);
+procedure TFHIRMMResourceLoader.parseChildren(path: String; obj: TFHIRObject; context: TFHIRMMElement);
 var
   properties : TAdvList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   name : String;
-  list : TFHIRObjectList;
-  o : TFHIRObject;
+  list : TFHIRSelectionList;
+  o : TFHIRSelection;
   n : TFHIRMMElement;
 begin
   properties := getChildProperties(context.Prop, context.Name, context.Type_);
   try
     for prop in properties do
     begin
-      list := TFHIRObjectList.create;
+      list := TFHIRSelectionList.create;
       try
         obj.ListChildrenByName(prop.name, list);
         for o in list do
         begin
-          if (o <> nil) then
+          if (o.value <> nil) then
           begin
-            if o is TFHIRObjectText then
-              context.value := TFHIRObjectText(o).value
-            else if o is TFhirXHtmlNode then
+            if o.value is TFHIRObjectText then
+              context.value := TFHIRObjectText(o.value).value
+            else if o.value is TFhirXHtmlNode then
             begin
               n := TFHIRMMElement.create(prop.name, prop.Link);
-              n.Xhtml := TFhirXHtmlNode(o).link;
-              n.value := TFHIRXhtmlParser.compose(TFhirXHtmlNode(o));
+              n.Xhtml := TFhirXHtmlNode(o.value).link;
+              n.value := TFHIRXhtmlParser.compose(TFhirXHtmlNode(o.value));
               context.getChildren().add(n);
             end
-            else if o is TFHIRBase then
+            else if o.value is TFHIRObject then
             begin
               name := prop.name;
               if name.endsWith('[x]') then
-                name := name.substring(0, name.length - 3)+capitalize(TFHIRBase(o).fhirType);
+                name := name.substring(0, name.length - 3)+capitalize(TFHIRObject(o.value).fhirType);
               n := TFHIRMMElement.create(name, prop.Link);
               context.getChildren().add(n);
               // is this a resource boundary?
               if prop.isResource then
-                n.type_ := TFHIRBase(o).fhirType;
-              parseChildren(path+'.'+name, o as TFHIRBase, n);
+                n.type_ := TFHIRObject(o.value).fhirType;
+              parseChildren(path+'.'+name, o.value as TFHIRObject, n);
             end;
           end;
         end;
@@ -2510,7 +2510,7 @@ begin
   FRoot := root;
 end;
 
-class function TFHIRCustomResource.CreateFromBase(context : TWorkerContext; base: TFHIRBase): TFHIRCustomResource;
+class function TFHIRCustomResource.CreateFromBase(context : TWorkerContext; base: TFHIRObject): TFHIRCustomResource;
 var
   e : TFHIRMMElement;
   l : TFHIRMMResourceLoader;
@@ -2555,12 +2555,12 @@ begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.Clone:');
 end;
 
-function TFHIRCustomResource.equalsDeep(other: TFHIRBase): boolean;
+function TFHIRCustomResource.equalsDeep(other: TFHIRObject): boolean;
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.equalsDeep');
 end;
 
-function TFHIRCustomResource.equalsShallow(other: TFHIRBase): boolean;
+function TFHIRCustomResource.equalsShallow(other: TFHIRObject): boolean;
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.equalsShallow');
 end;
@@ -2570,12 +2570,12 @@ begin
   result := FRoot.fhirType;
 end;
 
-procedure TFHIRCustomResource.GetChildrenByName(child_name: string; list: TFHIRObjectList);
+procedure TFHIRCustomResource.GetChildrenByName(child_name: string; list: TFHIRSelectionList);
 begin
   FRoot.GetChildrenByName(child_name, list);
 end;
 
-procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRBase>);
+procedure TFHIRCustomResource.getProperty(name: String; checkValid: boolean; list: TAdvList<TFHIRObject>);
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.getProperty');
 end;
@@ -2595,7 +2595,7 @@ begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.ListProperties');
 end;
 
-function TFHIRCustomResource.makeProperty(propName: string): TFHIRObject;
+function TFHIRCustomResource.createPropertyValue(propName: string): TFHIRObject;
 begin
   raise Exception.Create('Not done yet: TFHIRCustomResource.makeProperty');
 end;

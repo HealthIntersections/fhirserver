@@ -797,8 +797,8 @@ var
   b, e : integer;
   code, value : String;
   qry : TFHIRExpressionEngine;
-  o : TFHIRObject;
-  results : TFHIRBaseList;
+  o : TFHIRSelection;
+  results : TFHIRSelectionList;
 begin
   while url.Contains('{{') do
   begin
@@ -816,8 +816,8 @@ begin
           value := '';
           for o in results do
           begin
-            if o is TFHIRPrimitiveType then
-              CommaAdd(value, TFHIRPrimitiveType(o).StringValue)
+            if o.value is TFHIRPrimitiveType then
+              CommaAdd(value, TFHIRPrimitiveType(o.value).StringValue)
             else
               raise Exception.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
           end;

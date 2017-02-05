@@ -36,7 +36,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2015-12-21T14:12:27+11:00
+// FHIR v1.0.2 generated 2016-05-27T22:57:07+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -71,7 +71,7 @@ Type
     procedure buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    procedure buildIndexesForDeviceUseRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDiagnosticOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -340,7 +340,7 @@ begin
   indexes.add('CarePlan', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activitycode', 'Detail type of activity', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'activitydate', 'Specified date occurs within period specified by CarePlan.activity.timingSchedule', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
-  indexes.add('CarePlan', 'activityreference', 'Activity details defined in specific resource', SearchParamTypeREFERENCE, ['Appointment', 'Order', 'ReferralRequest', 'ProcessRequest', 'NutritionOrder', 'VisionPrescription', 'DiagnosticOrder', 'ProcedureRequest', 'DeviceUseRequest', 'MedicationOrder', 'CommunicationRequest', 'SupplyRequest'], '', SearchXpathUsageNormal);
+  indexes.add('CarePlan', 'activityreference', 'Activity details defined in specific resource', SearchParamTypeREFERENCE, ['Appointment', 'Order', 'ReferralRequest', 'ProcessRequest', 'NutritionOrder', 'VisionPrescription', 'ProcedureRequest', 'DiagnosticOrder', 'MedicationOrder', 'DeviceRequest', 'CommunicationRequest', 'SupplyRequest'], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'condition', 'Health issues this plan addresses', SearchParamTypeREFERENCE, ['Condition'], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'date', 'Time period plan covers', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
   indexes.add('CarePlan', 'goal', 'Desired outcome of plan', SearchParamTypeREFERENCE, ['Goal'], '', SearchXpathUsageNormal);
@@ -399,7 +399,7 @@ begin
   indexes.add('ClinicalImpression', 'finding', 'Specific text or code for finding', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'investigation', 'Record of a specific investigation', SearchParamTypeREFERENCE, ['FamilyMemberHistory', 'Observation', 'DiagnosticReport', 'QuestionnaireResponse'], '', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'patient', 'The patient being assessed', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
-  indexes.add('ClinicalImpression', 'plan', 'Plan of action after assessment', SearchParamTypeREFERENCE, ['Appointment', 'Order', 'ReferralRequest', 'ProcessRequest', 'VisionPrescription', 'DiagnosticOrder', 'ProcedureRequest', 'DeviceUseRequest', 'SupplyRequest', 'CarePlan', 'NutritionOrder', 'MedicationOrder', 'CommunicationRequest'], '', SearchXpathUsageNormal);
+  indexes.add('ClinicalImpression', 'plan', 'Plan of action after assessment', SearchParamTypeREFERENCE, ['Appointment', 'Order', 'ReferralRequest', 'ProcessRequest', 'VisionPrescription', 'ProcedureRequest', 'DiagnosticOrder', 'SupplyRequest', 'CarePlan', 'NutritionOrder', 'MedicationOrder', 'DeviceRequest', 'CommunicationRequest'], '', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'previous', 'Reference to last assessment', SearchParamTypeREFERENCE, ['ClinicalImpression'], '', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'problem', 'General assessment of patient state', SearchParamTypeREFERENCE, ['Condition', 'AllergyIntolerance'], '', SearchXpathUsageNormal);
   indexes.add('ClinicalImpression', 'resolved', 'Diagnoses/conditions resolved since previous assessment', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
@@ -704,19 +704,19 @@ begin
   indexes.add('DeviceMetric', 'type', 'The component type', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
 end;
 
-procedure TFHIRIndexBuilder.buildIndexesForDeviceUseRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+procedure TFHIRIndexBuilder.buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
-  indexes.add('DeviceUseRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', 'device', 'Device requested', SearchParamTypeREFERENCE, ['Device'], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
-  indexes.add('DeviceUseRequest', 'subject', 'Search by subject', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', 'device', 'Device requested', SearchParamTypeREFERENCE, ['Device'], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', 'patient', 'Search by subject - a patient', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', 'subject', 'Search by subject', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -783,7 +783,7 @@ begin
   indexes.add('DiagnosticReport', 'issued', 'When the report was issued', SearchParamTypeDATE, [], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticReport', 'patient', 'The subject of the report if a patient', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticReport', 'performer', 'Who was the source of the report (organization)', SearchParamTypeREFERENCE, ['Practitioner', 'Organization'], '', SearchXpathUsageNormal);
-  indexes.add('DiagnosticReport', 'request', 'Reference to the test or procedure request.', SearchParamTypeREFERENCE, ['ReferralRequest', 'DiagnosticOrder', 'ProcedureRequest'], '', SearchXpathUsageNormal);
+  indexes.add('DiagnosticReport', 'request', 'Reference to the test or procedure request.', SearchParamTypeREFERENCE, ['ReferralRequest', 'ProcedureRequest', 'DiagnosticOrder'], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticReport', 'result', 'Link to an atomic result (observation resource)', SearchParamTypeREFERENCE, ['Observation'], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticReport', 'specimen', 'The specimen details', SearchParamTypeREFERENCE, ['Specimen'], '', SearchXpathUsageNormal);
   indexes.add('DiagnosticReport', 'status', 'The status of the report', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
@@ -1243,7 +1243,7 @@ begin
   indexes.add('Media', 'identifier', 'Identifier(s) for the image', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('Media', 'operator', 'The person who generated the image', SearchParamTypeREFERENCE, ['Practitioner'], '', SearchXpathUsageNormal);
   indexes.add('Media', 'patient', 'Who/What this Media is a record of', SearchParamTypeREFERENCE, ['Patient'], '', SearchXpathUsageNormal);
-  indexes.add('Media', 'subject', 'Who/What this Media is a record of', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Specimen', 'Device', 'Patient'], '', SearchXpathUsageNormal);
+  indexes.add('Media', 'subject', 'Who/What this Media is a record of', SearchParamTypeREFERENCE, ['Practitioner', 'Specimen', 'Group', 'Device', 'Patient'], '', SearchXpathUsageNormal);
   indexes.add('Media', 'subtype', 'The type of acquisition equipment/process', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('Media', 'type', 'photo | video | audio', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
   indexes.add('Media', 'view', 'Imaging view, e.g. Lateral or Antero-posterior', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
@@ -2164,7 +2164,7 @@ begin
   buildIndexesForDevice(Indexes, compartments);
   buildIndexesForDeviceComponent(Indexes, compartments);
   buildIndexesForDeviceMetric(Indexes, compartments);
-  buildIndexesForDeviceUseRequest(Indexes, compartments);
+  buildIndexesForDeviceRequest(Indexes, compartments);
   buildIndexesForDeviceUseStatement(Indexes, compartments);
   buildIndexesForDiagnosticOrder(Indexes, compartments);
   buildIndexesForDiagnosticReport(Indexes, compartments);

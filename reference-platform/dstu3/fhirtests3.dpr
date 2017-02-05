@@ -118,7 +118,9 @@ uses
   FHIRPath in 'FHIRPath.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   ShellSupport in '..\support\ShellSupport.pas',
-  DifferenceEngine in 'DifferenceEngine.pas';
+  DifferenceEngine in 'DifferenceEngine.pas',
+  DifferenceEngineTests in 'DifferenceEngineTests.pas',
+  FHIRPathTests in 'tests\FHIRPathTests.pas';
 
 var
   s: String;
