@@ -301,22 +301,20 @@ end;
 
 procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource);
 begin
-  if (not rs.Required) then
-    b.append('optional ');
   b.append(rs.Context);
   if (rs.Element <> '') then
   begin
     b.append('.');
     b.append(rs.Element);
   end;
-  if (rs.ListMode <> MapListModeNull) then
-  begin
-    b.append(' ');
-    if (rs.ListMode = MapListModeShare) then
-      b.append('only_one')
-    else
-      b.append(CODES_TFhirMapListModeEnum[rs.ListMode]);
-  end;
+//  if (rs.ListMode <> MapListModeNull) then
+//  begin
+//    b.append(' ');
+//    if (rs.ListMode = MapListModeShare) then
+//      b.append('only_one')
+//    else
+//      b.append(CODES_TFhirMapListModeEnum[rs.ListMode]);
+//  end;
   if (rs.Variable <> '') then
   begin
     b.append(' as ');
@@ -338,7 +336,7 @@ procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIR
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
-  lm : TFhirMapListModeEnum;
+//  lm : TFhirMapListModeEnum;
 begin
   b.append(rt.Context);
   if (rt.Element <> '')  then
@@ -382,17 +380,17 @@ begin
     b.append(' as ');
     b.append(rt.Variable);
   end;
-  for lm := low(TFhirMapListModeEnum) to high(TFhirMapListModeEnum) do
-    if lm in rt.listMode then
-    begin
-      b.append(' ');
-      b.append(CODES_TFhirMapListModeEnum[lm]);
-      if (lm = MapListModeShare) then
-      begin
-        b.append(' ');
-        b.append(rt.ListRuleId);
-      end;
-    end;
+//  for lm := low(TFhirMapListModeEnum) to high(TFhirMapListModeEnum) do
+//    if lm in rt.listMode then
+//    begin
+//      b.append(' ');
+//      b.append(CODES_TFhirMapListModeEnum[lm]);
+//      if (lm = MapListModeShare) then
+//      begin
+//        b.append(' ');
+//        b.append(rt.ListRuleId);
+//      end;
+//    end;
 end;
 
 procedure TFHIRStructureMapUtilities.renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
@@ -886,12 +884,7 @@ var
   node : TFHIRExpressionNode;
 begin
   source := rule.sourceList.Append;
-  if (lexer.hasToken('optional')) then
-    lexer.next()
-  else
-    source.Required := true;
   source.Context := lexer.take();
-  source.contextType := MapContextTypeVariable;
   if (lexer.hasToken('.')) then
   begin
     lexer.token('.');
@@ -900,11 +893,11 @@ begin
   if StringArrayExistsInsensitive(['first', 'last', 'only_one'], lexer.current) then
     if (lexer.current = 'only_one') then
     begin
-      source.ListMode := MapListModeShare;
+//      source.ListMode := MapListModeShare;
       lexer.take();
     end
     else
-      source.ListMode := TFhirMapListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapListModeEnum));
+      ; // source.ListMode := TFhirMapListModeEnum(fromEnum(lexer.take(), CODES_TFhirMapListModeEnum));
   if (lexer.hasToken('as')) then
   begin
     lexer.take();
@@ -996,14 +989,14 @@ begin
   begin
     if (lexer.current = 'share') then
     begin
-      target.listMode := target.listMode + [MapListModeSHARE];
+//      target.listMode := target.listMode + [MapListModeSHARE];
       lexer.next();
       target.ListRuleId := lexer.take();
     end
     else if (lexer.current = 'first') then
-      target.listMode := target.listMode + [MapListModeFirst]
+//      target.listMode := target.listMode + [MapListModeFirst]
     else
-      target.listMode := target.listMode + [MapListModeLAST];
+      target.listMode := target.listMode; // + [MapListModeLAST];
     lexer.next();
   end;
 end;

@@ -2168,6 +2168,9 @@ begin
           if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
             summaryStatus := soCount;
 
+          bundle.total := inttostr(FConnection.CountSQL('Select count(*) from Versions, Ids, Sessions, SearchEntries, Types '+
+                'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id)+1);
+
           if (summaryStatus <> soCount) then
           begin
             if (count < 1) then
@@ -3477,7 +3480,7 @@ begin
   else
   begin
     key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+resourceName+'''');
-    assert(key > 0);
+    assert(key > 0, 'Unable to find resource type '+resourceName);
   end;
   p := TParseMap.create(params);
   result := TMatchingResourceList.Create;

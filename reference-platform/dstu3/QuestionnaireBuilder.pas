@@ -303,7 +303,7 @@ begin
     FQuestionnaire.Date := profile.Date.link;
     FQuestionnaire.publisher := profile.Publisher;
     FQuestionnaire.ItemList.Add(TFHIRQuestionnaireItem.Create);
-    FQuestionnaire.itemList[0].conceptList.AddAll(profile.keywordList);
+    FQuestionnaire.itemList[0].codeList.AddAll(profile.keywordList);
   end;
 
   if FAnswers <> nil then
@@ -1182,7 +1182,6 @@ begin
     itemTypeInteger: if value is TFhirInteger then result := value.link as TFhirType;
     itemTypeDate: if value is TFhirDate then result := value.link as TFhirType;
     itemTypeDateTime: if value is TFhirDateTime then result := value.link as TFhirType;
-    itemTypeInstant: if value is TFhirInstant then result := value.link as TFhirType;
     itemTypeTime: if value is TFhirTime then result := value.link as TFhirType;
     itemTypeString:
       if value is TFhirString then
@@ -1445,7 +1444,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.setExtensionString(TYPE_EXTENSION, 'instant');
-  addQuestion(group, itemTypeInstant, path, 'value', group.text, required, answerGroups);
+  addQuestion(group, ItemTypeDateTime, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';

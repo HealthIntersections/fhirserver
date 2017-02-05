@@ -2195,7 +2195,9 @@ public class DelphiGenerator {
 
     String s = getElementName(e.getName());
     String sumSet = "";
-    if (s.equals("id") || path == null || path.startsWith("Bundle") || path.startsWith("Parameters") || definitions.hasBaseType(path) )
+    if (s.equals("total") && path.startsWith("Bundle"))
+      sumSet = "soFull, soSummary, soText, soData, soCount";
+    else if (s.equals("id") || path == null || path.startsWith("Bundle") || path.startsWith("Parameters") || definitions.hasBaseType(path) )
       sumSet = "soFull, soSummary, soText, soData";
     else if ((s.equals("text") && path.equals("DomainResource")) || (path.equals("Narrative")) )
       sumSet = "soFull, soText";

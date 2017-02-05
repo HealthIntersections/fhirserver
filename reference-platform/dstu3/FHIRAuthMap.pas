@@ -30,6 +30,7 @@ const
     tcOther , // frtCapabilityStatement
     tcClinical , // frtCarePlan
     tcClinical , // frtCareTeam
+    tcOther , // frtCareTeam
     tcFinancial , // frtClaim
     tcFinancial , // frtClaimResponse
     tcClinical , // frtClinicalImpression
