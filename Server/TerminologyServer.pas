@@ -668,7 +668,7 @@ begin
       end;
     end;
     if not req.exact then
-      raise Exception.Create('Only ''machine'' is supported for mode');
+      raise Exception.Create('Only ''exact=true'' is supported at present');
     exp := TSnomedServices(cs).parseExpression(s);
     try
       list := TSnomedServices(cs).condenseExpression(exp);
