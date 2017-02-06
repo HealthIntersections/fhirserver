@@ -125,7 +125,6 @@ Type
     procedure addHumanNameQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addIdRefQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addIdentifierQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
-    procedure addInstantQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addIntegerQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addPeriodQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addQuantityQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -138,7 +137,7 @@ Type
     procedure addTimeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure addUriQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 
-    function processAnswerGroup(group : TFhirQuestionnaireResponseItem; context : TFhirBase; defn :  TProfileDefinition) : boolean;
+    function processAnswerGroup(group : TFhirQuestionnaireResponseItem; context : TFHIRObject; defn :  TProfileDefinition) : boolean;
 
     procedure processDataType(profile : TFHirStructureDefinition; group: TFHIRQuestionnaireItem; element: TFhirElementDefinition; path: String; t: TFhirElementDefinitionType; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
     procedure buildQuestion(group : TFHIRQuestionnaireItem; profile : TFHirStructureDefinition; element : TFhirElementDefinition; path : String; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -242,20 +241,20 @@ procedure TQuestionnaireBuilder.processExisting(path : String; answerGroups, nAn
 var
   ag : TFhirQuestionnaireResponseItem;
   ans: TFhirQuestionnaireResponseItem;
-  children: TFHIRObjectList;
-  ch : TFHIRObject;
+  children: TFHIRSelectionList;
+  ch : TFHIRSelection;
 begin
   // processing existing data
   for ag in answerGroups do
   begin
-    children := TFHIRObjectList.Create;
+    children := TFHIRSelectionList.Create;
     try
       TFHIRObject(ag.tag).ListChildrenByName(tail(path), children);
       for ch in children do
-        if ch <> nil then
+        if ch.value <> nil then
         begin
           ans := ag.itemList.Append;
-          ans.Tag := ch.Link;
+          ans.Tag := ch.value.Link;
           nAnswers.add(ans.link);
         end;
     finally
@@ -590,14 +589,14 @@ begin
       result := qg;
 end;
 
-function TQuestionnaireBuilder.processAnswerGroup(group : TFhirQuestionnaireResponseItem; context : TFhirBase; defn :  TProfileDefinition) : boolean;
+function TQuestionnaireBuilder.processAnswerGroup(group : TFhirQuestionnaireResponseItem; context : TFHIRObject; defn :  TProfileDefinition) : boolean;
 var
   g, g1 : TFhirQuestionnaireResponseItem;
   q : TFhirQuestionnaireResponseItem;
   a : TFhirQuestionnaireResponseItemAnswer;
   d : TProfileDefinition;
   t : TFhirElementDefinitionType;
-  o : TFHIRBase;
+  o : TFHIRObject;
 begin
   result := false;
 
@@ -1118,8 +1117,6 @@ begin
     addDecimalQuestions(group, element, path, required, answerGroups)
   else if (t.code = 'dateTime') or (t.code = 'date') then
     addDateTimeQuestions(group, element, path, required, answerGroups)
-  else if (t.code = 'instant') then
-    addInstantQuestions(group, element, path, required, answerGroups)
   else if (t.code = 'time') then
     addTimeQuestions(group, element, path, required, answerGroups)
   else if (t.code = 'CodeableConcept') then
@@ -1237,8 +1234,8 @@ function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : 
 var
   ag : TFhirQuestionnaireResponseItem;
   aq : TFhirQuestionnaireResponseItem;
-  children : TFHIRObjectList;
-  child : TFHIRObject;
+  children : TFHIRSelectionList;
+  child : TFHIRSelection;
   vse : TFhirValueSet;
 begin
   try
@@ -1291,19 +1288,19 @@ begin
     begin
       for ag in answerGroups do
       begin
-        children := TFHIRObjectList.Create;
+        children := TFHIRSelectionList.Create;
         try
           aq := nil;
 
           if isPrimitive(ag.Tag) then
-            children.add(ag.Tag.Link)
+            children.add(ag.Tag.Link as TFHIRObject)
           else if ag.Tag is TFHIREnum then
             children.add(TFHIRString.create(TFHIREnum(ag.Tag).value))
           else
             TFHIRObject(ag.Tag).ListChildrenByName(id, children);
 
           for child in children do
-            if child <> nil then
+            if child.value <> nil then
             begin
               if (aq = nil) then
               begin
@@ -1311,7 +1308,7 @@ begin
                 aq.LinkId := result.linkId;
                 aq.Text := result.text;
               end;
-              aq.answerList.append.value := convertType(child, af, vs, result.linkId);
+              aq.answerList.append.value := convertType(child.value, af, vs, result.linkId);
             end;
         finally
           children.Free;
@@ -1434,17 +1431,6 @@ var
 begin
   group.setExtensionString(TYPE_EXTENSION, 'datetime');
   addQuestion(group, itemTypeDateTime, path, 'value', group.text, required, answerGroups);
-  group.text := '';
-  for ag in answerGroups do
-    ag.text := '';
-end;
-
-procedure TQuestionnaireBuilder.addInstantQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
-var
-  ag : TFhirQuestionnaireResponseItem;
-begin
-  group.setExtensionString(TYPE_EXTENSION, 'instant');
-  addQuestion(group, ItemTypeDateTime, path, 'value', group.text, required, answerGroups);
   group.text := '';
   for ag in answerGroups do
     ag.text := '';

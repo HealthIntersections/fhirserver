@@ -77,7 +77,7 @@ type
     FMatchList : TAdvList<TFHIRAnnotation>;
     FExpression : TFHIRExpressionNode;
     FFocusPath : String;
-    FFocusObjects : TAdvList<TFHIRBase>;
+    FFocusObjects : TAdvList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
 
     FLock : TCriticalSection;
@@ -86,8 +86,8 @@ type
     FWebServer : TIdHTTPServer;
     FWebCache : TAdvMap<TWebBuffer>;
 
-    function generateBasicCard(path: String; focus: TFHIRBase): TCDSHookCard;
-    procedure generateTypeCard(focus, next: TFHIRBase);
+    function generateBasicCard(path: String; focus: TFHIRObject): TCDSHookCard;
+    procedure generateTypeCard(focus, next: TFHIRObject);
     function differentObjects(focus: array of TFHIRObject): boolean;
     procedure queryCDS(coding : TFHIRCoding; context : TFhirResource);
     procedure queryCDSPatient(coding : TFHIRCoding; patient : TFhirPatient);
@@ -209,7 +209,7 @@ begin
   VisualiserMode := TVisualiserMode(PageControl1.TabIndex+1);
   FCards := TAdvList<TCDSHookCard>.create;
   FCDSErrors := TStringList.Create;
-  FFocusObjects := TAdvList<TFHIRBase>.create;
+  FFocusObjects := TAdvList<TFHIRObject>.create;
 
   FLock := TCriticalSection.Create('vis.web');
   FWebCache := TAdvMap<TWebBuffer>.create;
@@ -405,11 +405,11 @@ begin
   end;
 end;
 
-function TFHIRVisualizer.generateBasicCard(path: String; focus: TFHIRBase) : TCDSHookCard;
+function TFHIRVisualizer.generateBasicCard(path: String; focus: TFHIRObject) : TCDSHookCard;
 begin
   result := TCDSHookCard.Create;
   try
-    result.summary := path+' : '+TFHIRBase(focus).FhirType;
+    result.summary := path+' : '+TFHIRObject(focus).FhirType;
     result.sourceLabel := 'Object Model';
 
     result.Link;
@@ -418,7 +418,7 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.generateTypeCard(focus, next: TFHIRBase);
+procedure TFHIRVisualizer.generateTypeCard(focus, next: TFHIRObject);
 var
   att : TFhirAttachment;
   md : TFhirMarkdown;
@@ -504,8 +504,8 @@ begin
     FFocusPath := path;
     FFocusObjects.clear;
     for f in focus do
-      if f is TFHIRBase then
-      FFocusObjects.Add(TFHIRBase(f).Link);
+      if f is TFHIRObject then
+      FFocusObjects.Add(TFHIRObject(f).Link);
     FLock.Lock;
     try
       FCards.Clear;

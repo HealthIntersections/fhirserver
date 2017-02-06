@@ -37,6 +37,7 @@ type
     pnlMessage: TPanel;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
+    ToolButton4: TToolButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -66,6 +67,7 @@ type
     procedure mPathEnter(Sender: TObject);
     procedure mPathChange(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure ToolButton4Click(Sender: TObject);
   private
     { Private declarations }
     FMessageShort, FMessageLong : String;
@@ -352,6 +354,11 @@ end;
 procedure TFHIRToolbox.ToolButton2Click(Sender: TObject);
 begin
   FNpp.FuncExtractPath;
+end;
+
+procedure TFHIRToolbox.ToolButton4Click(Sender: TObject);
+begin
+  _FuncDifference;
 end;
 
 procedure TFHIRToolbox.tbConnectClick(Sender: TObject);

@@ -53,10 +53,10 @@ type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFHIRRequest;
 
-    procedure generateByProfile(res : TFHIRDomainResource; e : TFHIRBase; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
+    procedure generateByProfile(res : TFHIRDomainResource; e : TFHIRObject; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
     function getChildrenForPath(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinitionList;
     procedure inject(res : TFHIRDomainResource; x : TFHIRXhtmlNode; status : TFhirNarrativeStatusEnum);
-    procedure renderLeaf(res : TFHIRResource; e : TFHIRBase; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+    procedure renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
     procedure readDisplayHints(defn : TFhirElementDefinition; hints : TDictionary<String, String>);
     function getElementDefinition(elements : TFhirElementDefinitionList; path : String) : TFhirElementDefinition;
     function exemptFromRendering(child : TFhirElementDefinition) : boolean;
@@ -163,7 +163,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.generateByProfile(res : TFHIRDomainResource; e : TFHIRBase; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
+procedure TNarrativeGenerator.generateByProfile(res : TFHIRDomainResource; e : TFHIRObject; allElements : TFhirElementDefinitionList; defn : TFhirElementDefinition; children : TFhirElementDefinitionList; x : TFHIRXhtmlNode; path : String; showCodeDetails : boolean);
 var
   i : integer;
   iter : TFHIRPropertyIterator;
@@ -319,18 +319,18 @@ procedure TNarrativeGenerator.addColumnValues(res : TFHIRResource; tr : TFHIRXht
 var
   i : integer;
   e : TFhirElementDefinition;
-  list : TFHIRObjectList;
+  list : TFHIRSelectionList;
 begin
   for i := 0 to grandChildren.Count - 1 do
   begin
     e := grandChildren[i];
-    list := TFHIRObjectList.Create;
+    list := TFHIRSelectionList.Create;
     try
       v.ListChildrenByName(tail(e.path), list);
       if (list.Count = 0) then
         tr.addTag('td').addText(' ')
       else
-        renderLeaf(res, list[0] as TFhirElement, e, tr.addTag('td'), false, showCodeDetails, displayHints);
+        renderLeaf(res, list[0].value as TFhirElement, e, tr.addTag('td'), false, showCodeDetails, displayHints);
     finally
       list.Free;
     end;
@@ -421,7 +421,7 @@ begin
   end;
 end;
 
-procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRBase; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
+procedure TNarrativeGenerator.renderLeaf(res : TFHIRResource; e : TFHIRObject; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; title, showCodeDetails : boolean; displayHints : TDictionary<String, String>);
 var
   p : TFHIRPeriod;
   r : TFhirReference;

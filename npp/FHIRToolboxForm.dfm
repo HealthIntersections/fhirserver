@@ -3291,8 +3291,15 @@ inherited FHIRToolbox: TFHIRToolbox
       ImageIndex = 9
       OnClick = ToolButton14Click
     end
-    object ToolButton20: TToolButton
+    object ToolButton4: TToolButton
       Left = 123
+      Top = 0
+      Hint = 'Make Patch'
+      Caption = 'ToolButton4'
+      OnClick = ToolButton4Click
+    end
+    object ToolButton20: TToolButton
+      Left = 146
       Top = 0
       Width = 8
       Caption = 'ToolButton20'
@@ -3300,7 +3307,7 @@ inherited FHIRToolbox: TFHIRToolbox
       Style = tbsSeparator
     end
     object ToolButton15: TToolButton
-      Left = 131
+      Left = 154
       Top = 0
       Hint = 'Find the path in this document'
       Caption = 'ToolButton15'
@@ -3308,7 +3315,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = ToolButton15Click
     end
     object ToolButton1: TToolButton
-      Left = 154
+      Left = 177
       Top = 0
       Hint = 'Debug Path Query'
       Caption = 'ToolButton1'
@@ -3316,7 +3323,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = ToolButton1Click
     end
     object ToolButton2: TToolButton
-      Left = 177
+      Left = 200
       Top = 0
       Hint = 'Extract the current path for the cursor'
       Caption = 'ToolButton2'
@@ -3324,7 +3331,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = ToolButton2Click
     end
     object ToolButton8: TToolButton
-      Left = 200
+      Left = 223
       Top = 0
       Width = 8
       Caption = 'ToolButton8'
@@ -3332,7 +3339,7 @@ inherited FHIRToolbox: TFHIRToolbox
       Style = tbsSeparator
     end
     object cbxServers: TComboBox
-      Left = 208
+      Left = 231
       Top = 0
       Width = 135
       Height = 21
@@ -3341,7 +3348,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnChange = cbxServersChange
     end
     object tbConnect: TToolButton
-      Left = 343
+      Left = 366
       Top = 0
       Hint = 'Connect to Server'
       Caption = 'tbConnect'
@@ -3349,7 +3356,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbConnectClick
     end
     object ToolButton3: TToolButton
-      Left = 366
+      Left = 389
       Top = 0
       Width = 8
       Caption = 'ToolButton3'
@@ -3357,36 +3364,35 @@ inherited FHIRToolbox: TFHIRToolbox
       Style = tbsSeparator
     end
     object ToolButton9: TToolButton
-      Left = 374
+      Left = 397
       Top = 0
       Hint = 'New Resource (Template)'
       ImageIndex = 6
       OnClick = ToolButton9Click
     end
     object tbOpen: TToolButton
-      Left = 397
+      Left = 420
       Top = 0
       Hint = 'Open Resource on Server'
       ImageIndex = 1
       OnClick = tbOpenClick
     end
     object tbPut: TToolButton
-      Left = 420
+      Left = 443
       Top = 0
       Hint = 'PUT resource to existing ID'
-      Enabled = False
       ImageIndex = 2
       OnClick = tbPutClick
     end
     object tbPost: TToolButton
-      Left = 443
+      Left = 466
       Top = 0
       Hint = 'POST resource to new ID'
       ImageIndex = 3
       OnClick = tbPostClick
     end
     object tbTransaction: TToolButton
-      Left = 466
+      Left = 489
       Top = 0
       Hint = 'POST resource as a transaction'
       Enabled = False
@@ -3394,7 +3400,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbTransactionClick
     end
     object tbServerValidate: TToolButton
-      Left = 489
+      Left = 512
       Top = 0
       Hint = 'Validate resource on server'
       Enabled = False
@@ -3402,7 +3408,7 @@ inherited FHIRToolbox: TFHIRToolbox
       OnClick = tbServerValidateClick
     end
     object ToolButton12: TToolButton
-      Left = 512
+      Left = 535
       Top = 0
       Width = 8
       Caption = 'ToolButton12'
@@ -3411,15 +3417,16 @@ inherited FHIRToolbox: TFHIRToolbox
       Style = tbsSeparator
     end
     object ToolButton16: TToolButton
-      Left = 520
+      Left = 543
       Top = 0
       Hint = 'Configure Tools'
       Caption = 'ToolButton16'
+      Enabled = False
       ImageIndex = 11
       OnClick = ToolButton16Click
     end
     object pnlMessage: TPanel
-      Left = 543
+      Left = 566
       Top = 0
       Width = 201
       Height = 22
@@ -3443,7 +3450,7 @@ inherited FHIRToolbox: TFHIRToolbox
     Left = 764
     Top = 4
     Bitmap = {
-      494C010113009800A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010113009800A80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       00000000001E454545AB4B4B4BD1363736DB323332D9383838DC22647CFF2264
