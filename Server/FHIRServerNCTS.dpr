@@ -276,7 +276,7 @@ uses
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\dstuAu\FHIRProfileUtilities.pas',
-  FHIRBase in '..\reference-platform\dstu3\FHIRBase.pas',
+  FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\dstuAu\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstuAu\FHIRResources.pas',
   FHIRParser in '..\reference-platform\dstuAu\FHIRParser.pas',

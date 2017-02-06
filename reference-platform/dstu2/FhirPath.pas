@@ -312,6 +312,7 @@ type
     function convertToBoolean(items : TFHIRSelectionList) : boolean;
 
     function UseLog : String;
+    property context : TWorkerContext read worker;
   end;
 
 implementation

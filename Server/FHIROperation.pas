@@ -7305,9 +7305,11 @@ begin
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := NowUTC;
 //            bundle.base := manager.FRepository.FormalURLPlain;
+            {$IFDEF FHIR3}
             bundle.identifier := TFhirIdentifier.Create;
             bundle.identifier.system := 'urn:ietf:rfc:3986';
             bundle.identifier.value := NewGuidURN;
+            {$ENDIF}
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
             entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/Composition/'+composition.id;
@@ -8858,6 +8860,7 @@ var
   blob : TBytes;
   diff : TDifferenceEngine;
   parser : TFHIRParser;
+  html : String;
 //  deleted : boolean;
 //  meta : TFhirMeta;
 //  c : TFhirCoding;
@@ -8888,7 +8891,7 @@ begin
       try
         diff := TDifferenceEngine.create(manager.FRepository.ValidatorContext.Link);
         try
-          response.Resource := diff.generateDifference(parser.resource, request.Resource);
+          response.Resource := diff.generateDifference(parser.resource, request.Resource, html);
           response.HTTPCode := 200;
           response.Message := 'OK';
         finally

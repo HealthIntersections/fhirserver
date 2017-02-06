@@ -79,7 +79,7 @@ uses
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
   AdvNameBuffers in '..\reference-platform\Support\AdvNameBuffers.pas',
   AdvMemories in '..\reference-platform\Support\AdvMemories.pas',
-  FHIRBase in '..\reference-platform\dstu3\FHIRBase.pas',
+  FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   DateAndTime in '..\reference-platform\Support\DateAndTime.pas',
   DecimalSupport in '..\reference-platform\Support\DecimalSupport.pas',
   GUIDSupport in '..\reference-platform\Support\GUIDSupport.pas',

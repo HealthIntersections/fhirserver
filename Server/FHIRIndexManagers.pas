@@ -376,7 +376,6 @@ Type
     procedure BuildIndexValuesCommunicationRequest(key : integer; id : string; context : TFhirResource; resource : TFhirCommunicationRequest);
     procedure BuildIndexValuesDeviceComponent(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceComponent);
     procedure BuildIndexValuesDeviceMetric(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceMetric);
-    procedure BuildIndexValuesDeviceUseRequest(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceUseRequest);
     procedure BuildIndexValuesDeviceUseStatement(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceUseStatement);
     procedure BuildIndexValuesEligibilityRequest(key : integer; id : string; context : TFhirResource; resource : TFhirEligibilityRequest);
     procedure BuildIndexValuesEligibilityResponse(key : integer; id : string; context : TFhirResource; resource : TFhirEligibilityResponse);
@@ -404,7 +403,7 @@ Type
 
     procedure checkTags(resource : TFhirResource; tags : TFHIRTagList);
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
-    function transform(base : TFHIRBase; uri : String) : TFHIRBase;
+    function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
     constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
     destructor Destroy; override;
@@ -873,7 +872,7 @@ begin
   FTerminologyServer := Value;
 end;
 
-function TFhirIndexManager.transform(base: TFHIRBase; uri: String): TFHIRBase;
+function TFhirIndexManager.transform(base: TFHIRObject; uri: String): TFHIRObject;
 begin
   raise Exception.Create('not done yet');
 end;
@@ -883,8 +882,9 @@ var
   path : TFHIRExpressionEngine;
   i : integer;
   ndx : TFhirIndex;
-  matches : TFHIRBaseList;
-  match, work : TFHIRBase;
+  matches : TFHIRSelectionList;
+  match : TFHIRSelection;
+  work : TFHIRObject;
   a : TFhirResourceType;
   s : string;
   ie : TFhirIndexEntry;
@@ -902,9 +902,9 @@ begin
           begin
             // custom resource support : do we need to do a transform?
             if ndx.mapping = '' then
-              work := match.Link
+              work := match.value.Link
             else
-              work := transform(match, ndx.mapping);
+              work := transform(match.value, ndx.mapping);
             try
               if ndx.FSearchType = SearchParamTypeComposite then
                 // ignore for now
@@ -912,63 +912,63 @@ begin
                 SearchXpathUsageNull: raise Exception.create('Path is not defined properly');
                 SearchXpathUsageNormal:
                   begin
-                  if match is TFhirString then
-                    index(resource.fhirType, key, 0, TFhirString(match), ndx.Name)
-                  else if match is TFhirUri then
-                    index(resource.fhirType, key, 0, TFhirUri(match), ndx.Name)
-                  else if match is TFhirEnum then
-                    index(resource.fhirType, key, 0, TFhirEnum(match), ndx.Name)
-                  else if match is TFhirInteger  then
-                    index(resource.fhirType, key, 0, TFhirInteger(match), ndx.Name)
-                  else if match is TFhirDecimal then
-                    index(resource.fhirType, key, 0, TFhirDecimal(match), ndx.Name)
-                  else if match is TFhirBoolean  then
-                    index(resource.fhirType, key, 0, TFhirBoolean(match), ndx.Name)
-                  else if match is TFhirInstant  then
-                    index(resource.fhirType, key, 0, TFhirInstant(match), ndx.Name)
-                  else if match is TFhirDateTime  then
-                    index(resource.fhirType, key, 0, TFhirDateTime(match), ndx.Name)
-                  else if match is TFhirDate  then
-                    index(resource.fhirType, key, 0, TFhirDate(match), ndx.Name)
-                  else if match is TFhirPeriod  then
-                    index(resource.fhirType, key, 0, TFhirPeriod(match), ndx.Name)
-                  else if match is TFhirTiming  then
-                    index(resource.fhirType, key, 0, TFhirTiming(match), ndx.Name)
-                  else if match is TFhirRatio  then
-                    index(resource.fhirType, key, 0, TFhirRatio(match), ndx.Name)
-                  else if match is TFhirQuantity  then
-                    index(resource.fhirType, key, 0, TFhirQuantity(match), ndx.Name)
-                  else if match is TFhirRange  then
-                    index(resource.fhirType, key, 0, TFhirRange(match), ndx.Name)
-                  else if match is TFhirSampledData  then
-                    index(resource.fhirType, key, 0, TFhirSampledData(match), ndx.Name)
-                  else if match is TFhirCoding  then
-                    index(resource.fhirType, key, 0, TFhirCoding(match), ndx.Name)
-                  else if match is TFhirCodeableConcept  then
-                    index(resource.fhirType, key, 0, TFhirCodeableConcept(match), ndx.Name)
-                  else if match is TFhirIdentifier  then
-                    index(resource.fhirType, key, 0, TFhirIdentifier(match), ndx.Name)
-                  else if match is TFhirHumanName  then
-                    index(resource.fhirType, key, 0, TFhirHumanName(match), ndx.Name, '')
-                  else if match is TFhirAddress  then
-                    index(resource.fhirType, key, 0, TFhirAddress(match), ndx.Name)
-                  else if match is TFhirContactPoint  then
-                    index(resource.fhirType, key, 0, TFhirContactPoint(match), ndx.Name)
-                  else if match is TFhirReference then
-                    index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-                  else if match is TFhirResource then
-                    // index(context, resource.fhirType, key, 0, TFhirReference(match), ndx.Name, ndx.specifiedTarget)
-                  else if not (match is TFHIRAttachment) then
-                    raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
+                  if work is TFhirString then
+                    index(resource.fhirType, key, 0, TFhirString(work), ndx.Name)
+                  else if work is TFhirUri then
+                    index(resource.fhirType, key, 0, TFhirUri(work), ndx.Name)
+                  else if work is TFhirEnum then
+                    index(resource.fhirType, key, 0, TFhirEnum(work), ndx.Name)
+                  else if work is TFhirInteger  then
+                    index(resource.fhirType, key, 0, TFhirInteger(work), ndx.Name)
+                  else if work is TFhirDecimal then
+                    index(resource.fhirType, key, 0, TFhirDecimal(work), ndx.Name)
+                  else if work is TFhirBoolean  then
+                    index(resource.fhirType, key, 0, TFhirBoolean(work), ndx.Name)
+                  else if work is TFhirInstant  then
+                    index(resource.fhirType, key, 0, TFhirInstant(work), ndx.Name)
+                  else if work is TFhirDateTime  then
+                    index(resource.fhirType, key, 0, TFhirDateTime(work), ndx.Name)
+                  else if work is TFhirDate  then
+                    index(resource.fhirType, key, 0, TFhirDate(work), ndx.Name)
+                  else if work is TFhirPeriod  then
+                    index(resource.fhirType, key, 0, TFhirPeriod(work), ndx.Name)
+                  else if work is TFhirTiming  then
+                    index(resource.fhirType, key, 0, TFhirTiming(work), ndx.Name)
+                  else if work is TFhirRatio  then
+                    index(resource.fhirType, key, 0, TFhirRatio(work), ndx.Name)
+                  else if work is TFhirQuantity  then
+                    index(resource.fhirType, key, 0, TFhirQuantity(work), ndx.Name)
+                  else if work is TFhirRange  then
+                    index(resource.fhirType, key, 0, TFhirRange(work), ndx.Name)
+                  else if work is TFhirSampledData  then
+                    index(resource.fhirType, key, 0, TFhirSampledData(work), ndx.Name)
+                  else if work is TFhirCoding  then
+                    index(resource.fhirType, key, 0, TFhirCoding(work), ndx.Name)
+                  else if work is TFhirCodeableConcept  then
+                    index(resource.fhirType, key, 0, TFhirCodeableConcept(work), ndx.Name)
+                  else if work is TFhirIdentifier  then
+                    index(resource.fhirType, key, 0, TFhirIdentifier(work), ndx.Name)
+                  else if work is TFhirHumanName  then
+                    index(resource.fhirType, key, 0, TFhirHumanName(work), ndx.Name, '')
+                  else if work is TFhirAddress  then
+                    index(resource.fhirType, key, 0, TFhirAddress(work), ndx.Name)
+                  else if work is TFhirContactPoint  then
+                    index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
+                  else if work is TFhirReference then
+                    index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                  else if work is TFhirResource then
+                    // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                  else if not (work is TFHIRAttachment) then
+                    raise Exception.Create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
                   end;
                 SearchXpathUsagePhonetic:
                   begin
-                  if match is TFhirString then
-                    index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(match).value), ndx.Name)
-                  else if match is TFhirHumanName then
-                    index(resource.fhirType, key, 0, TFhirHumanName(match), '', ndx.Name)
+                  if work is TFhirString then
+                    index(resource.fhirType, key, 0, EncodeNYSIIS(TFhirString(work).value), ndx.Name)
+                  else if work is TFhirHumanName then
+                    index(resource.fhirType, key, 0, TFhirHumanName(work), '', ndx.Name)
                   else
-                    raise Exception.Create('The type '+match.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
+                    raise Exception.Create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
                   end;
                 SearchXpathUsageNearby:
                   begin
@@ -2214,7 +2214,6 @@ begin
     frtCommunicationRequest : buildIndexValuesCommunicationRequest(key, id, context, TFhirCommunicationRequest(resource));
     frtDeviceComponent : buildIndexValuesDeviceComponent(key, id, context, TFhirDeviceComponent(resource));
     frtDeviceMetric : buildIndexValuesDeviceMetric(key, id, context, TFhirDeviceMetric(resource));
-    frtDeviceUseRequest : buildIndexValuesDeviceUseRequest(key, id, context, TFhirDeviceUseRequest(resource));
     frtDeviceUseStatement : buildIndexValuesDeviceUseStatement(key, id, context, TFhirDeviceUseStatement(resource));
     frtEligibilityRequest : buildIndexValuesEligibilityRequest(key, id, context, TFhirEligibilityRequest(resource));
     frtEligibilityResponse : buildIndexValuesEligibilityResponse(key, id, context, TFhirEligibilityResponse(resource));
@@ -4195,16 +4194,6 @@ begin
   index('DeviceMetric', key, 0, resource.type_, CODES_TSearchParamsDeviceMetric[spDeviceMetric_type]);
   index('DeviceMetric', key, 0, resource.identifierElement, CODES_TSearchParamsDeviceMetric[spDeviceMetric_identifier]);
   index('DeviceMetric', key, 0, resource.categoryElement, CODES_TSearchParamsDeviceMetric[spDeviceMetric_category]);
-end;
-
-procedure TFhirIndexManager.buildIndexValuesDeviceUseRequest(key: integer; id : String; context : TFhirResource; resource: TFhirDeviceUseRequest);
-var
-  i, j : integer;
-begin
-  index(context, 'DeviceUseRequest', key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_subject]);
-  index(context, 'DeviceUseRequest', key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_patient]);
-  patientCompartment(key, resource.subject);
-  index(context, 'DeviceUseRequest', key, 0, resource.device, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_device]);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesDeviceUseStatement(key: integer; id : String; context : TFhirResource; resource: TFhirDeviceUseStatement);

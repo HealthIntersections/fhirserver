@@ -138,12 +138,13 @@ var
   engine : TDifferenceEngine;
   delta : TFhirParameters;
   outcome : TFhirResource;
+  html : String;
 begin
   if (mode = 'both') or (mode = 'reverse') then
   begin
     engine := TDifferenceEngine.Create(TTestingWorkerContext.Use);
     try
-      delta := engine.generateDifference(input, output);
+      delta := engine.generateDifference(input, output, html);
       try
         compareXml(name, 'Difference', diff, delta);
       finally

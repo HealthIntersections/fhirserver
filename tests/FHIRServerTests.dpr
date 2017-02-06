@@ -193,7 +193,7 @@ uses
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
-  FHIRBase in '..\reference-platform\dstu3\FHIRBase.pas',
+  FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
   FHIRParser in '..\reference-platform\dstu3\FHIRParser.pas',
@@ -236,7 +236,8 @@ uses
   ServerAdaptations in '..\Server\ServerAdaptations.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas',
-  OpenMHealthServer in '..\Server\OpenMHealthServer.pas';
+  OpenMHealthServer in '..\Server\OpenMHealthServer.pas',
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
 
 var
   runner : ITestRunner;

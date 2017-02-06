@@ -75,7 +75,7 @@ uses
   DateAndTime in '..\support\DateAndTime.pas',
   KDate in '..\support\KDate.pas',
   HL7V2DateSupport in '..\support\HL7V2DateSupport.pas',
-  FHIRBase in 'FHIRBase.pas',
+  FHIRBase in '..\support\FHIRBase.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
   FHIRResources in 'FHIRResources.pas',
   FHIRParserBase in 'FHIRParserBase.pas',

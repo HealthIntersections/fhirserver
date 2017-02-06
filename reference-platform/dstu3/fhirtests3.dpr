@@ -106,7 +106,7 @@ uses
   JWT in '..\support\JWT.pas',
   HMAC in '..\support\HMAC.pas',
   libeay32 in '..\support\libeay32.pas',
-  FHIRBase in 'FHIRBase.pas',
+  FHIRBase in '..\support\FHIRBase.pas',
   FHIRXhtml in 'FHIRXhtml.pas',
   FHIRResources in 'FHIRResources.pas',
   FHIRConstants,

@@ -223,7 +223,7 @@ uses
   FHIRPath in '..\reference-platform\dstu2\FHIRPath.pas',
   FHIRTags in '..\reference-platform\dstu2\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu2\FHIRProfileUtilities.pas',
-  FHIRBase in '..\reference-platform\dstu2\FHIRBase.pas',
+  FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\dstu2\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstu2\FHIRResources.pas',
   FHIRParser in '..\reference-platform\dstu2\FHIRParser.pas',
@@ -252,7 +252,8 @@ uses
   FHIRLog in 'FHIRLog.pas',
   Logging in 'Logging.pas',
   FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas',
-  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

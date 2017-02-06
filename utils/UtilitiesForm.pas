@@ -118,7 +118,6 @@ type
     Label15: TLabel;
     edtCombinedStore: TEdit;
     btnCombinedStore: TSpeedButton;
-    Button1: TButton;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -141,7 +140,6 @@ type
     procedure Image1Click(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -219,19 +217,6 @@ end;
 procedure TForm4.btnStopClick(Sender: TObject);
 begin
   wantStop := true;
-end;
-
-procedure TForm4.Button1Click(Sender: TObject);
-var
-  diff : TDifferenceEngineTests;
-begin
-  diff := TDifferenceEngineTests.create('C:\work\org.hl7.fhir\build\tests\patch\fhir-path-tests.xml');
-  try
-    diff.execute;
-  finally
-    diff.free;
-  end;
-  ShowMessage('all ok');
 end;
 
 procedure TForm4.pnlCombineSnomedClick(Sender: TObject);

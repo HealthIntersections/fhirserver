@@ -333,7 +333,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRParser.pas"/>
@@ -363,6 +363,7 @@
         <DCCReference Include="Logging.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRAuthMap.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\DifferenceEngine.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

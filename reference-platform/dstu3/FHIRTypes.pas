@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-02-06T07:15:08+11:00
+// FHIR v1.9.0 generated 2017-02-06T13:02:45+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -2758,10 +2758,10 @@ Type
   TFhirDuration = class;
   TFhirDurationList = class;
 
-  {@Class TFhirElement : TFHIRBase
+  {@Class TFhirElement : TFHIRObject
     Base definition for all elements in a resource.
   }
-  TFhirElement = class (TFHIRBase)
+  TFhirElement = class (TFHIRObject)
   protected
     FId : TFhirId;
     FextensionList : TFhirExtensionList;
@@ -2771,7 +2771,7 @@ Type
     function GetExtensionList : TFhirExtensionList;
     function GetHasExtensionList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -2781,10 +2781,16 @@ Type
     function Link : TFhirElement; overload;
     function Clone : TFhirElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
+    function getId : String; override;
     {!script show}
   published
     {@member id
@@ -2826,6 +2832,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElement;
     procedure SetItemN(index : Integer; value : TFhirElement);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -2909,7 +2917,7 @@ Type
     function GetModifierExtensionList : TFhirExtensionList;
     function GetHasModifierExtensionList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -2919,10 +2927,15 @@ Type
     function Link : TFhirBackboneElement; overload;
     function Clone : TFhirBackboneElement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member modifierExtensionList
@@ -2955,6 +2968,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirBackboneElement;
     procedure SetItemN(index : Integer; value : TFhirBackboneElement);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3072,7 +3087,7 @@ Type
     FSystem: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3083,8 +3098,9 @@ Type
     Function Link : TFhirEnum; Overload;
     Function Clone : TFhirEnum; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3121,6 +3137,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirEnum;
     procedure SetItemN(index : Integer; value : TFhirEnum);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     constructor Create(Systems, Codes : Array Of String);
@@ -3213,7 +3231,7 @@ Type
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3224,8 +3242,9 @@ Type
     Function Link : TFhirDate; Overload;
     Function Clone : TFhirDate; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3257,6 +3276,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDate;
     procedure SetItemN(index : Integer; value : TFhirDate);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3347,7 +3368,7 @@ Type
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3358,8 +3379,9 @@ Type
     Function Link : TFhirDateTime; Overload;
     Function Clone : TFhirDateTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3391,6 +3413,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDateTime;
     procedure SetItemN(index : Integer; value : TFhirDateTime);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3481,7 +3505,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3492,8 +3516,9 @@ Type
     Function Link : TFhirString; Overload;
     Function Clone : TFhirString; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3525,6 +3550,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirString;
     procedure SetItemN(index : Integer; value : TFhirString);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3615,7 +3642,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3626,8 +3653,9 @@ Type
     Function Link : TFhirInteger; Overload;
     Function Clone : TFhirInteger; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3659,6 +3687,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirInteger;
     procedure SetItemN(index : Integer; value : TFhirInteger);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3749,7 +3779,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3760,8 +3790,9 @@ Type
     Function Link : TFhirUri; Overload;
     Function Clone : TFhirUri; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3793,6 +3824,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirUri;
     procedure SetItemN(index : Integer; value : TFhirUri);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -3883,7 +3916,7 @@ Type
     FValue: TDateAndTime;
     procedure setValue(value: TDateAndTime);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -3894,8 +3927,9 @@ Type
     Function Link : TFhirInstant; Overload;
     Function Clone : TFhirInstant; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -3927,6 +3961,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirInstant;
     procedure SetItemN(index : Integer; value : TFhirInstant);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4017,7 +4053,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -4028,8 +4064,9 @@ Type
     Function Link : TFhirXhtml; Overload;
     Function Clone : TFhirXhtml; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -4061,6 +4098,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirXhtml;
     procedure SetItemN(index : Integer; value : TFhirXhtml);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4151,7 +4190,7 @@ Type
     FValue: Boolean;
     procedure setValue(value: Boolean);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -4162,8 +4201,9 @@ Type
     Function Link : TFhirBoolean; Overload;
     Function Clone : TFhirBoolean; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -4195,6 +4235,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirBoolean;
     procedure SetItemN(index : Integer; value : TFhirBoolean);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4285,7 +4327,7 @@ Type
     FValue: TBytes;
     procedure setValue(value: TBytes);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -4296,8 +4338,9 @@ Type
     Function Link : TFhirBase64Binary; Overload;
     Function Clone : TFhirBase64Binary; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -4329,6 +4372,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirBase64Binary;
     procedure SetItemN(index : Integer; value : TFhirBase64Binary);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4419,7 +4464,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -4430,8 +4475,9 @@ Type
     Function Link : TFhirTime; Overload;
     Function Clone : TFhirTime; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -4463,6 +4509,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirTime;
     procedure SetItemN(index : Integer; value : TFhirTime);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4553,7 +4601,7 @@ Type
     FValue: String;
     procedure setValue(value: String);
   protected
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
@@ -4564,8 +4612,9 @@ Type
     Function Link : TFhirDecimal; Overload;
     Function Clone : TFhirDecimal; Overload;
     procedure Assign(oSource : TAdvObject); override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     function fhirType : string; override;
     {!script show}
   Published
@@ -4597,6 +4646,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDecimal;
     procedure SetItemN(index : Integer; value : TFhirDecimal);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4717,6 +4768,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirCode;
     procedure SetItemN(index : Integer; value : TFhirCode);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4837,6 +4890,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirOid;
     procedure SetItemN(index : Integer; value : TFhirOid);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -4957,6 +5012,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirUuid;
     procedure SetItemN(index : Integer; value : TFhirUuid);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5077,6 +5134,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirUnsignedInt;
     procedure SetItemN(index : Integer; value : TFhirUnsignedInt);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5197,6 +5256,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirMarkdown;
     procedure SetItemN(index : Integer; value : TFhirMarkdown);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5317,6 +5378,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirId;
     procedure SetItemN(index : Integer; value : TFhirId);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5437,6 +5500,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirPositiveInt;
     procedure SetItemN(index : Integer; value : TFhirPositiveInt);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5529,7 +5594,7 @@ Type
     Procedure SetUrlST(value : String);
     Procedure SetValue(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -5539,10 +5604,15 @@ Type
     function Link : TFhirExtension; overload;
     function Clone : TFhirExtension; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member url
@@ -5587,6 +5657,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirExtension;
     procedure SetItemN(index : Integer; value : TFhirExtension);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5673,7 +5745,7 @@ Type
     Procedure SetStatusST(value : TFhirNarrativeStatusEnum);
     Procedure SetDiv_(value : TFhirXHtmlNode);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -5683,10 +5755,15 @@ Type
     function Link : TFhirNarrative; overload;
     function Clone : TFhirNarrative; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member status
@@ -5728,6 +5805,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirNarrative;
     procedure SetItemN(index : Integer; value : TFhirNarrative);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5819,7 +5898,7 @@ Type
     function GetContactList : TFhirContactDetailList;
     function GetHasContactList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -5829,10 +5908,15 @@ Type
     function Link : TFhirContributor; overload;
     function Clone : TFhirContributor; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member type_
@@ -5880,6 +5964,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirContributor;
     procedure SetItemN(index : Integer; value : TFhirContributor);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -5992,7 +6078,7 @@ Type
     Function GetCreationST : TDateAndTime;
     Procedure SetCreationST(value : TDateAndTime);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6002,10 +6088,15 @@ Type
     function Link : TFhirAttachment; overload;
     function Clone : TFhirAttachment; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member contentType
@@ -6104,6 +6195,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirAttachment;
     procedure SetItemN(index : Integer; value : TFhirAttachment);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -6199,7 +6292,7 @@ Type
     function GetValueCodeableConceptList : TFhirCodeableConceptList;
     function GetHasValueCodeableConceptList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6209,10 +6302,15 @@ Type
     function Link : TFhirDataRequirementCodeFilter; overload;
     function Clone : TFhirDataRequirementCodeFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member path
@@ -6275,6 +6373,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDataRequirementCodeFilter;
     procedure SetItemN(index : Integer; value : TFhirDataRequirementCodeFilter);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -6361,7 +6461,7 @@ Type
     Procedure SetPathST(value : String);
     Procedure SetValue(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6371,10 +6471,15 @@ Type
     function Link : TFhirDataRequirementDateFilter; overload;
     function Clone : TFhirDataRequirementDateFilter; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member path
@@ -6419,6 +6524,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDataRequirementDateFilter;
     procedure SetItemN(index : Integer; value : TFhirDataRequirementDateFilter);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -6515,7 +6622,7 @@ Type
     function GetDateFilterList : TFhirDataRequirementDateFilterList;
     function GetHasDateFilterList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6525,10 +6632,15 @@ Type
     function Link : TFhirDataRequirement; overload;
     function Clone : TFhirDataRequirement; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member type_
@@ -6585,6 +6697,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDataRequirement;
     procedure SetItemN(index : Integer; value : TFhirDataRequirement);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -6683,7 +6797,7 @@ Type
     Procedure SetPeriod(value : TFhirPeriod);
     Procedure SetAssigner(value : TFhirReference{TFhirOrganization});
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6693,10 +6807,15 @@ Type
     function Link : TFhirIdentifier; overload;
     function Clone : TFhirIdentifier; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member use
@@ -6774,6 +6893,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirIdentifier;
     procedure SetItemN(index : Integer; value : TFhirIdentifier);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -6874,7 +6995,7 @@ Type
     Function GetUserSelectedST : Boolean;
     Procedure SetUserSelectedST(value : Boolean);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -6884,10 +7005,15 @@ Type
     function Link : TFhirCoding; overload;
     function Clone : TFhirCoding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member system
@@ -6959,6 +7085,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirCoding;
     procedure SetItemN(index : Integer; value : TFhirCoding);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7065,7 +7193,7 @@ Type
     Function GetDataST : String;
     Procedure SetDataST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -7075,10 +7203,15 @@ Type
     function Link : TFhirSampledData; overload;
     function Clone : TFhirSampledData; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member origin
@@ -7168,6 +7301,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirSampledData;
     procedure SetItemN(index : Integer; value : TFhirSampledData);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7252,7 +7387,7 @@ Type
     Procedure SetNumerator(value : TFhirQuantity);
     Procedure SetDenominator(value : TFhirQuantity);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -7262,10 +7397,15 @@ Type
     function Link : TFhirRatio; overload;
     function Clone : TFhirRatio; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member numerator
@@ -7310,6 +7450,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirRatio;
     procedure SetItemN(index : Integer; value : TFhirRatio);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7421,7 +7563,7 @@ Type
     Procedure SetMaxDosePerLifetime(value : TFhirQuantity);
     Procedure SetRate(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -7431,10 +7573,15 @@ Type
     function Link : TFhirDosageInstruction; overload;
     function Clone : TFhirDosageInstruction; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member sequence
@@ -7575,6 +7722,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDosageInstruction;
     procedure SetItemN(index : Integer; value : TFhirDosageInstruction);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7665,7 +7814,7 @@ Type
     Function GetDisplayST : String;
     Procedure SetDisplayST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -7675,10 +7824,15 @@ Type
     function Link : TFhirReference; overload;
     function Clone : TFhirReference; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member reference
@@ -7732,6 +7886,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirReference;
     procedure SetItemN(index : Integer; value : TFhirReference);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7824,7 +7980,7 @@ Type
     Procedure SetEventTiming(value : TFhirType);
     Procedure SetEventData(value : TFhirDataRequirement);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -7834,10 +7990,15 @@ Type
     function Link : TFhirTriggerDefinition; overload;
     function Clone : TFhirTriggerDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member type_
@@ -7897,6 +8058,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirTriggerDefinition;
     procedure SetItemN(index : Integer; value : TFhirTriggerDefinition);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -7997,7 +8160,7 @@ Type
     Function GetCodeST : String;
     Procedure SetCodeST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8007,10 +8170,15 @@ Type
     function Link : TFhirQuantity; overload;
     function Clone : TFhirQuantity; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member value
@@ -8079,6 +8247,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirQuantity;
     procedure SetItemN(index : Integer; value : TFhirQuantity);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8167,7 +8337,7 @@ Type
     Function GetEnd_ST : TDateAndTime;
     Procedure SetEnd_ST(value : TDateAndTime);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8177,10 +8347,15 @@ Type
     function Link : TFhirPeriod; overload;
     function Clone : TFhirPeriod; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member start
@@ -8225,6 +8400,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirPeriod;
     procedure SetItemN(index : Integer; value : TFhirPeriod);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8309,7 +8486,7 @@ Type
     Procedure SetLow(value : TFhirQuantity);
     Procedure SetHigh(value : TFhirQuantity);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8319,10 +8496,15 @@ Type
     function Link : TFhirRange; overload;
     function Clone : TFhirRange; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member low
@@ -8367,6 +8549,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirRange;
     procedure SetItemN(index : Integer; value : TFhirRange);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8467,7 +8651,7 @@ Type
     Procedure SetDocument(value : TFhirAttachment);
     Procedure SetResource(value : TFhirReference{TFhirReference});
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8477,10 +8661,15 @@ Type
     function Link : TFhirRelatedArtifact; overload;
     function Clone : TFhirRelatedArtifact; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member type_
@@ -8558,6 +8747,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirRelatedArtifact;
     procedure SetItemN(index : Integer; value : TFhirRelatedArtifact);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8648,7 +8839,7 @@ Type
     Function GetTextST : String;
     Procedure SetTextST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8658,10 +8849,15 @@ Type
     function Link : TFhirAnnotation; overload;
     function Clone : TFhirAnnotation; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member author
@@ -8715,6 +8911,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirAnnotation;
     procedure SetItemN(index : Integer; value : TFhirAnnotation);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8802,7 +9000,7 @@ Type
     function GetTelecomList : TFhirContactPointList;
     function GetHasTelecomList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8812,10 +9010,15 @@ Type
     function Link : TFhirContactDetail; overload;
     function Clone : TFhirContactDetail; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member name
@@ -8857,6 +9060,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirContactDetail;
     procedure SetItemN(index : Integer; value : TFhirContactDetail);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -8941,7 +9146,7 @@ Type
     Procedure SetCode(value : TFhirCoding);
     Procedure SetValue(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -8951,10 +9156,15 @@ Type
     function Link : TFhirUsageContext; overload;
     function Clone : TFhirUsageContext; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member code
@@ -8999,6 +9209,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirUsageContext;
     procedure SetItemN(index : Integer; value : TFhirUsageContext);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9098,7 +9310,7 @@ Type
     Function GetBlobST : TBytes;
     Procedure SetBlobST(value : TBytes);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -9108,10 +9320,15 @@ Type
     function Link : TFhirSignature; overload;
     function Clone : TFhirSignature; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member type_List
@@ -9189,6 +9406,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirSignature;
     procedure SetItemN(index : Integer; value : TFhirSignature);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9276,7 +9495,7 @@ Type
     Function GetTextST : String;
     Procedure SetTextST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -9286,10 +9505,15 @@ Type
     function Link : TFhirCodeableConcept; overload;
     function Clone : TFhirCodeableConcept; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member codingList
@@ -9331,6 +9555,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirCodeableConcept;
     procedure SetItemN(index : Integer; value : TFhirCodeableConcept);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9437,7 +9663,7 @@ Type
     Procedure SetType_ST(value : TFhirAllTypesEnum);
     Procedure SetProfile(value : TFhirReference{TFhirStructureDefinition});
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -9447,10 +9673,15 @@ Type
     function Link : TFhirParameterDefinition; overload;
     function Clone : TFhirParameterDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member name
@@ -9534,6 +9765,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirParameterDefinition;
     procedure SetItemN(index : Integer; value : TFhirParameterDefinition);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9631,7 +9864,7 @@ Type
     function GetTagList : TFhirCodingList;
     function GetHasTagList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -9641,10 +9874,15 @@ Type
     function Link : TFhirMeta; overload;
     function Clone : TFhirMeta; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member versionId
@@ -9707,6 +9945,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirMeta;
     procedure SetItemN(index : Integer; value : TFhirMeta);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9810,7 +10050,7 @@ Type
     function GetHasSuffixList : Boolean;
     Procedure SetPeriod(value : TFhirPeriod);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -9820,10 +10060,15 @@ Type
     function Link : TFhirHumanName; overload;
     function Clone : TFhirHumanName; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member use
@@ -9901,6 +10146,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirHumanName;
     procedure SetItemN(index : Integer; value : TFhirHumanName);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -9999,7 +10246,7 @@ Type
     Procedure SetRankST(value : String);
     Procedure SetPeriod(value : TFhirPeriod);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -10009,10 +10256,15 @@ Type
     function Link : TFhirContactPoint; overload;
     function Clone : TFhirContactPoint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member system
@@ -10078,6 +10330,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirContactPoint;
     procedure SetItemN(index : Integer; value : TFhirContactPoint);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -10195,7 +10449,7 @@ Type
     Procedure SetCountryST(value : String);
     Procedure SetPeriod(value : TFhirPeriod);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -10205,10 +10459,15 @@ Type
     function Link : TFhirAddress; overload;
     function Clone : TFhirAddress; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member use
@@ -10316,6 +10575,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirAddress;
     procedure SetItemN(index : Integer; value : TFhirAddress);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -10454,7 +10715,7 @@ Type
     Function GetOffsetST : String;
     Procedure SetOffsetST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -10464,10 +10725,15 @@ Type
     function Link : TFhirTimingRepeat; overload;
     function Clone : TFhirTimingRepeat; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member bounds
@@ -10614,6 +10880,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirTimingRepeat;
     procedure SetItemN(index : Integer; value : TFhirTimingRepeat);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -10701,7 +10969,7 @@ Type
     Procedure SetRepeat_(value : TFhirTimingRepeat);
     Procedure SetCode(value : TFhirCodeableConcept);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -10711,10 +10979,15 @@ Type
     function Link : TFhirTiming; overload;
     function Clone : TFhirTiming; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member eventList
@@ -10765,6 +11038,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirTiming;
     procedure SetItemN(index : Integer; value : TFhirTiming);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -10860,7 +11135,7 @@ Type
     Function GetRulesST : TFhirResourceSlicingRulesEnum;
     Procedure SetRulesST(value : TFhirResourceSlicingRulesEnum);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -10870,10 +11145,15 @@ Type
     function Link : TFhirElementDefinitionSlicing; overload;
     function Clone : TFhirElementDefinitionSlicing; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member discriminatorList
@@ -10930,6 +11210,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionSlicing;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionSlicing);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11022,7 +11304,7 @@ Type
     Function GetMaxST : String;
     Procedure SetMaxST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11032,10 +11314,15 @@ Type
     function Link : TFhirElementDefinitionBase; overload;
     function Clone : TFhirElementDefinitionBase; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member path
@@ -11089,6 +11376,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionBase;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionBase);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11190,7 +11479,7 @@ Type
     Function GetVersioningST : TFhirReferenceVersionRulesEnum;
     Procedure SetVersioningST(value : TFhirReferenceVersionRulesEnum);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11200,10 +11489,15 @@ Type
     function Link : TFhirElementDefinitionType; overload;
     function Clone : TFhirElementDefinitionType; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member code
@@ -11269,6 +11563,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionType;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionType);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11355,7 +11651,7 @@ Type
     Procedure SetLabel_ST(value : String);
     Procedure SetValue(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11365,10 +11661,15 @@ Type
     function Link : TFhirElementDefinitionExample; overload;
     function Clone : TFhirElementDefinitionExample; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member label_
@@ -11413,6 +11714,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionExample;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionExample);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11521,7 +11824,7 @@ Type
     Function GetSourceST : String;
     Procedure SetSourceST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11531,10 +11834,15 @@ Type
     function Link : TFhirElementDefinitionConstraint; overload;
     function Clone : TFhirElementDefinitionConstraint; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member key
@@ -11621,6 +11929,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionConstraint;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionConstraint);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11711,7 +12021,7 @@ Type
     Procedure SetDescriptionST(value : String);
     Procedure SetValueSet(value : TFhirType);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11721,10 +12031,15 @@ Type
     function Link : TFhirElementDefinitionBinding; overload;
     function Clone : TFhirElementDefinitionBinding; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member strength
@@ -11775,6 +12090,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionBinding;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionBinding);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -11867,7 +12184,7 @@ Type
     Function GetMapST : String;
     Procedure SetMapST(value : String);
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -11877,10 +12194,15 @@ Type
     function Link : TFhirElementDefinitionMapping; overload;
     function Clone : TFhirElementDefinitionMapping; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string) : TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member identity
@@ -11934,6 +12256,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinitionMapping;
     procedure SetItemN(index : Integer; value : TFhirElementDefinitionMapping);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12116,7 +12440,7 @@ Type
     function GetMappingList : TFhirElementDefinitionMappingList;
     function GetHasMappingList : Boolean;
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12126,10 +12450,15 @@ Type
     function Link : TFhirElementDefinition; overload;
     function Clone : TFhirElementDefinition; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
     {@member path
@@ -12411,6 +12740,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirElementDefinition;
     procedure SetItemN(index : Integer; value : TFhirElementDefinition);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12491,7 +12822,7 @@ Type
   TFhirCount = class (TFhirQuantity)
   protected
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12501,10 +12832,15 @@ Type
     function Link : TFhirCount; overload;
     function Clone : TFhirCount; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
   end;
@@ -12531,6 +12867,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirCount;
     procedure SetItemN(index : Integer; value : TFhirCount);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12611,7 +12949,7 @@ Type
   TFhirMoney = class (TFhirQuantity)
   protected
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12621,10 +12959,15 @@ Type
     function Link : TFhirMoney; overload;
     function Clone : TFhirMoney; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
   end;
@@ -12651,6 +12994,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirMoney;
     procedure SetItemN(index : Integer; value : TFhirMoney);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12731,7 +13076,7 @@ Type
   TFhirDistance = class (TFhirQuantity)
   protected
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12741,10 +13086,15 @@ Type
     function Link : TFhirDistance; overload;
     function Clone : TFhirDistance; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
   end;
@@ -12771,6 +13121,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDistance;
     procedure SetItemN(index : Integer; value : TFhirDistance);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12851,7 +13203,7 @@ Type
   TFhirAge = class (TFhirQuantity)
   protected
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12861,10 +13213,15 @@ Type
     function Link : TFhirAge; overload;
     function Clone : TFhirAge; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
   end;
@@ -12891,6 +13248,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirAge;
     procedure SetItemN(index : Integer; value : TFhirAge);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -12971,7 +13330,7 @@ Type
   TFhirDuration = class (TFhirQuantity)
   protected
   
-    Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor Create; Override;
@@ -12981,10 +13340,15 @@ Type
     function Link : TFhirDuration; overload;
     function Clone : TFhirDuration; overload;
     procedure setProperty(propName : string; propValue : TFHIRObject); override;
-    function makeProperty(propName : string): TFHIRObject; override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string): TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
     function fhirType : string; override;
-    function equalsDeep(other : TFHIRBase) : boolean; override;
-    function equalsShallow(other : TFHIRBase) : boolean; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
     {!script show}
   published
   end;
@@ -13011,6 +13375,8 @@ Type
 
     function GetItemN(index : Integer) : TFhirDuration;
     procedure SetItemN(index : Integer; value : TFhirDuration);
+  protected
+    function ItemClass : TAdvObjectClass; override;
   public
 
     {!script hide}
@@ -13886,6 +14252,11 @@ begin
   inherited;
 end;
 
+function TFHIRElement.getId : string;
+begin
+  result := id;
+end;
+
 procedure TFhirElement.Assign(oSource : TAdvObject);
 begin
   inherited;
@@ -13902,13 +14273,13 @@ begin
   end;
 end;
 
-procedure TFhirElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElement.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'id') Then
-     list.add(FId.Link);
+     list.add(self.link, 'id', FId.Link);
   if (child_name = 'extension') Then
-    list.addAll(FExtensionList);
+    list.addAll(self, 'extension', FExtensionList);
 end;
 
 procedure TFhirElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -13925,10 +14296,39 @@ begin
   else inherited;
 end;
 
-function TFhirElement.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirElement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'extension') then result := ExtensionList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'extension') then ExtensionList.insertItem(index, propValue as TFhirExtension){2}
+  else inherited;
+end;
+
+function TFhirElement.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'extension') then result := ExtensionList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElement.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'id') then IdElement := nil
+  else if (propName = 'extension') then deletePropertyValue('extension', ExtensionList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElement.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'id') then IdElement := asId(new){5b}
+  else if (propName = 'extension') then replacePropertyValue('extension', ExtensionList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElement.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'extension') then ExtensionList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElement.fhirType : string;
@@ -13936,7 +14336,12 @@ begin
   result := 'Element';
 end;
 
-function TFhirElement.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElement.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FId) and isEmptyProp(FextensionList);
+end;
+
+function TFhirElement.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElement;
 begin
@@ -13951,7 +14356,7 @@ begin
   end;
 end;
 
-function TFhirElement.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElement.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElement;
 begin
@@ -14088,6 +14493,10 @@ begin
   result := TFhirElement(ObjectByIndex[index]);
 end;
 
+function TFhirElementList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElement;
+end;
 function TFhirElementList.IndexOf(value: TFhirElement): Integer;
 begin
   result := IndexByReference(value);
@@ -14166,11 +14575,11 @@ begin
   end;
 end;
 
-procedure TFhirBackboneElement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirBackboneElement.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'modifierExtension') Then
-    list.addAll(FModifierExtensionList);
+    list.addAll(self, 'modifierExtension', FModifierExtensionList);
 end;
 
 procedure TFhirBackboneElement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -14185,10 +14594,37 @@ begin
   else inherited;
 end;
 
-function TFhirBackboneElement.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirBackboneElement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'modifierExtension') then result := ModifierExtensionList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension){2}
+  else inherited;
+end;
+
+function TFhirBackboneElement.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'modifierExtension') then result := ModifierExtensionList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirBackboneElement.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'modifierExtension') then deletePropertyValue('modifierExtension', ModifierExtensionList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirBackboneElement.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'modifierExtension') then replacePropertyValue('modifierExtension', ModifierExtensionList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirBackboneElement.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirBackboneElement.fhirType : string;
@@ -14196,7 +14632,12 @@ begin
   result := 'BackboneElement';
 end;
 
-function TFhirBackboneElement.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirBackboneElement.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FmodifierExtensionList);
+end;
+
+function TFhirBackboneElement.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirBackboneElement;
 begin
@@ -14211,7 +14652,7 @@ begin
   end;
 end;
 
-function TFhirBackboneElement.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirBackboneElement.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirBackboneElement;
 begin
@@ -14322,6 +14763,10 @@ begin
   result := TFhirBackboneElement(ObjectByIndex[index]);
 end;
 
+function TFhirBackboneElementList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirBackboneElement;
+end;
 function TFhirBackboneElementList.IndexOf(value: TFhirBackboneElement): Integer;
 begin
   result := IndexByReference(value);
@@ -14444,11 +14889,11 @@ begin
   result := 'code';
 end;
 
-procedure TFhirEnum.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirEnum.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirEnum.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -14469,7 +14914,7 @@ begin
   result := FValue;
 end;
 
-function TFhirEnum.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirEnum.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirEnum;
 begin
@@ -14484,7 +14929,7 @@ begin
   end;
 end;
 
-function TFhirEnum.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirEnum.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirEnum;
 begin
@@ -14497,6 +14942,11 @@ begin
     o := TFhirEnum(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirEnum.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirEnum.Link : TFhirEnum;
@@ -14606,6 +15056,10 @@ begin
   result := TFhirEnum(ObjectByIndex[index]);
 end;
 
+function TFhirEnumList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirEnum;
+end;
 function TFhirEnumList.IndexOf(value: TFhirEnum): Integer;
 begin
   result := IndexByReference(value);
@@ -14676,11 +15130,11 @@ begin
   result := 'date';
 end;
 
-procedure TFhirDate.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDate.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirDate.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -14705,7 +15159,7 @@ begin
     result := FValue.asXml;
 end;
 
-function TFhirDate.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDate.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDate;
 begin
@@ -14716,11 +15170,11 @@ begin
   else
   begin
     o := TFhirDate(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
-function TFhirDate.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDate.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDate;
 begin
@@ -14733,6 +15187,11 @@ begin
     o := TFhirDate(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirDate.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue <> nil);
 end;
 
 function TFhirDate.Link : TFhirDate;
@@ -14829,6 +15288,10 @@ begin
   result := TFhirDate(ObjectByIndex[index]);
 end;
 
+function TFhirDateList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDate;
+end;
 function TFhirDateList.IndexOf(value: TFhirDate): Integer;
 begin
   result := IndexByReference(value);
@@ -14898,11 +15361,11 @@ begin
   result := 'dateTime';
 end;
 
-procedure TFhirDateTime.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDateTime.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirDateTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -14927,7 +15390,7 @@ begin
     result := FValue.asXml;
 end;
 
-function TFhirDateTime.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDateTime.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDateTime;
 begin
@@ -14938,11 +15401,11 @@ begin
   else
   begin
     o := TFhirDateTime(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
-function TFhirDateTime.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDateTime.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDateTime;
 begin
@@ -14955,6 +15418,11 @@ begin
     o := TFhirDateTime(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirDateTime.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue <> nil);
 end;
 
 function TFhirDateTime.Link : TFhirDateTime;
@@ -15051,6 +15519,10 @@ begin
   result := TFhirDateTime(ObjectByIndex[index]);
 end;
 
+function TFhirDateTimeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDateTime;
+end;
 function TFhirDateTimeList.IndexOf(value: TFhirDateTime): Integer;
 begin
   result := IndexByReference(value);
@@ -15119,11 +15591,11 @@ begin
   result := 'string';
 end;
 
-procedure TFhirString.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirString.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirString.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -15144,7 +15616,7 @@ begin
   result := FValue;
 end;
 
-function TFhirString.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirString.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirString;
 begin
@@ -15159,7 +15631,7 @@ begin
   end;
 end;
 
-function TFhirString.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirString.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirString;
 begin
@@ -15172,6 +15644,11 @@ begin
     o := TFhirString(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirString.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirString.Link : TFhirString;
@@ -15267,6 +15744,10 @@ begin
   result := TFhirString(ObjectByIndex[index]);
 end;
 
+function TFhirStringList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirString;
+end;
 function TFhirStringList.IndexOf(value: TFhirString): Integer;
 begin
   result := IndexByReference(value);
@@ -15335,11 +15816,11 @@ begin
   result := 'integer';
 end;
 
-procedure TFhirInteger.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirInteger.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirInteger.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -15360,7 +15841,7 @@ begin
   result := FValue;
 end;
 
-function TFhirInteger.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirInteger.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirInteger;
 begin
@@ -15375,7 +15856,7 @@ begin
   end;
 end;
 
-function TFhirInteger.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirInteger.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirInteger;
 begin
@@ -15388,6 +15869,11 @@ begin
     o := TFhirInteger(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirInteger.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirInteger.Link : TFhirInteger;
@@ -15483,6 +15969,10 @@ begin
   result := TFhirInteger(ObjectByIndex[index]);
 end;
 
+function TFhirIntegerList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirInteger;
+end;
 function TFhirIntegerList.IndexOf(value: TFhirInteger): Integer;
 begin
   result := IndexByReference(value);
@@ -15551,11 +16041,11 @@ begin
   result := 'uri';
 end;
 
-procedure TFhirUri.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirUri.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirUri.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -15576,7 +16066,7 @@ begin
   result := FValue;
 end;
 
-function TFhirUri.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirUri.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirUri;
 begin
@@ -15591,7 +16081,7 @@ begin
   end;
 end;
 
-function TFhirUri.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirUri.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirUri;
 begin
@@ -15604,6 +16094,11 @@ begin
     o := TFhirUri(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirUri.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirUri.Link : TFhirUri;
@@ -15699,6 +16194,10 @@ begin
   result := TFhirUri(ObjectByIndex[index]);
 end;
 
+function TFhirUriList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirUri;
+end;
 function TFhirUriList.IndexOf(value: TFhirUri): Integer;
 begin
   result := IndexByReference(value);
@@ -15768,11 +16267,11 @@ begin
   result := 'instant';
 end;
 
-procedure TFhirInstant.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirInstant.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirInstant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -15797,7 +16296,7 @@ begin
     result := FValue.asXml;
 end;
 
-function TFhirInstant.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirInstant.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirInstant;
 begin
@@ -15808,11 +16307,11 @@ begin
   else
   begin
     o := TFhirInstant(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
-function TFhirInstant.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirInstant.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirInstant;
 begin
@@ -15825,6 +16324,11 @@ begin
     o := TFhirInstant(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirInstant.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue <> nil);
 end;
 
 function TFhirInstant.Link : TFhirInstant;
@@ -15921,6 +16425,10 @@ begin
   result := TFhirInstant(ObjectByIndex[index]);
 end;
 
+function TFhirInstantList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirInstant;
+end;
 function TFhirInstantList.IndexOf(value: TFhirInstant): Integer;
 begin
   result := IndexByReference(value);
@@ -15989,11 +16497,11 @@ begin
   result := 'xhtml';
 end;
 
-procedure TFhirXhtml.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirXhtml.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirXhtml.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -16014,7 +16522,7 @@ begin
   result := FValue;
 end;
 
-function TFhirXhtml.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirXhtml.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirXhtml;
 begin
@@ -16029,7 +16537,7 @@ begin
   end;
 end;
 
-function TFhirXhtml.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirXhtml.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirXhtml;
 begin
@@ -16042,6 +16550,11 @@ begin
     o := TFhirXhtml(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirXhtml.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirXhtml.Link : TFhirXhtml;
@@ -16137,6 +16650,10 @@ begin
   result := TFhirXhtml(ObjectByIndex[index]);
 end;
 
+function TFhirXhtmlList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirXhtml;
+end;
 function TFhirXhtmlList.IndexOf(value: TFhirXhtml): Integer;
 begin
   result := IndexByReference(value);
@@ -16205,11 +16722,11 @@ begin
   result := 'boolean';
 end;
 
-procedure TFhirBoolean.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirBoolean.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirBoolean.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -16230,7 +16747,7 @@ begin
   result := LCBooleanToString(FValue);
 end;
 
-function TFhirBoolean.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirBoolean.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirBoolean;
 begin
@@ -16245,7 +16762,7 @@ begin
   end;
 end;
 
-function TFhirBoolean.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirBoolean.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirBoolean;
 begin
@@ -16258,6 +16775,11 @@ begin
     o := TFhirBoolean(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirBoolean.isEmpty : boolean;
+begin
+  result := false;
 end;
 
 function TFhirBoolean.Link : TFhirBoolean;
@@ -16353,6 +16875,10 @@ begin
   result := TFhirBoolean(ObjectByIndex[index]);
 end;
 
+function TFhirBooleanList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirBoolean;
+end;
 function TFhirBooleanList.IndexOf(value: TFhirBoolean): Integer;
 begin
   result := IndexByReference(value);
@@ -16421,11 +16947,11 @@ begin
   result := 'base64Binary';
 end;
 
-procedure TFhirBase64Binary.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirBase64Binary.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirBase64Binary.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -16446,7 +16972,7 @@ begin
   if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));
 end;
 
-function TFhirBase64Binary.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirBase64Binary.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirBase64Binary;
 begin
@@ -16461,7 +16987,7 @@ begin
   end;
 end;
 
-function TFhirBase64Binary.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirBase64Binary.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirBase64Binary;
 begin
@@ -16474,6 +17000,11 @@ begin
     o := TFhirBase64Binary(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirBase64Binary.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (length(FValue) = 0);
 end;
 
 function TFhirBase64Binary.Link : TFhirBase64Binary;
@@ -16569,6 +17100,10 @@ begin
   result := TFhirBase64Binary(ObjectByIndex[index]);
 end;
 
+function TFhirBase64BinaryList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirBase64Binary;
+end;
 function TFhirBase64BinaryList.IndexOf(value: TFhirBase64Binary): Integer;
 begin
   result := IndexByReference(value);
@@ -16637,11 +17172,11 @@ begin
   result := 'time';
 end;
 
-procedure TFhirTime.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirTime.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -16662,7 +17197,7 @@ begin
   result := FValue;
 end;
 
-function TFhirTime.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirTime.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirTime;
 begin
@@ -16677,7 +17212,7 @@ begin
   end;
 end;
 
-function TFhirTime.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirTime.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirTime;
 begin
@@ -16690,6 +17225,11 @@ begin
     o := TFhirTime(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirTime.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirTime.Link : TFhirTime;
@@ -16785,6 +17325,10 @@ begin
   result := TFhirTime(ObjectByIndex[index]);
 end;
 
+function TFhirTimeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirTime;
+end;
 function TFhirTimeList.IndexOf(value: TFhirTime): Integer;
 begin
   result := IndexByReference(value);
@@ -16853,11 +17397,11 @@ begin
   result := 'decimal';
 end;
 
-procedure TFhirDecimal.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDecimal.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if child_name = 'value' then
-    list.add(TFHIRObjectText.create(value));
+    list.add(self.link, 'value', TFHIRObjectText.create(value));
 end;
 
 procedure TFhirDecimal.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -16878,7 +17422,7 @@ begin
   result := FValue;
 end;
 
-function TFhirDecimal.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDecimal.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDecimal;
 begin
@@ -16893,7 +17437,7 @@ begin
   end;
 end;
 
-function TFhirDecimal.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDecimal.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDecimal;
 begin
@@ -16906,6 +17450,11 @@ begin
     o := TFhirDecimal(other);
     result := o.value = value;
   end;
+end;
+
+function TFhirDecimal.isEmpty : boolean;
+begin
+  result := inherited isEmpty and (FValue = '');
 end;
 
 function TFhirDecimal.Link : TFhirDecimal;
@@ -17001,6 +17550,10 @@ begin
   result := TFhirDecimal(ObjectByIndex[index]);
 end;
 
+function TFhirDecimalList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDecimal;
+end;
 function TFhirDecimalList.IndexOf(value: TFhirDecimal): Integer;
 begin
   result := IndexByReference(value);
@@ -17157,6 +17710,10 @@ begin
   result := TFhirCode(ObjectByIndex[index]);
 end;
 
+function TFhirCodeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirCode;
+end;
 function TFhirCodeList.IndexOf(value: TFhirCode): Integer;
 begin
   result := IndexByReference(value);
@@ -17313,6 +17870,10 @@ begin
   result := TFhirOid(ObjectByIndex[index]);
 end;
 
+function TFhirOidList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirOid;
+end;
 function TFhirOidList.IndexOf(value: TFhirOid): Integer;
 begin
   result := IndexByReference(value);
@@ -17469,6 +18030,10 @@ begin
   result := TFhirUuid(ObjectByIndex[index]);
 end;
 
+function TFhirUuidList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirUuid;
+end;
 function TFhirUuidList.IndexOf(value: TFhirUuid): Integer;
 begin
   result := IndexByReference(value);
@@ -17625,6 +18190,10 @@ begin
   result := TFhirUnsignedInt(ObjectByIndex[index]);
 end;
 
+function TFhirUnsignedIntList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirUnsignedInt;
+end;
 function TFhirUnsignedIntList.IndexOf(value: TFhirUnsignedInt): Integer;
 begin
   result := IndexByReference(value);
@@ -17781,6 +18350,10 @@ begin
   result := TFhirMarkdown(ObjectByIndex[index]);
 end;
 
+function TFhirMarkdownList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirMarkdown;
+end;
 function TFhirMarkdownList.IndexOf(value: TFhirMarkdown): Integer;
 begin
   result := IndexByReference(value);
@@ -17937,6 +18510,10 @@ begin
   result := TFhirId(ObjectByIndex[index]);
 end;
 
+function TFhirIdList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirId;
+end;
 function TFhirIdList.IndexOf(value: TFhirId): Integer;
 begin
   result := IndexByReference(value);
@@ -18093,6 +18670,10 @@ begin
   result := TFhirPositiveInt(ObjectByIndex[index]);
 end;
 
+function TFhirPositiveIntList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirPositiveInt;
+end;
 function TFhirPositiveIntList.IndexOf(value: TFhirPositiveInt): Integer;
 begin
   result := IndexByReference(value);
@@ -18191,13 +18772,13 @@ begin
   value := TFhirExtension(oSource).value.Clone;
 end;
 
-procedure TFhirExtension.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirExtension.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'url') Then
-     list.add(FUrl.Link);
+     list.add(self.link, 'url', FUrl.Link);
   if (child_name = 'value[x]') or (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value[x]', FValue.Link);
 end;
 
 procedure TFhirExtension.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -18214,9 +18795,33 @@ begin
   else inherited;
 end;
 
-function TFhirExtension.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirExtension.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirExtension.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirExtension.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'url') then UrlElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirExtension.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'url') then UrlElement := asUri(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirExtension.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirExtension.fhirType : string;
@@ -18224,7 +18829,12 @@ begin
   result := 'Extension';
 end;
 
-function TFhirExtension.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirExtension.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FUrl) and isEmptyProp(FValue);
+end;
+
+function TFhirExtension.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirExtension;
 begin
@@ -18239,7 +18849,7 @@ begin
   end;
 end;
 
-function TFhirExtension.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirExtension.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirExtension;
 begin
@@ -18370,6 +18980,10 @@ begin
   result := TFhirExtension(ObjectByIndex[index]);
 end;
 
+function TFhirExtensionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirExtension;
+end;
 function TFhirExtensionList.IndexOf(value: TFhirExtension): Integer;
 begin
   result := IndexByReference(value);
@@ -18468,13 +19082,13 @@ begin
   div_ := TFhirNarrative(oSource).div_.Clone;
 end;
 
-procedure TFhirNarrative.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirNarrative.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'status') Then
-     list.add(FStatus.Link);
+     list.add(self.link, 'status', FStatus.Link);
   if (child_name = 'div') Then
-     list.add(FDiv_.Link);
+     list.add(self.link, 'div', FDiv_.Link);
 end;
 
 procedure TFhirNarrative.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -18491,10 +19105,36 @@ begin
   else inherited;
 end;
 
-function TFhirNarrative.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirNarrative.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'div') then begin Div_ := TFhirXHtmlNode.create(); result := Div_; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirNarrative.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'div') then result := TFhirXHtmlNode.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirNarrative.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'status') then StatusElement := nil
+  else if (propName = 'div') then Div_Element := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirNarrative.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, new){4}
+  else if (propName = 'div') then Div_Element := new as TFhirXHtmlNode{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirNarrative.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirNarrative.fhirType : string;
@@ -18502,7 +19142,12 @@ begin
   result := 'Narrative';
 end;
 
-function TFhirNarrative.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirNarrative.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FStatus) and isEmptyProp(FDiv_);
+end;
+
+function TFhirNarrative.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirNarrative;
 begin
@@ -18517,7 +19162,7 @@ begin
   end;
 end;
 
-function TFhirNarrative.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirNarrative.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirNarrative;
 begin
@@ -18644,6 +19289,10 @@ begin
   result := TFhirNarrative(ObjectByIndex[index]);
 end;
 
+function TFhirNarrativeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirNarrative;
+end;
 function TFhirNarrativeList.IndexOf(value: TFhirNarrative): Integer;
 begin
   result := IndexByReference(value);
@@ -18753,15 +19402,15 @@ begin
   end;
 end;
 
-procedure TFhirContributor.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirContributor.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'name') Then
-     list.add(FName.Link);
+     list.add(self.link, 'name', FName.Link);
   if (child_name = 'contact') Then
-    list.addAll(FContactList);
+    list.addAll(self, 'contact', FContactList);
 end;
 
 procedure TFhirContributor.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -18780,10 +19429,41 @@ begin
   else inherited;
 end;
 
-function TFhirContributor.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirContributor.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contact') then result := ContactList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail){2}
+  else inherited;
+end;
+
+function TFhirContributor.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'contact') then result := ContactList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirContributor.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'name') then NameElement := nil
+  else if (propName = 'contact') then deletePropertyValue('contact', ContactList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirContributor.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirContributorTypeEnum, CODES_TFhirContributorTypeEnum, new){4}
+  else if (propName = 'name') then NameElement := asString(new){5b}
+  else if (propName = 'contact') then replacePropertyValue('contact', ContactList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirContributor.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'contact') then ContactList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirContributor.fhirType : string;
@@ -18791,7 +19471,12 @@ begin
   result := 'Contributor';
 end;
 
-function TFhirContributor.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirContributor.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FName) and isEmptyProp(FcontactList);
+end;
+
+function TFhirContributor.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirContributor;
 begin
@@ -18807,7 +19492,7 @@ begin
   end;
 end;
 
-function TFhirContributor.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirContributor.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirContributor;
 begin
@@ -18966,6 +19651,10 @@ begin
   result := TFhirContributor(ObjectByIndex[index]);
 end;
 
+function TFhirContributorList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirContributor;
+end;
 function TFhirContributorList.IndexOf(value: TFhirContributor): Integer;
 begin
   result := IndexByReference(value);
@@ -19049,25 +19738,25 @@ begin
   creationElement := TFhirAttachment(oSource).creationElement.Clone;
 end;
 
-procedure TFhirAttachment.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirAttachment.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'contentType') Then
-     list.add(FContentType.Link);
+     list.add(self.link, 'contentType', FContentType.Link);
   if (child_name = 'language') Then
-     list.add(FLanguage.Link);
+     list.add(self.link, 'language', FLanguage.Link);
   if (child_name = 'data') Then
-     list.add(FData.Link);
+     list.add(self.link, 'data', FData.Link);
   if (child_name = 'url') Then
-     list.add(FUrl.Link);
+     list.add(self.link, 'url', FUrl.Link);
   if (child_name = 'size') Then
-     list.add(FSize.Link);
+     list.add(self.link, 'size', FSize.Link);
   if (child_name = 'hash') Then
-     list.add(FHash.Link);
+     list.add(self.link, 'hash', FHash.Link);
   if (child_name = 'title') Then
-     list.add(FTitle.Link);
+     list.add(self.link, 'title', FTitle.Link);
   if (child_name = 'creation') Then
-     list.add(FCreation.Link);
+     list.add(self.link, 'creation', FCreation.Link);
 end;
 
 procedure TFhirAttachment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -19096,9 +19785,47 @@ begin
   else inherited;
 end;
 
-function TFhirAttachment.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirAttachment.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirAttachment.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirAttachment.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'contentType') then ContentTypeElement := nil
+  else if (propName = 'language') then LanguageElement := nil
+  else if (propName = 'data') then DataElement := nil
+  else if (propName = 'url') then UrlElement := nil
+  else if (propName = 'size') then SizeElement := nil
+  else if (propName = 'hash') then HashElement := nil
+  else if (propName = 'title') then TitleElement := nil
+  else if (propName = 'creation') then CreationElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirAttachment.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'contentType') then ContentTypeElement := asCode(new){5b}
+  else if (propName = 'language') then LanguageElement := asCode(new){5b}
+  else if (propName = 'data') then DataElement := asBase64Binary(new){5b}
+  else if (propName = 'url') then UrlElement := asUri(new){5b}
+  else if (propName = 'size') then SizeElement := asUnsignedInt(new){5b}
+  else if (propName = 'hash') then HashElement := asBase64Binary(new){5b}
+  else if (propName = 'title') then TitleElement := asString(new){5b}
+  else if (propName = 'creation') then CreationElement := asDateTime(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirAttachment.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirAttachment.fhirType : string;
@@ -19106,7 +19833,12 @@ begin
   result := 'Attachment';
 end;
 
-function TFhirAttachment.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirAttachment.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FContentType) and isEmptyProp(FLanguage) and isEmptyProp(FData) and isEmptyProp(FUrl) and isEmptyProp(FSize) and isEmptyProp(FHash) and isEmptyProp(FTitle) and isEmptyProp(FCreation);
+end;
+
+function TFhirAttachment.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirAttachment;
 begin
@@ -19124,7 +19856,7 @@ begin
   end;
 end;
 
-function TFhirAttachment.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirAttachment.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirAttachment;
 begin
@@ -19434,6 +20166,10 @@ begin
   result := TFhirAttachment(ObjectByIndex[index]);
 end;
 
+function TFhirAttachmentList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirAttachment;
+end;
 function TFhirAttachmentList.IndexOf(value: TFhirAttachment): Integer;
 begin
   result := IndexByReference(value);
@@ -19565,19 +20301,19 @@ begin
   end;
 end;
 
-procedure TFhirDataRequirementCodeFilter.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDataRequirementCodeFilter.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'path') Then
-     list.add(FPath.Link);
+     list.add(self.link, 'path', FPath.Link);
   if (child_name = 'valueSet[x]') or (child_name = 'valueSet') Then
-     list.add(FValueSet.Link);
+     list.add(self.link, 'valueSet[x]', FValueSet.Link);
   if (child_name = 'valueCode') Then
-    list.addAll(FValueCodeList);
+    list.addAll(self, 'valueCode', FValueCodeList);
   if (child_name = 'valueCoding') Then
-    list.addAll(FValueCodingList);
+    list.addAll(self, 'valueCoding', FValueCodingList);
   if (child_name = 'valueCodeableConcept') Then
-    list.addAll(FValueCodeableConceptList);
+    list.addAll(self, 'valueCodeableConcept', FValueCodeableConceptList);
 end;
 
 procedure TFhirDataRequirementCodeFilter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -19600,12 +20336,49 @@ begin
   else inherited;
 end;
 
-function TFhirDataRequirementCodeFilter.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirDataRequirementCodeFilter.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'valueCode') then result := ValueCodeList.append(){2}
-  else if (propName = 'valueCoding') then result := ValueCodingList.append(){2}
-  else if (propName = 'valueCodeableConcept') then result := ValueCodeableConceptList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'valueCode') then ValueCodeList.insertItem(index, asCode(propValue)){2}
+  else if (propName = 'valueCoding') then ValueCodingList.insertItem(index, propValue as TFhirCoding){2}
+  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.insertItem(index, propValue as TFhirCodeableConcept){2}
+  else inherited;
+end;
+
+function TFhirDataRequirementCodeFilter.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'valueCode') then result := ValueCodeList.new(){2}
+  else if (propName = 'valueCoding') then result := ValueCodingList.new(){2}
+  else if (propName = 'valueCodeableConcept') then result := ValueCodeableConceptList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDataRequirementCodeFilter.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else if (propName = 'valueCode') then deletePropertyValue('valueCode', ValueCodeList, value) {2}
+  else if (propName = 'valueCoding') then deletePropertyValue('valueCoding', ValueCodingList, value) {2}
+  else if (propName = 'valueCodeableConcept') then deletePropertyValue('valueCodeableConcept', ValueCodeableConceptList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDataRequirementCodeFilter.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new){5b}
+  else if (propName = 'valueCode') then replacePropertyValue('valueCode', ValueCodeList, existing, new) {2}
+  else if (propName = 'valueCoding') then replacePropertyValue('valueCoding', ValueCodingList, existing, new) {2}
+  else if (propName = 'valueCodeableConcept') then replacePropertyValue('valueCodeableConcept', ValueCodeableConceptList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDataRequirementCodeFilter.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'valueCode') then ValueCodeList.move(source, destination){2}
+  else if (propName = 'valueCoding') then ValueCodingList.move(source, destination){2}
+  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDataRequirementCodeFilter.fhirType : string;
@@ -19623,7 +20396,7 @@ begin
   result := TFhirDataRequirementCodeFilter(inherited Clone);
 end;
 
-function TFhirDataRequirementCodeFilter.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDataRequirementCodeFilter.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirementCodeFilter;
 begin
@@ -19640,7 +20413,7 @@ begin
   end;
 end;
 
-function TFhirDataRequirementCodeFilter.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDataRequirementCodeFilter.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirementCodeFilter;
 begin
@@ -19653,6 +20426,11 @@ begin
     o := TFhirDataRequirementCodeFilter(other);
     result := compareValues(pathElement, o.pathElement, true) and compareValues(valueCodeList, o.valueCodeList, true);
   end;
+end;
+
+function TFhirDataRequirementCodeFilter.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FValueSet) and isEmptyProp(FvalueCodeList) and isEmptyProp(FvalueCodingList) and isEmptyProp(FvalueCodeableConceptList);
 end;
 
 { TFhirDataRequirementCodeFilter }
@@ -19797,6 +20575,10 @@ begin
   result := TFhirDataRequirementCodeFilter(ObjectByIndex[index]);
 end;
 
+function TFhirDataRequirementCodeFilterList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDataRequirementCodeFilter;
+end;
 function TFhirDataRequirementCodeFilterList.IndexOf(value: TFhirDataRequirementCodeFilter): Integer;
 begin
   result := IndexByReference(value);
@@ -19868,13 +20650,13 @@ begin
   value := TFhirDataRequirementDateFilter(oSource).value.Clone;
 end;
 
-procedure TFhirDataRequirementDateFilter.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDataRequirementDateFilter.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'path') Then
-     list.add(FPath.Link);
+     list.add(self.link, 'path', FPath.Link);
   if (child_name = 'value[x]') or (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value[x]', FValue.Link);
 end;
 
 procedure TFhirDataRequirementDateFilter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -19891,9 +20673,33 @@ begin
   else inherited;
 end;
 
-function TFhirDataRequirementDateFilter.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirDataRequirementDateFilter.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirDataRequirementDateFilter.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDataRequirementDateFilter.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDataRequirementDateFilter.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDataRequirementDateFilter.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDataRequirementDateFilter.fhirType : string;
@@ -19911,7 +20717,7 @@ begin
   result := TFhirDataRequirementDateFilter(inherited Clone);
 end;
 
-function TFhirDataRequirementDateFilter.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDataRequirementDateFilter.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirementDateFilter;
 begin
@@ -19926,7 +20732,7 @@ begin
   end;
 end;
 
-function TFhirDataRequirementDateFilter.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDataRequirementDateFilter.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirementDateFilter;
 begin
@@ -19939,6 +20745,11 @@ begin
     o := TFhirDataRequirementDateFilter(other);
     result := compareValues(pathElement, o.pathElement, true);
   end;
+end;
+
+function TFhirDataRequirementDateFilter.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FValue);
 end;
 
 { TFhirDataRequirementDateFilter }
@@ -20047,6 +20858,10 @@ begin
   result := TFhirDataRequirementDateFilter(ObjectByIndex[index]);
 end;
 
+function TFhirDataRequirementDateFilterList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDataRequirementDateFilter;
+end;
 function TFhirDataRequirementDateFilterList.IndexOf(value: TFhirDataRequirementDateFilter): Integer;
 begin
   result := IndexByReference(value);
@@ -20160,19 +20975,19 @@ begin
   end;
 end;
 
-procedure TFhirDataRequirement.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDataRequirement.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'profile') Then
-    list.addAll(FProfileList);
+    list.addAll(self, 'profile', FProfileList);
   if (child_name = 'mustSupport') Then
-    list.addAll(FMustSupportList);
+    list.addAll(self, 'mustSupport', FMustSupportList);
   if (child_name = 'codeFilter') Then
-    list.addAll(FCodeFilterList);
+    list.addAll(self, 'codeFilter', FCodeFilterList);
   if (child_name = 'dateFilter') Then
-    list.addAll(FDateFilterList);
+    list.addAll(self, 'dateFilter', FDateFilterList);
 end;
 
 procedure TFhirDataRequirement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -20195,13 +21010,54 @@ begin
   else inherited;
 end;
 
-function TFhirDataRequirement.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirDataRequirement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'profile') then result := ProfileList.append(){2}
-  else if (propName = 'mustSupport') then result := MustSupportList.append(){2}
-  else if (propName = 'codeFilter') then result := CodeFilterList.append(){2}
-  else if (propName = 'dateFilter') then result := DateFilterList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'profile') then ProfileList.insertItem(index, asUri(propValue)){2}
+  else if (propName = 'mustSupport') then MustSupportList.insertItem(index, asString(propValue)){2}
+  else if (propName = 'codeFilter') then CodeFilterList.insertItem(index, propValue as TFhirDataRequirementCodeFilter){2}
+  else if (propName = 'dateFilter') then DateFilterList.insertItem(index, propValue as TFhirDataRequirementDateFilter){2}
+  else inherited;
+end;
+
+function TFhirDataRequirement.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'profile') then result := ProfileList.new(){2}
+  else if (propName = 'mustSupport') then result := MustSupportList.new(){2}
+  else if (propName = 'codeFilter') then result := CodeFilterList.new(){2}
+  else if (propName = 'dateFilter') then result := DateFilterList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDataRequirement.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'profile') then deletePropertyValue('profile', ProfileList, value) {2}
+  else if (propName = 'mustSupport') then deletePropertyValue('mustSupport', MustSupportList, value) {2}
+  else if (propName = 'codeFilter') then deletePropertyValue('codeFilter', CodeFilterList, value) {2}
+  else if (propName = 'dateFilter') then deletePropertyValue('dateFilter', DateFilterList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDataRequirement.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, new){4}
+  else if (propName = 'profile') then replacePropertyValue('profile', ProfileList, existing, new) {2}
+  else if (propName = 'mustSupport') then replacePropertyValue('mustSupport', MustSupportList, existing, new) {2}
+  else if (propName = 'codeFilter') then replacePropertyValue('codeFilter', CodeFilterList, existing, new) {2}
+  else if (propName = 'dateFilter') then replacePropertyValue('dateFilter', DateFilterList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDataRequirement.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'profile') then ProfileList.move(source, destination){2}
+  else if (propName = 'mustSupport') then MustSupportList.move(source, destination){2}
+  else if (propName = 'codeFilter') then CodeFilterList.move(source, destination){2}
+  else if (propName = 'dateFilter') then DateFilterList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDataRequirement.fhirType : string;
@@ -20209,7 +21065,12 @@ begin
   result := 'DataRequirement';
 end;
 
-function TFhirDataRequirement.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDataRequirement.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FprofileList) and isEmptyProp(FmustSupportList) and isEmptyProp(FcodeFilterList) and isEmptyProp(FdateFilterList);
+end;
+
+function TFhirDataRequirement.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirement;
 begin
@@ -20226,7 +21087,7 @@ begin
   end;
 end;
 
-function TFhirDataRequirement.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDataRequirement.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDataRequirement;
 begin
@@ -20396,6 +21257,10 @@ begin
   result := TFhirDataRequirement(ObjectByIndex[index]);
 end;
 
+function TFhirDataRequirementList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDataRequirement;
+end;
 function TFhirDataRequirementList.IndexOf(value: TFhirDataRequirement): Integer;
 begin
   result := IndexByReference(value);
@@ -20502,21 +21367,21 @@ begin
   assigner := TFhirIdentifier(oSource).assigner.Clone;
 end;
 
-procedure TFhirIdentifier.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirIdentifier.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'use') Then
-     list.add(FUse.Link);
+     list.add(self.link, 'use', FUse.Link);
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'system') Then
-     list.add(FSystem.Link);
+     list.add(self.link, 'system', FSystem.Link);
   if (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value', FValue.Link);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
   if (child_name = 'assigner') Then
-     list.add(FAssigner.Link);
+     list.add(self.link, 'assigner', FAssigner.Link);
 end;
 
 procedure TFhirIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -20541,12 +21406,46 @@ begin
   else inherited;
 end;
 
-function TFhirIdentifier.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirIdentifier.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'type') then begin Type_ := TFhirCodeableConcept.create(); result := Type_; end{4b}
-  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
-  else if (propName = 'assigner') then begin Assigner := TFhirReference{TFhirOrganization}.create(); result := Assigner; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirIdentifier.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else if (propName = 'assigner') then result := TFhirReference{TFhirOrganization}.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirIdentifier.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'system') then SystemElement := nil
+  else if (propName = 'value') then ValueElement := nil
+  else if (propName = 'period') then PeriodElement := nil
+  else if (propName = 'assigner') then AssignerElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirIdentifier.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirIdentifierUseEnum, CODES_TFhirIdentifierUseEnum, new){4}
+  else if (propName = 'type') then Type_Element := new as TFhirCodeableConcept{4}
+  else if (propName = 'system') then SystemElement := asUri(new){5b}
+  else if (propName = 'value') then ValueElement := asString(new){5b}
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod{4}
+  else if (propName = 'assigner') then AssignerElement := new as TFhirReference{TFhirOrganization}{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirIdentifier.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirIdentifier.fhirType : string;
@@ -20554,7 +21453,12 @@ begin
   result := 'Identifier';
 end;
 
-function TFhirIdentifier.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirIdentifier.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FUse) and isEmptyProp(FType_) and isEmptyProp(FSystem) and isEmptyProp(FValue) and isEmptyProp(FPeriod) and isEmptyProp(FAssigner);
+end;
+
+function TFhirIdentifier.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirIdentifier;
 begin
@@ -20571,7 +21475,7 @@ begin
   end;
 end;
 
-function TFhirIdentifier.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirIdentifier.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirIdentifier;
 begin
@@ -20763,6 +21667,10 @@ begin
   result := TFhirIdentifier(ObjectByIndex[index]);
 end;
 
+function TFhirIdentifierList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirIdentifier;
+end;
 function TFhirIdentifierList.IndexOf(value: TFhirIdentifier): Integer;
 begin
   result := IndexByReference(value);
@@ -20840,19 +21748,19 @@ begin
   userSelectedElement := TFhirCoding(oSource).userSelectedElement.Clone;
 end;
 
-procedure TFhirCoding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirCoding.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(FSystem.Link);
+     list.add(self.link, 'system', FSystem.Link);
   if (child_name = 'version') Then
-     list.add(FVersion.Link);
+     list.add(self.link, 'version', FVersion.Link);
   if (child_name = 'code') Then
-     list.add(FCode.Link);
+     list.add(self.link, 'code', FCode.Link);
   if (child_name = 'display') Then
-     list.add(FDisplay.Link);
+     list.add(self.link, 'display', FDisplay.Link);
   if (child_name = 'userSelected') Then
-     list.add(FUserSelected.Link);
+     list.add(self.link, 'userSelected', FUserSelected.Link);
 end;
 
 procedure TFhirCoding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -20875,9 +21783,41 @@ begin
   else inherited;
 end;
 
-function TFhirCoding.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirCoding.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirCoding.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirCoding.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'system') then SystemElement := nil
+  else if (propName = 'version') then VersionElement := nil
+  else if (propName = 'code') then CodeElement := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else if (propName = 'userSelected') then UserSelectedElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCoding.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'system') then SystemElement := asUri(new){5b}
+  else if (propName = 'version') then VersionElement := asString(new){5b}
+  else if (propName = 'code') then CodeElement := asCode(new){5b}
+  else if (propName = 'display') then DisplayElement := asString(new){5b}
+  else if (propName = 'userSelected') then UserSelectedElement := asBoolean(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCoding.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirCoding.fhirType : string;
@@ -20885,7 +21825,12 @@ begin
   result := 'Coding';
 end;
 
-function TFhirCoding.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirCoding.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSystem) and isEmptyProp(FVersion) and isEmptyProp(FCode) and isEmptyProp(FDisplay) and isEmptyProp(FUserSelected);
+end;
+
+function TFhirCoding.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirCoding;
 begin
@@ -20902,7 +21847,7 @@ begin
   end;
 end;
 
-function TFhirCoding.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirCoding.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirCoding;
 begin
@@ -21128,6 +22073,10 @@ begin
   result := TFhirCoding(ObjectByIndex[index]);
 end;
 
+function TFhirCodingList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirCoding;
+end;
 function TFhirCodingList.IndexOf(value: TFhirCoding): Integer;
 begin
   result := IndexByReference(value);
@@ -21209,23 +22158,23 @@ begin
   dataElement := TFhirSampledData(oSource).dataElement.Clone;
 end;
 
-procedure TFhirSampledData.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirSampledData.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'origin') Then
-     list.add(FOrigin.Link);
+     list.add(self.link, 'origin', FOrigin.Link);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
   if (child_name = 'factor') Then
-     list.add(FFactor.Link);
+     list.add(self.link, 'factor', FFactor.Link);
   if (child_name = 'lowerLimit') Then
-     list.add(FLowerLimit.Link);
+     list.add(self.link, 'lowerLimit', FLowerLimit.Link);
   if (child_name = 'upperLimit') Then
-     list.add(FUpperLimit.Link);
+     list.add(self.link, 'upperLimit', FUpperLimit.Link);
   if (child_name = 'dimensions') Then
-     list.add(FDimensions.Link);
+     list.add(self.link, 'dimensions', FDimensions.Link);
   if (child_name = 'data') Then
-     list.add(FData.Link);
+     list.add(self.link, 'data', FData.Link);
 end;
 
 procedure TFhirSampledData.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -21252,10 +22201,46 @@ begin
   else inherited;
 end;
 
-function TFhirSampledData.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirSampledData.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'origin') then begin Origin := TFhirQuantity.create(); result := Origin; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirSampledData.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'origin') then result := TFhirQuantity.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirSampledData.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'origin') then OriginElement := nil
+  else if (propName = 'period') then PeriodElement := nil
+  else if (propName = 'factor') then FactorElement := nil
+  else if (propName = 'lowerLimit') then LowerLimitElement := nil
+  else if (propName = 'upperLimit') then UpperLimitElement := nil
+  else if (propName = 'dimensions') then DimensionsElement := nil
+  else if (propName = 'data') then DataElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirSampledData.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'origin') then OriginElement := new as TFhirQuantity{4}
+  else if (propName = 'period') then PeriodElement := asDecimal(new){5b}
+  else if (propName = 'factor') then FactorElement := asDecimal(new){5b}
+  else if (propName = 'lowerLimit') then LowerLimitElement := asDecimal(new){5b}
+  else if (propName = 'upperLimit') then UpperLimitElement := asDecimal(new){5b}
+  else if (propName = 'dimensions') then DimensionsElement := asPositiveInt(new){5b}
+  else if (propName = 'data') then DataElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirSampledData.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirSampledData.fhirType : string;
@@ -21263,7 +22248,12 @@ begin
   result := 'SampledData';
 end;
 
-function TFhirSampledData.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirSampledData.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FOrigin) and isEmptyProp(FPeriod) and isEmptyProp(FFactor) and isEmptyProp(FLowerLimit) and isEmptyProp(FUpperLimit) and isEmptyProp(FDimensions) and isEmptyProp(FData);
+end;
+
+function TFhirSampledData.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirSampledData;
 begin
@@ -21281,7 +22271,7 @@ begin
   end;
 end;
 
-function TFhirSampledData.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirSampledData.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirSampledData;
 begin
@@ -21544,6 +22534,10 @@ begin
   result := TFhirSampledData(ObjectByIndex[index]);
 end;
 
+function TFhirSampledDataList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirSampledData;
+end;
 function TFhirSampledDataList.IndexOf(value: TFhirSampledData): Integer;
 begin
   result := IndexByReference(value);
@@ -21615,13 +22609,13 @@ begin
   denominator := TFhirRatio(oSource).denominator.Clone;
 end;
 
-procedure TFhirRatio.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirRatio.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'numerator') Then
-     list.add(FNumerator.Link);
+     list.add(self.link, 'numerator', FNumerator.Link);
   if (child_name = 'denominator') Then
-     list.add(FDenominator.Link);
+     list.add(self.link, 'denominator', FDenominator.Link);
 end;
 
 procedure TFhirRatio.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -21638,11 +22632,37 @@ begin
   else inherited;
 end;
 
-function TFhirRatio.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirRatio.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'numerator') then begin Numerator := TFhirQuantity.create(); result := Numerator; end{4b}
-  else if (propName = 'denominator') then begin Denominator := TFhirQuantity.create(); result := Denominator; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirRatio.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'numerator') then result := TFhirQuantity.create(){4b}
+  else if (propName = 'denominator') then result := TFhirQuantity.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirRatio.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'numerator') then NumeratorElement := nil
+  else if (propName = 'denominator') then DenominatorElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRatio.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'numerator') then NumeratorElement := new as TFhirQuantity{4}
+  else if (propName = 'denominator') then DenominatorElement := new as TFhirQuantity{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRatio.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirRatio.fhirType : string;
@@ -21650,7 +22670,12 @@ begin
   result := 'Ratio';
 end;
 
-function TFhirRatio.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirRatio.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FNumerator) and isEmptyProp(FDenominator);
+end;
+
+function TFhirRatio.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirRatio;
 begin
@@ -21665,7 +22690,7 @@ begin
   end;
 end;
 
-function TFhirRatio.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirRatio.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirRatio;
 begin
@@ -21776,6 +22801,10 @@ begin
   result := TFhirRatio(ObjectByIndex[index]);
 end;
 
+function TFhirRatioList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirRatio;
+end;
 function TFhirRatioList.IndexOf(value: TFhirRatio): Integer;
 begin
   result := IndexByReference(value);
@@ -21878,35 +22907,35 @@ begin
   rate := TFhirDosageInstruction(oSource).rate.Clone;
 end;
 
-procedure TFhirDosageInstruction.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDosageInstruction.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'sequence') Then
-     list.add(FSequence.Link);
+     list.add(self.link, 'sequence', FSequence.Link);
   if (child_name = 'text') Then
-     list.add(FText.Link);
+     list.add(self.link, 'text', FText.Link);
   if (child_name = 'additionalInstructions') Then
-    list.addAll(FAdditionalInstructionsList);
+    list.addAll(self, 'additionalInstructions', FAdditionalInstructionsList);
   if (child_name = 'timing') Then
-     list.add(FTiming.Link);
+     list.add(self.link, 'timing', FTiming.Link);
   if (child_name = 'asNeeded[x]') or (child_name = 'asNeeded') Then
-     list.add(FAsNeeded.Link);
+     list.add(self.link, 'asNeeded[x]', FAsNeeded.Link);
   if (child_name = 'site') Then
-     list.add(FSite.Link);
+     list.add(self.link, 'site', FSite.Link);
   if (child_name = 'route') Then
-     list.add(FRoute.Link);
+     list.add(self.link, 'route', FRoute.Link);
   if (child_name = 'method') Then
-     list.add(FMethod.Link);
+     list.add(self.link, 'method', FMethod.Link);
   if (child_name = 'dose[x]') or (child_name = 'dose') Then
-     list.add(FDose.Link);
+     list.add(self.link, 'dose[x]', FDose.Link);
   if (child_name = 'maxDosePerPeriod') Then
-     list.add(FMaxDosePerPeriod.Link);
+     list.add(self.link, 'maxDosePerPeriod', FMaxDosePerPeriod.Link);
   if (child_name = 'maxDosePerAdministration') Then
-     list.add(FMaxDosePerAdministration.Link);
+     list.add(self.link, 'maxDosePerAdministration', FMaxDosePerAdministration.Link);
   if (child_name = 'maxDosePerLifetime') Then
-     list.add(FMaxDosePerLifetime.Link);
+     list.add(self.link, 'maxDosePerLifetime', FMaxDosePerLifetime.Link);
   if (child_name = 'rate[x]') or (child_name = 'rate') Then
-     list.add(FRate.Link);
+     list.add(self.link, 'rate[x]', FRate.Link);
 end;
 
 procedure TFhirDosageInstruction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -21945,17 +22974,62 @@ begin
   else inherited;
 end;
 
-function TFhirDosageInstruction.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirDosageInstruction.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'additionalInstructions') then result := AdditionalInstructionsList.append(){2}
-  else if (propName = 'timing') then begin Timing := TFhirTiming.create(); result := Timing; end{4b}
-  else if (propName = 'site') then begin Site := TFhirCodeableConcept.create(); result := Site; end{4b}
-  else if (propName = 'route') then begin Route := TFhirCodeableConcept.create(); result := Route; end{4b}
-  else if (propName = 'method') then begin Method := TFhirCodeableConcept.create(); result := Method; end{4b}
-  else if (propName = 'maxDosePerPeriod') then begin MaxDosePerPeriod := TFhirRatio.create(); result := MaxDosePerPeriod; end{4b}
-  else if (propName = 'maxDosePerAdministration') then begin MaxDosePerAdministration := TFhirQuantity.create(); result := MaxDosePerAdministration; end{4b}
-  else if (propName = 'maxDosePerLifetime') then begin MaxDosePerLifetime := TFhirQuantity.create(); result := MaxDosePerLifetime; end{4b}
-  else result := inherited makeProperty(propName);
+  if (propName = 'additionalInstructions') then AdditionalInstructionsList.insertItem(index, propValue as TFhirCodeableConcept){2}
+  else inherited;
+end;
+
+function TFhirDosageInstruction.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'additionalInstructions') then result := AdditionalInstructionsList.new(){2}
+  else if (propName = 'timing') then result := TFhirTiming.create(){4b}
+  else if (propName = 'site') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.create(){4b}
+  else if (propName = 'maxDosePerAdministration') then result := TFhirQuantity.create(){4b}
+  else if (propName = 'maxDosePerLifetime') then result := TFhirQuantity.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDosageInstruction.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'sequence') then SequenceElement := nil
+  else if (propName = 'text') then TextElement := nil
+  else if (propName = 'additionalInstructions') then deletePropertyValue('additionalInstructions', AdditionalInstructionsList, value) {2}
+  else if (propName = 'timing') then TimingElement := nil
+  else if (propName = 'site') then SiteElement := nil
+  else if (propName = 'route') then RouteElement := nil
+  else if (propName = 'method') then MethodElement := nil
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriodElement := nil
+  else if (propName = 'maxDosePerAdministration') then MaxDosePerAdministrationElement := nil
+  else if (propName = 'maxDosePerLifetime') then MaxDosePerLifetimeElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDosageInstruction.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'sequence') then SequenceElement := asInteger(new){5b}
+  else if (propName = 'text') then TextElement := asString(new){5b}
+  else if (propName = 'additionalInstructions') then replacePropertyValue('additionalInstructions', AdditionalInstructionsList, existing, new) {2}
+  else if (propName = 'timing') then TimingElement := new as TFhirTiming{4}
+  else if (propName = 'site') then SiteElement := new as TFhirCodeableConcept{4}
+  else if (propName = 'route') then RouteElement := new as TFhirCodeableConcept{4}
+  else if (propName = 'method') then MethodElement := new as TFhirCodeableConcept{4}
+  else if (propName = 'maxDosePerPeriod') then MaxDosePerPeriodElement := new as TFhirRatio{4}
+  else if (propName = 'maxDosePerAdministration') then MaxDosePerAdministrationElement := new as TFhirQuantity{4}
+  else if (propName = 'maxDosePerLifetime') then MaxDosePerLifetimeElement := new as TFhirQuantity{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDosageInstruction.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'additionalInstructions') then AdditionalInstructionsList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDosageInstruction.fhirType : string;
@@ -21963,7 +23037,12 @@ begin
   result := 'DosageInstruction';
 end;
 
-function TFhirDosageInstruction.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDosageInstruction.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSequence) and isEmptyProp(FText) and isEmptyProp(FadditionalInstructionsList) and isEmptyProp(FTiming) and isEmptyProp(FAsNeeded) and isEmptyProp(FSite) and isEmptyProp(FRoute) and isEmptyProp(FMethod) and isEmptyProp(FDose) and isEmptyProp(FMaxDosePerPeriod) and isEmptyProp(FMaxDosePerAdministration) and isEmptyProp(FMaxDosePerLifetime) and isEmptyProp(FRate);
+end;
+
+function TFhirDosageInstruction.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDosageInstruction;
 begin
@@ -21985,7 +23064,7 @@ begin
   end;
 end;
 
-function TFhirDosageInstruction.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDosageInstruction.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDosageInstruction;
 begin
@@ -22208,6 +23287,10 @@ begin
   result := TFhirDosageInstruction(ObjectByIndex[index]);
 end;
 
+function TFhirDosageInstructionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDosageInstruction;
+end;
 function TFhirDosageInstructionList.IndexOf(value: TFhirDosageInstruction): Integer;
 begin
   result := IndexByReference(value);
@@ -22281,15 +23364,15 @@ begin
   displayElement := TFhirReference(oSource).displayElement.Clone;
 end;
 
-procedure TFhirReference.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirReference.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'reference') Then
-     list.add(FReference.Link);
+     list.add(self.link, 'reference', FReference.Link);
   if (child_name = 'identifier') Then
-     list.add(FIdentifier.Link);
+     list.add(self.link, 'identifier', FIdentifier.Link);
   if (child_name = 'display') Then
-     list.add(FDisplay.Link);
+     list.add(self.link, 'display', FDisplay.Link);
 end;
 
 procedure TFhirReference.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -22308,10 +23391,38 @@ begin
   else inherited;
 end;
 
-function TFhirReference.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirReference.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'identifier') then begin Identifier := TFhirIdentifier.create(); result := Identifier; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirReference.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirReference.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'reference') then ReferenceElement := nil
+  else if (propName = 'identifier') then IdentifierElement := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirReference.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'reference') then ReferenceElement := asString(new){5b}
+  else if (propName = 'identifier') then IdentifierElement := new as TFhirIdentifier{4}
+  else if (propName = 'display') then DisplayElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirReference.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirReference.fhirType : string;
@@ -22319,7 +23430,12 @@ begin
   result := 'Reference';
 end;
 
-function TFhirReference.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirReference.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FReference) and isEmptyProp(FIdentifier) and isEmptyProp(FDisplay);
+end;
+
+function TFhirReference.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirReference;
 begin
@@ -22335,7 +23451,7 @@ begin
   end;
 end;
 
-function TFhirReference.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirReference.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirReference;
 begin
@@ -22492,6 +23608,10 @@ begin
   result := TFhirReference(ObjectByIndex[index]);
 end;
 
+function TFhirReferenceList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirReference;
+end;
 function TFhirReferenceList.IndexOf(value: TFhirReference): Integer;
 begin
   result := IndexByReference(value);
@@ -22594,17 +23714,17 @@ begin
   eventData := TFhirTriggerDefinition(oSource).eventData.Clone;
 end;
 
-procedure TFhirTriggerDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirTriggerDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'eventName') Then
-     list.add(FEventName.Link);
+     list.add(self.link, 'eventName', FEventName.Link);
   if (child_name = 'eventTiming[x]') or (child_name = 'eventTiming') Then
-     list.add(FEventTiming.Link);
+     list.add(self.link, 'eventTiming[x]', FEventTiming.Link);
   if (child_name = 'eventData') Then
-     list.add(FEventData.Link);
+     list.add(self.link, 'eventData', FEventData.Link);
 end;
 
 procedure TFhirTriggerDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -22625,10 +23745,38 @@ begin
   else inherited;
 end;
 
-function TFhirTriggerDefinition.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirTriggerDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'eventData') then begin EventData := TFhirDataRequirement.create(); result := EventData; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirTriggerDefinition.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'eventData') then result := TFhirDataRequirement.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirTriggerDefinition.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'eventName') then EventNameElement := nil
+  else if (propName = 'eventData') then EventDataElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirTriggerDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirTriggerTypeEnum, CODES_TFhirTriggerTypeEnum, new){4}
+  else if (propName = 'eventName') then EventNameElement := asString(new){5b}
+  else if (propName = 'eventData') then EventDataElement := new as TFhirDataRequirement{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirTriggerDefinition.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirTriggerDefinition.fhirType : string;
@@ -22636,7 +23784,12 @@ begin
   result := 'TriggerDefinition';
 end;
 
-function TFhirTriggerDefinition.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirTriggerDefinition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FEventName) and isEmptyProp(FEventTiming) and isEmptyProp(FEventData);
+end;
+
+function TFhirTriggerDefinition.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirTriggerDefinition;
 begin
@@ -22652,7 +23805,7 @@ begin
   end;
 end;
 
-function TFhirTriggerDefinition.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirTriggerDefinition.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirTriggerDefinition;
 begin
@@ -22811,6 +23964,10 @@ begin
   result := TFhirTriggerDefinition(ObjectByIndex[index]);
 end;
 
+function TFhirTriggerDefinitionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirTriggerDefinition;
+end;
 function TFhirTriggerDefinitionList.IndexOf(value: TFhirTriggerDefinition): Integer;
 begin
   result := IndexByReference(value);
@@ -22915,19 +24072,19 @@ begin
   codeElement := TFhirQuantity(oSource).codeElement.Clone;
 end;
 
-procedure TFhirQuantity.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirQuantity.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value', FValue.Link);
   if (child_name = 'comparator') Then
-     list.add(FComparator.Link);
+     list.add(self.link, 'comparator', FComparator.Link);
   if (child_name = 'unit') Then
-     list.add(FUnit_.Link);
+     list.add(self.link, 'unit', FUnit_.Link);
   if (child_name = 'system') Then
-     list.add(FSystem.Link);
+     list.add(self.link, 'system', FSystem.Link);
   if (child_name = 'code') Then
-     list.add(FCode.Link);
+     list.add(self.link, 'code', FCode.Link);
 end;
 
 procedure TFhirQuantity.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -22950,9 +24107,41 @@ begin
   else inherited;
 end;
 
-function TFhirQuantity.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirQuantity.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirQuantity.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirQuantity.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'value') then ValueElement := nil
+  else if (propName = 'comparator') then ComparatorElement := nil
+  else if (propName = 'unit') then Unit_Element := nil
+  else if (propName = 'system') then SystemElement := nil
+  else if (propName = 'code') then CodeElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirQuantity.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'value') then ValueElement := asDecimal(new){5b}
+  else if (propName = 'comparator') then ComparatorElement := asEnum(SYSTEMS_TFhirQuantityComparatorEnum, CODES_TFhirQuantityComparatorEnum, new){4}
+  else if (propName = 'unit') then Unit_Element := asString(new){5b}
+  else if (propName = 'system') then SystemElement := asUri(new){5b}
+  else if (propName = 'code') then CodeElement := asCode(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirQuantity.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirQuantity.fhirType : string;
@@ -22960,7 +24149,12 @@ begin
   result := 'Quantity';
 end;
 
-function TFhirQuantity.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirQuantity.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FValue) and isEmptyProp(FComparator) and isEmptyProp(FUnit_) and isEmptyProp(FSystem) and isEmptyProp(FCode);
+end;
+
+function TFhirQuantity.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirQuantity;
 begin
@@ -22977,7 +24171,7 @@ begin
   end;
 end;
 
-function TFhirQuantity.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirQuantity.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirQuantity;
 begin
@@ -23204,6 +24398,10 @@ begin
   result := TFhirQuantity(ObjectByIndex[index]);
 end;
 
+function TFhirQuantityList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirQuantity;
+end;
 function TFhirQuantityList.IndexOf(value: TFhirQuantity): Integer;
 begin
   result := IndexByReference(value);
@@ -23275,13 +24473,13 @@ begin
   end_Element := TFhirPeriod(oSource).end_Element.Clone;
 end;
 
-procedure TFhirPeriod.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirPeriod.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'start') Then
-     list.add(FStart.Link);
+     list.add(self.link, 'start', FStart.Link);
   if (child_name = 'end') Then
-     list.add(FEnd_.Link);
+     list.add(self.link, 'end', FEnd_.Link);
 end;
 
 procedure TFhirPeriod.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -23298,9 +24496,35 @@ begin
   else inherited;
 end;
 
-function TFhirPeriod.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirPeriod.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirPeriod.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirPeriod.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'start') then StartElement := nil
+  else if (propName = 'end') then End_Element := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirPeriod.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'start') then StartElement := asDateTime(new){5b}
+  else if (propName = 'end') then End_Element := asDateTime(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirPeriod.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirPeriod.fhirType : string;
@@ -23308,7 +24532,12 @@ begin
   result := 'Period';
 end;
 
-function TFhirPeriod.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirPeriod.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FStart) and isEmptyProp(FEnd_);
+end;
+
+function TFhirPeriod.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirPeriod;
 begin
@@ -23323,7 +24552,7 @@ begin
   end;
 end;
 
-function TFhirPeriod.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirPeriod.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirPeriod;
 begin
@@ -23474,6 +24703,10 @@ begin
   result := TFhirPeriod(ObjectByIndex[index]);
 end;
 
+function TFhirPeriodList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirPeriod;
+end;
 function TFhirPeriodList.IndexOf(value: TFhirPeriod): Integer;
 begin
   result := IndexByReference(value);
@@ -23545,13 +24778,13 @@ begin
   high := TFhirRange(oSource).high.Clone;
 end;
 
-procedure TFhirRange.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirRange.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'low') Then
-     list.add(FLow.Link);
+     list.add(self.link, 'low', FLow.Link);
   if (child_name = 'high') Then
-     list.add(FHigh.Link);
+     list.add(self.link, 'high', FHigh.Link);
 end;
 
 procedure TFhirRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -23568,11 +24801,37 @@ begin
   else inherited;
 end;
 
-function TFhirRange.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirRange.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'low') then begin Low := TFhirQuantity.create(); result := Low; end{4b}
-  else if (propName = 'high') then begin High := TFhirQuantity.create(); result := High; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirRange.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'low') then result := TFhirQuantity.create(){4b}
+  else if (propName = 'high') then result := TFhirQuantity.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirRange.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'low') then LowElement := nil
+  else if (propName = 'high') then HighElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRange.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'low') then LowElement := new as TFhirQuantity{4}
+  else if (propName = 'high') then HighElement := new as TFhirQuantity{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRange.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirRange.fhirType : string;
@@ -23580,7 +24839,12 @@ begin
   result := 'Range';
 end;
 
-function TFhirRange.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirRange.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FLow) and isEmptyProp(FHigh);
+end;
+
+function TFhirRange.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirRange;
 begin
@@ -23595,7 +24859,7 @@ begin
   end;
 end;
 
-function TFhirRange.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirRange.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirRange;
 begin
@@ -23706,6 +24970,10 @@ begin
   result := TFhirRange(ObjectByIndex[index]);
 end;
 
+function TFhirRangeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirRange;
+end;
 function TFhirRangeList.IndexOf(value: TFhirRange): Integer;
 begin
   result := IndexByReference(value);
@@ -23812,21 +25080,21 @@ begin
   resource := TFhirRelatedArtifact(oSource).resource.Clone;
 end;
 
-procedure TFhirRelatedArtifact.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirRelatedArtifact.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'display') Then
-     list.add(FDisplay.Link);
+     list.add(self.link, 'display', FDisplay.Link);
   if (child_name = 'citation') Then
-     list.add(FCitation.Link);
+     list.add(self.link, 'citation', FCitation.Link);
   if (child_name = 'url') Then
-     list.add(FUrl.Link);
+     list.add(self.link, 'url', FUrl.Link);
   if (child_name = 'document') Then
-     list.add(FDocument.Link);
+     list.add(self.link, 'document', FDocument.Link);
   if (child_name = 'resource') Then
-     list.add(FResource.Link);
+     list.add(self.link, 'resource', FResource.Link);
 end;
 
 procedure TFhirRelatedArtifact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -23851,11 +25119,45 @@ begin
   else inherited;
 end;
 
-function TFhirRelatedArtifact.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirRelatedArtifact.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'document') then begin Document := TFhirAttachment.create(); result := Document; end{4b}
-  else if (propName = 'resource') then begin Resource := TFhirReference{TFhirReference}.create(); result := Resource; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirRelatedArtifact.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'document') then result := TFhirAttachment.create(){4b}
+  else if (propName = 'resource') then result := TFhirReference{TFhirReference}.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirRelatedArtifact.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := nil
+  else if (propName = 'display') then DisplayElement := nil
+  else if (propName = 'citation') then CitationElement := nil
+  else if (propName = 'url') then UrlElement := nil
+  else if (propName = 'document') then DocumentElement := nil
+  else if (propName = 'resource') then ResourceElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirRelatedArtifact.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirRelatedArtifactTypeEnum, CODES_TFhirRelatedArtifactTypeEnum, new){4}
+  else if (propName = 'display') then DisplayElement := asString(new){5b}
+  else if (propName = 'citation') then CitationElement := asString(new){5b}
+  else if (propName = 'url') then UrlElement := asUri(new){5b}
+  else if (propName = 'document') then DocumentElement := new as TFhirAttachment{4}
+  else if (propName = 'resource') then ResourceElement := new as TFhirReference{TFhirReference}{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirRelatedArtifact.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirRelatedArtifact.fhirType : string;
@@ -23863,7 +25165,12 @@ begin
   result := 'RelatedArtifact';
 end;
 
-function TFhirRelatedArtifact.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirRelatedArtifact.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FDisplay) and isEmptyProp(FCitation) and isEmptyProp(FUrl) and isEmptyProp(FDocument) and isEmptyProp(FResource);
+end;
+
+function TFhirRelatedArtifact.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirRelatedArtifact;
 begin
@@ -23880,7 +25187,7 @@ begin
   end;
 end;
 
-function TFhirRelatedArtifact.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirRelatedArtifact.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirRelatedArtifact;
 begin
@@ -24092,6 +25399,10 @@ begin
   result := TFhirRelatedArtifact(ObjectByIndex[index]);
 end;
 
+function TFhirRelatedArtifactList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirRelatedArtifact;
+end;
 function TFhirRelatedArtifactList.IndexOf(value: TFhirRelatedArtifact): Integer;
 begin
   result := IndexByReference(value);
@@ -24165,15 +25476,15 @@ begin
   textElement := TFhirAnnotation(oSource).textElement.Clone;
 end;
 
-procedure TFhirAnnotation.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirAnnotation.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'author[x]') or (child_name = 'author') Then
-     list.add(FAuthor.Link);
+     list.add(self.link, 'author[x]', FAuthor.Link);
   if (child_name = 'time') Then
-     list.add(FTime.Link);
+     list.add(self.link, 'time', FTime.Link);
   if (child_name = 'text') Then
-     list.add(FText.Link);
+     list.add(self.link, 'text', FText.Link);
 end;
 
 procedure TFhirAnnotation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -24192,9 +25503,35 @@ begin
   else inherited;
 end;
 
-function TFhirAnnotation.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirAnnotation.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirAnnotation.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirAnnotation.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'time') then TimeElement := nil
+  else if (propName = 'text') then TextElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirAnnotation.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'time') then TimeElement := asDateTime(new){5b}
+  else if (propName = 'text') then TextElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirAnnotation.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirAnnotation.fhirType : string;
@@ -24202,7 +25539,12 @@ begin
   result := 'Annotation';
 end;
 
-function TFhirAnnotation.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirAnnotation.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FAuthor) and isEmptyProp(FTime) and isEmptyProp(FText);
+end;
+
+function TFhirAnnotation.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirAnnotation;
 begin
@@ -24218,7 +25560,7 @@ begin
   end;
 end;
 
-function TFhirAnnotation.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirAnnotation.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirAnnotation;
 begin
@@ -24375,6 +25717,10 @@ begin
   result := TFhirAnnotation(ObjectByIndex[index]);
 end;
 
+function TFhirAnnotationList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirAnnotation;
+end;
 function TFhirAnnotationList.IndexOf(value: TFhirAnnotation): Integer;
 begin
   result := IndexByReference(value);
@@ -24455,13 +25801,13 @@ begin
   end;
 end;
 
-procedure TFhirContactDetail.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirContactDetail.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(FName.Link);
+     list.add(self.link, 'name', FName.Link);
   if (child_name = 'telecom') Then
-    list.addAll(FTelecomList);
+    list.addAll(self, 'telecom', FTelecomList);
 end;
 
 procedure TFhirContactDetail.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -24478,10 +25824,39 @@ begin
   else inherited;
 end;
 
-function TFhirContactDetail.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirContactDetail.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'telecom') then result := TelecomList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint){2}
+  else inherited;
+end;
+
+function TFhirContactDetail.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'telecom') then result := TelecomList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirContactDetail.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'telecom') then deletePropertyValue('telecom', TelecomList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirContactDetail.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asString(new){5b}
+  else if (propName = 'telecom') then replacePropertyValue('telecom', TelecomList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirContactDetail.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'telecom') then TelecomList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirContactDetail.fhirType : string;
@@ -24489,7 +25864,12 @@ begin
   result := 'ContactDetail';
 end;
 
-function TFhirContactDetail.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirContactDetail.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FtelecomList);
+end;
+
+function TFhirContactDetail.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirContactDetail;
 begin
@@ -24504,7 +25884,7 @@ begin
   end;
 end;
 
-function TFhirContactDetail.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirContactDetail.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirContactDetail;
 begin
@@ -24641,6 +26021,10 @@ begin
   result := TFhirContactDetail(ObjectByIndex[index]);
 end;
 
+function TFhirContactDetailList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirContactDetail;
+end;
 function TFhirContactDetailList.IndexOf(value: TFhirContactDetail): Integer;
 begin
   result := IndexByReference(value);
@@ -24712,13 +26096,13 @@ begin
   value := TFhirUsageContext(oSource).value.Clone;
 end;
 
-procedure TFhirUsageContext.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirUsageContext.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(FCode.Link);
+     list.add(self.link, 'code', FCode.Link);
   if (child_name = 'value[x]') or (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value[x]', FValue.Link);
 end;
 
 procedure TFhirUsageContext.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -24735,10 +26119,34 @@ begin
   else inherited;
 end;
 
-function TFhirUsageContext.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirUsageContext.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'code') then begin Code := TFhirCoding.create(); result := Code; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirUsageContext.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := TFhirCoding.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirUsageContext.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirUsageContext.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := new as TFhirCoding{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirUsageContext.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirUsageContext.fhirType : string;
@@ -24746,7 +26154,12 @@ begin
   result := 'UsageContext';
 end;
 
-function TFhirUsageContext.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirUsageContext.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FValue);
+end;
+
+function TFhirUsageContext.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirUsageContext;
 begin
@@ -24761,7 +26174,7 @@ begin
   end;
 end;
 
-function TFhirUsageContext.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirUsageContext.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirUsageContext;
 begin
@@ -24872,6 +26285,10 @@ begin
   result := TFhirUsageContext(ObjectByIndex[index]);
 end;
 
+function TFhirUsageContextList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirUsageContext;
+end;
 function TFhirUsageContextList.IndexOf(value: TFhirUsageContext): Integer;
 begin
   result := IndexByReference(value);
@@ -24960,21 +26377,21 @@ begin
   blobElement := TFhirSignature(oSource).blobElement.Clone;
 end;
 
-procedure TFhirSignature.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirSignature.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'type') Then
-    list.addAll(FType_List);
+    list.addAll(self, 'type', FType_List);
   if (child_name = 'when') Then
-     list.add(FWhen.Link);
+     list.add(self.link, 'when', FWhen.Link);
   if (child_name = 'who[x]') or (child_name = 'who') Then
-     list.add(FWho.Link);
+     list.add(self.link, 'who[x]', FWho.Link);
   if (child_name = 'onBehalfOf[x]') or (child_name = 'onBehalfOf') Then
-     list.add(FOnBehalfOf.Link);
+     list.add(self.link, 'onBehalfOf[x]', FOnBehalfOf.Link);
   if (child_name = 'contentType') Then
-     list.add(FContentType.Link);
+     list.add(self.link, 'contentType', FContentType.Link);
   if (child_name = 'blob') Then
-     list.add(FBlob.Link);
+     list.add(self.link, 'blob', FBlob.Link);
 end;
 
 procedure TFhirSignature.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -24999,10 +26416,43 @@ begin
   else inherited;
 end;
 
-function TFhirSignature.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirSignature.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'type') then result := Type_List.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCoding){2}
+  else inherited;
+end;
+
+function TFhirSignature.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'type') then result := Type_List.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirSignature.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
+  else if (propName = 'when') then WhenElement := nil
+  else if (propName = 'contentType') then ContentTypeElement := nil
+  else if (propName = 'blob') then BlobElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirSignature.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
+  else if (propName = 'when') then WhenElement := asInstant(new){5b}
+  else if (propName = 'contentType') then ContentTypeElement := asCode(new){5b}
+  else if (propName = 'blob') then BlobElement := asBase64Binary(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirSignature.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'type') then Type_List.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirSignature.fhirType : string;
@@ -25010,7 +26460,12 @@ begin
   result := 'Signature';
 end;
 
-function TFhirSignature.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirSignature.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(Ftype_List) and isEmptyProp(FWhen) and isEmptyProp(FWho) and isEmptyProp(FOnBehalfOf) and isEmptyProp(FContentType) and isEmptyProp(FBlob);
+end;
+
+function TFhirSignature.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirSignature;
 begin
@@ -25027,7 +26482,7 @@ begin
   end;
 end;
 
-function TFhirSignature.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirSignature.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirSignature;
 begin
@@ -25229,6 +26684,10 @@ begin
   result := TFhirSignature(ObjectByIndex[index]);
 end;
 
+function TFhirSignatureList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirSignature;
+end;
 function TFhirSignatureList.IndexOf(value: TFhirSignature): Integer;
 begin
   result := IndexByReference(value);
@@ -25309,13 +26768,13 @@ begin
   textElement := TFhirCodeableConcept(oSource).textElement.Clone;
 end;
 
-procedure TFhirCodeableConcept.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirCodeableConcept.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'coding') Then
-    list.addAll(FCodingList);
+    list.addAll(self, 'coding', FCodingList);
   if (child_name = 'text') Then
-     list.add(FText.Link);
+     list.add(self.link, 'text', FText.Link);
 end;
 
 procedure TFhirCodeableConcept.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -25332,10 +26791,39 @@ begin
   else inherited;
 end;
 
-function TFhirCodeableConcept.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirCodeableConcept.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'coding') then result := CodingList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'coding') then CodingList.insertItem(index, propValue as TFhirCoding){2}
+  else inherited;
+end;
+
+function TFhirCodeableConcept.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'coding') then result := CodingList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirCodeableConcept.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'coding') then deletePropertyValue('coding', CodingList, value) {2}
+  else if (propName = 'text') then TextElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCodeableConcept.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'coding') then replacePropertyValue('coding', CodingList, existing, new) {2}
+  else if (propName = 'text') then TextElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCodeableConcept.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'coding') then CodingList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirCodeableConcept.fhirType : string;
@@ -25343,7 +26831,12 @@ begin
   result := 'CodeableConcept';
 end;
 
-function TFhirCodeableConcept.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirCodeableConcept.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FcodingList) and isEmptyProp(FText);
+end;
+
+function TFhirCodeableConcept.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirCodeableConcept;
 begin
@@ -25358,7 +26851,7 @@ begin
   end;
 end;
 
-function TFhirCodeableConcept.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirCodeableConcept.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirCodeableConcept;
 begin
@@ -25495,6 +26988,10 @@ begin
   result := TFhirCodeableConcept(ObjectByIndex[index]);
 end;
 
+function TFhirCodeableConceptList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirCodeableConcept;
+end;
 function TFhirCodeableConceptList.IndexOf(value: TFhirCodeableConcept): Integer;
 begin
   result := IndexByReference(value);
@@ -25603,23 +27100,23 @@ begin
   profile := TFhirParameterDefinition(oSource).profile.Clone;
 end;
 
-procedure TFhirParameterDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirParameterDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'name') Then
-     list.add(FName.Link);
+     list.add(self.link, 'name', FName.Link);
   if (child_name = 'use') Then
-     list.add(FUse.Link);
+     list.add(self.link, 'use', FUse.Link);
   if (child_name = 'min') Then
-     list.add(FMin.Link);
+     list.add(self.link, 'min', FMin.Link);
   if (child_name = 'max') Then
-     list.add(FMax.Link);
+     list.add(self.link, 'max', FMax.Link);
   if (child_name = 'documentation') Then
-     list.add(FDocumentation.Link);
+     list.add(self.link, 'documentation', FDocumentation.Link);
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'profile') Then
-     list.add(FProfile.Link);
+     list.add(self.link, 'profile', FProfile.Link);
 end;
 
 procedure TFhirParameterDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -25646,10 +27143,46 @@ begin
   else inherited;
 end;
 
-function TFhirParameterDefinition.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirParameterDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'profile') then begin Profile := TFhirReference{TFhirStructureDefinition}.create(); result := Profile; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirParameterDefinition.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'profile') then result := TFhirReference{TFhirStructureDefinition}.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirParameterDefinition.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := nil
+  else if (propName = 'use') then UseElement := nil
+  else if (propName = 'min') then MinElement := nil
+  else if (propName = 'max') then MaxElement := nil
+  else if (propName = 'documentation') then DocumentationElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'profile') then ProfileElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirParameterDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'name') then NameElement := asCode(new){5b}
+  else if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirOperationParameterUseEnum, CODES_TFhirOperationParameterUseEnum, new){4}
+  else if (propName = 'min') then MinElement := asInteger(new){5b}
+  else if (propName = 'max') then MaxElement := asString(new){5b}
+  else if (propName = 'documentation') then DocumentationElement := asString(new){5b}
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, new){4}
+  else if (propName = 'profile') then ProfileElement := new as TFhirReference{TFhirStructureDefinition}{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirParameterDefinition.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirParameterDefinition.fhirType : string;
@@ -25657,7 +27190,12 @@ begin
   result := 'ParameterDefinition';
 end;
 
-function TFhirParameterDefinition.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirParameterDefinition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FName) and isEmptyProp(FUse) and isEmptyProp(FMin) and isEmptyProp(FMax) and isEmptyProp(FDocumentation) and isEmptyProp(FType_) and isEmptyProp(FProfile);
+end;
+
+function TFhirParameterDefinition.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirParameterDefinition;
 begin
@@ -25675,7 +27213,7 @@ begin
   end;
 end;
 
-function TFhirParameterDefinition.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirParameterDefinition.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirParameterDefinition;
 begin
@@ -25930,6 +27468,10 @@ begin
   result := TFhirParameterDefinition(ObjectByIndex[index]);
 end;
 
+function TFhirParameterDefinitionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirParameterDefinition;
+end;
 function TFhirParameterDefinitionList.IndexOf(value: TFhirParameterDefinition): Integer;
 begin
   result := IndexByReference(value);
@@ -26034,19 +27576,19 @@ begin
   end;
 end;
 
-procedure TFhirMeta.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirMeta.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'versionId') Then
-     list.add(FVersionId.Link);
+     list.add(self.link, 'versionId', FVersionId.Link);
   if (child_name = 'lastUpdated') Then
-     list.add(FLastUpdated.Link);
+     list.add(self.link, 'lastUpdated', FLastUpdated.Link);
   if (child_name = 'profile') Then
-    list.addAll(FProfileList);
+    list.addAll(self, 'profile', FProfileList);
   if (child_name = 'security') Then
-    list.addAll(FSecurityList);
+    list.addAll(self, 'security', FSecurityList);
   if (child_name = 'tag') Then
-    list.addAll(FTagList);
+    list.addAll(self, 'tag', FTagList);
 end;
 
 procedure TFhirMeta.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -26069,12 +27611,51 @@ begin
   else inherited;
 end;
 
-function TFhirMeta.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirMeta.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'profile') then result := ProfileList.append(){2}
-  else if (propName = 'security') then result := SecurityList.append(){2}
-  else if (propName = 'tag') then result := TagList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'profile') then ProfileList.insertItem(index, asUri(propValue)){2}
+  else if (propName = 'security') then SecurityList.insertItem(index, propValue as TFhirCoding){2}
+  else if (propName = 'tag') then TagList.insertItem(index, propValue as TFhirCoding){2}
+  else inherited;
+end;
+
+function TFhirMeta.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'profile') then result := ProfileList.new(){2}
+  else if (propName = 'security') then result := SecurityList.new(){2}
+  else if (propName = 'tag') then result := TagList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirMeta.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'versionId') then VersionIdElement := nil
+  else if (propName = 'lastUpdated') then LastUpdatedElement := nil
+  else if (propName = 'profile') then deletePropertyValue('profile', ProfileList, value) {2}
+  else if (propName = 'security') then deletePropertyValue('security', SecurityList, value) {2}
+  else if (propName = 'tag') then deletePropertyValue('tag', TagList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirMeta.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'versionId') then VersionIdElement := asId(new){5b}
+  else if (propName = 'lastUpdated') then LastUpdatedElement := asInstant(new){5b}
+  else if (propName = 'profile') then replacePropertyValue('profile', ProfileList, existing, new) {2}
+  else if (propName = 'security') then replacePropertyValue('security', SecurityList, existing, new) {2}
+  else if (propName = 'tag') then replacePropertyValue('tag', TagList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirMeta.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'profile') then ProfileList.move(source, destination){2}
+  else if (propName = 'security') then SecurityList.move(source, destination){2}
+  else if (propName = 'tag') then TagList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirMeta.fhirType : string;
@@ -26082,7 +27663,12 @@ begin
   result := 'Meta';
 end;
 
-function TFhirMeta.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirMeta.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FVersionId) and isEmptyProp(FLastUpdated) and isEmptyProp(FprofileList) and isEmptyProp(FsecurityList) and isEmptyProp(FtagList);
+end;
+
+function TFhirMeta.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirMeta;
 begin
@@ -26099,7 +27685,7 @@ begin
   end;
 end;
 
-function TFhirMeta.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirMeta.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirMeta;
 begin
@@ -26287,6 +27873,10 @@ begin
   result := TFhirMeta(ObjectByIndex[index]);
 end;
 
+function TFhirMetaList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirMeta;
+end;
 function TFhirMetaList.IndexOf(value: TFhirMeta): Integer;
 begin
   result := IndexByReference(value);
@@ -26422,23 +28012,23 @@ begin
   period := TFhirHumanName(oSource).period.Clone;
 end;
 
-procedure TFhirHumanName.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirHumanName.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'use') Then
-     list.add(FUse.Link);
+     list.add(self.link, 'use', FUse.Link);
   if (child_name = 'text') Then
-     list.add(FText.Link);
+     list.add(self.link, 'text', FText.Link);
   if (child_name = 'family') Then
-     list.add(FFamily.Link);
+     list.add(self.link, 'family', FFamily.Link);
   if (child_name = 'given') Then
-    list.addAll(FGivenList);
+    list.addAll(self, 'given', FGivenList);
   if (child_name = 'prefix') Then
-    list.addAll(FPrefixList);
+    list.addAll(self, 'prefix', FPrefixList);
   if (child_name = 'suffix') Then
-    list.addAll(FSuffixList);
+    list.addAll(self, 'suffix', FSuffixList);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
 end;
 
 procedure TFhirHumanName.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -26465,13 +28055,56 @@ begin
   else inherited;
 end;
 
-function TFhirHumanName.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirHumanName.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'given') then result := GivenList.append(){2}
-  else if (propName = 'prefix') then result := PrefixList.append(){2}
-  else if (propName = 'suffix') then result := SuffixList.append(){2}
-  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
-  else result := inherited makeProperty(propName);
+  if (propName = 'given') then GivenList.insertItem(index, asString(propValue)){2}
+  else if (propName = 'prefix') then PrefixList.insertItem(index, asString(propValue)){2}
+  else if (propName = 'suffix') then SuffixList.insertItem(index, asString(propValue)){2}
+  else inherited;
+end;
+
+function TFhirHumanName.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'given') then result := GivenList.new(){2}
+  else if (propName = 'prefix') then result := PrefixList.new(){2}
+  else if (propName = 'suffix') then result := SuffixList.new(){2}
+  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirHumanName.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := nil
+  else if (propName = 'text') then TextElement := nil
+  else if (propName = 'family') then FamilyElement := nil
+  else if (propName = 'given') then deletePropertyValue('given', GivenList, value) {2}
+  else if (propName = 'prefix') then deletePropertyValue('prefix', PrefixList, value) {2}
+  else if (propName = 'suffix') then deletePropertyValue('suffix', SuffixList, value) {2}
+  else if (propName = 'period') then PeriodElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirHumanName.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, new){4}
+  else if (propName = 'text') then TextElement := asString(new){5b}
+  else if (propName = 'family') then FamilyElement := asString(new){5b}
+  else if (propName = 'given') then replacePropertyValue('given', GivenList, existing, new) {2}
+  else if (propName = 'prefix') then replacePropertyValue('prefix', PrefixList, existing, new) {2}
+  else if (propName = 'suffix') then replacePropertyValue('suffix', SuffixList, existing, new) {2}
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirHumanName.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'given') then GivenList.move(source, destination){2}
+  else if (propName = 'prefix') then PrefixList.move(source, destination){2}
+  else if (propName = 'suffix') then SuffixList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirHumanName.fhirType : string;
@@ -26479,7 +28112,12 @@ begin
   result := 'HumanName';
 end;
 
-function TFhirHumanName.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirHumanName.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FUse) and isEmptyProp(FText) and isEmptyProp(FFamily) and isEmptyProp(FgivenList) and isEmptyProp(FprefixList) and isEmptyProp(FsuffixList) and isEmptyProp(FPeriod);
+end;
+
+function TFhirHumanName.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirHumanName;
 begin
@@ -26497,7 +28135,7 @@ begin
   end;
 end;
 
-function TFhirHumanName.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirHumanName.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirHumanName;
 begin
@@ -26714,6 +28352,10 @@ begin
   result := TFhirHumanName(ObjectByIndex[index]);
 end;
 
+function TFhirHumanNameList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirHumanName;
+end;
 function TFhirHumanNameList.IndexOf(value: TFhirHumanName): Integer;
 begin
   result := IndexByReference(value);
@@ -26845,19 +28487,19 @@ begin
   period := TFhirContactPoint(oSource).period.Clone;
 end;
 
-procedure TFhirContactPoint.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirContactPoint.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'system') Then
-     list.add(FSystem.Link);
+     list.add(self.link, 'system', FSystem.Link);
   if (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value', FValue.Link);
   if (child_name = 'use') Then
-     list.add(FUse.Link);
+     list.add(self.link, 'use', FUse.Link);
   if (child_name = 'rank') Then
-     list.add(FRank.Link);
+     list.add(self.link, 'rank', FRank.Link);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
 end;
 
 procedure TFhirContactPoint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -26880,10 +28522,42 @@ begin
   else inherited;
 end;
 
-function TFhirContactPoint.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirContactPoint.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
-  else result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirContactPoint.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirContactPoint.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'system') then SystemElement := nil
+  else if (propName = 'value') then ValueElement := nil
+  else if (propName = 'use') then UseElement := nil
+  else if (propName = 'rank') then RankElement := nil
+  else if (propName = 'period') then PeriodElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirContactPoint.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'system') then SystemElement := asEnum(SYSTEMS_TFhirContactPointSystemEnum, CODES_TFhirContactPointSystemEnum, new){4}
+  else if (propName = 'value') then ValueElement := asString(new){5b}
+  else if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirContactPointUseEnum, CODES_TFhirContactPointUseEnum, new){4}
+  else if (propName = 'rank') then RankElement := asPositiveInt(new){5b}
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirContactPoint.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirContactPoint.fhirType : string;
@@ -26891,7 +28565,12 @@ begin
   result := 'ContactPoint';
 end;
 
-function TFhirContactPoint.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirContactPoint.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FSystem) and isEmptyProp(FValue) and isEmptyProp(FUse) and isEmptyProp(FRank) and isEmptyProp(FPeriod);
+end;
+
+function TFhirContactPoint.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirContactPoint;
 begin
@@ -26908,7 +28587,7 @@ begin
   end;
 end;
 
-function TFhirContactPoint.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirContactPoint.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirContactPoint;
 begin
@@ -27110,6 +28789,10 @@ begin
   result := TFhirContactPoint(ObjectByIndex[index]);
 end;
 
+function TFhirContactPointList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirContactPoint;
+end;
 function TFhirContactPointList.IndexOf(value: TFhirContactPoint): Integer;
 begin
   result := IndexByReference(value);
@@ -27260,29 +28943,29 @@ begin
   period := TFhirAddress(oSource).period.Clone;
 end;
 
-procedure TFhirAddress.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirAddress.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'use') Then
-     list.add(FUse.Link);
+     list.add(self.link, 'use', FUse.Link);
   if (child_name = 'type') Then
-     list.add(FType_.Link);
+     list.add(self.link, 'type', FType_.Link);
   if (child_name = 'text') Then
-     list.add(FText.Link);
+     list.add(self.link, 'text', FText.Link);
   if (child_name = 'line') Then
-    list.addAll(FLineList);
+    list.addAll(self, 'line', FLineList);
   if (child_name = 'city') Then
-     list.add(FCity.Link);
+     list.add(self.link, 'city', FCity.Link);
   if (child_name = 'district') Then
-     list.add(FDistrict.Link);
+     list.add(self.link, 'district', FDistrict.Link);
   if (child_name = 'state') Then
-     list.add(FState.Link);
+     list.add(self.link, 'state', FState.Link);
   if (child_name = 'postalCode') Then
-     list.add(FPostalCode.Link);
+     list.add(self.link, 'postalCode', FPostalCode.Link);
   if (child_name = 'country') Then
-     list.add(FCountry.Link);
+     list.add(self.link, 'country', FCountry.Link);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
 end;
 
 procedure TFhirAddress.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -27315,11 +28998,56 @@ begin
   else inherited;
 end;
 
-function TFhirAddress.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirAddress.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'line') then result := LineList.append(){2}
-  else if (propName = 'period') then begin Period := TFhirPeriod.create(); result := Period; end{4b}
-  else result := inherited makeProperty(propName);
+  if (propName = 'line') then LineList.insertItem(index, asString(propValue)){2}
+  else inherited;
+end;
+
+function TFhirAddress.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'line') then result := LineList.new(){2}
+  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirAddress.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := nil
+  else if (propName = 'type') then Type_Element := nil
+  else if (propName = 'text') then TextElement := nil
+  else if (propName = 'line') then deletePropertyValue('line', LineList, value) {2}
+  else if (propName = 'city') then CityElement := nil
+  else if (propName = 'district') then DistrictElement := nil
+  else if (propName = 'state') then StateElement := nil
+  else if (propName = 'postalCode') then PostalCodeElement := nil
+  else if (propName = 'country') then CountryElement := nil
+  else if (propName = 'period') then PeriodElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirAddress.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'use') then UseElement := asEnum(SYSTEMS_TFhirAddressUseEnum, CODES_TFhirAddressUseEnum, new){4}
+  else if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAddressTypeEnum, CODES_TFhirAddressTypeEnum, new){4}
+  else if (propName = 'text') then TextElement := asString(new){5b}
+  else if (propName = 'line') then replacePropertyValue('line', LineList, existing, new) {2}
+  else if (propName = 'city') then CityElement := asString(new){5b}
+  else if (propName = 'district') then DistrictElement := asString(new){5b}
+  else if (propName = 'state') then StateElement := asString(new){5b}
+  else if (propName = 'postalCode') then PostalCodeElement := asString(new){5b}
+  else if (propName = 'country') then CountryElement := asString(new){5b}
+  else if (propName = 'period') then PeriodElement := new as TFhirPeriod{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirAddress.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'line') then LineList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirAddress.fhirType : string;
@@ -27327,7 +29055,12 @@ begin
   result := 'Address';
 end;
 
-function TFhirAddress.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirAddress.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FUse) and isEmptyProp(FType_) and isEmptyProp(FText) and isEmptyProp(FlineList) and isEmptyProp(FCity) and isEmptyProp(FDistrict) and isEmptyProp(FState) and isEmptyProp(FPostalCode) and isEmptyProp(FCountry) and isEmptyProp(FPeriod);
+end;
+
+function TFhirAddress.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirAddress;
 begin
@@ -27346,7 +29079,7 @@ begin
   end;
 end;
 
-function TFhirAddress.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirAddress.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirAddress;
 begin
@@ -27667,6 +29400,10 @@ begin
   result := TFhirAddress(ObjectByIndex[index]);
 end;
 
+function TFhirAddressList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirAddress;
+end;
 function TFhirAddressList.IndexOf(value: TFhirAddress): Integer;
 begin
   result := IndexByReference(value);
@@ -27863,39 +29600,39 @@ begin
   offsetElement := TFhirTimingRepeat(oSource).offsetElement.Clone;
 end;
 
-procedure TFhirTimingRepeat.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirTimingRepeat.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'bounds[x]') or (child_name = 'bounds') Then
-     list.add(FBounds.Link);
+     list.add(self.link, 'bounds[x]', FBounds.Link);
   if (child_name = 'count') Then
-     list.add(FCount.Link);
+     list.add(self.link, 'count', FCount.Link);
   if (child_name = 'countMax') Then
-     list.add(FCountMax.Link);
+     list.add(self.link, 'countMax', FCountMax.Link);
   if (child_name = 'duration') Then
-     list.add(FDuration.Link);
+     list.add(self.link, 'duration', FDuration.Link);
   if (child_name = 'durationMax') Then
-     list.add(FDurationMax.Link);
+     list.add(self.link, 'durationMax', FDurationMax.Link);
   if (child_name = 'durationUnit') Then
-     list.add(FDurationUnit.Link);
+     list.add(self.link, 'durationUnit', FDurationUnit.Link);
   if (child_name = 'frequency') Then
-     list.add(FFrequency.Link);
+     list.add(self.link, 'frequency', FFrequency.Link);
   if (child_name = 'frequencyMax') Then
-     list.add(FFrequencyMax.Link);
+     list.add(self.link, 'frequencyMax', FFrequencyMax.Link);
   if (child_name = 'period') Then
-     list.add(FPeriod.Link);
+     list.add(self.link, 'period', FPeriod.Link);
   if (child_name = 'periodMax') Then
-     list.add(FPeriodMax.Link);
+     list.add(self.link, 'periodMax', FPeriodMax.Link);
   if (child_name = 'periodUnit') Then
-     list.add(FPeriodUnit.Link);
+     list.add(self.link, 'periodUnit', FPeriodUnit.Link);
   if (child_name = 'dayOfWeek') Then
-     list.addAll(FDayOfWeek);
+     list.addAll(self, 'dayOfWeek', FDayOfWeek);
   if (child_name = 'timeOfDay') Then
-    list.addAll(FTimeOfDayList);
+    list.addAll(self, 'timeOfDay', FTimeOfDayList);
   if (child_name = 'when') Then
-     list.add(FWhen.Link);
+     list.add(self.link, 'when', FWhen.Link);
   if (child_name = 'offset') Then
-     list.add(FOffset.Link);
+     list.add(self.link, 'offset', FOffset.Link);
 end;
 
 procedure TFhirTimingRepeat.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -27938,10 +29675,63 @@ begin
   else inherited;
 end;
 
-function TFhirTimingRepeat.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirTimingRepeat.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'timeOfDay') then result := TimeOfDayList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'dayOfWeek') then FDayOfWeek.insertItem(index, asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {1}
+  else if (propName = 'timeOfDay') then TimeOfDayList.insertItem(index, asTime(propValue)){2}
+  else inherited;
+end;
+
+function TFhirTimingRepeat.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'timeOfDay') then result := TimeOfDayList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirTimingRepeat.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'count') then CountElement := nil
+  else if (propName = 'countMax') then CountMaxElement := nil
+  else if (propName = 'duration') then DurationElement := nil
+  else if (propName = 'durationMax') then DurationMaxElement := nil
+  else if (propName = 'durationUnit') then DurationUnitElement := nil
+  else if (propName = 'frequency') then FrequencyElement := nil
+  else if (propName = 'frequencyMax') then FrequencyMaxElement := nil
+  else if (propName = 'period') then PeriodElement := nil
+  else if (propName = 'periodMax') then PeriodMaxElement := nil
+  else if (propName = 'periodUnit') then PeriodUnitElement := nil
+  else if (propName = 'timeOfDay') then deletePropertyValue('timeOfDay', TimeOfDayList, value) {2}
+  else if (propName = 'when') then WhenElement := nil
+  else if (propName = 'offset') then OffsetElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirTimingRepeat.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'count') then CountElement := asInteger(new){5b}
+  else if (propName = 'countMax') then CountMaxElement := asInteger(new){5b}
+  else if (propName = 'duration') then DurationElement := asDecimal(new){5b}
+  else if (propName = 'durationMax') then DurationMaxElement := asDecimal(new){5b}
+  else if (propName = 'durationUnit') then DurationUnitElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, new){4}
+  else if (propName = 'frequency') then FrequencyElement := asInteger(new){5b}
+  else if (propName = 'frequencyMax') then FrequencyMaxElement := asInteger(new){5b}
+  else if (propName = 'period') then PeriodElement := asDecimal(new){5b}
+  else if (propName = 'periodMax') then PeriodMaxElement := asDecimal(new){5b}
+  else if (propName = 'periodUnit') then PeriodUnitElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, new){4}
+  else if (propName = 'timeOfDay') then replacePropertyValue('timeOfDay', TimeOfDayList, existing, new) {2}
+  else if (propName = 'when') then WhenElement := asEnum(SYSTEMS_TFhirEventTimingEnum, CODES_TFhirEventTimingEnum, new){4}
+  else if (propName = 'offset') then OffsetElement := asUnsignedInt(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirTimingRepeat.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'dayOfWeek') then FDayOfWeek.move(source, destination) {1}
+  else if (propName = 'timeOfDay') then TimeOfDayList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirTimingRepeat.fhirType : string;
@@ -27959,7 +29749,7 @@ begin
   result := TFhirTimingRepeat(inherited Clone);
 end;
 
-function TFhirTimingRepeat.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirTimingRepeat.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirTimingRepeat;
 begin
@@ -27981,7 +29771,7 @@ begin
   end;
 end;
 
-function TFhirTimingRepeat.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirTimingRepeat.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirTimingRepeat;
 begin
@@ -28000,6 +29790,11 @@ begin
       compareValues(dayOfWeekList, o.dayOfWeekList, true) and compareValues(timeOfDayList, o.timeOfDayList, true) and 
       compareValues(whenElement, o.whenElement, true) and compareValues(offsetElement, o.offsetElement, true);
   end;
+end;
+
+function TFhirTimingRepeat.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FBounds) and isEmptyProp(FCount) and isEmptyProp(FCountMax) and isEmptyProp(FDuration) and isEmptyProp(FDurationMax) and isEmptyProp(FDurationUnit) and isEmptyProp(FFrequency) and isEmptyProp(FFrequencyMax) and isEmptyProp(FPeriod) and isEmptyProp(FPeriodMax) and isEmptyProp(FPeriodUnit) and isEmptyProp(FDayOfWeek) and isEmptyProp(FtimeOfDayList) and isEmptyProp(FWhen) and isEmptyProp(FOffset);
 end;
 
 { TFhirTimingRepeat }
@@ -28430,6 +30225,10 @@ begin
   result := TFhirTimingRepeat(ObjectByIndex[index]);
 end;
 
+function TFhirTimingRepeatList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirTimingRepeat;
+end;
 function TFhirTimingRepeatList.IndexOf(value: TFhirTimingRepeat): Integer;
 begin
   result := IndexByReference(value);
@@ -28512,15 +30311,15 @@ begin
   code := TFhirTiming(oSource).code.Clone;
 end;
 
-procedure TFhirTiming.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirTiming.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'event') Then
-    list.addAll(FEventList);
+    list.addAll(self, 'event', FEventList);
   if (child_name = 'repeat') Then
-     list.add(FRepeat_.Link);
+     list.add(self.link, 'repeat', FRepeat_.Link);
   if (child_name = 'code') Then
-     list.add(FCode.Link);
+     list.add(self.link, 'code', FCode.Link);
 end;
 
 procedure TFhirTiming.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -28539,12 +30338,43 @@ begin
   else inherited;
 end;
 
-function TFhirTiming.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirTiming.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'event') then result := EventList.append(){2}
-  else if (propName = 'repeat') then begin Repeat_ := TFhirTimingRepeat.create(); result := Repeat_; end{4b}
-  else if (propName = 'code') then begin Code := TFhirCodeableConcept.create(); result := Code; end{4b}
-  else result := inherited makeProperty(propName);
+  if (propName = 'event') then EventList.insertItem(index, asDateTime(propValue)){2}
+  else inherited;
+end;
+
+function TFhirTiming.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'event') then result := EventList.new(){2}
+  else if (propName = 'repeat') then result := TFhirTimingRepeat.create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirTiming.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'event') then deletePropertyValue('event', EventList, value) {2}
+  else if (propName = 'repeat') then Repeat_Element := nil
+  else if (propName = 'code') then CodeElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirTiming.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'event') then replacePropertyValue('event', EventList, existing, new) {2}
+  else if (propName = 'repeat') then Repeat_Element := new as TFhirTimingRepeat{4}
+  else if (propName = 'code') then CodeElement := new as TFhirCodeableConcept{4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirTiming.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'event') then EventList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirTiming.fhirType : string;
@@ -28552,7 +30382,12 @@ begin
   result := 'Timing';
 end;
 
-function TFhirTiming.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirTiming.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FeventList) and isEmptyProp(FRepeat_) and isEmptyProp(FCode);
+end;
+
+function TFhirTiming.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirTiming;
 begin
@@ -28568,7 +30403,7 @@ begin
   end;
 end;
 
-function TFhirTiming.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirTiming.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirTiming;
 begin
@@ -28691,6 +30526,10 @@ begin
   result := TFhirTiming(ObjectByIndex[index]);
 end;
 
+function TFhirTimingList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirTiming;
+end;
 function TFhirTimingList.IndexOf(value: TFhirTiming): Integer;
 begin
   result := IndexByReference(value);
@@ -28937,17 +30776,17 @@ begin
   FRules := TFhirElementDefinitionSlicing(oSource).FRules.Link;
 end;
 
-procedure TFhirElementDefinitionSlicing.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionSlicing.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'discriminator') Then
-    list.addAll(FDiscriminatorList);
+    list.addAll(self, 'discriminator', FDiscriminatorList);
   if (child_name = 'description') Then
-     list.add(FDescription.Link);
+     list.add(self.link, 'description', FDescription.Link);
   if (child_name = 'ordered') Then
-     list.add(FOrdered.Link);
+     list.add(self.link, 'ordered', FOrdered.Link);
   if (child_name = 'rules') Then
-     list.add(FRules.Link);
+     list.add(self.link, 'rules', FRules.Link);
 end;
 
 procedure TFhirElementDefinitionSlicing.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -28968,10 +30807,43 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionSlicing.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionSlicing.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'discriminator') then result := DiscriminatorList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'discriminator') then DiscriminatorList.insertItem(index, asString(propValue)){2}
+  else inherited;
+end;
+
+function TFhirElementDefinitionSlicing.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  if (propName = 'discriminator') then result := DiscriminatorList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionSlicing.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'discriminator') then deletePropertyValue('discriminator', DiscriminatorList, value) {2}
+  else if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'ordered') then OrderedElement := nil
+  else if (propName = 'rules') then RulesElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionSlicing.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'discriminator') then replacePropertyValue('discriminator', DiscriminatorList, existing, new) {2}
+  else if (propName = 'description') then DescriptionElement := asString(new){5b}
+  else if (propName = 'ordered') then OrderedElement := asBoolean(new){5b}
+  else if (propName = 'rules') then RulesElement := asEnum(SYSTEMS_TFhirResourceSlicingRulesEnum, CODES_TFhirResourceSlicingRulesEnum, new){4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionSlicing.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'discriminator') then DiscriminatorList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionSlicing.fhirType : string;
@@ -28989,7 +30861,7 @@ begin
   result := TFhirElementDefinitionSlicing(inherited Clone);
 end;
 
-function TFhirElementDefinitionSlicing.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionSlicing.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionSlicing;
 begin
@@ -29005,7 +30877,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionSlicing.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionSlicing.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionSlicing;
 begin
@@ -29019,6 +30891,11 @@ begin
     result := compareValues(discriminatorList, o.discriminatorList, true) and compareValues(descriptionElement, o.descriptionElement, true) and 
       compareValues(orderedElement, o.orderedElement, true) and compareValues(rulesElement, o.rulesElement, true);
   end;
+end;
+
+function TFhirElementDefinitionSlicing.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FdiscriminatorList) and isEmptyProp(FDescription) and isEmptyProp(FOrdered) and isEmptyProp(FRules);
 end;
 
 { TFhirElementDefinitionSlicing }
@@ -29176,6 +31053,10 @@ begin
   result := TFhirElementDefinitionSlicing(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionSlicingList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionSlicing;
+end;
 function TFhirElementDefinitionSlicingList.IndexOf(value: TFhirElementDefinitionSlicing): Integer;
 begin
   result := IndexByReference(value);
@@ -29249,15 +31130,15 @@ begin
   maxElement := TFhirElementDefinitionBase(oSource).maxElement.Clone;
 end;
 
-procedure TFhirElementDefinitionBase.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionBase.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'path') Then
-     list.add(FPath.Link);
+     list.add(self.link, 'path', FPath.Link);
   if (child_name = 'min') Then
-     list.add(FMin.Link);
+     list.add(self.link, 'min', FMin.Link);
   if (child_name = 'max') Then
-     list.add(FMax.Link);
+     list.add(self.link, 'max', FMax.Link);
 end;
 
 procedure TFhirElementDefinitionBase.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -29276,9 +31157,37 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionBase.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionBase.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirElementDefinitionBase.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionBase.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else if (propName = 'min') then MinElement := nil
+  else if (propName = 'max') then MaxElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionBase.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new){5b}
+  else if (propName = 'min') then MinElement := asInteger(new){5b}
+  else if (propName = 'max') then MaxElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionBase.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionBase.fhirType : string;
@@ -29296,7 +31205,7 @@ begin
   result := TFhirElementDefinitionBase(inherited Clone);
 end;
 
-function TFhirElementDefinitionBase.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionBase.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionBase;
 begin
@@ -29312,7 +31221,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionBase.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionBase.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionBase;
 begin
@@ -29326,6 +31235,11 @@ begin
     result := compareValues(pathElement, o.pathElement, true) and compareValues(minElement, o.minElement, true) and 
       compareValues(maxElement, o.maxElement, true);
   end;
+end;
+
+function TFhirElementDefinitionBase.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FMin) and isEmptyProp(FMax);
 end;
 
 { TFhirElementDefinitionBase }
@@ -29480,6 +31394,10 @@ begin
   result := TFhirElementDefinitionBase(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionBaseList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionBase;
+end;
 function TFhirElementDefinitionBaseList.IndexOf(value: TFhirElementDefinitionBase): Integer;
 begin
   result := IndexByReference(value);
@@ -29566,19 +31484,19 @@ begin
   FVersioning := TFhirElementDefinitionType(oSource).FVersioning.Link;
 end;
 
-procedure TFhirElementDefinitionType.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionType.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'code') Then
-     list.add(FCode.Link);
+     list.add(self.link, 'code', FCode.Link);
   if (child_name = 'profile') Then
-     list.add(FProfile.Link);
+     list.add(self.link, 'profile', FProfile.Link);
   if (child_name = 'targetProfile') Then
-     list.add(FTargetProfile.Link);
+     list.add(self.link, 'targetProfile', FTargetProfile.Link);
   if (child_name = 'aggregation') Then
-     list.addAll(FAggregation);
+     list.addAll(self, 'aggregation', FAggregation);
   if (child_name = 'versioning') Then
-     list.add(FVersioning.Link);
+     list.add(self.link, 'versioning', FVersioning.Link);
 end;
 
 procedure TFhirElementDefinitionType.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -29601,9 +31519,42 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionType.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionType.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  if (propName = 'aggregation') then FAggregation.insertItem(index, asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
+  else inherited;
+end;
+
+function TFhirElementDefinitionType.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionType.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := nil
+  else if (propName = 'profile') then ProfileElement := nil
+  else if (propName = 'targetProfile') then TargetProfileElement := nil
+  else if (propName = 'versioning') then VersioningElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionType.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'code') then CodeElement := asUri(new){5b}
+  else if (propName = 'profile') then ProfileElement := asUri(new){5b}
+  else if (propName = 'targetProfile') then TargetProfileElement := asUri(new){5b}
+  else if (propName = 'versioning') then VersioningElement := asEnum(SYSTEMS_TFhirReferenceVersionRulesEnum, CODES_TFhirReferenceVersionRulesEnum, new){4}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionType.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'aggregation') then FAggregation.move(source, destination) {1}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionType.fhirType : string;
@@ -29621,7 +31572,7 @@ begin
   result := TFhirElementDefinitionType(inherited Clone);
 end;
 
-function TFhirElementDefinitionType.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionType.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionType;
 begin
@@ -29638,7 +31589,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionType.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionType.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionType;
 begin
@@ -29653,6 +31604,11 @@ begin
       compareValues(targetProfileElement, o.targetProfileElement, true) and compareValues(aggregationList, o.aggregationList, true) and 
       compareValues(versioningElement, o.versioningElement, true);
   end;
+end;
+
+function TFhirElementDefinitionType.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FCode) and isEmptyProp(FProfile) and isEmptyProp(FTargetProfile) and isEmptyProp(FAggregation) and isEmptyProp(FVersioning);
 end;
 
 { TFhirElementDefinitionType }
@@ -29865,6 +31821,10 @@ begin
   result := TFhirElementDefinitionType(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionTypeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionType;
+end;
 function TFhirElementDefinitionTypeList.IndexOf(value: TFhirElementDefinitionType): Integer;
 begin
   result := IndexByReference(value);
@@ -29936,13 +31896,13 @@ begin
   value := TFhirElementDefinitionExample(oSource).value.Clone;
 end;
 
-procedure TFhirElementDefinitionExample.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionExample.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'label') Then
-     list.add(FLabel_.Link);
+     list.add(self.link, 'label', FLabel_.Link);
   if (child_name = 'value[x]') or (child_name = 'value') Then
-     list.add(FValue.Link);
+     list.add(self.link, 'value[x]', FValue.Link);
 end;
 
 procedure TFhirElementDefinitionExample.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -29959,9 +31919,33 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionExample.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionExample.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirElementDefinitionExample.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionExample.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'label') then Label_Element := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionExample.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'label') then Label_Element := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionExample.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionExample.fhirType : string;
@@ -29979,7 +31963,7 @@ begin
   result := TFhirElementDefinitionExample(inherited Clone);
 end;
 
-function TFhirElementDefinitionExample.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionExample.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionExample;
 begin
@@ -29994,7 +31978,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionExample.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionExample.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionExample;
 begin
@@ -30007,6 +31991,11 @@ begin
     o := TFhirElementDefinitionExample(other);
     result := compareValues(label_Element, o.label_Element, true);
   end;
+end;
+
+function TFhirElementDefinitionExample.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FLabel_) and isEmptyProp(FValue);
 end;
 
 { TFhirElementDefinitionExample }
@@ -30115,6 +32104,10 @@ begin
   result := TFhirElementDefinitionExample(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionExampleList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionExample;
+end;
 function TFhirElementDefinitionExampleList.IndexOf(value: TFhirElementDefinitionExample): Integer;
 begin
   result := IndexByReference(value);
@@ -30196,23 +32189,23 @@ begin
   sourceElement := TFhirElementDefinitionConstraint(oSource).sourceElement.Clone;
 end;
 
-procedure TFhirElementDefinitionConstraint.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionConstraint.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'key') Then
-     list.add(FKey.Link);
+     list.add(self.link, 'key', FKey.Link);
   if (child_name = 'requirements') Then
-     list.add(FRequirements.Link);
+     list.add(self.link, 'requirements', FRequirements.Link);
   if (child_name = 'severity') Then
-     list.add(FSeverity.Link);
+     list.add(self.link, 'severity', FSeverity.Link);
   if (child_name = 'human') Then
-     list.add(FHuman.Link);
+     list.add(self.link, 'human', FHuman.Link);
   if (child_name = 'expression') Then
-     list.add(FExpression.Link);
+     list.add(self.link, 'expression', FExpression.Link);
   if (child_name = 'xpath') Then
-     list.add(FXpath.Link);
+     list.add(self.link, 'xpath', FXpath.Link);
   if (child_name = 'source') Then
-     list.add(FSource.Link);
+     list.add(self.link, 'source', FSource.Link);
 end;
 
 procedure TFhirElementDefinitionConstraint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -30239,9 +32232,45 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionConstraint.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionConstraint.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirElementDefinitionConstraint.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionConstraint.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'key') then KeyElement := nil
+  else if (propName = 'requirements') then RequirementsElement := nil
+  else if (propName = 'severity') then SeverityElement := nil
+  else if (propName = 'human') then HumanElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else if (propName = 'xpath') then XpathElement := nil
+  else if (propName = 'source') then SourceElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionConstraint.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'key') then KeyElement := asId(new){5b}
+  else if (propName = 'requirements') then RequirementsElement := asString(new){5b}
+  else if (propName = 'severity') then SeverityElement := asEnum(SYSTEMS_TFhirConstraintSeverityEnum, CODES_TFhirConstraintSeverityEnum, new){4}
+  else if (propName = 'human') then HumanElement := asString(new){5b}
+  else if (propName = 'expression') then ExpressionElement := asString(new){5b}
+  else if (propName = 'xpath') then XpathElement := asString(new){5b}
+  else if (propName = 'source') then SourceElement := asUri(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionConstraint.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionConstraint.fhirType : string;
@@ -30259,7 +32288,7 @@ begin
   result := TFhirElementDefinitionConstraint(inherited Clone);
 end;
 
-function TFhirElementDefinitionConstraint.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionConstraint.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionConstraint;
 begin
@@ -30277,7 +32306,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionConstraint.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionConstraint.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionConstraint;
 begin
@@ -30293,6 +32322,11 @@ begin
       compareValues(expressionElement, o.expressionElement, true) and compareValues(xpathElement, o.xpathElement, true) and 
       compareValues(sourceElement, o.sourceElement, true);
   end;
+end;
+
+function TFhirElementDefinitionConstraint.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FKey) and isEmptyProp(FRequirements) and isEmptyProp(FSeverity) and isEmptyProp(FHuman) and isEmptyProp(FExpression) and isEmptyProp(FXpath) and isEmptyProp(FSource);
 end;
 
 { TFhirElementDefinitionConstraint }
@@ -30547,6 +32581,10 @@ begin
   result := TFhirElementDefinitionConstraint(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionConstraintList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionConstraint;
+end;
 function TFhirElementDefinitionConstraintList.IndexOf(value: TFhirElementDefinitionConstraint): Integer;
 begin
   result := IndexByReference(value);
@@ -30620,15 +32658,15 @@ begin
   valueSet := TFhirElementDefinitionBinding(oSource).valueSet.Clone;
 end;
 
-procedure TFhirElementDefinitionBinding.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionBinding.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'strength') Then
-     list.add(FStrength.Link);
+     list.add(self.link, 'strength', FStrength.Link);
   if (child_name = 'description') Then
-     list.add(FDescription.Link);
+     list.add(self.link, 'description', FDescription.Link);
   if (child_name = 'valueSet[x]') or (child_name = 'valueSet') Then
-     list.add(FValueSet.Link);
+     list.add(self.link, 'valueSet[x]', FValueSet.Link);
 end;
 
 procedure TFhirElementDefinitionBinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -30647,9 +32685,35 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionBinding.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionBinding.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirElementDefinitionBinding.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionBinding.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'strength') then StrengthElement := nil
+  else if (propName = 'description') then DescriptionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionBinding.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'strength') then StrengthElement := asEnum(SYSTEMS_TFhirBindingStrengthEnum, CODES_TFhirBindingStrengthEnum, new){4}
+  else if (propName = 'description') then DescriptionElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionBinding.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionBinding.fhirType : string;
@@ -30667,7 +32731,7 @@ begin
   result := TFhirElementDefinitionBinding(inherited Clone);
 end;
 
-function TFhirElementDefinitionBinding.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionBinding.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionBinding;
 begin
@@ -30683,7 +32747,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionBinding.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionBinding.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionBinding;
 begin
@@ -30696,6 +32760,11 @@ begin
     o := TFhirElementDefinitionBinding(other);
     result := compareValues(strengthElement, o.strengthElement, true) and compareValues(descriptionElement, o.descriptionElement, true);
   end;
+end;
+
+function TFhirElementDefinitionBinding.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FStrength) and isEmptyProp(FDescription) and isEmptyProp(FValueSet);
 end;
 
 { TFhirElementDefinitionBinding }
@@ -30826,6 +32895,10 @@ begin
   result := TFhirElementDefinitionBinding(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionBindingList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionBinding;
+end;
 function TFhirElementDefinitionBindingList.IndexOf(value: TFhirElementDefinitionBinding): Integer;
 begin
   result := IndexByReference(value);
@@ -30899,15 +32972,15 @@ begin
   mapElement := TFhirElementDefinitionMapping(oSource).mapElement.Clone;
 end;
 
-procedure TFhirElementDefinitionMapping.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinitionMapping.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'identity') Then
-     list.add(FIdentity.Link);
+     list.add(self.link, 'identity', FIdentity.Link);
   if (child_name = 'language') Then
-     list.add(FLanguage.Link);
+     list.add(self.link, 'language', FLanguage.Link);
   if (child_name = 'map') Then
-     list.add(FMap.Link);
+     list.add(self.link, 'map', FMap.Link);
 end;
 
 procedure TFhirElementDefinitionMapping.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -30926,9 +32999,37 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinitionMapping.makeProperty(propName : string) : TFHIRObject;
+procedure TFhirElementDefinitionMapping.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirElementDefinitionMapping.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinitionMapping.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'identity') then IdentityElement := nil
+  else if (propName = 'language') then LanguageElement := nil
+  else if (propName = 'map') then MapElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinitionMapping.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'identity') then IdentityElement := asId(new){5b}
+  else if (propName = 'language') then LanguageElement := asCode(new){5b}
+  else if (propName = 'map') then MapElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinitionMapping.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinitionMapping.fhirType : string;
@@ -30946,7 +33047,7 @@ begin
   result := TFhirElementDefinitionMapping(inherited Clone);
 end;
 
-function TFhirElementDefinitionMapping.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionMapping.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionMapping;
 begin
@@ -30962,7 +33063,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinitionMapping.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinitionMapping.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinitionMapping;
 begin
@@ -30976,6 +33077,11 @@ begin
     result := compareValues(identityElement, o.identityElement, true) and compareValues(languageElement, o.languageElement, true) and 
       compareValues(mapElement, o.mapElement, true);
   end;
+end;
+
+function TFhirElementDefinitionMapping.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FIdentity) and isEmptyProp(FLanguage) and isEmptyProp(FMap);
 end;
 
 { TFhirElementDefinitionMapping }
@@ -31130,6 +33236,10 @@ begin
   result := TFhirElementDefinitionMapping(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionMappingList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinitionMapping;
+end;
 function TFhirElementDefinitionMappingList.IndexOf(value: TFhirElementDefinitionMapping): Integer;
 begin
   result := IndexByReference(value);
@@ -31331,71 +33441,71 @@ begin
   end;
 end;
 
-procedure TFhirElementDefinition.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirElementDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
   if (child_name = 'path') Then
-     list.add(FPath.Link);
+     list.add(self.link, 'path', FPath.Link);
   if (child_name = 'representation') Then
-     list.addAll(FRepresentation);
+     list.addAll(self, 'representation', FRepresentation);
   if (child_name = 'sliceName') Then
-     list.add(FSliceName.Link);
+     list.add(self.link, 'sliceName', FSliceName.Link);
   if (child_name = 'label') Then
-     list.add(FLabel_.Link);
+     list.add(self.link, 'label', FLabel_.Link);
   if (child_name = 'code') Then
-    list.addAll(FCodeList);
+    list.addAll(self, 'code', FCodeList);
   if (child_name = 'slicing') Then
-     list.add(FSlicing.Link);
+     list.add(self.link, 'slicing', FSlicing.Link);
   if (child_name = 'short') Then
-     list.add(FShort.Link);
+     list.add(self.link, 'short', FShort.Link);
   if (child_name = 'definition') Then
-     list.add(FDefinition.Link);
+     list.add(self.link, 'definition', FDefinition.Link);
   if (child_name = 'comments') Then
-     list.add(FComments.Link);
+     list.add(self.link, 'comments', FComments.Link);
   if (child_name = 'requirements') Then
-     list.add(FRequirements.Link);
+     list.add(self.link, 'requirements', FRequirements.Link);
   if (child_name = 'alias') Then
-    list.addAll(FAliasList);
+    list.addAll(self, 'alias', FAliasList);
   if (child_name = 'min') Then
-     list.add(FMin.Link);
+     list.add(self.link, 'min', FMin.Link);
   if (child_name = 'max') Then
-     list.add(FMax.Link);
+     list.add(self.link, 'max', FMax.Link);
   if (child_name = 'base') Then
-     list.add(FBase.Link);
+     list.add(self.link, 'base', FBase.Link);
   if (child_name = 'contentReference') Then
-     list.add(FContentReference.Link);
+     list.add(self.link, 'contentReference', FContentReference.Link);
   if (child_name = 'type') Then
-    list.addAll(FType_List);
+    list.addAll(self, 'type', FType_List);
   if (child_name = 'defaultValue[x]') or (child_name = 'defaultValue') Then
-     list.add(FDefaultValue.Link);
+     list.add(self.link, 'defaultValue[x]', FDefaultValue.Link);
   if (child_name = 'meaningWhenMissing') Then
-     list.add(FMeaningWhenMissing.Link);
+     list.add(self.link, 'meaningWhenMissing', FMeaningWhenMissing.Link);
   if (child_name = 'fixed[x]') or (child_name = 'fixed') Then
-     list.add(FFixed.Link);
+     list.add(self.link, 'fixed[x]', FFixed.Link);
   if (child_name = 'pattern[x]') or (child_name = 'pattern') Then
-     list.add(FPattern.Link);
+     list.add(self.link, 'pattern[x]', FPattern.Link);
   if (child_name = 'example') Then
-    list.addAll(FExampleList);
+    list.addAll(self, 'example', FExampleList);
   if (child_name = 'minValue[x]') or (child_name = 'minValue') Then
-     list.add(FMinValue.Link);
+     list.add(self.link, 'minValue[x]', FMinValue.Link);
   if (child_name = 'maxValue[x]') or (child_name = 'maxValue') Then
-     list.add(FMaxValue.Link);
+     list.add(self.link, 'maxValue[x]', FMaxValue.Link);
   if (child_name = 'maxLength') Then
-     list.add(FMaxLength.Link);
+     list.add(self.link, 'maxLength', FMaxLength.Link);
   if (child_name = 'condition') Then
-    list.addAll(FConditionList);
+    list.addAll(self, 'condition', FConditionList);
   if (child_name = 'constraint') Then
-    list.addAll(FConstraintList);
+    list.addAll(self, 'constraint', FConstraintList);
   if (child_name = 'mustSupport') Then
-     list.add(FMustSupport.Link);
+     list.add(self.link, 'mustSupport', FMustSupport.Link);
   if (child_name = 'isModifier') Then
-     list.add(FIsModifier.Link);
+     list.add(self.link, 'isModifier', FIsModifier.Link);
   if (child_name = 'isSummary') Then
-     list.add(FIsSummary.Link);
+     list.add(self.link, 'isSummary', FIsSummary.Link);
   if (child_name = 'binding') Then
-     list.add(FBinding.Link);
+     list.add(self.link, 'binding', FBinding.Link);
   if (child_name = 'mapping') Then
-    list.addAll(FMappingList);
+    list.addAll(self, 'mapping', FMappingList);
 end;
 
 procedure TFhirElementDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -31470,19 +33580,108 @@ begin
   else inherited;
 end;
 
-function TFhirElementDefinition.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirElementDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'code') then result := CodeList.append(){2}
-  else if (propName = 'slicing') then begin Slicing := TFhirElementDefinitionSlicing.create(); result := Slicing; end{4b}
-  else if (propName = 'alias') then result := AliasList.append(){2}
-  else if (propName = 'base') then begin Base := TFhirElementDefinitionBase.create(); result := Base; end{4b}
-  else if (propName = 'type') then result := Type_List.append(){2}
-  else if (propName = 'example') then result := ExampleList.append(){2}
-  else if (propName = 'condition') then result := ConditionList.append(){2}
-  else if (propName = 'constraint') then result := ConstraintList.append(){2}
-  else if (propName = 'binding') then begin Binding := TFhirElementDefinitionBinding.create(); result := Binding; end{4b}
-  else if (propName = 'mapping') then result := MappingList.append(){2}
-  else result := inherited makeProperty(propName);
+  if (propName = 'representation') then FRepresentation.insertItem(index, asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
+  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCoding){2}
+  else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue)){2}
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirElementDefinitionType){2}
+  else if (propName = 'example') then ExampleList.insertItem(index, propValue as TFhirElementDefinitionExample){2}
+  else if (propName = 'condition') then ConditionList.insertItem(index, asId(propValue)){2}
+  else if (propName = 'constraint') then ConstraintList.insertItem(index, propValue as TFhirElementDefinitionConstraint){2}
+  else if (propName = 'mapping') then MappingList.insertItem(index, propValue as TFhirElementDefinitionMapping){2}
+  else inherited;
+end;
+
+function TFhirElementDefinition.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  if (propName = 'code') then result := CodeList.new(){2}
+  else if (propName = 'slicing') then result := TFhirElementDefinitionSlicing.create(){4b}
+  else if (propName = 'alias') then result := AliasList.new(){2}
+  else if (propName = 'base') then result := TFhirElementDefinitionBase.create(){4b}
+  else if (propName = 'type') then result := Type_List.new(){2}
+  else if (propName = 'example') then result := ExampleList.new(){2}
+  else if (propName = 'condition') then result := ConditionList.new(){2}
+  else if (propName = 'constraint') then result := ConstraintList.new(){2}
+  else if (propName = 'binding') then result := TFhirElementDefinitionBinding.create(){4b}
+  else if (propName = 'mapping') then result := MappingList.new(){2}
+  else result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirElementDefinition.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := nil
+  else if (propName = 'sliceName') then SliceNameElement := nil
+  else if (propName = 'label') then Label_Element := nil
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {2}
+  else if (propName = 'slicing') then SlicingElement := nil
+  else if (propName = 'short') then ShortElement := nil
+  else if (propName = 'definition') then DefinitionElement := nil
+  else if (propName = 'comments') then CommentsElement := nil
+  else if (propName = 'requirements') then RequirementsElement := nil
+  else if (propName = 'alias') then deletePropertyValue('alias', AliasList, value) {2}
+  else if (propName = 'min') then MinElement := nil
+  else if (propName = 'max') then MaxElement := nil
+  else if (propName = 'base') then BaseElement := nil
+  else if (propName = 'contentReference') then ContentReferenceElement := nil
+  else if (propName = 'type') then deletePropertyValue('type', Type_List, value) {2}
+  else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := nil
+  else if (propName = 'example') then deletePropertyValue('example', ExampleList, value) {2}
+  else if (propName = 'maxLength') then MaxLengthElement := nil
+  else if (propName = 'condition') then deletePropertyValue('condition', ConditionList, value) {2}
+  else if (propName = 'constraint') then deletePropertyValue('constraint', ConstraintList, value) {2}
+  else if (propName = 'mustSupport') then MustSupportElement := nil
+  else if (propName = 'isModifier') then IsModifierElement := nil
+  else if (propName = 'isSummary') then IsSummaryElement := nil
+  else if (propName = 'binding') then BindingElement := nil
+  else if (propName = 'mapping') then deletePropertyValue('mapping', MappingList, value) {2}
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirElementDefinition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'path') then PathElement := asString(new){5b}
+  else if (propName = 'sliceName') then SliceNameElement := asString(new){5b}
+  else if (propName = 'label') then Label_Element := asString(new){5b}
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {2}
+  else if (propName = 'slicing') then SlicingElement := new as TFhirElementDefinitionSlicing{4}
+  else if (propName = 'short') then ShortElement := asString(new){5b}
+  else if (propName = 'definition') then DefinitionElement := asMarkdown(new){5b}
+  else if (propName = 'comments') then CommentsElement := asMarkdown(new){5b}
+  else if (propName = 'requirements') then RequirementsElement := asMarkdown(new){5b}
+  else if (propName = 'alias') then replacePropertyValue('alias', AliasList, existing, new) {2}
+  else if (propName = 'min') then MinElement := asInteger(new){5b}
+  else if (propName = 'max') then MaxElement := asString(new){5b}
+  else if (propName = 'base') then BaseElement := new as TFhirElementDefinitionBase{4}
+  else if (propName = 'contentReference') then ContentReferenceElement := asUri(new){5b}
+  else if (propName = 'type') then replacePropertyValue('type', Type_List, existing, new) {2}
+  else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(new){5b}
+  else if (propName = 'example') then replacePropertyValue('example', ExampleList, existing, new) {2}
+  else if (propName = 'maxLength') then MaxLengthElement := asInteger(new){5b}
+  else if (propName = 'condition') then replacePropertyValue('condition', ConditionList, existing, new) {2}
+  else if (propName = 'constraint') then replacePropertyValue('constraint', ConstraintList, existing, new) {2}
+  else if (propName = 'mustSupport') then MustSupportElement := asBoolean(new){5b}
+  else if (propName = 'isModifier') then IsModifierElement := asBoolean(new){5b}
+  else if (propName = 'isSummary') then IsSummaryElement := asBoolean(new){5b}
+  else if (propName = 'binding') then BindingElement := new as TFhirElementDefinitionBinding{4}
+  else if (propName = 'mapping') then replacePropertyValue('mapping', MappingList, existing, new) {2}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirElementDefinition.reorderProperty(propName : string; source, destination : integer);
+begin
+  if (propName = 'representation') then FRepresentation.move(source, destination) {1}
+  else if (propName = 'code') then CodeList.move(source, destination){2}
+  else if (propName = 'alias') then AliasList.move(source, destination){2}
+  else if (propName = 'type') then Type_List.move(source, destination){2}
+  else if (propName = 'example') then ExampleList.move(source, destination){2}
+  else if (propName = 'condition') then ConditionList.move(source, destination){2}
+  else if (propName = 'constraint') then ConstraintList.move(source, destination){2}
+  else if (propName = 'mapping') then MappingList.move(source, destination){2}
+  else
+    inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirElementDefinition.fhirType : string;
@@ -31490,7 +33689,12 @@ begin
   result := 'ElementDefinition';
 end;
 
-function TFhirElementDefinition.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirElementDefinition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FRepresentation) and isEmptyProp(FSliceName) and isEmptyProp(FLabel_) and isEmptyProp(FcodeList) and isEmptyProp(FSlicing) and isEmptyProp(FShort) and isEmptyProp(FDefinition) and isEmptyProp(FComments) and isEmptyProp(FRequirements) and isEmptyProp(FaliasList) and isEmptyProp(FMin) and isEmptyProp(FMax) and isEmptyProp(FBase) and isEmptyProp(FContentReference) and isEmptyProp(Ftype_List) and isEmptyProp(FDefaultValue) and isEmptyProp(FMeaningWhenMissing) and isEmptyProp(FFixed) and isEmptyProp(FPattern) and isEmptyProp(FexampleList) and isEmptyProp(FMinValue) and isEmptyProp(FMaxValue) and isEmptyProp(FMaxLength) and isEmptyProp(FconditionList) and isEmptyProp(FconstraintList) and isEmptyProp(FMustSupport) and isEmptyProp(FIsModifier) and isEmptyProp(FIsSummary) and isEmptyProp(FBinding) and isEmptyProp(FmappingList);
+end;
+
+function TFhirElementDefinition.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinition;
 begin
@@ -31520,7 +33724,7 @@ begin
   end;
 end;
 
-function TFhirElementDefinition.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirElementDefinition.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirElementDefinition;
 begin
@@ -32171,6 +34375,10 @@ begin
   result := TFhirElementDefinition(ObjectByIndex[index]);
 end;
 
+function TFhirElementDefinitionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirElementDefinition;
+end;
 function TFhirElementDefinitionList.IndexOf(value: TFhirElementDefinition): Integer;
 begin
   result := IndexByReference(value);
@@ -32238,7 +34446,7 @@ begin
   inherited;
 end;
 
-procedure TFhirCount.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirCount.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
 end;
@@ -32253,9 +34461,29 @@ begin
   inherited;
 end;
 
-function TFhirCount.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirCount.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirCount.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirCount.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirCount.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirCount.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirCount.fhirType : string;
@@ -32263,7 +34491,12 @@ begin
   result := 'Count';
 end;
 
-function TFhirCount.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirCount.isEmpty : boolean;
+begin
+  result := inherited isEmpty ;
+end;
+
+function TFhirCount.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirCount;
 begin
@@ -32278,7 +34511,7 @@ begin
   end;
 end;
 
-function TFhirCount.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirCount.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirCount;
 begin
@@ -32377,6 +34610,10 @@ begin
   result := TFhirCount(ObjectByIndex[index]);
 end;
 
+function TFhirCountList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirCount;
+end;
 function TFhirCountList.IndexOf(value: TFhirCount): Integer;
 begin
   result := IndexByReference(value);
@@ -32444,7 +34681,7 @@ begin
   inherited;
 end;
 
-procedure TFhirMoney.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirMoney.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
 end;
@@ -32459,9 +34696,29 @@ begin
   inherited;
 end;
 
-function TFhirMoney.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirMoney.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirMoney.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirMoney.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirMoney.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirMoney.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirMoney.fhirType : string;
@@ -32469,7 +34726,12 @@ begin
   result := 'Money';
 end;
 
-function TFhirMoney.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirMoney.isEmpty : boolean;
+begin
+  result := inherited isEmpty ;
+end;
+
+function TFhirMoney.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirMoney;
 begin
@@ -32484,7 +34746,7 @@ begin
   end;
 end;
 
-function TFhirMoney.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirMoney.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirMoney;
 begin
@@ -32583,6 +34845,10 @@ begin
   result := TFhirMoney(ObjectByIndex[index]);
 end;
 
+function TFhirMoneyList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirMoney;
+end;
 function TFhirMoneyList.IndexOf(value: TFhirMoney): Integer;
 begin
   result := IndexByReference(value);
@@ -32650,7 +34916,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDistance.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDistance.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
 end;
@@ -32665,9 +34931,29 @@ begin
   inherited;
 end;
 
-function TFhirDistance.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirDistance.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirDistance.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDistance.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDistance.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDistance.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDistance.fhirType : string;
@@ -32675,7 +34961,12 @@ begin
   result := 'Distance';
 end;
 
-function TFhirDistance.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDistance.isEmpty : boolean;
+begin
+  result := inherited isEmpty ;
+end;
+
+function TFhirDistance.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDistance;
 begin
@@ -32690,7 +34981,7 @@ begin
   end;
 end;
 
-function TFhirDistance.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDistance.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDistance;
 begin
@@ -32789,6 +35080,10 @@ begin
   result := TFhirDistance(ObjectByIndex[index]);
 end;
 
+function TFhirDistanceList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDistance;
+end;
 function TFhirDistanceList.IndexOf(value: TFhirDistance): Integer;
 begin
   result := IndexByReference(value);
@@ -32856,7 +35151,7 @@ begin
   inherited;
 end;
 
-procedure TFhirAge.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirAge.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
 end;
@@ -32871,9 +35166,29 @@ begin
   inherited;
 end;
 
-function TFhirAge.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirAge.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirAge.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirAge.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirAge.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirAge.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirAge.fhirType : string;
@@ -32881,7 +35196,12 @@ begin
   result := 'Age';
 end;
 
-function TFhirAge.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirAge.isEmpty : boolean;
+begin
+  result := inherited isEmpty ;
+end;
+
+function TFhirAge.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirAge;
 begin
@@ -32896,7 +35216,7 @@ begin
   end;
 end;
 
-function TFhirAge.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirAge.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirAge;
 begin
@@ -32995,6 +35315,10 @@ begin
   result := TFhirAge(ObjectByIndex[index]);
 end;
 
+function TFhirAgeList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirAge;
+end;
 function TFhirAgeList.IndexOf(value: TFhirAge): Integer;
 begin
   result := IndexByReference(value);
@@ -33062,7 +35386,7 @@ begin
   inherited;
 end;
 
-procedure TFhirDuration.GetChildrenByName(child_name : string; list : TFHIRObjectList);
+procedure TFhirDuration.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
 end;
@@ -33077,9 +35401,29 @@ begin
   inherited;
 end;
 
-function TFhirDuration.makeProperty(propName: string) : TFHIRObject;
+procedure TFhirDuration.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  result := inherited makeProperty(propName);
+  inherited;
+end;
+
+function TFhirDuration.createPropertyValue(propName: string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirDuration.deleteProperty(propName : string; value : TFHIRObject);
+begin
+  inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirDuration.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirDuration.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
 end;
 
 function TFhirDuration.fhirType : string;
@@ -33087,7 +35431,12 @@ begin
   result := 'Duration';
 end;
 
-function TFhirDuration.equalsDeep(other : TFHIRBase) : boolean; 
+function TFhirDuration.isEmpty : boolean;
+begin
+  result := inherited isEmpty ;
+end;
+
+function TFhirDuration.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDuration;
 begin
@@ -33102,7 +35451,7 @@ begin
   end;
 end;
 
-function TFhirDuration.equalsShallow(other : TFHIRBase) : boolean; 
+function TFhirDuration.equalsShallow(other : TFHIRObject) : boolean; 
 var
   o : TFhirDuration;
 begin
@@ -33201,6 +35550,10 @@ begin
   result := TFhirDuration(ObjectByIndex[index]);
 end;
 
+function TFhirDurationList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirDuration;
+end;
 function TFhirDurationList.IndexOf(value: TFhirDuration): Integer;
 begin
   result := IndexByReference(value);
