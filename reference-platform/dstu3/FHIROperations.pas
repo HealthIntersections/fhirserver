@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-01-18T03:22:42+11:00
+// FHIR v1.9.0 generated 2017-02-06T07:15:08+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -694,13 +694,7 @@ Type
   TFHIRImplementsOpResponse = class (TFHIROperationResponse)
   private
     FReturn : TFhirOperationOutcome;
-    FIssues : TFhirOperationOutcome;
-    FUnion : TFhirBundle;
-    FIntersection : TFhirBundle;
     procedure SetReturn(value : TFhirOperationOutcome);
-    procedure SetIssues(value : TFhirOperationOutcome);
-    procedure SetUnion(value : TFhirBundle);
-    procedure SetIntersection(value : TFhirBundle);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -710,9 +704,6 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirOperationOutcome read FReturn write SetReturn;
-    property issues : TFhirOperationOutcome read FIssues write SetIssues;
-    property union : TFhirBundle read FUnion write SetUnion;
-    property intersection : TFhirBundle read FIntersection write SetIntersection;
   end;
 
   //Operation conforms (Test if a server implements a client's required operations)
@@ -736,6 +727,12 @@ Type
 
   TFHIRConformsOpResponse = class (TFHIROperationResponse)
   private
+    FIssues : TFhirOperationOutcome;
+    FUnion : TFhirCapabilityStatement;
+    FIntersection : TFhirCapabilityStatement;
+    procedure SetIssues(value : TFhirOperationOutcome);
+    procedure SetUnion(value : TFhirCapabilityStatement);
+    procedure SetIntersection(value : TFhirCapabilityStatement);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -744,6 +741,9 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
+    property issues : TFhirOperationOutcome read FIssues write SetIssues;
+    property union : TFhirCapabilityStatement read FUnion write SetUnion;
+    property intersection : TFhirCapabilityStatement read FIntersection write SetIntersection;
   end;
 
   //Operation document (Generate a Document)
@@ -3596,24 +3596,6 @@ begin
   FReturn := value;
 end;
 
-procedure TFHIRImplementsOpResponse.SetIssues(value : TFhirOperationOutcome);
-begin
-  FIssues.free;
-  FIssues := value;
-end;
-
-procedure TFHIRImplementsOpResponse.SetUnion(value : TFhirBundle);
-begin
-  FUnion.free;
-  FUnion := value;
-end;
-
-procedure TFHIRImplementsOpResponse.SetIntersection(value : TFhirBundle);
-begin
-  FIntersection.free;
-  FIntersection := value;
-end;
-
 constructor TFHIRImplementsOpResponse.create;
 begin
   inherited create();
@@ -3622,9 +3604,6 @@ end;
 procedure TFHIRImplementsOpResponse.load(params : TFHIRParameters);
 begin
   FReturn := (params.res['return'] as TFhirOperationOutcome).Link;{ob.5a}
-  FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
-  FUnion := (params.res['union'] as TFhirBundle).Link;{ob.5a}
-  FIntersection := (params.res['intersection'] as TFhirBundle).Link;{ob.5a}
   loadExtensions(params);
 end;
 
@@ -3636,9 +3615,6 @@ end;
 destructor TFHIRImplementsOpResponse.Destroy;
 begin
   FReturn.free;
-  FIssues.free;
-  FUnion.free;
-  FIntersection.free;
   inherited;
 end;
 
@@ -3648,12 +3624,6 @@ begin
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);{oz.5a}
-    if (FIssues <> nil) then
-      result.addParameter('issues', FIssues.Link);{oz.5a}
-    if (FUnion <> nil) then
-      result.addParameter('union', FUnion.Link);{oz.5a}
-    if (FIntersection <> nil) then
-      result.addParameter('intersection', FIntersection.Link);{oz.5a}
     writeExtensions(result);
     result.link;
   finally
@@ -3663,7 +3633,7 @@ end;
 
 function TFHIRImplementsOpResponse.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['return', 'issues', 'union', 'intersection'], name);
+  result := StringArrayExists(['return'], name);
 end;
 
 constructor TFHIRConformsOpRequest.create;
@@ -3714,6 +3684,24 @@ begin
   result := StringArrayExists(['left', 'right', 'mode'], name);
 end;
 
+procedure TFHIRConformsOpResponse.SetIssues(value : TFhirOperationOutcome);
+begin
+  FIssues.free;
+  FIssues := value;
+end;
+
+procedure TFHIRConformsOpResponse.SetUnion(value : TFhirCapabilityStatement);
+begin
+  FUnion.free;
+  FUnion := value;
+end;
+
+procedure TFHIRConformsOpResponse.SetIntersection(value : TFhirCapabilityStatement);
+begin
+  FIntersection.free;
+  FIntersection := value;
+end;
+
 constructor TFHIRConformsOpResponse.create;
 begin
   inherited create();
@@ -3721,6 +3709,9 @@ end;
 
 procedure TFHIRConformsOpResponse.load(params : TFHIRParameters);
 begin
+  FIssues := (params.res['issues'] as TFhirOperationOutcome).Link;{ob.5a}
+  FUnion := (params.res['union'] as TFhirCapabilityStatement).Link;{ob.5a}
+  FIntersection := (params.res['intersection'] as TFhirCapabilityStatement).Link;{ob.5a}
   loadExtensions(params);
 end;
 
@@ -3731,6 +3722,9 @@ end;
 
 destructor TFHIRConformsOpResponse.Destroy;
 begin
+  FIssues.free;
+  FUnion.free;
+  FIntersection.free;
   inherited;
 end;
 
@@ -3738,6 +3732,12 @@ function TFHIRConformsOpResponse.asParams : TFhirParameters;
 begin
   result := TFHIRParameters.create;
   try
+    if (FIssues <> nil) then
+      result.addParameter('issues', FIssues.Link);{oz.5a}
+    if (FUnion <> nil) then
+      result.addParameter('union', FUnion.Link);{oz.5a}
+    if (FIntersection <> nil) then
+      result.addParameter('intersection', FIntersection.Link);{oz.5a}
     writeExtensions(result);
     result.link;
   finally
@@ -3747,7 +3747,7 @@ end;
 
 function TFHIRConformsOpResponse.isKnownName(name : String) : boolean;
 begin
-  result := false;
+  result := StringArrayExists(['issues', 'union', 'intersection'], name);
 end;
 
 constructor TFHIRDocumentOpRequest.create;

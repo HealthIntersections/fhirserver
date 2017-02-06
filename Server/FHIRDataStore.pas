@@ -1146,7 +1146,7 @@ begin
   begin
     pc := TFhirConsent.Create;
     try
-      pc.status := ConsentStatusActive;
+      pc.status := ConsentStatusCodesActive;
       with pc.categoryList.Append.codingList.append do
       begin
         system := 'http://hl7.org/fhir/consentcategorycodes';

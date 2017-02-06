@@ -7291,6 +7291,9 @@ begin
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := NowUTC;
 //            bundle.base := manager.FRepository.FormalURLPlain;
+            bundle.identifier := TFhirIdentifier.Create;
+            bundle.identifier.system := 'urn:ietf:rfc:3986';
+            bundle.identifier.value := NewGuidURN;
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
             entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/Composition/'+composition.id;

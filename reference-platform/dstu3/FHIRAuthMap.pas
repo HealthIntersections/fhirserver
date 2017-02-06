@@ -31,6 +31,7 @@ const
     tcClinical , // frtCarePlan
     tcClinical , // frtCareTeam
     tcOther , // frtCareTeam
+    tcOther , // frtCatalog
     tcFinancial , // frtClaim
     tcFinancial , // frtClaimResponse
     tcClinical , // frtClinicalImpression

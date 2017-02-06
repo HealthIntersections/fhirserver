@@ -3096,7 +3096,7 @@ begin
         result := TFHIRTypeDetails.create(csSINGLETON, ['dateTime']);
       pfResolve :
         begin
-        if (not focus.hasType(['uri, Reference'])) then
+        if (not focus.hasType(['uri', 'Reference'])) then
           raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on uri, Reference not '+focus.describe);
         result := TFHIRTypeDetails.create(csSINGLETON, ['DomainResource']);
         end;

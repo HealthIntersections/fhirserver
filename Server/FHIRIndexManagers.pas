@@ -269,6 +269,7 @@ Type
     procedure index(aType : String; key, parent : integer; value : TFhirUri; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirEnum; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirInteger; name : String); overload;
+    procedure index(aType : String; key, parent : integer; value : TFhirDecimal; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirBoolean; name : String); overload;
 
     // intervals of time
@@ -919,6 +920,8 @@ begin
                     index(resource.fhirType, key, 0, TFhirEnum(match), ndx.Name)
                   else if match is TFhirInteger  then
                     index(resource.fhirType, key, 0, TFhirInteger(match), ndx.Name)
+                  else if match is TFhirDecimal then
+                    index(resource.fhirType, key, 0, TFhirDecimal(match), ndx.Name)
                   else if match is TFhirBoolean  then
                     index(resource.fhirType, key, 0, TFhirBoolean(match), ndx.Name)
                   else if match is TFhirInstant  then
@@ -1777,6 +1780,22 @@ begin
   if (ndx.Key = 0) then
     raise Exception.create('unknown composite index '+ndx.Name);
   result := FEntries.add(key, parent, ndx);
+end;
+
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirDecimal; name: String);
+var
+  ndx : TFhirIndex;
+begin
+  if (value = nil) or (value.value = '') then
+    exit;
+  ndx := FInfo.FIndexes.getByName(aType, name);
+  if (ndx = nil) then
+    raise Exception.create('Unknown index '+name);
+  if (length(ndx.TargetTypes) > 0) then
+    raise Exception.create('Attempt to index a simple type in an index that is a resource join');
+  if not (ndx.SearchType in [SearchParamTypeString, SearchParamTypeNumber, SearchParamTypeToken]) then
+    raise Exception.create('Unsuitable index '+name+' : '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing integer');
+  FEntries.add(key, parent, ndx, 0, value.value, '', 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(context: TFhirResource; aType: String; key, parent: integer; value: TFhirReferenceList; name: String; specificType : String = '');
