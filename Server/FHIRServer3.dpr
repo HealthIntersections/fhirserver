@@ -247,7 +247,6 @@ uses
   XMLSupport in '..\reference-platform\Support\XMLSupport.pas',
   DigitalSignatures in '..\reference-platform\Support\DigitalSignatures.pas',
   UriServices in 'UriServices.pas',
-  CvxServices in 'CvxServices.pas',
   USStateCodeServices in 'USStateCodeServices.pas',
   UniiServices in 'UniiServices.pas',
   RxNormServices in 'RxNormServices.pas',
@@ -303,7 +302,9 @@ uses
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',
   OpenMHealthServer in 'OpenMHealthServer.pas',
-  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
+  CvxServices in 'CvxServices.pas',
+  ACIRServices in 'ACIRServices.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

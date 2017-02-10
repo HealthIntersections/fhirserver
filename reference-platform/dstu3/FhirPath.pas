@@ -4066,7 +4066,7 @@ end;
 
 function TFHIRPathLexer.error(msg: String; offset: integer): Exception;
 begin
-  result := Exception.Create('Error in '+FPath+' at '+inttostr(offset)+': '+msg);
+  result := EFHIRPath.Create('Error in '+FPath+' at '+inttostr(offset)+': '+msg);
 end;
 
 function TFHIRPathLexer.error(msg: String): Exception;

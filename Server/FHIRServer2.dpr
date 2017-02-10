@@ -253,7 +253,8 @@ uses
   Logging in 'Logging.pas',
   FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
-  DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas';
+  DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas',
+  ACIRServices in 'ACIRServices.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

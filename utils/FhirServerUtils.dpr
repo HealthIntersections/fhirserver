@@ -162,7 +162,6 @@ uses
   XMLSupport in '..\reference-platform\Support\XMLSupport.pas',
   DigitalSignatures in '..\reference-platform\Support\DigitalSignatures.pas',
   UriServices in '..\server\UriServices.pas',
-  CvxServices in '..\server\CvxServices.pas',
   USStateCodeServices in '..\server\USStateCodeServices.pas',
   UniiServices in '..\server\UniiServices.pas',
   RxNormServices in '..\server\RxNormServices.pas',
@@ -228,7 +227,9 @@ uses
   SnomedCombiner in 'SnomedCombiner.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas',
-  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas';
+  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
+  ACIRServices in '..\Server\ACIRServices.pas',
+  CvxServices in '..\Server\CvxServices.pas';
 
 {$R *.res}
 

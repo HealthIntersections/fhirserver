@@ -68,6 +68,7 @@ const
     tcClinical, // frtFamilyMemberHistory
     tcClinical , // frtFlag
     tcClinical , // frtGoal
+    tcOther, // frtGraphDefinition
     tcOther , // frtGroup
     tcClinical , // frtGuidanceResponse
     tcSchedule , // frtHealthcareService

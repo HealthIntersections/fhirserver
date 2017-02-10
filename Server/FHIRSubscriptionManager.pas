@@ -278,8 +278,16 @@ begin
 end;
 
 function TSubscriptionManager.getSummaryForChannel(subst: TFhirSubscription): String;
+var
+  s : TFHIRString;
 begin
-  result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload+#0+subst.channel.header;
+  result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload;
+  {$IFDEF FHIR3}
+  for s in subst.channel.headerList do
+    result := result+#0+s.value;
+  {$ELSE}
+  result := result+#0+subst.channel.header;
+  {$ENDIF}
 end;
 
 function TSubscriptionManager.checkForClose(connection: TIdWebSocket; id : String; worked : boolean) : boolean;
@@ -531,7 +539,10 @@ begin
     sender.Connect;
     msg := TIdMessage.Create(Nil);
     try
-      msg.Subject := subst.channel.header;
+      if {$IFDEF FHIR3} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF} then
+        msg.Subject := {$IFDEF FHIR3} subst.channel.headerList[0].value {$ELSE} subst.channel.header {$ENDIF}
+      else
+        msg.Subject := 'FHIR Notification';
       msg.Recipients.EMailAddresses := subst.channel.endpoint.Replace('mailto:', '');
       msg.From.Text := SMTPSender;
       if subst.channel.payload = '' then
@@ -569,6 +580,7 @@ var
   client : TFHIRClient;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   stream : TMemoryStream;
+  s : TFHIRString;
 begin
   if subst.channel.payload = '' then
   begin
@@ -578,8 +590,13 @@ begin
     try
       http.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
+      {$IFDEF FHIR3}
+      for s in subst.channel.headerList do
+        http.Request.CustomHeaders.Add(s.value);
+      {$ELSE}
       if subst.channel.header <> '' then
         http.Request.CustomHeaders.Add(subst.channel.header);
+      {$ENDIF}
       http.Post(subst.channel.endpoint, stream);
     finally
       ssl.Free;

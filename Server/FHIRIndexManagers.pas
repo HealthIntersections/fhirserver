@@ -958,7 +958,7 @@ begin
                     index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                   else if work is TFhirResource then
                     // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
-                  else if not (work is TFHIRAttachment) then
+                  else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
                     raise Exception.Create('The type '+work.FhirType+' is not supported in FIndexManager for the index '+ndx.FName+' for the expression '+ndx.Path);
                   end;
                 SearchXpathUsagePhonetic:

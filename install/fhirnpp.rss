@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIR Notepad++ Plug-in Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>Notepad++ Plugin release 1.0.23 18/11/2016 10:10:46 PM</title>
+		<item><title>Notepad++ Plugin release 1.0.24 7/02/2017 6:19:00 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.24.exe</link>
+			<description>7/02/2017 6:19:00 AM (v1.0.24): $diff support</description>
+		</item>
+<item><title>Notepad++ Plugin release 1.0.23 18/11/2016 10:10:46 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.23.exe</link>
 			<description>18/11/2016 10:10:46 PM (v1.0.23): enable R2 definitions (oops)</description>
 		</item>
-<item><title>Notepad++ Plugin release 1.0.22 13/11/2016 9:48:40 PM</title>
+		<item><title>Notepad++ Plugin release 1.0.22 13/11/2016 9:48:40 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/npp-install-1.0.22.exe</link>
 			<description>13/11/2016 9:48:40 PM (v1.0.22): Fix Issue with Conformance Resource + other updates  for ongoing changes to FHIR spec</description>
 		</item>

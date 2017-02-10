@@ -310,7 +310,6 @@
         <DCCReference Include="..\reference-platform\Support\XMLSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\DigitalSignatures.pas"/>
         <DCCReference Include="UriServices.pas"/>
-        <DCCReference Include="CvxServices.pas"/>
         <DCCReference Include="USStateCodeServices.pas"/>
         <DCCReference Include="UniiServices.pas"/>
         <DCCReference Include="RxNormServices.pas"/>
@@ -333,7 +332,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParser.pas"/>
@@ -367,6 +366,8 @@
         <DCCReference Include="ObservationStatsEvaluator.pas"/>
         <DCCReference Include="OpenMHealthServer.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\DifferenceEngine.pas"/>
+        <DCCReference Include="CvxServices.pas"/>
+        <DCCReference Include="ACIRServices.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

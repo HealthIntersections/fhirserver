@@ -61,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Update to FHIR R3 \+ fix various bugs. R3 support needs testing"
+        as.returnvalue = "$diff support"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -225,7 +225,7 @@ begin
           recordfieldalign = fa8
           referenceinfo = false
           safedivide = false
-          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
           showhints = true
           showwarnings = true
           stackframes = false

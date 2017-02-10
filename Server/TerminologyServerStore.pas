@@ -8,7 +8,7 @@ uses
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, UriServices,
+  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, ACIRServices, UriServices,
   USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
   YuStemmer;
 
@@ -156,6 +156,7 @@ Type
     FCountryCode : TCountryCodeServices;
     FAreaCode : TAreaCodeServices;
     FCvx : TCvxServices;
+    FACIR : TACIRServices;
     FStem : TYuStemmer_8;
 
     FLastConceptKey : integer;
@@ -196,6 +197,7 @@ Type
     procedure SetCountryCode(const Value: TCountryCodeServices);
     procedure SetAreaCode(const Value: TAreaCodeServices);
     procedure SetCvx(const Value: TCvxServices);
+    procedure SetACIR(const Value: TACIRServices);
     procedure checkCodeSystem(vs : TFHIRCodeSystem);
 
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
@@ -223,6 +225,7 @@ Type
     Property CountryCode : TCountryCodeServices read FCountryCode write SetCountryCode;
     Property AreaCode : TAreaCodeServices read FAreaCode write SetAreaCode;
     Property Cvx : TCvxServices read FCvx write SetCvx;
+    Property ACIR : TACIRServices read FACIR write SetACIR;
     Property DB : TKDBManager read FDB;
 
     // maintenance procedures
@@ -876,6 +879,8 @@ begin
     addCodeSystem('Unii', 'unii', FUnii.system(nil), FUnii.version(nil), FUnii.TotalCount);
   if FCvx <> nil then
     addCodeSystem('CVX', 'cvx', FCvx.system(nil), FCvx.version(nil), FCvx.TotalCount);
+  if FACIR <> nil then
+    addCodeSystem('ACIR', 'acir', FACIR.system(nil), FACIR.version(nil), FACIR.TotalCount);
 end;
 {$ENDIF}
 
@@ -924,6 +929,7 @@ begin
   FSnomed.free;
   FUnii.Free;
   FCvx.Free;
+  FACIR.Free;
   FUcum.free;
   FLock.Free;
   FRxNorm.Free;
@@ -1085,6 +1091,22 @@ begin
   begin
     FProviderClasses.add(FCvx.system(nil), FCvx.Link);
     FProviderClasses.add(FCvx.system(nil)+URI_VERSION_BREAK+FCvx.version(nil), FCvx.Link);
+  end;
+end;
+
+procedure TTerminologyServerStore.SetACIR(const Value: TACIRServices);
+begin
+  if FACIR <> nil then
+  begin
+    FProviderClasses.Remove(FACIR.system(nil));
+    FProviderClasses.Remove(FACIR.system(nil)+URI_VERSION_BREAK+FACIR.version(nil));
+  end;
+  FACIR.Free;
+  FACIR := Value;
+  if FACIR <> nil then
+  begin
+    FProviderClasses.add(FACIR.system(nil), FACIR.Link);
+    FProviderClasses.add(FACIR.system(nil)+URI_VERSION_BREAK+FCvx.version(nil), FACIR.Link);
   end;
 end;
 
@@ -1658,6 +1680,11 @@ begin
     b.append('<li>Cvx: not loaded</li>')
   else
     b.append('<li>Cvx: '+FCvx.version(nil)+' ('+inttostr(FCvx.UseCount)+' uses)');
+
+  if FACIR = nil then
+    b.append('<li>ACIR: not loaded</li>')
+  else
+    b.append('<li>ACIR: '+FACIR.version(nil)+' ('+inttostr(FACIR.UseCount)+' uses)');
 
   b.append('<li>ValueSets : '+inttostr(FValueSetsById.Count)+'</li>');
   b.append('<li>Code Systems : '+inttostr(FCodeSystemsByUrl.Count)+'</li>');

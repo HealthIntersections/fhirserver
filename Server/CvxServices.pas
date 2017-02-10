@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes,
   StringSupport,
-  AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,  AdvExceptions,
+  AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,  AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
 
@@ -19,6 +19,8 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TCvxConcept; overload;
+    property code : String read FCode;
   end;
 
   TCvxFilter = class (TCodeSystemProviderFilterContext)
@@ -38,7 +40,10 @@ type
   TCvxServices = class (TCodeSystemProvider)
   private
     db : TKDBManager;
+    FList : TAdvList<TCvxConcept>;
+    FMap : TAdvMap<TCvxConcept>;
 
+    procedure load;
   public
     Constructor Create(db : TKDBManager);
     Destructor Destroy; Override;
@@ -88,30 +93,15 @@ begin
   inherited Create;
 
   self.db := db;
+  FList := TAdvList<TCvxConcept>.create;
+  FMap := TAdvMap<TCvxConcept>.create;
+  Load;
 end;
 
 
 function TCvxServices.TotalCount : integer;
-var
-  qry : TKDBConnection;
 begin
-  qry := db.GetConnection('Cvx.Count');
-  try
-    qry.SQL := 'Select Count(*) from Cvx';
-    qry.prepare;
-    qry.execute;
-    qry.FetchNext;
-    result := qry.ColInteger[1];
-    qry.Terminate;
-    qry.Release;
-  except
-    on e : Exception do
-    begin
-      qry.Error(e);
-      recordStack(e);
-      raise;
-    end;
-  end;
+  result := FList.Count;
 end;
 
 
@@ -131,27 +121,8 @@ begin
 end;
 
 function TCvxServices.getDisplay(code : String; lang : String):String;
-var
-  qry : TKDBConnection;
 begin
-  qry := db.GetConnection('Cvx.display');
-  try
-    qry.SQL := 'Select [CVX Short Description] from Cvx where [CVX Code] = :code';
-    qry.prepare;
-    qry.BindString('code', code);
-    qry.execute;
-    qry.FetchNext;
-    result := qry.colString[1];
-    qry.Terminate;
-    qry.Release;
-  except
-    on e : Exception do
-    begin
-      qry.Error(e);
-      recordStack(e);
-      raise;
-    end;
-  end;
+  result := FMap[code].FDisplay;
 end;
 
 function TCvxServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -162,6 +133,42 @@ end;
 procedure TCvxServices.Displays(code : String; list : TStringList; lang : String);
 begin
   list.Add(getDisplay(code, lang));
+end;
+
+procedure TCvxServices.load;
+var
+  qry : TKDBConnection;
+  res : TCvxConcept;
+begin
+  qry := db.GetConnection('Cvx.locate');
+  try
+    qry.SQL := 'Select [CVX Code], [CVX Short Description], [Full Vaccine Name] from Cvx';
+    qry.prepare;
+    qry.execute;
+    while qry.FetchNext do
+    begin
+      res := TCvxConcept.Create;
+      try
+        res.FCode := qry.ColStringByName['CVX Code'];
+        res.FDisplay := qry.ColStringByName['CVX Short Description'];
+        res.FOthers.Add(qry.ColStringByName['Full Vaccine Name']);
+        Flist.Add(res.Link);
+      finally
+        res.Free;
+      end;
+    end;
+    qry.Terminate;
+    qry.Release;
+  except
+    on e : Exception do
+    begin
+      qry.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
+  for res in FList do
+    FMap.AddOrSetValue(res.code, res.link);
 end;
 
 function TCvxServices.locate(code : String) : TCodeSystemProviderContext;
@@ -215,6 +222,8 @@ end;
 destructor TCvxServices.Destroy;
 begin
   DB.Free;
+  FList.Free;
+  FMap.Free;
   inherited;
 end;
 
@@ -246,12 +255,15 @@ end;
 
 function TCvxServices.ChildCount(context : TCodeSystemProviderContext) : integer;
 begin
-  result := 0; // no children
+  if context = nil then
+    result := totalcount
+  else
+    result := 0; // no children
 end;
 
 function TCvxServices.getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext;
 begin
-  raise ETerminologySetup.Create('not done yet');
+  result := FList[ndx];
 end;
 
 function TCvxServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
@@ -351,6 +363,11 @@ destructor TCvxConcept.destroy;
 begin
   FOthers.free;
   inherited;
+end;
+
+function TCvxConcept.link: TCvxConcept;
+begin
+  result := TCvxConcept(inherited link);
 end;
 
 end.

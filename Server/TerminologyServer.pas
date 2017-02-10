@@ -13,7 +13,7 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices, ACIRServices,
   CountryCodeServices, AreaCodeServices,
   FHIRValueSetChecker, ClosureManager, ServerAdaptations,
   TerminologyServerStore, SnomedExpressions;
@@ -128,6 +128,7 @@ begin
   logt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
   Cvx := TCvxServices.Create(Fdb.Link);
+  ACIR := TACIRServices.Create;
   CountryCode := TCountryCodeServices.Create(Fdb.Link);
   AreaCode := TAreaCodeServices.Create(Fdb);
   p := TUSStateCodeServices.Create(Fdb);

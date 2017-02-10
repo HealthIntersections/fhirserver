@@ -707,7 +707,7 @@ begin
         if StringStartsWith(iter.Current.Type_, 'Reference(') then
         begin
           for i := 0 to iter.Current.Values.count - 1 do
-            if (iter.current.Values[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.Values[i]).reference, '#') then
+            if (iter.current.Values[i] <> nil) and (iter.current.Values[i].fhirType = 'Reference') and not StringStartsWith(TFhirReference(iter.current.Values[i]).reference, '#') then
               list.add(iter.Current.Values[i].Link)
         end
         else if (iter.Current.Type_ = 'Resource') then
