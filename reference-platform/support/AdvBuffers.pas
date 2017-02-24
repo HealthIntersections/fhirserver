@@ -371,7 +371,7 @@ Procedure TAdvBuffer.SetCapacity(Const Value: Integer);
 Begin 
   If (Value <> Capacity) Then
   Begin 
-    Assert(Condition(Value >= 0, 'SetCapacity', StringFormat('Unable to change the Capacity to %d', [Value])));
+    Assert(CheckCondition(Value >= 0, 'SetCapacity', StringFormat('Unable to change the Capacity to %d', [Value])));
 
     If FOwned Then
       MemoryResize(FData, FCapacity, Value);
@@ -440,7 +440,7 @@ End;
 Procedure TAdvBuffer.CopyRange(oBuffer: TAdvBuffer; Const iIndex, iLength : Integer);
 Begin
   Assert(Invariants('CopyRange', oBuffer, TAdvBuffer, 'oBuffer'));
-  Assert(Condition((iIndex >= 0) And (iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
+  Assert(CheckCondition((iIndex >= 0) And (iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
 
   SetCapacity(iLength);
 
@@ -450,8 +450,8 @@ End;
 
 Procedure TAdvBuffer.Move(Const iSource, iTarget, iLength : Integer);
 Begin 
-  Assert(Condition((iSource >= 0) And (iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
-  Assert(Condition((iTarget >= 0) And (iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
+  Assert(CheckCondition((iSource >= 0) And (iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
+  Assert(CheckCondition((iTarget >= 0) And (iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
 
   MemoryMove(Offset(iSource), Offset(iTarget), iLength);
 End;  
@@ -459,7 +459,7 @@ End;
 
 Function TAdvBuffer.Offset(iIndex: Integer): Pointer;
 Begin 
-  Assert(Condition((iIndex >= 0) And (iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
+  Assert(CheckCondition((iIndex >= 0) And (iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
 
   Result := Pointer(NativeUInt(Data) + NativeUInt(iIndex));
 End;  

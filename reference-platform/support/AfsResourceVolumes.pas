@@ -88,7 +88,7 @@ Type
     FType : PChar;
     FDirty : Boolean;
   Protected
-    Procedure Error(Const sMethod, sException : String); Override;
+    Procedure RaiseError(Const sMethod, sException : String); Override;
   Public
     Procedure Write(Const Buffer; iSize : Cardinal); Override;
 
@@ -196,7 +196,7 @@ Begin { Procedure TAfsResourceVolume.Format }
   If hUpdate <> 0 Then
     EndUpdateResource(hUpdate, False)
   Else
-    Error('Format', 'Could not open update handle.');
+    RaiseError('Format', 'Could not open update handle.');
 End;  { Procedure TAfsResourceVolume.Format }
 
 
@@ -225,7 +225,7 @@ Var
   pResource : Pointer;
 Begin { Function TAfsResourceVolume.Open }
   If amMode > Mode Then
-    Error('Open', StringSupport.StringFormat('Requested access mode denied on "%s"', [sName]));
+    RaiseError('Open', StringSupport.StringFormat('Requested access mode denied on "%s"', [sName]));
 
   iResource := 0;
   pResource := Nil;
@@ -254,7 +254,7 @@ Begin { Function TAfsResourceVolume.Open }
             End;  { If }
           End   { If }
           Else
-            Error('Open', StringSupport.StringFormat('File not found "%s"', [sName]));
+            RaiseError('Open', StringSupport.StringFormat('File not found "%s"', [sName]));
 
           oFile.Capacity := iResource;
           Move(pResource^, oFile.DataPointer^, iResource);
@@ -307,14 +307,14 @@ Begin { Procedure TAfsResourceVolume.Close }
       Begin { If }
         Try
           If Not UpdateResource(hUpdate, oFile.ResourceType, PChar(oFile.Name), 0 {iLanguage}, oFile.DataPointer, oFile.Size) Then
-            Error('Close', ErrorAsString);
+            RaiseError('Close', ErrorAsString);
           EndUpdateResource(hUpdate, False);
         Except
           EndUpdateResource(hUpdate, True);
         End; { Try }
       End   { If }
       Else
-        Error('Close', 'Could not open update handle.');
+        RaiseError('Close', 'Could not open update handle.');
     End;  { If }
   Finally
     oFile.Free;
@@ -361,7 +361,7 @@ Var
   hSource, hDest : TAfsHandle;
 Begin { Procedure TAfsResourceVolume.Rename }
   If Exists(sDest) Then
-    Error('Rename', StringSupport.StringFormat('Cannot rename to "%s" - target filename already exists', [sDest]))
+    RaiseError('Rename', StringSupport.StringFormat('Cannot rename to "%s" - target filename already exists', [sDest]))
   Else
   Begin { If }
     hSource := Open('', sSource, amRead, asWrite);
@@ -390,14 +390,14 @@ Begin { Procedure TAfsResourceVolume.Delete }
   Begin { If }
     Try
       If Not UpdateResource(hUpdate, iType, PChar(sResource), 0 {iLanguage}, Nil, 0) Then
-        Error('Delete', ErrorAsString);
+        RaiseError('Delete', ErrorAsString);
       EndUpdateResource(hUpdate, False);
     Except
       EndUpdateResource(hUpdate, True);
     End; { Try }
   End   { If }
   Else
-    Error('Close', 'Could not open update handle.');
+    RaiseError('Close', 'Could not open update handle.');
 End;  { Procedure TAfsResourceVolume.Delete }
 
 
@@ -413,16 +413,16 @@ Begin { Procedure TAfsResourceVolume.CloseIterator }
 End;  { Procedure TAfsResourceVolume.CloseIterator }
 
 
-Procedure TAfsResourceFile.Error(Const sMethod, sException : String);
+Procedure TAfsResourceFile.RaiseError(Const sMethod, sException : String);
 Begin { Procedure TAfsResourceFile.Error }
-  Error(EAfs, sMethod, sException);
+  RaiseError(EAfs, sMethod, sException);
 End;  { Procedure TAfsResourceFile.Error }
 
 
 Procedure TAfsResourceFile.Write(Const Buffer; iSize : Cardinal);
 Begin { Procedure TAfsResourceFile.Write }
   If Mode = amRead Then
-    Error('Write', 'File was opened read-only.');
+    RaiseError('Write', 'File was opened read-only.');
 
   // Calculate required capacity increase - round up to next 4Kb
   If Writeable < iSize Then
@@ -437,7 +437,7 @@ Procedure TAfsResourceFile.SetName(Const sName : String);
 Begin { Procedure TAfsResourceFile.SetName }
   ExpandName(sName, FName, FType);
 
-  Assert(Condition((FName <> ''), 'SetName', 'Resource name must be of form <Name>,#<Type>'));
+  Assert(CheckCondition((FName <> ''), 'SetName', 'Resource name must be of form <Name>,#<Type>'));
 End;  { Procedure TAfsResourceFile.SetName }
 
 

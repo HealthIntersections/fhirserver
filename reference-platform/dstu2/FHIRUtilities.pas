@@ -298,6 +298,14 @@ type
     procedure setSystem(type_ : TFHIRContactPointSystemEnum; value : String);
   end;
 
+  TFhirConceptMapGroupElementTargetHelper = class helper for TFhirConceptMapGroupElementTarget
+  private
+    function GetCommentElement: TFHIRString;
+    procedure SetCommentElement(const Value: TFHIRString);
+  public
+    property commentElement : TFHIRString read GetCommentElement write SetCommentElement;
+  end;
+
   TFhirTestScriptSetupActionOperationRequestHeaderListHelper = class helper for TFhirTestScriptSetupActionOperationRequestHeaderList
   public
     procedure add(name, value : String); overload;
@@ -4191,6 +4199,18 @@ end;
 procedure TFHIROperationDefinitionHelper.Settype_(const Value: boolean);
 begin
 
+end;
+
+{ TFhirConceptMapGroupElementTargetHelper }
+
+function TFhirConceptMapGroupElementTargetHelper.GetCommentElement: TFHIRString;
+begin
+  result := commentsElement;
+end;
+
+procedure TFhirConceptMapGroupElementTargetHelper.SetCommentElement(const Value: TFHIRString);
+begin
+  CommentsElement := value;
 end;
 
 end.

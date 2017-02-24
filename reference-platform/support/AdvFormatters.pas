@@ -81,7 +81,7 @@ End;
 Var
   Bytes : TBytes;
 Begin
-  Assert(Condition(sText <> '', 'Produce', 'Text must not be empty.'));
+  Assert(CheckCondition(sText <> '', 'Produce', 'Text must not be empty.'));
 
   Bytes := SysUtils.TEncoding.UTF8.GetBytes(sText);
 

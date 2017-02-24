@@ -42,7 +42,7 @@ end;
 
 function TIdWebSocket.open(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo): boolean;
 var
-  s : AnsiString;
+  s : String;
   hash : TIdHashSHA1;
   base64 : TIdEncoderMIME;
 begin

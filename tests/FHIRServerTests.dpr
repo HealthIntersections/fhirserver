@@ -174,7 +174,6 @@ uses
   UniiServices in '..\server\UniiServices.pas',
   RxNormServices in '..\server\RxNormServices.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
-  IETFLanguageCodeServices in '..\server\IETFLanguageCodeServices.pas',
   SnomedAnalysis in '..\Libraries\snomed\SnomedAnalysis.pas',
   AreaCodeServices in '..\server\AreaCodeServices.pas',
   FHIRSubscriptionManager in '..\server\FHIRSubscriptionManager.pas',
@@ -238,7 +237,9 @@ uses
   OpenMHealthServer in '..\Server\OpenMHealthServer.pas',
   DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
   ACIRServices in '..\Server\ACIRServices.pas',
-  CvxServices in '..\Server\CvxServices.pas';
+  CvxServices in '..\Server\CvxServices.pas',
+  IETFLangTests in 'IETFLangTests.pas',
+  IETFLanguageCodeServices in '..\Server\IETFLanguageCodeServices.pas';
 
 var
   runner : ITestRunner;

@@ -189,7 +189,7 @@ type
     function primitiveValue : String; override;
     procedure getProperty(name : String; checkValid : boolean; list : TAdvList<TFHIRObject>); override;
    	procedure listChildren(list : TAdvList<TFHIRMMProperty>);
-    function isEmpty : boolean;
+    function isEmpty : boolean; override;
   end;
 
   TFHIRValidationPolicy = (fvpNONE, fvpQUICK, fvpEVERYTHING);
@@ -212,7 +212,7 @@ type
     function parse(stream : TStream) : TFHIRMMElement; overload; virtual; abstract;
     function parse(stream : TAdvStream) : TFHIRMMElement; overload; virtual;
     function parse(buffer : TAdvBuffer) : TFHIRMMElement; overload; virtual;
-    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  virtual; abstract;
+    procedure compose(e : TFHIRMMElement; stream : TStream; pretty : boolean; base : String);  overload; virtual; abstract;
   end;
 
   TFHIRMMManager = class (TAdvObject)

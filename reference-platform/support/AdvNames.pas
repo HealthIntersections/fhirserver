@@ -292,7 +292,7 @@ Var
   iIndex : Integer;
 Begin 
   If Not FindByName(sName, iIndex) Then
-    Error('RemoveByName', StringFormat('Object ''%s'' not found in list.', [sName]));
+    RaiseError('RemoveByName', StringFormat('Object ''%s'' not found in list.', [sName]));
 
   DeleteByIndex(iIndex);
 End;  

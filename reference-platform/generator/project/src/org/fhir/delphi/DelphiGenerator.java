@@ -1129,8 +1129,10 @@ public class DelphiGenerator {
       prsrImpl.append("end;\r\n\r\n");
       srlsdefX.append("    Procedure Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
       prsrImpl.append("Procedure TFHIRXmlComposer.Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  i : integer;\r\n");
+      if (workingComposerX.toString().contains("i :=")) {
+        prsrImpl.append("var\r\n");
+        prsrImpl.append("  i : integer;{z.a}\r\n");
+      }
       prsrImpl.append("begin\r\n");
       if (!isBase)
         prsrImpl.append("  compose"+root.typeCode()+"Children(xml, elem);\r\n");
@@ -1139,8 +1141,10 @@ public class DelphiGenerator {
 
       srlsdefJ.append("    Procedure Compose"+root.getName()+"Properties(json : TJSONWriter; elem : "+tn+");\r\n");
       prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+root.getName()+"Properties(json : TJSONWriter; elem : "+tn+");\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  i : integer;\r\n");
+      if (workingComposerJ.toString().contains("i :=")) {
+        prsrImpl.append("var\r\n");
+        prsrImpl.append("  i : integer{z.b};\r\n");
+      }
       prsrImpl.append("begin\r\n");
       if (!isBase)
         prsrImpl.append("  Compose"+root.typeCode()+"Properties(json, elem);\r\n");
@@ -1149,8 +1153,10 @@ public class DelphiGenerator {
 
       srlsdefR.append("    Procedure Compose"+root.getName()+"(this : TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer); overload;\r\n");
       prsrImpl.append("Procedure TFHIRRDFComposer.Compose"+root.getName()+"(this : TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer);\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  i : integer;\r\n");
+      if (workingComposerR.toString().contains("i :=")) {
+        prsrImpl.append("var\r\n");
+        prsrImpl.append("  i : integer{z.c};\r\n");
+      }
       prsrImpl.append("begin\r\n");
       if (!isBase)
         prsrImpl.append("  Compose"+root.typeCode()+"(this, '"+root.getName()+"', name, elem, index);\r\n");
@@ -3446,7 +3452,7 @@ public class DelphiGenerator {
       if (pn.equals("Boolean"))
         impl2.append("  result := LCBooleanToString(FValue);\r\n");
       else if (pn.equals("TBytes"))
-        impl2.append("  if (length(FValue) = 0) then result := '' else result := EncodeBase64(@FValue[0], length(FValue));\r\n");
+        impl2.append("  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(@FValue[0], length(FValue)));\r\n");
       else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") ) {
         impl2.append("  if (FValue = nil) then\r\n");
         impl2.append("    result := ''\r\n");

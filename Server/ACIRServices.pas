@@ -43,7 +43,7 @@ type
 
     procedure load;
   public
-    Constructor Create();
+    Constructor Create; Override;
     Destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
@@ -55,7 +55,7 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -69,7 +69,7 @@ type
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -214,7 +214,7 @@ begin
     FMap.AddOrSetValue(c.code, c.link);
 end;
 
-function TACIRServices.locate(code : String) : TCodeSystemProviderContext;
+function TACIRServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
   result := FMap[code];
 end;
@@ -306,7 +306,7 @@ begin
   raise ETerminologySetup.Create('not done yet');
 end;
 
-function TACIRServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
+function TACIRServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
   raise ETerminologySetup.Create('not done yet');
 end;
@@ -328,12 +328,10 @@ end;
 
 procedure TACIRServices.Close(ctxt: TCodeSystemProviderContext);
 begin
-  ctxt.free;
 end;
 
 procedure TACIRServices.Close(ctxt : TCodeSystemProviderFilterContext);
 begin
-  ctxt.free;
 end;
 
 procedure TACIRServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);

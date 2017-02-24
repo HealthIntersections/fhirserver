@@ -316,8 +316,8 @@ Begin
     aValue.Free;
 
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Item already exists in match (%x=%x)', [Integer(aKey), Integer(aValue)]));
-  End   
+      RaiseError('Add', StringFormat('Item already exists in match (%x=%x)', [Integer(aKey), Integer(aValue)]));
+  End
   Else
   Begin 
     If Not IsSorted Then
@@ -383,7 +383,7 @@ Var
   iIndex : Integer;
 Begin
   If Not Find(aKey, aValue, iIndex) Then
-    Error('Delete', 'Key/Value pair could not be found in the match.');
+    RaiseError('Delete', 'Key/Value pair could not be found in the match.');
 
   DeleteByIndex(iIndex);
 End;
@@ -456,7 +456,7 @@ Begin
     Result := FDefaultValue;
 
     If Not FForced Then
-      Error('GetValueByKey', 'Unable to get the value for the specified key.');
+      RaiseError('GetValueByKey', 'Unable to get the value for the specified key.');
   End;  
 End;  
 
@@ -477,7 +477,7 @@ Begin
   Else
   Begin 
     aValue.Free;
-    Error('SetValueByKey', 'Unable to set the value for the specified key.');
+    RaiseError('SetValueByKey', 'Unable to set the value for the specified key.');
   End;  
 End;
 

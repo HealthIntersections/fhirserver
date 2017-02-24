@@ -154,7 +154,7 @@ Begin
   If Not IsAllowDuplicates And Find(pValue, Result) Then
   Begin 
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Item already exists in list ($%x)', [Integer(pValue)]));
+      RaiseError('Add', StringFormat('Item already exists in list ($%x)', [Integer(pValue)]));
   End   
   Else
   Begin 
@@ -189,7 +189,7 @@ Var
   iIndex : Integer;
 Begin
   If Not Find(pValue, iIndex) Then
-    Error('DeleteByValue', 'Pointer not found in list');
+    RaiseError('DeleteByValue', 'Pointer not found in list');
 
   DeleteByIndex(iIndex);
 End;

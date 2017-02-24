@@ -388,7 +388,7 @@ End;
 
 Function TAdvHashTable.Resolve(oHashEntry: TAdvHashEntry): Cardinal;
 Begin
-  Assert(Condition(FCapacity > 0, 'Resolve', 'Capacity must be greater than zero'));
+  Assert(CheckCondition(FCapacity > 0, 'Resolve', 'Capacity must be greater than zero'));
 
   Result := UnsignedMod(oHashEntry.Code, FCapacity);
 End;
@@ -402,7 +402,7 @@ Var
   iCapacity : Integer;
   iLoop : Integer;
 Begin
-  Assert(Condition(Not FPreventRehash, 'Rehash', 'Rehash has been prevented on this hash table as you are required to set Capacity more appropriately in advance.'));
+  Assert(CheckCondition(Not FPreventRehash, 'Rehash', 'Rehash has been prevented on this hash table as you are required to set Capacity more appropriately in advance.'));
 
   pTable := FTable;
   FTable := Nil;
@@ -451,7 +451,7 @@ Begin
   Assert(Invariants('Add', oHashEntry, ItemClass, 'oHashEntry'));
 
   Try
-    Assert(Condition(Not Exists(oHashEntry), 'Add', 'Object already exists in the hash.'));
+    Assert(CheckCondition(Not Exists(oHashEntry), 'Add', 'Object already exists in the hash.'));
 
     If FCount > FThreshold Then
       Rehash;
@@ -468,7 +468,7 @@ Var
   pFirst : PAdvHashEntry;
 Begin
   Assert(Invariants('Insert', oHashEntry, TAdvHashEntry, 'oHashEntry'));
-  Assert(Condition((iIndex >= 0) And (iIndex < FCapacity), 'Insert', 'Index must be within the hash table'));
+  Assert(CheckCondition((iIndex >= 0) And (iIndex < FCapacity), 'Insert', 'Index must be within the hash table'));
 
   pFirst := @FTable^[iIndex];
 
@@ -613,7 +613,7 @@ Begin
 
   If Value <> FCapacity Then
   Begin
-    Assert(Condition(FCount = 0, 'SetCapacity', StringFormat('Unable to change capacity to %d when there are entries in the hash table', [Value])));
+    Assert(CheckCondition(FCount = 0, 'SetCapacity', StringFormat('Unable to change capacity to %d when there are entries in the hash table', [Value])));
 
     MemoryResize(FTable, FCapacity * SizeOf(TAdvHashEntry), Value * SizeOf(TAdvHashEntry));
 
@@ -628,7 +628,7 @@ End;
 
 Procedure TAdvHashTable.SetBalance(Const Value: Real);
 Begin
-  Assert(Condition((Value > 0.0) And (Value < 1.0), 'SetBalance', 'Balance must be set to valid positive percentage.'));
+  Assert(CheckCondition((Value > 0.0) And (Value < 1.0), 'SetBalance', 'Balance must be set to valid positive percentage.'));
 
   FBalance := Value;
   FThreshold := Trunc(FCapacity * FBalance);
@@ -740,7 +740,7 @@ Procedure TAdvHashTable.PredictCapacityByExpectedCount(Const iCount: Integer);
 Begin
   Capacity := RealCeiling(iCount / Balance) + 1;
 
-  Assert(Condition(FThreshold >= iCount, 'PredictCapacityByExpectedCount', StringFormat('Threshold %d was expected to be the same as the expected count %d.', [FThreshold, iCount])));
+  Assert(CheckCondition(FThreshold >= iCount, 'PredictCapacityByExpectedCount', StringFormat('Threshold %d was expected to be the same as the expected count %d.', [FThreshold, iCount])));
 End;
 
 

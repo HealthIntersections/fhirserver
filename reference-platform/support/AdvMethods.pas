@@ -148,7 +148,7 @@ Begin
   If Not IsAllowDuplicates And Find(aValue, Result) Then
   Begin 
     If IsPreventDuplicates Then
-      Error('Add', 'Item already exists in list');
+      RaiseError('Add', 'Item already exists in list');
 
     // Result is the index of the existing key
   End   
@@ -186,7 +186,7 @@ Var
   iIndex : Integer;
 Begin
   If Not Find(aValue, iIndex) Then
-    Error('DeleteByValue', 'Method not found in list');
+    RaiseError('DeleteByValue', 'Method not found in list');
 
   DeleteByIndex(iIndex);
 End;  

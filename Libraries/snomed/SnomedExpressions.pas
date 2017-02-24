@@ -7,7 +7,7 @@ uses
 
 const
   MAX_TERM_LENGTH = 1024;
-  NO_REFERENCE = MAXINT;
+  NO_REFERENCE : cardinal = MAXINT;
 
 Type
   ESnomedServices = class (Exception);
@@ -569,6 +569,7 @@ var
 begin
   b := TStringBuilder.Create;
   try
+    first := true;
     for refinement in refinements do
     begin
       if first then first := false else b.Append(',');

@@ -16,9 +16,9 @@ Type
     fvs : TFHIRValueSet;
     FId: String;
     FProfile : TFhirExpansionProfile;
-    function check(system, version, code : String; abstractOk : boolean; displays : TStringList) : boolean; overload;
+    function check(system, version, code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean; overload;
     function findCode(cs : TFhirCodeSystem; code: String; list : TFhirCodeSystemConceptList; displays : TStringList; out isabstract : boolean): boolean;
-    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList) : boolean;
+    function checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
 //    function rule(op : TFhirOperationOutcome; severity : TFhirIssueSeverityEnum; test : boolean; code : TFhirIssueTypeEnum; msg : string):boolean;
     function getName: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeInclude; var cs: TCodeSystemProvider);
@@ -62,12 +62,10 @@ procedure TValueSetChecker.prepare(vs: TFHIRValueSet; profile : TFhirExpansionPr
 var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeInclude;
-  desc : string;
-  i, j : integer;
   {$IFDEF FHIR2}
+  i, j : integer;
   other : TFHIRValueSet;
   checker : TValueSetChecker;
-
   {$ENDIF}
 begin
   FProfile := profile.Link;
@@ -191,25 +189,27 @@ end;
 function TValueSetChecker.check(system, version, code: String; abstractOk : boolean): boolean;
 var
   list : TStringList;
+  msg : string;
 begin
   list := TStringList.Create;
   try
-    result := check(system, version, code, abstractOk, list);
+    result := check(system, version, code, abstractOk, list, msg);
   finally
     list.Free;
   end;
 end;
 
-function TValueSetChecker.check(system, version, code : String; abstractOk : boolean; displays : TStringList) : boolean;
+function TValueSetChecker.check(system, version, code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
 var
   checker : TValueSetChecker;
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   cc : TFhirValueSetComposeInclude;
   uri : TFhirUri;
-  isabstract, excluded : boolean;
+  excluded : boolean;
   {$IFDEF FHIR2}
   i : integer;
+  isabstract : boolean;
   {$ENDIF}
 begin
   result := false;
@@ -259,7 +259,7 @@ begin
         if not result then
         begin
           checker := TValueSetChecker(FOthers.matches[fvs.compose.importList[i].value]);
-          result := checker.check(system, version, code, abstractOk, displays);
+          result := checker.check(system, version, code, abstractOk, displays, message);
         end;
       end;
       {$ENDIF}
@@ -270,13 +270,13 @@ begin
         else
         begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays);
+          result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
         end;
         {$IFDEF FHIR3}
         for uri in cc.valueSetList do
         begin
           checker := TValueSetChecker(FOthers.matches[uri.value]);
-          result := result and checker.check(system, version, code, abstractOk, displays);
+          result := result and checker.check(system, version, code, abstractOk, displays, message);
         end;
         {$ENDIF}
         if result then
@@ -290,13 +290,13 @@ begin
           else
           begin
             cs := TCodeSystemProvider(FOthers.matches[cc.system]);
-            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays);
+            excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
           {$IFDEF FHIR3}
           for uri in cc.valueSetList do
           begin
             checker := TValueSetChecker(FOthers.matches[uri.value]);
-            excluded := excluded and checker.check(system, version, code, abstractOk, displays);
+            excluded := excluded and checker.check(system, version, code, abstractOk, displays, message);
           end;
           {$ENDIF}
           if excluded then
@@ -310,13 +310,14 @@ end;
 function TValueSetChecker.check(coding: TFhirCoding; abstractOk : boolean) : TFhirParameters;
 var
   list : TStringList;
+  message : String;
 begin
   result := TFhirParameters.create;
   try
     list := TStringList.Create;
     try
       list.CaseSensitive := false;
-      if check(coding.system, coding.version, coding.code, abstractOk, list) then
+      if check(coding.system, coding.version, coding.code, abstractOk, list, message) then
       begin
         result.AddParameter('result', TFhirBoolean.Create(true));
         if (coding.display <> '') and (list.IndexOf(coding.display) < 0) then
@@ -328,6 +329,8 @@ begin
       begin
         result.AddParameter('result', TFhirBoolean.Create(false));
         result.AddParameter('message', 'The system/code "'+coding.system+'"/"'+coding.code+'" is not in the value set '+fvs.name);
+        if (message <> '') then
+          result.AddParameter('message', message);
       end;
     finally
       list.Free;
@@ -336,6 +339,16 @@ begin
   finally
     result.free;
   end;
+end;
+
+function hasMessage(params : TFhirParameters; msg : String) : boolean;
+var
+  p : TFhirParametersParameter;
+begin
+  result := false;
+  for p in params.parameterList do
+    if (p.name = 'message') and (p.value is TFHIRString) and (TFHIRString(p.value).value = msg) then
+      exit(true);
 end;
 
 function TValueSetChecker.check(code: TFhirCodeableConcept; abstractOk : boolean) : TFhirParameters;
@@ -351,7 +364,7 @@ var
   i : integer;
   v : boolean;
   ok : TFhirBoolean;
-  cc, codelist : String;
+  cc, codelist, message : String;
   prov : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
 begin
@@ -369,11 +382,14 @@ begin
         list.Clear;
         cc := ',{'+code.codingList[i].system+'}'+code.codingList[i].code;
         codelist := codelist + cc;
-        v := check(code.codingList[i].system, code.codingList[i].version, code.codingList[i].code, abstractOk, list);
+        v := check(code.codingList[i].system, code.codingList[i].version, code.codingList[i].code, abstractOk, list, message);
+        if not v and (message <> '') then
+          result.AddParameter('message', message);
         ok.value := ok.value or v;
 
         if (v) then
         begin
+          message := '';
           if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) < 0) then
             result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc);
           if list.Count > 0 then
@@ -390,12 +406,14 @@ begin
            end
            else
            begin
-             ctxt := prov.locate(code.codingList[i].code);
+             ctxt := prov.locate(code.codingList[i].code, message);
              try
                if ctxt = nil then
                begin
                  result.AddParameter('message', 'The code "'+code.codingList[i].code+'" is not valid in the system '+code.codingList[i].system);
                  result.AddParameter('cause', 'invalid');
+                 if (message <> '') and not hasMessage(result, message) then
+                   result.AddParameter('message', message);
                end
                else
                begin
@@ -440,7 +458,7 @@ begin
     cs.Close(ctxt);
 end;
 
-function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code: String; abstractOk : boolean; displays : TStringList): boolean;
+function TValueSetChecker.checkConceptSet(cs: TCodeSystemProvider; cset : TFhirValueSetComposeInclude; code: String; abstractOk : boolean; displays : TStringList; var message : String): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilter;
@@ -452,14 +470,16 @@ begin
   result := false;
   if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
   begin
-    loc := cs.locate(code);
+    loc := cs.locate(code, message);
     try
       result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
       if result then
       begin
         cs.displays(loc, displays, '');
         exit;
-      end;
+      end
+      else
+
     finally
       cs.Close(loc);
     end;

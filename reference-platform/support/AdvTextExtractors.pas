@@ -52,7 +52,7 @@ Type
       Procedure CacheAdd(Const sValue : String); Virtual;
       Procedure CacheRemove(Const sValue : String); Virtual;
 
-      Procedure Error(Const sMethod, sMessage : String); Override;
+      Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
     Public
       Constructor Create; Overload; Override;
@@ -140,9 +140,9 @@ Begin
 End;
 
 
-Procedure TAdvTextExtractor.Error(Const sMethod, sMessage: String);
+Procedure TAdvTextExtractor.RaiseError(Const sMethod, sMessage: String);
 Begin
-  Inherited Error(sMethod, StringFormat('Line %d: %s', [FLine, sMessage]));
+  Inherited RaiseError(sMethod, StringFormat('Line %d: %s', [FLine, sMessage]));
 End;
 
 
@@ -241,7 +241,7 @@ Function TAdvTextExtractor.ConsumeCharacter(Const cToken : Char) : Char;
 
 Begin
   If Not StringEquals(cToken, NextCharacter) Then
-    Error('Consume(Char)', StringFormat('Expected token ''%s'' but found token ''%s''', [ToCharacter(cToken), ToCharacter(NextCharacter)]));
+    RaiseError('Consume(Char)', StringFormat('Expected token ''%s'' but found token ''%s''', [ToCharacter(cToken), ToCharacter(NextCharacter)]));
 
   Result := ConsumeCharacter;
 End;
@@ -250,7 +250,7 @@ End;
 Function TAdvTextExtractor.ConsumeString(Const sToken : String) : String;
 Begin
   If Not MatchString(sToken) Then
-    Error('Consume(String)', StringFormat('Expected token ''%s'' but found token ''%s''', [sToken, Copy(FCache, 1, Length(sToken))]));
+    RaiseError('Consume(String)', StringFormat('Expected token ''%s'' but found token ''%s''', [sToken, Copy(FCache, 1, Length(sToken))]));
 
   Delete(FCache, 1, Length(sToken));
 

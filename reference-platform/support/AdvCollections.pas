@@ -83,7 +83,7 @@ End;
 
 Function TAdvCollection.Iterator : TAdvIterator;
 Begin 
-  Error('Iterator', 'No iterator specified.');
+  RaiseError('Iterator', 'No iterator specified.');
 
   Result := Nil;
 End;  

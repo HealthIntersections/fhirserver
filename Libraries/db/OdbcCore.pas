@@ -341,7 +341,7 @@ Type
     Function IsDriver(Const ADrivers: Array Of String): Boolean;
 
     Procedure SetSpecialSQLConnectionAttribute(AAttribute: SQLINTEGER; AValue: SQLPOINTER; AStringLength: SQLINTEGER);
-  Published
+  public
     { Published declarations }
     Property Connected: Boolean Read GetConnected Write SetConnected
       Default DefConnected;
@@ -1291,7 +1291,7 @@ Type
                                Row: SQLUSMALLINT]: Variant Read GetCellVariantByName Write SetCellVariantByName;
 
     Procedure SetSpecialSQLStatementAttribute(AAttribute: SQLINTEGER; AValue: SQLPOINTER; AStringLength: SQLINTEGER);
-  Published
+  public
     { Published declarations }
     Property hDbc: THdbc Read FHdbc Write SetHdbc
       Default Nil;

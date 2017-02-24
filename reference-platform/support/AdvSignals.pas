@@ -140,7 +140,7 @@ Procedure TAdvSignal.Open(bShow : Boolean);
 Var
   pName : PChar;
 Begin
-  Assert(Condition(Not Active, 'Open', 'Signal must not already be active.'));
+  Assert(CheckCondition(Not Active, 'Open', 'Signal must not already be active.'));
 
   If FName = '' Then
     pName := Nil
@@ -165,7 +165,7 @@ End;
 
 Procedure TAdvSignal.Close;
 Begin
-  Assert(Condition(Active, 'Close', 'Signal must be active.'));
+  Assert(CheckCondition(Active, 'Close', 'Signal must be active.'));
 
   CloseHandle(FHandle);
 
@@ -175,28 +175,28 @@ End;
 
 Procedure TAdvSignal.Hide;
 Begin
-  Assert(Condition(Active, 'Hide', 'Signal must be active.'));
+  Assert(CheckCondition(Active, 'Hide', 'Signal must be active.'));
 
   If Not ResetEvent(FHandle) Then
-    Error('Hide', ErrorAsString);
+    RaiseError('Hide', ErrorAsString);
 End;
 
 
 Procedure TAdvSignal.Show;
 Begin
-  Assert(Condition(Active, 'Show', 'Signal must be active.'));
+  Assert(CheckCondition(Active, 'Show', 'Signal must be active.'));
 
   If Not SetEvent(FHandle) Then
-    Error('Show', ErrorAsString);
+    RaiseError('Show', ErrorAsString);
 End;
 
 
 Procedure TAdvSignal.Flash;
 Begin
-  Assert(Condition(Active, 'Flash', 'Signal must be active.'));
+  Assert(CheckCondition(Active, 'Flash', 'Signal must be active.'));
 
   If Not PulseEvent(FHandle) Then
-    Error('Flash', ErrorAsString);
+    RaiseError('Flash', ErrorAsString);
 End;
 
 
@@ -210,12 +210,12 @@ Function TAdvSignal.WaitTimeout(Const iTimeout: Cardinal) : Boolean;
 Var
   iWaitResult : Cardinal;
 Begin
-  Assert(Condition(Active, 'WaitTimeout', 'Signal must be active.'));
+  Assert(CheckCondition(Active, 'WaitTimeout', 'Signal must be active.'));
 
   iWaitResult := WaitForSingleObject(FHandle, iTimeout);
 
   if (iWaitResult = WAIT_FAILED) Then
-    Error('WaitTimeout', ErrorAsString);
+    RaiseError('WaitTimeout', ErrorAsString);
 
   Result := iWaitResult = WAIT_OBJECT_0;
 End;
@@ -262,13 +262,13 @@ End;
 
 Procedure TAdvSignalManager.AddSignal(oSignal: TAdvSignal);
 Begin
-  Assert(Condition(Not FActive, 'AddSignal', 'Cannot add a signal to a prepared signal manager.'));
+  Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot add a signal to a prepared signal manager.'));
 
   If (FSignalList.Count >= MAXIMUM_WAIT_OBJECTS) Then
   Begin
     oSignal.Free;
 
-    Error('AddSignal', StringFormat('The signal manager only supports up to %d signals', [MAXIMUM_WAIT_OBJECTS]));
+    RaiseError('AddSignal', StringFormat('The signal manager only supports up to %d signals', [MAXIMUM_WAIT_OBJECTS]));
   End;
 
   FSignalList.Add(oSignal);
@@ -277,7 +277,7 @@ End;
 
 Procedure TAdvSignalManager.DeleteSignal(oSignal: TAdvSignal);
 Begin
-  Assert(Condition(Not FActive, 'AddSignal', 'Cannot delete a signal to a prepared signal manager.'));
+  Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot delete a signal to a prepared signal manager.'));
 
   FSignalList.DeleteByReference(oSignal);
 End;
@@ -285,7 +285,7 @@ End;
 
 Procedure TAdvSignalManager.DeleteAllSignals;
 Begin
-  Assert(Condition(Not FActive, 'AddSignal', 'Cannot delete all signal with a prepared signal manager.'));
+  Assert(CheckCondition(Not FActive, 'AddSignal', 'Cannot delete all signal with a prepared signal manager.'));
 
   FSignalList.Clear;
 End;
@@ -296,10 +296,10 @@ Var
   iSignalIndex : Integer;
   oSignal : TAdvSignal;
 Begin
-  Assert(Condition(Not FActive, 'Prepare', 'Cannot double prepare a signal manager.'));
+  Assert(CheckCondition(Not FActive, 'Prepare', 'Cannot double prepare a signal manager.'));
 
   If (FSignalList.Count > MAXIMUM_WAIT_OBJECTS) Then
-    Error('AddSignal', StringFormat('The signal manager only supports up to %d signals', [MAXIMUM_WAIT_OBJECTS]));
+    RaiseError('AddSignal', StringFormat('The signal manager only supports up to %d signals', [MAXIMUM_WAIT_OBJECTS]));
 
   FActive := True;
 
@@ -310,7 +310,7 @@ Begin
     oSignal := FSignalList[iSignalIndex];
 
     If Not oSignal.Active Then
-      Error('Prepare', 'All signals must be active.');
+      RaiseError('Prepare', 'All signals must be active.');
 
     FSignalHandleArray[iSignalIndex] := oSignal.Handle;
   End;
@@ -319,7 +319,7 @@ End;
 
 Procedure TAdvSignalManager.Terminate;
 Begin
-  Assert(Condition(FActive, 'Terminate', 'Cannot double terminate a signal manager.'));
+  Assert(CheckCondition(FActive, 'Terminate', 'Cannot double terminate a signal manager.'));
 
   FSignalHandleCount := 0;
   FActive := False;
@@ -330,12 +330,12 @@ Function TAdvSignalManager.WaitTimeout(Const iTimeout: Cardinal; Const bAll: Boo
 Var
   iWaitResult : Cardinal;
 Begin
-  Assert(Condition(FActive, 'WaitTimeout', 'Cannot wait on a signal manager that has not been prepared.'));
+  Assert(CheckCondition(FActive, 'WaitTimeout', 'Cannot wait on a signal manager that has not been prepared.'));
 
   iWaitResult := WaitForMultipleObjects(FSignalHandleCount, @FSignalHandleArray, bAll, iTimeout);
 
   if (iWaitResult = WAIT_FAILED) Then
-    Error('WaitTimeout', ErrorAsString);
+    RaiseError('WaitTimeout', ErrorAsString);
 
   Result := (iWaitResult <> WAIT_TIMEOUT) And IntegerBetween(WAIT_OBJECT_0, iWaitResult, WAIT_OBJECT_0 + FSignalHandleCount - 1);
 End;

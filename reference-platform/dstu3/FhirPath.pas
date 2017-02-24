@@ -248,11 +248,11 @@ type
     function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
 
 
-    function equals(left, right : TFHIRObject) : boolean;  overload;
+    function equal(left, right : TFHIRObject) : boolean;  overload;
     function equivalent(left, right : TFHIRObject) : boolean;  overload;
 
-    function opEquals(left, right : TFHIRSelectionList) : TFHIRSelectionList;
-    function opNotEquals(left, right : TFHIRSelectionList) : TFHIRSelectionList;
+    function opequal(left, right : TFHIRSelectionList) : TFHIRSelectionList;
+    function opNotequal(left, right : TFHIRSelectionList) : TFHIRSelectionList;
     function opLessThan(left, right : TFHIRSelectionList) : TFHIRSelectionList;
     function opGreater(left, right : TFHIRSelectionList) : TFHIRSelectionList;
     function opLessOrEqual(left, right : TFHIRSelectionList) : TFHIRSelectionList;
@@ -630,7 +630,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.equals(left, right: TFHIRObject): boolean;
+function TFHIRExpressionEngine.equal(left, right: TFHIRObject): boolean;
 begin
   if (left.isPrimitive and right.isPrimitive) then
     result := left.primitiveValue = right.primitiveValue
@@ -655,9 +655,9 @@ end;
 function TFHIRExpressionEngine.equivalent(left, right: TFHIRObject): boolean;
 begin
   if (left.hasType('integer') and right.hasType('integer')) then
-    result := equals(left, right)
+    result := equal(left, right)
   else if (left.hasType('boolean') and right.hasType('boolean')) then
-    result := equals(left, right)
+    result := equal(left, right)
   else if (left.hasType(['integer', 'decimal']) and right.hasType(['integer', 'decimal'])) then
     result :=  equivalentNumber(left.primitiveValue(), right.primitiveValue())
   else if (left.hasType(['date', 'dateTime', 'time', 'instant']) and right.hasType(['date', 'dateTime', 'time', 'instant'])) then
@@ -999,7 +999,7 @@ begin
       found := false;
       for j := i+1 to focus.count - 1 do
       begin
-        if (equals(focus[j].value, focus[i].value)) then
+        if (equal(focus[j].value, focus[i].value)) then
         begin
           found := true;
           break;
@@ -1104,7 +1104,7 @@ begin
       distinct := true;
       for i := 0 to focus.count - 1 do
         for j := i+1 to focus.count - 1 do
-          if (equals(focus[j].value, focus[i].value)) then
+          if (equal(focus[j].value, focus[i].value)) then
           begin
             distinct := false;
             break;
@@ -1382,7 +1382,7 @@ begin
       found := false;
       for t in target do
       begin
-        if (equals(item.value, t.value)) then
+        if (equal(item.value, t.value)) then
         begin
           found := true;
           break;
@@ -1461,7 +1461,7 @@ begin
       found := false;
       for t in focus do
       begin
-        if (equals(item.value, t.value)) then
+        if (equal(item.value, t.value)) then
         begin
           found := true;
           break;
@@ -1874,9 +1874,9 @@ function TFHIRExpressionEngine.operate(left: TFHIRSelectionList; op: TFHIRPathOp
 begin
   case op of
     popNull: raise EFHIRPath.create('An internal error has occurred');
-    popEquals: result := opEquals(left, right);
+    popEquals: result := opequal(left, right);
     popEquivalent: result := opEquivalent(left, right);
-    popNotEquals: result := opNotEquals(left, right);
+    popNotEquals: result := opNotequal(left, right);
     popNotEquivalent: result := opNotEquivalent(left, right);
     popLessThan: result := opLessThan(left, right);
     popGreater: result := opGreater(left, right);
@@ -2009,7 +2009,7 @@ begin
   begin
     f := false;
     for l in left do
-      if equals(l.value, r.value) then
+      if equal(l.value, r.value) then
       begin
         f := true;
         break;
@@ -2103,7 +2103,7 @@ begin
 
 end;
 
-function TFHIRExpressionEngine.opEquals(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRExpressionEngine.opequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res : boolean;
   i : integer;
@@ -2114,7 +2114,7 @@ begin
   begin
     res := true;
     for i := 0 to left.count - 1 do
-      if not equals(left[i].value, right[i].value) then
+      if not equal(left[i].value, right[i].value) then
       begin
         res := false;
         break;
@@ -2262,7 +2262,7 @@ begin
   begin
     f := false;
     for r in right do
-      if equals(l.value, r.value) then
+      if equal(l.value, r.value) then
       begin
         f := true;
         break;
@@ -2474,7 +2474,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opNotEquals(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRExpressionEngine.opNotequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res : boolean;
   i : integer;
@@ -2485,7 +2485,7 @@ begin
   begin
     res := false;
     for i := 0 to left.count - 1 do
-      if not equals(left[i].value, right[i].value) then
+      if not equal(left[i].value, right[i].value) then
       begin
         res := true;
         break;
@@ -2633,7 +2633,7 @@ var
 begin
   result := false;
   for test in list do
-    if equals(test.value, item) then
+    if equal(test.value, item) then
         exit(true);
 end;
 
@@ -3826,7 +3826,7 @@ begin
     {$IFDEF FHIR3}
     if (name.equals('#'+ed.id)) then
     {$ELSE}
-    if (name.equals(ed.Name)) then
+    if (name.equal(ed.Name)) then
     {$ENDIF}
       exit(ed);
   result := nil;

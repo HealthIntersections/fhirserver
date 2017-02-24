@@ -580,45 +580,45 @@ end;
 procedure TAdvBytesBuilder.Read(index : integer; var buffer; ilength: integer);
 begin
   if index < 1 Then
-    Error('Read', 'index < 1');
+    RaiseError('Read', 'index < 1');
   if index + ilength > FLength Then
-    Error('Read', 'index > length');
+    RaiseError('Read', 'index > length');
   Move(FContent[index], buffer, ilength);
 end;
 
 procedure TAdvBytesBuilder.WriteCardinal(index: integer; val: cardinal);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + 4 > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   Move(val, FContent[index], 4);
 end;
 
 procedure TAdvBytesBuilder.WriteString(index: integer; val: String);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + (val.Length*2) > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   Move(val[1], FContent[index], (val.Length*2));
 end;
 
 procedure TAdvBytesBuilder.WriteUInt64(index: integer; val: UInt64);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + 8 > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   Move(val, FContent[index], 8);
 end;
 
 procedure TAdvBytesBuilder.WriteWord(index: integer; val: word);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + 2 > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   Move(val, FContent[index], 2);
 end;
 

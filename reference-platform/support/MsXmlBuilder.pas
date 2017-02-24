@@ -131,7 +131,7 @@ End;
 procedure TMsXmlBuilder.Finish;
 Begin
   if FStack.Count > 1 Then
-    Error('Close', 'Document is not finished');
+    RaiseError('Close', 'Document is not finished');
   FStack.Free;
   FStack := nil;
   FAttributes.Free;

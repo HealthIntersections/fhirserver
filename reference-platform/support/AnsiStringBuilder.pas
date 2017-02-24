@@ -351,9 +351,9 @@ end;
 procedure TAnsiStringBuilder.Overwrite(index: integer; content: AnsiString);
 begin
   if index < 1 Then
-    Error('Overwrite', 'index < 1');
+    RaiseError('Overwrite', 'index < 1');
   if index + System.length(Content) > FLength Then
-    Error('Overwrite', 'index > length');
+    RaiseError('Overwrite', 'index > length');
   if content <> '' Then
     Move(Content[1], FContent[index], System.length(Content));
 end;
@@ -361,9 +361,9 @@ end;
 procedure TAnsiStringBuilder.Read(index: integer; var buffer; ilength: integer);
 begin
   if index < 1 Then
-    Error('Read', 'index < 1');
+    RaiseError('Read', 'index < 1');
   if index + ilength > FLength Then
-    Error('Read', 'index > length');
+    RaiseError('Read', 'index > length');
   Move(FContent[index], buffer, ilength);
 end;
 

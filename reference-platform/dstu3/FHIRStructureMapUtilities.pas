@@ -672,7 +672,7 @@ begin
         tgt.Code := lexer.take();
       end;
       if (lexer.hasComment())  then
-        tgt.Comments := lexer.take().substring(2).trim();
+        tgt.Comment := lexer.take().substring(2).trim();
     end;
     lexer.token('}');
   finally

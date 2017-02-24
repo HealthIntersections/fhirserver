@@ -140,7 +140,7 @@ End;
 
 Procedure TAdvXMLFormatter.ProduceOpen(Const sName : String);
 Begin 
-  Assert(Condition(sName <> '', 'ProduceOpen', 'Open tag name must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProduceOpen', 'Open tag name must be specified.'));
 
   commitPending;
 
@@ -171,7 +171,7 @@ end;
 
 Procedure TAdvXMLFormatter.ProduceClose(Const sName: String);
 Begin 
-  Assert(Condition(sName <> '', 'ProduceClose', 'Close tag name must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProduceClose', 'Close tag name must be specified.'));
 
   LevelUp;
 
@@ -188,7 +188,7 @@ End;
 
 Procedure TAdvXMLFormatter.ProduceTextNoEscapeEoln(Const sName, sValue: String);
 Begin
-  Assert(Condition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
   commitPending;
 
   FLastText := false;
@@ -219,7 +219,7 @@ End;
 
 Procedure TAdvXMLFormatter.ProduceText(Const sName, sValue: String);
 Begin
-  Assert(Condition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProduceText', 'Tag name for text must be specified.'));
 
   commitPending;
   FLastText := false;
@@ -245,7 +245,7 @@ End;
 
 Procedure TAdvXMLFormatter.ProduceTag(Const sName: String);
 Begin 
-  Assert(Condition(sName <> '', 'ProduceTag', 'Tag name must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProduceTag', 'Tag name must be specified.'));
   commitPending;
 
   FLastText := false;
@@ -302,7 +302,7 @@ End;
 
 procedure TAdvXMLFormatter.ProducePI(const sName, sText: String);
 begin
-  Assert(Condition(sName <> '', 'ProducePI', 'PI name must be specified.'));
+  Assert(CheckCondition(sName <> '', 'ProducePI', 'PI name must be specified.'));
   commitPending;
 
   FLastText := false;

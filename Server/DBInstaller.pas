@@ -284,7 +284,6 @@ procedure TFHIRDatabaseInstaller.CreateCodeSystems;
 begin
   runScript('tx_db.sql');
   runScript('us-state-codes.sql');
-  runScript('area-codes.sql');
   runScript('country-codes.sql');
 end;
 

@@ -68,7 +68,7 @@ type
     function SupportsSizingV : Boolean; Override;
   Public
     constructor create(AOwner : TKDBManager; Env : THenv; AHdbc : THdbc; AStmt : THstmt);
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
   TOdbcExpressConnManBase = {Abstract} class (TKDBManager)
@@ -89,7 +89,7 @@ type
     function GetDBDetails: String; Override;
     procedure init; override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean; override;
     property Dsn : String read FDsn;
     property Driver : String read FDriver;

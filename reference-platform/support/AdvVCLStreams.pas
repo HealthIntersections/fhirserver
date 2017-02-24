@@ -139,7 +139,7 @@ End;
 
 Function TAdvVCLStream.GetStream: TStream;
 Begin
-  Assert(Condition(Assigned(FStream), 'GetStream', 'No VCL Stream available.'));
+  Assert(CheckCondition(Assigned(FStream), 'GetStream', 'No VCL Stream available.'));
 
   Result := FStream;
 End;

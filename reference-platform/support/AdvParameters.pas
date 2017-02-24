@@ -113,7 +113,7 @@ End;
 
 Function TAdvParameters.GetParameter(iIndex: Integer): String;
 Begin 
-  Assert(Condition(Valid(iIndex), 'GetParameter', StringFormat('Index not valid in bounds [0..%d]', [iIndex])));
+  Assert(CheckCondition(Valid(iIndex), 'GetParameter', StringFormat('Index not valid in bounds [0..%d]', [iIndex])));
 
   Result := ParamStr(iIndex + 1);
 End;  

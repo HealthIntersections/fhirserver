@@ -38,7 +38,7 @@ type
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -52,7 +52,7 @@ type
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -149,7 +149,7 @@ begin
 end;
 
 
-function TUSStateCodeServices.locate(code : String) : TCodeSystemProviderContext;
+function TUSStateCodeServices.locate(code : String; var message : String) : TCodeSystemProviderContext;
 var
   qry : TKDBConnection;
   res : TUSStateCodeConcept;
@@ -268,7 +268,7 @@ begin
   raise Exception.Create('not done yet');
 end;
 
-function TUSStateCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
+function TUSStateCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
   raise Exception.Create('not done yet');
 end;

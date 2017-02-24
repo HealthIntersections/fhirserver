@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 Interface
 
 uses
-  Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character,
+  Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character, System.NetEncoding,
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
   AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,
@@ -419,7 +419,7 @@ begin
       if iDom.parseError.url <> '' Then
         sError := sError + '. url="'+ iDom.parseError.url+'"';
       sError := sError + '. source = "'+ iDom.parseError.srcText+'"';
-      Error('Parse', sError);
+      RaiseError('Parse', sError);
     End;
     Result := iDom;
   end;
@@ -519,6 +519,7 @@ end;
 
 procedure TFHIRXmlParserBase.XmlError(const sPath, sMessage: String);
 begin
+
   Raise Exception.Create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', lang), [sMessage+' @ '+sPath]));
 end;
 

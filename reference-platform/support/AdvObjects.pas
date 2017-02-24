@@ -65,15 +65,15 @@ Type
       Function Invariants(Const sLocation : String; oObject : TAdvObject; aClass : TClass; Const sObject : String) : Boolean; Overload;
       Function Invariants(Const sLocation : String; aReference, aClass : TClass; Const sReference : String) : Boolean; Overload;
 
-      Function Condition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
-      Function Condition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
+      Function CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean; Overload;
+      Function CheckCondition(bCorrect : Boolean; Const sMethod, sMessage : String) : Boolean; Overload;
 
       // Override to introduce additional or alternate behaviour.
       Function Assignable(Const sLocation : String; oObject : TAdvObject; Const sObject : String) : Boolean; Overload; Virtual;
       Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
       Function Destructable(Const sMethod : String) : Boolean; Overload; Virtual;
-      Procedure Error(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
-      Procedure Error(Const sMethod, sMessage : String); Overload; Virtual;
+      Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
+      Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
 
       Class Procedure ClassError(Const sMethod, sMessage : String); Overload;
 
@@ -152,16 +152,16 @@ Procedure TAdvObject.AfterConstruction;
 Begin 
   Inherited;
 
-  Assert(Condition(Factory.Valid(Self), 'AfterConstruction', 'Invalid object after construction (possibly missing call to inherited in Create).'));
+  Assert(CheckCondition(Factory.Valid(Self), 'AfterConstruction', 'Invalid object after construction (possibly missing call to inherited in Create).'));
 End;  
 
 
 Procedure TAdvObject.BeforeDestruction;
 Begin 
-  Assert(Condition(Factory.Valid(Self), 'BeforeDestruction', 'Invalid object before destruction (possibly too many calls to Free or not enough to Link).'));
+  Assert(CheckCondition(Factory.Valid(Self), 'BeforeDestruction', 'Invalid object before destruction (possibly too many calls to Free or not enough to Link).'));
 
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
-  Assert(Condition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
+  Assert(CheckCondition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
 
   Assert(Destructable('BeforeDestruction'));
 
@@ -320,15 +320,15 @@ Begin
 End;  
 
 
-Procedure TAdvObject.Error(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
-Begin 
+Procedure TAdvObject.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
+Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
 
 
-Procedure TAdvObject.Error(Const sMethod, sMessage : String);
+Procedure TAdvObject.RaiseError(Const sMethod, sMessage : String);
 Begin
-  Error(ErrorClass, sMethod, sMessage);
+  RaiseError(ErrorClass, sMethod, sMessage);
 End;  
 
 
@@ -345,7 +345,7 @@ End;
 
 Procedure TAdvObject.Assign(oObject : TAdvObject);
 Begin 
-  Assert(Condition(Assignable, 'Assign', 'Object is not marked as assignable.'));
+  Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
   Assert(Assignable('Assign', oObject, 'oObject'));
 
   // Override and inherit to assign the properties of your class.
@@ -403,23 +403,23 @@ Begin
 End;
 
 
-Function TAdvObject.Condition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
-Begin 
+Function TAdvObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
+Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
   If Not bCorrect Then
     Invariant(sMethod, sMessage);
 
   Result := True;
-End;  
+End;
 
 
-Function TAdvObject.Condition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean;
+Function TAdvObject.CheckCondition(bCorrect : Boolean; aException : EAdvExceptionClass; Const sMethod, sMessage : String) : Boolean;
 Begin 
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
   If Not bCorrect Then
-    Error(aException, sMethod, sMessage);
+    RaiseError(aException, sMethod, sMessage);
 
   Result := True;
 End;  
@@ -469,7 +469,7 @@ End;
 
 Function TAdvObject.IsFrozen : Boolean;
 Begin
-  Assert(Condition(Freezable, 'IsFrozen', 'Object is not marked as freezable.'));
+  Assert(CheckCondition(Freezable, 'IsFrozen', 'Object is not marked as freezable.'));
 
 {$IFOPT C+}
   Result := Factory.IsFrozen(Self);

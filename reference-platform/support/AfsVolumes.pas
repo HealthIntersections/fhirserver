@@ -53,7 +53,7 @@ Type
 
   TAfsObject = Class(TAdvStringHashEntry)
   Protected
-    Procedure Error(Const sMethod, sException : String); Override;
+    Procedure RaiseError(Const sMethod, sException : String); Override;
   End; { TAfsObject }
 
   TAfsClass = Class Of TAfsObject;
@@ -63,7 +63,7 @@ Type
     FVolume : TAfsVolume;
     Procedure SetVolume(Const Value: TAfsVolume);
   Protected
-    Procedure Error(Const sMethod, sMessage : String); Override;
+    Procedure RaiseError(Const sMethod, sMessage : String); Override;
     Function GetCurrent : TAfsEntity; Virtual; Abstract;
   Public
     Constructor Create(oVolume : TAfsVolume); Overload; Virtual;
@@ -226,18 +226,18 @@ Uses
   StringSupport, MathSupport;
 
 
-Procedure TAfsObject.Error(Const sMethod, sException : String);
+Procedure TAfsObject.RaiseError(Const sMethod, sException : String);
 
 Begin { Procedure TAfsObject.Error }
-  Error(EAfs, sMethod, sException);
+  RaiseError(EAfs, sMethod, sException);
 End;  { Procedure TAfsObject.Error }
 
 
 
-Procedure TAfsIterator.Error(Const sMethod, sMessage : String);
+Procedure TAfsIterator.RaiseError(Const sMethod, sMessage : String);
 
 Begin { Procedure TAfsIterator.Error }
-  Error(EAfs, sMethod, sMessage);
+  RaiseError(EAfs, sMethod, sMessage);
 End;  { Procedure TAfsIterator.Error }
 
 Constructor TAfsIterator.Create(oVolume : TAfsVolume);
@@ -258,7 +258,7 @@ End;  { Function TAfsVolume.GetAllocation }
 Procedure TAfsVolume.SetAllocation(Value : Cardinal);
 
 Begin { Procedure TAfsVolume.SetAllocation }
-  Error('SetAllocation', 'Cannot set allocation unit size.');
+  RaiseError('SetAllocation', 'Cannot set allocation unit size.');
 End;  { Procedure TAfsVolume.SetAllocation }
 
 Function TAfsVolume.Clone: TAfsVolume;
@@ -314,7 +314,7 @@ End;  { Function TAfsStream.GetSize }
 Procedure TAfsStream.SetSize(Const Value : Int64);
 
 Begin { Procedure TAfsStream.SetSize }
-  Error('SetSize', 'Not implemented');
+  RaiseError('SetSize', 'Not implemented');
 //  FVolume.SetSize(FHandle, Value);
 End;  { Procedure TAfsStream.SetSize }
 
@@ -400,14 +400,14 @@ Procedure TAfsEntity.Open;
 
 Begin { Procedure TAfsEntity.Open }
   If Not Assigned(FVolume) Then
-    Error('Open', 'AFS volume not assigned.')
+    RaiseError('Open', 'AFS volume not assigned.')
   Else
   Begin { If }
     FStream.Volume := FVolume.Link;
     FStream.Handle := FVolume.Open('', Name, FMode, FShare);
 
     If FStream.Handle = 0 Then
-      Error('Open', StringFormat('Unable to open ''%s'' in volume ''%s''', [Name, FVolume.Name]));
+      RaiseError('Open', StringFormat('Unable to open ''%s'' in volume ''%s''', [Name, FVolume.Name]));
   End   { If }
 End;  { Procedure TAfsEntity.Open }
 

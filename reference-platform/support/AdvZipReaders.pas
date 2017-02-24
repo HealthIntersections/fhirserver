@@ -236,13 +236,13 @@ Begin
       inc(count);
     until true; // (partName <> 'fhir.schema.json.zip') or (count > 1);
     If iCurrent <> SIG_DATA_DESCRIPTOR Then
-      Error('ReadUnknownLengthDeflate', 'Error in zip structure: Source is not terminated by a Data Descriptor');
+      RaiseError('ReadUnknownLengthDeflate', 'Error in zip structure: Source is not terminated by a Data Descriptor');
     iCRC := ReadLongWord;                // crc-32                          4 bytes
     iSizeComp := ReadLongWord;           // compressed size                 4 bytes
     iSizeUncomp := ReadLongWord;         // uncompressed size               4 bytes
     {$WARNINGS OFF} // a widening notifications in this check and the assertion in ReadKnownDeflate
     If oMem.Buffer.Capacity < iSizeComp + 2 Then
-      Error( 'ReadUnknownLengthDeflate', 'Compressed length expected to be '+IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
+      RaiseError('ReadUnknownLengthDeflate', 'Compressed length expected to be '+IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
     ReadKnownDeflate(oMem.Buffer.Data, partName, iSizeComp + 2, iSizeUncomp, oBuffer);
   Finally
     oMem.Free;
@@ -286,7 +286,7 @@ Begin
 
       {$IFOPT C+}
         iRead := oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
-        Assert(Condition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
+        Assert(CheckCondition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
             ' bytes, but actually found '+IntegerToString(iRead)+' bytes'));
       {$ELSE}
         oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
@@ -306,7 +306,7 @@ Begin
     METHOD_NONE: ReadUncompressed(iSizeComp, oBuffer);
     METHOD_DEFLATE: ReadDeflate(iFlags, partName, iSizeComp, iSizeUncomp, oBuffer);
   Else
-    Error('Decompress', 'Unknown Compression type '+IntegerToString(iComp));
+    RaiseError('Decompress', 'Unknown Compression type '+IntegerToString(iComp));
   End;
 End;
 

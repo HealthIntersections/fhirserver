@@ -335,7 +335,7 @@ Function TAdvOrdinalSet.CheckedRange(iFromIndex, iToIndex: Integer): Boolean;
 Var
   iIndex : Integer;
 Begin
-  Assert(Condition(iFromIndex <= iToIndex, 'CheckedRange', 'From Index and To Index are not valid.'));
+  Assert(CheckCondition(iFromIndex <= iToIndex, 'CheckedRange', 'From Index and To Index are not valid.'));
 
   iIndex := iFromIndex;
   Result := True;

@@ -1664,6 +1664,7 @@ var
   s, sc, st: String;
   p: TFHIRDateTime;
   rep: TFhirTimingRepeat;
+  w : TFhirEventTimingEnum;
 begin
   s := '';
   if (t.code <> nil) then
@@ -1687,7 +1688,7 @@ begin
     if (rep.Duration <> '') then
       CommaAdd(s, 'Duration ' + rep.Duration + displayTimeUnits(rep.periodUnit));
 
-    if (rep.when <> EventTimingNull) then
+    if (rep.when <> []) then
     begin
       st := '';
       if (rep.Period <> '') then
@@ -1697,7 +1698,9 @@ begin
           st := st + '-' + rep.PeriodMax;
         st := st + displayTimeUnits(rep.periodUnit);
       end;
-      CommaAdd(s, 'Do ' + st + displayEventCode(rep.when));
+      for w := low(TFhirEventTimingEnum) to high(TFhirEventTimingEnum) do
+        if w in rep.when then
+          CommaAdd(s, 'Do ' + st + displayEventCode(w));
     end
     else
     begin

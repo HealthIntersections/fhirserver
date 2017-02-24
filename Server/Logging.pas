@@ -66,8 +66,6 @@ Type
     FFilenameCanChange : Boolean;
     FPolicy : TLoggerPolicy;
 
-    Function Header : String;
-
     Function ProcessFileName : String;
 
     Procedure ActualLog(Const s: String);
@@ -109,17 +107,6 @@ Begin
   FBuffer.Free;
   FLock.Free;
   Inherited;
-End;
-
-Function TLogger.Header : String;
-Begin
-  If FPolicy.Header <> '' Then
-    Result := FPolicy.Header + #13#10
-  Else If FPolicy.Description <> '' Then
-    Result := FormatDateTime('hh:nn:ss.zzzz dd-mmm yyyy', Now) + ' Log: ' + FPolicy.Description + #13#10 +
-      '=================================================================' + #13#10
-  Else
-    Result := '';
 End;
 
 Procedure TLogger.FlushLogQueue;

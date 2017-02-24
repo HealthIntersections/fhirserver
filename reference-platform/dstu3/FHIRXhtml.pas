@@ -258,7 +258,7 @@ begin
   try
     for c in s do
     begin
-      if not System.Character.isWhitespace(c) or (c = #$a0) then
+      if not c.isWhitespace or (c = #$a0) then
       begin
         b.Append(c);
         w := false;

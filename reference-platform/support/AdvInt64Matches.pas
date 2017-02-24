@@ -250,7 +250,7 @@ Begin
   If Not IsAllowDuplicates And Find(aKey, aValue, Result) Then
   Begin 
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Key already exists in list (%s=%s)', [aKey, aValue]));
+      RaiseError('Add', StringFormat('Key already exists in list (%s=%s)', [aKey, aValue]));
 
     // Result is the index of the existing key
   End   
@@ -375,7 +375,7 @@ Begin
   Begin 
     Result := FDefault;
     If Not FForced Then
-      Error('GetMatch', 'Unable to get the value for the specified key.');
+      RaiseError('GetMatch', 'Unable to get the value for the specified key.');
   End;  
 End;  
 
@@ -391,7 +391,7 @@ Begin
   Else If FForced Then
     Add(iKey, iValue)
   Else
-    Error('SetMatch', 'Unable to set the value for the specified key.');
+    RaiseError('SetMatch', 'Unable to set the value for the specified key.');
 End;  
 
 

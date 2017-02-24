@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, kCritSct, Generics.Defaults, Generics.Collections,
-  StringSupport,
+  StringSupport, TextUtilities,
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
@@ -28,7 +28,7 @@ Type
     FMap : TAdvMap<TFhirCodeSystemConcept>;
   public
     constructor Create(map : TAdvMap<TFhirCodeSystemConcept>);
-    destructor destroy; override;
+    destructor Destroy; override;
     property map : TAdvMap<TFhirCodeSystemConcept> read FMap;
   end;
 
@@ -87,7 +87,7 @@ Type
     function Compare(const Left, Right: TFhirCodeSystemConceptMatch): Integer;
     procedure sort;
   public
-    constructor Create; overload;
+    constructor Create; overload; override;
     destructor Destroy; override;
   end;
 
@@ -115,7 +115,7 @@ Type
     function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
     function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; overload; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
@@ -131,7 +131,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
@@ -319,7 +319,7 @@ Type
     function system(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
@@ -330,7 +330,7 @@ Type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -412,7 +412,7 @@ function TAllCodeSystemsProvider.getDefinition(code : String):String;
 begin
   raise Exception.Create('Not Created Yet');
 end;
-function TAllCodeSystemsProvider.locate(code : String) : TCodeSystemProviderContext;
+function TAllCodeSystemsProvider.locate(code : String; var message : String) : TCodeSystemProviderContext;
 begin
   raise Exception.Create('Not Created Yet');
 end;
@@ -551,7 +551,7 @@ begin
   end;
 end;
 
-function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext;
+function TAllCodeSystemsProvider.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
   raise Exception.Create('Not Created Yet');
 end;
@@ -726,7 +726,6 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
   end;
   procedure processConcepts(parent : TFhirCodeSystemConcept; list : TFhirCodeSystemConceptList; map : TAdvMap<TFhirCodeSystemConcept>);
   var
-    ca : TConceptAdornment;
     c : TFhirCodeSystemConcept;
   begin
     for c in list do
@@ -775,8 +774,10 @@ begin
 end;
 
 procedure TTerminologyServerStore.checkCodeSystem(vs: TFHIRCodeSystem);
+{$IFDEF FHIR2}
 var
   list : TStringList;
+{$ENDIF}
 begin
   if (exempt(vs)) then
     exit;
@@ -820,9 +821,6 @@ begin
   FConceptMapsByURL := TAdvMap<TLoadedConceptMap>.create;
 
   FSnomed := TAdvList<TSnomedServices>.create;
-  p := TIETFLanguageCodeServices.Create;
-  FProviderClasses.Add(p.system(nil), p);
-  FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TUriServices.Create();
   FProviderClasses.Add(p.system(nil), p);
   FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
@@ -1956,6 +1954,7 @@ var
   ex : TFhirExtension;
   code : String;
 begin
+  result := nil;
   if context = nil then
     result := TFhirCodeSystemProviderContext.create(FVs.codeSystem.conceptList[ndx])
   else
@@ -2216,7 +2215,7 @@ begin
   {$ENDIF}
 end;
 
-function TFhirCodeSystemProvider.locate(code: String): TCodeSystemProviderContext;
+function TFhirCodeSystemProvider.locate(code: String; var message : String): TCodeSystemProviderContext;
 begin
   result := DoLocate(code);
 end;
@@ -2403,7 +2402,7 @@ begin
   result := TFhirCodeSystemProviderContext.Create(context.concepts[context.ndx].FItem.Link)
 end;
 
-function TFhirCodeSystemProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+function TFhirCodeSystemProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 var
   context : TFhirCodeSystemProviderFilterContext;
   i : integer;
@@ -2463,7 +2462,6 @@ end;
 
 function TLoadedConceptMap.HasTranslation(list : TFhirConceptMapGroupList; system, code : String; out maps : TFhirConceptMapGroupElementTargetList): boolean;
 var
-  i : integer;
   g : TFhirConceptMapGroup;
   c : TFhirConceptMapGroupElement;
 begin

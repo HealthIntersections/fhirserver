@@ -172,9 +172,9 @@ Procedure TAdvMemoryStream.Read(Var aBuffer; iSize : Cardinal);
 Begin 
   If iSize > 0 Then
   Begin 
-    Assert(Condition(FPosition + iSize <= FBuffer.Capacity, 'Read', 'Unable to read past the end of the buffer.'));
-    Assert(Condition(FPosition + iSize <= FSize, 'Read', 'Unable to read past the end of the stream.'));
-    Assert(Condition(Assigned(FCurrentPointer), 'Read', 'Current must be assigned.'));
+    Assert(CheckCondition(FPosition + iSize <= FBuffer.Capacity, 'Read', 'Unable to read past the end of the buffer.'));
+    Assert(CheckCondition(FPosition + iSize <= FSize, 'Read', 'Unable to read past the end of the stream.'));
+    Assert(CheckCondition(Assigned(FCurrentPointer), 'Read', 'Current must be assigned.'));
 
     Move(FCurrentPointer^, aBuffer, iSize);
 
@@ -191,8 +191,8 @@ Begin
     If FExpand And (FPosition + iSize > FBuffer.Capacity) Then
       SetCapacity(FPosition + iSize);
 
-    Assert(Condition(FPosition + iSize <= FBuffer.Capacity, 'Write', 'Unable to write past the end of the buffer.'));
-    Assert(Condition(Assigned(FCurrentPointer), 'Read', 'Current must be assigned.'));
+    Assert(CheckCondition(FPosition + iSize <= FBuffer.Capacity, 'Write', 'Unable to write past the end of the buffer.'));
+    Assert(CheckCondition(Assigned(FCurrentPointer), 'Read', 'Current must be assigned.'));
 
     Move(aBuffer, FCurrentPointer^, iSize);
 
@@ -228,7 +228,7 @@ End;
 
 Procedure TAdvMemoryStream.SetSize(Const Value: Int64);
 Begin 
-  Assert(Condition(Value >= 0, 'SetSize', 'Attempted to set size to an invalid value.'));
+  Assert(CheckCondition(Value >= 0, 'SetSize', 'Attempted to set size to an invalid value.'));
 
   If FSize <> Value Then
   Begin
@@ -253,7 +253,7 @@ End;
 
 Procedure TAdvMemoryStream.SetPosition(Const Value: Int64);
 Begin 
-  Assert(Condition((Value >= 0) And (Value <= FBuffer.Capacity), 'SetPosition', 'Attempted to set position outside of memory.'));
+  Assert(CheckCondition((Value >= 0) And (Value <= FBuffer.Capacity), 'SetPosition', 'Attempted to set position outside of memory.'));
 
   FPosition := Value;
   UpdateCurrentPointer;
@@ -268,7 +268,7 @@ End;
 
 Procedure TAdvMemoryStream.SetCapacity(Const Value: Int64);
 Begin 
-  Assert(Condition((Value >= Size), 'SetCapacity', StringFormat('Unable to change the capacity to less than the size %d.', [Value])));
+  Assert(CheckCondition((Value >= Size), 'SetCapacity', StringFormat('Unable to change the capacity to less than the size %d.', [Value])));
 
   FBuffer.Capacity := Value;
   UpdateCurrentPointer;
@@ -358,12 +358,12 @@ Procedure TAdvMemoryStream.DeleteRange(Const iFromPosition, iToPosition: Integer
 Var
   iDifference : Integer;
 Begin 
-  Assert(Condition(ValidPosition(iFromPosition), 'DeleteRange', 'Delete from position is invalid.'));
-  Assert(Condition(ValidPosition(iToPosition), 'DeleteRange', 'Delete to position is invalid.'));
+  Assert(CheckCondition(ValidPosition(iFromPosition), 'DeleteRange', 'Delete from position is invalid.'));
+  Assert(CheckCondition(ValidPosition(iToPosition), 'DeleteRange', 'Delete to position is invalid.'));
 
   iDifference := iToPosition - iFromPosition + 1;
 
-  Assert(Condition(iDifference > 0, 'DeleteRange', 'Delete from position <= to position.'));
+  Assert(CheckCondition(iDifference > 0, 'DeleteRange', 'Delete from position <= to position.'));
 
   Buffer.Move(iToPosition, iFromPosition, iDifference);
 

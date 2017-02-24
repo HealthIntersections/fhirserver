@@ -328,7 +328,7 @@ End;
 
 Function TAdvSynchronizationThreadLock.PeekLockEvent : TAdvSynchronizationLockEvent;
 Begin
-  Assert(Condition(Not FLockEventList.IsEmpty, 'PeekLockEvent', 'Cannot peek last lock event as there are no lock events for this context.'));
+  Assert(CheckCondition(Not FLockEventList.IsEmpty, 'PeekLockEvent', 'Cannot peek last lock event as there are no lock events for this context.'));
 
   Result := FLockEventList[FLockEventList.Count - 1];
 
@@ -449,7 +449,7 @@ Var
   oThreadLock : TAdvSynchronizationThreadLock;
   oLockEvent : TAdvSynchronizationLockEvent;
 Begin
-  Assert(Condition(aEventStatus In [AdvSynchronizationLockEventStatusWaitingForRead, AdvSynchronizationLockEventStatusWaitingForWrite], 'RegisterWaitingForLock', 'Invalid waiting for lock event status.'));
+  Assert(CheckCondition(aEventStatus In [AdvSynchronizationLockEventStatusWaitingForRead, AdvSynchronizationLockEventStatusWaitingForWrite], 'RegisterWaitingForLock', 'Invalid waiting for lock event status.'));
 
   oLockEvent := TAdvSynchronizationLockEvent.Create;
   Try
@@ -512,7 +512,7 @@ Var
   oLastLockEvent : TAdvSynchronizationLockEvent;
   oThreadLock : TAdvSynchronizationThreadLock;
 Begin
-  Assert(Condition(aEventStatus In [AdvSynchronizationLockEventStatusWaitingForRead, AdvSynchronizationLockEventStatusWaitingForWrite], 'RegisterNoLongerWaitingForLock', 'Invalid locked event status.'));
+  Assert(CheckCondition(aEventStatus In [AdvSynchronizationLockEventStatusWaitingForRead, AdvSynchronizationLockEventStatusWaitingForWrite], 'RegisterNoLongerWaitingForLock', 'Invalid locked event status.'));
 
   iThreadIdentifier := ThreadID;
 
@@ -521,14 +521,14 @@ Begin
     iThreadLockIndex := FThreadLockList.IndexByThreadIdentifierAndLockIdentifier(iThreadIdentifier, iLockIdentifier);
 
     If Not FThreadLockList.ExistsByIndex(iThreadLockIndex) Then
-      Error('RegisterNoLongerWaitingForLock', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
+      RaiseError('RegisterNoLongerWaitingForLock', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
 
     oThreadLock := FThreadLockList[iThreadLockIndex];
 
     oLastLockEvent := oThreadLock.PopLockEvent;
     Try
       If oLastLockEvent.EventStatus <> AdvSynchronizationLockEventStatusRelevantWaitingForLockStatusArray[aEventStatus] Then
-        Error('RegisterNoLongerWaitingForLock', 'Last lock event should be relevant waiting for lock status.');
+        RaiseError('RegisterNoLongerWaitingForLock', 'Last lock event should be relevant waiting for lock status.');
     Finally
       oLastLockEvent.Free;
     End;
@@ -554,7 +554,7 @@ Var
   oLockEvent : TAdvSynchronizationLockEvent;
   oThreadLock : TAdvSynchronizationThreadLock;
 Begin
-  Assert(Condition(aEventStatus In [AdvSynchronizationLockEventStatusLockedForRead, AdvSynchronizationLockEventStatusLockedForWrite], 'RegisterLocked', 'Invalid locked event status.'));
+  Assert(CheckCondition(aEventStatus In [AdvSynchronizationLockEventStatusLockedForRead, AdvSynchronizationLockEventStatusLockedForWrite], 'RegisterLocked', 'Invalid locked event status.'));
 
   oLockEvent := TAdvSynchronizationLockEvent.Create;
   Try
@@ -568,14 +568,14 @@ Begin
       iThreadLockIndex := FThreadLockList.IndexByThreadIdentifierAndLockIdentifier(iThreadIdentifier, iLockIdentifier);
 
       If Not FThreadLockList.ExistsByIndex(iThreadLockIndex) Then
-        Error('RegisterLocked', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
+        RaiseError('RegisterLocked', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
 
       oThreadLock := FThreadLockList[iThreadLockIndex];
 
       oLastLockEvent := oThreadLock.PopLockEvent;
       Try
         If oLastLockEvent.EventStatus <> AdvSynchronizationLockEventStatusRelevantWaitingForLockStatusArray[aEventStatus] Then
-          Error('RegisterLocked', 'Last lock event should be relevant waiting for lock status.');
+          RaiseError('RegisterLocked', 'Last lock event should be relevant waiting for lock status.');
 
         oLockEvent.EventSequence := oLastLockEvent.EventSequence;
 
@@ -643,18 +643,18 @@ Begin
     iThreadLockIndex := FThreadLockList.IndexByThreadIdentifierAndLockIdentifier(iThreadIdentifier, iLockIdentifier);
 
     If Not FThreadLockList.ExistsByIndex(iThreadLockIndex) Then
-      Error('RegisterUnlocked', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
+      RaiseError('RegisterUnlocked', 'Thread lock for thread ''' + IntegerToString(iThreadIdentifier) + ''' does not exist.');
 
     oThreadLock := FThreadLockList[iThreadLockIndex];
 
     oLastLockEvent := oThreadLock.PopLockEvent;
     Try
       If oLastLockEvent.EventStatus <> aEventStatus Then
-        Error('RegisterUnlocked', 'Last lock event should have same event status.');
+        RaiseError('RegisterUnlocked', 'Last lock event should have same event status.');
 
       iThreadNextSequenceMatchIndex := FThreadIdentifierNextEventSequenceMatch.IndexByKey(iThreadIdentifier);
 
-      Assert(Condition(FThreadIdentifierNextEventSequenceMatch.ExistsByIndex(iThreadNextSequenceMatchIndex), 'RegisterUnlocked', 'Could not find thread lock for this combination of thread and lock identifier.'));
+      Assert(CheckCondition(FThreadIdentifierNextEventSequenceMatch.ExistsByIndex(iThreadNextSequenceMatchIndex), 'RegisterUnlocked', 'Could not find thread lock for this combination of thread and lock identifier.'));
 
       FThreadIdentifierNextEventSequenceMatch.ValueByIndex[iThreadNextSequenceMatchIndex] := FThreadIdentifierNextEventSequenceMatch.ValueByIndex[iThreadNextSequenceMatchIndex] - 1;
     Finally

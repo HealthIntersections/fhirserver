@@ -478,7 +478,6 @@ end;
 procedure TDifferenceEngine.applyMove(res : TFHIRObject; path: String; source, destination: integer);
 var
   dest : TFHIRSelectionList;
-  v : TFHIRObject;
 begin
   dest := fpe.evaluate(nil, res, path);
   try
@@ -669,8 +668,6 @@ end;
 function TDifferenceEngine.asValue(value: TFHIRObject): string;
 var
   pl : TFHIRPropertyList;
-  p : TFHIRProperty;
-  v : TFHIRObject;
   c : TFHIRJsonComposer;
   b : TStringBuilder;
 begin

@@ -206,7 +206,7 @@ Begin
 
   Clear;
 
-  Assert(Condition(Count = 0, 'Assign', 'Collection must be empty of all items after clear.'));   
+  Assert(CheckCondition(Count = 0, 'Assign', 'Collection must be empty of all items after clear.'));
 
   Count := TAdvItemList(oSource).Count;
 
@@ -394,8 +394,8 @@ Procedure TAdvItemList.InternalSort;
   End;  
 
 Begin 
-  Assert(Condition(Assigned(FComparison), 'Sort', 'Comparison property must be assigned.'));
-  Assert(Condition(FDirection <> 0, 'Sort', 'Direction must be non-zero'));
+  Assert(CheckCondition(Assigned(FComparison), 'Sort', 'Comparison property must be assigned.'));
+  Assert(CheckCondition(FDirection <> 0, 'Sort', 'Direction must be non-zero'));
 
   If (FCount > 1) Then
     QuickSort(0, FCount - 1);              // call the quicksort routine
@@ -404,7 +404,7 @@ End;
 
 Procedure TAdvItemList.InternalSort(aCompare: TAdvItemsCompare; iDirection : TAdvItemsDirection);
 Begin 
-  Assert(Condition(Assigned(aCompare), 'Sort', 'Comparison parameter must be assigned.'));
+  Assert(CheckCondition(Assigned(aCompare), 'Sort', 'Comparison parameter must be assigned.'));
 
   If iDirection <> 0 Then
     FDirection := iDirection;
@@ -541,7 +541,7 @@ End;
 
 Procedure TAdvItemList.SetCapacity(Const iValue: Integer);
 Begin 
-  Assert(Condition((iValue >= FCount) And (iValue <= CapacityLimit), 'SetCapacity', StringFormat('Unable to change the capacity to %d', [iValue])));
+  Assert(CheckCondition((iValue >= FCount) And (iValue <= CapacityLimit), 'SetCapacity', StringFormat('Unable to change the capacity to %d', [iValue])));
 
   InternalResize(iValue);
   FCapacity := iValue;
@@ -816,8 +816,8 @@ Procedure TAdvItemList.Exchange(iA, iB: Integer);
 Begin 
   Assert(ValidateIndex('Exchange', iA));
   Assert(ValidateIndex('Exchange', iB));
-  Assert(Condition(iA <> iB, 'Exchange', 'Cannot exchange with the same index position.'));
-  Assert(Condition(IsUnsorted, 'Exchange', 'Cannot exchange in sorted items.'));
+  Assert(CheckCondition(iA <> iB, 'Exchange', 'Cannot exchange with the same index position.'));
+  Assert(CheckCondition(IsUnsorted, 'Exchange', 'Cannot exchange in sorted items.'));
   Assert(Alterable('Exchange'));
 
   InternalExchange(iA, iB);

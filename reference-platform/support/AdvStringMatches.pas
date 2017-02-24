@@ -334,7 +334,7 @@ Begin
   If ExistsByIndex(iIndex) Then
     DeleteByIndex(iIndex)
   Else If Not Forced Then
-    Error('DeleteByKey', StringFormat('Unable to find a value for the specified key ''%s''.', [aKey]));
+    RaiseError('DeleteByKey', StringFormat('Unable to find a value for the specified key ''%s''.', [aKey]));
 End;
 
 
@@ -352,7 +352,7 @@ Begin
   If Not IsAllowDuplicates And Find(aKey, aValue, Result) Then
   Begin
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Key already exists in list (%s=%s)', [aKey, aValue]));
+      RaiseError('Add', StringFormat('Key already exists in list (%s=%s)', [aKey, aValue]));
 
     // Result is the index of the existing key
   End   
@@ -469,7 +469,7 @@ Begin
     Result := DefaultValue(aKey)
   Else
   Begin
-    Error('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
+    RaiseError('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
     Result := '';
   End;
 End;  
@@ -486,7 +486,7 @@ Begin
   Else If FForced Then
     Add(aKey, aValue)
   Else
-    Error('SetMatch', 'Unable to set the value for the specified key.');
+    RaiseError('SetMatch', 'Unable to set the value for the specified key.');
 End;  
 
 
@@ -594,7 +594,7 @@ Begin
   End   
   Else
   Begin 
-    Error('EqualTo', 'Equality checking not available to duplicate allowing string matches.');
+    RaiseError('EqualTo', 'Equality checking not available to duplicate allowing string matches.');
   End;  
 End;  
 
@@ -639,7 +639,7 @@ Procedure TAdvStringMatch.AddAll(oStringMatch: TAdvStringMatch);
 Var
   iIndex : Integer;
 Begin
-  Assert(Condition(oStringMatch <> Self, 'AddAll', 'Cannot add all items from a list to itself.'));
+  Assert(CheckCondition(oStringMatch <> Self, 'AddAll', 'Cannot add all items from a list to itself.'));
 
   Capacity := IntegerMax(Count + oStringMatch.Count, Capacity);
 
@@ -660,7 +660,7 @@ Begin
     Result := DefaultValue(aKey)
   Else
   Begin
-    Error('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
+    RaiseError('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
     Result := '';
   End;
 End;
@@ -677,7 +677,7 @@ Begin
   Else If FForced Then
     Add(aKey, aValue)
   Else
-    Error('SetMatch', 'Unable to set the value for the specified key.');
+    RaiseError('SetMatch', 'Unable to set the value for the specified key.');
 End;  
 
 

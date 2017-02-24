@@ -37,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections,
+  SysUtils, Classes, Generics.Collections, System.NetEncoding,
   AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvStringMatches, AdvStringLists, AdvGenerics,
   DateAndTime, DateSupport, EncodeSupport, XMLBuilder, EncdDecd, DecimalSupport;
 
@@ -282,7 +282,7 @@ type
     procedure dropEmpty;
     function equalsDeep(other : TFHIRObject) : boolean; virtual;
     function equalsShallow(other : TFHIRObject) : boolean; virtual;
-  published
+  public
     {@member comments
       comments from the XML stream. No support for comments in JSON
     }
@@ -324,7 +324,7 @@ type
     Property ObjByIndex[index : Integer] : TFHIRObject read GetItemN; default;
     Property Tags[name : String] : String read getTags write SetTags;
     function ToString : String; override;
-    function new : TFHIRObject; overload;
+    function new : TFHIRObject; reintroduce; overload; virtual;
   end;
 
   TFHIRObjectText = class (TFHIRObject)
@@ -417,7 +417,7 @@ type
 
   TFHIRSelectionList = class (TAdvList<TFHIRSelection>)
   public
-    Constructor Create; overload;
+    Constructor Create; overload; override;
     Constructor Create(focus : TFHIRObject); overload;
     Constructor Create(parent : TFHIRObject; name : String; focus : TFHIRObject); overload;
     function Link : TFHIRSelectionList; overload;

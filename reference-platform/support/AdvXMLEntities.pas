@@ -836,7 +836,7 @@ Procedure TAdvXMLElement.SetElementType(Const Value : TAdvXMLElementType);
 Begin
   If Value <> FElementType Then
   Begin
-    Assert(Condition(Value <> AdvXMLElementTypeUnknown, 'SetElementType', 'ElementType must not be unknown'));
+    Assert(CheckCondition(Value <> AdvXMLElementTypeUnknown, 'SetElementType', 'ElementType must not be unknown'));
     FElementType := Value;
     Clear;
   End;
@@ -857,98 +857,98 @@ End;
 
 Function TAdvXMLElement.HasNamespace : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
 Function TAdvXMLElement.HasName : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
 Function TAdvXMLElement.HasId : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
 Function TAdvXMLElement.HasChildren : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
 Function TAdvXMLElement.HasAttributes : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType = AdvXMLElementTypeNode;
 End;
 
 
 Function TAdvXMLElement.HasContent : Boolean;
 Begin
-  Assert(Condition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
+  Assert(CheckCondition(FElementType <> AdvXMLElementTypeUnknown, 'GetNamespace', 'Element has no type assigned'));
   Result := FElementType In [AdvXMLElementTypeText, AdvXMLElementTypeComment];
 End;
 
 
 Function TAdvXMLElement.GetNamespace : String;
 Begin
-  Assert(Condition(HasNamespace, 'GetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
+  Assert(CheckCondition(HasNamespace, 'GetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
   Result := FNamespace;
 End;
 
 
 Procedure TAdvXMLElement.SetNamespace(Const Value : String);
 Begin
-  Assert(Condition(HasNamespace, 'SetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
+  Assert(CheckCondition(HasNamespace, 'SetNamespace', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Namespace'])));
   FNamespace := Value;
 End;
 
 
 Function TAdvXMLElement.GetName : String;
 Begin
-  Assert(Condition(HasName, 'GetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
+  Assert(CheckCondition(HasName, 'GetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
   Result := FName;
 End;
 
 
 Procedure TAdvXMLElement.SetName(Const Value : String);
 Begin
-  Assert(Condition(HasName, 'SetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
+  Assert(CheckCondition(HasName, 'SetName', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Name'])));
   FName := Value;
 End;
 
 
 Function TAdvXMLElement.GetId : String;
 Begin
-  Assert(Condition(HasId, 'GetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
+  Assert(CheckCondition(HasId, 'GetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
   Result := FId;
 End;
 
 
 Procedure TAdvXMLElement.SetId(Const Value : String);
 Begin
-  Assert(Condition(HasId, 'SetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
+  Assert(CheckCondition(HasId, 'SetId', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Id'])));
   FId := Value;
 End;
 
 
 Function TAdvXMLElement.GetChildren : TAdvXMLElementList;
 Begin
-  Assert(Condition(HasChildren, 'GetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
+  Assert(CheckCondition(HasChildren, 'GetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
   Result := FChildrenElementList;
 End;
 
 
 Procedure TAdvXMLElement.SetChildren(Const Value : TAdvXMLElementList);
 Begin
-  Assert(Condition(HasChildren, 'SetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
+  Assert(CheckCondition(HasChildren, 'SetChildren', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Children'])));
 
   FChildrenElementList.Free;
   FChildrenElementList := Value;
@@ -957,14 +957,14 @@ End;
 
 Function TAdvXMLElement.GetAttributes : TAdvXMLAttributeList;
 Begin
-  Assert(Condition(HasAttributes, 'GetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
+  Assert(CheckCondition(HasAttributes, 'GetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
   Result := FAttributeList;
 End;
 
 
 Procedure TAdvXMLElement.SetAttributes(Const Value : TAdvXMLAttributeList);
 Begin
-  Assert(Condition(HasAttributes, 'SetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
+  Assert(CheckCondition(HasAttributes, 'SetAttributes', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Attributes'])));
   FAttributeList.Free;
   FAttributeList := Value;
 End;
@@ -989,7 +989,7 @@ End;
 
 Procedure TAdvXMLElement.SetContent(Const Value : String);
 Begin
-  Assert(Condition(HasContent, 'SetContent', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Content'])));
+  Assert(CheckCondition(HasContent, 'SetContent', StringFormat('Element of Type %s does not have property %s', [NAMES_ADVXMLELEMENTTYPE[FElementType], 'Content'])));
   FContent := Value;
 End;
 
@@ -1473,7 +1473,7 @@ Begin
   iEntryIndex := FEntryList.IndexByKey(sPrefix);
 
   If iEntryIndex < 0 Then
-    Error('NamespaceOfPrefix', StringFormat('The namespace prefix ''%s'' has not beed defined.', [sPrefix]));
+    RaiseError('NamespaceOfPrefix', StringFormat('The namespace prefix ''%s'' has not beed defined.', [sPrefix]));
 
   Result := FEntryList[iEntryIndex].Value;
 End;

@@ -43,7 +43,7 @@ certificate you nominate
 }
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.NetEncoding,
   IdHashSHA, IdGlobal,
   Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom,
   BytesSupport, StringSupport, EncodeSupport, EncdDecd,

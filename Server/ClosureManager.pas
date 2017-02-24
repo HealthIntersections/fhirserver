@@ -166,6 +166,7 @@ var
   element, e : TFhirConceptMapGroupElement;
   target, t : TFhirConceptMapGroupElementTarget;
 begin
+  group := nil;
   matches := TAdvList<TSubsumptionMatch>.create;
   try
     conn.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(FKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';

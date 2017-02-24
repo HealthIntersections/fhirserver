@@ -392,7 +392,7 @@ procedure TAdvObjectList.AddAll(oList: TAdvObjectList);
 var
   iIndex: integer;
 begin
-  Assert(Condition(oList <> Self, 'AddAll',
+  Assert(CheckCondition(oList <> Self, 'AddAll',
     'Cannot addall items from a list to itself.'));
 
   if (oList <> nil) then
@@ -417,7 +417,7 @@ begin
   Assert(ValidateItem('DeleteBy', oValue, 'oValue'));
 
   if not Find(oValue, iIndex, aCompare) then
-    Error('DeleteBy', 'Object not found in list.');
+    RaiseError('DeleteBy', 'Object not found in list.');
 
   DeleteByIndex(iIndex);
 end;
@@ -580,7 +580,7 @@ begin
     oValue.Free; // free ignored object
 
     if IsPreventDuplicates then
-      Error('Add', 'Object already exists in list.');
+      RaiseError('Add', 'Object already exists in list.');
   end
   else
   begin
@@ -597,7 +597,7 @@ end;
 procedure TAdvObjectList.Insert(iIndex: integer; oValue: TAdvObject);
 begin
   Assert(ValidateItem('Insert', oValue, 'oValue'));
-  Assert(Condition(not IsSorted or (Find(oValue) = iIndex), 'Insert',
+  Assert(CheckCondition(not IsSorted or (Find(oValue) = iIndex), 'Insert',
     'Cannot insert into a sorted list unless the index is correct.'));
   Assert(Insertable('Insert', oValue));
 
@@ -637,7 +637,7 @@ begin
   iIndex := IndexByClass(aClass);
 
   if not ExistsByIndex(iIndex) then
-    Error('DeleteByClass', StringFormat('Object of class ''%s'' not found in list.',
+    RaiseError('DeleteByClass', StringFormat('Object of class ''%s'' not found in list.',
       [aClass.ClassName]));
 
   DeleteByIndex(iIndex);
@@ -697,7 +697,7 @@ procedure TAdvObjectList.Move(iSource, iTarget: integer);
 var
   oObject: TAdvObject;
 begin
-  Assert(Condition(iSource <> iTarget, 'Move', 'Can''t move the same index.'));
+  Assert(CheckCondition(iSource <> iTarget, 'Move', 'Can''t move the same index.'));
 
   oObject := ObjectByIndex[iSource].Link;
   try
@@ -742,7 +742,7 @@ end;
 
 procedure TAdvObjectList.SetItemClass(const Value: TAdvObjectClass);
 begin
-  Assert(Condition(Count = 0, 'SetItemClass',
+  Assert(CheckCondition(Count = 0, 'SetItemClass',
     'Cannot change ItemClass once objects are present in the list.'));
 
   FItemClass := Value;
@@ -962,7 +962,7 @@ end;
 procedure TAdvObjectList.ConsumeIterator(oIterator: TAdvObjectListIterator);
 begin
   Assert(Invariants('ConsumeIterator', oIterator, IteratorClass, 'oIterator'));
-  Assert(Condition(oIterator.List = Self, 'ConsumeIterator',
+  Assert(CheckCondition(oIterator.List = Self, 'ConsumeIterator',
     'Iterator was not produced by this list.'));
 
   oIterator.Free;
@@ -1053,7 +1053,7 @@ end;
 
 function TAdvObjectListIterator.Current: TAdvObject;
 begin
-  Assert(Condition(not FDeleted, 'Current', 'Current element has been deleted'));
+  Assert(CheckCondition(not FDeleted, 'Current', 'Current element has been deleted'));
 
   Result := List[FIndex];
 end;
@@ -1067,7 +1067,7 @@ end;
 
 procedure TAdvObjectListIterator.Delete;
 begin
-  Assert(Condition(not FDeleted, 'Delete', 'Current element has already been deleted'));
+  Assert(CheckCondition(not FDeleted, 'Delete', 'Current element has already been deleted'));
 
   List.DeleteByIndex(FIndex);
   FDeleted := True;

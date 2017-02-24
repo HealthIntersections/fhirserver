@@ -363,7 +363,7 @@ Type
       FBuilder : TAdvBytesBuilder;
     Public
       Function GetMembers(iIndex : Cardinal) : TSnomedReferenceSetMemberArray;
-      Function GetMemberCount(iIndex : Cardinal) : integer;
+      Function GetMemberCount(iIndex : Cardinal) : cardinal;
 
       Procedure StartBuild;
       Function AddMembers(ids : boolean; Const a : TSnomedReferenceSetMemberArray) : Cardinal;
@@ -506,10 +506,6 @@ operations
     procedure renderExpr(b : TStringBuilder; expr : TSnomedConcept; option : TSnomedServicesRenderOption); overload;
     procedure renderExpr(b : TStringBuilder; expr : TSnomedRefinement; option : TSnomedServicesRenderOption); overload;
 
-    function debugExpr(expr : TSnomedExpression) : String; overload;
-    function debugExpr(expr : TSnomedConcept) : String; overload;
-    function debugExpr(expr : TSnomedRefinement) : String; overload;
-
     procedure displayExpr(b : TStringBuilder; expr : TSnomedExpression); overload;
     procedure displayExpr(b : TStringBuilder; expr : TSnomedConcept); overload;
     procedure displayExpr(b : TStringBuilder; expr : TSnomedRefinement); overload;
@@ -611,7 +607,7 @@ operations
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
@@ -621,7 +617,7 @@ operations
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function buildValueSet(url : String) : TFhirValueSet;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
@@ -1348,7 +1344,6 @@ function TSnomedServices.RefSetCount: Cardinal;
 var
   i : integer;
   iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
-  ids : boolean;
 begin
   result := RefSetIndex.Count;
   for i := 0 to RefSetIndex.Count - 1 do
@@ -1785,9 +1780,7 @@ var
   iInt : integer;
   date : TSnomedDate;
   aMembers : TSnomedReferenceSetMemberArray;
-  iList : TRefSetMemberEntryArray;
   active : boolean;
-  v : String;
 begin
   SetLength(aMembers, 0);
   result := '';
@@ -1951,7 +1944,7 @@ var
   iLoop : Integer;
   iid : UInt64;
   iString, iDummy, module, valueses, refsets, kind, caps : Cardinal;
-  iFlag, lang : Byte;
+  lang : Byte;
   date : TSnomedDate;
   iList, values : TCardinalArray;
   fsn, v, d : String;
@@ -2789,13 +2782,15 @@ function TSnomedReferenceSetMembers.AddMembers(ids : boolean; const a: TSnomedRe
 var
   iLoop : Integer;
   b : byte;
+  l : cardinal;
 Begin
   result := FBuilder.Length;
   if (ids) then
     b := 1
   else
     b := 0;
-  FBuilder.AddCardinal(length(a));
+  l := length(a);
+  FBuilder.AddCardinal(l);
   FBuilder.Append(b);
   for iLoop := Low(a) to High(a) Do
   begin
@@ -2818,7 +2813,7 @@ begin
   FBuilder.Free;
 end;
 
-function TSnomedReferenceSetMembers.GetMemberCount(iIndex : Cardinal) : integer;
+function TSnomedReferenceSetMembers.GetMemberCount(iIndex : Cardinal) : cardinal;
 begin
   if iIndex = MAGIC_NO_CHILDREN then
     result := 0
@@ -3205,7 +3200,6 @@ var
   {$ENDIF}
   did : UInt64;
   exp : TSnomedExpression;
-  s : String;
 begin
   if TSnomedExpressionContext(ctxt).Expression.isSimple then
   begin
@@ -3443,7 +3437,7 @@ begin
   result := (flags and MASK_CONCEPT_PRIMITIVE > 0);
 end;
 
-function TSnomedServices.locate(code: String): TCodeSystemProviderContext;
+function TSnomedServices.locate(code: String; var message : String): TCodeSystemProviderContext;
 var
   iId : UInt64;
   index : cardinal;
@@ -3554,7 +3548,7 @@ begin
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).descendants);
 end;
 
-function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+function TSnomedServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 begin
 //  result := TSnomedFilterContext(ctxt).Members[;
   result := nil;
@@ -3711,17 +3705,14 @@ end;
 procedure TSnomedServices.createDefinedExpr(reference: Cardinal; exp: TSnomedExpression; ancestor : boolean);
 var
   c, r : Cardinal;
-  parents : TCardinalArray;
   did : UInt64;
   iSource, iTarget, iType, kind, module, modifier : Cardinal;
   date : word;
   Group : integer;
-  Flags : Byte;
   Active, Defining : boolean;
   ref : TSnomedRefinement;
   groups : TAdvMap<TSnomedRefinementGroup>;
   grp : TSnomedRefinementGroup;
-  i : integer;
 begin
   if isPrimitive(reference) then
   begin
@@ -3806,38 +3797,37 @@ begin
   end;
 end;
 
-function TSnomedServices.debugExpr(expr: TSnomedConcept): String;
-var
-  b : TStringBuilder;
-begin
-  b := TStringBuilder.create;
-  try
-    renderExpr(b, expr, sroFillMissing);
-    result := b.ToString;
-  finally
-    b.free;
-  end;
-end;
-
-function TSnomedServices.debugExpr(expr: TSnomedRefinement): String;
-var
-  b : TStringBuilder;
-begin
-  b := TStringBuilder.create;
-  try
-    renderExpr(b, expr, sroFillMissing);
-    result := b.ToString;
-  finally
-    b.free;
-  end;
-end;
+//function TSnomedServices.debugExpr(expr: TSnomedConcept): String;
+//var
+//  b : TStringBuilder;
+//begin
+//  b := TStringBuilder.create;
+//  try
+//    renderExpr(b, expr, sroFillMissing);
+//    result := b.ToString;
+//  finally
+//    b.free;
+//  end;
+//end;
+//
+//function TSnomedServices.debugExpr(expr: TSnomedRefinement): String;
+//var
+//  b : TStringBuilder;
+//begin
+//  b := TStringBuilder.create;
+//  try
+//    renderExpr(b, expr, sroFillMissing);
+//    result := b.ToString;
+//  finally
+//    b.free;
+//  end;
+//end;
 
 procedure TSnomedServices.rationaliseExpr(exp: TSnomedExpression);
 var
   group, grp1, grp2 : TSnomedRefinementGroup;
   c1, c2 : TSnomedConcept;
   i, j : integer;
-  msg : String;
 begin
   i := 0;
   while i < exp.concepts.Count do
@@ -3924,7 +3914,6 @@ var
   targets : TArray<boolean>;
   t : integer;
   c : cardinal;
-  ok : boolean;
   ref1, ref2 : TSnomedRefinement;
   function matchIndex(c : cardinal) : integer;
   var
@@ -4086,6 +4075,7 @@ var
 begin
   b := TStringBuilder.Create;
   try
+    ws := false;
     for ch in s do
       if not ch.IsWhiteSpace then
       begin
@@ -4395,7 +4385,6 @@ end;
 function TSnomedServices.renderExpression(source : TSnomedExpression; option : TSnomedServicesRenderOption): String;
 var
   b : TStringBuilder;
-  prsr : TSnomedServices;
 begin
   b := TStringBuilder.Create;
   try
@@ -4444,18 +4433,18 @@ begin
   end;
 end;
 
-function TSnomedServices.debugExpr(expr: TSnomedExpression) : String;
-var
-  b : TStringBuilder;
-begin
-  b := TStringBuilder.create;
-  try
-    renderExpr(b, expr, sroFillMissing);
-    result := b.ToString;
-  finally
-    b.free;
-  end;
-end;
+//function TSnomedServices.debugExpr(expr: TSnomedExpression) : String;
+//var
+//  b : TStringBuilder;
+//begin
+//  b := TStringBuilder.create;
+//  try
+//    renderExpr(b, expr, sroFillMissing);
+//    result := b.ToString;
+//  finally
+//    b.free;
+//  end;
+//end;
 
 
 procedure TSnomedServices.RenderExpr(b : TStringBuilder; expr : TSnomedConcept; option : TSnomedServicesRenderOption);

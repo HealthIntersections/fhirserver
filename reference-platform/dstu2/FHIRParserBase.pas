@@ -419,7 +419,7 @@ begin
       if iDom.parseError.url <> '' Then
         sError := sError + '. url="'+ iDom.parseError.url+'"';
       sError := sError + '. source = "'+ iDom.parseError.srcText+'"';
-      Error('Parse', sError);
+      RaiseError('Parse', sError);
     End;
     Result := iDom;
   end;

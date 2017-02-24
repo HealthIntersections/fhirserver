@@ -273,7 +273,7 @@ Begin
   If Not IsAllowDuplicates And Find(sValue, Result) Then
   Begin { If }
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Item already exists in list (%s)', [sValue]));
+      RaiseError('Add', StringFormat('Item already exists in list (%s)', [sValue]));
   End   { If }
   Else
   Begin { Else }
@@ -316,7 +316,7 @@ Var
   iIndex : Integer;
 Begin
   If Not Find(sValue, iIndex) Then
-    Error('DeleteByValue', StringFormat('''%s'' not found in list', [sValue]));
+    RaiseError('DeleteByValue', StringFormat('''%s'' not found in list', [sValue]));
 
   DeleteByIndex(iIndex);
 End;

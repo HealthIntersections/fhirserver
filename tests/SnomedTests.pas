@@ -231,5 +231,5 @@ end;
 
 
 initialization
-  TDUnitX.RegisterTestFixture(TSnomedTests);
+//  TDUnitX.RegisterTestFixture(TSnomedTests);
 end.

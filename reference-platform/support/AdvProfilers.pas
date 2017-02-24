@@ -250,7 +250,7 @@ Procedure TAdvProfiler.Add(oObject : TObject);
 Var
   pNew : PAdvProfileItem;
 Begin 
-  Assert(Condition(Not Exists(oObject), 'Add', 'Object reference already registered for construction (possibly missing call to inherited in Destroy and the reference has been reused).'));
+  Assert(CheckCondition(Not Exists(oObject), 'Add', 'Object reference already registered for construction (possibly missing call to inherited in Destroy and the reference has been reused).'));
 
   If FCount >= FThreshold Then
     Rehash;
@@ -408,7 +408,7 @@ Begin
   pProfile := Find(oObject);
 
   If Not Assigned(pProfile) Then
-    Error('SetBreakpoint', 'Object is invalid or is not registered.');
+    RaiseError('SetBreakpoint', 'Object is invalid or is not registered.');
 
   pProfile^.Breakpoint := Value;
 End;  
@@ -431,7 +431,7 @@ Begin
   pProfile := Find(oObject);
 
   If Not Assigned(pProfile) Then
-    Error('SetPermanent', 'Object is invalid or is not registered.');
+    RaiseError('SetPermanent', 'Object is invalid or is not registered.');
 
   If pProfile^.Permanent <> Value Then
     pProfile^.Permanent := Value;
@@ -455,7 +455,7 @@ Begin
   pProfile := Find(oObject);
 
   If Not Assigned(pProfile) Then
-    Error('SetFrozen', 'Object is invalid or is not registered.');
+    RaiseError('SetFrozen', 'Object is invalid or is not registered.');
 
   pProfile^.Frozen := Value;
 End;  
@@ -555,7 +555,7 @@ End;
 
 Function TAdvProfilerIterator.Current : TObject;
 Begin 
-  Assert(Condition(Assigned(FCurrent), 'Current', 'Current pointer must be assigned.'));
+  Assert(CheckCondition(Assigned(FCurrent), 'Current', 'Current pointer must be assigned.'));
 
   Result := FCurrent^.Key;
 End;  

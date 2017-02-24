@@ -124,7 +124,7 @@ End;
 
 Procedure TAdvExclusiveStateCriticalSection.Unlock;
 Begin 
-  Assert(Condition(IsLockedToCurrentThread, 'Unlock', 'Cannot unlock as the critical section is not locked to the current thread.'));
+  Assert(CheckCondition(IsLockedToCurrentThread, 'Unlock', 'Cannot unlock as the critical section is not locked to the current thread.'));
 
   Leave;
 

@@ -67,7 +67,8 @@ Type
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; lang : String):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
-    function locate(code : String) : TCodeSystemProviderContext; virtual; abstract;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
+    function locate(code : String) : TCodeSystemProviderContext; overload; virtual;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; virtual; abstract;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; virtual;
@@ -82,7 +83,8 @@ Type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; virtual; abstract;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
@@ -133,6 +135,13 @@ begin
   // nothing here
 end;
 
+function TCodeSystemProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+var
+  msg : String;
+begin
+  result := filterLocate(ctxt, code, msg);
+end;
+
 procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
@@ -151,6 +160,13 @@ end;
 function TCodeSystemProvider.Link: TCodeSystemProvider;
 begin
   result := TCodeSystemProvider(inherited link);
+end;
+
+function TCodeSystemProvider.locate(code: String): TCodeSystemProviderContext;
+var
+  msg : String;
+begin
+  result := locate(code, msg);
 end;
 
 function TCodeSystemProvider.name(context: TCodeSystemProviderContext): String;

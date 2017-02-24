@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.117
+AppVerName=1.0.118
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.117
+OutputBaseFilename=fhirserver3-1.0.118
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -65,7 +65,7 @@ Name: svcInst;   Description: "Install FHIR Server as a Service"
 Name: svcInst\start;   Description: "Start FHIR Server after Installation"
 Name: firewall;  Description: "Allow FHIR Server through the Firewall"
 Name: sct; Description: "Import SNOMED CT (Requires RF2 Snapshot, ~1hr)"; Flags: unchecked
-Name: db; Description: "Initialize Data Base"
+Name: db; Description: "Initialize Data Base";                            Flags: checkablealone
 Name: db\pop; Description: "Populate Data Base (~30min)"
 
 [Files]
@@ -106,6 +106,7 @@ Source: "C:\work\fhirserver\install\load.ini";                                  
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\ProgramData\FHIRServer\loinc_256.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
+Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
 Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
@@ -118,6 +119,7 @@ Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{com
 Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"
+Filename: "{app}\fhirserver.ini"; Section: "lang";  Key: "source";  String: "{app}\sql\lang.txt"
 
 [Icons]
 Name: "{group}\FHIR Server (Desktop Mode)";  Filename: "{app}\FHIRServer.exe";     Parameters: "-debug";  WorkingDir: "{app}"    

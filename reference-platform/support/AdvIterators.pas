@@ -159,7 +159,7 @@ End;
 
 Function TAdvObjectIterator.Current : TAdvObject;
 Begin
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := Nil;
 End;  
@@ -167,7 +167,7 @@ End;
 
 Function TAdvStringIterator.Current : String;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
   
   Result := '';
 End;  
@@ -175,7 +175,7 @@ End;
 
 Function TAdvIntegerIterator.Current : Integer;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
   
   Result := 0;
 End;  
@@ -183,7 +183,7 @@ End;
 
 Function TAdvRealIterator.Current : Real;
 Begin
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := 0;
 End;
@@ -191,7 +191,7 @@ End;
 
 Function TAdvExtendedIterator.Current : Extended;
 Begin
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := 0;
 End;
@@ -199,7 +199,7 @@ End;
 
 Function TAdvBooleanIterator.Current : Boolean;
 Begin
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
   
   Result := False;
 End;  
@@ -207,15 +207,15 @@ End;
 
 Function TAdvLargeIntegerIterator.Current : Int64;
 Begin 
-  Error('Current', 'Current not implemented.');
-  
+  RaiseError('Current', 'Current not implemented.');
+
   Result := 0;
-End;  
+End;
 
 
 Function TAdvPointerIterator.Current : Pointer;
-Begin 
-  Error('Current', 'Current not implemented.');
+Begin
+  RaiseError('Current', 'Current not implemented.');
   
   Result := Nil;
 End;  
@@ -223,7 +223,7 @@ End;
 
 Function TAdvObjectClassIterator.Current : TClass;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
   
   Result := Nil;
 End;  
@@ -231,7 +231,7 @@ End;
 
 Function TAdvDateTimeIterator.Current : TDateTime;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := 0;
 End;  
@@ -239,7 +239,7 @@ End;
 
 Function TAdvDurationIterator.Current : TDuration;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := 0;
 End;  
@@ -247,7 +247,7 @@ End;
 
 Function TAdvCurrencyIterator.Current : TCurrency;
 Begin 
-  Error('Current', 'Current not implemented.');
+  RaiseError('Current', 'Current not implemented.');
 
   Result := 0;
 End;  

@@ -1740,7 +1740,7 @@ end;
 }
 function TFHIRValidator.sliceMatches(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; slice, ed: TFHIRElementDefinition; profile: TFHIRStructureDefinition): boolean;
 var
-  s: TFhirString;
+  s: TFhirElementDefinitionSlicingDiscriminator;
   discriminator: String;
   criteria: TFHIRElementDefinition;
   value: TFhirElement;
@@ -1751,7 +1751,7 @@ begin
   else
     for s in slice.Slicing.DiscriminatorList do
     begin
-      discriminator := s.value;
+      discriminator := s.path;
       criteria := getCriteriaForDiscriminator(ctxt, path, ed, discriminator, profile);
       if (discriminator = 'url') and criteria.path.endsWith('xtension.url') then
       begin

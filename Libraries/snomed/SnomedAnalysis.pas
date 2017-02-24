@@ -77,7 +77,7 @@ type
 
     procedure assess(b : TAdvStringBuilder; id : String);
     function getProps(id, prop : cardinal) : TPropertyArray;
-    function findRelationshipInGroup(concept, group, siblingtype : cardinal; relationship : TSnomedRelationship) : boolean;
+    function findRelationshipInGroup(concept: cardinal; group : integer; siblingtype: cardinal; relationship : TSnomedRelationship) : boolean;
     procedure listChildren(id : cardinal; list : TStringList);
     function prepSubColumn(json : TJsonObject) : TColumnDetail;
     procedure processSubColumn(json : TJsonObject; tbl : TAdvStringBuilder; det : TColumnDetail; child, relid, target, group : cardinal);
@@ -261,7 +261,7 @@ begin
   inherited;
 end;
 
-function TSnomedAnalysis.findRelationshipInGroup(concept, group, siblingtype: cardinal; relationship: TSnomedRelationship): boolean;
+function TSnomedAnalysis.findRelationshipInGroup(concept: cardinal; group : integer; siblingtype: cardinal; relationship: TSnomedRelationship): boolean;
 var
   outboundIndex, o : cardinal;
   outbounds : TCardinalArray;

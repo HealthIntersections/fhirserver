@@ -14,7 +14,7 @@ uses
   KDBManager, KDBOdbcExpress,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices, ACIRServices,
-  CountryCodeServices, AreaCodeServices,
+  CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
   FHIRValueSetChecker, ClosureManager, ServerAdaptations,
   TerminologyServerStore, SnomedExpressions;
 
@@ -130,11 +130,15 @@ begin
   Cvx := TCvxServices.Create(Fdb.Link);
   ACIR := TACIRServices.Create;
   CountryCode := TCountryCodeServices.Create(Fdb.Link);
-  AreaCode := TAreaCodeServices.Create(Fdb);
+  AreaCode := TAreaCodeServices.Create();
   p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  p := TIETFLanguageCodeServices.Create(ini.ReadString('lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));
+  ProviderClasses.Add(p.system(nil), p);
+  ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   logt(' - done');
+
 
   if ini.ReadString('RxNorm', 'database', '') <> '' then
   begin
@@ -937,8 +941,8 @@ begin
               result.AddParameter('result', false);
             end;
             result.AddParameter('equivalence', map.equivalenceElement.Link);
-            if (map.commentsElement <> nil) then
-              result.AddParameter('message', map.commentsElement.Link);
+            if (map.{$IFDEF FHIR2}commentsElement{$ELSE}commentElement{$ENDIF} <> nil) then
+              result.AddParameter('message', map.{$IFDEF FHIR2}commentsElement{$ELSE}commentElement{$ENDIF}.Link);
             exit;
           end;
         end;
@@ -1303,8 +1307,9 @@ begin
         result.AddParameter('equivalence', TFHIRCode.Create('equivalent'))
       else
         result.AddParameter('equivalence', TFHIRCode.Create(map.equivalenceElement.value));
-      if (map.commentsElement <> nil) then
-        result.AddParameter('message', map.commentsElement.Link);
+      if (map.{$IFDEF FHIR2}commentsElement{$ELSE}commentElement{$ENDIF} <> nil) then
+        result.AddParameter('message', map.{$IFDEF FHIR2}commentsElement{$ELSE}commentElement{$ENDIF}
+        .Link);
       end;
 
       if not found then

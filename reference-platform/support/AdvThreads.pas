@@ -187,7 +187,7 @@ End;
 Procedure TAdvThread.Open;
 Begin
   If FActive Then
-    Error('Open', 'Thread is already active.');
+    RaiseError('Open', 'Thread is already active.');
 
   FActive := True;
 
@@ -199,7 +199,7 @@ Begin
   Begin
     Invalidate;
     FActive := False;
-    Error('Open', ErrorAsString);
+    RaiseError('Open', ErrorAsString);
   End;
 End;
 
@@ -221,7 +221,7 @@ Begin
     Else
     Begin
       If Not CloseHandle(FHandle) Then
-        Error('Kill-CloseHandle', ErrorAsString);
+        RaiseError('Kill-CloseHandle', ErrorAsString);
 
       Invalidate;
     End;
@@ -287,10 +287,10 @@ End;
 {
 Procedure TAdvThread.SetProcessor(iProcessor : Cardinal);
 Begin
-  Error('SetProcessor', 'Unable to set the preferrer processor because the operation is not supported.');
+  RaiseError('SetProcessor', 'Unable to set the preferrer processor because the operation is not supported.');
   // Static link to SetThreadIdealProcessor causes software to fail on Windows 95.
   If Not SetThreadIdealProcessor(FHandle, iProcessor) Then
-    Error('SetProcessor', StringFormat('Unable to set the preferred processor [%s]', [ErrorAsString]));
+    RaiseError('SetProcessor', StringFormat('Unable to set the preferred processor [%s]', [ErrorAsString]));
 End;
 }
 

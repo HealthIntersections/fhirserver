@@ -87,7 +87,7 @@ Type
       Procedure AttributeExclude(Const aAttribute : TAdvFileAttribute); 
       Function HasAttribute(Const aAttribute : TAdvFileAttribute) : Boolean;
 
-      Procedure Error(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
+      Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
 
       Function ErrorClass : EAdvExceptionClass; Override;
 
@@ -182,9 +182,9 @@ Begin
 End;  
 
 
-Procedure TAdvFile.Error(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
-Begin 
-  Inherited Error(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FName]));
+Procedure TAdvFile.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
+Begin
+  Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FName]));
 End;  
 
 
@@ -231,7 +231,7 @@ End;
 Procedure TAdvFile.Open;
 Begin
   If Not TryOpen Then
-    Error('Open', StringFormat('Unable to open file [%s]', [ErrorAsString]));
+    RaiseError('Open', StringFormat('Unable to open file [%s]', [ErrorAsString]));
 End;
 
 
@@ -336,7 +336,7 @@ Begin
   Receive(aBuffer, iCount, iActual);
 
   If (iActual < iCount) Then
-    Error('Read', 'Unable to read past end of file');
+    RaiseError('Read', 'Unable to read past end of file');
 End;  
 
 
@@ -347,21 +347,21 @@ Begin
   Send(aBuffer, iCount, iActual);
 
   If (iActual < iCount) Then
-    Error('Read', 'Unable to write the entire buffer');
+    RaiseError('Read', 'Unable to write the entire buffer');
 End;  
 
 
 Procedure TAdvFile.Receive(Var aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin 
   If Not ReadFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
-    Error('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
+    RaiseError('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
 End;  
 
 
 Procedure TAdvFile.Send(Const aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin 
   If Not WriteFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
-    Error('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
+    RaiseError('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
 End;  
 
 
@@ -374,7 +374,7 @@ Begin
   pFinish := PLargeInteger(@iFinish);
 
   If Not LockFile(FHandle.Value, pStart^.Low, pStart^.High, pFinish^.Low, pFinish^.High) Then
-    Error('Lock', StringFormat('Unable to lock the specified region [%s]', [ErrorAsString]));
+    RaiseError('Lock', StringFormat('Unable to lock the specified region [%s]', [ErrorAsString]));
 End;  
 
 
@@ -387,7 +387,7 @@ Begin
   pFinish :=PLargeInteger(@iFinish);
 
   If Not UnlockFile(FHandle.Value, pStart^.Low, pStart^.High, pFinish^.Low, pFinish^.High) Then
-    Error('Unlock', StringFormat('Unable to unlock the specified region [%s]', [ErrorAsString]));
+    RaiseError('Unlock', StringFormat('Unable to unlock the specified region [%s]', [ErrorAsString]));
 End;  
 
 
@@ -404,42 +404,42 @@ End;
 Function TAdvFile.GetCreated : TAdvFileTime;
 Begin 
   If Not GetFileTime(FHandle.Value, @Result, Nil, Nil) Then
-    Error('GetCreated', ErrorAsString);
+    RaiseError('GetCreated', ErrorAsString);
 End;
 
 
 Procedure TAdvFile.SetCreated(Const aValue : TAdvFileTime);
 Begin
   If Not SetFileTime(FHandle.Value, @aValue, Nil, Nil) Then
-    Error('SetCreated', ErrorAsString);
+    RaiseError('SetCreated', ErrorAsString);
 End;
 
 
 Function TAdvFile.GetModified : TAdvFileTime;
 Begin
   If Not GetFileTime(FHandle.Value, Nil, Nil, @Result) Then
-    Error('GetModified', ErrorAsString);
+    RaiseError('GetModified', ErrorAsString);
 End;
 
 
 Procedure TAdvFile.SetModified(Const aValue : TAdvFileTime);
 Begin
   If Not SetFileTime(FHandle.Value, Nil, Nil, @aValue) Then
-    Error('SetModified', ErrorAsString);
+    RaiseError('SetModified', ErrorAsString);
 End;
 
 
 Function TAdvFile.GetAccessed : TAdvFileTime;
 Begin
   If Not GetFileTime(FHandle.Value, Nil, @Result, Nil) Then
-    Error('GetAccessed', ErrorAsString);
+    RaiseError('GetAccessed', ErrorAsString);
 End;
 
 
 Procedure TAdvFile.SetAccessed(Const aValue : TAdvFileTime);
 Begin
   If Not SetFileTime(FHandle.Value, Nil, @aValue, Nil) Then
-    Error('SetAccessed', ErrorAsString);
+    RaiseError('SetAccessed', ErrorAsString);
 End;  
 
 
@@ -447,7 +447,7 @@ Procedure TAdvFile.SetName(Const Value : String);
 Begin 
   If Value <> FName Then
   Begin 
-    Assert(Condition(Not Active, 'SetName', 'Cannot set the name when the file is open.'));
+    Assert(CheckCondition(Not Active, 'SetName', 'Cannot set the name when the file is open.'));
 
     FName := Value;
   End;
@@ -462,7 +462,7 @@ Begin
   pResult^.Low := GetFileSize(FHandle.Value, @pResult^.High);
 
   If pResult^.Low = FileHandleInvalid.Value Then
-    Error('GetSize', StringFormat('Unable to get the size of the file [%s]', [ErrorAsString]));
+    RaiseError('GetSize', StringFormat('Unable to get the size of the file [%s]', [ErrorAsString]));
 End;  
 
 
@@ -474,7 +474,7 @@ Begin
   Position := iValue;
 
   If Not SetEndOfFile(FHandle.Value) Then
-    Error('SetSize', StringFormat('Unable to set the size of the file [%s]', [ErrorAsString]));
+    RaiseError('SetSize', StringFormat('Unable to set the size of the file [%s]', [ErrorAsString]));
 
   Position := IntegerMin(iValue, iLast);
 End;  
@@ -491,7 +491,7 @@ Begin
   pResult^.Low := SetFilePointer(FHandle.Value, 0, @pResult^.High, FILE_CURRENT);
 
   If pResult^.Low = FileHandleInvalid.Value Then
-    Error('GetPosition', StringFormat('Unable to get the file position [%s]', [ErrorAsString]));
+    RaiseError('GetPosition', StringFormat('Unable to get the file position [%s]', [ErrorAsString]));
 End;  
 
 
@@ -504,7 +504,7 @@ Begin
   // 9x does not support SetFilePointerEx
   
   If SetFilePointer(FHandle.Value, pValue^.Low, @pValue^.High, FILE_BEGIN) = FileHandleInvalid.Value Then
-    Error('SetPosition', StringFormat('Unable to set the file position [%s]', [ErrorAsString]));
+    RaiseError('SetPosition', StringFormat('Unable to set the file position [%s]', [ErrorAsString]));
 End;  
 
 

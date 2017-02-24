@@ -168,7 +168,7 @@ Type
     function findEndOfElement(context : TFhirStructureDefinitionDifferential; cursor : integer) : integer; overload;
     function findEndOfElement(context : TFhirStructureDefinitionSnapshot; cursor : integer) : integer; overload;
     function orderMatches(diff, base : TFHIRBoolean) : boolean;
-    function discriiminatorMatches(diff, base : TFhirStringList) : boolean;
+    function discriiminatorMatches(diff, base : TFhirElementDefinitionSlicingDiscriminatorList) : boolean;
     function ruleMatches(diff, base : TFhirResourceSlicingRulesEnum) : boolean;
     function summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
     procedure updateFromSlicing(dst, src : TFhirElementDefinitionSlicing);
@@ -268,8 +268,8 @@ begin
       result.Definition := usage.Definition;
     if (usage.ShortElement <> nil) then
       result.Short := usage.Short;
-    if (usage.CommentsElement <> nil) then
-      result.Comments := usage.Comments;
+    if (usage.CommentElement <> nil) then
+      result.Comment := usage.Comment;
     if (usage.RequirementsElement <> nil) then
       result.Requirements := usage.Requirements;
     for s in usage.aliasList do
@@ -603,7 +603,7 @@ function TProfileUtilities.summariseSlicing(slice : TFhirElementDefinitionSlicin
 var
   b : TStringBuilder;
   first : boolean;
-  d : TFhirString;
+  d : TFhirElementDefinitionSlicingDiscriminator;
 begin
   b := TStringBuilder.Create;
   try
@@ -970,7 +970,7 @@ begin
   inherited;
 end;
 
-function TProfileUtilities.discriiminatorMatches(diff, base : TFhirStringList) : boolean;
+function TProfileUtilities.discriiminatorMatches(diff, base : TFhirElementDefinitionSlicingDiscriminatorList) : boolean;
 var
   i : integer;
 begin
@@ -982,7 +982,7 @@ begin
   begin
     result := true;
     for i := 0 to diff.Count - 1 do
-      if (diff[i].value <> base[i].value) then
+      if (diff[i].type_ <> base[i].type_) or (diff[i].path <> base[i].path)  then
         result := false;
   end;
 end;
@@ -1149,7 +1149,7 @@ begin
     begin
       base.Definition := 'An Extension';
       base.Short := 'Extension';
-      base.comments := '';
+      base.comment := '';
       base.requirements := '';
       base.aliasList.clear();
       base.mappingList.clear();
@@ -1177,16 +1177,16 @@ begin
         derived.DefinitionElement.Tags[DERIVATION_EQUALS] := 'true';
     end;
 
-    if (derived.CommentsElement <> nil) then
+    if (derived.CommentElement <> nil) then
     begin
-      if (derived.comments.startsWith('...')) then
-        base.comments := base.comments+#13#10+derived.comments.substring(3)
-      else if not compareDeep(derived.commentsElement, base.commentsElement, false) then
-        base.CommentsElement := derived.CommentsElement.clone()
+      if (derived.comment.startsWith('...')) then
+        base.comment := base.comment+#13#10+derived.comment.substring(3)
+      else if not compareDeep(derived.commentElement, base.commentElement, false) then
+        base.CommentElement := derived.CommentElement.clone()
       else if (trimDifferential) then
-        derived.CommentsElement := nil
+        derived.CommentElement := nil
       else
-        derived.CommentsElement.Tags[DERIVATION_EQUALS] := 'true';
+        derived.CommentElement.Tags[DERIVATION_EQUALS] := 'true';
     end;
 
     if (derived.RequirementsElement <> nil) then

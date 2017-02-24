@@ -288,7 +288,7 @@ Begin
     aValue.Free; // free ignored object
 
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Item already exists in list (%d=%x)', [aKey, Integer(aValue)]));
+      RaiseError('Add', StringFormat('Item already exists in list (%d=%x)', [aKey, Integer(aValue)]));
 
     // Result is the index of the existing key
   End
@@ -421,7 +421,7 @@ Begin
     Result := DefaultKey
   Else
   Begin
-    Error('GetKeyByValue', 'Could not find key by value.');
+    RaiseError('GetKeyByValue', 'Could not find key by value.');
     Result := 0;
   End;
 End;
@@ -439,7 +439,7 @@ Begin
     Result := DefaultValue
   Else
   Begin
-    Error('GetValueByKey', StringFormat('Unable to get the value for the specified key ''%d''.', [aKey]));
+    RaiseError('GetValueByKey', StringFormat('Unable to get the value for the specified key ''%d''.', [aKey]));
     Result := Nil;
   End;
 End;
@@ -458,7 +458,7 @@ Begin
   Else If FForced Then
     Add(aKey, aValue)
   Else
-    Error('SetValueByKey', 'Unable to set the value for the specified key.');
+    RaiseError('SetValueByKey', 'Unable to set the value for the specified key.');
 End;
 
 

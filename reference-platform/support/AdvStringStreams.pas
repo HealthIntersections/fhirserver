@@ -70,7 +70,7 @@ Implementation
 Procedure TAdvStringStream.Read(Var aBuffer; iCount: Cardinal);
 Begin
   If FIndex + iCount > Size Then
-    Error('Read', 'Unable to read past end of string.');
+    RaiseError('Read', 'Unable to read past end of string.');
 
   Move((PAnsiChar(FData) + FIndex)^, aBuffer, iCount);
   Inc(FIndex, iCount);

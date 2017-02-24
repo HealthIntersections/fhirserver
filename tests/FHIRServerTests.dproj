@@ -46,6 +46,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>FHIRServerTests</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
@@ -271,7 +272,6 @@
         <DCCReference Include="..\server\UniiServices.pas"/>
         <DCCReference Include="..\server\RxNormServices.pas"/>
         <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
-        <DCCReference Include="..\server\IETFLanguageCodeServices.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedAnalysis.pas"/>
         <DCCReference Include="..\server\AreaCodeServices.pas"/>
         <DCCReference Include="..\server\FHIRSubscriptionManager.pas"/>
@@ -330,6 +330,8 @@
         <DCCReference Include="..\reference-platform\dstu3\DifferenceEngine.pas"/>
         <DCCReference Include="..\Server\ACIRServices.pas"/>
         <DCCReference Include="..\Server\CvxServices.pas"/>
+        <DCCReference Include="IETFLangTests.pas"/>
+        <DCCReference Include="..\Server\IETFLanguageCodeServices.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

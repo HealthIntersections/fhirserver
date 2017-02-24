@@ -315,7 +315,7 @@ Begin
     aValue.Free; // free ignored object
 
     If IsPreventDuplicates Then
-      Error('Add', StringFormat('Item already exists in list (%s=%x)', [aKey, Integer(aValue)]));
+      RaiseError('Add', StringFormat('Item already exists in list (%s=%x)', [aKey, Integer(aValue)]));
   End
   Else
   Begin
@@ -437,7 +437,7 @@ Begin
   Else If FForced Then
     Add(aKey, aValue)
   Else
-    Error('SetValueByKey', StringFormat('Unable to set the value for the specified key ''%s''.', [aKey]));
+    RaiseError('SetValueByKey', StringFormat('Unable to set the value for the specified key ''%s''.', [aKey]));
 End;
 
 
@@ -606,7 +606,7 @@ Begin
   End
   Else
   Begin
-    Error('GetKeyByValue', StringFormat('Unable to get the key for the specified value ''%d''.', [Integer(aValue)]));
+    RaiseError('GetKeyByValue', StringFormat('Unable to get the key for the specified value ''%d''.', [Integer(aValue)]));
 
     Result := '';
   End;
@@ -627,7 +627,7 @@ Begin
   End
   Else
   Begin
-    Error('GetValueByKey', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
+    RaiseError('GetValueByKey', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
 
     Result := Nil;
   End;
@@ -638,7 +638,7 @@ Procedure TAdvStringObjectMatch.AddAll(oSourceStringObjectMatch: TAdvStringObjec
 Var
   iIndex : Integer;
 Begin
-  Assert(Condition(oSourceStringObjectMatch <> Self, 'AddAll', 'Cannot addall items from a list to itself.'));
+  Assert(CheckCondition(oSourceStringObjectMatch <> Self, 'AddAll', 'Cannot addall items from a list to itself.'));
 
   Capacity := IntegerMax(Count + oSourceStringObjectMatch.Count, Capacity);
   For iIndex := 0 To oSourceStringObjectMatch.Count - 1 Do
@@ -672,7 +672,7 @@ Begin
     Result := DefaultValue
   Else
   Begin
-    Error('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
+    RaiseError('GetMatch', StringFormat('Unable to get the value for the specified key ''%s''.', [aKey]));
     Result := Nil;
   End;
 End;
@@ -691,7 +691,7 @@ Begin
   Else If FForced Then
     Add(aKey, aValue)
   Else
-    Error('SetMatch', StringFormat('Unable to set the value for the specified key ''%s''.', [aKey]));
+    RaiseError('SetMatch', StringFormat('Unable to set the value for the specified key ''%s''.', [aKey]));
 End;
 
 Procedure TAdvStringObjectMatch.DeleteByKey(Const aKey: TAdvStringObjectMatchKey);

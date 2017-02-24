@@ -48,7 +48,7 @@ Type
       FField : String;
 
     Protected
-      Procedure Error(Const sMethod, sMessage : String); Override;
+      Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
       Function GetField : String; Virtual;
       Function SetField(Const sField : String) : TAdvFiler; Virtual;
@@ -150,9 +150,9 @@ Begin
 End;  
 
 
-Procedure TAdvFiler.Error(Const sMethod, sMessage: String);
+Procedure TAdvFiler.RaiseError(Const sMethod, sMessage: String);
 Begin
-  Error(EAdvFiler, sMethod, sMessage);
+  RaiseError(EAdvFiler, sMethod, sMessage);
 End;  
 
 

@@ -44,7 +44,7 @@ uses
   FHIRUtilities, FHIRSupport, FHIRProfileUtilities;
 
 Const
-  TYPE_EXTENSION = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-type';
+  TYPE_EXTENSION = 'http://hl7.org/fhir/StructureDefinition/questionnnaire-baseType';
   TYPE_REFERENCE = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-reference';
   FLYOVER_REFERENCE = 'http://www.healthintersections.com.au/fhir/StructureDefinition/questionnnaire-flyover';
   EXTENSION_FILTER_ONLY = 'http://www.healthintersections.com.au/fhir/StructureDefinition/expandNeedsFilter';
@@ -689,7 +689,7 @@ var
   ag : TFhirQuestionnaireResponseItem;
 begin
   group.LinkId := element.Path; // todo: this will be wrong when we start slicing
-  group.Text := element.comments;
+  group.Text := element.comment;
   group.SetExtensionString(FLYOVER_REFERENCE, element.definition);
   group.Required := element.Min > '0';
   group.Repeats := element.Max <> '1';
@@ -1069,8 +1069,8 @@ begin
     ag.Text := group.Text;
   end;
 
-  if element.comments <> '' then
-    group.setExtensionString(FLYOVER_REFERENCE, element.definition+' '+element.comments)
+  if element.comment <> '' then
+    group.setExtensionString(FLYOVER_REFERENCE, element.definition+' '+element.comment)
   else
     group.setExtensionString(FLYOVER_REFERENCE, element.definition);
 

@@ -413,7 +413,7 @@ End;
 Procedure TAdvWinInetClient.Check(ACondition : Boolean; Const ALocation, ADescription, aDetail : String; iError : Cardinal);
 Begin
   If Not ACondition Then
-    Error(ALocation, ADescription + ' ' + ErrorMessage(aDetail, iError));
+    RaiseError(ALocation, ADescription + ' ' + ErrorMessage(aDetail, iError));
 End;
 
 
@@ -730,7 +730,7 @@ Begin
   Else If sLeft = 'https' Then
     FSecure := True
   Else
-    Error('GetServerAddress', 'The protocol '+sLeft+' is not supported');
+    RaiseError('GetServerAddress', 'The protocol '+sLeft+' is not supported');
   iIndex := StringFind(sTemp, ['?', '/']);
   If iIndex = 0 Then
   Begin

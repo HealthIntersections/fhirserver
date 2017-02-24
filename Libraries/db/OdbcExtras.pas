@@ -98,8 +98,8 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaColumns }
@@ -127,8 +127,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   TSchemaIndex = class;
@@ -161,8 +161,8 @@ type
     destructor Destroy; override;
     procedure LoadIndex;
     procedure DropIndex;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaIndexes }
@@ -191,8 +191,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaTable }
@@ -222,8 +222,8 @@ type
     procedure DropTable;
     procedure LoadIndexes;
     procedure DropIndexes(IgnoreErrors: Boolean);
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaTables }
@@ -255,8 +255,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaView }
@@ -283,8 +283,8 @@ type
     destructor Destroy; override;
     procedure LoadView;
     procedure DropView;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TSchemaViews }
@@ -316,8 +316,8 @@ type
     procedure MoveItem(Index, NewIndex: Integer);
     procedure ExchangeItems(Index1, Index2: Integer);
     procedure Clear;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TOESchema }
@@ -364,8 +364,8 @@ type
     procedure Abort;
 
     property Aborted: Boolean read FAborted;
-  published
-    { Published declarations }
+  public
+    { public declarations }
     property hDbc: THdbc read FHdbc write SetHdbc
       default nil;
     property Tables: TSchemaTables read FTables write SetTables;
@@ -417,8 +417,8 @@ type
 
     property DataSources: TStrings read GetDataSources;
     property Drivers: TStrings read GetDrivers;
-  published
-    { Published declarations }
+  public
+    { public declarations }
     property Prompt: Boolean read FPrompt write FPrompt
       default DefPrompt;
     property DataSourceType: TDataSourceType read FDataSourceType write SetDataSourceType
@@ -461,8 +461,8 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TCatalogColumns }
@@ -486,8 +486,8 @@ type
 
     constructor Create;
     destructor Destroy; override;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TCatalogTable }
@@ -547,8 +547,8 @@ type
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TCatalogTables }
@@ -573,8 +573,8 @@ type
 
     constructor Create(Env : THenv); override;
     destructor Destroy; override;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TCatalogProcedure }
@@ -609,8 +609,8 @@ type
     destructor Destroy; override;
     function ColumnByName(AColumnName: String): TCatalogColumn;
     procedure Refresh;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TCatalogProcedures }
@@ -635,8 +635,8 @@ type
 
     constructor Create(Env : THenv); override;
     destructor Destroy; override;
-  published
-    { Published declarations }
+  public
+    { public declarations }
   end;
 
   { TOECatalog }
@@ -693,8 +693,8 @@ type
     property Procedures: TCatalogProcedures read GetProcedures;
     property TableNames: TStrings read GetTableNames;
     property ProcedureNames: TStrings read GetProcedureNames;
-  published
-    { Published declarations }
+  public
+    { public declarations }
     property hDbc: THdbc read FHdbc write SetHdbc
       default nil;
     property TableOwner: String read FTableOwner write SetTableOwner;

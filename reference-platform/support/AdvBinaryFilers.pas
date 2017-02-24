@@ -267,14 +267,14 @@ Begin
     DefineValue(atEnumerated8);
     DefineBlock(Value, 1);
 
-    Assert(Condition((Byte(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
+    Assert(CheckCondition((Byte(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
   End
   Else
   Begin
     DefineValue(atEnumerated16);
     DefineBlock(Value, 2);
 
-    Assert(Condition((Word(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
+    Assert(CheckCondition((Word(Value) <= High(aNames)), 'DefineEnumerated', 'Enumeration defined out of range.'));
   End;
 End;
 
@@ -357,7 +357,7 @@ Var
   Bytes : TBytes;
 {$ENDIF}
 Begin
-  Assert(Condition(Length(sValue) <= 256, 'WriteClass', 'Class must be less than 256 characters.'));
+  Assert(CheckCondition(Length(sValue) <= 256, 'WriteClass', 'Class must be less than 256 characters.'));
 
   iLength := Length(sValue);
   DefineBlock(iLength, SizeOf(iLength));
@@ -402,7 +402,7 @@ Begin
   Begin
     Assert(Not Assigned(aClass) Or Invariants('DefineClass', TClass(Value), aClass, 'Value'));
 
-    Assert(Condition(Factory.IsRegisteredClass(TClass(Value)), 'DefineClass', 'Only class types that are registered with the factory can be defined.'));
+    Assert(CheckCondition(Factory.IsRegisteredClass(TClass(Value)), 'DefineClass', 'Only class types that are registered with the factory can be defined.'));
 
     DefineValue(atClass);
 
@@ -516,7 +516,7 @@ Begin
 
     sResource := ResourceManager.ResolveID(oObject);
 
-    Assert(Condition(sResource <> '', 'DefineResource', 'Resource string must be specified.'));
+    Assert(CheckCondition(sResource <> '', 'DefineResource', 'Resource string must be specified.'));
 
     WriteString(sResource);
   End;
@@ -553,7 +553,7 @@ Begin
 
   // If read tag doesn't match the supplied type then an exception has occurred
   If FCache <> Value Then
-    Error('DefineValue', StringFormat('Expected ''%s'' but found ''%s''', [TagToString(Value), TagToString(FCache)]));
+    RaiseError('DefineValue', StringFormat('Expected ''%s'' but found ''%s''', [TagToString(Value), TagToString(FCache)]));
 
   // Cache will be remember for the next call if the above exception is raised.
   FCache := atUnknown;
@@ -579,12 +579,12 @@ Begin
 
       TClass(Value) := Factory.Get(sClass);
 
-      Assert(Condition(Assigned(TClass(Value)), 'DefineClass', 'Class not registered ' + sClass));
+      Assert(CheckCondition(Assigned(TClass(Value)), 'DefineClass', 'Class not registered ' + sClass));
 
       Assert(Not Assigned(aClass) Or Invariants('DefineClass', TClass(Value), aClass, 'Value'));
     End;  
   Else
-    Error('DefineClass', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atClass), TagToString(atNil), TagToString(Peek)]));
+    RaiseError('DefineClass', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atClass), TagToString(atNil), TagToString(Peek)]));
   End;  
 End;  
 
@@ -613,13 +613,13 @@ Begin
 
       oObject := ReferenceManager.Get(oReference);
       If Not Assigned(oObject) Then
-        Error('DefineReference', 'Reference does not have an associated object.');
+        RaiseError('DefineReference', 'Reference does not have an associated object.');
 
       pObject^.Free;
       pObject^ := oObject;
     End;   
   Else
-    Error('DefineReference', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
+    RaiseError('DefineReference', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
   End;  
 End;  
 
@@ -671,7 +671,7 @@ Begin
       {$ENDIF}
 
         If Not Factory.IsEquivalentClass(pObject^.ClassType, sClass) Then
-          Error('DefineObject', StringFormat('Expected object ''%s'' but found object ''%s''', [pObject^.ClassName, sClass]));
+          RaiseError('DefineObject', StringFormat('Expected object ''%s'' but found object ''%s''', [pObject^.ClassName, sClass]));
       End;
 
       // Read the objects old reference and match to the new reference.
@@ -696,7 +696,7 @@ Begin
     atReference :
     Begin
       If Not Referential Then
-        Error('DefineObject', 'Can only load from references if the filer is in referential mode.');
+        RaiseError('DefineObject', 'Can only load from references if the filer is in referential mode.');
 
       DefineValue(atReference);
       DefineBlock(oReference, SizeOf(oReference));
@@ -705,7 +705,7 @@ Begin
       pObject^ := TAdvPersistent(TAdvObject(ReferenceManager.Get(oReference)).Link);
     End; 
   Else
-    Error('DefineObject', StringFormat('Expected ''%s'', ''%s'' or ''%s'' but found ''%s''', [TagToString(atObject), TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
+    RaiseError('DefineObject', StringFormat('Expected ''%s'', ''%s'' or ''%s'' but found ''%s''', [TagToString(atObject), TagToString(atReference), TagToString(atNil), TagToString(Peek)]));
   End; 
 End;
 
@@ -750,7 +750,7 @@ Begin
       pObject^ := oObject.Link;
     End;
   Else
-    Error('DefineResource', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atResource), TagToString(atNil), TagToString(Peek)]));
+    RaiseError('DefineResource', StringFormat('Expected ''%s'' or ''%s'' but found ''%s''', [TagToString(atResource), TagToString(atNil), TagToString(Peek)]));
   End;
 End;
 

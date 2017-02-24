@@ -1,3 +1,4 @@
+
 unit UcumServices;
 
 {
@@ -40,6 +41,8 @@ Uses
   TerminologyServices;
 
 Type
+  EUCUMServices = class (Exception);
+
   TUcumPair = class (TAdvObject)
   private
     FUnitCode: String;
@@ -210,7 +213,7 @@ Type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; lang : String):String; override;
-    function locate(code : String) : TCodeSystemProviderContext; override;
+    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; lang : String) : string; override;
@@ -223,7 +226,7 @@ Type
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; override;
+    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
@@ -285,9 +288,9 @@ var
   t : TSmartDecimal;
 begin
   if sourceUnit = '' Then
-    Error('Convert', 'Source units are required');
+    RaiseError('Convert', 'Source units are required');
   if destUnit = '' Then
-    Error('Convert', 'destination units are required');
+    RaiseError('Convert', 'destination units are required');
   if (sourceUnit = destUnit) Then
     result := value
   else
@@ -305,7 +308,7 @@ begin
       s := TUcumExpressionComposer.compose(src.Unit_);
       d := TUcumExpressionComposer.compose(dst.Unit_);
       if s <> d then
-        raise Exception.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
+        raise EUCUMServices.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
       t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
@@ -345,9 +348,9 @@ var
   c : TUcumCanonical;
 begin
   if value = nil then
-    Error('Convert', 'A value is required');
+    RaiseError('Convert', 'A value is required');
   if value.UnitCode = '' then
-    Error('Convert', 'A value unit is required');
+    RaiseError('Convert', 'A value unit is required');
   t := TUcumExpressionParser.Parse(FModel, value.UnitCode);
   Try
     conv := TUcumConverter.Create(FModel.Link, FHandlers.Link);
@@ -373,7 +376,7 @@ var
   c : TUcumCanonical;
 begin
   if Code = '' then
-    Error('Convert', 'A unit is required');
+    RaiseError('Convert', 'A unit is required');
   t := TUcumExpressionParser.Parse(FModel, Code);
   Try
     conv := TUcumConverter.Create(FModel.Link, FHandlers.Link);
@@ -417,7 +420,7 @@ var
   i : integer;
 begin
   if Code = '' then
-    Error('Convert', 'A unit is required');
+    RaiseError('Convert', 'A unit is required');
   result := TUcumDefinedUnitList.Create;
   Try
     base := FModel.baseUnits.GetByCode(code);
@@ -531,7 +534,7 @@ var
   oSearch : TUcumSearch;
 begin
   if text = '' Then
-    raise exception.Create('A text to search for is required');
+    raise EUCUMServices.Create('A text to search for is required');
   oSearch := TUcumSearch.Create;
   Try
     result := oSearch.DoSearch(model, kind, text, isRegex);
@@ -543,7 +546,7 @@ end;
 function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
   result := nil;
-  raise Exception.Create('to do');
+  raise EUCUMServices.Create('to do');
 end;
 
 procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSet);
@@ -618,9 +621,9 @@ var
   cu : String;
 begin
   if Code = '' then
-    Error('Convert', 'A unit is required');
+    RaiseError('Convert', 'A unit is required');
   if canonical = '' then
-    Error('Convert', 'A canonical unit is required');
+    RaiseError('Convert', 'A canonical unit is required');
 
   result := '';
   Try
@@ -659,9 +662,9 @@ var
   b : TUcumBaseUnit;
 begin
   if Code = '' then
-    Error('Convert', 'A unit is required');
+    RaiseError('Convert', 'A unit is required');
   if propertyType = '' then
-    Error('Convert', 'A property is required');
+    RaiseError('Convert', 'A property is required');
 
   result := '';
   Try
@@ -865,7 +868,7 @@ begin
     oParser.Free;
   End;
   if oXml.documentElement.nodeName <> 'root' Then
-    raise exception.create('Invalid ucum essence file');
+    raise EUCUMServices.create('Invalid ucum essence file');
   FModel.Clear;
   FModel.Version := TMsXmlParser.GetAttribute(oXml.documentElement, 'version');
   FModel.RevisionDate := TMsXmlParser.GetAttribute(oXml.documentElement, 'revision-date');
@@ -880,14 +883,14 @@ begin
    Else if oElem.NodeName = 'unit' Then
      FModel.definedUnits.Add(ParseUnit(oElem))
    else
-     raise exception.create('unrecognised element '+oElem.nodename);
+     raise EUCUMServices.create('unrecognised element '+oElem.nodename);
     oElem := TMsXmlParser.NextSibling(oElem);
   End;
   oErrors := TAdvStringList.Create;
   Try
     Validate(oErrors);
     if oErrors.Count > 0 then
-      raise exception.create(oErrors.asText);
+      raise EUCUMServices.create(oErrors.asText);
   Finally
     oErrors.Free;
   End;
@@ -895,7 +898,7 @@ end;
 
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise Exception.Create('not supported yet');
+  raise EUCUMServices.Create('not supported yet');
 end;
 
 function TUcumServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -908,7 +911,7 @@ begin
   result := true;
 end;
 
-function TUcumServices.locate(code: String): TCodeSystemProviderContext;
+function TUcumServices.locate(code: String; var message : String): TCodeSystemProviderContext;
 var
   s : String;
 begin
@@ -916,7 +919,10 @@ begin
   if s = '' then
     result := TUCUMCodeHolder.Create(code)
   else
+  begin
     result := nil;
+    message := s;
+  end;
 end;
 
 function TUcumServices.system(context : TCodeSystemProviderContext): String;
@@ -937,22 +943,22 @@ end;
 
 function TUcumServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise Exception.Create('not supported yet');
+  raise EUCUMServices.Create('not supported yet (ucum)');
 end;
 
 function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not supported yet');
+  raise EUCUMServices.Create('not supported yet');
 end;
 
 function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise Exception.Create('not supported yet');
+  raise EUCUMServices.Create('not supported yet');
 end;
 
-function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 begin
-  raise Exception.Create('not supported yet');
+  raise EUCUMServices.Create('not supported yet');
 end;
 
 function TUcumServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
@@ -995,7 +1001,7 @@ Begin
           result.Text := s;
       End
       else
-        raise exception.Create('unknown element in prefix: '+oChild.NodeName);
+        raise EUCUMServices.Create('unknown element in prefix: '+oChild.NodeName);
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;
@@ -1026,7 +1032,7 @@ Begin
       else if oChild.nodeName = 'property' Then
         result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
       else
-        raise exception.Create('unknown element in base unit: '+oChild.NodeName);
+        raise EUCUMServices.Create('unknown element in base unit: '+oChild.NodeName);
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;
@@ -1065,7 +1071,7 @@ Begin
         result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
       End
       else
-        raise exception.Create('unknown element in unit: '+oChild.NodeName);
+        raise EUCUMServices.Create('unknown element in unit: '+oChild.NodeName);
       oChild := TMsXmlParser.NextSibling(oChild);
     End;
     result.Link;

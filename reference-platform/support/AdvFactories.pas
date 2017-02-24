@@ -352,7 +352,7 @@ Begin
   aClass := Get(sName);
 
   If Not Assigned(aClass) Then
-    Error('Make', StringFormat('Class ''%s'' was not registered with the factory.', [sName]));
+    RaiseError('Make', StringFormat('Class ''%s'' was not registered with the factory.', [sName]));
 
   Result := Make(aClass);
 End;  
@@ -377,7 +377,7 @@ Function TAdvFactory.IsRegisteredClass(Const aClass : TClass): Boolean;
 Var
   oIterator : TAdvObjectClassHashTableIterator;
 Begin
-  Assert(Condition(Assigned(aClass), 'IsRegisteredClass', 'Class to be validated must be assigned.'));
+  Assert(CheckCondition(Assigned(aClass), 'IsRegisteredClass', 'Class to be validated must be assigned.'));
 
   Result := ActiveClassTracking;
 
@@ -482,7 +482,7 @@ Begin
       If Not Nested Then
       Begin 
         If Not FObjectProfiler.Delete(oObject) Then
-          Error('Destruct', 'Object reference could not be found for destruction.');
+          RaiseError('Destruct', 'Object reference could not be found for destruction.');
       End;  
     Finally
       Unlock;

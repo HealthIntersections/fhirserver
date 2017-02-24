@@ -217,7 +217,7 @@ begin
   o := TSmartDecimal.valueOf(outcome);
   r := FUcum.convert(v, srcUnit, dstunit);
   if r.Compares(o) <> 0 then
-     Error('TestConversionCase', 'case '+id+': conversion of '+value+' '+srcUnit+' to '+dstUnit+' failed. Expected '+outcome+' but got '+r.AsString);
+     RaiseError('TestConversionCase', 'case '+id+': conversion of '+value+' '+srcUnit+' to '+dstUnit+' failed. Expected '+outcome+' but got '+r.AsString);
 end;
 
 procedure TUcumTests.TestDisplaynameCase(id, unit_, display: String);
@@ -240,9 +240,9 @@ begin
       o3 := FUcum.multiply(o1, o2);
       Try
         if o3.UnitCode <> uRes Then
-          Error('TestMultiplicationCase', 'Error in multiplication: got units '+o3.unitCode +' expecting '+URes);
+          RaiseError('TestMultiplicationCase', 'Error in multiplication: got units '+o3.unitCode +' expecting '+URes);
         if (o3.Value.AsString <> vRes) Then
-          Error('TestMultiplicationCase', 'Error in multiplication: got value '+o3.Value.AsString +' expecting '+vRes);
+          RaiseError('TestMultiplicationCase', 'Error in multiplication: got value '+o3.Value.AsString +' expecting '+vRes);
       Finally
         o3.Free;
       End;

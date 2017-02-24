@@ -208,7 +208,7 @@ public class DefinitionsLoader3 {
       DefinedStringPattern dsp = new DefinedStringPattern();
       dsp.setCode(sd.getId());
       dsp.setDefinition(removeprefix(sd.getDescription()));
-      dsp.setComment(sd.getSnapshot().getElement().get(0).getComments());
+      dsp.setComment(sd.getSnapshot().getElement().get(0).getComment());
       dsp.setSchema(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_XML_TYPE));
       dsp.setJsonType(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(2).getType().get(0).getCodeElement(), ToolingExtensions.EXT_JSON_TYPE));
       dsp.setBase(sd.getBaseDefinition().substring(40));
@@ -217,7 +217,7 @@ public class DefinitionsLoader3 {
       PrimitiveType pt = new PrimitiveType();
       pt.setCode(sd.getId());
       pt.setDefinition(removeprefix(sd.getDescription()));
-      pt.setComment(sd.getSnapshot().getElement().get(0).getComments());
+      pt.setComment(sd.getSnapshot().getElement().get(0).getComment());
       pt.setSchemaType(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(3).getType().get(0).getCodeElement(), ToolingExtensions.EXT_XML_TYPE));
       pt.setJsonType(ToolingExtensions.readStringExtension(sd.getSnapshot().getElement().get(3).getType().get(0).getCodeElement(), ToolingExtensions.EXT_JSON_TYPE));
       if (!pt.getSchemaType().startsWith("xs:"))

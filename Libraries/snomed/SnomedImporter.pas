@@ -1508,7 +1508,7 @@ begin
   for i := 0 to FConcepts.Count - 1 do
   begin
     if (i mod 5000 = 0) then
-      Progress(STEP_INDEX_REFSET, i / (FConcepts.Count + FDesc.Count), '');
+      Progress(STEP_INDEX_REFSET, i / (FConcepts.Count + integer(FDesc.Count)), '');
 
     conc := FConcepts[i] as TConcept;
     setLength(refs, FRefsets.Count);
@@ -1536,7 +1536,7 @@ begin
   for i := 0 to FDesc.Count - 1 do
   begin
     if (i mod 5000 = 0) then
-      Progress(STEP_INDEX_REFSET, (FDesc.Count + i) / (FConcepts.Count + FDesc.Count), '');
+      Progress(STEP_INDEX_REFSET, (integer(FDesc.Count) + i) / (FConcepts.Count + integer(FDesc.Count)), '');
 
     setLength(refs, Frefsets.Count);
     setLength(vals, Frefsets.Count);
@@ -1832,7 +1832,7 @@ begin
       for I := 0 to length(types) - 1 do
       begin
         if (i = 0) then
-          sVals[i] := ascopy(s, iRefComp+1, offsets[i] - (iRefComp + 1))
+          sVals[i] := ascopy(s, iRefComp+1, integer(offsets[i]) - (iRefComp + 1))
         else
           sVals[i] := ascopy(s, offsets[i-1]+1, offsets[i] - (offsets[i-1] + 1));
         iVal := 0;

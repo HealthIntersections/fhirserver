@@ -113,7 +113,6 @@ var
   notClosed : boolean;
   table : TFhirXHtmlNode;
   tr : TFhirXHtmlNode;
-  param : TFhirValueSetExpansionParameter;
 begin
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   source.checkNoModifiers('ValueSetExpander.Expand', 'ValueSet');

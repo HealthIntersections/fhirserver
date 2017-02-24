@@ -6666,10 +6666,10 @@ begin
         end
         else
           raise Exception.Create('duration or period is required');
-        if (req.paramsList.Count = 0) then
+        if (req.statisticList.Count = 0) then
           raise Exception.Create('at least one parameter is required');
 
-        for s in req.paramsList do
+        for s in req.statisticList do
           ose.parameters := ose.parameters + [resolveParameter(s)];
 
         ose.execute;
