@@ -1166,6 +1166,14 @@ begin
   result := path.substring(path.lastIndexOf('/')+1);
 end;
 
+function cmref(t : TFHIRType) : string;
+begin
+  if t is TFHIRUri then
+    result := TFHIRUri(t).value
+  else
+    result := TFhirReference(t).reference;
+end;
+
 procedure TTerminologyServerStore.SeeSpecificationResource(resource : TFHIRResource);
 var
   vs : TFhirValueSet;
@@ -1178,8 +1186,8 @@ begin
     begin
       vs := TFhirValueSet(resource);
       vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true));
-      if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
-        FUcum.SetCommonUnits(vs.Link);
+//      if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+//        FUcum.SetCommonUnits(vs.Link);
 
       FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
       FValueSetsById.AddOrSetValue(vs.id, vs.Link);
@@ -1211,8 +1219,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
-        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        cm.Source := getValueSetByUrl(cmRef(cm.Resource.source));
+        cm.Target := getValueSetByUrl(cmRef(cm.Resource.target));
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
         FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
         FBaseConceptMaps.AddOrSetValue(cm.Resource.url, cm.Link);
@@ -1271,10 +1279,8 @@ begin
       cm := TLoadedConceptMap.Create;
       try
         cm.Resource := TFhirConceptMap(resource).Link;
-        if cm.Resource.source is TFHIRReference then
-          cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
-        if cm.Resource.target is TFHIRReference then
-          cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
+        cm.Source := getValueSetByUrl(cmRef(cm.Resource.source));
+        cm.Target := getValueSetByUrl(cmRef(cm.Resource.target));
         FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
         FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
       finally
@@ -1392,27 +1398,17 @@ begin
       cm.source := nil
     else
     begin
-      if cm.Resource.source is TFHIRUri then
-        cm.Source := getValueSetByUrl(TFhirUri(cm.Resource.source).value)
-      else
-      begin
-        cm.Source := getValueSetByUrl(TFhirReference(cm.Resource.source).reference);
-        if (cm.Source = nil) then
-          cm.Source := getValueSetById(TFhirReference(cm.Resource.source).reference);
-      end;
+      cm.Source := getValueSetByUrl(cmRef(cm.Resource.source));
+      if (cm.Source = nil) then
+        cm.Source := getValueSetById(cmRef(cm.Resource.source));
     end;
     if cm.Resource.target = nil then
       cm.Target := nil
     else
     begin
-      if cm.Resource.target is TFHIRUri then
-        cm.Target := getValueSetByUrl(TFhirUri(cm.Resource.target).value)
-      else
-      begin
-        cm.Target := getValueSetByUrl(TFhirReference(cm.Resource.target).reference);
-        if (cm.Target = nil) then
-          cm.Target := getValueSetById(TFhirReference(cm.Resource.target).reference);
-      end;
+      cm.Target := getValueSetByUrl(cmRef(cm.Resource.target));
+      if (cm.Target = nil) then
+        cm.Target := getValueSetById(cmRef(cm.Resource.target));
     end;
   end;
 end;
@@ -1499,8 +1495,8 @@ begin
   FLock.Lock('getValueSetByUrl');
   try
     for lcm in FConceptMapsById.Values do
-      if (lcm.Resource.source is TFhirUri) and (TFhirUri(lcm.Resource.source).value = src) and
-         (lcm.Resource.target is TFhirUri) and (TFhirUri(lcm.Resource.target).value = src) then
+      if (cmRef(lcm.Resource.source) = src) and
+         (cmRef(lcm.Resource.target) = src) then
       begin
         result := lcm.Link;
         break;

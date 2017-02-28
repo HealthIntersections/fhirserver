@@ -17,6 +17,7 @@ type
     script : string;
     region : String;
     variant : String;
+    extension : String;
     privateUse : TArray<String>;
     procedure addExtLang(s : String);
     procedure addPrivateUse(s : String);
@@ -88,7 +89,16 @@ type
     function getDisplayForLang(code : String):String;
   end;
 
+  TIETFLanguageComponent = (languageComponentLang, languageComponentExtLang, languageComponentScript, languageComponentRegion, languageComponentVariant, languageComponentExtension, languageComponentPrivateUse);
+
   TIETFLanguageCodeFilter = class (TCodeSystemProviderFilterContext)
+  private
+    FComponent : TIETFLanguageComponent;
+    FStatus : boolean;
+  public
+    constructor create(component : TIETFLanguageComponent; status : boolean);
+    property component : TIETFLanguageComponent read FComponent write FComponent;
+    property status : boolean read FStatus write FStatus;
   end;
 
   TIETFLanguageCodePrep = class (TCodeSystemProviderFilterPreparationContext)
@@ -134,6 +144,9 @@ type
     procedure Close(ctxt : TCodeSystemProviderContext); override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
   end;
+
+const
+  CODES_TIETFLanguageComponent : array [TIETFLanguageComponent] of String = ('language', 'ext-lang', 'script', 'region', 'variant', 'extension', 'private-use');
 
 implementation
 
@@ -250,7 +263,7 @@ end;
 
 function TIETFLanguageCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise Exception.Create('not done yet');
+  result := nil;
 end;
 
 procedure TIETFLanguageCodeServices.Displays(code : String; list : TStringList; lang : String);
@@ -329,7 +342,7 @@ end;
 
 function TIETFLanguageCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise Exception.Create('not done yet');
+  result := false;
 end;
 
 function TIETFLanguageCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
@@ -338,13 +351,48 @@ begin
 end;
 
 function TIETFLanguageCodeServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+var
+  i : integer;
 begin
-  raise Exception.Create('not done yet');
+  i := StringArrayIndexOfSensitive(CODES_TIETFLanguageComponent, prop);
+  if (i >= 0) and (op = FilterOperatorExists) and ((value = 'true') or (value = 'false')) then
+    result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
+  else
+    raise Exception.Create('Not a supported filter');
 end;
 
 function TIETFLanguageCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
+var
+  cc : TIETFLanguageCodeConcept;
+  filter : TIETFLanguageCodeFilter;
+  ok : boolean;
 begin
-  raise Exception.Create('not done yet');
+  result := nil;
+  cc := FDefinitions.parse(code, message);
+  try
+    filter := TIETFLanguageCodeFilter(ctxt);
+    ok := false;
+    if cc <> nil then
+    begin
+      case filter.component of
+        languageComponentLang: ok := filter.status = (cc.language <> '');
+        languageComponentExtLang: ok := filter.status = (length(cc.extLang) > 0);
+        languageComponentScript: ok := filter.status = (cc.script <> '');
+        languageComponentRegion: ok := filter.status = (cc.region <> '');
+        languageComponentVariant: ok := filter.status = (cc.variant <> '');
+        languageComponentExtension: ok := filter.status = (cc.extension <> '');
+        languageComponentPrivateUse: ok := filter.status = (cc.language <> '');
+      end;
+    end;
+    if ok then
+      result := cc.Link
+    else if filter.status then
+      message := 'The language code '+code+' does not contain a '+CODES_TIETFLanguageComponent[filter.component]+', and it is required to'
+    else
+      message := 'The language code '+code+' contains a '+CODES_TIETFLanguageComponent[filter.component]+', and it is not allowed to';
+  finally
+    cc.free;
+  end;
 end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -374,7 +422,7 @@ end;
 
 procedure TIETFLanguageCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
 begin
-  raise Exception.Create('not done yet');
+  ctxt.free;
 end;
 
 
@@ -931,6 +979,15 @@ end;
 function TIETFLanguageVariant.Link: TIETFLanguageVariant;
 begin
   result := TIETFLanguageVariant(inherited link);
+end;
+
+{ TIETFLanguageCodeFilter }
+
+constructor TIETFLanguageCodeFilter.create(component: TIETFLanguageComponent; status: boolean);
+begin
+  inherited create;
+  FComponent := component;
+  FStatus := status;
 end;
 
 end.

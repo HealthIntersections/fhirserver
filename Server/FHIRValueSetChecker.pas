@@ -466,6 +466,7 @@ var
   loc :  TCodeSystemProviderContext;
   prep : TCodeSystemProviderFilterPreparationContext;
   filters : Array of TCodeSystemProviderFilterContext;
+  msg : String;
 begin
   result := false;
   if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
@@ -523,6 +524,7 @@ begin
       end
       else
       begin
+        result := true;
         for i := 0 to cset.filterList.count - 1 do
         begin
           fc := cset.filterList[i];
@@ -540,18 +542,20 @@ begin
           else
           begin
             ctxt := filters[i];
-            loc := cs.filterLocate(ctxt, code);
+            loc := cs.filterLocate(ctxt, code, msg);
             try
+              if (loc = nil) and (message = '') then
+                message := msg;
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-              if result then
-                cs.displays(loc, displays, '');
             finally
               cs.Close(loc);
             end;
           end;
-          if result then
+          if not result then
             break;
         end;
+        if result then
+          cs.displays(loc, displays, '');
       end;
     finally
       for i := 0 to cset.filterList.count - 1 do
