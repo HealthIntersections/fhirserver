@@ -1,10 +1,10 @@
 [Stats]
-EditorSecs=62354
+EditorSecs=62430
 DesignerSecs=1
 InspectorSecs=11
 <<<<<<< HEAD
-CompileSecs=10747499
-OtherSecs=3208
+CompileSecs=10761290
+OtherSecs=3516
 =======
 CompileSecs=10430595
 OtherSecs=3121

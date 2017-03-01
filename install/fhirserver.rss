@@ -3,11 +3,27 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.123 2017-03-02</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.123.exe</link>
+			<description>2017-03-02 (v1.0.123): fix R2 support</description>
+		</item>
+<item><title>FHIRServer release 1.0.122 2017-03-01</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.122.exe</link>
+			<description>2017-03-01 (v1.0.122): More quality fixes for freeze</description>
+		</item>
+		<item><title>FHIRServer release 1.0.121 2017-02-28</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.121.exe</link>
+			<description>2017-02-28 (v1.0.121): fix index definitions</description>
+		</item>
+		<item><title>FHIRServer release 1.0.120 2017-02-28</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.120.exe</link>
+			<description>2017-02-28 (v1.0.120): Add support for better language validation</description>
+		</item>
 		<item><title>FHIRServer release 1.0.119 2017-02-25</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.119.exe</link>
 			<description>2017-02-25 (v1.0.119): QA release for STU3 candidate release</description>
 		</item>
-<item><title>FHIRServer release 1.0.118 2017-02-21</title>
+		<item><title>FHIRServer release 1.0.118 2017-02-21</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.118.exe</link>
 			<description>2017-02-21 (v1.0.118): r3 final candidate</description>
 		</item>

@@ -377,6 +377,7 @@ Type
     procedure BuildIndexValuesDeviceComponent(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceComponent);
     procedure BuildIndexValuesDeviceMetric(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceMetric);
     procedure BuildIndexValuesDeviceUseStatement(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceUseStatement);
+    procedure BuildIndexValuesDeviceUseRequest(key : integer; id : string; context : TFhirResource; resource : TFhirDeviceUseRequest);
     procedure BuildIndexValuesEligibilityRequest(key : integer; id : string; context : TFhirResource; resource : TFhirEligibilityRequest);
     procedure BuildIndexValuesEligibilityResponse(key : integer; id : string; context : TFhirResource; resource : TFhirEligibilityResponse);
     procedure BuildIndexValuesEnrollmentRequest(key : integer; id : string; context : TFhirResource; resource : TFhirEnrollmentRequest);
@@ -2215,6 +2216,7 @@ begin
     frtDeviceComponent : buildIndexValuesDeviceComponent(key, id, context, TFhirDeviceComponent(resource));
     frtDeviceMetric : buildIndexValuesDeviceMetric(key, id, context, TFhirDeviceMetric(resource));
     frtDeviceUseStatement : buildIndexValuesDeviceUseStatement(key, id, context, TFhirDeviceUseStatement(resource));
+    frtDeviceUseRequest : buildIndexValuesDeviceUseRequest(key, id, context, TFhirDeviceUseRequest(resource));
     frtEligibilityRequest : buildIndexValuesEligibilityRequest(key, id, context, TFhirEligibilityRequest(resource));
     frtEligibilityResponse : buildIndexValuesEligibilityResponse(key, id, context, TFhirEligibilityResponse(resource));
     frtEnrollmentRequest : buildIndexValuesEnrollmentRequest(key, id, context, TFhirEnrollmentRequest(resource));
@@ -4204,6 +4206,16 @@ begin
   index(context, 'DeviceUseStatement', key, 0, resource.subject, CODES_TSearchParamsDeviceUseStatement[spDeviceUseStatement_patient]);
   patientCompartment(key, resource.subject);
   index(context, 'DeviceUseStatement', key, 0, resource.device, CODES_TSearchParamsDeviceUseStatement[spDeviceUseStatement_device]);
+end;
+
+procedure TFhirIndexManager.buildIndexValuesDeviceUseRequest(key: integer; id : String; context : TFhirResource; resource: TFhirDeviceUseRequest);
+var
+  i, j : integer;
+begin
+  index(context, 'DeviceUseRequest', key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_subject]);
+  index(context, 'DeviceUseRequest', key, 0, resource.subject, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_patient]);
+  patientCompartment(key, resource.subject);
+  index(context, 'DeviceUseRequest', key, 0, resource.device, CODES_TSearchParamsDeviceUseRequest[spDeviceUseRequest_device]);
 end;
 
 procedure TFhirIndexManager.buildIndexValuesEpisodeOfCare(key: integer; id : String; context : TFhirResource; resource: TFhirEpisodeOfCare);

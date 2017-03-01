@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-02-25T06:03:12+11:00
+// FHIR v1.9.0 generated 2017-03-01T12:49:01+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -225,7 +225,7 @@ begin
   indexes.add('AdverseEvent', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('AdverseEvent', 'category', 'AE | PAE  An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse e'+'vent is something that occurred and that could have caused harm to a patient but did not', SearchParamTypeTOKEN, [], 'AdverseEvent.category', SearchXpathUsageNormal);
+  indexes.add('AdverseEvent', 'category', 'AE | PA An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse e'+'vent is something that occurred and that could have caused harm to a patient but did not', SearchParamTypeTOKEN, [], 'AdverseEvent.category', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'date', 'AdverseEvent.date', SearchParamTypeDATE, [], 'AdverseEvent.date', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'location', 'AdverseEvent.location', SearchParamTypeREFERENCE, ['Location'], 'AdverseEvent.location', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'reaction', 'Adverse Reaction Events linked to exposure to substance', SearchParamTypeREFERENCE, ['Condition'], 'AdverseEvent.reaction', SearchXpathUsageNormal);
@@ -759,7 +759,7 @@ begin
   indexes.add('Composition', 'identifier', 'Logical identifier of composition (version-independent)', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.identifier | List.identifier | Immunization.identi'+'fier | VisionPrescription.identifier | ProcedureRequest.identifier | Observation.identifier | DiagnosticReport.identifier | NutritionOrder.identifier | Condition.identifier | Composition.identifier | DetectedIssue.identifier | SupplyDelivery.identifi'+'er', SearchXpathUsageNormal);
   indexes.add('Composition', 'patient', 'Who and/or what the composition is about', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'ReferralRequest.subject | DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.sub'+'ject | DeviceUseStatement.subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeOfCare.patient | Procedure.subject | List.subject | Immunization.patient | VisionPrescription.patient | ProcedureRequest.subject | Flag'+'.subject | Observation.subject | DiagnosticReport.subject | NutritionOrder.patient | Condition.subject | Composition.subject | DetectedIssue.patient | SupplyDelivery.patient | ClinicalImpression.subject', SearchXpathUsageNormal);
   indexes.add('Composition', 'period', 'The period covered by the documentation', SearchParamTypeDATE, [], 'Composition.event.period', SearchXpathUsageNormal);
-  indexes.add('Composition', 'related-id', 'Target of the relationship', SearchParamTypeREFERENCE, ['Composition'], 'Composition.relatesTo.target.as(Identifier)', SearchXpathUsageNormal);
+  indexes.add('Composition', 'related-id', 'Target of the relationship', SearchParamTypeTOKEN, [], 'Composition.relatesTo.target.as(Identifier)', SearchXpathUsageNormal);
   indexes.add('Composition', 'related-ref', 'Target of the relationship', SearchParamTypeREFERENCE, ['Composition'], 'Composition.relatesTo.target.as(Reference)', SearchXpathUsageNormal);
   indexes.add('Composition', 'section', 'Classification of section (recommended)', SearchParamTypeTOKEN, [], 'Composition.section.code', SearchXpathUsageNormal);
   indexes.add('Composition', 'status', 'preliminary | final | amended | entered-in-error', SearchParamTypeTOKEN, [], 'Composition.status', SearchXpathUsageNormal);
@@ -1739,8 +1739,8 @@ begin
   indexes.add('Location', 'endpoint', 'Technical endpoints providing access to services operated for the location', SearchParamTypeREFERENCE, ['Endpoint'], 'Location.endpoint', SearchXpathUsageNormal);
   indexes.add('Location', 'identifier', 'An identifier for the location', SearchParamTypeTOKEN, [], 'Location.identifier', SearchXpathUsageNormal);
   indexes.add('Location', 'name', 'A portion of the location''s name or alias', SearchParamTypeSTRING, [], 'Location.name | Location.alias', SearchXpathUsageNormal);
-  indexes.add('Location', 'near', 'The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency)  Requires the near-distance parameter to be provided also', SearchParamTypeTOKEN, [], 'Location.position', SearchXpathUsageNearby);
-  indexes.add('Location', 'near-distance', 'A distance quantity to limit the near search to locations within a specific distance  Requires the near parameter to also be included', SearchParamTypeQUANTITY, [], 'Location.position', SearchXpathUsageDistance);
+  indexes.add('Location', 'near', 'The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency) Requires the near-distance parameter to be provided also', SearchParamTypeTOKEN, [], 'Location.position', SearchXpathUsageNearby);
+  indexes.add('Location', 'near-distance', 'A distance quantity to limit the near search to locations within a specific distance Requires the near parameter to also be included', SearchParamTypeQUANTITY, [], 'Location.position', SearchXpathUsageDistance);
   indexes.add('Location', 'operational-status', 'Searches for locations (typically bed/room) that have an operational status (e.g. contaminated, housekeeping)', SearchParamTypeTOKEN, [], 'Location.operationalStatus', SearchXpathUsageNormal);
   indexes.add('Location', 'organization', 'Searches for locations that are managed by the provided organization', SearchParamTypeREFERENCE, ['Organization'], 'Location.managingOrganization', SearchXpathUsageNormal);
   indexes.add('Location', 'partof', 'A location of which this location is a part', SearchParamTypeREFERENCE, ['Location'], 'Location.partOf', SearchXpathUsageNormal);

@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-02-25T06:03:12+11:00
+// FHIR v1.9.0 generated 2017-03-01T12:49:01+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -104,7 +104,8 @@ Type
     spAdverseEvent__security, {@enum.value "_security" spAdverseEvent__security Security Labels applied to this resource }
     spAdverseEvent__tag, {@enum.value "_tag" spAdverseEvent__tag Tags applied to this resource }
     spAdverseEvent__text, {@enum.value "_text" spAdverseEvent__text Search on the narrative of the resource }
-    spAdverseEvent_Category, {@enum.value "category" spAdverseEvent_Category AE | PAE  An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse event is something that occurred and that could have caused harm to a patient but did not }
+    spAdverseEvent_Category, {@enum.value "category" spAdverseEvent_Category AE | PAE 
+An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse event is something that occurred and that could have caused harm to a patient but did not }
     spAdverseEvent_Date, {@enum.value "date" spAdverseEvent_Date AdverseEvent.date }
     spAdverseEvent_Location, {@enum.value "location" spAdverseEvent_Location AdverseEvent.location }
     spAdverseEvent_Reaction, {@enum.value "reaction" spAdverseEvent_Reaction Adverse Reaction Events linked to exposure to substance }
@@ -1556,8 +1557,12 @@ Type
     spLocation_Endpoint, {@enum.value "endpoint" spLocation_Endpoint Technical endpoints providing access to services operated for the location }
     spLocation_Identifier, {@enum.value "identifier" spLocation_Identifier An identifier for the location }
     spLocation_Name, {@enum.value "name" spLocation_Name A portion of the location's name or alias }
-    spLocation_Near, {@enum.value "near" spLocation_Near The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency)  Requires the near-distance parameter to be provided also }
-    spLocation_Neardistance, {@enum.value "near-distance" spLocation_Neardistance A distance quantity to limit the near search to locations within a specific distance  Requires the near parameter to also be included }
+    spLocation_Near, {@enum.value "near" spLocation_Near The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency)
+
+Requires the near-distance parameter to be provided also }
+    spLocation_Neardistance, {@enum.value "near-distance" spLocation_Neardistance A distance quantity to limit the near search to locations within a specific distance
+
+Requires the near parameter to also be included }
     spLocation_Operationalstatus, {@enum.value "operational-status" spLocation_Operationalstatus Searches for locations (typically bed/room) that have an operational status (e.g. contaminated, housekeeping) }
     spLocation_Organization, {@enum.value "organization" spLocation_Organization Searches for locations that are managed by the provided organization }
     spLocation_Partof, {@enum.value "partof" spLocation_Partof A location of which this location is a part }
@@ -3466,7 +3471,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.9.0';
 
-  FHIR_GENERATED_DATE = '2017-02-25T06:03:12+11:00';
+  FHIR_GENERATED_DATE = '2017-03-01T12:49:01+11:00';
 
 
 

@@ -631,21 +631,21 @@ Type
     spDeviceMetric_Source, {@enum.value "source" spDeviceMetric_Source The device resource }
     spDeviceMetric_Type); {@enum.value "type" spDeviceMetric_Type The component type }
 
-  {@Enum TSearchParamsDeviceRequest
-    Search Parameters for DeviceRequest
+  {@Enum TSearchParamsDeviceUseRequest
+    Search Parameters for DeviceUseRequest
   }
-  TSearchParamsDeviceRequest = (
-    spDeviceRequest__content, {@enum.value "_content" spDeviceRequest__content Search on the entire content of the resource }
-    spDeviceRequest__id, {@enum.value "_id" spDeviceRequest__id Logical id of this artifact }
-    spDeviceRequest__lastUpdated, {@enum.value "_lastUpdated" spDeviceRequest__lastUpdated When the resource version last changed }
-    spDeviceRequest__profile, {@enum.value "_profile" spDeviceRequest__profile Profiles this resource claims to conform to }
-    spDeviceRequest__query, {@enum.value "_query" spDeviceRequest__query A custom search profile that describes a specific defined query operation }
-    spDeviceRequest__security, {@enum.value "_security" spDeviceRequest__security Security Labels applied to this resource }
-    spDeviceRequest__tag, {@enum.value "_tag" spDeviceRequest__tag Tags applied to this resource }
-    spDeviceRequest__text, {@enum.value "_text" spDeviceRequest__text Search on the narrative of the resource }
-    spDeviceRequest_Device, {@enum.value "device" spDeviceRequest_Device Device requested }
-    spDeviceRequest_Patient, {@enum.value "patient" spDeviceRequest_Patient Search by subject - a patient }
-    spDeviceRequest_Subject); {@enum.value "subject" spDeviceRequest_Subject Search by subject }
+  TSearchParamsDeviceUseRequest = (
+    spDeviceUseRequest__content, {@enum.value "_content" spDeviceUseRequest__content Search on the entire content of the resource }
+    spDeviceUseRequest__id, {@enum.value "_id" spDeviceUseRequest__id Logical id of this artifact }
+    spDeviceUseRequest__lastUpdated, {@enum.value "_lastUpdated" spDeviceUseRequest__lastUpdated When the resource version last changed }
+    spDeviceUseRequest__profile, {@enum.value "_profile" spDeviceUseRequest__profile Profiles this resource claims to conform to }
+    spDeviceUseRequest__query, {@enum.value "_query" spDeviceUseRequest__query A custom search profile that describes a specific defined query operation }
+    spDeviceUseRequest__security, {@enum.value "_security" spDeviceUseRequest__security Security Labels applied to this resource }
+    spDeviceUseRequest__tag, {@enum.value "_tag" spDeviceUseRequest__tag Tags applied to this resource }
+    spDeviceUseRequest__text, {@enum.value "_text" spDeviceUseRequest__text Search on the narrative of the resource }
+    spDeviceUseRequest_Device, {@enum.value "device" spDeviceUseRequest_Device Device requested }
+    spDeviceUseRequest_Patient, {@enum.value "patient" spDeviceUseRequest_Patient Search by subject - a patient }
+    spDeviceUseRequest_Subject); {@enum.value "subject" spDeviceUseRequest_Subject Search by subject }
 
   {@Enum TSearchParamsDeviceUseStatement
     Search Parameters for DeviceUseStatement
@@ -2131,7 +2131,7 @@ Type
     spVisionPrescription_Prescriber); {@enum.value "prescriber" spVisionPrescription_Prescriber Who authorizes the vision product }
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CarePlan', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'Communication', 'CommunicationRequest', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceUseRequest', 'DeviceUseStatement', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'Group', 'HealthcareService', 'ImagingObjectSelection', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationOrder', 
       'MedicationStatement', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'Practitioner', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Slot', 'Specimen', 'StructureDefinition', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'allergyintolerance',
@@ -2159,7 +2159,7 @@ Const
      'device',
      'devicecomponent',
      'devicemetric',
-     'devicerequest',
+     'deviceuserequest',
      'deviceusestatement',
      'diagnosticorder',
      'diagnosticreport',
@@ -2255,7 +2255,7 @@ Const
      TFhirDevice,
      TFhirDeviceComponent,
      TFhirDeviceMetric,
-     TFhirDeviceRequest,
+     TFhirDeviceUseRequest,
      TFhirDeviceUseStatement,
      TFhirDiagnosticOrder,
      TFhirDiagnosticReport,
@@ -2351,7 +2351,7 @@ Const
      frtDevice,
      frtDeviceComponent,
      frtDeviceMetric,
-     frtDeviceRequest,
+     frtDeviceUseRequest,
      frtDeviceUseStatement,
      frtDiagnosticOrder,
      frtDiagnosticReport,
@@ -2447,7 +2447,7 @@ Const
      'Device',
      'DeviceComponent',
      'DeviceMetric',
-     'DeviceRequest',
+     'DeviceUseRequest',
      'DeviceUseStatement',
      'DiagnosticOrder',
      'DiagnosticReport',
@@ -2543,7 +2543,7 @@ Const
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'type', 'udi', 'url');
   CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'parent', 'source', 'type');
   CODES_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'identifier', 'parent', 'source', 'type');
-  CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'patient', 'subject');
+  CODES_TSearchParamsDeviceUseRequest : Array[TSearchParamsDeviceUseRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'patient', 'subject');
   CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'patient', 'subject');
   CODES_TSearchParamsDiagnosticOrder : Array[TSearchParamsDiagnosticOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'bodysite', 'code', 'encounter', 'event-date', 'event-status', 'event-status-date', 'identifier', 'item-date', 'item-past-status', 'item-status', 'item-status-date', 'orderer', 'patient', 'specimen', 'status', 'subject');
   CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'date', 'diagnosis', 'encounter', 'identifier', 'image', 'issued', 'patient', 'performer', 'request', 'result', 'specimen', 'status', 'subject');

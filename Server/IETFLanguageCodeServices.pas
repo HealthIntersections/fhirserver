@@ -355,9 +355,11 @@ var
   i : integer;
 begin
   i := StringArrayIndexOfSensitive(CODES_TIETFLanguageComponent, prop);
+  {$IFDEF FHIR3}
   if (i >= 0) and (op = FilterOperatorExists) and ((value = 'true') or (value = 'false')) then
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
   else
+  {$ENDIF}
     raise Exception.Create('Not a supported filter');
 end;
 

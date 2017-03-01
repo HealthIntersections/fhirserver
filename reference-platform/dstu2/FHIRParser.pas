@@ -348,8 +348,8 @@ Type
     function ParseDeviceMetricCalibrationChild(element : TFhirDeviceMetricCalibration; path : string; child : IXmlDomElement) : boolean;
     function ParseDeviceMetric(element : IXmlDomElement; path : string) : TFhirDeviceMetric;
     function ParseDeviceMetricChild(element : TFhirDeviceMetric; path : string; child : IXmlDomElement) : boolean;
-    function ParseDeviceRequest(element : IXmlDomElement; path : string) : TFhirDeviceRequest;
-    function ParseDeviceRequestChild(element : TFhirDeviceRequest; path : string; child : IXmlDomElement) : boolean;
+    function ParseDeviceUseRequest(element : IXmlDomElement; path : string) : TFhirDeviceUseRequest;
+    function ParseDeviceUseRequestChild(element : TFhirDeviceUseRequest; path : string; child : IXmlDomElement) : boolean;
     function ParseDeviceUseStatement(element : IXmlDomElement; path : string) : TFhirDeviceUseStatement;
     function ParseDeviceUseStatementChild(element : TFhirDeviceUseStatement; path : string; child : IXmlDomElement) : boolean;
     function ParseDiagnosticOrderEvent(element : IXmlDomElement; path : string) : TFhirDiagnosticOrderEvent;
@@ -1063,8 +1063,8 @@ Type
     procedure ComposeDeviceMetricCalibrationChildren(xml : TXmlBuilder; elem : TFhirDeviceMetricCalibration);
     procedure ComposeDeviceMetric(xml : TXmlBuilder; name : string; elem : TFhirDeviceMetric);
     procedure ComposeDeviceMetricChildren(xml : TXmlBuilder; elem : TFhirDeviceMetric);
-    procedure ComposeDeviceRequest(xml : TXmlBuilder; name : string; elem : TFhirDeviceRequest);
-    procedure ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
+    procedure ComposeDeviceUseRequest(xml : TXmlBuilder; name : string; elem : TFhirDeviceUseRequest);
+    procedure ComposeDeviceUseRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceUseRequest);
     procedure ComposeDeviceUseStatement(xml : TXmlBuilder; name : string; elem : TFhirDeviceUseStatement);
     procedure ComposeDeviceUseStatementChildren(xml : TXmlBuilder; elem : TFhirDeviceUseStatement);
     procedure ComposeDiagnosticOrderEvent(xml : TXmlBuilder; name : string; elem : TFhirDiagnosticOrderEvent);
@@ -1929,9 +1929,9 @@ Type
     function ParseDeviceMetric(jsn : TJsonObject) : TFhirDeviceMetric; overload;
     procedure ParseDeviceMetricProperties(jsn : TJsonObject; result : TFhirDeviceMetric); overload;
     procedure ParseDeviceMetric(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest; overload;
-    procedure ParseDeviceRequestProperties(jsn : TJsonObject; result : TFhirDeviceRequest); overload;
-    procedure ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceUseRequest(jsn : TJsonObject) : TFhirDeviceUseRequest; overload;
+    procedure ParseDeviceUseRequestProperties(jsn : TJsonObject; result : TFhirDeviceUseRequest); overload;
+    procedure ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceUseStatement(jsn : TJsonObject) : TFhirDeviceUseStatement; overload;
     procedure ParseDeviceUseStatementProperties(jsn : TJsonObject; result : TFhirDeviceUseStatement); overload;
     procedure ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -2725,7 +2725,7 @@ Type
     procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
     procedure ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
     procedure ComposeDeviceMetric(json : TJSONWriter; name : string; elem : TFhirDeviceMetric; noObj : boolean = false);
-    procedure ComposeDeviceRequest(json : TJSONWriter; name : string; elem : TFhirDeviceRequest; noObj : boolean = false);
+    procedure ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
     procedure ComposeDeviceUseStatement(json : TJSONWriter; name : string; elem : TFhirDeviceUseStatement; noObj : boolean = false);
     procedure ComposeDiagnosticOrderEvent(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderEvent; noObj : boolean = false);
     procedure ComposeDiagnosticOrderItem(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderItem; noObj : boolean = false);
@@ -3099,7 +3099,7 @@ Type
     procedure ComposeDeviceComponent(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceComponent; index : integer);
     procedure ComposeDeviceMetricCalibration(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceMetricCalibration; index : integer);
     procedure ComposeDeviceMetric(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceMetric; index : integer);
-    procedure ComposeDeviceRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceRequest; index : integer);
+    procedure ComposeDeviceUseRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseRequest; index : integer);
     procedure ComposeDeviceUseStatement(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseStatement; index : integer);
     procedure ComposeDiagnosticOrderEvent(parent :  TRDFComplex; parentType, name : String; elem : TFhirDiagnosticOrderEvent; index : integer);
     procedure ComposeDiagnosticOrderItem(parent :  TRDFComplex; parentType, name : String; elem : TFhirDiagnosticOrderItem; index : integer);
@@ -5373,8 +5373,6 @@ begin
 end;
 
 Procedure TFHIRXmlComposer.ComposeResourceChildren(xml : TXmlBuilder; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeId(xml, 'id', elem.idElement);{x.2b}
@@ -5387,8 +5385,6 @@ begin
 end;
 
 Procedure TFHIRJsonComposer.ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdValue(json, 'id', elem.idElement, false);
@@ -5407,8 +5403,6 @@ begin
 end;
 
 Procedure TFHIRRDFComposer.ComposeResource(this : TRDFComplex; parentType, name : String; elem : TFhirResource; index : integer);
-var
-  i : integer;
 begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeId(this, 'Resource', 'id', elem.idElement, -1);{x.2c}
@@ -5542,8 +5536,8 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
+    ComposeString(xml, 'name', elem.nameElement){x.2b}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
     ComposeCode(xml, 'valueCode', TFhirCode(elem.value))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
@@ -5728,8 +5722,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
+    ComposeStringProps(json, 'name', elem.nameElement, false)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
   begin
     ComposeCodeValue(json, 'valueCode', TFhirCode(elem.value), false);
     ComposeCodeProps(json, 'valueCode', TFhirCode(elem.value), false)
@@ -5878,8 +5872,8 @@ begin
   end;
   composeBackboneElement(this, 'ParametersParameter', name, elem, index);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(this, 'ParametersParameter', 'name', elem.nameElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
+    ComposeString(this, 'ParametersParameter', 'name', elem.nameElement, -1){x.2c}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
     ComposeCode(this, 'ParametersParameter', 'valueCode', TFhirCode(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(this, 'ParametersParameter', 'valueOid', TFhirOid(elem.value), -1)
@@ -6107,7 +6101,7 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeDomainResourceChildren(xml : TXmlBuilder; elem : TFhirDomainResource);
 var
-  i : integer;
+  i : integer;{z.a}
 begin
   composeResourceChildren(xml, elem);
   if (SummaryOption in [soFull, soText]) then
@@ -6125,7 +6119,7 @@ end;
 
 Procedure TFHIRJsonComposer.ComposeDomainResourceProperties(json : TJSONWriter; elem : TFhirDomainResource);
 var
-  i : integer;
+  i : integer{z.b};
 begin
   ComposeResourceProperties(json, elem);
   if (SummaryOption in [soFull, soText]) then
@@ -6155,7 +6149,7 @@ end;
 
 Procedure TFHIRRDFComposer.ComposeDomainResource(this : TRDFComplex; parentType, name : String; elem : TFhirDomainResource; index : integer);
 var
-  i : integer;
+  i : integer{z.c};
 begin
   ComposeResource(this, 'DomainResource', name, elem, index);
   if (SummaryOption in [soFull, soText]) then
@@ -6460,8 +6454,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeUriProps(json, 'url', elem.urlElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
+    ComposeUriProps(json, 'url', elem.urlElement, false)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
   begin
     ComposeCodeValue(json, 'valueCode', TFhirCode(elem.value), false);
     ComposeCodeProps(json, 'valueCode', TFhirCode(elem.value), false)
@@ -6600,8 +6594,8 @@ begin
   end;
   composeElement(this, 'Extension', name, elem, index);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeUri(this, 'Extension', 'url', elem.urlElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
+    ComposeUri(this, 'Extension', 'url', elem.urlElement, -1){x.2c}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
     ComposeCode(this, 'Extension', 'valueCode', TFhirCode(elem.value), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(this, 'Extension', 'valueOid', TFhirOid(elem.value), -1)
@@ -10798,8 +10792,8 @@ begin
     for i := 0 to elem.type_List.Count - 1 do
       ComposeElementDefinitionType(xml, 'type', elem.type_List[i]);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(xml, 'nameReference', elem.nameReferenceElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) {1} then
+    ComposeString(xml, 'nameReference', elem.nameReferenceElement){x.2b}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) {1} then
     ComposeCode(xml, 'defaultValueCode', TFhirCode(elem.defaultValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirOid) {1} then
     ComposeOid(xml, 'defaultValueOid', TFhirOid(elem.defaultValue))
@@ -10870,8 +10864,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
     ComposeTiming(xml, 'defaultValueTiming', TFhirTiming(elem.defaultValue));
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeMarkdown(xml, 'meaningWhenMissing', elem.meaningWhenMissingElement);{x.2b}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
+    ComposeMarkdown(xml, 'meaningWhenMissing', elem.meaningWhenMissingElement){x.2b}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
     ComposeCode(xml, 'fixedCode', TFhirCode(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirOid) {1} then
     ComposeOid(xml, 'fixedOid', TFhirOid(elem.fixed))
@@ -10940,8 +10934,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
     ComposeElementDefinition(xml, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
-    ComposeTiming(xml, 'fixedTiming', TFhirTiming(elem.fixed));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
+    ComposeTiming(xml, 'fixedTiming', TFhirTiming(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
     ComposeCode(xml, 'patternCode', TFhirCode(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirOid) {1} then
     ComposeOid(xml, 'patternOid', TFhirOid(elem.pattern))
@@ -11010,8 +11004,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
     ComposeElementDefinition(xml, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
-    ComposeTiming(xml, 'patternTiming', TFhirTiming(elem.pattern));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
+    ComposeTiming(xml, 'patternTiming', TFhirTiming(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
     ComposeCode(xml, 'exampleCode', TFhirCode(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirOid) {1} then
     ComposeOid(xml, 'exampleOid', TFhirOid(elem.example))
@@ -11080,8 +11074,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
     ComposeElementDefinition(xml, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
-    ComposeTiming(xml, 'exampleTiming', TFhirTiming(elem.example));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
+    ComposeTiming(xml, 'exampleTiming', TFhirTiming(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
     ComposeCode(xml, 'minValueCode', TFhirCode(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirOid) {1} then
     ComposeOid(xml, 'minValueOid', TFhirOid(elem.minValue))
@@ -11150,8 +11144,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
     ComposeElementDefinition(xml, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
-    ComposeTiming(xml, 'minValueTiming', TFhirTiming(elem.minValue));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
+    ComposeTiming(xml, 'minValueTiming', TFhirTiming(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
     ComposeCode(xml, 'maxValueCode', TFhirCode(elem.maxValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirOid) {1} then
     ComposeOid(xml, 'maxValueOid', TFhirOid(elem.maxValue))
@@ -11848,8 +11842,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeStringValue(json, 'nameReference', elem.nameReferenceElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringProps(json, 'nameReference', elem.nameReferenceElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) then
+    ComposeStringProps(json, 'nameReference', elem.nameReferenceElement, false)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) then
   begin
     ComposeCodeValue(json, 'defaultValueCode', TFhirCode(elem.defaultValue), false);
     ComposeCodeProps(json, 'defaultValueCode', TFhirCode(elem.defaultValue), false)
@@ -11973,8 +11967,8 @@ begin
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeMarkdownValue(json, 'meaningWhenMissing', elem.meaningWhenMissingElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeMarkdownProps(json, 'meaningWhenMissing', elem.meaningWhenMissingElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) then
+    ComposeMarkdownProps(json, 'meaningWhenMissing', elem.meaningWhenMissingElement, false)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) then
   begin
     ComposeCodeValue(json, 'fixedCode', TFhirCode(elem.fixed), false);
     ComposeCodeProps(json, 'fixedCode', TFhirCode(elem.fixed), false)
@@ -12094,8 +12088,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) then
     ComposeElementDefinition(json, 'fixedElementDefinition', TFhirElementDefinition(elem.fixed))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) then
-    ComposeTiming(json, 'fixedTiming', TFhirTiming(elem.fixed));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) then
+    ComposeTiming(json, 'fixedTiming', TFhirTiming(elem.fixed))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) then
   begin
     ComposeCodeValue(json, 'patternCode', TFhirCode(elem.pattern), false);
     ComposeCodeProps(json, 'patternCode', TFhirCode(elem.pattern), false)
@@ -12215,8 +12209,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) then
     ComposeElementDefinition(json, 'patternElementDefinition', TFhirElementDefinition(elem.pattern))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) then
-    ComposeTiming(json, 'patternTiming', TFhirTiming(elem.pattern));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) then
+    ComposeTiming(json, 'patternTiming', TFhirTiming(elem.pattern))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) then
   begin
     ComposeCodeValue(json, 'exampleCode', TFhirCode(elem.example), false);
     ComposeCodeProps(json, 'exampleCode', TFhirCode(elem.example), false)
@@ -12336,8 +12330,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) then
     ComposeElementDefinition(json, 'exampleElementDefinition', TFhirElementDefinition(elem.example))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) then
-    ComposeTiming(json, 'exampleTiming', TFhirTiming(elem.example));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) then
+    ComposeTiming(json, 'exampleTiming', TFhirTiming(elem.example))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) then
   begin
     ComposeCodeValue(json, 'minValueCode', TFhirCode(elem.minValue), false);
     ComposeCodeProps(json, 'minValueCode', TFhirCode(elem.minValue), false)
@@ -12457,8 +12451,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) then
     ComposeElementDefinition(json, 'minValueElementDefinition', TFhirElementDefinition(elem.minValue))
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) then
-    ComposeTiming(json, 'minValueTiming', TFhirTiming(elem.minValue));
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) then
+    ComposeTiming(json, 'minValueTiming', TFhirTiming(elem.minValue))
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) then
   begin
     ComposeCodeValue(json, 'maxValueCode', TFhirCode(elem.maxValue), false);
     ComposeCodeProps(json, 'maxValueCode', TFhirCode(elem.maxValue), false)
@@ -12691,8 +12685,8 @@ begin
     for i := 0 to elem.type_List.Count - 1 do
       ComposeElementDefinitionType(this, 'ElementDefinition', 'type', elem.type_List[i], i);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(this, 'ElementDefinition', 'nameReference', elem.nameReferenceElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) {1} then
+    ComposeString(this, 'ElementDefinition', 'nameReference', elem.nameReferenceElement, -1){x.2c}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'defaultValueCode', TFhirCode(elem.defaultValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'defaultValueOid', TFhirOid(elem.defaultValue), -1)
@@ -12763,8 +12757,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.defaultValue is TFhirTiming) {9} then
     ComposeTiming(this, 'ElementDefinition', 'defaultValueTiming', TFhirTiming(elem.defaultValue), -1);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeMarkdown(this, 'ElementDefinition', 'meaningWhenMissing', elem.meaningWhenMissingElement, -1);{x.2c}
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
+    ComposeMarkdown(this, 'ElementDefinition', 'meaningWhenMissing', elem.meaningWhenMissingElement, -1){x.2c}
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'fixedCode', TFhirCode(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'fixedOid', TFhirOid(elem.fixed), -1)
@@ -12833,8 +12827,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirElementDefinition) {9} then
     ComposeElementDefinition(this, 'ElementDefinition', 'fixedElementDefinition', TFhirElementDefinition(elem.fixed), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.fixed is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'fixedTiming', TFhirTiming(elem.fixed), -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
+    ComposeTiming(this, 'ElementDefinition', 'fixedTiming', TFhirTiming(elem.fixed), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'patternCode', TFhirCode(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'patternOid', TFhirOid(elem.pattern), -1)
@@ -12903,8 +12897,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirElementDefinition) {9} then
     ComposeElementDefinition(this, 'ElementDefinition', 'patternElementDefinition', TFhirElementDefinition(elem.pattern), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.pattern is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'patternTiming', TFhirTiming(elem.pattern), -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
+    ComposeTiming(this, 'ElementDefinition', 'patternTiming', TFhirTiming(elem.pattern), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'exampleCode', TFhirCode(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'exampleOid', TFhirOid(elem.example), -1)
@@ -12973,8 +12967,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirElementDefinition) {9} then
     ComposeElementDefinition(this, 'ElementDefinition', 'exampleElementDefinition', TFhirElementDefinition(elem.example), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.example is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'exampleTiming', TFhirTiming(elem.example), -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
+    ComposeTiming(this, 'ElementDefinition', 'exampleTiming', TFhirTiming(elem.example), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'minValueCode', TFhirCode(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'minValueOid', TFhirOid(elem.minValue), -1)
@@ -13043,8 +13037,8 @@ begin
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirElementDefinition) {9} then
     ComposeElementDefinition(this, 'ElementDefinition', 'minValueElementDefinition', TFhirElementDefinition(elem.minValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.minValue is TFhirTiming) {9} then
-    ComposeTiming(this, 'ElementDefinition', 'minValueTiming', TFhirTiming(elem.minValue), -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
+    ComposeTiming(this, 'ElementDefinition', 'minValueTiming', TFhirTiming(elem.minValue), -1)
+  else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirCode) {1} then
     ComposeCode(this, 'ElementDefinition', 'maxValueCode', TFhirCode(elem.maxValue), -1)
   else if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.maxValue is TFhirOid) {1} then
     ComposeOid(this, 'ElementDefinition', 'maxValueOid', TFhirOid(elem.maxValue), -1)
@@ -17156,7 +17150,7 @@ begin
   composeResourceChildren(xml, elem);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirBundleTypeEnum);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if (SummaryOption in [soFull, soSummary, soText, soData, soCount]) then
     ComposeUnsignedInt(xml, 'total', elem.totalElement);{x.2b}
   if SummaryOption in [soFull, soSummary, soText, soData] then
     for i := 0 to elem.link_List.Count - 1 do
@@ -17210,9 +17204,9 @@ begin
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirBundleTypeEnum, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirBundleTypeEnum, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if (SummaryOption in [soFull, soSummary, soText, soData, soCount]) then
     ComposeUnsignedIntValue(json, 'total', elem.totalElement, false);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if (SummaryOption in [soFull, soSummary, soText, soData, soCount]) then
     ComposeUnsignedIntProps(json, 'total', elem.totalElement, false);
   if (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.link_List.Count > 0) then
   begin
@@ -17249,7 +17243,7 @@ begin
   composeResource(this, 'Bundle', name, elem, index);
   if (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnum(this, 'Bundle', 'type', elem.Type_Element, CODES_TFhirBundleTypeEnum, SYSTEMS_TFhirBundleTypeEnum, -1);
-  if (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if (SummaryOption in [soFull, soSummary, soText, soData, soCount]) then
     ComposeUnsignedInt(this, 'Bundle', 'total', elem.totalElement, -1);{x.2c}
   if SummaryOption in [soFull, soSummary, soText, soData] then
     for i := 0 to elem.link_List.Count - 1 do
@@ -23044,7 +23038,7 @@ begin
   begin
     json.valueArray('plan');
     for i := 0 to elem.planList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.planList[i]); {z - Reference(CarePlan|Appointment|CommunicationRequest|DeviceRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)}
+      ComposeReference{Resource}(json, '', elem.planList[i]); {z - Reference(CarePlan|Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)}
     json.FinishArray;
   end;
   if (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
@@ -32741,17 +32735,17 @@ begin
       ComposeDeviceMetricCalibration(this, 'DeviceMetric', 'calibration', elem.calibrationList[i], i);
 end;
 
-function TFHIRXmlParser.ParseDeviceRequest(element : IXmlDomElement; path : string) : TFhirDeviceRequest;
+function TFHIRXmlParser.ParseDeviceUseRequest(element : IXmlDomElement; path : string) : TFhirDeviceUseRequest;
 var
   child : IXMLDOMElement;
 begin
-  result := TFhirDeviceRequest.create;
+  result := TFhirDeviceUseRequest.create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseDeviceRequestChild(result, path, child) then
+      if not ParseDeviceUseRequestChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -32763,7 +32757,7 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseDeviceRequestChild(element : TFhirDeviceRequest; path : string; child : IXmlDomElement) : boolean;
+function TFHIRXmlParser.ParseDeviceUseRequestChild(element : TFhirDeviceUseRequest; path : string; child : IXmlDomElement) : boolean;
 begin
   result := true;
       if (child.baseName = 'bodySiteCodeableConcept') then
@@ -32802,18 +32796,18 @@ begin
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceRequest(xml : TXmlBuilder; name : String; elem : TFhirDeviceRequest);
+procedure TFHIRXmlComposer.ComposeDeviceUseRequest(xml : TXmlBuilder; name : String; elem : TFhirDeviceUseRequest);
 begin
   if (elem = nil) then
     exit;
   composeDomainResourceAttributes(xml, elem);
   xml.open(name);
-  composeDeviceRequestChildren(xml, elem);
+  composeDeviceUseRequestChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
+procedure TFHIRXmlComposer.ComposeDeviceUseRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceUseRequest);
 var
   i : integer;
 begin
@@ -32856,23 +32850,23 @@ begin
      ComposeEnum(xml, 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum);
 end;
 
-procedure TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDeviceRequest(jsn)); {2}
+  ctxt.add(ParseDeviceUseRequest(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest;
+function TFHIRJsonParser.ParseDeviceUseRequest(jsn : TJsonObject) : TFhirDeviceUseRequest;
 begin
-  result := TFhirDeviceRequest.create;
+  result := TFhirDeviceUseRequest.create;
   try
-    ParseDeviceRequestProperties(jsn, result);
+    ParseDeviceUseRequestProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDeviceRequestProperties(jsn : TJsonObject; result : TFhirDeviceRequest);
+procedure TFHIRJsonParser.ParseDeviceUseRequestProperties(jsn : TJsonObject; result : TFhirDeviceUseRequest);
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('bodySiteCodeableConcept') {a4} then
@@ -32909,7 +32903,7 @@ begin
       result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum);
 end;
 
-procedure TFHIRJsonComposer.ComposeDeviceRequest(json : TJSONWriter; name : string; elem : TFhirDeviceRequest; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
 var
   i : integer;
   ext : boolean;
@@ -33000,7 +32994,7 @@ begin
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, false);
 end;
 
-procedure TFHIRRDFComposer.ComposeDeviceRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceRequest; index : integer);
+procedure TFHIRRDFComposer.ComposeDeviceUseRequest(parent :  TRDFComplex; parentType, name : String; elem : TFhirDeviceUseRequest; index : integer);
 var
   this : TRDFComplex;
   i : integer;
@@ -33012,45 +33006,45 @@ begin
   else
   begin
     this := parent.predicate('fhir:'+parentType+'.'+name);
-    this.predicate('a', 'fhir:DeviceRequest');
+    this.predicate('a', 'fhir:DeviceUseRequest');
   end;
-  composeDomainResource(this, 'DeviceRequest', name, elem, index);
+  composeDomainResource(this, 'DeviceUseRequest', name, elem, index);
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySite is TFhirCodeableConcept) {6} then
-    ComposeCodeableConcept(this, 'DeviceRequest', 'bodySiteCodeableConcept', TFhirCodeableConcept(elem.bodySite), -1)
+    ComposeCodeableConcept(this, 'DeviceUseRequest', 'bodySiteCodeableConcept', TFhirCodeableConcept(elem.bodySite), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySite is TFhirReference) {2} then
-    ComposeReference(this, 'DeviceRequest', 'bodySiteReference', TFhirReference(elem.bodySite), -1);
+    ComposeReference(this, 'DeviceUseRequest', 'bodySiteReference', TFhirReference(elem.bodySite), -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'DeviceRequest', 'status', elem.StatusElement, CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum, -1);
+     ComposeEnum(this, 'DeviceUseRequest', 'status', elem.StatusElement, CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum, -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirDevice}(this, 'DeviceRequest', 'device', elem.deviceElement, -1);{x.2c}
+    ComposeReference{TFhirDevice}(this, 'DeviceUseRequest', 'device', elem.deviceElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirEncounter}(this, 'DeviceRequest', 'encounter', elem.encounterElement, -1);{x.2c}
+    ComposeReference{TFhirEncounter}(this, 'DeviceUseRequest', 'encounter', elem.encounterElement, -1);{x.2c}
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(this, 'DeviceRequest', 'identifier', elem.identifierList[i], i);
+      ComposeIdentifier(this, 'DeviceUseRequest', 'identifier', elem.identifierList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.indicationList.Count - 1 do
-      ComposeCodeableConcept(this, 'DeviceRequest', 'indication', elem.indicationList[i], i);
+      ComposeCodeableConcept(this, 'DeviceUseRequest', 'indication', elem.indicationList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.notesList.Count - 1 do
-      ComposeString(this, 'DeviceRequest', 'notes', elem.notesList[i], i);
+      ComposeString(this, 'DeviceUseRequest', 'notes', elem.notesList[i], i);
   if SummaryOption in [soFull, soSummary, soData] then
     for i := 0 to elem.prnReasonList.Count - 1 do
-      ComposeCodeableConcept(this, 'DeviceRequest', 'prnReason', elem.prnReasonList[i], i);
+      ComposeCodeableConcept(this, 'DeviceUseRequest', 'prnReason', elem.prnReasonList[i], i);
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'DeviceRequest', 'orderedOn', elem.orderedOnElement, -1);{x.2c}
+    ComposeDateTime(this, 'DeviceUseRequest', 'orderedOn', elem.orderedOnElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTime(this, 'DeviceRequest', 'recordedOn', elem.recordedOnElement, -1);{x.2c}
+    ComposeDateTime(this, 'DeviceUseRequest', 'recordedOn', elem.recordedOnElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeReference{TFhirPatient}(this, 'DeviceRequest', 'subject', elem.subjectElement, -1);{x.2c}
+    ComposeReference{TFhirPatient}(this, 'DeviceUseRequest', 'subject', elem.subjectElement, -1);{x.2c}
   if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirTiming) {6} then
-    ComposeTiming(this, 'DeviceRequest', 'timingTiming', TFhirTiming(elem.timing), -1)
+    ComposeTiming(this, 'DeviceUseRequest', 'timingTiming', TFhirTiming(elem.timing), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirPeriod) {6} then
-    ComposePeriod(this, 'DeviceRequest', 'timingPeriod', TFhirPeriod(elem.timing), -1)
+    ComposePeriod(this, 'DeviceUseRequest', 'timingPeriod', TFhirPeriod(elem.timing), -1)
   else if (SummaryOption in [soFull, soSummary, soData]) and (elem.timing is TFhirDateTime) {6} then
-    ComposeDateTime(this, 'DeviceRequest', 'timingDateTime', TFhirDateTime(elem.timing), -1);
+    ComposeDateTime(this, 'DeviceUseRequest', 'timingDateTime', TFhirDateTime(elem.timing), -1);
   if (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'DeviceRequest', 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum, -1);
+     ComposeEnum(this, 'DeviceUseRequest', 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, SYSTEMS_TFhirDeviceUseRequestPriorityEnum, -1);
 end;
 
 function TFHIRXmlParser.ParseDeviceUseStatement(element : IXmlDomElement; path : string) : TFhirDeviceUseStatement;
@@ -70055,8 +70049,8 @@ begin
     result := ParseDeviceComponent(element, path+'/DeviceComponent')
   else if element.baseName = 'DeviceMetric' Then
     result := ParseDeviceMetric(element, path+'/DeviceMetric')
-  else if element.baseName = 'DeviceRequest' Then
-    result := ParseDeviceRequest(element, path+'/DeviceRequest')
+  else if element.baseName = 'DeviceUseRequest' Then
+    result := ParseDeviceUseRequest(element, path+'/DeviceUseRequest')
   else if element.baseName = 'DeviceUseStatement' Then
     result := ParseDeviceUseStatement(element, path+'/DeviceUseStatement')
   else if element.baseName = 'DiagnosticOrder' Then
@@ -70225,7 +70219,7 @@ begin
     frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource));
     frtDeviceComponent: ComposeDeviceComponent(xml, 'DeviceComponent', TFhirDeviceComponent(resource));
     frtDeviceMetric: ComposeDeviceMetric(xml, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceRequest: ComposeDeviceRequest(xml, 'DeviceRequest', TFhirDeviceRequest(resource));
+    frtDeviceUseRequest: ComposeDeviceUseRequest(xml, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
     frtDeviceUseStatement: ComposeDeviceUseStatement(xml, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
     frtDiagnosticOrder: ComposeDiagnosticOrder(xml, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
     frtDiagnosticReport: ComposeDiagnosticReport(xml, 'DiagnosticReport', TFhirDiagnosticReport(resource));
@@ -70356,8 +70350,8 @@ begin
     result := ParseDeviceComponent(jsn)
   else if s = 'DeviceMetric' Then
     result := ParseDeviceMetric(jsn)
-  else if s = 'DeviceRequest' Then
-    result := ParseDeviceRequest(jsn)
+  else if s = 'DeviceUseRequest' Then
+    result := ParseDeviceUseRequest(jsn)
   else if s = 'DeviceUseStatement' Then
     result := ParseDeviceUseStatement(jsn)
   else if s = 'DiagnosticOrder' Then
@@ -70594,8 +70588,8 @@ begin
     result := parseDeviceComponent(jsn)
   else if (type_ = 'TFhirDeviceMetric') then
     result := parseDeviceMetric(jsn)
-  else if (type_ = 'TFhirDeviceRequest') then
-    result := parseDeviceRequest(jsn)
+  else if (type_ = 'TFhirDeviceUseRequest') then
+    result := parseDeviceUseRequest(jsn)
   else if (type_ = 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(jsn)
   else if (type_ = 'TFhirDiagnosticOrder') then
@@ -70832,8 +70826,8 @@ begin
     result := parseDeviceComponent(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDeviceMetric') then
     result := parseDeviceMetric(element, element.nodeName)
-  else if SameText(element.NodeName, 'TFhirDeviceRequest') then
-    result := parseDeviceRequest(element, element.nodeName)
+  else if SameText(element.NodeName, 'TFhirDeviceUseRequest') then
+    result := parseDeviceUseRequest(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(element, element.nodeName)
   else if SameText(element.NodeName, 'TFhirDiagnosticOrder') then
@@ -71372,8 +71366,8 @@ begin
     composeDeviceMetricCalibration(xml, name,  TFhirDeviceMetricCalibration(base))
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(xml, name,  TFhirDeviceMetric(base))
-  else if (base is TFhirDeviceRequest) then
-    composeDeviceRequest(xml, name,  TFhirDeviceRequest(base))
+  else if (base is TFhirDeviceUseRequest) then
+    composeDeviceUseRequest(xml, name,  TFhirDeviceUseRequest(base))
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(xml, name,  TFhirDeviceUseStatement(base))
   else if (base is TFhirDiagnosticOrderEvent) then
@@ -72088,8 +72082,8 @@ begin
     composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(json, name, TFhirDeviceMetric(base), false)
-  else if (base is TFhirDeviceRequest) then
-    composeDeviceRequest(json, name, TFhirDeviceRequest(base), false)
+  else if (base is TFhirDeviceUseRequest) then
+    composeDeviceUseRequest(json, name, TFhirDeviceUseRequest(base), false)
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(json, name, TFhirDeviceUseStatement(base), false)
   else if (base is TFhirDiagnosticOrderEvent) then
@@ -72529,7 +72523,7 @@ begin
     frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
     frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
     frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceRequest: ComposeDeviceRequest(json, 'DeviceRequest', TFhirDeviceRequest(resource));
+    frtDeviceUseRequest: ComposeDeviceUseRequest(json, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
     frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
     frtDiagnosticOrder: ComposeDiagnosticOrder(json, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
     frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
@@ -72636,7 +72630,7 @@ begin
     frtDevice: ComposeDevice(this, '', 'Device', TFhirDevice(resource), -1);
     frtDeviceComponent: ComposeDeviceComponent(this, '', 'DeviceComponent', TFhirDeviceComponent(resource), -1);
     frtDeviceMetric: ComposeDeviceMetric(this, '', 'DeviceMetric', TFhirDeviceMetric(resource), -1);
-    frtDeviceRequest: ComposeDeviceRequest(this, '', 'DeviceRequest', TFhirDeviceRequest(resource), -1);
+    frtDeviceUseRequest: ComposeDeviceUseRequest(this, '', 'DeviceUseRequest', TFhirDeviceUseRequest(resource), -1);
     frtDeviceUseStatement: ComposeDeviceUseStatement(this, '', 'DeviceUseStatement', TFhirDeviceUseStatement(resource), -1);
     frtDiagnosticOrder: ComposeDiagnosticOrder(this, '', 'DiagnosticOrder', TFhirDiagnosticOrder(resource), -1);
     frtDiagnosticReport: ComposeDiagnosticReport(this, '', 'DiagnosticReport', TFhirDiagnosticReport(resource), -1);
