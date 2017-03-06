@@ -116,6 +116,7 @@ Type
     FDefinition : TSnomedCombinedConcept;
     FTypes : TStringList;
     FFields : TStringList;
+    DefaultLanguage : boolean;
     FMembers : TAdvMap<TSnomedCombinedReferenceSetEntry>;
     function getByItem(item : TSnomedCombinedItem; values : TStringList) : TSnomedCombinedReferenceSetEntry;
   public
@@ -685,6 +686,7 @@ var
   guid  : TGuid;
 begin
   svc.RefSetIndex.GetReferenceSet(i, name, iFilename, definition, members, dummy, types, names);
+
   ui := svc.GetConceptId(definition);
   if (ui = '900000000000534007') then
     s := 'test';
@@ -701,6 +703,9 @@ begin
   end
   else
     rs := FRefSets[ui];
+
+  if (svc = FInternational) and (definition = FInternational.DefaultLanguageRefSet) then
+    rs.DefaultLanguage := true;
 
   if (types <> 0)  then
   begin
@@ -1121,6 +1126,7 @@ begin
 
     CreateDir(IncludeTrailingBackslash(destination)+'Terminology');
     CreateDir(IncludeTrailingBackslash(destination)+'RefSet');
+    CreateDir(IncludeTrailingBackslash(destination)+'RefSet\Language');
 
 
     c := TTabWriter.Create(IncludeTrailingBackslash(destination)+'Terminology\concepts.txt');
@@ -1214,7 +1220,10 @@ begin
   end;
   for rs in FRefSets.Values do
   begin
-    filename := IncludeTrailingBackslash(destination)+'RefSet\'+rs.FFilename;
+    if rs.DefaultLanguage then
+      filename := IncludeTrailingBackslash(destination)+'RefSet\Language\'+rs.FFilename
+    else
+      filename := IncludeTrailingBackslash(destination)+'RefSet\'+rs.FFilename;
     ForceFolder(ExtractFilePath(filename));
     r := TTabWriter.Create(filename);
     try

@@ -69,6 +69,7 @@ Type
   private
     index, filename : Cardinal;
     noStoreIds : boolean;
+    isLangRefset : boolean;
     title : String;
     aMembers : TSnomedReferenceSetMemberArray;
     iMemberLength : Integer;
@@ -172,7 +173,7 @@ Type
     Procedure LoadReferenceSets(pfxLen : integer; path : String; var count : integer); overload;
     Procedure LoadReferenceSets; overload;
     Procedure CloseReferenceSets(); overload;
-    Procedure LoadReferenceSet(pfxLen : integer; sFile : String);
+    Procedure LoadReferenceSet(pfxLen : integer; sFile : String; isLangRefset : boolean);
     Procedure SeeDesc(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
     Procedure SeeWord(sDesc : String; iConceptIndex : Integer; active, fsn : boolean);
     procedure ReadRelationshipsFile;
@@ -1469,7 +1470,7 @@ begin
       end
       else if (sr.Attr <> faDirectory) and (ExtractFileExt(sr.Name) = '.txt') then
       begin
-        LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name);
+        LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, path.Contains('Language\'));
         inc(count);
         Progress(STEP_IMPORT_REFSET, count / 300, '');
       end;
@@ -1729,7 +1730,7 @@ Begin
 End;
 
 
-procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String);
+procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String; isLangRefset : boolean);
 var
   s : TBytes;
   i, iId, iTime, iDate, iActive, iModule, iRefSetId, iRefComp, l, c : Integer;
@@ -1878,6 +1879,7 @@ begin
         if (refset.fieldTypes <> 0) and (refset.fieldTypes <> ti) then
           raise Exception.Create('field types mismatch');
         refset.title := sname;
+        refset.isLangRefset := isLangRefset;
         refset.filename := FStrings.AddString(sFile.Substring(pfxLen));
         refset.fieldTypes := ti;
         SetLength(fnames, length(types));
@@ -1897,6 +1899,7 @@ begin
         begin
           bDesc := 1;
           refset.noStoreIds := true;
+
         end
         Else if FRels.TryGetValue(iRef, iTermRef) then
           bDesc := 2
@@ -1941,6 +1944,8 @@ begin
     refset.membersByName := FRefsetMembers.AddMembers(false, refset.aMembers);
     QuickSortPairs(refset.aMembers);
     refset.membersByRef := FRefsetMembers.AddMembers(not refset.noStoreIds, refset.aMembers);
+    if refset.isLangRefset then // it's a description refset...
+      Fsvc.DefaultLanguageRefSet := refset.index;
   end;
 end;
 

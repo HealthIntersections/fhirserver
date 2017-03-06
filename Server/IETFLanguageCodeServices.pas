@@ -24,6 +24,7 @@ type
   public
     constructor create(code : String);
     function Link : TIETFLanguageCodeConcept; overload;
+
   end;
 
   TIETFLanguageEntry = class (TAdvObject)
@@ -84,6 +85,7 @@ type
     destructor Destroy; override;
 
     function parse(code : String; var msg : String) : TIETFLanguageCodeConcept;
+    function present(code : TIETFLanguageCodeConcept):String;
 
     function getDisplayForRegion(code : String):String;
     function getDisplayForLang(code : String):String;
@@ -249,15 +251,22 @@ end;
 function TIETFLanguageCodeServices.getDisplay(code : String; lang : String):String;
 var
   parts : TArray<String>;
+  c : TIETFLanguageCodeConcept;
+  msg : String;
 begin
   if (code = '') then
     result := '??'
   else
   begin
-    parts := code.Split(['-']);
-    result := FDefinitions.getDisplayForLang(parts[0]);
-    if length(parts) > 1 then
-      result := result + '('+FDefinitions.getDisplayForREgion(parts[1])+')';
+    c := FDefinitions.parse(code, msg);
+    try
+      if c <> nil then
+        result := FDefinitions.present(c)
+      else
+        result := '??';
+    finally
+      c.Free;
+    end;
   end;
 end;
 
@@ -383,7 +392,7 @@ begin
         languageComponentRegion: ok := filter.status = (cc.region <> '');
         languageComponentVariant: ok := filter.status = (cc.variant <> '');
         languageComponentExtension: ok := filter.status = (cc.extension <> '');
-        languageComponentPrivateUse: ok := filter.status = (cc.language <> '');
+        languageComponentPrivateUse: ok := filter.status = (length(cc.privateUse) > 0);
       end;
     end;
     if ok then
@@ -452,6 +461,7 @@ function TIETFLanguageCodeConcept.Link: TIETFLanguageCodeConcept;
 begin
   result := TIETFLanguageCodeConcept(inherited link);
 end;
+
 
 { TIETFLanguageDefinitions }
 
@@ -547,6 +557,43 @@ begin
   end;
 end;
 
+
+function TIETFLanguageDefinitions.present(code: TIETFLanguageCodeConcept): String;
+var
+  b : TStringBuilder;
+  first : boolean;
+  procedure note(n, v : String);
+  begin
+    if first then
+      first := false
+    else
+      b.Append(', ');
+    b.Append(n);
+    b.Append('=');
+    b.Append(v);
+  end;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.append(FLanguages[code.language].display);
+    if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
+    begin
+      b.Append(' (');
+      first := true;
+      if (code.script <> '') then
+        note('Script', FScripts[code.script].display);
+      if (code.region <> '') then
+        note('Region', FRegions[code.region].display);
+      if (code.variant <> '') then
+        note('Region', FVariants[code.variant].display);
+      b.Append(')');
+    end;
+
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 function TIETFLanguageDefinitions.readVars(st: TStringList; i: integer; vars: TDictionary<string, string>): integer;
 var

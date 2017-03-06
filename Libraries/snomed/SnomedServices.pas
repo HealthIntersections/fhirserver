@@ -61,7 +61,7 @@ Uses
   SnomedExpressions, TerminologyServices;
 
 Const
-  SNOMED_CACHE_VERSION = '14'; // 12: change description.flags to description.active
+  SNOMED_CACHE_VERSION = '15'; // 15: add default language refset
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
@@ -469,7 +469,7 @@ operations
     FLoading : boolean;
     FActiveRoots : UInt64Array;
     FInactiveRoots : UInt64Array;
-    FIs_a_Index, FFSN, FPreferredTerm : Cardinal;
+    FIs_a_Index, FFSN, FPreferredTerm, FDefaultLanguage : Cardinal;
     FStrings : TSnomedStrings;
     FRefs : TSnomedReferences;
     FDesc : TSnomedDescriptions;
@@ -558,6 +558,7 @@ operations
     Property ActiveRoots : UInt64Array read FActiveRoots write FActiveRoots;
     Property InactiveRoots : UInt64Array read FInActiveRoots write FInActiveRoots;
     Property Is_a_Index : Cardinal read FIs_a_Index write FIs_a_Index;
+    Property DefaultLanguageRefSet : Cardinal read FDefaultLanguage write FDefaultLanguage;
     function Subsumes(iParent, iChild: Cardinal): Boolean; Overload;
     Function GetDisplayName(Const iConcept, iLang : Cardinal) : String; Overload;
     Procedure ListDisplayNames(list : TStringList; Const iConcept, iLang : Cardinal; FlagMask : Byte); Overload;
@@ -1284,7 +1285,7 @@ begin
     oread := TReader.Create(oFile, 8192);
     try
       if oRead.ReadString <> SNOMED_CACHE_VERSION Then
-        raise ESnomedServices.create('The Snomed cache "'+sFilename+'" must be rebuilt using -snomed-rf1 or -snomed-rf2');
+        raise ESnomedServices.create('The Snomed cache "'+sFilename+'" must be rebuilt using the server utilities');
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
       s := VersionUri.split(['/']);
@@ -1318,6 +1319,7 @@ begin
       SetLength(FActiveRoots, oRead.ReadInteger);
       for i := 0 to Length(FActiveRoots) - 1 Do
         FActiveRoots[i] := ReadUInt64;
+      FDefaultLanguage := oread.ReadInteger;
     Finally
       oread.Free;
     End;
@@ -1398,6 +1400,7 @@ begin
       oWrite.writeInteger(length(FActiveRoots));
       for i := 0 to Length(FActiveRoots) - 1 Do
         writeUInt64(FActiveRoots[i]);
+      oWrite.writeInteger(FDefaultLanguage);
     Finally
       oWrite.Free;
     End;
@@ -1803,7 +1806,8 @@ begin
         result := Strings.GetEntry(iDesc);
     End;
   // if we still haven't found, then any preferred term
-  result := GetPN(Descs);
+  if result = '' then
+    result := GetPN(Descs);
 end;
 
 function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
@@ -3168,11 +3172,27 @@ End;
 *)
 
 function TSnomedServices.Display(context: TCodeSystemProviderContext; lang : String): string;
+var
+  Identity : UInt64;
+  Flags : Byte;
+  ParentIndex : Cardinal;
+  DescriptionIndex : Cardinal;
+  InboundIndex : Cardinal;
+  outboundIndex, refsets : Cardinal;
+  Descriptions : TCardinalArray;
+  date : TSnomedDate;
 begin
   if TSnomedExpressionContext(context).isComplex then
     result := displayExpression(TSnomedExpressionContext(context).Expression)
   else
+  begin
+    if lang = '' then
+
     result := GetDisplayName(TSnomedExpressionContext(context).reference, 0);
+    Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
+    if result = GetFSN(Refs.GetReferences(DescriptionIndex)) then
+      writeln('returning FSN');
+  end;
 end;
 
 procedure TSnomedServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);

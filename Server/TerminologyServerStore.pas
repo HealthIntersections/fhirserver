@@ -1186,8 +1186,8 @@ begin
     begin
       vs := TFhirValueSet(resource);
       vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true));
-//      if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
-//        FUcum.SetCommonUnits(vs.Link);
+      if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
+        FUcum.SetCommonUnits(vs.Link);
 
       FBaseValueSets.AddOrSetValue(vs.url, vs.Link);
       FValueSetsById.AddOrSetValue(vs.id, vs.Link);

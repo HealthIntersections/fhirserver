@@ -2767,11 +2767,12 @@ Type
     FId : TFhirId;
     FextensionList : TFhirExtensionList;
     Procedure SetId(value : TFhirId);
+    function getId : String; override;
     Function GetIdST : String;
     Procedure SetIdST(value : String);
     function GetExtensionList : TFhirExtensionList;
     function GetHasExtensionList : Boolean;
-  
+
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
@@ -2791,7 +2792,6 @@ Type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
     function isEmpty : boolean; override;
-    function getId : String; override;
     {!script show}
   published
     {@member id

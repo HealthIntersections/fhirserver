@@ -81,6 +81,7 @@ Type
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
@@ -187,6 +188,11 @@ end;
 function TCodeSystemProvider.SpecialEnumeration: String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+begin
+  raise Exception.Create('Not implemented for '+ClassName);
 end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;

@@ -193,6 +193,8 @@ var
 begin
   list := TStringList.Create;
   try
+    list.Duplicates := dupIgnore;
+    list.CaseSensitive := false;
     result := check(system, version, code, abstractOk, list, msg);
   finally
     list.Free;
@@ -316,6 +318,7 @@ begin
   try
     list := TStringList.Create;
     try
+      list.Duplicates := dupIgnore;
       list.CaseSensitive := false;
       if check(coding.system, coding.version, coding.code, abstractOk, list, message) then
       begin
@@ -374,6 +377,8 @@ begin
   try
     list := TStringList.Create;
     try
+      list.Duplicates := dupIgnore;
+      list.CaseSensitive := false;
       ok := TFhirBoolean.Create(false);
       result.AddParameter('result', ok);
       codelist := '';
@@ -533,7 +538,7 @@ begin
             loc := cs.locateIsA(code, fc.value);
             try
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
-              if result then
+              if loc <> nil then
                 cs.displays(loc, displays, '');
             finally
               cs.Close(loc);
@@ -547,6 +552,8 @@ begin
               if (loc = nil) and (message = '') then
                 message := msg;
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
+              if loc <> nil then
+                cs.displays(loc, displays, '');
             finally
               cs.Close(loc);
             end;
@@ -554,8 +561,6 @@ begin
           if not result then
             break;
         end;
-        if result then
-          cs.displays(loc, displays, '');
       end;
     finally
       for i := 0 to cset.filterList.count - 1 do

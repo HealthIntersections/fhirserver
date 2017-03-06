@@ -478,10 +478,10 @@ begin
         if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
           primitiveTypes.add(sd.id);
         {$ELSE}
-        raise Exception.Create('Debug this');
+
         if (sd.constrainedType = '') then
           allTypes.add(sd.id);
-        if (sd.constrainedType = '') and isPrimitiveType(sd.getId) then
+        if (sd.constrainedType = '') and isPrimitiveType(sd.id) then
           primitiveTypes.add(sd.id);
         {$ENDIF}
     end;
