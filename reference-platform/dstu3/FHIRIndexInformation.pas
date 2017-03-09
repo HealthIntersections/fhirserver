@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-03-09T14:32:57+11:00
+// FHIR v1.9.0 generated 2017-03-09T14:57:41+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -203,7 +203,7 @@ begin
   indexes.add('ActivityDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'date', 'The activity definition publication date', SearchParamTypeDATE, [], 'ActivityDefinition.date', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''depends-on'').resource | ActivityDefinition.library', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'description', 'Text search against the description of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.description', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'effective', 'Effective time associated with the activity definition', SearchParamTypeDATE, [], 'ActivityDefinition.effectivePeriod', SearchXpathUsageNormal);
@@ -1771,7 +1771,7 @@ begin
   indexes.add('Measure', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Measure', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'date', 'The measure publication date', SearchParamTypeDATE, [], 'Measure.date', SearchXpathUsageNormal);
-  indexes.add('Measure', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('Measure', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''depends-on'').resource | Measure.library', SearchXpathUsageNormal);
   indexes.add('Measure', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'description', 'Text search against the description of the measure', SearchParamTypeSTRING, [], 'Measure.description', SearchXpathUsageNormal);
   indexes.add('Measure', 'effective', 'Effective time associated with the measure', SearchParamTypeDATE, [], 'Measure.effectivePeriod', SearchXpathUsageNormal);
@@ -2319,7 +2319,7 @@ begin
   indexes.add('PlanDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'date', 'The plan definition publication date', SearchParamTypeDATE, [], 'PlanDefinition.date', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''depends-on'').resource | PlanDefinition.library', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'description', 'Text search against the description of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.description', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'effective', 'Effective time associated with the plan definition', SearchParamTypeDATE, [], 'PlanDefinition.effectivePeriod', SearchXpathUsageNormal);
