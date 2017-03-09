@@ -1470,7 +1470,7 @@ begin
       end
       else if (sr.Attr <> faDirectory) and (ExtractFileExt(sr.Name) = '.txt') then
       begin
-        LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, path.Contains('Language\'));
+        LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, path.endsWith('Language'));
         inc(count);
         Progress(STEP_IMPORT_REFSET, count / 300, '');
       end;
@@ -1945,7 +1945,7 @@ begin
     QuickSortPairs(refset.aMembers);
     refset.membersByRef := FRefsetMembers.AddMembers(not refset.noStoreIds, refset.aMembers);
     if refset.isLangRefset then // it's a description refset...
-      Fsvc.DefaultLanguageRefSet := refset.index;
+      Fsvc.DefaultLanguageRefSet := refset.membersByRef;
   end;
 end;
 

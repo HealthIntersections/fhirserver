@@ -626,7 +626,7 @@ begin
           begin
             prep := cs.getPrepContext;
             try
-              if not filter.null then
+              if filter.null then
               begin
                 SetLength(filters, cset.filterList.count);
                 offset := 0;

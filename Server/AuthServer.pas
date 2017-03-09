@@ -34,7 +34,7 @@ type
 
   // predefined token per user for testing
 
-  // this is a server that lives at /oauth2
+  // this is a server that lives at /oauth2 (or elsewhere, if configured)
   TAuth2Server = class (TAdvObject)
   private
     FLock : TCriticalSection;
@@ -61,6 +61,7 @@ type
     FSCIMServer : TSCIMServer;
     FEndPoint: String;
     FOnDoSearch : TDoSearchEvent;
+    FPath: String;
     function GetPatientListAsOptions : String;
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -101,6 +102,7 @@ type
     property SSLCert : String read FSSLCert write FSSLCert;
     property SSLPassword : String read FSSLPassword write FSSLPassword;
     property AdminEmail : String read FAdminEmail write FAdminEmail;
+    property path : String read FPath write FPath;
 
     function AuthPath : String;
     function BasePath : String;
@@ -137,7 +139,7 @@ begin
   FGoogleAppid := FIni.ReadString('google.com', 'app-id', '');
   FGoogleAppSecret := FIni.ReadString('google.com', 'app-secret', '');
   FGoogleAppKey := FIni.ReadString('google.com', 'app-key', '');
-
+  FPath := '/auth';
 end;
 
 destructor TAuth2Server.Destroy;
@@ -183,9 +185,9 @@ end;
 function TAuth2Server.BasePath: String;
 begin
   if FSSLPort = '443' then
-    result := 'https://'+FHost+'/oauth2'
+    result := 'https://'+FHost+FPath
   else
-    result := 'https://'+FHost+':'+FSSLPort+'/oauth2';
+    result := 'https://'+FHost+':'+FSSLPort+FPath;
 end;
 
 function TAuth2Server.MakeLoginToken(path : String; provider : TFHIRAuthProvider): String;
@@ -284,7 +286,7 @@ end;
 
 function TAuth2Server.TokenPath: String;
 begin
- result := '/oauth2/token';
+ result := FPath+'/token';
 end;
 
 procedure TAuth2Server.HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap; response: TIdHTTPResponseInfo);
@@ -310,7 +312,7 @@ begin
   state := checkNotEmpty(params.GetVar('state'), 'state');
   aud := checkNotEmpty(params.GetVar('aud'), 'aud');
   if not isAllowedAud(client_id, aud) then
-    raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'"');
+    raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
   id := newguidid;
   conn := FFhirStore.DB.GetConnection('oatuh2');
@@ -329,7 +331,7 @@ begin
 
   variables := TDictionary<String,String>.create;
   try
-
+    variables.Add('/oauth2', FPath);
     variables.Add('idmethods', BuildLoginList(id));
     variables.Add('client', FIni.ReadString(client_id, 'name', ''));
     OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
@@ -438,9 +440,9 @@ begin
     raise Exception.Create('User Session not found');
 
   if FSSLPort = '443' then
-    authurl := 'https://'+FHost+'/oauth2'
+    authurl := 'https://'+FHost+FPath
   else
-    authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
+    authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   try
     conn := FFhirStore.DB.GetConnection('OAuth2');
@@ -507,6 +509,7 @@ begin
         variables := TDictionary<String,String>.create;
         try
           variables.Add('client', FIni.ReadString(client_id, 'name', ''));
+          variables.Add('/oauth2', FPath);
           variables.Add('username', name);
           variables.Add('patient-list', GetPatientListAsOptions);
           loadScopeVariables(variables, scope, session.User);
@@ -565,9 +568,9 @@ var
   authurl : String;
 begin
   if FSSLPort = '443' then
-    authurl := 'https://'+FHost+'/oauth2'
+    authurl := 'https://'+FHost+FPath
   else
-    authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2';
+    authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(FSSLCert));
   try
@@ -612,12 +615,12 @@ begin
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect('/oauth2/auth_choice');
+        response.Redirect(FPath+'/auth_choice');
       finally
         session.Free;
       end;
     end
-    else if request.document.startsWith('/oauth2/auth_dest/state/') then
+    else if request.document.startsWith(FPath+'/auth_dest/state/') then
     begin
       // HL7
       if not CheckLoginToken(copy(request.document, 25, $FF), id, provider) then
@@ -629,7 +632,7 @@ begin
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect('/oauth2/auth_choice');
+        response.Redirect(FPath+'/auth_choice');
       finally
         session.Free;
       end;
@@ -637,9 +640,9 @@ begin
     else if (params.VarExists('state')) then
     begin
       if FSSLPort = '443' then
-        authurl := 'https://'+FHost+'/oauth2/auth_dest'
+        authurl := 'https://'+FHost+FPath+'/auth_dest'
       else
-        authurl := 'https://'+FHost+':'+FSSLPort+'/oauth2/auth_dest';
+        authurl := 'https://'+FHost+':'+FSSLPort+FPath+'/auth_dest';
 
       state := params.GetVar('state');
       if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
@@ -667,7 +670,7 @@ begin
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect('/oauth2/auth_choice');
+        response.Redirect(FPath+'/auth_choice');
       finally
         session.Free;
       end;
@@ -701,23 +704,23 @@ begin
 
     params := TParseMap.create(request.UnparsedParams);
     try
-      if (request.Document = '/oauth2/auth') then
+      if (request.Document = FPath+'/auth') then
         HandleAuth(AContext, request, session, params, response)
-      else if (request.Document.startsWith('/oauth2/auth_dest')) then
+      else if (request.Document.startsWith(FPath+'/auth_dest')) then
         HandleLogin(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/auth_choice') then
+      else if (request.Document = FPath+'/auth_choice') then
         HandleChoice(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/token') then
+      else if (request.Document = FPath+'/token') then
         HandleToken(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/token_data') then
+      else if (request.Document = FPath+'/token_data') then
         HandleTokenData(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/auth_skype') then
+      else if (request.Document = FPath+'/auth_skype') then
         HandleSkype(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/auth_key') then
+      else if (request.Document = FPath+'/auth_key') then
         HandleKey(AContext, request, session, params, response)
-      else if (request.Document = '/oauth2/discovery') then
+      else if (request.Document = FPath+'/discovery') then
         HandleDiscovery(AContext, request, response)
-      else if (request.Document = '/oauth2/userdetails') then
+      else if (request.Document = FPath+'/userdetails') then
         HandleUserDetails(AContext, request, session, params, response)
       else
         raise Exception.Create('Invalid URL');
@@ -738,6 +741,7 @@ procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequest
 var
   conn : TKDBConnection;
   token, id, name, email, password, domain : String;
+  variables : TDictionary<String,String>;
 begin
   domain := request.Host;
   if domain.Contains(':') then
@@ -773,13 +777,21 @@ begin
         if conn.CountSQL('Select Count(*) from OAuthLogins where Status = 2 and SessionKey = '+inttostr(session.Key)) <> 1 then
           raise Exception.Create('State Error (2)');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect('/oauth2/auth_choice');
+        response.Redirect(FPath+'/auth_choice');
       finally
         session.Free;
       end
     end
     else
-      OnProcessFile(response, session, '/oauth2/auth_skype.html', AltFile('/oauth_skype.html'), true, nil);
+    begin
+      variables := TDictionary<String,String>.create;
+      try
+        variables.Add('/oauth2', FPath);
+        OnProcessFile(response, session, FPath+'/auth_skype.html', AltFile('/oauth_skype.html'), true, variables);
+      finally
+        variables.free;
+      end;
+    end;
     conn.Release;
   except
     on e:exception do
@@ -1016,7 +1028,7 @@ var
   variables : TDictionary<String,String>;
 begin
   if session = nil then
-    response.Redirect('/oauth2/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
+    response.Redirect(FPath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+EndPoint+'/internal&aud='+EndPoint+'&state='+MakeLoginToken(EndPoint, apGoogle))
   else
   begin
     if params.getVar('form') = 'true' then
@@ -1028,6 +1040,7 @@ begin
       variables := TDictionary<String,String>.create;
       try
         variables.Add('username', session.User.username);
+        variables.Add('/oauth2', FPath);
         OnProcessFile(response, session, '/oauth_userdetails.html', AltFile('/oauth_userdetails.html'), true, variables)
       finally
         variables.free;
@@ -1038,7 +1051,7 @@ end;
 
 function TAuth2Server.AuthPath: String;
 begin
-  result := '/oauth2/auth';
+  result := FPath+'/auth';
 end;
 
 function TAuth2Server.BuildLoginList(id : String): String;
@@ -1046,7 +1059,7 @@ var
   authurl : String;
   path : String;
 begin
-  path := '/oauth2/auth_dest';
+  path := FPath+'/auth_dest';
   if FSSLPort = '443' then
     authurl := 'https://'+FHost+path
   else
@@ -1065,7 +1078,7 @@ begin
     result := result +
       '<li><a href="https://accounts.google.com/o/oauth2/auth?client_id='+FGoogleAppid+'&response_type=code&scope=openid%20email&redirect_uri='+authurl+'&state='+MakeLoginToken(id, apGoogle)+'">Login through Google</a></li>'+#13#10;
 
-  result := result +'<li>Authenticate to the Server Administrator directly using Skype (token = '+id+'),<br/> then <a href="/oauth2/auth_skype?id='+id+'">click here</a></li>'+#13#10;
+  result := result +'<li>Authenticate to the Server Administrator directly using Skype (token = '+id+'),<br/> then <a href="'+FPath+'/auth_skype?id='+id+'">click here</a></li>'+#13#10;
   result := result +
     '<li>Or login directly (if you have an account): <form method="POST" action="'+path+'">'+
     '<input type="hidden" name="id" value="'+id+'"/>'+

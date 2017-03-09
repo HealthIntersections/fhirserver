@@ -103,7 +103,7 @@ The openID discovery document for this server is available at <a href="https://[
 <h3>Step 1: Authorization</h3>
 
 <p>
-The Auth2 authorization URL is https://[%host%]/oauth2/auth?, which the following parameters:
+The Auth2 authorization URL is https://[%host%][%/oauth2%]/auth?, which the following parameters:
 <p>
 <ul>
  <li>client_id= client identifier as provided by server administrator. To enrol a client, email the server administrator ([%admin%])</li>
@@ -125,7 +125,7 @@ user to the redirect_uri with two parameters:
 <h3>Step 2: Converting the authorization code into an access token</h3>
 <p>
 The authorization code returned in the previous sequence has only one use - to be used to get an access token. 
-To get the access token, the client does a GET/POST  to https://[%host%]/oauth2/token), with the parameters:
+To get the access token, the client does a GET/POST  to https://[%host%][%/oauth2%]/token), with the parameters:
 </p> 
 <ul>
   <li>code= the authorization code from the server (from the previous sequence)</li>
@@ -170,7 +170,7 @@ To use the access token, put it in the header of http requests like this:
 
 <p>
 If the client wishes, it can ask for further information about the access token - and check that it works - by
-doing a GET/POST to https://[%host%]/oauth2/token_data, with the following parameters:
+doing a GET/POST to https://[%host%][%/oauth2%]/token_data, with the following parameters:
 </p>
 <ul>
   <li>token= the authorization code from the server (from the previous sequence)</li>

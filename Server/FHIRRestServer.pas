@@ -383,6 +383,7 @@ Begin
   FAuthServer.FHIRStore := FFhirStore.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
+  FAuthServer.Path := FIni.ReadString('web', 'auth-path', '/oauth2');
   FAuthServer.RootCert := FRootCertFile;
   FAuthServer.SSLCert := FCertFile;
   FAuthServer.SSLPassword := FSSLPassword;
@@ -398,14 +399,14 @@ Begin
   if (FActualPort = 0) then
     logt('  http: not active')
   else if FStatedPort <> FActualPort then
-    logt('  http: listen on '+inttostr(FActualPort)+', but claim = '+inttostr(FActualPort)+' (reverse proxy mode')
+    logt('  http: listen on '+inttostr(FActualPort)+', but claim = '+inttostr(FStatedPort)+' (reverse proxy mode')
   else
     logt('  http: listen on '+inttostr(FActualPort));
 
   if (FActualSSLPort = 0) then
     logt('  https: not active')
   else if FStatedSSLPort <> FActualSSLPort then
-    logt('  https: listen on '+inttostr(FActualSSLPort)+', but claim = '+inttostr(FActualSSLPort)+' (reverse proxy mode')
+    logt('  https: listen on '+inttostr(FActualSSLPort)+', but claim = '+inttostr(FStatedSSLPort)+' (reverse proxy mode')
   else
     logt('  https: listen on '+inttostr(FActualSSLPort));
 
@@ -940,7 +941,7 @@ begin
       HandleRequest(AContext, request, response, true, true, FSecurePath)
     else if FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, true)
-    else if request.Document.StartsWith('/oauth2') then
+    else if request.Document.StartsWith(FAuthServer.Path) then
       FAuthServer.HandleRequest(AContext, request, session, response)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
@@ -2440,7 +2441,7 @@ result := result +
   '<p><b>'+ FormatTextToHTML(msg)+'</b></p>'#13#10;
 
 result := result +
-'<p><a href="/oauth2/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+authurl+'/internal&aud='+authurl+'&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
+'<p><a href="'+FAuthServer.basePath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+authurl+'/internal&aud='+authurl+'&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
 
 result := result +
 '<p>Or use the <a href="http://'+FHost+port(FStatedPort, 80)+FBasePath+'">unsecured API</a>.</p>'#13#10+

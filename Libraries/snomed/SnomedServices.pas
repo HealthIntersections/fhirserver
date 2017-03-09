@@ -1227,7 +1227,7 @@ end;
 
 function TSnomedServices.DebugDesc(index: cardinal): String;
 begin
-  result := GetConceptId(index)+'|'+GetDisplayName(index, 0)+'|';
+  result := GetConceptId(index)+'|'+GetDisplayName(index, FDefaultLanguage)+'|';
 end;
 
 function TSnomedServices.Definition(context: TCodeSystemProviderContext): string;
@@ -1415,7 +1415,7 @@ var
 begin
   res := TSnomedFilterContext.Create;
   try
-    res.matches := Search(0, filter.filter, 0, false, true);
+    res.matches := Search(0, filter.filter, FDefaultLanguage, false, true);
     result := res.Link;
   finally
     res.Free;
@@ -1768,6 +1768,13 @@ begin
   iIndex := L;
 end;
 
+type
+  TDescInfo = record
+    index : cardinal;
+    active : boolean;
+    langok : boolean;
+    kind : cardinal;
+  end;
 
 function TSnomedServices.GetDisplayName(const iConcept, iLang: Cardinal): String;
 var
@@ -1784,6 +1791,7 @@ var
   date : TSnomedDate;
   aMembers : TSnomedReferenceSetMemberArray;
   active : boolean;
+  dlist : Array of TDescInfo;
 begin
   SetLength(aMembers, 0);
   result := '';
@@ -1791,23 +1799,46 @@ begin
     aMembers := FRefSetMembers.GetMembers(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   Descs := Refs.GetReferences(Descriptions);
+  SetLength(dlist, length(descs));
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
-    if Active And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iint))) Then
-      result := Strings.GetEntry(iDesc);
-  End;
-  // ok, didn't find an active preferred term in the language of preference. Let's try for any term in the language
-  if (result = '') and (iLang <> 0) then
-    For iLoop := 0 to High(descs) Do
-    Begin
-      Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
-      if (active) And (FindMember(aMembers, descs[iLoop], iInt)) Then
-        result := Strings.GetEntry(iDesc);
-    End;
-  // if we still haven't found, then any preferred term
-  if result = '' then
-    result := GetPN(Descs);
+    dlist[iLoop].index := iDesc;
+    dlist[iLoop].active := Active;
+    dlist[iLoop].langok := (iLang = 0) or (FindMember(aMembers, descs[iLoop], iint));
+    dlist[iLoop].kind := kind;
+  end;
+
+  // look for a preferred term in the lang set
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active and dlist[iLoop].langok and (dlist[iloop].kind = FPreferredTerm)) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+
+  // look for a synonym in the lang set
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active and dlist[iLoop].langok and (dlist[iloop].kind <> FFSN)) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+
+  // look for a preferred term
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active and (dlist[iloop].kind = FPreferredTerm)) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+
+  // look for a synonym
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active and (dlist[iloop].kind <> FFSN)) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+
+  // ok, still nothing,
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active and dlist[iLoop].langok) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+
+  For iLoop := 0 to High(descs) Do
+    if (dlist[iLoop].active) then
+      exit(Strings.GetEntry(dlist[iLoop].index));
+  // if we still haven't found, then we are... lost
+  result := GetPN(Descs);
 end;
 
 function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
@@ -3186,9 +3217,9 @@ begin
     result := displayExpression(TSnomedExpressionContext(context).Expression)
   else
   begin
-    if lang = '' then
+//    if lang = '' then
 
-    result := GetDisplayName(TSnomedExpressionContext(context).reference, 0);
+    result := GetDisplayName(TSnomedExpressionContext(context).reference, FDefaultLanguage);
     Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
     if result = GetFSN(Refs.GetReferences(DescriptionIndex)) then
       writeln('returning FSN');
@@ -3387,7 +3418,7 @@ begin
       // there's only one display name - for now?
       list.Add(displayExpression(ctxt.FExpression))
     else
-      ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, 0, $FF);
+      ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, FDefaultLanguage, $FF);
   finally
     close(ctxt);
   end;
@@ -4487,7 +4518,7 @@ begin
         s := expr.description;
         if (s = '') then
           if expr.reference <> NO_REFERENCE then
-            s := GetDisplayName(expr.reference, 0)
+            s := GetDisplayName(expr.reference, FDefaultLanguage)
           else if (expr.code <> '') then
             s := GetDisplayName(expr.code, '');
       end;

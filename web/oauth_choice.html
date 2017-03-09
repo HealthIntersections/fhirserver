@@ -82,7 +82,7 @@
 Welcome [%username%]. What rights you want the [%client%] to have?
 </p>
 
-<form method="POST" action="/oauth2/auth_choice">
+<form method="POST" action="[%/oauth2%]/auth_choice">
   <input type="hidden" name="form" value="true"/>
   <p>
     <input type="checkbox" name="userinfo" value="1" [%userinfo%]/> Share User Details <br/>
@@ -157,7 +157,7 @@ Welcome [%username%]. What rights you want the [%client%] to have?
 Other things you can do: 
 </p>
 <ul>
- <li><a href="/oauth2/userdetails">Edit your user details &amp; Client Registration</a></li>
+ <li><a href="[%/oauth2%]/userdetails">Edit your user details &amp; Client Registration</a></li>
 </ul>
 
 <!--
