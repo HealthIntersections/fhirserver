@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-03-09T14:57:41+11:00
+// FHIR v3.0.0 generated 2017-03-16T17:26:25+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -1324,7 +1324,7 @@ Type
   //Operation expand (Value Set Expansion)
   TFHIRExpandOpRequest = class (TFHIROperationRequest)
   private
-    FIdentifier : String;
+    FUrl : String;
     FValueSet : TFhirValueSet;
     FContext : String;
     FFilter : String;
@@ -1350,7 +1350,7 @@ Type
     procedure load(params : TFHIRParameters); overload; override;
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
-    property identifier : String read FIdentifier write FIdentifier;
+    property url : String read FUrl write FUrl;
     property valueSet : TFhirValueSet read FValueSet write SetValueSet;
     property context : String read FContext write FContext;
     property filter : String read FFilter write FFilter;
@@ -5214,7 +5214,7 @@ end;
 
 procedure TFHIRExpandOpRequest.load(params : TFHIRParameters);
 begin
-  FIdentifier := params.str['identifier'];
+  FUrl := params.str['url'];
   FValueSet := (params.res['valueSet'] as TFhirValueSet).Link;{ob.5a}
   FContext := params.str['context'];
   FFilter := params.str['filter'];
@@ -5235,7 +5235,7 @@ end;
 
 procedure TFHIRExpandOpRequest.load(params : TParseMap);
 begin
-  FIdentifier := params.getVar('identifier');
+  FUrl := params.getVar('url');
   FContext := params.getVar('context');
   FFilter := params.getVar('filter');
   FProfile := params.getVar('profile');
@@ -5263,8 +5263,8 @@ function TFHIRExpandOpRequest.asParams : TFhirParameters;
 begin
   result := TFHIRParameters.create;
   try
-    if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
+    if (FUrl <> '') then
+      result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
     if (FValueSet <> nil) then
       result.addParameter('valueSet', FValueSet.Link);{oz.5a}
     if (FContext <> '') then
@@ -5297,7 +5297,7 @@ end;
 
 function TFHIRExpandOpRequest.isKnownName(name : String) : boolean;
 begin
-  result := StringArrayExists(['identifier', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'activeOnly', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
+  result := StringArrayExists(['url', 'valueSet', 'context', 'filter', 'profile', 'date', 'offset', 'count', 'includeDesignations', 'includeDefinition', 'activeOnly', 'excludeNested', 'excludeNotForUI', 'excludePostCoordinated', 'displayLanguage', 'limitedExpansion'], name);
 end;
 
 procedure TFHIRExpandOpResponse.SetReturn(value : TFhirValueSet);

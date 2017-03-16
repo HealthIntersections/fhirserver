@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-03-09T14:57:41+11:00
+// FHIR v3.0.0 generated 2017-03-16T17:26:25+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -51,7 +51,8 @@ Type
     PublicationStatusNull,  {@enum.value PublicationStatusNull Value is missing from Instance }
     PublicationStatusDraft, {@enum.value PublicationStatusDraft  }
     PublicationStatusActive, {@enum.value PublicationStatusActive  }
-    PublicationStatusRetired); {@enum.value PublicationStatusRetired  }
+    PublicationStatusRetired, {@enum.value PublicationStatusRetired  }
+    PublicationStatusUnknown); {@enum.value PublicationStatusUnknown  }
   TFhirPublicationStatusEnumList = set of TFhirPublicationStatusEnum;
 
   {@Enum TFhirNarrativeStatusEnum
@@ -769,7 +770,7 @@ Type
   TFhirParticipationstatusEnumList = set of TFhirParticipationstatusEnum;
 
   {@Enum TFhirAuditEventActionEnum
-    Indicator for type of action performed during the event that generated the audit. from http://hl7.org/fhir/ValueSet/audit-event-action
+    Indicator for type of action performed during the event that generated the event from http://hl7.org/fhir/ValueSet/audit-event-action
   }
   TFhirAuditEventActionEnum = (
     AuditEventActionNull,  {@enum.value AuditEventActionNull Value is missing from Instance }
@@ -1432,7 +1433,8 @@ Type
     MetricOperationalStatusNull,  {@enum.value MetricOperationalStatusNull Value is missing from Instance }
     MetricOperationalStatusOn, {@enum.value MetricOperationalStatusOn  }
     MetricOperationalStatusOff, {@enum.value MetricOperationalStatusOff  }
-    MetricOperationalStatusStandby); {@enum.value MetricOperationalStatusStandby  }
+    MetricOperationalStatusStandby, {@enum.value MetricOperationalStatusStandby  }
+    MetricOperationalStatusEnteredInError); {@enum.value MetricOperationalStatusEnteredInError  }
   TFhirMetricOperationalStatusEnumList = set of TFhirMetricOperationalStatusEnum;
 
   {@Enum TFhirMetricColorEnum
@@ -2150,16 +2152,6 @@ Type
     ProvenanceEntityRoleRemoval); {@enum.value ProvenanceEntityRoleRemoval  }
   TFhirProvenanceEntityRoleEnumList = set of TFhirProvenanceEntityRoleEnum;
 
-  {@Enum TFhirQuestionnaireStatusEnum
-    Lifecycle status of the questionnaire. from http://hl7.org/fhir/ValueSet/questionnaire-status
-  }
-  TFhirQuestionnaireStatusEnum = (
-    QuestionnaireStatusNull,  {@enum.value QuestionnaireStatusNull Value is missing from Instance }
-    QuestionnaireStatusDraft, {@enum.value QuestionnaireStatusDraft  }
-    QuestionnaireStatusPublished, {@enum.value QuestionnaireStatusPublished  }
-    QuestionnaireStatusRetired); {@enum.value QuestionnaireStatusRetired  }
-  TFhirQuestionnaireStatusEnumList = set of TFhirQuestionnaireStatusEnum;
-
   {@Enum TFhirItemTypeEnum
     Distinguishes groups from questions and display text and indicates data type for questions from http://hl7.org/fhir/ValueSet/item-type
   }
@@ -2333,7 +2325,7 @@ Type
   TFhirExtensionContextEnumList = set of TFhirExtensionContextEnum;
 
   {@Enum TFhirTypeDerivationRuleEnum
-    How a type relates to it's baseDefinition. from http://hl7.org/fhir/ValueSet/type-derivation-rule
+    How a type relates to its baseDefinition. from http://hl7.org/fhir/ValueSet/type-derivation-rule
   }
   TFhirTypeDerivationRuleEnum = (
     TypeDerivationRuleNull,  {@enum.value TypeDerivationRuleNull Value is missing from Instance }
@@ -6344,7 +6336,7 @@ Type
     property valueSetElement : TFhirType read FValueSet write SetValueSet;
 
     {@member valueCodeList
-      The codes for the code filter. Only one of valueSet, valueCode, valueConding, or valueCodeableConcept may be specified. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified codes.
+      The codes for the code filter. Only one of valueSet, valueCode, valueCoding, or valueCodeableConcept may be specified. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified codes.
     }
     property valueCodeList : TFhirCodeList read GetValueCodeList;
     property hasValueCodeList : boolean read GetHasValueCodeList;
@@ -9710,11 +9702,11 @@ Type
     {!script show}
   published
     {@member name
-      Typed access to The name of the parameter.
+      Typed access to The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
     }
     property name : String read GetNameST write SetNameST;
     {@member nameElement
-      The name of the parameter.
+      The name of the parameter used to allow access to the value of the parameter in evaluation contexts.
     }
     property nameElement : TFhirCode read FName write SetName;
 
@@ -11222,20 +11214,20 @@ Type
     property codeElement : TFhirUri read FCode write SetCode;
 
     {@member profile
-      Typed access to Identifies a profile structure or implementation Guide that SHALL hold for the datatype this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition in another profile. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
+      Typed access to Identifies a profile structure or implementation Guide that SHALL hold for the datatype this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition or Implementation Guide by a canonical URL. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
     }
     property profile : String read GetProfileST write SetProfileST;
     {@member profileElement
-      Identifies a profile structure or implementation Guide that SHALL hold for the datatype this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition in another profile. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
+      Identifies a profile structure or implementation Guide that SHALL hold for the datatype this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition or Implementation Guide by a canonical URL. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
     }
     property profileElement : TFhirUri read FProfile write SetProfile;
 
     {@member targetProfile
-      Typed access to Identifies a profile structure or implementation Guide that SHALL hold for the target of the reference this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition in another profile. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
+      Typed access to Identifies a profile structure or implementation Guide that SHALL hold for the target of the reference this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition or Implementation Guide by a canonical URL. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
     }
     property targetProfile : String read GetTargetProfileST write SetTargetProfileST;
     {@member targetProfileElement
-      Identifies a profile structure or implementation Guide that SHALL hold for the target of the reference this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition in another profile. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
+      Identifies a profile structure or implementation Guide that SHALL hold for the target of the reference this element refers to. Can be a local reference - to a contained StructureDefinition, or a reference to another StructureDefinition or Implementation Guide by a canonical URL. When an implementation guide is specified, the resource SHALL conform to at least one profile defined in the implementation guide.
     }
     property targetProfileElement : TFhirUri read FTargetProfile write SetTargetProfile;
 
@@ -11949,11 +11941,11 @@ Type
     property mapElement : TFhirString read FMap write SetMap;
 
     {@member comment
-      Typed access to Comments that provide information about the mapping or it's use.
+      Typed access to Comments that provide information about the mapping or its use.
     }
     property comment : String read GetCommentST write SetCommentST;
     {@member commentElement
-      Comments that provide information about the mapping or it's use.
+      Comments that provide information about the mapping or its use.
     }
     property commentElement : TFhirString read FComment write SetComment;
 
@@ -13654,8 +13646,8 @@ Type
 
 
 Const
-  CODES_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'draft', 'active', 'retired');
-  SYSTEMS_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status');
+  CODES_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'draft', 'active', 'retired', 'unknown');
+  SYSTEMS_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status');
   CODES_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'generated', 'extensions', 'additional', 'empty');
   SYSTEMS_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status');
   CODES_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'author', 'editor', 'reviewer', 'endorser');
@@ -13852,8 +13844,8 @@ Const
   SYSTEMS_TFhirDeviceStatusEnum : Array[TFhirDeviceStatusEnum] of String = ('', 'http://hl7.org/fhir/device-status', 'http://hl7.org/fhir/device-status', 'http://hl7.org/fhir/device-status', 'http://hl7.org/fhir/device-status');
   CODES_TFhirMeasurementPrincipleEnum : Array[TFhirMeasurementPrincipleEnum] of String = ('', 'other', 'chemical', 'electrical', 'impedance', 'nuclear', 'optical', 'thermal', 'biological', 'mechanical', 'acoustical', 'manual');
   SYSTEMS_TFhirMeasurementPrincipleEnum : Array[TFhirMeasurementPrincipleEnum] of String = ('', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle', 'http://hl7.org/fhir/measurement-principle');
-  CODES_TFhirMetricOperationalStatusEnum : Array[TFhirMetricOperationalStatusEnum] of String = ('', 'on', 'off', 'standby');
-  SYSTEMS_TFhirMetricOperationalStatusEnum : Array[TFhirMetricOperationalStatusEnum] of String = ('', 'http://hl7.org/fhir/metric-operational-status', 'http://hl7.org/fhir/metric-operational-status', 'http://hl7.org/fhir/metric-operational-status');
+  CODES_TFhirMetricOperationalStatusEnum : Array[TFhirMetricOperationalStatusEnum] of String = ('', 'on', 'off', 'standby', 'entered-in-error');
+  SYSTEMS_TFhirMetricOperationalStatusEnum : Array[TFhirMetricOperationalStatusEnum] of String = ('', 'http://hl7.org/fhir/metric-operational-status', 'http://hl7.org/fhir/metric-operational-status', 'http://hl7.org/fhir/metric-operational-status', 'http://hl7.org/fhir/metric-operational-status');
   CODES_TFhirMetricColorEnum : Array[TFhirMetricColorEnum] of String = ('', 'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white');
   SYSTEMS_TFhirMetricColorEnum : Array[TFhirMetricColorEnum] of String = ('', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color', 'http://hl7.org/fhir/metric-color');
   CODES_TFhirMetricCategoryEnum : Array[TFhirMetricCategoryEnum] of String = ('', 'measurement', 'setting', 'calculation', 'unspecified');
@@ -13973,8 +13965,6 @@ Const
   SYSTEMS_TFhirActionlistEnum : Array[TFhirActionlistEnum] of String = ('', 'http://hl7.org/fhir/actionlist', 'http://hl7.org/fhir/actionlist', 'http://hl7.org/fhir/actionlist', 'http://hl7.org/fhir/actionlist');
   CODES_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'derivation', 'revision', 'quotation', 'source', 'removal');
   SYSTEMS_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role');
-  CODES_TFhirQuestionnaireStatusEnum : Array[TFhirQuestionnaireStatusEnum] of String = ('', 'draft', 'published', 'retired');
-  SYSTEMS_TFhirQuestionnaireStatusEnum : Array[TFhirQuestionnaireStatusEnum] of String = ('', 'http://hl7.org/fhir/questionnaire-status', 'http://hl7.org/fhir/questionnaire-status', 'http://hl7.org/fhir/questionnaire-status');
   CODES_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'group', 'display', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
   SYSTEMS_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type');
   CODES_TFhirQuestionnaireAnswersStatusEnum : Array[TFhirQuestionnaireAnswersStatusEnum] of String = ('', 'in-progress', 'completed', 'amended', 'entered-in-error', 'stopped');
@@ -14356,8 +14346,6 @@ Function TFhirActionlistEnumListAsInteger(aSet : TFhirActionlistEnumList) : Inte
 Function IntegerAsTFhirActionlistEnumList(i : integer) : TFhirActionlistEnumList; overload;
 Function TFhirProvenanceEntityRoleEnumListAsInteger(aSet : TFhirProvenanceEntityRoleEnumList) : Integer; overload;
 Function IntegerAsTFhirProvenanceEntityRoleEnumList(i : integer) : TFhirProvenanceEntityRoleEnumList; overload;
-Function TFhirQuestionnaireStatusEnumListAsInteger(aSet : TFhirQuestionnaireStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirQuestionnaireStatusEnumList(i : integer) : TFhirQuestionnaireStatusEnumList; overload;
 Function TFhirItemTypeEnumListAsInteger(aSet : TFhirItemTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirItemTypeEnumList(i : integer) : TFhirItemTypeEnumList; overload;
 Function TFhirQuestionnaireAnswersStatusEnumListAsInteger(aSet : TFhirQuestionnaireAnswersStatusEnumList) : Integer; overload;
@@ -39709,33 +39697,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirProvenanceEntityRoleEnum) to high(TFhirProvenanceEntityRoleEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirQuestionnaireStatusEnumListAsInteger(aSet : TFhirQuestionnaireStatusEnumList) : Integer;
-var
-  a : TFhirQuestionnaireStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirQuestionnaireStatusEnum) to high(TFhirQuestionnaireStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirQuestionnaireStatusEnumList(i : Integer) : TFhirQuestionnaireStatusEnumList;
-var
-  aLoop : TFhirQuestionnaireStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirQuestionnaireStatusEnum) to high(TFhirQuestionnaireStatusEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hl7.fhir.convertors.VersionConvertor_10_20;
+import org.hl7.fhir.convertors.VersionConvertor_10_30;
 import org.hl7.fhir.dstu3.formats.XmlParser;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
@@ -103,13 +103,13 @@ public class DefinitionsLoader3 {
    
   private void processCapabilityStatement(Definitions def, CapabilityStatement resource) throws FHIRException {
     def.setVersion(resource.getFhirVersion());
-    def.setGenDate(new VersionConvertor_10_20(null).convertDateTime(resource.getDateElement()));
+    def.setGenDate(new VersionConvertor_10_30(null).convertDateTime(resource.getDateElement()));
   }
 
   private void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
     for (CodeType ct : sp.getBase()) {
-      SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), new VersionConvertor_10_20(null).convertSearchParamType(sp.getType()), 
-          sp.getTarget(), new VersionConvertor_10_20(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
+      SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), pickDescription(sp.getDescription(), ct.asStringValue()), new VersionConvertor_10_30(null).convertSearchParamType(sp.getType()), 
+          sp.getTarget(), new VersionConvertor_10_30(null).convertXPathUsageType(sp.getXpathUsage()), sp.getExpression());
       def.getResourceByName(ct.asStringValue()).getSearchParams().put(spd.getCode(), spd);
     }
   }

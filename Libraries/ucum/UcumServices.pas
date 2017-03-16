@@ -54,6 +54,29 @@ Type
     Property UnitCode : String read FUnitCode write FUnitCode;
   End;
 
+{ TUCUMCodeHolder }
+
+Type
+  TUCUMContext  = class (TCodeSystemProviderContext)
+  private
+    FConcept: TFhirValueSetComposeIncludeConcept;
+    procedure SetConcept(const Value: TFhirValueSetComposeIncludeConcept);
+  public
+    Constructor Create(concept : TFhirValueSetComposeIncludeConcept); overload;
+    Constructor Create(code : String); overload;
+    Destructor Destroy; override;
+    property concept : TFhirValueSetComposeIncludeConcept read FConcept write SetConcept;
+  end;
+
+  TUcumFilterContext = class (TCodeSystemProviderFilterContext)
+  private
+    FCursor : integer; // used on the first
+    FCanonical: String;
+  public
+    Constructor Create(canonical : String);
+    property canonical : String read FCanonical write FCanonical;
+  end;
+
   TUcumServices = class (TCodeSystemProvider)
   Private
     FModel : TUcumModel;
@@ -227,6 +250,8 @@ Type
     function locateIsA(code, parent : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
+    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
+    function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
@@ -258,7 +283,7 @@ Implementation
 Uses
   MsXmlParser,
   UcumSearch;
- 
+
 { TUcumServices }
 
 function TUcumServices.analyse(code: String): String;
@@ -449,6 +474,11 @@ begin
   i := Model.Properties.IndexByName(propertyName);
   if i > -1 Then
     oList.Assign(Model.Properties[i].CommonUnits);
+end;
+
+function TUcumServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+begin
+  result := nil;
 end;
 
 procedure TUcumServices.getProperties(oList: TAdvStringList);
@@ -731,15 +761,6 @@ begin
 end;
 
 
-{ TUCUMCodeHolder }
-
-Type
-  TUCUMCodeHolder = class (TCodeSystemProviderContext)
-  private
-    code : String;
-  public
-    Constructor Create(code : String);
-  end;
 
 { TUcumServiceList }
 
@@ -817,7 +838,7 @@ begin
   if context = nil then
     result := ''
   else
-    result := TUCUMCodeHolder(context).code;
+    result := TUCUMContext(context).concept.code;
 end;
 
 function TUcumServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
@@ -830,7 +851,7 @@ begin
   if context = nil then
     result := ''
   else
-    result := getDisplay(TUCUMCodeHolder(context).code, lang);
+    result := getDisplay(TUCUMContext(context).concept.code, lang);
 end;
 
 procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
@@ -897,8 +918,13 @@ begin
 end;
 
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+var
+  code : String;
+  context : TUcumFilterContext;
 begin
-  raise EUCUMServices.Create('not supported yet');
+  context := TUcumFilterContext(ctxt);
+  code := TUcumContext(concept).concept.code;
+  result := validateCanonicalUnits(code, context.canonical) = '';
 end;
 
 function TUcumServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -917,12 +943,17 @@ var
 begin
   s:= validate(code);
   if s = '' then
-    result := TUCUMCodeHolder.Create(code)
+    result := TUCUMContext.Create(code)
   else
   begin
     result := nil;
     message := s;
   end;
+end;
+
+function TUcumServices.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+begin
+  result := TUcumFilterContext.create('')
 end;
 
 function TUcumServices.system(context : TCodeSystemProviderContext): String;
@@ -943,22 +974,32 @@ end;
 
 function TUcumServices.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
-  raise EUCUMServices.Create('not supported yet (ucum)');
+  if (prop = 'canonical') and (op in [FilterOperatorEqual]) then
+    result := TUcumFilterContext.create(value)
+  else
+    result := nil;
 end;
 
 function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+var
+  context : TUcumFilterContext;
 begin
-  raise EUCUMServices.Create('not supported yet');
+  context := TUcumFilterContext(ctxt);
+  result := TUCUMContext.create(FCommonUnits.compose.includeList[0].conceptList[context.FCursor].link);
 end;
 
 function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+var
+  context : TUcumFilterContext;
 begin
-  raise EUCUMServices.Create('not supported yet');
+  context := TUcumFilterContext(ctxt);
+  inc(context.FCursor);
+  result := context.FCursor < FCommonUnits.compose.includeList[0].conceptList.count;
 end;
 
 function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 begin
-  raise EUCUMServices.Create('not supported yet');
+  result := nil;
 end;
 
 function TUcumServices.locateIsA(code, parent: String): TCodeSystemProviderContext;
@@ -1090,12 +1131,41 @@ end;
 
 
 
-{ TUCUMCodeHolder }
 
-constructor TUCUMCodeHolder.Create(code: String);
+{ TUcumFilterContext }
+
+constructor TUcumFilterContext.Create(canonical: String);
 begin
   inherited Create;
-  self.code := code;
+  FCursor := -1;
+  FCanonical := canonical;
+end;
+
+{ TUCUMContext }
+
+constructor TUCUMContext.Create(concept: TFhirValueSetComposeIncludeConcept);
+begin
+  inherited Create;
+  FConcept := concept;
+end;
+
+constructor TUCUMContext.Create(code: String);
+begin
+  inherited Create;
+  FConcept := TFhirValueSetComposeIncludeConcept.Create;
+  FConcept.code := code;
+end;
+
+destructor TUCUMContext.Destroy;
+begin
+  FConcept.Free;
+  inherited;
+end;
+
+procedure TUCUMContext.SetConcept(const Value: TFhirValueSetComposeIncludeConcept);
+begin
+  FConcept.Free;
+  FConcept := Value;
 end;
 
 End.

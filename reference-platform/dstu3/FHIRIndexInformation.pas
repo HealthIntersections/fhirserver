@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v1.9.0 generated 2017-03-09T14:57:41+11:00
+// FHIR v3.0.0 generated 2017-03-16T17:26:25+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -201,19 +201,19 @@ begin
   indexes.add('ActivityDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'date', 'The activity definition publication date', SearchParamTypeDATE, [], 'ActivityDefinition.date', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''depends-on'').resource | ActivityDefinition.library', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''depends-on'').resource | ActivityDefinition.library', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'description', 'Text search against the description of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.description', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'effective', 'Effective time associated with the activity definition', SearchParamTypeDATE, [], 'ActivityDefinition.effectivePeriod', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'identifier', 'External identifiers for the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.identifier', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'jurisdiction', 'Intended jurisdiction for activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.jurisdiction', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'name', 'Name of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.name', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'predecessor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'publisher', 'Name of the publisher of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.publisher', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'status', 'The current status of the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.status', SearchXpathUsageNormal);
-  indexes.add('ActivityDefinition', 'successor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('ActivityDefinition', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ActivityDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'title', 'Text search against the title of the activity definition', SearchParamTypeSTRING, [], 'ActivityDefinition.title', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ActivityDefinition.topic', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'url', 'The uri that identifies the activity definition', SearchParamTypeURI, [], 'ActivityDefinition.url', SearchXpathUsageNormal);
@@ -230,7 +230,7 @@ begin
   indexes.add('AdverseEvent', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('AdverseEvent', 'category', 'AE | PAE An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse e'+'vent is something that occurred and that could have caused harm to a patient but did not', SearchParamTypeTOKEN, [], 'AdverseEvent.category', SearchXpathUsageNormal);
+  indexes.add('AdverseEvent', 'category', 'AE | PAE  An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse e'+'vent is something that occurred and that could have caused harm to a patient but did not', SearchParamTypeTOKEN, [], 'AdverseEvent.category', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'date', 'AdverseEvent.date', SearchParamTypeDATE, [], 'AdverseEvent.date', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'location', 'AdverseEvent.location', SearchParamTypeREFERENCE, ['Location'], 'AdverseEvent.location', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'reaction', 'Adverse Reaction Events linked to exposure to substance', SearchParamTypeREFERENCE, ['Condition'], 'AdverseEvent.reaction', SearchXpathUsageNormal);
@@ -1008,6 +1008,7 @@ begin
   indexes.add('DeviceComponent', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('DeviceComponent', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DeviceComponent', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('DeviceComponent', 'identifier', 'The identifier of the component', SearchParamTypeTOKEN, [], 'DeviceComponent.identifier', SearchXpathUsageNormal);
   indexes.add('DeviceComponent', 'parent', 'The parent DeviceComponent resource', SearchParamTypeREFERENCE, ['DeviceComponent'], 'DeviceComponent.parent', SearchXpathUsageNormal);
   indexes.add('DeviceComponent', 'source', 'The device source', SearchParamTypeREFERENCE, ['Device'], 'DeviceComponent.source', SearchXpathUsageNormal);
   indexes.add('DeviceComponent', 'type', 'The device component type', SearchParamTypeTOKEN, [], 'DeviceComponent.type', SearchXpathUsageNormal);
@@ -1669,19 +1670,19 @@ begin
   indexes.add('Library', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Library', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Library', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Library', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('Library', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('Library', 'date', 'The library publication date', SearchParamTypeDATE, [], 'Library.date', SearchXpathUsageNormal);
-  indexes.add('Library', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
-  indexes.add('Library', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('Library', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('Library', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('Library', 'description', 'Text search against the description of the library', SearchParamTypeSTRING, [], 'Library.description', SearchXpathUsageNormal);
   indexes.add('Library', 'effective', 'Effective time associated with the library', SearchParamTypeDATE, [], 'Library.effectivePeriod', SearchXpathUsageNormal);
   indexes.add('Library', 'identifier', 'External identifiers for the library', SearchParamTypeTOKEN, [], 'Library.identifier', SearchXpathUsageNormal);
   indexes.add('Library', 'jurisdiction', 'Intended jurisdiction for library', SearchParamTypeTOKEN, [], 'Library.jurisdiction', SearchXpathUsageNormal);
   indexes.add('Library', 'name', 'Name of the library', SearchParamTypeSTRING, [], 'Library.name', SearchXpathUsageNormal);
-  indexes.add('Library', 'predecessor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('Library', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
   indexes.add('Library', 'publisher', 'Name of the publisher of the library', SearchParamTypeSTRING, [], 'Library.publisher', SearchXpathUsageNormal);
   indexes.add('Library', 'status', 'The current status of the library', SearchParamTypeTOKEN, [], 'Library.status', SearchXpathUsageNormal);
-  indexes.add('Library', 'successor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('Library', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Library.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
   indexes.add('Library', 'title', 'Text search against the title of the library', SearchParamTypeSTRING, [], 'Library.title', SearchXpathUsageNormal);
   indexes.add('Library', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'Library.topic', SearchXpathUsageNormal);
   indexes.add('Library', 'url', 'The uri that identifies the library', SearchParamTypeURI, [], 'Library.url', SearchXpathUsageNormal);
@@ -1750,7 +1751,7 @@ begin
   indexes.add('Location', 'endpoint', 'Technical endpoints providing access to services operated for the location', SearchParamTypeREFERENCE, ['Endpoint'], 'Location.endpoint', SearchXpathUsageNormal);
   indexes.add('Location', 'identifier', 'An identifier for the location', SearchParamTypeTOKEN, [], 'Location.identifier', SearchXpathUsageNormal);
   indexes.add('Location', 'name', 'A portion of the location''s name or alias', SearchParamTypeSTRING, [], 'Location.name | Location.alias', SearchXpathUsageNormal);
-  indexes.add('Location', 'near', 'The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency) Requires the near-distance parameter to be provided also', SearchParamTypeTOKEN, [], 'Location.position', SearchXpathUsageNearby);
+  indexes.add('Location', 'near', 'The coordinates expressed as [latitude]:[longitude] (using the WGS84 datum, see notes) to find locations near to (servers may search using a square rather than a circle for efficiency). Requires the near-distance parameter to be provided also', SearchParamTypeTOKEN, [], 'Location.position', SearchXpathUsageNearby);
   indexes.add('Location', 'near-distance', 'A distance quantity to limit the near search to locations within a specific distance Requires the near parameter to also be included', SearchParamTypeQUANTITY, [], 'Location.position', SearchXpathUsageDistance);
   indexes.add('Location', 'operational-status', 'Searches for locations (typically bed/room) that have an operational status (e.g. contaminated, housekeeping)', SearchParamTypeTOKEN, [], 'Location.operationalStatus', SearchXpathUsageNormal);
   indexes.add('Location', 'organization', 'Searches for locations that are managed by the provided organization', SearchParamTypeREFERENCE, ['Organization'], 'Location.managingOrganization', SearchXpathUsageNormal);
@@ -1769,19 +1770,19 @@ begin
   indexes.add('Measure', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Measure', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Measure', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Measure', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('Measure', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'date', 'The measure publication date', SearchParamTypeDATE, [], 'Measure.date', SearchXpathUsageNormal);
-  indexes.add('Measure', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''depends-on'').resource | Measure.library', SearchXpathUsageNormal);
-  indexes.add('Measure', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('Measure', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''depends-on'').resource | Measure.library', SearchXpathUsageNormal);
+  indexes.add('Measure', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'description', 'Text search against the description of the measure', SearchParamTypeSTRING, [], 'Measure.description', SearchXpathUsageNormal);
   indexes.add('Measure', 'effective', 'Effective time associated with the measure', SearchParamTypeDATE, [], 'Measure.effectivePeriod', SearchXpathUsageNormal);
   indexes.add('Measure', 'identifier', 'External identifiers for the measure', SearchParamTypeTOKEN, [], 'Measure.identifier', SearchXpathUsageNormal);
   indexes.add('Measure', 'jurisdiction', 'Intended jurisdiction for measure', SearchParamTypeTOKEN, [], 'Measure.jurisdiction', SearchXpathUsageNormal);
   indexes.add('Measure', 'name', 'Name of the measure', SearchParamTypeSTRING, [], 'Measure.name', SearchXpathUsageNormal);
-  indexes.add('Measure', 'predecessor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('Measure', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'publisher', 'Name of the publisher of the measure', SearchParamTypeSTRING, [], 'Measure.publisher', SearchXpathUsageNormal);
   indexes.add('Measure', 'status', 'The current status of the measure', SearchParamTypeTOKEN, [], 'Measure.status', SearchXpathUsageNormal);
-  indexes.add('Measure', 'successor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('Measure', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Measure.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
   indexes.add('Measure', 'title', 'Text search against the title of the measure', SearchParamTypeSTRING, [], 'Measure.title', SearchXpathUsageNormal);
   indexes.add('Measure', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'Measure.topic', SearchXpathUsageNormal);
   indexes.add('Measure', 'url', 'The uri that identifies the measure', SearchParamTypeURI, [], 'Measure.url', SearchXpathUsageNormal);
@@ -1798,7 +1799,9 @@ begin
   indexes.add('MeasureReport', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('MeasureReport', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('MeasureReport', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('MeasureReport', 'identifier', 'External identifier of the measure report to be returned', SearchParamTypeTOKEN, [], 'MeasureReport.identifier', SearchXpathUsageNormal);
   indexes.add('MeasureReport', 'patient', 'The identity of a patient to search for individual measure report results for', SearchParamTypeREFERENCE, ['Patient'], 'MeasureReport.patient', SearchXpathUsageNormal);
+  indexes.add('MeasureReport', 'status', 'The status of the measure report', SearchParamTypeTOKEN, [], 'MeasureReport.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MeasureReport', ['patient']);
 end;
 
@@ -1926,6 +1929,7 @@ begin
   indexes.add('MedicationRequest', 'category', 'Returns prescriptions with different categories', SearchParamTypeTOKEN, [], 'MedicationRequest.category', SearchXpathUsageNormal);
   indexes.add('MedicationRequest', 'code', 'Return prescriptions of this medication code', SearchParamTypeTOKEN, [], 'Medication.code | MedicationRequest.medication.as(CodeableConcept) | MedicationAdministration.medication.as(CodeableConcept) | MedicationStatement.medication.as(CodeableConcept) | MedicationDispense.medication.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('MedicationRequest', 'context', 'Return prescriptions with this encounter or episode of care identifier', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'MedicationRequest.context', SearchXpathUsageNormal);
+  indexes.add('MedicationRequest', 'date', 'Returns medication request to be administered on a specific date', SearchParamTypeDATE, [], 'MedicationRequest.dosageInstruction.timing.event', SearchXpathUsageNormal);
   indexes.add('MedicationRequest', 'identifier', 'Return prescriptions with this external identifier', SearchParamTypeTOKEN, [], 'MedicationRequest.identifier | MedicationAdministration.identifier | MedicationStatement.identifier | MedicationDispense.identifier', SearchXpathUsageNormal);
   indexes.add('MedicationRequest', 'intended-dispenser', 'Returns prescriptions intended to be dispensed by this Organization', SearchParamTypeREFERENCE, ['Organization'], 'MedicationRequest.dispenseRequest.performer', SearchXpathUsageNormal);
   indexes.add('MedicationRequest', 'intent', 'Returns prescriptions with different intents', SearchParamTypeTOKEN, [], 'MedicationRequest.intent', SearchXpathUsageNormal);
@@ -2291,7 +2295,7 @@ begin
   indexes.add('Person', 'address-use', 'A use code specified in an address', SearchParamTypeTOKEN, [], 'RelatedPerson.address.use | Practitioner.address.use | Person.address.use | Patient.address.use', SearchXpathUsageNormal);
   indexes.add('Person', 'birthdate', 'The Related Person''s date of birth', SearchParamTypeDATE, [], 'RelatedPerson.birthDate | Person.birthDate | Patient.birthDate', SearchXpathUsageNormal);
   indexes.add('Person', 'email', 'A value in an email contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Patient.telecom.where(system=''email'')', SearchXpathUsageNormal);
-  indexes.add('Person', 'gender', 'Gender of the person', SearchParamTypeTOKEN, [], 'RelatedPerson.gender | Practitioner.gender | Person.gender | Patient.gender', SearchXpathUsageNormal);
+  indexes.add('Person', 'gender', 'Gender of the related person', SearchParamTypeTOKEN, [], 'RelatedPerson.gender | Practitioner.gender | Person.gender | Patient.gender', SearchXpathUsageNormal);
   indexes.add('Person', 'identifier', 'A person Identifier', SearchParamTypeTOKEN, [], 'Person.identifier', SearchXpathUsageNormal);
   indexes.add('Person', 'link', 'Any link has this Patient, Person, RelatedPerson or Practitioner reference', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'Person', 'RelatedPerson'], 'Person.link.target', SearchXpathUsageNormal);
   indexes.add('Person', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', SearchParamTypeSTRING, [], 'Person.name', SearchXpathUsageNormal);
@@ -2317,19 +2321,19 @@ begin
   indexes.add('PlanDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'date', 'The plan definition publication date', SearchParamTypeDATE, [], 'PlanDefinition.date', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''depends-on'').resource | PlanDefinition.library', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''depends-on'').resource | PlanDefinition.library', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'description', 'Text search against the description of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.description', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'effective', 'Effective time associated with the plan definition', SearchParamTypeDATE, [], 'PlanDefinition.effectivePeriod', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'identifier', 'External identifiers for the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.identifier', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'jurisdiction', 'Intended jurisdiction for plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.jurisdiction', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'name', 'Name of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.name', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'predecessor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'publisher', 'Name of the publisher of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.publisher', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'status', 'The current status of the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.status', SearchXpathUsageNormal);
-  indexes.add('PlanDefinition', 'successor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('PlanDefinition', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'PlanDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'title', 'Text search against the title of the plan definition', SearchParamTypeSTRING, [], 'PlanDefinition.title', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'PlanDefinition.topic', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'url', 'The uri that identifies the plan definition', SearchParamTypeURI, [], 'PlanDefinition.url', SearchXpathUsageNormal);
@@ -2532,14 +2536,17 @@ begin
   indexes.add('Questionnaire', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Questionnaire', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('Questionnaire', 'code', 'A code that corresponds to the questionnaire or one of its groups', SearchParamTypeTOKEN, [], 'Questionnaire.item.code', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'context', 'A use context assigned to the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.useContext', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'date', 'When the questionnaire was last changed', SearchParamTypeDATE, [], 'Questionnaire.date', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'identifier', 'An identifier for the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.identifier', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'publisher', 'The author of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.publisher', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'status', 'The status of the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.status', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'title', 'All or part of the name of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.title', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'url', 'Globally unique logical identifier for  questionnaire', SearchParamTypeURI, [], 'Questionnaire.url', SearchXpathUsageNormal);
-  indexes.add('Questionnaire', 'version', 'The business version of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.version', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'date', 'The questionnaire publication date', SearchParamTypeDATE, [], 'Questionnaire.date', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'description', 'Text search against the description of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.description', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'effective', 'Effective time associated with the questionnaire', SearchParamTypeDATE, [], 'Questionnaire.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'identifier', 'External identifiers for the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.identifier', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'jurisdiction', 'Intended jurisdiction for questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'name', 'Name of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.name', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'publisher', 'Name of the publisher of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.publisher', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'status', 'The current status of the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.status', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'title', 'Text search against the title of the questionnaire', SearchParamTypeSTRING, [], 'Questionnaire.title', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'url', 'The uri that identifies the questionnaire', SearchParamTypeURI, [], 'Questionnaire.url', SearchXpathUsageNormal);
+  indexes.add('Questionnaire', 'version', 'The business version of the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2613,7 +2620,7 @@ begin
   indexes.add('RelatedPerson', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('RelatedPerson', 'active', 'Wheter the related person record is active', SearchParamTypeTOKEN, [], 'RelatedPerson.active', SearchXpathUsageNormal);
+  indexes.add('RelatedPerson', 'active', 'Indicates if the related person record is active', SearchParamTypeTOKEN, [], 'RelatedPerson.active', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'address', 'A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text', SearchParamTypeSTRING, [], 'RelatedPerson.address | Practitioner.address | Person.address | Patient.address', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'address-city', 'A city specified in an address', SearchParamTypeSTRING, [], 'RelatedPerson.address.city | Practitioner.address.city | Person.address.city | Patient.address.city', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'address-country', 'A country specified in an address', SearchParamTypeSTRING, [], 'RelatedPerson.address.country | Practitioner.address.country | Person.address.country | Patient.address.country', SearchXpathUsageNormal);
@@ -2622,10 +2629,10 @@ begin
   indexes.add('RelatedPerson', 'address-use', 'A use code specified in an address', SearchParamTypeTOKEN, [], 'RelatedPerson.address.use | Practitioner.address.use | Person.address.use | Patient.address.use', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'birthdate', 'The Related Person''s date of birth', SearchParamTypeDATE, [], 'RelatedPerson.birthDate | Person.birthDate | Patient.birthDate', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'email', 'A value in an email contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom.where(system=''email'') | RelatedPerson.telecom.where(system=''email'') | Practitioner.telecom.where(system=''email'') | Person.telecom.where(system=''email'') | Patient.telecom.where(system=''email'')', SearchXpathUsageNormal);
-  indexes.add('RelatedPerson', 'gender', 'Gender of the person', SearchParamTypeTOKEN, [], 'RelatedPerson.gender | Practitioner.gender | Person.gender | Patient.gender', SearchXpathUsageNormal);
+  indexes.add('RelatedPerson', 'gender', 'Gender of the related person', SearchParamTypeTOKEN, [], 'RelatedPerson.gender | Practitioner.gender | Person.gender | Patient.gender', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'identifier', 'An Identifier of the RelatedPerson', SearchParamTypeTOKEN, [], 'RelatedPerson.identifier', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'name', 'A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text', SearchParamTypeSTRING, [], 'RelatedPerson.name', SearchXpathUsageNormal);
-  indexes.add('RelatedPerson', 'patient', 'The patient this person is related to', SearchParamTypeREFERENCE, ['Patient'], 'RelatedPerson.patient', SearchXpathUsageNormal);
+  indexes.add('RelatedPerson', 'patient', 'The patient this related person is related to', SearchParamTypeREFERENCE, ['Patient'], 'RelatedPerson.patient', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'phone', 'A value in a phone contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom.where(system=''phone'') | RelatedPerson.telecom.where(system=''phone'') | Practitioner.telecom.where(system=''phone'') | Person.telecom.where(system=''phone'') | Patient.telecom.where(system=''phone'')', SearchXpathUsageNormal);
   indexes.add('RelatedPerson', 'phonetic', 'A portion of name using some kind of phonetic matching algorithm', SearchParamTypeSTRING, [], 'RelatedPerson.name | Practitioner.name | Person.name | Patient.name', SearchXpathUsagePhonetic);
   indexes.add('RelatedPerson', 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom | RelatedPerson.telecom | Practitioner.telecom | Person.telecom | Patient.telecom', SearchXpathUsageNormal);
@@ -2644,11 +2651,17 @@ begin
   indexes.add('RequestGroup', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('RequestGroup', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'author', 'The author of the request group', SearchParamTypeREFERENCE, ['Practitioner', 'Device'], 'RequestGroup.author', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'authored', 'The date the request group was authored', SearchParamTypeDATE, [], 'RequestGroup.authoredOn', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'context', 'The context the request group applies to', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'RequestGroup.context', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'definition', 'The definition from which the request group is realized', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'RequestGroup.definition', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'encounter', 'The encounter the request group applies to', SearchParamTypeREFERENCE, ['Encounter'], 'RequestGroup.context', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'group-identifier', 'The group identifier for the request group', SearchParamTypeTOKEN, [], 'RequestGroup.groupIdentifier', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'identifier', 'External identifiers for the request group', SearchParamTypeTOKEN, [], 'RequestGroup.identifier', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'intent', 'The intent of the request group', SearchParamTypeTOKEN, [], 'RequestGroup.intent', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'participant', 'The participant in the requests in the group', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'Person', 'RelatedPerson'], 'RequestGroup.action.participant', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'patient', 'The identity of a patient to search for request groups', SearchParamTypeREFERENCE, ['Patient'], 'RequestGroup.subject', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'priority', 'The priority of the request group', SearchParamTypeTOKEN, [], 'RequestGroup.priority', SearchXpathUsageNormal);
+  indexes.add('RequestGroup', 'status', 'The status of the request group', SearchParamTypeTOKEN, [], 'RequestGroup.status', SearchXpathUsageNormal);
   indexes.add('RequestGroup', 'subject', 'The subject that the request group is about', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'RequestGroup.subject', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'RequestGroup', ['author']);
   compartments.register(frtEncounter, 'RequestGroup', ['encounter']);
@@ -2670,7 +2683,7 @@ begin
   indexes.add('ResearchStudy', 'category', 'Classifications for the study', SearchParamTypeTOKEN, [], 'ResearchStudy.category', SearchXpathUsageNormal);
   indexes.add('ResearchStudy', 'date', 'When the study began and ended', SearchParamTypeDATE, [], 'ResearchStudy.period', SearchXpathUsageNormal);
   indexes.add('ResearchStudy', 'focus', 'Drugs, devices, conditions, etc. under study', SearchParamTypeTOKEN, [], 'ResearchStudy.focus', SearchXpathUsageNormal);
-  indexes.add('ResearchStudy', 'identifier', 'Business Identifer for study', SearchParamTypeTOKEN, [], 'ResearchStudy.identifier', SearchXpathUsageNormal);
+  indexes.add('ResearchStudy', 'identifier', 'Business Identifier for study', SearchParamTypeTOKEN, [], 'ResearchStudy.identifier', SearchXpathUsageNormal);
   indexes.add('ResearchStudy', 'jurisdiction', 'Geographic region(s) for study', SearchParamTypeTOKEN, [], 'ResearchStudy.jurisdiction', SearchXpathUsageNormal);
   indexes.add('ResearchStudy', 'keyword', 'Used to search for the study', SearchParamTypeTOKEN, [], 'ResearchStudy.keyword', SearchXpathUsageNormal);
   indexes.add('ResearchStudy', 'partof', 'Part of larger study', SearchParamTypeREFERENCE, ['ResearchStudy'], 'ResearchStudy.partOf', SearchXpathUsageNormal);
@@ -2694,7 +2707,7 @@ begin
   indexes.add('ResearchSubject', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ResearchSubject', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('ResearchSubject', 'date', 'Start and end of participation', SearchParamTypeDATE, [], 'ResearchSubject.period', SearchXpathUsageNormal);
-  indexes.add('ResearchSubject', 'identifier', 'Business Identifer for event', SearchParamTypeTOKEN, [], 'ResearchSubject.identifier', SearchXpathUsageNormal);
+  indexes.add('ResearchSubject', 'identifier', 'Business Identifier for event', SearchParamTypeTOKEN, [], 'ResearchSubject.identifier', SearchXpathUsageNormal);
   indexes.add('ResearchSubject', 'individual', 'Who is part of study', SearchParamTypeREFERENCE, ['Patient'], 'ResearchSubject.individual', SearchXpathUsageNormal);
   indexes.add('ResearchSubject', 'patient', 'Who is part of study', SearchParamTypeREFERENCE, ['Patient'], 'ResearchSubject.individual', SearchXpathUsageNormal);
   indexes.add('ResearchSubject', 'status', 'candidate | enrolled | active | suspended | withdrawn | completed', SearchParamTypeTOKEN, [], 'ResearchSubject.status', SearchXpathUsageNormal);
@@ -2802,19 +2815,19 @@ begin
   indexes.add('ServiceDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'composed-of', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'date', 'The service definition publication date', SearchParamTypeDATE, [], 'ServiceDefinition.date', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'depends-on', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'derived-from', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'description', 'Text search against the description of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.description', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'effective', 'Effective time associated with the service definition', SearchParamTypeDATE, [], 'ServiceDefinition.effectivePeriod', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'identifier', 'External identifiers for the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.identifier', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'jurisdiction', 'Intended jurisdiction for service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.jurisdiction', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'name', 'Name of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.name', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'predecessor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'publisher', 'Name of the publisher of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.publisher', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'status', 'The current status of the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.status', SearchXpathUsageNormal);
-  indexes.add('ServiceDefinition', 'successor', 'The related resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('ServiceDefinition', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'ServiceDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'title', 'Text search against the title of the service definition', SearchParamTypeSTRING, [], 'ServiceDefinition.title', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'ServiceDefinition.topic', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'url', 'The uri that identifies the service definition', SearchParamTypeURI, [], 'ServiceDefinition.url', SearchXpathUsageNormal);

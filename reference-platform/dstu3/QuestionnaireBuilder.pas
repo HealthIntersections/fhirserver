@@ -277,16 +277,6 @@ begin
   inherited;
 end;
 
-function convertStatus(status : TFhirPublicationStatusEnum) : TFHIRQuestionnaireStatusEnum;
-begin
-  case (status) of
-		PublicationStatusActive: result := QuestionnaireStatusPublished;
-		PublicationStatusDraft: result := QuestionnaireStatusDraft;
-		PublicationStatusRetired : result := QuestionnaireStatusRetired;
-	else
-  result := QuestionnaireStatusNull;
-	end;
-end;
 procedure TQuestionnaireBuilder.processMetadata;
 var
   id : TFhirIdentifier;
@@ -298,7 +288,7 @@ begin
     id.System := 'urn:ietf:rfc:3986';
     id.Value := FQuestionnaireId;
     FQuestionnaire.Version := profile.Version;
-    FQuestionnaire.Status := convertStatus(profile.Status);
+    FQuestionnaire.Status := profile.Status;
     FQuestionnaire.Date := profile.Date.link;
     FQuestionnaire.publisher := profile.Publisher;
     FQuestionnaire.ItemList.Add(TFHIRQuestionnaireItem.Create);

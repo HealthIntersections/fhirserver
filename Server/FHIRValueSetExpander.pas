@@ -626,58 +626,61 @@ begin
           begin
             prep := cs.getPrepContext;
             try
-              if filter.null then
-              begin
-                SetLength(filters, cset.filterList.count);
-                offset := 0;
-              end
-              else
-              begin
-                SetLength(filters, cset.filterList.count+1);
-                offset := 1;
-                filters[0] := cs.searchFilter(filter, prep, true); // this comes first, because it imposes order
-              end;
-
-              if cs.specialEnumeration <> '' then
-              begin
-                SetLength(filters, cset.filterList.count+2);
-                filters[offset] := cs.specialFilter(prep, true);
-                offset := offset + 1;
-                ex := expansion.extensionList.Append;
-                ex.url := 'http://hl7.org/fhir/StructureDefinition/valueset-toocostly';
-                ex.value := TFHIRBoolean.Create(true);
-                notClosed := true;
-              end;
-
-              for i := 0 to cset.filterList.count - 1 do
-              begin
-                fc := cset.filterList[i];
-                fc.checkNoModifiers('ValueSetExpander.processCodes', 'filter');
-                filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
-                if filters[i+offset] = nil then
-                  raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
-                if cs.isNotClosed(filter, filters[i+offset]) then
-                  notClosed := true;
-              end;
-
-              inner := not cs.prepare(prep);
-              count := 0;
-              While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
-              begin
-                c := cs.FilterConcept(filters[0]);
-                ok := true;
-                if inner then
-                  for i := 1 to length(filters) - 1 do
-                    ok := ok and cs.InFilter(filters[i], c);
-                if ok then
+              try
+                if filter.null then
                 begin
-                  inc(count);
-                  if count > FOffset then
-                    processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, profile.displayLanguage), cs.definition(c), expansion, profile, hash);
+                  SetLength(filters, cset.filterList.count);
+                  offset := 0;
+                end
+                else
+                begin
+                  SetLength(filters, cset.filterList.count+1);
+                  offset := 1;
+                  filters[0] := cs.searchFilter(filter, prep, true); // this comes first, because it imposes order
                 end;
+
+                if cs.specialEnumeration <> '' then
+                begin
+                  SetLength(filters, length(filters)+1);
+                  filters[offset] := cs.specialFilter(prep, true);
+                  offset := offset + 1;
+                  ex := expansion.extensionList.Append;
+                  ex.url := 'http://hl7.org/fhir/StructureDefinition/valueset-toocostly';
+                  ex.value := TFHIRBoolean.Create(true);
+                  notClosed := true;
+                end;
+                for i := 0 to cset.filterList.count - 1 do
+                begin
+                  fc := cset.filterList[i];
+                  fc.checkNoModifiers('ValueSetExpander.processCodes', 'filter');
+                  filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
+                  if filters[i+offset] = nil then
+                    raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
+                  if cs.isNotClosed(filter, filters[i+offset]) then
+                    notClosed := true;
+                end;
+
+                inner := not cs.prepare(prep);
+                count := 0;
+                While cs.FilterMore(filters[0]) and ((FOffset + FCount = 0) or (count < FOffset + FCount)) do
+                begin
+                  c := cs.FilterConcept(filters[0]);
+                  ok := true;
+                  if inner then
+                    for i := 1 to length(filters) - 1 do
+                      ok := ok and cs.InFilter(filters[i], c);
+                  if ok then
+                  begin
+                    inc(count);
+                    if count > FOffset then
+                      processCode(doDelete, list, map, cs.system(nil), cs.version(nil), cs.code(c), cs.display(c, profile.displayLanguage), cs.definition(c), expansion, profile, hash);
+                  end;
+                end;
+              finally
+                for i := 0 to length(filters) - 1 do
+                  if filters[i] <> nil then
+                    cs.Close(filters[i]);
               end;
-              for i := 0 to length(filters) - 1 do
-                cs.Close(filters[i]);
             finally
               prep.free;
             end;
