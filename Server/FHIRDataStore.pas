@@ -426,7 +426,7 @@ begin
         {$IFDEF FHIR3}
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
         {$ELSE}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
         {$ENDIF}
 
         logt('Load Validation Pack from ' + fn);
@@ -659,6 +659,7 @@ begin
       sp.indexes := FIndexes.Link;
       sp.repository := self.Link;
       sp.countAllowed := false;
+      sp.Connection := conn.link;
       sp.build;
       result := sp.filter;
     finally

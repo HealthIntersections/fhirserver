@@ -8,6 +8,7 @@ uses
   StringSupport, EncodeSupport,
   AdvObjects, DateAndTime, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
+  KDBManager,
   FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities,
   UcumServices;
 
@@ -49,8 +50,11 @@ type
     FcountAllowed: boolean;
     FReverse: boolean;
     FStrict : boolean;
+    FConnection: TKDBConnection;
+    FWarnings : TFhirOperationOutcomeIssueList;
 
-    function processValueSetMembership(vs : String) : String;
+    procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
+    function processValueSetMembership(code, vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
     function BuildFilterParameter(filter : TFSFilterParameter; path : TFSFilterParameterPath; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
     function BuildFilterLogical  (filter : TFSFilterLogical;   parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
@@ -79,6 +83,7 @@ type
     procedure ProcessReferenceParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure SetConnection(const Value: TKDBConnection);
   public
     constructor create(ResConfig: TADvMap<TFHIRResourceConfig>);
     Destructor Destroy; override;
@@ -97,6 +102,7 @@ type
     property repository : TFHIRDataStore read FRepository write SetRepository;
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
+    property Connection : TKDBConnection read FConnection write SetConnection;
 
     // outbound
     property link_ : String read FLink write FLink;
@@ -104,6 +110,7 @@ type
     property filter : String read FFilter write FFilter;
     property reverse : boolean read FReverse write FReverse;
     property strict : boolean read FStrict write FStrict;
+    property Warnings : TFhirOperationOutcomeIssueList read FWarnings;
   end;
 
 
@@ -358,9 +365,9 @@ begin
   else if modifier = 'text' then
     result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 like ''' + sqlwrapString(lowercase(RemoveAccents(value))) + '%'')'
   else if modifier = 'in' then
-    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and ' + processValueSetMembership(value) + ')'
+    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and ' + processValueSetMembership(name, value) + ')'
   else if modifier = 'not-in' then
-    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (' + processValueSetMembership(value) + '))'
+    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (' + processValueSetMembership(name, value) + '))'
   else
   begin
     if value.Contains('|') then
@@ -1064,9 +1071,10 @@ begin
   end;
 end;
 
-function TSearchProcessor.processValueSetMembership(vs: String): String;
+function TSearchProcessor.processValueSetMembership(code, vs: String): String;
 var
   vso : TFHIRValueSet;
+  key : integer;
 begin
   // firstly, the vs can be a logical reference or a literal reference
   if (vs.StartsWith('valueset/')) then
@@ -1081,7 +1089,10 @@ begin
       vso.Free;
     end;
   end;
-  result := 'Concept in (select ConceptKey from ValueSetMembers where ValueSetKey in (select ValueSetKey from ValueSets where URL = '''+sqlWrapString(vs)+'''))';
+  key := FConnection.CountSQL('select ValueSetKey from ValueSets where URL = '''+sqlWrapString(vs)+'''');
+  if key = 0 then
+    warning(IssueTypeNotFound, 'http.url.'+code, 'The value set "'+vs+'" is not indexed, and cannot be searched on');
+  result := 'Concept in (select ConceptKey from ValueSetMembers where ValueSetKey = '+inttostr(key)+')';
 end;
 
 procedure TSearchProcessor.replaceNames(paramPath: TFSFilterParameterPath; components: TDictionary<String, String>);
@@ -1103,6 +1114,12 @@ begin
   end
   else
     replaceNames(TFSFilterParameter(filter).ParamPath, components);
+end;
+
+procedure TSearchProcessor.SetConnection(const Value: TKDBConnection);
+begin
+  FConnection.Free;
+  FConnection := Value;
 end;
 
 procedure TSearchProcessor.SetIndexes(const Value: TFhirIndexInformation);
@@ -1131,6 +1148,18 @@ var
 begin
   for s in value.Split([',']) do
     list.add(s);
+end;
+
+procedure TSearchProcessor.warning(issue: TFhirIssueTypeEnum; location, message: String);
+var
+  iss : TFhirOperationOutcomeIssue;
+begin
+  iss := FWarnings.Append;
+  iss.severity := IssueSeverityWarning;
+  iss.code := issue;
+  iss.details := TFhirCodeableConcept.Create;
+  iss.details.text := message;
+  iss.locationList.add(location);
 end;
 
 function TSearchProcessor.findPrefix(var value : String; subst : String) : boolean;
@@ -1278,10 +1307,13 @@ begin
   Inherited Create;
   FResConfig := ResConfig;
   FStrict := false;
+  FWarnings := TFhirOperationOutcomeIssueList.create;
 end;
 
 destructor TSearchProcessor.Destroy;
 begin
+  FWarnings.Free;
+  FConnection.Free;
   FRepository.Free;
   FSession.Free;
   FIndexes.Free;

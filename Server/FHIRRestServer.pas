@@ -1,5 +1,9 @@
 Unit FHIRRestServer;
 
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -33,7 +37,7 @@ Interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
 
-  EncodeSupport, GuidSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
+  EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
@@ -42,14 +46,14 @@ Uses
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
-  IdZLibCompressorBase, IdCompressorZLib, IdZlib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
+  IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
-  TerminologyWebServer, AuthServer, TwilioClient,
+  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient,
 
-  FHIRTypes, fhirresources, fhirparser, fhirconstants,
-  fhirbase, fhirparserbase, fhirtags, fhirsupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXml, TerminologyServices {$IFDEF FHIR3}, OpenMHealthServer{$ENDIF};
+  FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
+  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXML, TerminologyServices {$IFDEF FHIR3}, OpenMHealthServer{$ENDIF};
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -134,6 +138,7 @@ Type
     FStartTime : cardinal;
     FTotalTime : cardinal;
     FRestTime : cardinal;
+    FHomePage : String;
 
     FClients : TAdvList<TFHIRWebServerClientInfo>;
     FFhirStore : TFHIRDataStore;
@@ -148,6 +153,7 @@ Type
     carryName : String;
     FPatientViewServers : TDictionary<String, String>;
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
+    FReverseProxyList : TAdvList<TReverseProxyInfo>;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -188,6 +194,7 @@ Type
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkExit(AContext: TIdContext);
+    Procedure ReverseProxy(proxy : TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -233,7 +240,7 @@ Uses
   FHIRLog, SystemService,
 
   FileSupport,
-  FaceBookSupport;
+  FacebookSupport;
 
 Function GetMimeTypeForExt(AExt: String): String;
 Var
@@ -309,6 +316,7 @@ Begin
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
   FPatientViewServers := TDictionary<String, String>.create;
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
+  FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
 
   FSourcePath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'web', ''));
   logt('Load User Sub-system');
@@ -333,7 +341,17 @@ Begin
   FCertFile := FIni.ReadString('web', 'certname', '');
   FRootCertFile := FIni.ReadString('web', 'cacertname', '');
   FSSLPassword := FIni.ReadString('web', 'certpword', '');
+  FHomePage := FIni.ReadString('web', 'homepage', 'homepage.html');
   FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
+  ts := TStringList.Create;
+  try
+    FIni.ReadSection('reverse-proxy', ts);
+    for s in ts do
+      FReverseProxyList.Add(TReverseProxyInfo.create(s, FIni.ReadString('reverse-proxy', s, '')));
+  finally
+    ts.Free;
+  end;
+
 
   FFhirStore := TFHIRDataStore.Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link, loadStore);
   FFhirStore.ownername := FOwnerName;
@@ -439,6 +457,7 @@ Begin
   FPatientViewServers.Free;
   FClients.Free;
   FPatientHooks.Free;
+  FReverseProxyList.Free;
   FLock.Free;
   Inherited;
 End;
@@ -796,7 +815,8 @@ Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequ
 var
   session : TFHIRSession;
   c : integer;
-  check : boolean;
+  check, handled : boolean;
+  rp : TReverseProxyInfo;
 begin
   session := nil;
   MarkEntry(AContext, request, response);
@@ -840,14 +860,25 @@ begin
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
-      ReturnProcessedFile(response, session, '/homepage.html', AltFile('/homepage.html'), false)
+      ReturnProcessedFile(response, session, '/'+FHomepage, AltFile('/'+FHomepage), false)
     else if FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, false)
     else
     begin
-      response.ResponseNo := 404;
-      response.ContentText := 'Document '+request.Document+' not found';
-      logt('miss: '+request.Document);
+      handled := false;
+      for rp in FReverseProxyList do
+        if request.Document.StartsWith(rp.path) then
+        begin
+          ReverseProxy(rp, AContext, request, session, response);
+          handled := true;
+          break;
+        end;
+      if not handled then
+      begin
+        response.ResponseNo := 404;
+        response.ContentText := 'Document '+request.Document+' not found';
+        logt('miss: '+request.Document);
+      end;
     end;
   finally
     MarkExit(AContext);
@@ -3153,6 +3184,22 @@ begin
   response.ContentStream := TFileStream.Create(path, fmOpenRead);
   response.FreeContentStream := true;
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));
+end;
+
+procedure TFhirWebServer.ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo);
+var
+  client : TReverseClient;
+begin
+  client := TReverseClient.create;
+  try
+    client.proxy := proxy.Link;
+    client.context := AContext;
+    client.request := request;
+    client.response := response;
+    client.execute;
+  finally
+    client.free;
+  end;
 end;
 
 //procedure TFhirWebServer.DoSendFHIR(iMsgKey, SrcID: Integer; request: TFHIRRequest; response: TFHIRResponse);

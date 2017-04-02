@@ -1,5 +1,10 @@
 // JCL_DEBUG_EXPERT_INSERTJDBG ON
 program FHIRServer3;
+
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -80,8 +85,6 @@ ucum search
 }
 
 uses
-  FastMM4 in '..\Libraries\FMM\FastMM4.pas',
-  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   Windows,
   SysUtils,
   Classes,
@@ -304,7 +307,8 @@ uses
   OpenMHealthServer in 'OpenMHealthServer.pas',
   DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
   CvxServices in 'CvxServices.pas',
-  ACIRServices in 'ACIRServices.pas';
+  ACIRServices in 'ACIRServices.pas',
+  ReverseClient in 'ReverseClient.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v3.0.0 generated 2017-03-16T17:26:25+11:00
+// FHIR v3.0.0 generated 2017-03-21T06:09:53+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -83,16 +83,16 @@ Type
     spActivityDefinition_Date, {@enum.value "date" spActivityDefinition_Date The activity definition publication date }
     spActivityDefinition_Dependson, {@enum.value "depends-on" spActivityDefinition_Dependson What resource is being referenced }
     spActivityDefinition_Derivedfrom, {@enum.value "derived-from" spActivityDefinition_Derivedfrom What resource is being referenced }
-    spActivityDefinition_Description, {@enum.value "description" spActivityDefinition_Description Text search against the description of the activity definition }
-    spActivityDefinition_Effective, {@enum.value "effective" spActivityDefinition_Effective Effective time associated with the activity definition }
-    spActivityDefinition_Identifier, {@enum.value "identifier" spActivityDefinition_Identifier External identifiers for the activity definition }
-    spActivityDefinition_Jurisdiction, {@enum.value "jurisdiction" spActivityDefinition_Jurisdiction Intended jurisdiction for activity definition }
-    spActivityDefinition_Name, {@enum.value "name" spActivityDefinition_Name Name of the activity definition }
+    spActivityDefinition_Description, {@enum.value "description" spActivityDefinition_Description The description of the activity definition }
+    spActivityDefinition_Effective, {@enum.value "effective" spActivityDefinition_Effective The time during which the activity definition is intended to be in use }
+    spActivityDefinition_Identifier, {@enum.value "identifier" spActivityDefinition_Identifier External identifier for the activity definition }
+    spActivityDefinition_Jurisdiction, {@enum.value "jurisdiction" spActivityDefinition_Jurisdiction Intended jurisdiction for the activity definition }
+    spActivityDefinition_Name, {@enum.value "name" spActivityDefinition_Name Computationally friendly name of the activity definition }
     spActivityDefinition_Predecessor, {@enum.value "predecessor" spActivityDefinition_Predecessor What resource is being referenced }
     spActivityDefinition_Publisher, {@enum.value "publisher" spActivityDefinition_Publisher Name of the publisher of the activity definition }
     spActivityDefinition_Status, {@enum.value "status" spActivityDefinition_Status The current status of the activity definition }
     spActivityDefinition_Successor, {@enum.value "successor" spActivityDefinition_Successor What resource is being referenced }
-    spActivityDefinition_Title, {@enum.value "title" spActivityDefinition_Title Text search against the title of the activity definition }
+    spActivityDefinition_Title, {@enum.value "title" spActivityDefinition_Title The human-friendly name of the activity definition }
     spActivityDefinition_Topic, {@enum.value "topic" spActivityDefinition_Topic Topics associated with the module }
     spActivityDefinition_Url, {@enum.value "url" spActivityDefinition_Url The uri that identifies the activity definition }
     spActivityDefinition_Version); {@enum.value "version" spActivityDefinition_Version The business version of the activity definition }
@@ -111,14 +111,14 @@ Type
     spAdverseEvent__text, {@enum.value "_text" spAdverseEvent__text Search on the narrative of the resource }
     spAdverseEvent_Category, {@enum.value "category" spAdverseEvent_Category AE | PAE 
 An adverse event is an event that caused harm to a patient,  an adverse reaction is a something that is a subject-specific event that is a result of an exposure to a medication, food, device or environmental substance, a potential adverse event is something that occurred and that could have caused harm to a patient but did not }
-    spAdverseEvent_Date, {@enum.value "date" spAdverseEvent_Date AdverseEvent.date }
-    spAdverseEvent_Location, {@enum.value "location" spAdverseEvent_Location AdverseEvent.location }
+    spAdverseEvent_Date, {@enum.value "date" spAdverseEvent_Date When the event occurred }
+    spAdverseEvent_Location, {@enum.value "location" spAdverseEvent_Location Location where adverse event occurred }
     spAdverseEvent_Reaction, {@enum.value "reaction" spAdverseEvent_Reaction Adverse Reaction Events linked to exposure to substance }
-    spAdverseEvent_Recorder, {@enum.value "recorder" spAdverseEvent_Recorder AdverseEvent.recorder }
+    spAdverseEvent_Recorder, {@enum.value "recorder" spAdverseEvent_Recorder Who recorded the adverse event }
     spAdverseEvent_Seriousness, {@enum.value "seriousness" spAdverseEvent_Seriousness Mild | Moderate | Severe }
     spAdverseEvent_Study, {@enum.value "study" spAdverseEvent_Study AdverseEvent.study }
     spAdverseEvent_Subject, {@enum.value "subject" spAdverseEvent_Subject Subject or group impacted by event }
-    spAdverseEvent_Substance, {@enum.value "substance" spAdverseEvent_Substance AdverseEvent.suspectEntity.instance }
+    spAdverseEvent_Substance, {@enum.value "substance" spAdverseEvent_Substance Refers to the specific entity that caused the adverse event }
     spAdverseEvent_Type); {@enum.value "type" spAdverseEvent_Type actual | potential }
 
   {@Enum TSearchParamsAllergyIntolerance
@@ -304,14 +304,14 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCapabilityStatement__tag, {@enum.value "_tag" spCapabilityStatement__tag Tags applied to this resource }
     spCapabilityStatement__text, {@enum.value "_text" spCapabilityStatement__text Search on the narrative of the resource }
     spCapabilityStatement_Date, {@enum.value "date" spCapabilityStatement_Date The capability statement publication date }
-    spCapabilityStatement_Description, {@enum.value "description" spCapabilityStatement_Description Text search against the description of the capability statement }
+    spCapabilityStatement_Description, {@enum.value "description" spCapabilityStatement_Description The description of the capability statement }
     spCapabilityStatement_Event, {@enum.value "event" spCapabilityStatement_Event Event code in a capability statement }
     spCapabilityStatement_Fhirversion, {@enum.value "fhirversion" spCapabilityStatement_Fhirversion The version of FHIR }
     spCapabilityStatement_Format, {@enum.value "format" spCapabilityStatement_Format formats supported (xml | json | ttl | mime type) }
-    spCapabilityStatement_Guide, {@enum.value "guide" spCapabilityStatement_Guide Implementation Guide supported }
-    spCapabilityStatement_Jurisdiction, {@enum.value "jurisdiction" spCapabilityStatement_Jurisdiction Intended jurisdiction for capability statement }
+    spCapabilityStatement_Guide, {@enum.value "guide" spCapabilityStatement_Guide Implementation guides supported }
+    spCapabilityStatement_Jurisdiction, {@enum.value "jurisdiction" spCapabilityStatement_Jurisdiction Intended jurisdiction for the capability statement }
     spCapabilityStatement_Mode, {@enum.value "mode" spCapabilityStatement_Mode Mode - restful (server/client) or messaging (sender/receiver) }
-    spCapabilityStatement_Name, {@enum.value "name" spCapabilityStatement_Name Name of the capability statement }
+    spCapabilityStatement_Name, {@enum.value "name" spCapabilityStatement_Name Computationally friendly name of the capability statement }
     spCapabilityStatement_Publisher, {@enum.value "publisher" spCapabilityStatement_Publisher Name of the publisher of the capability statement }
     spCapabilityStatement_Resource, {@enum.value "resource" spCapabilityStatement_Resource Name of a resource mentioned in a capability statement }
     spCapabilityStatement_Resourceprofile, {@enum.value "resource-profile" spCapabilityStatement_Resourceprofile A profile id invoked in a capability statement }
@@ -319,7 +319,7 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCapabilityStatement_Software, {@enum.value "software" spCapabilityStatement_Software Part of a the name of a software application }
     spCapabilityStatement_Status, {@enum.value "status" spCapabilityStatement_Status The current status of the capability statement }
     spCapabilityStatement_Supportedprofile, {@enum.value "supported-profile" spCapabilityStatement_Supportedprofile Profiles for use cases supported }
-    spCapabilityStatement_Title, {@enum.value "title" spCapabilityStatement_Title Text search against the title of the capability statement }
+    spCapabilityStatement_Title, {@enum.value "title" spCapabilityStatement_Title The human-friendly name of the capability statement }
     spCapabilityStatement_Url, {@enum.value "url" spCapabilityStatement_Url The uri that identifies the capability statement }
     spCapabilityStatement_Version); {@enum.value "version" spCapabilityStatement_Version The business version of the capability statement }
 
@@ -396,7 +396,7 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spChargeItem_Entereddate, {@enum.value "entered-date" spChargeItem_Entereddate Date the charge item was entered }
     spChargeItem_Enterer, {@enum.value "enterer" spChargeItem_Enterer Individual who was entering }
     spChargeItem_Factoroverride, {@enum.value "factor-override" spChargeItem_Factoroverride Factor overriding the associated rules }
-    spChargeItem_Identifier, {@enum.value "identifier" spChargeItem_Identifier Business Identifer for item }
+    spChargeItem_Identifier, {@enum.value "identifier" spChargeItem_Identifier Business Identifier for item }
     spChargeItem_Occurrence, {@enum.value "occurrence" spChargeItem_Occurrence When the charged service was applied }
     spChargeItem_Participantactor, {@enum.value "participant-actor" spChargeItem_Participantactor Individual who was performing }
     spChargeItem_Participantrole, {@enum.value "participant-role" spChargeItem_Participantrole What type of performance was done }
@@ -497,15 +497,15 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCodeSystem_Code, {@enum.value "code" spCodeSystem_Code A code defined in the code system }
     spCodeSystem_Contentmode, {@enum.value "content-mode" spCodeSystem_Contentmode not-present | example | fragment | complete }
     spCodeSystem_Date, {@enum.value "date" spCodeSystem_Date The code system publication date }
-    spCodeSystem_Description, {@enum.value "description" spCodeSystem_Description Text search against the description of the code system }
-    spCodeSystem_Identifier, {@enum.value "identifier" spCodeSystem_Identifier External identifiers for the code system }
-    spCodeSystem_Jurisdiction, {@enum.value "jurisdiction" spCodeSystem_Jurisdiction Intended jurisdiction for code system }
+    spCodeSystem_Description, {@enum.value "description" spCodeSystem_Description The description of the code system }
+    spCodeSystem_Identifier, {@enum.value "identifier" spCodeSystem_Identifier External identifier for the code system }
+    spCodeSystem_Jurisdiction, {@enum.value "jurisdiction" spCodeSystem_Jurisdiction Intended jurisdiction for the code system }
     spCodeSystem_Language, {@enum.value "language" spCodeSystem_Language A language in which a designation is provided }
-    spCodeSystem_Name, {@enum.value "name" spCodeSystem_Name Name of the code system }
+    spCodeSystem_Name, {@enum.value "name" spCodeSystem_Name Computationally friendly name of the code system }
     spCodeSystem_Publisher, {@enum.value "publisher" spCodeSystem_Publisher Name of the publisher of the code system }
     spCodeSystem_Status, {@enum.value "status" spCodeSystem_Status The current status of the code system }
     spCodeSystem_System, {@enum.value "system" spCodeSystem_System The system for any codes defined by this code system (same as 'url') }
-    spCodeSystem_Title, {@enum.value "title" spCodeSystem_Title Text search against the title of the code system }
+    spCodeSystem_Title, {@enum.value "title" spCodeSystem_Title The human-friendly name of the code system }
     spCodeSystem_Url, {@enum.value "url" spCodeSystem_Url The uri that identifies the code system }
     spCodeSystem_Version); {@enum.value "version" spCodeSystem_Version The business version of the code system }
 
@@ -581,13 +581,13 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCompartmentDefinition__text, {@enum.value "_text" spCompartmentDefinition__text Search on the narrative of the resource }
     spCompartmentDefinition_Code, {@enum.value "code" spCompartmentDefinition_Code Patient | Encounter | RelatedPerson | Practitioner | Device }
     spCompartmentDefinition_Date, {@enum.value "date" spCompartmentDefinition_Date The compartment definition publication date }
-    spCompartmentDefinition_Description, {@enum.value "description" spCompartmentDefinition_Description Text search against the description of the compartment definition }
-    spCompartmentDefinition_Jurisdiction, {@enum.value "jurisdiction" spCompartmentDefinition_Jurisdiction Intended jurisdiction for compartment definition }
-    spCompartmentDefinition_Name, {@enum.value "name" spCompartmentDefinition_Name Name of the compartment definition }
+    spCompartmentDefinition_Description, {@enum.value "description" spCompartmentDefinition_Description The description of the compartment definition }
+    spCompartmentDefinition_Jurisdiction, {@enum.value "jurisdiction" spCompartmentDefinition_Jurisdiction Intended jurisdiction for the compartment definition }
+    spCompartmentDefinition_Name, {@enum.value "name" spCompartmentDefinition_Name Computationally friendly name of the compartment definition }
     spCompartmentDefinition_Publisher, {@enum.value "publisher" spCompartmentDefinition_Publisher Name of the publisher of the compartment definition }
     spCompartmentDefinition_Resource, {@enum.value "resource" spCompartmentDefinition_Resource Name of resource type }
     spCompartmentDefinition_Status, {@enum.value "status" spCompartmentDefinition_Status The current status of the compartment definition }
-    spCompartmentDefinition_Title, {@enum.value "title" spCompartmentDefinition_Title Text search against the title of the compartment definition }
+    spCompartmentDefinition_Title, {@enum.value "title" spCompartmentDefinition_Title The human-friendly name of the compartment definition }
     spCompartmentDefinition_Url); {@enum.value "url" spCompartmentDefinition_Url The uri that identifies the compartment definition }
 
   {@Enum TSearchParamsComposition
@@ -635,10 +635,10 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spConceptMap__text, {@enum.value "_text" spConceptMap__text Search on the narrative of the resource }
     spConceptMap_Date, {@enum.value "date" spConceptMap_Date The concept map publication date }
     spConceptMap_Dependson, {@enum.value "dependson" spConceptMap_Dependson Reference to property mapping depends on }
-    spConceptMap_Description, {@enum.value "description" spConceptMap_Description Text search against the description of the concept map }
-    spConceptMap_Identifier, {@enum.value "identifier" spConceptMap_Identifier External identifiers for the concept map }
-    spConceptMap_Jurisdiction, {@enum.value "jurisdiction" spConceptMap_Jurisdiction Intended jurisdiction for concept map }
-    spConceptMap_Name, {@enum.value "name" spConceptMap_Name Name of the concept map }
+    spConceptMap_Description, {@enum.value "description" spConceptMap_Description The description of the concept map }
+    spConceptMap_Identifier, {@enum.value "identifier" spConceptMap_Identifier External identifier for the concept map }
+    spConceptMap_Jurisdiction, {@enum.value "jurisdiction" spConceptMap_Jurisdiction Intended jurisdiction for the concept map }
+    spConceptMap_Name, {@enum.value "name" spConceptMap_Name Computationally friendly name of the concept map }
     spConceptMap_Other, {@enum.value "other" spConceptMap_Other Canonical URL for other concept map }
     spConceptMap_Product, {@enum.value "product" spConceptMap_Product Reference to property mapping depends on }
     spConceptMap_Publisher, {@enum.value "publisher" spConceptMap_Publisher Name of the publisher of the concept map }
@@ -651,7 +651,7 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spConceptMap_Targetcode, {@enum.value "target-code" spConceptMap_Targetcode Code that identifies the target element }
     spConceptMap_Targetsystem, {@enum.value "target-system" spConceptMap_Targetsystem System of the target (if necessary) }
     spConceptMap_Targeturi, {@enum.value "target-uri" spConceptMap_Targeturi Provides context to the mappings }
-    spConceptMap_Title, {@enum.value "title" spConceptMap_Title Text search against the title of the concept map }
+    spConceptMap_Title, {@enum.value "title" spConceptMap_Title The human-friendly name of the concept map }
     spConceptMap_Url, {@enum.value "url" spConceptMap_Url The uri that identifies the concept map }
     spConceptMap_Version); {@enum.value "version" spConceptMap_Version The business version of the concept map }
 
@@ -782,15 +782,15 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDataElement_Code, {@enum.value "code" spDataElement_Code A code for the data element (server may choose to do subsumption) }
     spDataElement_Date, {@enum.value "date" spDataElement_Date The data element publication date }
     spDataElement_Description, {@enum.value "description" spDataElement_Description Text search in the description of the data element.  This corresponds to the definition of the first DataElement.element. }
-    spDataElement_Identifier, {@enum.value "identifier" spDataElement_Identifier External identifiers for the data element }
-    spDataElement_Jurisdiction, {@enum.value "jurisdiction" spDataElement_Jurisdiction Intended jurisdiction for data element }
-    spDataElement_Name, {@enum.value "name" spDataElement_Name Name of the data element }
+    spDataElement_Identifier, {@enum.value "identifier" spDataElement_Identifier External identifier for the data element }
+    spDataElement_Jurisdiction, {@enum.value "jurisdiction" spDataElement_Jurisdiction Intended jurisdiction for the data element }
+    spDataElement_Name, {@enum.value "name" spDataElement_Name Computationally friendly name of the data element }
     spDataElement_ObjectClass, {@enum.value "objectClass" spDataElement_ObjectClass Matches on the 11179-objectClass extension value }
     spDataElement_ObjectClassProperty, {@enum.value "objectClassProperty" spDataElement_ObjectClassProperty Matches on the 11179-objectClassProperty extension value }
     spDataElement_Publisher, {@enum.value "publisher" spDataElement_Publisher Name of the publisher of the data element }
     spDataElement_Status, {@enum.value "status" spDataElement_Status The current status of the data element }
     spDataElement_Stringency, {@enum.value "stringency" spDataElement_Stringency The stringency of the data element definition }
-    spDataElement_Title, {@enum.value "title" spDataElement_Title Text search against the title of the data element }
+    spDataElement_Title, {@enum.value "title" spDataElement_Title The human-friendly name of the data element }
     spDataElement_Url, {@enum.value "url" spDataElement_Url The uri that identifies the data element }
     spDataElement_Version); {@enum.value "version" spDataElement_Version The business version of the data element }
 
@@ -993,11 +993,11 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDocumentReference_Custodian, {@enum.value "custodian" spDocumentReference_Custodian Organization which maintains the document }
     spDocumentReference_Description, {@enum.value "description" spDocumentReference_Description Human-readable description (title) }
     spDocumentReference_Encounter, {@enum.value "encounter" spDocumentReference_Encounter Context of the document  content }
-    spDocumentReference_Event, {@enum.value "event" spDocumentReference_Event Main Clinical Acts Documented }
+    spDocumentReference_Event, {@enum.value "event" spDocumentReference_Event Main clinical acts documented }
     spDocumentReference_Facility, {@enum.value "facility" spDocumentReference_Facility Kind of facility where patient was seen }
     spDocumentReference_Format, {@enum.value "format" spDocumentReference_Format Format/content rules for the document }
     spDocumentReference_Identifier, {@enum.value "identifier" spDocumentReference_Identifier Master Version Specific Identifier }
-    spDocumentReference_Indexed, {@enum.value "indexed" spDocumentReference_Indexed When this document reference created }
+    spDocumentReference_Indexed, {@enum.value "indexed" spDocumentReference_Indexed When this document reference was created }
     spDocumentReference_Language, {@enum.value "language" spDocumentReference_Language Human language of the content (BCP-47) }
     spDocumentReference_Location, {@enum.value "location" spDocumentReference_Location Uri where the data can be found }
     spDocumentReference_Patient, {@enum.value "patient" spDocumentReference_Patient Who/what is the subject of the document }
@@ -1175,10 +1175,10 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spExpansionProfile__tag, {@enum.value "_tag" spExpansionProfile__tag Tags applied to this resource }
     spExpansionProfile__text, {@enum.value "_text" spExpansionProfile__text Search on the narrative of the resource }
     spExpansionProfile_Date, {@enum.value "date" spExpansionProfile_Date The expansion profile publication date }
-    spExpansionProfile_Description, {@enum.value "description" spExpansionProfile_Description Text search against the description of the expansion profile }
-    spExpansionProfile_Identifier, {@enum.value "identifier" spExpansionProfile_Identifier External identifiers for the expansion profile }
-    spExpansionProfile_Jurisdiction, {@enum.value "jurisdiction" spExpansionProfile_Jurisdiction Intended jurisdiction for expansion profile }
-    spExpansionProfile_Name, {@enum.value "name" spExpansionProfile_Name Name of the expansion profile }
+    spExpansionProfile_Description, {@enum.value "description" spExpansionProfile_Description The description of the expansion profile }
+    spExpansionProfile_Identifier, {@enum.value "identifier" spExpansionProfile_Identifier External identifier for the expansion profile }
+    spExpansionProfile_Jurisdiction, {@enum.value "jurisdiction" spExpansionProfile_Jurisdiction Intended jurisdiction for the expansion profile }
+    spExpansionProfile_Name, {@enum.value "name" spExpansionProfile_Name Computationally friendly name of the expansion profile }
     spExpansionProfile_Publisher, {@enum.value "publisher" spExpansionProfile_Publisher Name of the publisher of the expansion profile }
     spExpansionProfile_Status, {@enum.value "status" spExpansionProfile_Status The current status of the expansion profile }
     spExpansionProfile_Url, {@enum.value "url" spExpansionProfile_Url The uri that identifies the expansion profile }
@@ -1283,9 +1283,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spGraphDefinition__tag, {@enum.value "_tag" spGraphDefinition__tag Tags applied to this resource }
     spGraphDefinition__text, {@enum.value "_text" spGraphDefinition__text Search on the narrative of the resource }
     spGraphDefinition_Date, {@enum.value "date" spGraphDefinition_Date The graph definition publication date }
-    spGraphDefinition_Description, {@enum.value "description" spGraphDefinition_Description Text search against the description of the graph definition }
-    spGraphDefinition_Jurisdiction, {@enum.value "jurisdiction" spGraphDefinition_Jurisdiction Intended jurisdiction for graph definition }
-    spGraphDefinition_Name, {@enum.value "name" spGraphDefinition_Name Name of the graph definition }
+    spGraphDefinition_Description, {@enum.value "description" spGraphDefinition_Description The description of the graph definition }
+    spGraphDefinition_Jurisdiction, {@enum.value "jurisdiction" spGraphDefinition_Jurisdiction Intended jurisdiction for the graph definition }
+    spGraphDefinition_Name, {@enum.value "name" spGraphDefinition_Name Computationally friendly name of the graph definition }
     spGraphDefinition_Publisher, {@enum.value "publisher" spGraphDefinition_Publisher Name of the publisher of the graph definition }
     spGraphDefinition_Start, {@enum.value "start" spGraphDefinition_Start Type of resource at which the graph starts }
     spGraphDefinition_Status, {@enum.value "status" spGraphDefinition_Status The current status of the graph definition }
@@ -1467,10 +1467,10 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImplementationGuide__text, {@enum.value "_text" spImplementationGuide__text Search on the narrative of the resource }
     spImplementationGuide_Date, {@enum.value "date" spImplementationGuide_Date The implementation guide publication date }
     spImplementationGuide_Dependency, {@enum.value "dependency" spImplementationGuide_Dependency Where to find dependency }
-    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description Text search against the description of the implementation guide }
-    spImplementationGuide_Experimental, {@enum.value "experimental" spImplementationGuide_Experimental If for testing purposes, not real usage }
-    spImplementationGuide_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuide_Jurisdiction Intended jurisdiction for implementation guide }
-    spImplementationGuide_Name, {@enum.value "name" spImplementationGuide_Name Name of the implementation guide }
+    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description The description of the implementation guide }
+    spImplementationGuide_Experimental, {@enum.value "experimental" spImplementationGuide_Experimental For testing purposes, not real usage }
+    spImplementationGuide_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuide_Jurisdiction Intended jurisdiction for the implementation guide }
+    spImplementationGuide_Name, {@enum.value "name" spImplementationGuide_Name Computationally friendly name of the implementation guide }
     spImplementationGuide_Publisher, {@enum.value "publisher" spImplementationGuide_Publisher Name of the publisher of the implementation guide }
     spImplementationGuide_Resource, {@enum.value "resource" spImplementationGuide_Resource Location of the resource }
     spImplementationGuide_Status, {@enum.value "status" spImplementationGuide_Status The current status of the implementation guide }
@@ -1493,16 +1493,16 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spLibrary_Date, {@enum.value "date" spLibrary_Date The library publication date }
     spLibrary_Dependson, {@enum.value "depends-on" spLibrary_Dependson What resource is being referenced }
     spLibrary_Derivedfrom, {@enum.value "derived-from" spLibrary_Derivedfrom What resource is being referenced }
-    spLibrary_Description, {@enum.value "description" spLibrary_Description Text search against the description of the library }
-    spLibrary_Effective, {@enum.value "effective" spLibrary_Effective Effective time associated with the library }
-    spLibrary_Identifier, {@enum.value "identifier" spLibrary_Identifier External identifiers for the library }
-    spLibrary_Jurisdiction, {@enum.value "jurisdiction" spLibrary_Jurisdiction Intended jurisdiction for library }
-    spLibrary_Name, {@enum.value "name" spLibrary_Name Name of the library }
+    spLibrary_Description, {@enum.value "description" spLibrary_Description The description of the library }
+    spLibrary_Effective, {@enum.value "effective" spLibrary_Effective The time during which the library is intended to be in use }
+    spLibrary_Identifier, {@enum.value "identifier" spLibrary_Identifier External identifier for the library }
+    spLibrary_Jurisdiction, {@enum.value "jurisdiction" spLibrary_Jurisdiction Intended jurisdiction for the library }
+    spLibrary_Name, {@enum.value "name" spLibrary_Name Computationally friendly name of the library }
     spLibrary_Predecessor, {@enum.value "predecessor" spLibrary_Predecessor What resource is being referenced }
     spLibrary_Publisher, {@enum.value "publisher" spLibrary_Publisher Name of the publisher of the library }
     spLibrary_Status, {@enum.value "status" spLibrary_Status The current status of the library }
     spLibrary_Successor, {@enum.value "successor" spLibrary_Successor What resource is being referenced }
-    spLibrary_Title, {@enum.value "title" spLibrary_Title Text search against the title of the library }
+    spLibrary_Title, {@enum.value "title" spLibrary_Title The human-friendly name of the library }
     spLibrary_Topic, {@enum.value "topic" spLibrary_Topic Topics associated with the module }
     spLibrary_Url, {@enum.value "url" spLibrary_Url The uri that identifies the library }
     spLibrary_Version); {@enum.value "version" spLibrary_Version The business version of the library }
@@ -1597,16 +1597,16 @@ Requires the near parameter to also be included }
     spMeasure_Date, {@enum.value "date" spMeasure_Date The measure publication date }
     spMeasure_Dependson, {@enum.value "depends-on" spMeasure_Dependson What resource is being referenced }
     spMeasure_Derivedfrom, {@enum.value "derived-from" spMeasure_Derivedfrom What resource is being referenced }
-    spMeasure_Description, {@enum.value "description" spMeasure_Description Text search against the description of the measure }
-    spMeasure_Effective, {@enum.value "effective" spMeasure_Effective Effective time associated with the measure }
-    spMeasure_Identifier, {@enum.value "identifier" spMeasure_Identifier External identifiers for the measure }
-    spMeasure_Jurisdiction, {@enum.value "jurisdiction" spMeasure_Jurisdiction Intended jurisdiction for measure }
-    spMeasure_Name, {@enum.value "name" spMeasure_Name Name of the measure }
+    spMeasure_Description, {@enum.value "description" spMeasure_Description The description of the measure }
+    spMeasure_Effective, {@enum.value "effective" spMeasure_Effective The time during which the measure is intended to be in use }
+    spMeasure_Identifier, {@enum.value "identifier" spMeasure_Identifier External identifier for the measure }
+    spMeasure_Jurisdiction, {@enum.value "jurisdiction" spMeasure_Jurisdiction Intended jurisdiction for the measure }
+    spMeasure_Name, {@enum.value "name" spMeasure_Name Computationally friendly name of the measure }
     spMeasure_Predecessor, {@enum.value "predecessor" spMeasure_Predecessor What resource is being referenced }
     spMeasure_Publisher, {@enum.value "publisher" spMeasure_Publisher Name of the publisher of the measure }
     spMeasure_Status, {@enum.value "status" spMeasure_Status The current status of the measure }
     spMeasure_Successor, {@enum.value "successor" spMeasure_Successor What resource is being referenced }
-    spMeasure_Title, {@enum.value "title" spMeasure_Title Text search against the title of the measure }
+    spMeasure_Title, {@enum.value "title" spMeasure_Title The human-friendly name of the measure }
     spMeasure_Topic, {@enum.value "topic" spMeasure_Topic Topics associated with the module }
     spMeasure_Url, {@enum.value "url" spMeasure_Url The uri that identifies the measure }
     spMeasure_Version); {@enum.value "version" spMeasure_Version The business version of the measure }
@@ -1796,15 +1796,15 @@ Requires the near parameter to also be included }
     spMessageDefinition__text, {@enum.value "_text" spMessageDefinition__text Search on the narrative of the resource }
     spMessageDefinition_Category, {@enum.value "category" spMessageDefinition_Category The behavior associated with the message }
     spMessageDefinition_Date, {@enum.value "date" spMessageDefinition_Date The message definition publication date }
-    spMessageDefinition_Description, {@enum.value "description" spMessageDefinition_Description Text search against the description of the message definition }
+    spMessageDefinition_Description, {@enum.value "description" spMessageDefinition_Description The description of the message definition }
     spMessageDefinition_Event, {@enum.value "event" spMessageDefinition_Event The event that triggers the message }
     spMessageDefinition_Focus, {@enum.value "focus" spMessageDefinition_Focus A resource that is a permitted focus of the message }
-    spMessageDefinition_Identifier, {@enum.value "identifier" spMessageDefinition_Identifier External identifiers for the message definition }
-    spMessageDefinition_Jurisdiction, {@enum.value "jurisdiction" spMessageDefinition_Jurisdiction Intended jurisdiction for message definition }
-    spMessageDefinition_Name, {@enum.value "name" spMessageDefinition_Name Name of the message definition }
+    spMessageDefinition_Identifier, {@enum.value "identifier" spMessageDefinition_Identifier External identifier for the message definition }
+    spMessageDefinition_Jurisdiction, {@enum.value "jurisdiction" spMessageDefinition_Jurisdiction Intended jurisdiction for the message definition }
+    spMessageDefinition_Name, {@enum.value "name" spMessageDefinition_Name Computationally friendly name of the message definition }
     spMessageDefinition_Publisher, {@enum.value "publisher" spMessageDefinition_Publisher Name of the publisher of the message definition }
     spMessageDefinition_Status, {@enum.value "status" spMessageDefinition_Status The current status of the message definition }
-    spMessageDefinition_Title, {@enum.value "title" spMessageDefinition_Title Text search against the title of the message definition }
+    spMessageDefinition_Title, {@enum.value "title" spMessageDefinition_Title The human-friendly name of the message definition }
     spMessageDefinition_Url, {@enum.value "url" spMessageDefinition_Url The uri that identifies the message definition }
     spMessageDefinition_Version); {@enum.value "version" spMessageDefinition_Version The business version of the message definition }
 
@@ -1850,11 +1850,11 @@ Requires the near parameter to also be included }
     spNamingSystem__text, {@enum.value "_text" spNamingSystem__text Search on the narrative of the resource }
     spNamingSystem_Contact, {@enum.value "contact" spNamingSystem_Contact Name of an individual to contact }
     spNamingSystem_Date, {@enum.value "date" spNamingSystem_Date The naming system publication date }
-    spNamingSystem_Description, {@enum.value "description" spNamingSystem_Description Text search against the description of the naming system }
+    spNamingSystem_Description, {@enum.value "description" spNamingSystem_Description The description of the naming system }
     spNamingSystem_Idtype, {@enum.value "id-type" spNamingSystem_Idtype oid | uuid | uri | other }
-    spNamingSystem_Jurisdiction, {@enum.value "jurisdiction" spNamingSystem_Jurisdiction Intended jurisdiction for naming system }
+    spNamingSystem_Jurisdiction, {@enum.value "jurisdiction" spNamingSystem_Jurisdiction Intended jurisdiction for the naming system }
     spNamingSystem_Kind, {@enum.value "kind" spNamingSystem_Kind codesystem | identifier | root }
-    spNamingSystem_Name, {@enum.value "name" spNamingSystem_Name Name of the naming system }
+    spNamingSystem_Name, {@enum.value "name" spNamingSystem_Name Computationally friendly name of the naming system }
     spNamingSystem_Period, {@enum.value "period" spNamingSystem_Period When is identifier valid? }
     spNamingSystem_Publisher, {@enum.value "publisher" spNamingSystem_Publisher Name of the publisher of the naming system }
     spNamingSystem_Replacedby, {@enum.value "replaced-by" spNamingSystem_Replacedby Use this instead }
@@ -1953,11 +1953,11 @@ Requires the near parameter to also be included }
     spOperationDefinition_Base, {@enum.value "base" spOperationDefinition_Base Marks this as a profile of the base }
     spOperationDefinition_Code, {@enum.value "code" spOperationDefinition_Code Name used to invoke the operation }
     spOperationDefinition_Date, {@enum.value "date" spOperationDefinition_Date The operation definition publication date }
-    spOperationDefinition_Description, {@enum.value "description" spOperationDefinition_Description Text search against the description of the operation definition }
+    spOperationDefinition_Description, {@enum.value "description" spOperationDefinition_Description The description of the operation definition }
     spOperationDefinition_Instance, {@enum.value "instance" spOperationDefinition_Instance Invoke on an instance? }
-    spOperationDefinition_Jurisdiction, {@enum.value "jurisdiction" spOperationDefinition_Jurisdiction Intended jurisdiction for operation definition }
+    spOperationDefinition_Jurisdiction, {@enum.value "jurisdiction" spOperationDefinition_Jurisdiction Intended jurisdiction for the operation definition }
     spOperationDefinition_Kind, {@enum.value "kind" spOperationDefinition_Kind operation | query }
-    spOperationDefinition_Name, {@enum.value "name" spOperationDefinition_Name Name of the operation definition }
+    spOperationDefinition_Name, {@enum.value "name" spOperationDefinition_Name Computationally friendly name of the operation definition }
     spOperationDefinition_Paramprofile, {@enum.value "param-profile" spOperationDefinition_Paramprofile Profile on the type }
     spOperationDefinition_Publisher, {@enum.value "publisher" spOperationDefinition_Publisher Name of the publisher of the operation definition }
     spOperationDefinition_Status, {@enum.value "status" spOperationDefinition_Status The current status of the operation definition }
@@ -2133,16 +2133,16 @@ Requires the near parameter to also be included }
     spPlanDefinition_Date, {@enum.value "date" spPlanDefinition_Date The plan definition publication date }
     spPlanDefinition_Dependson, {@enum.value "depends-on" spPlanDefinition_Dependson What resource is being referenced }
     spPlanDefinition_Derivedfrom, {@enum.value "derived-from" spPlanDefinition_Derivedfrom What resource is being referenced }
-    spPlanDefinition_Description, {@enum.value "description" spPlanDefinition_Description Text search against the description of the plan definition }
-    spPlanDefinition_Effective, {@enum.value "effective" spPlanDefinition_Effective Effective time associated with the plan definition }
-    spPlanDefinition_Identifier, {@enum.value "identifier" spPlanDefinition_Identifier External identifiers for the plan definition }
-    spPlanDefinition_Jurisdiction, {@enum.value "jurisdiction" spPlanDefinition_Jurisdiction Intended jurisdiction for plan definition }
-    spPlanDefinition_Name, {@enum.value "name" spPlanDefinition_Name Name of the plan definition }
+    spPlanDefinition_Description, {@enum.value "description" spPlanDefinition_Description The description of the plan definition }
+    spPlanDefinition_Effective, {@enum.value "effective" spPlanDefinition_Effective The time during which the plan definition is intended to be in use }
+    spPlanDefinition_Identifier, {@enum.value "identifier" spPlanDefinition_Identifier External identifier for the plan definition }
+    spPlanDefinition_Jurisdiction, {@enum.value "jurisdiction" spPlanDefinition_Jurisdiction Intended jurisdiction for the plan definition }
+    spPlanDefinition_Name, {@enum.value "name" spPlanDefinition_Name Computationally friendly name of the plan definition }
     spPlanDefinition_Predecessor, {@enum.value "predecessor" spPlanDefinition_Predecessor What resource is being referenced }
     spPlanDefinition_Publisher, {@enum.value "publisher" spPlanDefinition_Publisher Name of the publisher of the plan definition }
     spPlanDefinition_Status, {@enum.value "status" spPlanDefinition_Status The current status of the plan definition }
     spPlanDefinition_Successor, {@enum.value "successor" spPlanDefinition_Successor What resource is being referenced }
-    spPlanDefinition_Title, {@enum.value "title" spPlanDefinition_Title Text search against the title of the plan definition }
+    spPlanDefinition_Title, {@enum.value "title" spPlanDefinition_Title The human-friendly name of the plan definition }
     spPlanDefinition_Topic, {@enum.value "topic" spPlanDefinition_Topic Topics associated with the module }
     spPlanDefinition_Url, {@enum.value "url" spPlanDefinition_Url The uri that identifies the plan definition }
     spPlanDefinition_Version); {@enum.value "version" spPlanDefinition_Version The business version of the plan definition }
@@ -2334,16 +2334,16 @@ Requires the near parameter to also be included }
     spQuestionnaire__security, {@enum.value "_security" spQuestionnaire__security Security Labels applied to this resource }
     spQuestionnaire__tag, {@enum.value "_tag" spQuestionnaire__tag Tags applied to this resource }
     spQuestionnaire__text, {@enum.value "_text" spQuestionnaire__text Search on the narrative of the resource }
-    spQuestionnaire_Code, {@enum.value "code" spQuestionnaire_Code A code that corresponds to the questionnaire or one of its groups }
+    spQuestionnaire_Code, {@enum.value "code" spQuestionnaire_Code A code that corresponds to one of its items in the questionnaire }
     spQuestionnaire_Date, {@enum.value "date" spQuestionnaire_Date The questionnaire publication date }
-    spQuestionnaire_Description, {@enum.value "description" spQuestionnaire_Description Text search against the description of the questionnaire }
-    spQuestionnaire_Effective, {@enum.value "effective" spQuestionnaire_Effective Effective time associated with the questionnaire }
-    spQuestionnaire_Identifier, {@enum.value "identifier" spQuestionnaire_Identifier External identifiers for the questionnaire }
-    spQuestionnaire_Jurisdiction, {@enum.value "jurisdiction" spQuestionnaire_Jurisdiction Intended jurisdiction for questionnaire }
-    spQuestionnaire_Name, {@enum.value "name" spQuestionnaire_Name Name of the questionnaire }
+    spQuestionnaire_Description, {@enum.value "description" spQuestionnaire_Description The description of the questionnaire }
+    spQuestionnaire_Effective, {@enum.value "effective" spQuestionnaire_Effective The time during which the questionnaire is intended to be in use }
+    spQuestionnaire_Identifier, {@enum.value "identifier" spQuestionnaire_Identifier External identifier for the questionnaire }
+    spQuestionnaire_Jurisdiction, {@enum.value "jurisdiction" spQuestionnaire_Jurisdiction Intended jurisdiction for the questionnaire }
+    spQuestionnaire_Name, {@enum.value "name" spQuestionnaire_Name Computationally friendly name of the questionnaire }
     spQuestionnaire_Publisher, {@enum.value "publisher" spQuestionnaire_Publisher Name of the publisher of the questionnaire }
     spQuestionnaire_Status, {@enum.value "status" spQuestionnaire_Status The current status of the questionnaire }
-    spQuestionnaire_Title, {@enum.value "title" spQuestionnaire_Title Text search against the title of the questionnaire }
+    spQuestionnaire_Title, {@enum.value "title" spQuestionnaire_Title The human-friendly name of the questionnaire }
     spQuestionnaire_Url, {@enum.value "url" spQuestionnaire_Url The uri that identifies the questionnaire }
     spQuestionnaire_Version); {@enum.value "version" spQuestionnaire_Version The business version of the questionnaire }
 
@@ -2360,14 +2360,14 @@ Requires the near parameter to also be included }
     spQuestionnaireResponse__tag, {@enum.value "_tag" spQuestionnaireResponse__tag Tags applied to this resource }
     spQuestionnaireResponse__text, {@enum.value "_text" spQuestionnaireResponse__text Search on the narrative of the resource }
     spQuestionnaireResponse_Author, {@enum.value "author" spQuestionnaireResponse_Author The author of the questionnaire response }
-    spQuestionnaireResponse_Authored, {@enum.value "authored" spQuestionnaireResponse_Authored When the questionnaire response was authored }
+    spQuestionnaireResponse_Authored, {@enum.value "authored" spQuestionnaireResponse_Authored When the questionnaire response was last changed }
     spQuestionnaireResponse_Basedon, {@enum.value "based-on" spQuestionnaireResponse_Basedon Plan/proposal/order fulfilled by this questionnaire response }
-    spQuestionnaireResponse_Context, {@enum.value "context" spQuestionnaireResponse_Context Encounter or episode during which questionnaire response was authored }
+    spQuestionnaireResponse_Context, {@enum.value "context" spQuestionnaireResponse_Context Encounter or episode associated with the questionnaire response }
     spQuestionnaireResponse_Identifier, {@enum.value "identifier" spQuestionnaireResponse_Identifier The unique identifier for the questionnaire response }
-    spQuestionnaireResponse_Parent, {@enum.value "parent" spQuestionnaireResponse_Parent Procedure or observation this questionnaire response is part of }
+    spQuestionnaireResponse_Parent, {@enum.value "parent" spQuestionnaireResponse_Parent Procedure or observation this questionnaire response was performed as a part of }
     spQuestionnaireResponse_Patient, {@enum.value "patient" spQuestionnaireResponse_Patient The patient that is the subject of the questionnaire response }
     spQuestionnaireResponse_Questionnaire, {@enum.value "questionnaire" spQuestionnaireResponse_Questionnaire The questionnaire the answers are provided for }
-    spQuestionnaireResponse_Source, {@enum.value "source" spQuestionnaireResponse_Source The person who answered the questions }
+    spQuestionnaireResponse_Source, {@enum.value "source" spQuestionnaireResponse_Source The individual providing the information reflected in the questionnaire respose }
     spQuestionnaireResponse_Status, {@enum.value "status" spQuestionnaireResponse_Status The status of the questionnaire response }
     spQuestionnaireResponse_Subject); {@enum.value "subject" spQuestionnaireResponse_Subject The subject of the questionnaire response }
 
@@ -2477,7 +2477,7 @@ Requires the near parameter to also be included }
     spResearchStudy_Jurisdiction, {@enum.value "jurisdiction" spResearchStudy_Jurisdiction Geographic region(s) for study }
     spResearchStudy_Keyword, {@enum.value "keyword" spResearchStudy_Keyword Used to search for the study }
     spResearchStudy_Partof, {@enum.value "partof" spResearchStudy_Partof Part of larger study }
-    spResearchStudy_Principalinvestigator, {@enum.value "principalinvestigator" spResearchStudy_Principalinvestigator Individual responsible for the study }
+    spResearchStudy_Principalinvestigator, {@enum.value "principalinvestigator" spResearchStudy_Principalinvestigator The individual responsible for the study }
     spResearchStudy_Protocol, {@enum.value "protocol" spResearchStudy_Protocol Steps followed in executing study }
     spResearchStudy_Site, {@enum.value "site" spResearchStudy_Site Location involved in study execution }
     spResearchStudy_Sponsor, {@enum.value "sponsor" spResearchStudy_Sponsor Organization responsible for the study }
@@ -2497,7 +2497,7 @@ Requires the near parameter to also be included }
     spResearchSubject__tag, {@enum.value "_tag" spResearchSubject__tag Tags applied to this resource }
     spResearchSubject__text, {@enum.value "_text" spResearchSubject__text Search on the narrative of the resource }
     spResearchSubject_Date, {@enum.value "date" spResearchSubject_Date Start and end of participation }
-    spResearchSubject_Identifier, {@enum.value "identifier" spResearchSubject_Identifier Business Identifier for event }
+    spResearchSubject_Identifier, {@enum.value "identifier" spResearchSubject_Identifier Business Identifier for research subject }
     spResearchSubject_Individual, {@enum.value "individual" spResearchSubject_Individual Who is part of study }
     spResearchSubject_Patient, {@enum.value "patient" spResearchSubject_Patient Who is part of study }
     spResearchSubject_Status); {@enum.value "status" spResearchSubject_Status candidate | enrolled | active | suspended | withdrawn | completed }
@@ -2560,9 +2560,9 @@ Requires the near parameter to also be included }
     spSearchParameter_Component, {@enum.value "component" spSearchParameter_Component Defines how the part works }
     spSearchParameter_Date, {@enum.value "date" spSearchParameter_Date The search parameter publication date }
     spSearchParameter_Derivedfrom, {@enum.value "derived-from" spSearchParameter_Derivedfrom Original Definition for the search parameter }
-    spSearchParameter_Description, {@enum.value "description" spSearchParameter_Description Text search against the description of the search parameter }
-    spSearchParameter_Jurisdiction, {@enum.value "jurisdiction" spSearchParameter_Jurisdiction Intended jurisdiction for search parameter }
-    spSearchParameter_Name, {@enum.value "name" spSearchParameter_Name Name of the search parameter }
+    spSearchParameter_Description, {@enum.value "description" spSearchParameter_Description The description of the search parameter }
+    spSearchParameter_Jurisdiction, {@enum.value "jurisdiction" spSearchParameter_Jurisdiction Intended jurisdiction for the search parameter }
+    spSearchParameter_Name, {@enum.value "name" spSearchParameter_Name Computationally friendly name of the search parameter }
     spSearchParameter_Publisher, {@enum.value "publisher" spSearchParameter_Publisher Name of the publisher of the search parameter }
     spSearchParameter_Status, {@enum.value "status" spSearchParameter_Status The current status of the search parameter }
     spSearchParameter_Target, {@enum.value "target" spSearchParameter_Target Types of resource (if a resource reference) }
@@ -2606,16 +2606,16 @@ Requires the near parameter to also be included }
     spServiceDefinition_Date, {@enum.value "date" spServiceDefinition_Date The service definition publication date }
     spServiceDefinition_Dependson, {@enum.value "depends-on" spServiceDefinition_Dependson What resource is being referenced }
     spServiceDefinition_Derivedfrom, {@enum.value "derived-from" spServiceDefinition_Derivedfrom What resource is being referenced }
-    spServiceDefinition_Description, {@enum.value "description" spServiceDefinition_Description Text search against the description of the service definition }
-    spServiceDefinition_Effective, {@enum.value "effective" spServiceDefinition_Effective Effective time associated with the service definition }
-    spServiceDefinition_Identifier, {@enum.value "identifier" spServiceDefinition_Identifier External identifiers for the service definition }
-    spServiceDefinition_Jurisdiction, {@enum.value "jurisdiction" spServiceDefinition_Jurisdiction Intended jurisdiction for service definition }
-    spServiceDefinition_Name, {@enum.value "name" spServiceDefinition_Name Name of the service definition }
+    spServiceDefinition_Description, {@enum.value "description" spServiceDefinition_Description The description of the service definition }
+    spServiceDefinition_Effective, {@enum.value "effective" spServiceDefinition_Effective The time during which the service definition is intended to be in use }
+    spServiceDefinition_Identifier, {@enum.value "identifier" spServiceDefinition_Identifier External identifier for the service definition }
+    spServiceDefinition_Jurisdiction, {@enum.value "jurisdiction" spServiceDefinition_Jurisdiction Intended jurisdiction for the service definition }
+    spServiceDefinition_Name, {@enum.value "name" spServiceDefinition_Name Computationally friendly name of the service definition }
     spServiceDefinition_Predecessor, {@enum.value "predecessor" spServiceDefinition_Predecessor What resource is being referenced }
     spServiceDefinition_Publisher, {@enum.value "publisher" spServiceDefinition_Publisher Name of the publisher of the service definition }
     spServiceDefinition_Status, {@enum.value "status" spServiceDefinition_Status The current status of the service definition }
     spServiceDefinition_Successor, {@enum.value "successor" spServiceDefinition_Successor What resource is being referenced }
-    spServiceDefinition_Title, {@enum.value "title" spServiceDefinition_Title Text search against the title of the service definition }
+    spServiceDefinition_Title, {@enum.value "title" spServiceDefinition_Title The human-friendly name of the service definition }
     spServiceDefinition_Topic, {@enum.value "topic" spServiceDefinition_Topic Topics associated with the module }
     spServiceDefinition_Url, {@enum.value "url" spServiceDefinition_Url The uri that identifies the service definition }
     spServiceDefinition_Version); {@enum.value "version" spServiceDefinition_Version The business version of the service definition }
@@ -2681,18 +2681,18 @@ Requires the near parameter to also be included }
     spStructureDefinition_Contexttype, {@enum.value "context-type" spStructureDefinition_Contexttype resource | datatype | extension }
     spStructureDefinition_Date, {@enum.value "date" spStructureDefinition_Date The structure definition publication date }
     spStructureDefinition_Derivation, {@enum.value "derivation" spStructureDefinition_Derivation specialization | constraint - How relates to base definition }
-    spStructureDefinition_Description, {@enum.value "description" spStructureDefinition_Description Text search against the description of the structure definition }
-    spStructureDefinition_Experimental, {@enum.value "experimental" spStructureDefinition_Experimental If for testing purposes, not real usage }
+    spStructureDefinition_Description, {@enum.value "description" spStructureDefinition_Description The description of the structure definition }
+    spStructureDefinition_Experimental, {@enum.value "experimental" spStructureDefinition_Experimental For testing purposes, not real usage }
     spStructureDefinition_Extcontext, {@enum.value "ext-context" spStructureDefinition_Extcontext Where the extension can be used in instances }
-    spStructureDefinition_Identifier, {@enum.value "identifier" spStructureDefinition_Identifier External identifiers for the structure definition }
-    spStructureDefinition_Jurisdiction, {@enum.value "jurisdiction" spStructureDefinition_Jurisdiction Intended jurisdiction for structure definition }
+    spStructureDefinition_Identifier, {@enum.value "identifier" spStructureDefinition_Identifier External identifier for the structure definition }
+    spStructureDefinition_Jurisdiction, {@enum.value "jurisdiction" spStructureDefinition_Jurisdiction Intended jurisdiction for the structure definition }
     spStructureDefinition_Keyword, {@enum.value "keyword" spStructureDefinition_Keyword A code for the profile }
     spStructureDefinition_Kind, {@enum.value "kind" spStructureDefinition_Kind primitive-type | complex-type | resource | logical }
-    spStructureDefinition_Name, {@enum.value "name" spStructureDefinition_Name Name of the structure definition }
+    spStructureDefinition_Name, {@enum.value "name" spStructureDefinition_Name Computationally friendly name of the structure definition }
     spStructureDefinition_Path, {@enum.value "path" spStructureDefinition_Path A path that is constrained in the profile }
     spStructureDefinition_Publisher, {@enum.value "publisher" spStructureDefinition_Publisher Name of the publisher of the structure definition }
     spStructureDefinition_Status, {@enum.value "status" spStructureDefinition_Status The current status of the structure definition }
-    spStructureDefinition_Title, {@enum.value "title" spStructureDefinition_Title Text search against the title of the structure definition }
+    spStructureDefinition_Title, {@enum.value "title" spStructureDefinition_Title The human-friendly name of the structure definition }
     spStructureDefinition_Type, {@enum.value "type" spStructureDefinition_Type Type defined or constrained by this structure }
     spStructureDefinition_Url, {@enum.value "url" spStructureDefinition_Url The uri that identifies the structure definition }
     spStructureDefinition_Valueset, {@enum.value "valueset" spStructureDefinition_Valueset A vocabulary binding reference }
@@ -2711,13 +2711,13 @@ Requires the near parameter to also be included }
     spStructureMap__tag, {@enum.value "_tag" spStructureMap__tag Tags applied to this resource }
     spStructureMap__text, {@enum.value "_text" spStructureMap__text Search on the narrative of the resource }
     spStructureMap_Date, {@enum.value "date" spStructureMap_Date The structure map publication date }
-    spStructureMap_Description, {@enum.value "description" spStructureMap_Description Text search against the description of the structure map }
-    spStructureMap_Identifier, {@enum.value "identifier" spStructureMap_Identifier External identifiers for the structure map }
-    spStructureMap_Jurisdiction, {@enum.value "jurisdiction" spStructureMap_Jurisdiction Intended jurisdiction for structure map }
-    spStructureMap_Name, {@enum.value "name" spStructureMap_Name Name of the structure map }
+    spStructureMap_Description, {@enum.value "description" spStructureMap_Description The description of the structure map }
+    spStructureMap_Identifier, {@enum.value "identifier" spStructureMap_Identifier External identifier for the structure map }
+    spStructureMap_Jurisdiction, {@enum.value "jurisdiction" spStructureMap_Jurisdiction Intended jurisdiction for the structure map }
+    spStructureMap_Name, {@enum.value "name" spStructureMap_Name Computationally friendly name of the structure map }
     spStructureMap_Publisher, {@enum.value "publisher" spStructureMap_Publisher Name of the publisher of the structure map }
     spStructureMap_Status, {@enum.value "status" spStructureMap_Status The current status of the structure map }
-    spStructureMap_Title, {@enum.value "title" spStructureMap_Title Text search against the title of the structure map }
+    spStructureMap_Title, {@enum.value "title" spStructureMap_Title The human-friendly name of the structure map }
     spStructureMap_Url, {@enum.value "url" spStructureMap_Url The uri that identifies the structure map }
     spStructureMap_Version); {@enum.value "version" spStructureMap_Version The business version of the structure map }
 
@@ -2864,14 +2864,14 @@ Requires the near parameter to also be included }
     spTestScript__tag, {@enum.value "_tag" spTestScript__tag Tags applied to this resource }
     spTestScript__text, {@enum.value "_text" spTestScript__text Search on the narrative of the resource }
     spTestScript_Date, {@enum.value "date" spTestScript_Date The test script publication date }
-    spTestScript_Description, {@enum.value "description" spTestScript_Description Text search against the description of the test script }
-    spTestScript_Identifier, {@enum.value "identifier" spTestScript_Identifier External identifiers for the test script }
-    spTestScript_Jurisdiction, {@enum.value "jurisdiction" spTestScript_Jurisdiction Intended jurisdiction for test script }
-    spTestScript_Name, {@enum.value "name" spTestScript_Name Name of the test script }
+    spTestScript_Description, {@enum.value "description" spTestScript_Description The description of the test script }
+    spTestScript_Identifier, {@enum.value "identifier" spTestScript_Identifier External identifier for the test script }
+    spTestScript_Jurisdiction, {@enum.value "jurisdiction" spTestScript_Jurisdiction Intended jurisdiction for the test script }
+    spTestScript_Name, {@enum.value "name" spTestScript_Name Computationally friendly name of the test script }
     spTestScript_Publisher, {@enum.value "publisher" spTestScript_Publisher Name of the publisher of the test script }
     spTestScript_Status, {@enum.value "status" spTestScript_Status The current status of the test script }
     spTestScript_Testscriptcapability, {@enum.value "testscript-capability" spTestScript_Testscriptcapability TestScript required and validated capability }
-    spTestScript_Title, {@enum.value "title" spTestScript_Title Text search against the title of the test script }
+    spTestScript_Title, {@enum.value "title" spTestScript_Title The human-friendly name of the test script }
     spTestScript_Url, {@enum.value "url" spTestScript_Url The uri that identifies the test script }
     spTestScript_Version); {@enum.value "version" spTestScript_Version The business version of the test script }
 
@@ -2888,15 +2888,15 @@ Requires the near parameter to also be included }
     spValueSet__tag, {@enum.value "_tag" spValueSet__tag Tags applied to this resource }
     spValueSet__text, {@enum.value "_text" spValueSet__text Search on the narrative of the resource }
     spValueSet_Date, {@enum.value "date" spValueSet_Date The value set publication date }
-    spValueSet_Description, {@enum.value "description" spValueSet_Description Text search against the description of the value set }
+    spValueSet_Description, {@enum.value "description" spValueSet_Description The description of the value set }
     spValueSet_Expansion, {@enum.value "expansion" spValueSet_Expansion Uniquely identifies this expansion }
-    spValueSet_Identifier, {@enum.value "identifier" spValueSet_Identifier External identifiers for the value set }
-    spValueSet_Jurisdiction, {@enum.value "jurisdiction" spValueSet_Jurisdiction Intended jurisdiction for value set }
-    spValueSet_Name, {@enum.value "name" spValueSet_Name Name of the value set }
+    spValueSet_Identifier, {@enum.value "identifier" spValueSet_Identifier External identifier for the value set }
+    spValueSet_Jurisdiction, {@enum.value "jurisdiction" spValueSet_Jurisdiction Intended jurisdiction for the value set }
+    spValueSet_Name, {@enum.value "name" spValueSet_Name Computationally friendly name of the value set }
     spValueSet_Publisher, {@enum.value "publisher" spValueSet_Publisher Name of the publisher of the value set }
     spValueSet_Reference, {@enum.value "reference" spValueSet_Reference A code system included or excluded in the value set or an imported value set }
     spValueSet_Status, {@enum.value "status" spValueSet_Status The current status of the value set }
-    spValueSet_Title, {@enum.value "title" spValueSet_Title Text search against the title of the value set }
+    spValueSet_Title, {@enum.value "title" spValueSet_Title The human-friendly name of the value set }
     spValueSet_Url, {@enum.value "url" spValueSet_Url The uri that identifies the value set }
     spValueSet_Version); {@enum.value "version" spValueSet_Version The business version of the value set }
 
@@ -3516,7 +3516,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '3.0.0';
 
-  FHIR_GENERATED_DATE = '2017-03-16T17:26:25+11:00';
+  FHIR_GENERATED_DATE = '2017-03-21T06:09:53+11:00';
 
 
 

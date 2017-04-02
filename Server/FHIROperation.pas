@@ -1,5 +1,9 @@
 unit FHIROperation;
 
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -193,9 +197,9 @@ type
     procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; adaptor : TFHIRFormatAdaptor; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean;
     function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
-    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+    function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
-    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+    procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
@@ -985,7 +989,7 @@ begin
     oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
     oConf.software := TFhirCapabilityStatementSoftware.Create;
     oConf.software.name := 'Reference Server';
-    oConf.software.version := SERVER_VERSION+'.';
+    oConf.software.version := SERVER_VERSION;
     oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
     if FRepository.FormalURLPlainOpen <> '' then
     begin
@@ -1021,8 +1025,9 @@ begin
     {$IFDEF FHIR3}
     oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
     {$ENDIF}
-
+    {$IFDEF FHIR2}
     FRepository.TerminologyServer.declareSystems(oConf);
+    {$ENDIF}
     if assigned(FOnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
       FOnPopulateConformance(self, oConf);
     AddCDSHooks(oConf.restList[0]);
@@ -1923,7 +1928,7 @@ begin
   end;
 end;
 
-function TFhirOperationManager.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
+function TFhirOperationManager.BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
 var
   id : string;
 begin
@@ -1937,10 +1942,10 @@ begin
       raise exception.create('The query "'+params.getVar('_query')+'" is not known');
   end
   else
-    ProcessDefaultSearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, link, sql, total, summaryStatus, strict, reverse);
+    ProcessDefaultSearch(typekey, session, aType, params, baseURL, compartments, compartmentId, id, result, op, link, sql, total, summaryStatus, strict, reverse);
 end;
 
-procedure TFhirOperationManager.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
+procedure TFhirOperationManager.ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
 var
   sp : TSearchProcessor;
   s : String;
@@ -1966,12 +1971,15 @@ begin
     sp.repository := FRepository.Link;
     sp.session := session.link;
     sp.countAllowed := true;
+    sp.Connection := FConnection.link;
 
     sp.build;
     sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
     reverse := sp.reverse;
+    if (op <> nil) then
+      op.issueList.AddAll(sp.Warnings);
   finally
     sp.free;
   end;
@@ -2125,7 +2133,9 @@ var
   keys : TKeyList;
   comp : TFHIRParserClass;
   needsObject : boolean;
+  op : TFHIROperationOutcome;
   type_ : String;
+  be : TFhirBundleEntry;
 begin
   try
     ok := true;
@@ -2154,6 +2164,7 @@ begin
       if ok then
       begin
         bundle := TFHIRBundle.Create(BundleTypeSearchset);
+        op := TFhirOperationOutcome.Create;
         keys := TKeyList.Create;
         try
 //          bundle.base := request.baseUrl;
@@ -2164,7 +2175,7 @@ begin
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, summaryStatus, request.strictSearch, reverse);
+            id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
@@ -2181,9 +2192,6 @@ begin
             count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
           if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
             summaryStatus := soCount;
-
-          bundle.total := inttostr(FConnection.CountSQL('Select count(*) from Versions, Ids, Sessions, SearchEntries, Types '+
-                'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id)+1);
 
           if (summaryStatus <> soCount) then
           begin
@@ -2242,6 +2250,13 @@ begin
           end;
 
           bundle.id := FhirGUIDToString(CreateGUID);
+          if (op.issueList.Count > 0) then
+          begin
+            be := bundle.entryList.Append;
+            be.resource := op.Link;
+            be.search := TFhirBundleEntrySearch.Create;
+            be.search.mode := SearchEntryModeOutcome;
+          end;
 
           //bundle.link_List['self'] := request.url;
           response.HTTPCode := 200;
@@ -2252,6 +2267,7 @@ begin
         finally
           keys.Free;
           bundle.Free;
+          op.Free;
         end;
       end;
     end;
@@ -3512,6 +3528,7 @@ begin
       sp.indexes := FRepository.Indexes.Link;
       sp.repository := FRepository.Link;
       sp.countAllowed := false;
+      sp.Connection := FConnection.link;
 
       sp.build;
 
@@ -7104,7 +7121,7 @@ begin
           if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, link, sql, total, wantSummary, request.strictSearch, reverse);
+            id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
           manager.chooseField(response.Format, wantsummary, request.Adaptor, field, prsr, needsObject);

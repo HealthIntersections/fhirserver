@@ -72,3 +72,5 @@ tests/FHIRServerTests.stat
 Server/win64_3/Debug/TestInsightSettings.ini
 Server/FHIRServer3.cfg
 Server/win64_3/Debug/dunitx-results.xml
+*.o
+*.ppu

@@ -97,7 +97,7 @@ var
 begin
   client.conformance(true).Free;
   client.conformance(false).Free;
-  patient := LoadResource('C:\work\org.hl7.fhir.dstu2\build\publish\patient-example.json') as TFHIRPatient;
+  patient := LoadResource('C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\patient-example.json') as TFHIRPatient;
   try
     client.createResource(patient, id);
   finally

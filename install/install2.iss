@@ -82,9 +82,9 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*";                                   DestDir: "{app}\web";        Flags: ignoreversion recursesubdirs;
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip"
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
-Source: "C:\work\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\*.*";                       DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  Excludes: "*.zip"
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";                       DestDir: "{app}\spec";       Flags: ignoreversion;
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";            DestDir: "{app}\spec";       Flags: ignoreversion recursesubdirs;  
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"

@@ -239,7 +239,8 @@ uses
   ACIRServices in '..\Server\ACIRServices.pas',
   CvxServices in '..\Server\CvxServices.pas',
   IETFLangTests in 'IETFLangTests.pas',
-  IETFLanguageCodeServices in '..\Server\IETFLanguageCodeServices.pas';
+  IETFLanguageCodeServices in '..\Server\IETFLanguageCodeServices.pas',
+  ReverseClient in '..\Server\ReverseClient.pas';
 
 var
   runner : ITestRunner;

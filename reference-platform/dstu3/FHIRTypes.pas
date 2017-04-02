@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v3.0.0 generated 2017-03-16T17:26:25+11:00
+// FHIR v3.0.0 generated 2017-03-21T06:09:53+11:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -425,7 +425,7 @@ Type
   TFhirResourceAggregationModeEnumList = set of TFhirResourceAggregationModeEnum;
 
   {@Enum TFhirReferenceVersionRulesEnum
-    Whether a reference needs to be version specific or version independent, or whetehr either can be used from http://hl7.org/fhir/ValueSet/reference-version-rules
+    Whether a reference needs to be version specific or version independent, or whether either can be used from http://hl7.org/fhir/ValueSet/reference-version-rules
   }
   TFhirReferenceVersionRulesEnum = (
     ReferenceVersionRulesNull,  {@enum.value ReferenceVersionRulesNull Value is missing from Instance }
@@ -483,7 +483,7 @@ Type
   TFhirDaysOfWeekEnumList = set of TFhirDaysOfWeekEnum;
 
   {@Enum TFhirEventTimingEnum
-    Real world event that the relating to the schedule. from http://hl7.org/fhir/ValueSet/event-timing
+    Real world event relating to the schedule. from http://hl7.org/fhir/ValueSet/event-timing
   }
   TFhirEventTimingEnum = (
     EventTimingNull,  {@enum.value EventTimingNull Value is missing from Instance }
@@ -645,7 +645,7 @@ Type
   TFhirResourceTypesEnumList = set of TFhirResourceTypesEnum;
 
   {@Enum TFhirActionParticipantTypeEnum
-    The type of participant for an action in the orderset from http://hl7.org/fhir/ValueSet/action-participant-type
+    The type of participant in the activity from http://hl7.org/fhir/ValueSet/action-participant-type
   }
   TFhirActionParticipantTypeEnum = (
     ActionParticipantTypeNull,  {@enum.value ActionParticipantTypeNull Value is missing from Instance }
@@ -655,7 +655,7 @@ Type
   TFhirActionParticipantTypeEnumList = set of TFhirActionParticipantTypeEnum;
 
   {@Enum TFhirAdverseEventCategoryEnum
-    Overall categorisation of the event e.g. real or potential from http://hl7.org/fhir/ValueSet/adverse-event-category
+    Overall categorization of the event, e.g. real or potential from http://hl7.org/fhir/ValueSet/adverse-event-category
   }
   TFhirAdverseEventCategoryEnum = (
     AdverseEventCategoryNull,  {@enum.value AdverseEventCategoryNull Value is missing from Instance }
@@ -919,7 +919,7 @@ Type
   TFhirConditionalDeleteStatusEnumList = set of TFhirConditionalDeleteStatusEnum;
 
   {@Enum TFhirReferenceHandlingPolicyEnum
-    A set of flags that defines how references are supported from http://hl7.org/fhir/ValueSet/reference-handling-policy
+    A set of flags that defines how references are supported. from http://hl7.org/fhir/ValueSet/reference-handling-policy
   }
   TFhirReferenceHandlingPolicyEnum = (
     ReferenceHandlingPolicyNull,  {@enum.value ReferenceHandlingPolicyNull Value is missing from Instance }
@@ -1172,7 +1172,7 @@ Type
   TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
 
   {@Enum TFhirCompartmentTypeEnum
-    Which compartment a compartmnet definition describes from http://hl7.org/fhir/ValueSet/compartment-type
+    Which compartment a compartment definition describes from http://hl7.org/fhir/ValueSet/compartment-type
   }
   TFhirCompartmentTypeEnum = (
     CompartmentTypeNull,  {@enum.value CompartmentTypeNull Value is missing from Instance }
@@ -1316,7 +1316,7 @@ Type
   TFhirConsentDataMeaningEnumList = set of TFhirConsentDataMeaningEnum;
 
   {@Enum TFhirConsentExceptTypeEnum
-    How an exception is statement is applied, as adding additional consent, or removing consent from http://hl7.org/fhir/ValueSet/consent-except-type
+    How an exception statement is applied, such as adding additional consent or removing consent from http://hl7.org/fhir/ValueSet/consent-except-type
   }
   TFhirConsentExceptTypeEnum = (
     ConsentExceptTypeNull,  {@enum.value ConsentExceptTypeNull Value is missing from Instance }
@@ -1385,7 +1385,7 @@ Type
   TFhirDetectedissueSeverityEnumList = set of TFhirDetectedissueSeverityEnum;
 
   {@Enum TFhirUdiEntryTypeEnum
-    Codes to identify how udi data was entered from http://hl7.org/fhir/ValueSet/udi-entry-type
+    Codes to identify how UDI data was entered from http://hl7.org/fhir/ValueSet/udi-entry-type
   }
   TFhirUdiEntryTypeEnum = (
     UdiEntryTypeNull,  {@enum.value UdiEntryTypeNull Value is missing from Instance }
@@ -1793,7 +1793,7 @@ Type
   TFhirMeasureReportTypeEnumList = set of TFhirMeasureReportTypeEnum;
 
   {@Enum TFhirDigitalMediaTypeEnum
-    Whether the Media is a photo, video, or audio from http://hl7.org/fhir/ValueSet/digital-media-type
+    Whether the media is a photo, video, or audio from http://hl7.org/fhir/ValueSet/digital-media-type
   }
   TFhirDigitalMediaTypeEnum = (
     DigitalMediaTypeNull,  {@enum.value DigitalMediaTypeNull Value is missing from Instance }
@@ -2269,7 +2269,7 @@ Type
   TFhirQualityTypeEnumList = set of TFhirQualityTypeEnum;
 
   {@Enum TFhirRepositoryTypeEnum
-    Type for access of external uri from http://hl7.org/fhir/ValueSet/repository-type
+    Type for access of external URI from http://hl7.org/fhir/ValueSet/repository-type
   }
   TFhirRepositoryTypeEnum = (
     RepositoryTypeNull,  {@enum.value RepositoryTypeNull Value is missing from Instance }
@@ -2345,7 +2345,7 @@ Type
   TFhirMapModelModeEnumList = set of TFhirMapModelModeEnum;
 
   {@Enum TFhirMapGroupTypeModeEnum
-    If this is the default rule set to apply for thie source type, or this combination of types from http://hl7.org/fhir/ValueSet/map-group-type-mode
+    If this is the default rule set to apply for the source type, or this combination of types from http://hl7.org/fhir/ValueSet/map-group-type-mode
   }
   TFhirMapGroupTypeModeEnum = (
     MapGroupTypeModeNull,  {@enum.value MapGroupTypeModeNull Value is missing from Instance }
@@ -2396,7 +2396,7 @@ Type
   TFhirMapTargetListModeEnumList = set of TFhirMapTargetListModeEnum;
 
   {@Enum TFhirMapTransformEnum
-    How data is copied / created from http://hl7.org/fhir/ValueSet/map-transform
+    How data is copied/created from http://hl7.org/fhir/ValueSet/map-transform
   }
   TFhirMapTransformEnum = (
     MapTransformNull,  {@enum.value MapTransformNull Value is missing from Instance }
@@ -5587,7 +5587,7 @@ Type
 
 
   {@Class TFhirExtension : TFHIRType
-    Optional Extensions Element - found in all resources.
+    Optional Extension Element - found in all resources.
   }
   TFhirExtension = class (TFHIRType)
   protected
@@ -6605,7 +6605,7 @@ Type
 
 
   {@Class TFhirDataRequirement : TFhirType
-    Describes a required data item for evaluation in terms of the type of data, and optional code- or date-based filters of the data.
+    Describes a required data item for evaluation in terms of the type of data, and optional code or date-based filters of the data.
   }
   TFhirDataRequirement = class (TFhirType)
   protected
@@ -9303,7 +9303,7 @@ Type
 
 
   {@Class TFhirSignature : TFhirType
-    A digital signature along with supporting context. The signature may be electronic/cryptographic in nature, or a graphical image representing a hand-written signature, or a signature process. Different Signature approaches have different utilities.
+    A digital signature along with supporting context. The signature may be electronic/cryptographic in nature, or a graphical image representing a hand-written signature, or a signature process. Different signature approaches have different utilities.
   }
   TFhirSignature = class (TFhirType)
   protected
@@ -10424,7 +10424,7 @@ Type
 
 
   {@Class TFhirAddress : TFhirType
-    An address expressed using postal conventions (as opposed to GPS or other location definition formats).  This data type may be used to convey addresses for use in delivering mail as well as for visiting locations and which might not be valid for mail delivery.  There are a variety of postal address formats defined around the world.
+    An address expressed using postal conventions (as opposed to GPS or other location definition formats).  This data type may be used to convey addresses for use in delivering mail as well as for visiting locations which might not be valid for mail delivery.  There are a variety of postal address formats defined around the world.
   }
   TFhirAddress = class (TFhirType)
   protected
@@ -11238,7 +11238,7 @@ Type
     property aggregationList : TFhirEnumList read GetAggregation;
     property hasAggregation : boolean read GetHasAggregation;
     {@member versioning
-      Whether this reference needs to be version specific or version independent, or whetehr either can be used.
+      Whether this reference needs to be version specific or version independent, or whether either can be used.
     }
     property versioning : TFhirReferenceVersionRulesEnum read GetVersioningST write SetVersioningST;
     property versioningElement : TFhirEnum read FVersioning write SetVersioning;
@@ -13138,7 +13138,7 @@ Type
 
 
   {@Class TFhirMoney : TFhirQuantity
-    An amount of economic utility in some recognised currency.
+    An amount of economic utility in some recognized currency.
   }
   TFhirMoney = class (TFhirQuantity)
   protected

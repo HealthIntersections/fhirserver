@@ -1,5 +1,9 @@
 unit FHIRServerApplicationCore;
 
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
 {
 Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -38,7 +42,7 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
-  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRDataStore, FHIRBase, FHIRPath,
+  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRDataStore, FHIRBase, FhirPath,
   FHIRServerConstants,
   SCIMServer;
 

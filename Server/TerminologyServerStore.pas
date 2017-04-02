@@ -253,7 +253,9 @@ Type
 
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
+    {$IFDEF FHIR2}
     procedure declareSystems(oConf : TFhirCapabilityStatement);
+    {$ENDIF}
     {$IFDEF FHIR3}
     procedure declareCodeSystems(list : TFhirResourceList);
     {$ENDIF}
@@ -882,6 +884,7 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR2}
 procedure TTerminologyServerStore.declareSystems(oConf: TFhirCapabilityStatement);
 var
   e : TFhirExtension;
@@ -904,6 +907,7 @@ begin
         e.addExtension('name', s);
     end;
 end;
+{$ENDIF}
 
 destructor TTerminologyServerStore.Destroy;
 begin

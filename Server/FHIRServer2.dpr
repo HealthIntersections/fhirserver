@@ -254,7 +254,8 @@ uses
   FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas',
-  ACIRServices in 'ACIRServices.pas';
+  ACIRServices in 'ACIRServices.pas',
+  ReverseClient in 'ReverseClient.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

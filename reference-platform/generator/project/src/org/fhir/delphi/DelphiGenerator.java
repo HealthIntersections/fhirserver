@@ -1319,7 +1319,7 @@ public class DelphiGenerator {
     Collections.sort(names);
     for (String name : names) {
       SearchParameterDefn sp = params.get(name);
-      b.append("  indexes.add('"+r.getName()+"', '"+sp.getCode()+"', '"+defCodeType.escape(sp.getDescription())+"', SearchParamType"+getTitle(sp.getType().toString())+", "+
+      b.append("  indexes.add('"+r.getName()+"', '"+sp.getCode()+"', '"+defCodeType.escape(removeEoln(sp.getDescription()))+"', SearchParamType"+getTitle(sp.getType().toString())+", "+
           getTarget(sp.getWorkingTargets(), 800)+", '"+defCodeType.escape(sp.getExpression())+"', SearchXpathUsage"+Utilities.capitalize(sp.getxPathUsage().toCode())+");\r\n");
     }
 
@@ -1344,6 +1344,10 @@ public class DelphiGenerator {
   }
   
   
+  private String removeEoln(String s) {
+    return s.replace("\r", " ").replace("\n", " ").replace("\t", "  ");
+}
+
   private void generateSearchEnums(ResourceDefn r) throws Exception {
     StringBuilder def = new StringBuilder();
     StringBuilder con3 = new StringBuilder();

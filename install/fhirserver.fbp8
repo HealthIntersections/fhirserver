@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix bug in DSTU2 server"
+        as.returnvalue = "ReverseProxy support"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -133,7 +133,7 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Seattle
+        delphiversion = Delphi10Berlin
         description = "Compile the Server (DSTU2)"
         eurekalogverboselogging = false
         frameworktype = VCL
@@ -308,7 +308,7 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Seattle
+        delphiversion = Delphi10Berlin
         description = "Compile the Server (DSTU3)"
         eurekalogverboselogging = false
         frameworktype = VCL

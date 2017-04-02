@@ -156,7 +156,7 @@ var
 begin
   qry := db.GetConnection('USStateCode.locate');
   try
-    qry.SQL := 'Select USStateCodeKey, Display from USStateCodes where code = :code';
+    qry.SQL := 'Select Display from USStateCodes where code = :code';
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;

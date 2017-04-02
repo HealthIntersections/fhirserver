@@ -83,7 +83,7 @@ begin
         failifvariablenotininifile = true
         id = {25828604-726F-4115-89FB-03799A67707B}
         ignorefilenotfound = false
-        inifile = C:\\work\\org.hl7.fhir.dstu2\\build\\publish\\version.info
+        inifile = C:\\work\\org.hl7.fhir.old\\org.hl7.fhir.dstu2\\build\\publish\\version.info
         sectionname = FHIR
         variables = "FhirVersion" +
                     ""
