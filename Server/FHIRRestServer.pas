@@ -162,6 +162,7 @@ Type
 
     function BuildCompartmentList(session : TFHIRSession) : String;
 
+    procedure cacheResponse(response : TIdHTTPResponseInfo; caching : TFHIRCacheControl);
     procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
     function GetResource(session : TFhirSession; rtype : String; lang, id, ver, op : String) : TFhirResource;
     function FindResource(session : TFhirSession; rtype : String; lang, params : String) : TFhirResource;
@@ -1135,6 +1136,7 @@ Begin
                   if oRequest.Session <> nil then
                   begin
                     FAuthServer.setCookie(response, FHIR_COOKIE_NAME, oRequest.Session.Cookie, domain, '', oRequest.Session.Expires, false);
+                    cacheResponse(response, cacheNotAtAll);
                     response.Redirect(oRequest.Session.OriginalUrl);
                   end
                   else
@@ -1143,9 +1145,11 @@ Begin
                 else if oRequest.CommandType = fcmdNull then
                 begin
                   response.CustomHeaders.add('Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE');
+                  cacheResponse(response, cacheNormal);
                 end
                 else if oRequest.CommandType = fcmdUnknown then
                 begin
+                  cacheResponse(response, oResponse.CacheControl);
                   if oResponse.Format = ffXhtml then
                   begin
                     response.ResponseNo := 200;
@@ -1161,6 +1165,7 @@ Begin
                 end
                 else if (oRequest.CommandType = fcmdUpload) and (oRequest.Resource = nil) Then
                 begin
+                  cacheResponse(response, oResponse.CacheControl);
                   response.ResponseNo := 200;
                   response.ContentType := 'text/html; charset=UTF-8';
                   response.FreeContentStream := true;
@@ -1168,6 +1173,7 @@ Begin
                 end
                 else if (oRequest.CommandType = fcmdConformanceStmt) and (oRequest.ResourceName <> '') then
                 begin
+                  cacheResponse(response, oResponse.CacheControl);
                   response.ResponseNo := 200;
                   response.ContentType := 'text/html; charset=UTF-8';
     // no - just use *              response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
@@ -1203,6 +1209,7 @@ Begin
                       raise;
                     end;
                   end;
+                  cacheResponse(response, oResponse.CacheControl);
                   RecordExchange(oRequest, oResponse);
                   ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
     // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
@@ -2081,6 +2088,16 @@ Begin
     oRequest.Free;
   End;
 End;
+
+procedure TFhirWebServer.cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
+begin
+  case caching of
+    cacheNotAtAll: response.CacheControl := 'no-cache, no-store, must-revalidate';
+    cacheAsException: response.CacheControl := 'public, max-age=600, error';
+    cacheNormal: response.CacheControl := 'public, max-age=600';
+    cacheLong: response.CacheControl := 'public, max-age=31536000';
+  end;
+end;
 
 Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
 var

@@ -250,7 +250,6 @@ end;
 
 function TIETFLanguageCodeServices.getDisplay(code : String; lang : String):String;
 var
-  parts : TArray<String>;
   c : TIETFLanguageCodeConcept;
   msg : String;
 begin

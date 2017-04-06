@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.134
+AppVerName=1.0.136
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.134
+OutputBaseFilename=fhirserver3-1.0.136
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -939,7 +939,7 @@ begin
   Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
   begin
     if IsComponentSelected('r3') then
-      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.8.0')
+      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.0')
     else
       s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
     result := s = '';
@@ -956,7 +956,7 @@ begin
         if (isTaskSelected('db')) then
           result := true
         else
-          MsgBox('The database must be reinitialized because the FHIR version has changed (is "+s+", needs to be 1.8.0). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
+          MsgBox('The database must be reinitialized because the FHIR version has changed (is '+s+', needs to be 3.0.0). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
       end
       else
         MsgBox(s, mbError, MB_OK); 

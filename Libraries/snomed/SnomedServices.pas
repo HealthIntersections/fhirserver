@@ -3210,7 +3210,6 @@ var
   DescriptionIndex : Cardinal;
   InboundIndex : Cardinal;
   outboundIndex, refsets : Cardinal;
-  Descriptions : TCardinalArray;
   date : TSnomedDate;
 begin
   if TSnomedExpressionContext(context).isComplex then
