@@ -709,9 +709,11 @@ begin
         get : indy.Get(url, result);
         post : indy.Post(url, source, result);
         put : indy.Put(url, source, result);
-        delete : indy.delete(url, result);
-        patch : indy.Patch(url, source, result);
-        options : indy.Options(url, result);
+        delete : indy.delete(url);
+        options : indy.Options(url);
+{%IFNDEF VER260}    patch : indy.Patch(url, source, result); {%ENDIF}
+      else
+        raise Exception.Create('Unknown HTTP method '+inttostr(ord(verb)));
       end;
 
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then

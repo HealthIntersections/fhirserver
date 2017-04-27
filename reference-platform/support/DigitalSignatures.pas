@@ -43,7 +43,7 @@ certificate you nominate
 }
 
 uses
-  SysUtils, Classes, System.NetEncoding,
+  SysUtils, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdHashSHA, IdGlobal,
   Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom,
   BytesSupport, StringSupport, EncodeSupport, EncdDecd,

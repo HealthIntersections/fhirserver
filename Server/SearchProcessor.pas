@@ -193,7 +193,7 @@ begin
       for j := 0 to ts.count - 1 do
       begin
         handled := false;
-        filter := filter + processParam([type_], params.VarName(i), ts[j], false, first, handled);
+        filter := filter + processParam(TArray<String>.create(type_), params.VarName(i), ts[j], false, first, handled);
         if handled then
           link_ := link_ + '&'+params.VarName(i)+'='+EncodeMIME(ts[j])
         else if strict and not (knownParam(params.VarName(i))) then
@@ -891,11 +891,17 @@ end;
 Function TSearchProcessor.filterTypes(types : TArray<String>) : TArray<String>;
 var
   a : string;
+  res : TStringList;
 begin
-  result := [];
+  res := TStringList.Create;
+  try
   for a in types do
     if session.canRead(a) then
-      result := result + [a];
+        res.add(a);
+    result := res.ToStringArray;
+  finally
+    res.free;
+  end;
 end;
 
 function isCommonSearchParameter(name : String): boolean;
@@ -945,7 +951,7 @@ begin
       StringSplit(left, ':', left, modifier);
       if not StringArrayExistsInSensitive(CODES_TFHIRResourceType, modifier) then
         raise Exception.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
-      types := filterTypes([modifier]);
+      types := filterTypes(TArray<String>.create(modifier));
     end
     else
     begin
@@ -1062,7 +1068,7 @@ begin
   try
     filter := TFSFilterParser.parse(value);
     try
-      result := '('+BuildFilter(filter, ' ', issuer, [FType])+')';
+      result := '('+BuildFilter(filter, ' ', issuer, TArray<String>.create(FType))+')';
     finally
       filter.Free;
     end;

@@ -38,7 +38,7 @@ This is the dstu3 version of the FHIR code
 Interface
 
 uses
-  Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character, System.NetEncoding,
+  Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF XE5} System.NetEncoding, {$ENDIF}
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
   AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   MsXml, MsXmlParser, XmlBuilder, MsXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,

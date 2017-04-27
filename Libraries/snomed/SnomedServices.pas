@@ -1235,12 +1235,23 @@ begin
   result := '';
 end;
 
+function versionSplit(s : String) : TArray<string>;
+var
+  i : integer;
+begin
+  i := s.IndexOf('/version/');
+  if i = 0 then
+    result := TArray<String>.Create(s)
+  else
+    result := TArray<String>.Create(s.Substring(0, i), s.Substring(i+9));
+end;
+
 function TSnomedServices.defToThisVersion(specifiedVersion: String): boolean;
 var
   tv, sv : TArray<String>;
 begin
-  tv := VersionUri.Split(['/version/']);
-  sv := specifiedVersion.Split(['/version/']);
+  tv := versionSplit(VersionUri);
+  sv := versionSplit(specifiedVersion);
   if (tv[0] <> sv[0]) then
     result := false
   else if (length(sv) = 0) then

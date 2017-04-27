@@ -124,10 +124,17 @@ begin
         hcHEAD: client.Head(url);
         hcGET: client.Get(url, getOutput);
         hcPOST: client.Post(url, request.PostStream, getOutput);
+        hcTRACE: client.Trace(url, getOutput);
+        {$IFDEF VER260}
+        hcDELETE: client.Delete(url);
+        hcPUT: client.Put(url, request.PostStream); // broken...
+        hcOPTION: client.Options(url);
+        {$ELSE}
         hcDELETE: client.Delete(url, getOutput);
         hcPUT: client.Put(url, request.PostStream, getOutput);
-        hcTRACE: client.Trace(url, getOutput);
         hcOPTION: client.Options(url, getOutput);
+        // todo: patch...
+        {$ENDIF}
       end;
     except
       // suppress the exception - will be handled below
@@ -135,7 +142,7 @@ begin
     if assigned(response.ContentStream) then
       response.ContentStream.Position := 0;
 
-    response.AcceptPatch := client.response.AcceptPatch;
+    {$IFNDEF VER260} response.AcceptPatch := client.response.AcceptPatch; {$ENDIF}
     response.AcceptRanges := client.response.AcceptRanges;
     response.Location := client.response.Location;
     response.ProxyConnection := client.response.ProxyConnection;

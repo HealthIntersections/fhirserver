@@ -3,7 +3,7 @@
 interface
 
 uses
-  SysUtils, EncdDecd, Classes, // System.NetEncoding,
+  SysUtils, EncdDecd, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdSSLOpenSSLHeaders, IdHMACSHA1,
   
   EncodeSupport, BytesSupport, StringSupport,
