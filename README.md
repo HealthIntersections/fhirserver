@@ -33,7 +33,10 @@ well optimised for hosting/supporting very large repositories efficiently.
 Compiling 
 ---------
 
-This is pascal code that compoiles under Delphi XE3+ (any edition, personal will do).
+This is pascal code that (in principle) compiles under Delphi XE3+ (any edition, personal will do).
+Note that in practice, various subtle but breaking changes have been introduced to the runtime
+library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessary.
+
 Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
 difference between delphi and FPC unicode implementations. Contributions are welcome
 
