@@ -70,7 +70,7 @@ Type
     Function MakeChecker(uri : string; profile : TFhirExpansionProfile) : TValueSetChecker;
     function getDisplayForCode(system, version, code : String): String;
     function checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
     {$ENDIF}
 
@@ -216,7 +216,7 @@ var
   provider : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   s : String;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
   function hasProp(name : String; def : boolean) : boolean;
@@ -240,7 +240,7 @@ begin
 
       if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
       begin
-        {$IFDEF FHIR3}
+        {$IFNDEF FHIR2}
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.add(p);
         p.code := 'abstract';
@@ -618,7 +618,7 @@ begin
   end;
 end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 procedure TTerminologyServer.composeCode(req: TFHIRComposeOpRequest; resp: TFHIRComposeOpResponse);
 var
   prop : TFHIRComposeOpReqProperty_;

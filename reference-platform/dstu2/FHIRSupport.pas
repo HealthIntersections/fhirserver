@@ -74,6 +74,8 @@ Const
 Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew, idCheckNew);
+  TFHIRCacheControl = (cacheNotAtAll, cacheAsException, cacheNormal, cacheLong);
+
   {$M+}
 
   TFHIRCompartment = class (TAdvObject)
@@ -518,6 +520,7 @@ Type
     FOrigin: String;
     FId: String;
     FOutcome: TFHIROperationOutcome;
+    FCacheControl : TFHIRCacheControl;
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
@@ -630,6 +633,10 @@ Type
     }
     Property Origin : String read FOrigin write FOrigin;
 
+    {@member CacheControl
+      The degree of caching to use on the response
+    }
+    Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
   end;
 
   ERestfulException = class (EAdvException)

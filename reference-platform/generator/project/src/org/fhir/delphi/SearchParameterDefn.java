@@ -71,8 +71,7 @@ public class SearchParameterDefn {
     return type;
   }
   
-  public SearchParameterDefn(String code, String description, SearchParamType type, SearchParameter.XPathUsageType xPathUsage, List<org.hl7.fhir.dstu2.model.CodeType> targets, String expression) {
-    super();
+  public SearchParameterDefn loadR2(String code, String description, SearchParamType type, SearchParameter.XPathUsageType xPathUsage, List<org.hl7.fhir.dstu2.model.CodeType> targets, String expression) {
     this.code = code;
     this.description = description;
     this.type = type;
@@ -80,10 +79,10 @@ public class SearchParameterDefn {
     this.expression = expression;
     for (CodeType c : targets)
       getWorkingTargets().add(c.getValue());
+    return this;
   }
     
-  public SearchParameterDefn(String code, String description, SearchParamType type, List<org.hl7.fhir.dstu3.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage, String expression) {
-    super();
+  public SearchParameterDefn loadR3(String code, String description, SearchParamType type, List<org.hl7.fhir.dstu3.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage, String expression) {
     this.code = code;
     this.description = description;
     this.type = type;
@@ -91,6 +90,18 @@ public class SearchParameterDefn {
     this.expression = expression;
     for (org.hl7.fhir.dstu3.model.CodeType c : targets)
       getWorkingTargets().add(c.getValue());
+    return this;
+  }
+    
+  public SearchParameterDefn loadR4(String code, String description, SearchParamType type, List<org.hl7.fhir.r4.model.CodeType> targets, SearchParameter.XPathUsageType xPathUsage, String expression) {
+    this.code = code;
+    this.description = description;
+    this.type = type;
+    this.xPathUsage = xPathUsage;
+    this.expression = expression;
+    for (org.hl7.fhir.r4.model.CodeType c : targets)
+      getWorkingTargets().add(c.getValue());
+    return this;
   }
     
   public List<String> getPaths() {

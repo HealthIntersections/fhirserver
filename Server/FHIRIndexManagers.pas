@@ -1045,7 +1045,7 @@ begin
   FCompartments.Clear;
 
   processCompartmentTags(key, id, tags);
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   evaluateByFHIRPath(key, resource, resource);
   {$ELSE}
   // base indexes
@@ -1641,7 +1641,7 @@ begin
       FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
       FSpaces.FDB.Execute;
       FSpaces.FDB.Terminate;
-      {$IFDEF FHIR3}
+      {$IFNDEF FHIR2}
       evaluateByFHIRPath(target, context, contained);
       {$ELSE}
       buildIndexValues(target, '', context, contained);
@@ -2458,7 +2458,7 @@ begin
     if resource.restList[j].security <> nil then
     begin
       for i := 0 to resource.restList[j].security.serviceList.count - 1 do
-        index('Conformance', key, 0, resource.restList[j].security.serviceList[i], CODES_TSearchParamsConformance[{$IFDEF FHIR3}spConformance_securityservice{$ELSE}spConformance_security{$ENDIF}]);
+        index('Conformance', key, 0, resource.restList[j].security.serviceList[i], CODES_TSearchParamsConformance[{$IFNDEF FHIR2}spConformance_securityservice{$ELSE}spConformance_security{$ENDIF}]);
     end;
   end;
 
@@ -2467,7 +2467,7 @@ begin
   begin
     for i := 0 to resource.restList[j].resourceList.count - 1 do
     begin
-      index(context, 'Conformance', key, 0, resource.restList[j].resourceList[i].profile, CODES_TSearchParamsConformance[{$IFDEF FHIR3} spConformance_resourceprofile{$ELSE} spConformance_profile {$ENDIF}]);
+      index(context, 'Conformance', key, 0, resource.restList[j].resourceList[i].profile, CODES_TSearchParamsConformance[{$IFNDEF FHIR2} spConformance_resourceprofile{$ELSE} spConformance_profile {$ENDIF}]);
       index('Conformance', key, 0, resource.restList[j].resourceList[i].type_Element, CODES_TSearchParamsConformance[spConformance_resource]);
     end;
     index('Conformance', key, 0, resource.restList[j].modeElement, CODES_TSearchParamsConformance[spConformance_mode]);
@@ -2488,9 +2488,9 @@ begin
   end;
 
   for i := 0 to resource.DocumentList.count - 1 do
-    index(context, 'Conformance', key, 0, resource.DocumentList[i].profile, CODES_TSearchParamsConformance[{$IFDEF FHIR3} spConformance_resourceprofile {$ELSE} spConformance_profile {$ENDIF}]);
+    index(context, 'Conformance', key, 0, resource.DocumentList[i].profile, CODES_TSearchParamsConformance[{$IFNDEF FHIR2} spConformance_resourceprofile {$ELSE} spConformance_profile {$ENDIF}]);
   for i := 0 to resource.profileList.count - 1 do
-    index(context, 'Conformance', key, 0, resource.ProfileList[i], CODES_TSearchParamsConformance[{$IFDEF FHIR3} spConformance_supportedprofile {$ELSE} spConformance_profile {$ENDIF}]);
+    index(context, 'Conformance', key, 0, resource.ProfileList[i], CODES_TSearchParamsConformance[{$IFNDEF FHIR2} spConformance_supportedprofile {$ELSE} spConformance_profile {$ENDIF}]);
 
 end;
 

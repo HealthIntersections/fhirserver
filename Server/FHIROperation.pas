@@ -49,12 +49,13 @@ uses
   FHIRParser, FHIRUtilities, FHIRLang, FHIRIndexManagers, FHIRValidator, FHIRValueSetExpander, FHIRTags, FHIRDataStore, FHIROperations, FHIRXhtml,
   FHIRServerConstants, FHIRServerUtilities, NarrativeGenerator, FHIRProfileUtilities, FHIRNarrativeGenerator, CDSHooksUtilities,
   FHIRMetamodel, DifferenceEngine,
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   ObservationStatsEvaluator,
+  {$ENDIF}
   {$IFNDEF FHIR2}
   FHIRStructureMapUtilities,
   {$ENDIF}
-  {$ENDIF}
+  FHIRStorageService,
   ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
@@ -67,22 +68,6 @@ const
   OP_MASK_TAG = 'this-tag-used-for-the-mask-operation-outcome';
 
 type
-  TOperationContext = class (TAdvObject)
-  private
-    FUpload : boolean;
-    FCallback : TInstallerCallback;
-    FMessage : String;
-  public
-    constructor Create; overload; override;
-    constructor Create(upload : boolean; callback : TInstallerCallback; message : String); overload;
-
-    property upload : boolean read FUpload write FUpload;
-    property callback : TInstallerCallback read FCallback write FCallback;
-    property message : String read FMessage write FMessage;
-
-    procedure progress(i : integer);
-  end;
-
   TKeyPair = class (TAdvObject)
   private
     type_ : String;
@@ -149,7 +134,6 @@ type
     function asSql : String;
   end;
 
-  TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatement) of object;
 
   TFhirOperationManager = class;
 
@@ -170,7 +154,7 @@ type
     function formalURL : String; virtual;
   end;
 
-  TFhirOperationManager = class (TAdvObject)
+  TFhirOperationManager = class (TFhirOperationManagerBase)
   private
     FRepository : TFHIRDataStore;
     FConnection : TKDBConnection;
@@ -182,7 +166,6 @@ type
     FOwnerName : String;
 
     FSpaces: TFHIRIndexSpaces;
-    FOnPopulateConformance : TPopulateConformanceEvent;
 
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
@@ -265,6 +248,8 @@ type
   public
     Constructor Create(lang : String; repository : TFHIRDataStore);
     Destructor Destroy; Override;
+    function Link : TFhirOperationManager; overload;
+
     Property Connection : TKDBConnection read FConnection write SetConnection;
     Property Repository : TFHIRDataStore read FRepository;
 
@@ -279,14 +264,13 @@ type
     function GetPatientId : String; virtual;
 
     // called when kernel actually wants to process against the store
-    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
+    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
-    function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
+    function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
 
     property lang : String read FLang write FLang;
     Property TestServer : boolean read FTestServer write FTestServer;
     Property OwnerName : String read FOwnerName write FOwnerName;
-    Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
 
     // index maintenance
     procedure clear(a : TFhirResourceTypeSet);
@@ -357,7 +341,7 @@ type
     function formalURL : String; override;
   end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
   TFhirCodeSystemComposeOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -620,7 +604,7 @@ type
   end;
   {$ENDIF}
 
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   TFhirActivateOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
@@ -702,7 +686,7 @@ begin
   {$IFNDEF FHIR2}
   FOperations.add(TFhirTransformOperation.create);
   {$ENDIF}
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   FOperations.add(TFhirActivateOperation.create);
   FOperations.add(TFhirSubsumesOperation.create);
   FOperations.add(TFhirCodeSystemComposeOperation.create);
@@ -731,7 +715,7 @@ begin
     end;
     for i := 0 to list.Count - 1 do
       list[i].Tags['internal'] := '1';
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     FRepository.TerminologyServer.declareCodeSystems(list);
     {$ENDIF}
     storeResources(list, roConfig, true);
@@ -913,26 +897,36 @@ end;
 
 Function TFhirOperationManager.Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;
 begin
- // assert(FConnection.InTransaction);
-  result := Request.Id;
-  case request.CommandType of
-    fcmdRead : ExecuteRead(request, response);
-    fcmdUpdate : ExecuteUpdate(context, request, response);
-    fcmdVersionRead : ExecuteVersionRead(request, response);
-    fcmdDelete : ExecuteDelete(request, response);
-    fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
-    fcmdSearch : ExecuteSearch(request, response);
-    fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-    fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
-    fcmdTransaction : ExecuteTransaction(context, request, response);
-    fcmdBatch : ExecuteBatch(context, request, response);
-    fcmdOperation : ExecuteOperation(context, request, response);
-    fcmdUpload : ExecuteUpload(context, request, response);
-    fcmdPatch : ExecutePatch(request, response);
-    fcmdValidate : ExecuteValidation(request, response, 'Validation')
-  else
-    Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
-  End;
+  Connection.StartTransact;
+  try
+    result := Request.Id;
+    case request.CommandType of
+      fcmdRead : ExecuteRead(request, response);
+      fcmdUpdate : ExecuteUpdate(context, request, response);
+      fcmdVersionRead : ExecuteVersionRead(request, response);
+      fcmdDelete : ExecuteDelete(request, response);
+      fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
+      fcmdSearch : ExecuteSearch(request, response);
+      fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
+      fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
+      fcmdTransaction : ExecuteTransaction(context, request, response);
+      fcmdBatch : ExecuteBatch(context, request, response);
+      fcmdOperation : ExecuteOperation(context, request, response);
+      fcmdUpload : ExecuteUpload(context, request, response);
+      fcmdPatch : ExecutePatch(request, response);
+      fcmdValidate : ExecuteValidation(request, response, 'Validation')
+    else
+      Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
+    End;
+
+    Connection.Commit;
+  except
+    on e:exception do
+    begin
+      Connection.Rollback;
+      raise;
+    end;
+ end;
 end;
 
 procedure TFhirOperationManager.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
@@ -997,11 +991,11 @@ begin
       oConf.implementation_.description := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
       oConf.implementation_.url := FRepository.FormalURLPlainOpen;
     end;
-    if assigned(FOnPopulateConformance) then
-      FOnPopulateConformance(self, oConf);
+    if assigned(OnPopulateConformance) then
+      OnPopulateConformance(self, oConf);
 
     oConf.acceptUnknown := UnknownContentCodeBoth;
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     oConf.formatList.Append.value := 'application/fhir+xml';
     oConf.formatList.Append.value := 'application/fhir+json';
     {$ELSE}
@@ -1016,20 +1010,20 @@ begin
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
     oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
-    {$IFNDEF FHIR3}
+    {$IFDEF FHIR2}
     oConf.restList[0].transactionMode := TransactionModeBoth;
     {$ENDIF}
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
 
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
     {$ENDIF}
     {$IFDEF FHIR2}
     FRepository.TerminologyServer.declareSystems(oConf);
     {$ENDIF}
-    if assigned(FOnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
-      FOnPopulateConformance(self, oConf);
+    if assigned(OnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
+      OnPopulateConformance(self, oConf);
     AddCDSHooks(oConf.restList[0]);
 
     html := TAdvStringBuilder.Create;
@@ -3032,6 +3026,11 @@ begin
     result := check(response, request.secure or (c.system <> 'http://hl7.org/fhir/v3/Confidentiality') or not
             StringArrayExistsSensitive(['L', 'M', 'N', 'R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T'], c.code),
         403, lang, 'This security label can only be deleted on a secure connection', IssueTypeSuppressed);
+end;
+
+function TFhirOperationManager.Link: TFhirOperationManager;
+begin
+  result := TFhirOperationManager(inherited Link);
 end;
 
 function TFhirOperationManager.loadCustomResources(response : TFHIRResponse; key: integer; startup : boolean; names : TStringList) : boolean;
@@ -5912,7 +5911,7 @@ var
   res : boolean;
 begin
   res := false;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   exp := params.res['profile'] as TFHIRExpansionProfile;
   if exp <> nil then
     res := true
@@ -5951,7 +5950,7 @@ begin
        result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
      if (params.str['excludePostCoordinated'] <> '') then
        result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
-     {$IFDEF FHIR3}
+     {$IFNDEF FHIR2}
      if (result.url = '') and not res then
        result.url := params.str['profile'];
      {$ENDIF}
@@ -6348,7 +6347,7 @@ begin
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.FRepository.TerminologyServer.lookupCode(req.coding, {$IFDEF FHIR3}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            manager.FRepository.TerminologyServer.lookupCode(req.coding, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -6380,7 +6379,7 @@ end;
 
 function TFhirLookupCodeSystemOperation.formalURL: String;
 begin
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   result := 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup';
   {$ELSE}
   result := 'http://hl7.org/fhir/OperationDefinition/ValueSet-lookup';
@@ -6392,7 +6391,7 @@ begin
   result := false;
 end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 { TFhirCodeSystemComposeOperation }
 
 function TFhirCodeSystemComposeOperation.Name: String;
@@ -7079,7 +7078,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Patient record as a bundle';
-      type_ := {$IFDEF FHIR3}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
+      type_ := {$IFNDEF FHIR2}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
     end;
     result.Link;
   finally
@@ -7286,7 +7285,7 @@ begin
       min := '1';
       max := '1';
       documentation := 'Composition as a bundle (document)';
-      type_ := {$IFDEF FHIR3}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
+      type_ := {$IFNDEF FHIR2}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
     end;
     result.Link;
   finally
@@ -7322,7 +7321,7 @@ begin
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := NowUTC;
 //            bundle.base := manager.FRepository.FormalURLPlain;
-            {$IFDEF FHIR3}
+            {$IFNDEF FHIR2}
             bundle.identifier := TFhirIdentifier.Create;
             bundle.identifier.system := 'urn:ietf:rfc:3986';
             bundle.identifier.value := NewGuidURN;
@@ -7761,7 +7760,7 @@ var
   card : TCDSHookCard;
   b : TStringBuilder;
   cp : TFhirNamingSystemContact;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   uc : TFhirUsageContext;
   {$ENDIF}
   cc : TFhirCodeableConcept;
@@ -7782,10 +7781,10 @@ begin
 
     b.append(#13#10);
 
-    if (ns.useContextList.Count > 0) {$IFDEF FHIR3}or (ns.jurisdictionList.Count > 0){$ENDIF} then
+    if (ns.useContextList.Count > 0) {$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
     begin
       b.Append('Contexts of Use'#13#10#13#10);
-      {$IFDEF FHIR3}
+      {$IFNDEF FHIR2}
       for uc in ns.useContextList do
         b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
       for cc in ns.jurisdictionList do
@@ -9167,7 +9166,7 @@ end;
 
 {$ENDIF}
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 
 { TFhirActivateOperation }
 
@@ -9260,27 +9259,6 @@ begin
   result := [frtImplementationGuide];
 end;
 {$ENDIF}
-
-{ TOperationContext }
-
-constructor TOperationContext.Create;
-begin
-  inherited Create;
-end;
-
-constructor TOperationContext.Create(upload: boolean; callback: TInstallerCallback; message : String);
-begin
-  Create;
-  FUpload := upload;
-  FCallback := callback;
-  FMessage := message;
-end;
-
-procedure TOperationContext.progress(i: integer);
-begin
-  if assigned(FCallback) then
-    FCallback(i, FMessage);
-end;
 
 end.
 

@@ -42,11 +42,18 @@ Uses
   LoincImporter, LoincServices,
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
+  FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRDataStore, FHIRBase, FhirPath,
-  FHIRServerConstants,
+  FHIRServerConstants, FHIRServerContext,
   SCIMServer;
 
 Type
+  TFHIRServerDataStore = class (TFHIRDataStore)
+  public
+    function createOperationContext(lang : String) : TFhirOperationManagerBase; override;
+    Procedure Yield(op : TFhirOperationManagerBase; e : Exception); override;
+  end;
+
   TFHIRService = class (TSystemService)
   private
     FStartTime : cardinal;
@@ -60,6 +67,8 @@ Type
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
+    function createStore : TFHIRServerDataStore;
+
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -405,7 +414,7 @@ begin
   ini := TIniFile.Create(fn);
   st := TStringList.Create;
   try
-    ini.ReadSection('files', st);
+    ini.ReadSection({$IFDEF FHIR4}'files-4' {$ELSE} 'files-3'{$ENDIF}, st);
     first := true;
     for s in st do
     begin
@@ -525,15 +534,21 @@ begin
     ConnectToDatabase;
   CanStart;
   logt('validate resources');
-  FWebServer.DataStore.RunValidation;
+  FWebServer.ServerContext.Storage.RunValidation;
   DoStop;
+end;
+
+function TFHIRService.createStore : TFHIRServerDataStore;
+begin
+  result := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString('fhir', 'web', '')), FterminologyServer, FINi, FindCmdLineSwitch('forload'));
+  result.ownername := Fini.readString('admin', 'ownername', '');
+  result.Validate := FIni.ReadBool('fhir', 'validate', true);
 end;
 
 procedure TFHIRService.InitialiseRestServer;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, FLoadStore);
+  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, TFHIRServerContext.Create(createStore));
   FWebServer.Start(not FNotServing);
-  FWebServer.DataStore.ForLoad := FindCmdLineSwitch('forload');
 end;
 
 procedure TFHIRService.InstallDatabase;
@@ -640,6 +655,35 @@ begin
   FWebServer.Stop;
   FWebServer.free;
 end;
+
+{ TFHIRServerDataStore }
+
+function TFHIRServerDataStore.createOperationContext(lang: String): TFhirOperationManagerBase;
+var
+  res : TFhirOperationManager;
+begin
+  res := TFhirOperationManager.Create(lang, self.Link);
+  try
+    res.Connection := DB.GetConnection('Operation');
+    res.OwnerName := OwnerName;
+    result := res.Link;
+  finally
+    res.free;
+  end;
+end;
+
+procedure TFHIRServerDataStore.Yield(op: TFhirOperationManagerBase; e : Exception);
+begin
+  try
+    if e = nil then
+      TFhirOperationManager(op).Connection.Release
+    else
+      TFhirOperationManager(op).Connection.Error(e);
+  finally
+    op.Free;
+  end;
+end;
+
 
 end.
 

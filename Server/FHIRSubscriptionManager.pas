@@ -282,7 +282,7 @@ var
   s : TFHIRString;
 begin
   result := subst.channel.type_Element.value+#1+subst.channel.endpoint+#1+subst.channel.payload;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   for s in subst.channel.headerList do
     result := result+#0+s.value;
   {$ELSE}
@@ -539,8 +539,8 @@ begin
     sender.Connect;
     msg := TIdMessage.Create(Nil);
     try
-      if {$IFDEF FHIR3} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF} then
-        msg.Subject := {$IFDEF FHIR3} subst.channel.headerList[0].value {$ELSE} subst.channel.header {$ENDIF}
+      if {$IFNDEF FHIR2} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF} then
+        msg.Subject := {$IFNDEF FHIR2} subst.channel.headerList[0].value {$ELSE} subst.channel.header {$ENDIF}
       else
         msg.Subject := 'FHIR Notification';
       msg.Recipients.EMailAddresses := subst.channel.endpoint.Replace('mailto:', '');
@@ -590,7 +590,7 @@ begin
     try
       http.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
-      {$IFDEF FHIR3}
+      {$IFNDEF FHIR2}
       for s in subst.channel.headerList do
         http.Request.CustomHeaders.Add(s.value);
       {$ELSE}

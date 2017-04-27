@@ -102,7 +102,7 @@ Type
     function getParent(ctxt : TFhirCodeSystemConcept) : TFhirCodeSystemConcept;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptList; filter : TSearchFilterText);
     procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     function getProperty(code : String) : TFhirCodeSystemProperty;
     {$ENDIF}
   public
@@ -256,7 +256,7 @@ Type
     {$IFDEF FHIR2}
     procedure declareSystems(oConf : TFhirCapabilityStatement);
     {$ENDIF}
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     procedure declareCodeSystems(list : TFhirResourceList);
     {$ENDIF}
     function supportsSystem(s : String; version : String) : boolean;
@@ -847,7 +847,7 @@ begin
   end;
 end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 procedure TTerminologyServerStore.declareCodeSystems(list : TFhirResourceList);
   procedure addCodeSystem(name, id, uri, version : String; count : integer);
   var
@@ -1206,7 +1206,7 @@ begin
       {$ENDIF}
       UpdateConceptMaps;
     end
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFhirCodeSystem(resource);
@@ -1267,7 +1267,7 @@ begin
       {$ENDIF}
       UpdateConceptMaps;
     end
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFHIRCodeSystem(resource);
@@ -1335,7 +1335,7 @@ begin
         UpdateConceptMaps;
       end;
     end
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     else if (aType = frtCodeSystem) then
     begin
       cs := FCodeSystemsById[id];
@@ -2025,7 +2025,7 @@ end;
 
 function TFhirCodeSystemProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   result := FVs.isAbstract(TFhirCodeSystemProviderContext(context).context);
   {$ELSE}
   result := (TFhirCodeSystemProviderContext(context).context.abstractElement <> nil) and TFhirCodeSystemProviderContext(context).context.abstract;
@@ -2089,7 +2089,7 @@ begin
     result := getMyParent(FVs.conceptList)
 end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 function TFhirCodeSystemProvider.getProperty(code: String): TFhirCodeSystemProperty;
 var
   p : TFhirCodeSystemProperty;
@@ -2152,7 +2152,7 @@ begin
 end;
 
 procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 var
   context : TFhirCodeSystemConcept;
   parent, child : TFhirCodeSystemConcept;
@@ -2163,7 +2163,7 @@ var
   p : TFHIRLookupOpRespProperty_;
   {$ENDIF}
 begin
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   context := TFHIRCodeSystemProviderContext(ctxt).context;
 
   if hasProp(props, 'parent', true) then

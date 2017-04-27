@@ -120,7 +120,7 @@ var
 begin
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   source.checkNoModifiers('ValueSetExpander.Expand', 'ValueSet');
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   profile.checkNoImplicitRules('ValueSetExpander.Expand', 'ExpansionProfile');
   profile.checkNoModifiers('ValueSetExpander.Expand', 'ExpansionProfile');
   {$ENDIF}
@@ -188,7 +188,7 @@ begin
       result.expansion.addParam('expansion-source', 'ValueSet/'+source.id)
     else if source.url <> '' then
       result.expansion.addParam('expansion-source', source.url);
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     if profile.url <> '' then
       result.expansion.addParam('expansion-profile', profile.url);
     {$ENDIF}
@@ -385,13 +385,13 @@ begin
 end;
 
 function TFHIRValueSetExpander.chooseDisplay(c: TFhirValueSetComposeIncludeConcept; profile : TFHIRExpansionProfile) : String;
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 var
   ccd : TFhirValueSetComposeIncludeConceptDesignation;
 {$ENDIF}
 begin
   result := c.display;
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
   for ccd in c.designationList do
     if (profile.displayLanguage = '') or languageMatches(profile.displayLanguage, ccd.language) then
       result := ccd.value;
@@ -402,7 +402,7 @@ procedure TFHIRValueSetExpander.addDefinedCode(cs : TFhirCodeSystem; list: TFhir
 var
   i : integer;
 begin
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   if not profile.excludeNotForUI or not (cs.isAbstract(c)) then
   {$ELSE}
   if not profile.excludeNotForUI or (c.abstractElement = nil) or not c.Abstract then
@@ -544,7 +544,7 @@ begin
   imports := TAdvList<TFHIRValueSet>.create;
   try
     cset.checkNoModifiers('ValueSetExpander.processCodes', 'set');
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     for uri in cset.valueSetList do
       imports.add(expandValueset(uri.value, filter.filter, dependencies, notClosed));
     {$ENDIF}

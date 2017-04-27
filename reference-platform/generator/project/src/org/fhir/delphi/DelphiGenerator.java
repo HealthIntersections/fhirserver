@@ -1,4 +1,5 @@
 package org.fhir.delphi;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -4220,13 +4221,13 @@ public class DelphiGenerator {
     }
     con.append("frtCustom];\r\n     ");
 
-    con.append("\r\n  ALL_RESOURCE_TYPE_NAMES : Array of String = [");
+    con.append("\r\n  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', ");
     for (int i = 0; i < types.size(); i++) {
       String s = types.get(i);
       String s2 = getTitle(s);
       con.append("'"+s2+"',\r\n     ");
     }
-    con.append("'Custom'];\r\n     ");
+    con.append("'Custom');\r\n     ");
 
 
     defCodeRes.enumDefs.add(def.toString());

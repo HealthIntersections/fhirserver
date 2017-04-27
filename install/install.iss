@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.136
+AppVerName=1.0.137
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.136
+OutputBaseFilename=fhirserver3-1.0.137
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -52,12 +52,14 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 ;  {store}\data - terminology caches
 
 [Types]
-Name: "fhir3";   Description: "Install STU3 Version"
+Name: "fhir4";   Description: "Install R4 Version (Current Build)"
+Name: "fhir3";   Description: "Install R3 Version"
 Name: "fhir2";   Description: "Install DSTU2 Version"
 
 [Components]
 Name: "r2";   Description: "DSTU2 Components"; Types: fhir2
 Name: "r3";   Description: "STU3 Components"; Types: fhir3
+Name: "r4";   Description: "R4 Components"; Types: fhir4
 
 [Tasks]
 ; Core related tasks
@@ -81,6 +83,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 ; Executable files
 Source: "C:\work\fhirserver\Exec\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
@@ -91,17 +94,27 @@ Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
 
 ; Spec & IGs
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";                DestDir: "{app}\load";                                 Components: r2; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: "{app}\web";       DestName: validation.json.zip; Components: r2; Flags: ignoreversion  
-Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";              DestDir: {app}\web;                                    Components: r3; Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                 DestDir: {app}\load;    DestName: fhir.json.zip;       Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\nucc.xml";                                      DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\tslc.xml";                                      DestDir: {app}\sql;     DestName: tslc.xml;            Components: r3; Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                DestDir: {app}\load;    DestName: us-core.json.zip;    Components: r3; Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                 DestDir: {app}\load;    DestName: daf.json.zip;        Components: r3; Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir.us\meds\output\examples.json.zip";                DestDir: {app}\load;    DestName: meds.json.zip;       Components: r3; Flags: ignoreversion
-;Source: "C:\work\org.hl7.fhir\build\guides\ccda2\output\examples.json.zip";     DestDir: {app}\load;    DestName: ccda.json.zip;       Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3; Flags: ignoreversion
+; R2
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip";                DestDir: {app}\load;                                        Components: r2;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: {app}\web;         DestName: validation.json.zip;  Components: r2;   Flags: ignoreversion  
+
+; R3
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\examples-json.zip";           DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";                                DestDir: {app}\load;        DestName: us-sdcde.json.zip;    Components: r3;   Flags: ignoreversion
+
+; R4
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                                  DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
+
+
+; Load Data
+Source: "C:\work\fhirserver\sql\nucc.xml";                                      DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\sql\tslc.xml";                                      DestDir: {app}\sql;     DestName: tslc.xml;            Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3 r4; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"

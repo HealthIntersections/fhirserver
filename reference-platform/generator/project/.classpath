@@ -10,5 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.dstu3"/>
 	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/commons-codec-1.9.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.convertors"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

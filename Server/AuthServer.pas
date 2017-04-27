@@ -17,7 +17,7 @@ uses
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
-  FHIRDataStore, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
+  FHIRStorageService, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
@@ -39,7 +39,7 @@ type
   private
     FLock : TCriticalSection;
     FIni : TIniFile;
-    FFhirStore : TFHIRDataStore;
+    FFhirStore : TFHIRStorageService;
     FOnProcessFile : TProcessFileEvent;
     FFilePath : String;
     FSSLPort : String;
@@ -74,7 +74,7 @@ type
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
-    procedure SetFhirStore(const Value: TFHIRDataStore);
+    procedure SetFhirStore(const Value: TFHIRStorageService);
     function BuildLoginList(id : String) : String;
     function AltFile(path: String): String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
@@ -90,7 +90,7 @@ type
 
     procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
 
-    property FHIRStore : TFHIRDataStore read FFhirStore write SetFhirStore;
+    property FHIRStore : TFHIRStorageService read FFhirStore write SetFhirStore;
     property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
     property FacebookAppid : String read FFacebookAppid;
@@ -278,7 +278,7 @@ end;
 
 
 
-procedure TAuth2Server.SetFhirStore(const Value: TFHIRDataStore);
+procedure TAuth2Server.SetFhirStore(const Value: TFHIRStorageService);
 begin
   FFhirStore.Free;
   FFhirStore := Value;
@@ -315,7 +315,7 @@ begin
     raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
   id := newguidid;
-  conn := FFhirStore.DB.GetConnection('oatuh2');
+  conn := FFhirStore.DB.GetConnection('oauth2');
   try
     conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');
     conn.release;

@@ -162,7 +162,7 @@ begin
     if (code = list[i].code) then
     begin
       result := true;
-      {$IFDEF FHIR3}
+      {$IFNDEF FHIR2}
       isabstract := cs.isAbstract(list[i]);
       {$ELSE}
       isabstract := list[i].abstract;

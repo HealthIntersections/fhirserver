@@ -76,9 +76,15 @@ Type
       Property Stream : TAdvStream Read GetStream Write SetStream;
   End;
 
+  // dealing with changes to the Stream Interface:
+  TStreamDWord = DWord;
+  TStreamFixedUInt = FixedUInt;
+  PStreamFixedUInt = PFixedUInt;
+  TStreamLargeUInt = LargeUInt;
+
   TAdvStreamAdapter = Class(TStreamAdapter)
     Public
-      Function Stat(Out statstg: TStatStg; grfStatFlag: DWord): HResult; Override; Stdcall;
+      Function Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; Override; Stdcall;
   End;
 
   TAdvIStreamAdapter = Class(TAdvObject, IStream)
@@ -92,17 +98,17 @@ Type
       Constructor Create; Override;
       Destructor Destroy; Override;
 
-      function Seek(dlibMove: Largeint; dwOrigin: DWORD; out libNewPosition: LargeUInt): HResult; stdcall;
-      function SetSize(libNewSize: LargeUInt): HResult; stdcall;
-      function CopyTo(stm: IStream; cb: LargeUInt; out cbRead: LargeUInt; out cbWritten: LargeUInt): HResult; stdcall;
+      function Seek(dlibMove: Largeint; dwOrigin: TStreamDWord; out libNewPosition: TStreamLargeUInt): HResult; stdcall;
+      function SetSize(libNewSize: TStreamLargeUInt): HResult; stdcall;
+      function CopyTo(stm: IStream; cb: TStreamLargeUInt; out cbRead: LargeUInt; out cbWritten: TStreamLargeUInt): HResult; stdcall;
       function Commit(grfCommitFlags: DWORD): HResult; stdcall;
       function Revert: HResult; stdcall;
-      function LockRegion(libOffset: LargeUInt; cb: LargeUInt; dwLockType: DWORD): HResult; stdcall;
-      function UnlockRegion(libOffset: LargeUInt; cb: LargeUInt; dwLockType: DWORD): HResult; stdcall;
+      function LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: DWORD): HResult; stdcall;
+      function UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: DWORD): HResult; stdcall;
       function Stat(out statstg: TStatStg; grfStatFlag: DWORD): HResult; stdcall;
       function Clone(out stm: IStream): HResult; stdcall;
-      function Read(pv: Pointer; cb: FixedUInt; pcbRead: PFixedUInt): HResult; stdcall;
-      function Write(pv: Pointer; cb: FixedUInt; pcbWritten: PFixedUInt): HResult; stdcall;
+      function Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
+      function Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
 
       Property Stream: TAdvAccessStream Read GetStream Write SetStream;
   End;

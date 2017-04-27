@@ -1691,8 +1691,7 @@ begin
   LoadODBCDLL;
 
   if @PSQLDisconnect <> nil then
-    Result:= PSQLDisconnect(
-      AConnectionHandle)
+    Result:= PSQLDisconnect(AConnectionHandle)
   else
     raise EODBCExpress.Create(ErrorLoadingMethod+ODBCDLL);
 end;

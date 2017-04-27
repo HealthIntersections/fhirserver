@@ -3,7 +3,7 @@ unit HMAC;
 interface
 
 uses
-  System.SysUtils, System.NetEncoding,
+  System.SysUtils,
   EncdDecd,
   IdGlobal, IdHMAC, IdSSLOpenSSL, IdHash,
   BytesSupport;

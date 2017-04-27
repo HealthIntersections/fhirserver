@@ -37,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections, System.NetEncoding,
+  SysUtils, Classes, Generics.Collections,
   AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvStringMatches, AdvStringLists, AdvGenerics,
   DateAndTime, DateSupport, EncodeSupport, XMLBuilder, EncdDecd, DecimalSupport;
 

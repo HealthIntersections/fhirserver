@@ -60,7 +60,7 @@ public class DefinitionsLoader2 {
   }
 
   private static void processSearchParam(Definitions def, SearchParameter sp) throws Exception {
-    SearchParameterDefn spd = new SearchParameterDefn(sp.getCode(), sp.getDescription(), sp.getType(), sp.getXpathUsage(), sp.getTarget(), null);
+    SearchParameterDefn spd = new SearchParameterDefn().loadR2(sp.getCode(), sp.getDescription(), sp.getType(), sp.getXpathUsage(), sp.getTarget(), null);
     def.getResourceByName(sp.getBase()).getSearchParams().put(spd.getCode(), spd);
   }
 

@@ -52,8 +52,8 @@ Uses
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient,
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
-  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIROperation, FHIRDataStore, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXML, TerminologyServices {$IFDEF FHIR3}, OpenMHealthServer{$ENDIF};
+  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIROperation, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerContext, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXML, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -141,7 +141,7 @@ Type
     FHomePage : String;
 
     FClients : TAdvList<TFHIRWebServerClientInfo>;
-    FFhirStore : TFHIRDataStore;
+    FServerContext : TFHIRServerContext;
     FFacebookLike : boolean;
     FTerminologyWebServer : TTerminologyWebServer;
     FThread : TFhirServerMaintenanceThread;
@@ -222,15 +222,17 @@ Type
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
   Public
-    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; loadStore : boolean);
+    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
 
     Procedure Start(active : boolean);
     Procedure Stop;
     Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile; callback : TInstallerCallback);
 
-    Property DataStore : TFHIRDataStore read FFhirStore;
+    Property ServerContext : TFHIRServerContext read FServerContext;
   End;
+
+Function ProcessPath(base, path : String): string;
 
 Implementation
 
@@ -303,7 +305,7 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; loadStore : boolean);
+Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
 var
   s, txu : String;
   ts : TStringList;
@@ -311,8 +313,7 @@ Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
   FName := Name;
-  FIni := TIniFile.Create(ini);
-  FHost := FIni.ReadString('web', 'host', '');
+  FIni := TIniFile.Create(ini);                    FHost := FIni.ReadString('web', 'host', '');
   HostSms := FIni.ReadString('sms', 'owner', '');
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
   FPatientViewServers := TDictionary<String, String>.create;
@@ -323,6 +324,7 @@ Begin
   logt('Load User Sub-system');
   FSCIMServer := TSCIMServer.Create(db.link, FSourcePath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
+  context.storage.SCIMServer := FSCIMServer.Link;
 
   logt('Load & Cache Store: ');
   FOwnerName := Fini.readString('admin', 'ownername', '');
@@ -354,9 +356,9 @@ Begin
   end;
 
 
-  FFhirStore := TFHIRDataStore.Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link, loadStore);
-  FFhirStore.ownername := FOwnerName;
-  FFhirStore.Validate := FIni.ReadBool('fhir', 'validate', true);
+  FServerContext := context; // .Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link, loadStore);
+//  FServerContext.Storage.ownername := FOwnerName;
+//  FServerContext.Storage.Validate := FIni.ReadBool('fhir', 'validate', true);
 
   if FIni.ReadString('web', 'host', '') <> '' then
   begin
@@ -365,25 +367,25 @@ Begin
     else
       s := FIni.ReadString('web', 'secure', '');
   end;
-  logt(inttostr(FFhirStore.TotalResourceCount)+' resources');
-  FFhirStore.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort);
-  FFhirStore.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort);
-  FFhirStore.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
-  FFhirStore.FormalURLSecureOpen := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
-  FFhirStore.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
+  logt(inttostr(FServerContext.Storage.TotalResourceCount)+' resources');
+  FServerContext.Storage.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort);
+  FServerContext.Storage.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort);
+  FServerContext.Storage.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
+  FServerContext.Storage.FormalURLSecureOpen := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
+  FServerContext.Storage.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
 
   if FIni.ReadString('web', 'insecure', '') = 'conformance' then
-    FFhirStore.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem'])
+    FServerContext.Storage.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem'])
   else if FIni.ReadString('web', 'insecure', '') = 'conformance+patient' then
-    FFhirStore.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem', 'Patient'])
+    FServerContext.Storage.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem', 'Patient'])
   else
-    FFhirStore.ValidatorContext.setNonSecureTypes([]);
+    FServerContext.Storage.ValidatorContext.setNonSecureTypes([]);
 
   if FStatedPort = 80 then
     txu := 'http://'+FHost
   else
     txu := 'http://'+FHost+':'+inttostr(FStatedPort);
-  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FFhirStore.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
+  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.Storage.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
 
   if FIni.SectionExists('patient-view') then
   begin
@@ -399,7 +401,7 @@ Begin
   if FIni.readString('web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
   FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort), FSCIMServer.Link);
-  FAuthServer.FHIRStore := FFhirStore.Link;
+  FAuthServer.FHIRStore := FServerContext.Storage.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
   FAuthServer.Path := FIni.ReadString('web', 'auth-path', '/oauth2');
@@ -450,10 +452,10 @@ Begin
   FTerminologyWebServer.free;
   FIni.Free;
   FAuthServer.Free;
-  if FFhirStore <> nil then
+  if FServerContext.Storage <> nil then
   begin
-    FFhirStore.CloseAll;
-    FFhirStore.Free;
+    FServerContext.Storage.CloseAll;
+    FServerContext.Storage.Free;
   end;
   FPatientViewServers.Free;
   FClients.Free;
@@ -497,7 +499,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FFhirStore.ValidatorContext.link, roRest, FFhirStore.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.Storage.ValidatorContext.link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
   context := TOperationContext.Create;
   try
     response := TFHIRResponse.Create;
@@ -558,7 +560,7 @@ Begin
   if (active) then
   begin
     FThread := TFhirServerMaintenanceThread.create(self);
-    smsStatus('The server '+DataStore.FormalURLPlain+' for '+DataStore.OwnerName+' has started');
+    smsStatus('The server '+ServerContext.Storage.FormalURLPlain+' for '+ServerContext.Storage.OwnerName+' has started');
   end;
 End;
 
@@ -569,11 +571,11 @@ begin
   try
     client := TTwilioClient.Create;
     try
-      client.Account := DataStore.SubscriptionManager.SMSAccount;
+      client.Account := ServerContext.Storage.SubscriptionManager.SMSAccount;
       if (client.Account <> '') and (HostSms <> '') then
       begin
-        client.Token := DataStore.SubscriptionManager.SMSToken;
-        client.From := DataStore.SubscriptionManager.SMSFrom;
+        client.Token := ServerContext.Storage.SubscriptionManager.SMSToken;
+        client.From := ServerContext.Storage.SubscriptionManager.SMSFrom;
         client.dest := HostSms;
         client.Body := msg;
         client.send;
@@ -609,7 +611,7 @@ begin
   req := TCDSHookRequest.Create;
   try
     req.activity := TCDSHooks.patientView;
-    req.activityInstance := FFhirStore.FormalURLPlain;  // arbitrary global
+    req.activityInstance := FServerContext.Storage.FormalURLPlain;  // arbitrary global
     req.patient := patient.id;
     req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
     req.preFetchData.id := NewGuidId;
@@ -623,7 +625,7 @@ end;
 
 Procedure TFhirWebServer.Stop;
 Begin
-  smsStatus('The server '+DataStore.FormalURLPlain+' for '+DataStore.OwnerName+' is stopping');
+  smsStatus('The server '+ServerContext.Storage.FormalURLPlain+' for '+ServerContext.Storage.OwnerName+' is stopping');
   if FThread <> nil then
     FThread.Terminate;
   StopServer;
@@ -702,37 +704,23 @@ procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base 
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
-  op : TFhirOperationManager;
+//  op : TFhirOperationManager;
   cursor : integer;
   context : TOperationContext;
 begin
-  if init then
-  begin
-    op := TFhirOperationManager.Create('en', FFhirStore.Link);
-    try
-      op.Connection := DataStore.DB.GetConnection('op');
-      try
-        op.DefineConformanceResources(FIni.ReadString('web', 'host', ''));
-        op.Connection.Release;
-      except
-        on e:exception do
-          op.Connection.Error(e);
-      end;
-    finally
-      op.Free;
-    end;
-  end;
+//  if init then
+//    op := FServerContext.Storage.createOperationContext('en');
   context := TOperationContext.Create(true, callback, 'Load from '+name);
   try
-    req := TFHIRRequest.Create(FFHIRStore.ValidatorContext.Link, roUpload, FFhirStore.Indexes.Compartments.Link);
+    req := TFHIRRequest.Create(FServerContext.Storage.ValidatorContext.Link, roUpload, FServerContext.Storage.Indexes.Compartments.Link);
     try
       req.CommandType := fcmdTransaction;
       req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
       req.resource.tags['duplicates'] := 'ignore';
-      req.session := FFhirStore.CreateImplicitSession('service', true);
+      req.session := FServerContext.Storage.CreateImplicitSession('service', true);
       req.session.allowAll;
       req.LoadParams('');
-      req.baseUrl := FFhirStore.Bases[0];
+      req.baseUrl := FServerContext.Storage.Bases[0];
       context.message := 'Process '+name;
       resp := TFHIRResponse.Create;
       try
@@ -824,7 +812,7 @@ begin
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
-      FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+      FServerContext.Storage.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
     if (request.CommandType = hcOption) then
     begin
@@ -904,10 +892,10 @@ begin
 
     ext := rest.security.extensionList.Append;
     ext.url := 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris';
-//     ext.addExtension('dscovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
+//     ext.addExtension('dscovery', TFhirUri.Create(ExcludeTrailingPathDelimiter(FServerContext.Storage.FormalURLSecure)+FAuthServer.AuthPath+'/discovery'));
     ext.addExtension('register', TFhirUri.Create('mailto:'+FAdminEmail));
-    ext.addExtension('authorize',TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.AuthPath));
-    ext.addExtension('token', TFhirUri.Create(ExcludeTrailingPathDelimiter(FFhirStore.FormalURLSecure)+FAuthServer.TokenPath));
+    ext.addExtension('authorize',TFhirUri.Create(ExcludeTrailingPathDelimiter(FServerContext.Storage.FormalURLSecure)+FAuthServer.AuthPath));
+    ext.addExtension('token', TFhirUri.Create(ExcludeTrailingPathDelimiter(FServerContext.Storage.FormalURLSecure)+FAuthServer.TokenPath));
   end;
 end;
 
@@ -940,7 +928,7 @@ begin
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
-      FFhirStore.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+      FServerContext.Storage.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
     if (request.CommandType = hcOption) then
     begin
@@ -1323,29 +1311,29 @@ begin
   try
     id := profile.id;
     fid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-    s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
+    s := FServerContext.Storage.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
       builder := TQuestionnaireBuilder.Create;
       try
-        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+        questionnaire := FServerContext.Storage.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try
           if questionnaire = nil then
           begin
             builder.Profile := profile.Link;
-            builder.OnExpand := FFhirStore.ExpandVS;
-            builder.onLookupCode := FFhirStore.LookupCode;
+            builder.OnExpand := FServerContext.Storage.ExpandVS;
+            builder.onLookupCode := FServerContext.Storage.LookupCode;
             builder.QuestionnaireId := fid;
             builder.onLookupReference := LookupReference;
             builder.Context := request.Link;
 
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-            FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
+            FServerContext.Storage.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
           s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
-          FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
+          FServerContext.Storage.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
         end;
@@ -1381,7 +1369,7 @@ begin
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
-  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.ValidatorContext.hasCustomResource(typ)) then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.Storage.ValidatorContext.hasCustomResource(typ)) then
     raise Exception.Create('Unknown resource type '+typ);
 
   r := GetResource(request.Session, typ, request.Lang, id, '', '');
@@ -1396,9 +1384,9 @@ begin
     begin
 
       if request.Parameters.GetVar('srcformat') = 'json' then
-        comp := TFHIRJsonComposer.Create(FFhirStore.Validator.Context.Link, request.Lang)
+        comp := TFHIRJsonComposer.Create(FServerContext.Storage.Validator.Context.Link, request.Lang)
       else
-        comp := TFHIRXMLComposer.Create(FFhirStore.Validator.Context.Link, request.Lang);
+        comp := TFHIRXMLComposer.Create(FServerContext.Storage.Validator.Context.Link, request.Lang);
       try
         s := comp.Compose(r, true, nil);
       finally
@@ -1446,7 +1434,7 @@ begin
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
   request.Id := Id;
-  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.validatorContext.hasCustomResource(typ)) then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.Storage.validatorContext.hasCustomResource(typ)) then
     raise Exception.Create('Unknown resource type '+typ);
   request.ResourceName := typ;
   request.CommandType := fcmdUpdate;
@@ -1499,28 +1487,28 @@ begin
   profile := GetResource(request.Session, 'StructureDefinition', request.Lang, id, ver, '') as TFHirStructureDefinition;
   try
     fullid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-    s := FFhirStore.QuestionnaireCache.getForm(frtStructureDefinition, id);
+    s := FServerContext.Storage.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
       builder := TQuestionnaireBuilder.Create;
       try
-        questionnaire := FFhirStore.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+        questionnaire := FServerContext.Storage.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try
           if questionnaire = nil then
           begin
             builder.Profile := profile.Link;
-            builder.OnExpand := FFhirStore.ExpandVS;
-            builder.onLookupCode := FFhirStore.LookupCode;
+            builder.OnExpand := FServerContext.Storage.ExpandVS;
+            builder.onLookupCode := FServerContext.Storage.LookupCode;
             builder.onLookupReference := LookupReference;
             builder.Context := request.Link;
             builder.QuestionnaireId := fullid;
             builder.build;
             questionnaire := builder.Questionnaire.Link;
-            FFhirStore.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
+            FServerContext.Storage.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
           s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
-          FFhirStore.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
+          FServerContext.Storage.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
         end;
@@ -1685,7 +1673,7 @@ begin
    // get the right questionnaire
   StringSplit(request.Id, '/', typ, s);
   StringSplit(s, '/', id, ver);
-  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FFhirStore.validatorContext.hasCustomResource(typ))  then
+  if not (StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.Storage.validatorContext.hasCustomResource(typ))  then
     raise Exception.Create('Unknown resource type '+typ);
 
   r := GetResource(request.Session, typ, request.Lang, id, ver, 'qa-edit');
@@ -1738,7 +1726,7 @@ begin
   ws := TIdWebSocket.Create(nil);
   try
     if ws.open(aContext, request, response) then
-      DataStore.SubscriptionManager.HandleWebSocket(ws);
+      ServerContext.Storage.SubscriptionManager.HandleWebSocket(ws);
   finally
     ws.Free;
   end;
@@ -1840,17 +1828,17 @@ begin
       response.ContentStream := TMemoryStream.Create;
       oComp := nil;
       case format of
-        ffXml: oComp := TFHIRXmlComposer.Create(FFhirStore.Validator.Context.Link, lang);
+        ffXml: oComp := TFHIRXmlComposer.Create(FServerContext.Storage.Validator.Context.Link, lang);
         ffXhtml:
           begin
-          oComp := TFHIRXhtmlComposer.Create(FFhirStore.Validator.Context.Link, lang);
+          oComp := TFHIRXhtmlComposer.Create(FServerContext.Storage.Validator.Context.Link, lang);
           TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(url);
           TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
           TFHIRXhtmlComposer(oComp).Session := Session.Link;
           TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
-        ffJson: oComp := TFHIRJsonComposer.Create(FFhirStore.Validator.Context.Link, lang);
-        ffText: oComp := TFHIRTextComposer.Create(FFhirStore.Validator.Context.Link, lang);
+        ffJson: oComp := TFHIRJsonComposer.Create(FServerContext.Storage.Validator.Context.Link, lang);
+        ffText: oComp := TFHIRTextComposer.Create(FServerContext.Storage.Validator.Context.Link, lang);
       end;
       try
         response.ContentType := oComp.MimeType;
@@ -1894,7 +1882,7 @@ Var
 Begin
   relativeReferenceAdjustment := 0;
   Result := nil;
-  oRequest := TFHIRRequest.Create(FFHIRStore.validatorContext.link, roRest, FFhirStore.Indexes.Compartments.Link);
+  oRequest := TFHIRRequest.Create(FServerContext.Storage.validatorContext.link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
   try
     oRequest.Lang := lang;
     oResponse.origin := sOrigin;
@@ -1976,25 +1964,25 @@ Begin
     begin
       if sUrl = 'logout' then
       begin
-        FFhirStore.EndSession(sCookie, sClient);
+        FServerContext.Storage.EndSession(sCookie, sClient);
         oRequest.session := nil;
         redirect := true;
       end
       else if (sURL = 'internal') then
         redirect := true
-      else if (sUrl <> 'auth-login') and FFhirStore.GetSession(sCookie, session, check) then
+      else if (sUrl <> 'auth-login') and FServerContext.Storage.GetSession(sCookie, session, check) then
       begin
         if check and not CheckSessionOK(session, sClient) then
           Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
         oRequest.session := session
       end
-      else if (secure and FFhirStore.isOkBearer(sBearer, sClient, Session)) then
+      else if (secure and FServerContext.Storage.isOkBearer(sBearer, sClient, Session)) then
         oRequest.session := session
       else
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
     end
     else
-      oRequest.session := FFhirStore.CreateImplicitSession(sClient, false);
+      oRequest.session := FServerContext.Storage.CreateImplicitSession(sClient, false);
 
     if not redirect then
     begin
@@ -2050,7 +2038,7 @@ Begin
             end
             else if oRequest.CommandType <> fcmdWebUI then
               try
-                parser := MakeParser(FFhirStore.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
+                parser := MakeParser(FServerContext.Storage.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.Resource := parser.resource.Link;
                   if oRequest.PostFormat = ffUnspecified then
@@ -2156,11 +2144,11 @@ begin
           context.progress(trunc(100 * (i - iStart) / (iEnd - iStart)));
         writeln('Parse '+rdr.Parts[i].name);
         if rdr.Parts[i].name.EndsWith('.json') then
-          p := TFHIRJsonParser.create(FFhirStore.Validator.Context.Link, lang)
+          p := TFHIRJsonParser.create(FServerContext.Storage.Validator.Context.Link, lang)
         else if rdr.Parts[i].name.EndsWith('.map') then
-          p := TFHIRTextParser.create(FFhirStore.Validator.Context.Link, lang)
+          p := TFHIRTextParser.create(FServerContext.Storage.Validator.Context.Link, lang)
         else
-          p := TFHIRXmlParser.create(FFhirStore.Validator.Context.Link, lang);
+          p := TFHIRXmlParser.create(FServerContext.Storage.Validator.Context.Link, lang);
         try
           p.source := TBytesStream.create(rdr.parts[i].AsBytes);
           p.AllowUnknownContent := true;
@@ -2258,10 +2246,10 @@ begin
   //        response.Expires := Now; //don't want anyone caching anything
           response.Pragma := 'no-cache';
           if oResponse.Format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang)
           else if oResponse.Format = ffXhtml then
           begin
-            oComp := TFHIRXhtmlComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang);
+            oComp := TFHIRXhtmlComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang);
             TFHIRXhtmlComposer(oComp).BaseURL := AppendForwardSlash(oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.Link;
@@ -2273,20 +2261,20 @@ begin
             response.Pragma := '';
           end
           else if oResponse.Format = ffXml then
-            oComp := TFHIRXmlComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
+            oComp := TFHIRXmlComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang)
           else if oResponse.format = ffText then
-            oComp := TFHIRTextComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
+            oComp := TFHIRTextComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang)
           else if (oResponse.Format = ffTurtle) or (res._source_format = ffTurtle) then
           begin
-            oComp := TFHIRRDFComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang);
+            oComp := TFHIRRDFComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang);
             TFHIRRDFComposer(oComp).RDFFormat := rdfTurtle;
             if (res <> nil) and (res.id <> '') then
               TFHIRRDFComposer(oComp).URL :=  oRequest.baseUrl+'/'+CODES_TFhirResourceType[res.ResourceType]+'/'+res.id;
           end
           else if res._source_format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang)
           else
-            oComp := TFHIRXmlComposer.Create(FFhirStore.Validator.Context.Link, oRequest.lang);
+            oComp := TFHIRXmlComposer.Create(FServerContext.Storage.Validator.Context.Link, oRequest.lang);
           try
             response.ContentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
@@ -2339,7 +2327,7 @@ begin
   begin
     ss := TStringStream.Create(header, TEncoding.UTF8);
     try
-      json := TFHIRJsonParser.Create(FFhirStore.Validator.Context.Link, lang);
+      json := TFHIRJsonParser.Create(FServerContext.Storage.Validator.Context.Link, lang);
       try
         json.source := ss;
         json.Parse;
@@ -2360,7 +2348,7 @@ end;
 
 procedure TFhirWebServer.ProcessRequest(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
-  store : TFhirOperationManager;
+  op : TFhirOperationManagerBase;
   t : cardinal;
 begin
   FLock.Lock;
@@ -2370,35 +2358,17 @@ begin
     FLock.Unlock;
   end;
   t := gettickCount;
-  store := TFhirOperationManager.Create(request.Lang, FFhirStore.Link);
+  op := FServerContext.Storage.createOperationContext(request.Lang);
   try
-    store.OwnerName := FOwnerName;
-    store.OnPopulateConformance := PopulateConformance;
-    store.Connection := FFhirStore.DB.GetConnection('Operation/'+CODES_TFHIRCommandType[request.CommandType]);
-    try
-      store.Connection.StartTransact;
-      try
-        store.Execute(context, request, response);
-        store.Connection.Commit;
-      except
-        on e:exception do
-        begin
-          store.Connection.Rollback;
-          recordStack(e);
-          raise;
-        end;
-      end;
-      store.Connection.Release;
-    except
-      on e:exception do
-      begin
-        store.Connection.Error(e);
-        recordStack(e);
-        raise;
-      end;
+    op.OnPopulateConformance := PopulateConformance;
+    op.Execute(context, request, response);
+    FServerContext.Storage.yield(op, nil);
+  except
+    on e : Exception do
+    begin
+      FServerContext.Storage.yield(op, e);
+      raise;
     end;
-  finally
-    store.Free;
   end;
   FLock.Lock;
   try
@@ -2436,10 +2406,10 @@ begin
 
   if (sCookie <> '') and request.Document.StartsWith('/scim/logout') then
   begin
-    FFhirStore.EndSession(sCookie, request.RemoteIP);
+    FServerContext.Storage.EndSession(sCookie, request.RemoteIP);
     response.Redirect('/closed');
   end
-  else if (FFhirStore.GetSession(sCookie, session, check)) then
+  else if (FServerContext.Storage.GetSession(sCookie, session, check)) then
   begin
     try
       if check and not CheckSessionOK(session, request.RemoteIP) then
@@ -2517,27 +2487,27 @@ begin
   logt('home page: '+session.scopes);
   counts := TStringList.create;
   try
-    for a in FFhirStore.ValidatorContext.allResourceNames do
+    for a in FServerContext.Storage.ValidatorContext.allResourceNames do
     begin
       ix := counts.add(a);
-      if (comps = '') or FFhirStore.Indexes.Compartments.existsInCompartment(frtPatient, a) then
+      if (comps = '') or FServerContext.Storage.Indexes.Compartments.existsInCompartment(frtPatient, a) then
         counts.Objects[ix] := TObject(0)
       else
         counts.Objects[ix] := TObject(-1);
     end;
 
     if (comps <> '') then
-      cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(DataStore.ResConfig['Patient'].key)+' and Id in ('+comps+'))'
+      cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ServerContext.Storage.ResConfig['Patient'].key)+' and Id in ('+comps+'))'
     else
       cmp := '';
 
-    pol := FFhirStore.ProfilesAsOptionList;
+    pol := FServerContext.Storage.ProfilesAsOptionList;
     profiles := TAdvStringMatch.create;
     try
       profiles.forced := true;
-      if FFhirStore <> nil then
+      if FServerContext.Storage <> nil then
       begin
-        db := FFhirStore.DB.GetConnection('fhir');
+        db := FServerContext.Storage.DB.GetConnection('fhir');
         try
           db.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
 
@@ -2633,10 +2603,10 @@ begin
 
       names := TStringList.create;
       Try
-        for a in FFhirStore.ValidatorContext.allResourceNames do
+        for a in FServerContext.Storage.ValidatorContext.allResourceNames do
         begin
           ix := counts.IndexOf(a);
-          if (integer(counts.objects[ix]) > -1) and (FFhirStore.ResConfig[a].Supported)  then
+          if (integer(counts.objects[ix]) > -1) and (FServerContext.Storage.ResConfig[a].Supported)  then
             names.Add(a);
         end;
 
@@ -2779,25 +2749,18 @@ end;
 
 function TFhirWebServer.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 var
-  store : TFhirOperationManager;
+  store : TFhirOperationManagerBase;
 begin
-  store := TFhirOperationManager.Create(TFHIRRequest(context).Lang, FFhirStore.Link);
+  store := FServerContext.Storage.createOperationContext(TFHIRRequest(context).Lang);
   try
-    store.OwnerName := FOwnerName;
-    store.Connection := FFhirStore.DB.GetConnection('Operation/ref');
-    try
-      result := store.LookupReference(context, id);
-      store.Connection.Release;
-    except
-      on e:exception do
-      begin
-        store.Connection.Error(e);
-        recordStack(e);
-        raise;
-      end;
+    result := store.LookupReference(context, id);
+    FServerContext.Storage.Yield(store, nil);
+  except
+    on e : Exception do
+    begin
+      FServerContext.Storage.Yield(store, e);
+      raise;
     end;
-  finally
-    store.Free;
   end;
 end;
 
@@ -2885,7 +2848,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FFhirStore.ValidatorContext.Link, roRest, FFhirStore.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.Storage.ValidatorContext.Link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
@@ -2927,7 +2890,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FFhirStore.ValidatorContext.Link, roRest, FFhirStore.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.Storage.ValidatorContext.Link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
@@ -3063,9 +3026,9 @@ begin
   if result then
     result := session.Id = id;
   if result then
-    FFhirStore.MarkSessionChecked(session.Cookie, session.Name)
+    FServerContext.Storage.MarkSessionChecked(session.Cookie, session.Name)
   else
-    FFhirStore.EndSession(session.Cookie, ip);
+    FServerContext.Storage.EndSession(session.Cookie, ip);
 end;
 
 //procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
@@ -3117,7 +3080,7 @@ begin
    op.requestHeaderList.add('if-modified-since', DateTimeToXMLDateTimeTimeZoneString(req.IfModifiedSince, TimeZoneBias));
   op.requestHeaderList.add('if-none-exist', req.IfNoneExist);
   if req.Provenance <> nil then
-    op.requestHeaderList.add('x-provenance', ComposeJson(FFhirStore.ValidatorContext, req.Provenance));
+    op.requestHeaderList.add('x-provenance', ComposeJson(FServerContext.Storage.ValidatorContext, req.Provenance));
   op.url := req.Url;
 
 end;
@@ -3130,10 +3093,10 @@ begin
   try
     vars.Add('status.db', FormatTextToHTML(KDBManagers.dump));
     vars.Add('status.locks', FormatTextToHTML(DumpLocks));
-    vars.Add('status.thread', DataStore.TerminologyServer.BackgroundThreadStatus);
-    vars.Add('status.sessions', DataStore.DumpSessions);
+    vars.Add('status.thread', ServerContext.Storage.TerminologyServer.BackgroundThreadStatus);
+    vars.Add('status.sessions', ServerContext.Storage.DumpSessions);
     vars.Add('status.web', WebDump);
-    vars.Add('status.tx', DataStore.TerminologyServer.Summary);
+    vars.Add('status.tx', ServerContext.Storage.TerminologyServer.Summary);
     vars.Add('status.web-total-count', inttostr(FTotalCount));
     vars.Add('status.web-rest-count', inttostr(FRestCount));
     vars.Add('status.web-total-time', inttostr(FTotalTime));
@@ -3274,36 +3237,36 @@ procedure TFhirServerMaintenanceThread.Execute;
 begin
   Writeln('Starting TFhirServerMaintenanceThread');
   try
-    FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'starting';
+    FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'starting';
     CoInitialize(nil);
     repeat
-      FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'sleeping';
+      FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'sleeping';
       sleep(1000);
-      if not FServer.DataStore.ForLoad then
+      if not FServer.ServerContext.Storage.ForLoad then
       begin
         if (not terminated) then
         begin
           try
-            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
-            FServer.FFhirStore.TerminologyServer.BuildIndexes(false);
+            FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
+            FServer.FServerContext.Storage.TerminologyServer.BuildIndexes(false);
           except
           end;
           try
-            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
-            FServer.FFhirStore.ProcessObservations;
+            FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
+            FServer.FServerContext.Storage.ProcessObservations;
           except
           end;
         end;
         if FServer.FActive then
         begin
-          FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
-          FServer.FFhirStore.ProcessSubscriptions;
+          FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
+          FServer.FServerContext.Storage.ProcessSubscriptions;
         end;
         if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
         begin
           try
-            FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
-            FServer.FFhirStore.Sweep;
+            FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
+            FServer.FServerContext.Storage.Sweep;
           except
           end;
           FLastSweep := now;
@@ -3311,7 +3274,7 @@ begin
       end;
     until Terminated;
     try
-      FServer.DataStore.TerminologyServer.BackgroundThreadStatus := 'dead';
+      FServer.ServerContext.Storage.TerminologyServer.BackgroundThreadStatus := 'dead';
     except
     end;
     CoUninitialize;
@@ -3337,7 +3300,7 @@ begin
 
   b := TBytesStream.Create;
   try
-    xml := TFHIRXmlComposer.Create(FFhirStore.ValidatorContext.Link, lang);
+    xml := TFHIRXmlComposer.Create(FServerContext.Storage.ValidatorContext.Link, lang);
     try
       xml.Compose(b, resource, false, nil);
     finally

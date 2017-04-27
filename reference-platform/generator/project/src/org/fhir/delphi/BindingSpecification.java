@@ -362,6 +362,17 @@ public class BindingSpecification {
     }
     
   }
+  public void loadFromExpansion(org.hl7.fhir.r4.model.ValueSet vs) {
+    allCodes = new ArrayList<DefinedCode>();
+    for (org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
+      DefinedCode cd = new DefinedCode();
+      cd.setCode(c.getCode());
+      cd.setSystem(c.getSystem());
+      cd.setDisplay(c.getDisplay());
+      allCodes.add(cd);
+    }
+    
+  }
   public void loadFromExpansion(ValueSet vs) {
     allCodes = new ArrayList<DefinedCode>();
     for (ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {

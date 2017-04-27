@@ -40,41 +40,16 @@ uses
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
-  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices;
+  ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices,
+  FHIRStorageService;
 
 const
-  OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
-  OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
   IMPL_COOKIE_PREFIX = 'implicit-';
   MAXSQLDATE = 365 * 3000;
 
 Type
-  TQuestionnaireCache = class(TAdvObject)
+  TFHIRDataStore = class (TFHIRStorageService)
   private
-    FLock: TCriticalSection;
-    FQuestionnaires: TAdvMap<TFhirQuestionnaire>;
-    FForms: TAdvStringMatch;
-    FValueSetDependencies: TDictionary<String, TList<string>>;
-  public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
-
-    procedure putQuestionnaire(rtype: TFHIRResourceType; id: String; q: TFhirQuestionnaire; dependencies: TList<String>);
-    procedure putForm(rtype: TFHIRResourceType; id: String; form: String; dependencies: TList<String>);
-
-    function getQuestionnaire(rtype: TFHIRResourceType; id: String) : TFhirQuestionnaire;
-    function getForm(rtype: TFHIRResourceType; id: String): String;
-
-    procedure clear(rtype: TFHIRResourceType; id: String); overload;
-    procedure clearVS(id: string);
-    procedure clear; overload;
-  end;
-
-  TFHIRDataStore = class(TAdvObject)
-  private
-    FDB: TKDBManager;
-    FSCIMServer: TSCIMServer;
-    FTerminologyServer: TTerminologyServer;
     // folder in which the FHIR specification itself is found
     FSessions: TStringList;
     FTags: TFHIRTagList;
@@ -90,24 +65,12 @@ Type
     FLastCompartmentKey: integer;
     FLastObservationKey : integer;
     FLastObservationQueueKey : integer;
-    FValidatorContext : TFHIRServerWorkerContext;
-    FValidator: TFHIRValidator;
-    FResConfig: TAdvMap<TFHIRResourceConfig>;
     FSupportTransaction: Boolean;
     FDoAudit: Boolean;
     FSupportSystemHistory: Boolean;
-    FBases: TStringList;
     FTotalResourceCount: integer;
-    FFormalURLPlain: String;
-    FFormalURLSecure: String;
-    FFormalURLPlainOpen: String;
-    FFormalURLSecureOpen: String;
-    FFormalURLSecureClosed: String;
-    FOwnerName: String;
-    FSubscriptionManager: TSubscriptionManager;
-    FQuestionnaireCache: TQuestionnaireCache;
     FAppFolder : String;
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
@@ -116,8 +79,6 @@ Type
     FAudits: TFhirResourceList;
     FNextSearchSweep: TDateTime;
     FSystemId: String;
-    FIndexes : TFHIRIndexInformation;
-    FForLoad : boolean;
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure RecordFhirSession(session: TFhirSession);
@@ -144,20 +105,22 @@ Type
     procedure ProcessObservationValue(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRType);
     procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantity);
     procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj, concept, subconcept : integer; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
+  protected
+    function GetTotalResourceCount: integer; override;
   public
-    constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer; loadStore : boolean);
+    constructor Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; loadStore : boolean);
     Destructor Destroy; Override;
     Function Link: TFHIRDataStore; virtual;
-    procedure CloseAll;
+    procedure CloseAll; override;
     procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
-    function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
-    function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
-    Function CreateImplicitSession(clientInfo: String; server: Boolean) : TFhirSession;
-    Procedure EndSession(sCookie, ip: String);
-    function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
-    procedure MarkSessionChecked(sCookie, sName: String);
-    function isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean;
-    function ProfilesAsOptionList: String;
+    function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean; override;
+    function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean; override;
+    Function CreateImplicitSession(clientInfo: String; server: Boolean) : TFhirSession; override;
+    Procedure EndSession(sCookie, ip: String); override;
+    function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession; override;
+    procedure MarkSessionChecked(sCookie, sName: String); override;
+    function isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean; override;
+    function ProfilesAsOptionList: String; override;
     function NextVersionKey: integer;
     function NextTagVersionKey: integer;
     function NextSearchKey: integer;
@@ -171,54 +134,31 @@ Type
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure SeeResource(key, vkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
     procedure DropResource(key, vkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TKDBConnection);
-    procedure RegisterConsentRecord(session: TFhirSession);
+    procedure RegisterConsentRecord(session: TFhirSession); override;
     function KeyForTag(category : TFHIRTagCategory; system, code: String): integer;
-    Property Validator: TFHIRValidator read FValidator;
     function GetTagByKey(key: integer): TFHIRTag;
-    Property DB: TKDBManager read FDB;
-    Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
     Property SupportTransaction: Boolean read FSupportTransaction;
     Property DoAudit: Boolean read FDoAudit;
     Property SupportSystemHistory: Boolean read FSupportSystemHistory;
-    Property Bases: TStringList read FBases;
-    Property TotalResourceCount: integer read FTotalResourceCount;
-    Property TerminologyServer: TTerminologyServer read FTerminologyServer;
-    procedure Sweep;
-    property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
-    property FormalURLSecure: String read FFormalURLSecure
-      write FFormalURLSecure;
-    property FormalURLPlainOpen: String read FFormalURLPlainOpen
-      write FFormalURLPlainOpen;
-    property FormalURLSecureOpen: String read FFormalURLSecureOpen
-      write FFormalURLSecureOpen;
-    property FormalURLSecureClosed: String read FFormalURLSecureClosed
-      write FFormalURLSecureClosed;
+    procedure Sweep; override;
     function ResourceTypeKeyForName(name: String): integer;
-    procedure ProcessSubscriptions;
-    procedure ProcessObservations;
+    procedure ProcessSubscriptions; override;
+    procedure ProcessObservations; override;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     function getMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
     function oid2Uri(oid : String) : String;
 
-    Property OwnerName: String read FOwnerName write FOwnerName;
-    Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer;
-      allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
-    function LookupCode(system, version, code: String): String;
-    property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
+    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
+    function LookupCode(system, version, code: String): String; override;
     Property Validate: Boolean read FValidate write FValidate;
     procedure QueueResource(r: TFhirResource); overload;
     procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload;
-    procedure RunValidation;
+    procedure RunValidation; override;
     property SystemId: String read FSystemId;
 
-    function DumpSessions : String;
-
-    property SubscriptionManager : TSubscriptionManager read FSubscriptionManager;
-    property Indexes : TFHIRIndexInformation read FIndexes;
-    property ForLoad : boolean read FForLoad write FForLoad;
+    function DumpSessions : String; override;
   end;
 
 implementation
@@ -255,11 +195,10 @@ begin
   end;
 end;
 
-constructor TFHIRDataStore.Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; SCIMServer: TSCIMServer; loadStore : boolean);
+constructor TFHIRDataStore.Create(DB: TKDBManager; AppFolder: String; TerminologyServer: TTerminologyServer; ini: TIniFile; loadStore : boolean);
 var
   i : integer;
   conn: TKDBConnection;
-  a: TFHIRResourceType;
   rn, fn : String;
   implGuides : TAdvStringSet;
   cfg : TFHIRResourceConfig;
@@ -267,27 +206,15 @@ begin
   inherited Create;
   LoadMessages; // load while thread safe
   FIndexes := TFHIRIndexInformation.create;
-  FBases := TStringList.Create;
-  FBases.add('http://localhost/');
   FAppFolder := AppFolder;
-  FResConfig := TAdvMap<TFHIRResourceConfig>.create;
-  for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-  begin
-    cfg := TFHIRResourceConfig.Create;
-    cfg.name := CODES_TFHIRResourceType[a];
-    cfg.Supported := false;
-    FResConfig.Add(cfg.name,  cfg);
-  end;
   FDB := DB;
   FSessions := TStringList.Create;
   FTags := TFHIRTagList.Create;
   FLock := TCriticalSection.Create('fhir-store');
-  FSCIMServer := SCIMServer;
   FAudits := TFhirResourceList.Create;
 
-  FQuestionnaireCache := TQuestionnaireCache.Create;
   FClaimQueue := TFHIRClaimList.Create;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   FMaps := TAdvMap<TFHIRStructureMap>.create;
   {$ENDIF}
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
@@ -340,7 +267,7 @@ begin
         if conn.ColIntegerByName['ConfigKey'] = 1 then
           FSupportTransaction := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 2 then
-          FBases.add(AppendForwardSlash(conn.ColStringByName['Value']))
+          Bases.add(AppendForwardSlash(conn.ColStringByName['Value']))
         else if conn.ColIntegerByName['ConfigKey'] = 3 then
           FSupportSystemHistory := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 4 then
@@ -348,7 +275,7 @@ begin
         else if conn.ColIntegerByName['ConfigKey'] = 6 then
           FSystemId := conn.ColStringByName['Value']
         else if conn.ColIntegerByName['ConfigKey'] = 7 then
-          FResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
+          ResConfig[''].cmdSearch := conn.ColStringByName['Value'] = '1'
         else if conn.ColIntegerByName['ConfigKey'] = 8 then
         begin
           if conn.ColStringByName['Value'] <> FHIR_GENERATED_VERSION then
@@ -367,13 +294,13 @@ begin
         if conn.ColStringByName['ImplementationGuide'] <> '' then
           implGuides.add(conn.ColStringByName['ImplementationGuide']);
 
-        if FResConfig.ContainsKey(rn) then
-          cfg := FResConfig[rn]
+        if ResConfig.ContainsKey(rn) then
+          cfg := ResConfig[rn]
         else
         begin
           cfg := TFHIRResourceConfig.Create;
           cfg.name := rn;
-          FResConfig.Add(cfg.name, cfg);
+          ResConfig.Add(cfg.name, cfg);
         end;
         cfg.key := conn.ColIntegerByName['ResourceTypeKey'];
         cfg.Supported := conn.ColStringByName['Supported'] = '1';
@@ -399,9 +326,9 @@ begin
       While conn.FetchNext do
       begin
         rn := getTypeForKey(conn.ColIntegerByName['ResourceTypeKey']);
-        if StringIsInteger32(conn.ColStringByName['MaxId']) and (conn.ColIntegerByName['MaxId'] > FResConfig[rn].LastResourceId) then
+        if StringIsInteger32(conn.ColStringByName['MaxId']) and (conn.ColIntegerByName['MaxId'] > ResConfig[rn].LastResourceId) then
           raise Exception.Create('Error in database - LastResourceId (' +
-            inttostr(FResConfig[rn].LastResourceId) + ') < MaxId (' +
+            inttostr(ResConfig[rn].LastResourceId) + ') < MaxId (' +
             inttostr(conn.ColIntegerByName['MaxId']) + ') found for ' +
             rn);
       end;
@@ -423,10 +350,14 @@ begin
         FValidatorContext.TerminologyServer := TerminologyServer.Link;
 
         // the order here is important: specification resources must be loaded prior to stored resources
-        {$IFDEF FHIR3}
+        {$IFDEF FHIR4}
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
         {$ELSE}
+        {$IFDEF FHIR3}
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip');
+        {$ELSE} // fhir2
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
+        {$ENDIF}
         {$ENDIF}
 
         logt('Load Validation Pack from ' + fn);
@@ -524,7 +455,7 @@ begin
       se.event.outcome := AuditEventOutcome0;
       se.event.dateTime := NowUTC;
       se.source := TFhirAuditEventSource.Create;
-      se.source.site := FOwnerName;
+      se.source.site := OwnerName;
       se.source.identifier := TFhirIdentifier.Create;
       se.source.identifier.system := 'urn:ietf:rfc:3986';
       se.source.identifier.value := SystemId;
@@ -581,25 +512,22 @@ end;
 destructor TFHIRDataStore.Destroy;
 begin
   FAudits.free;
-  FBases.free;
   FTagsByKey.free;
   FSessions.free;
   FTags.free;
   FSubscriptionManager.free;
-  FQuestionnaireCache.free;
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
   FMaps.Free;
   {$ENDIF}
   FNamingSystems.Free;
   FClaimQueue.free;
   FLock.free;
   FIndexes.free;
-  FSCIMServer.free;
   FValidator.free;
   FValidatorContext.Free;
   FTerminologyServer.free;
   FDB.Free;
-  FResConfig.free;
+  ResConfig.free;
   inherited;
 end;
 
@@ -653,7 +581,7 @@ begin
       sp.type_ := getTypeForKey(typekey);
       sp.compartmentId := compartmentId;
       sp.compartments := compartments;
-      sp.baseURL := FFormalURLPlainOpen; // todo: what?
+      sp.baseURL := FormalURLPlainOpen; // todo: what?
       sp.lang := 'en';
       sp.params := params;
       sp.indexes := FIndexes.Link;
@@ -703,7 +631,7 @@ begin
           se.event.outcome := AuditEventOutcome0;
           se.event.dateTime := NowUTC;
           se.source := TFhirAuditEventSource.Create;
-          se.source.site := FOwnerName;
+          se.source.site := OwnerName;
           se.source.identifier := TFhirIdentifier.Create;
           se.source.identifier.system := 'urn:ietf:rfc:3986';
           se.source.identifier.value := SystemId;
@@ -934,6 +862,11 @@ begin
   end;
 end;
 
+function TFHIRDataStore.GetTotalResourceCount: integer;
+begin
+  result := FTotalResourceCount;
+end;
+
 function TFHIRDataStore.getTypeForKey(key: integer): String;
 var
   a: TFHIRResourceConfig;
@@ -941,7 +874,7 @@ begin
   FLock.Lock('getTypeForKey');
   try
     result := '';
-    for a in FResConfig.Values do
+    for a in ResConfig.Values do
       if a.key = key then
       begin
         result := a.Name;
@@ -1027,7 +960,7 @@ begin
         se.event.outcome := AuditEventOutcome0;
         se.event.dateTime := NowUTC;
         se.source := TFhirAuditEventSource.Create;
-        se.source.site := FOwnerName;
+        se.source.site := OwnerName;
         se.source.identifier := TFhirIdentifier.Create;
         se.source.identifier.system := 'urn:ietf:rfc:3986';
         se.source.identifier.value := SystemId;
@@ -1244,7 +1177,7 @@ begin
     se.event.outcome := AuditEventOutcome0;
     se.event.dateTime := NowUTC;
     se.source := TFhirAuditEventSource.Create;
-    se.source.site := FOwnerName;
+    se.source.site := OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
     se.source.identifier.system := 'urn:ietf:rfc:3986';
     se.source.identifier.value := SystemId;
@@ -1391,7 +1324,7 @@ begin
         for ed in sd.snapshot.elementList do
           for inv in ed.constraintList do
           begin
-            sx := {$IFDEF FHIR3} inv.expression {$ELSE} inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') {$ENDIF};
+            sx := {$IFNDEF FHIR2} inv.expression {$ELSE} inv.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-expression') {$ENDIF};
             if (sx <> '') and not sx.contains('$parent') then
             begin
               inc(t);
@@ -1499,7 +1432,7 @@ function TFHIRDataStore.ResourceTypeKeyForName(name: String): integer;
 begin
   FLock.Lock('ResourceTypeKeyForName');
   try
-    result := FResConfig[name].key;
+    result := ResConfig[name].key;
   finally
     FLock.Unlock;
   end;
@@ -1720,19 +1653,19 @@ begin
 
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR3}, frtCodeSystem {$ENDIF}] then
+    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
       TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
       FValidatorContext.seeResource(resource as TFhirStructureDefinition)
     else if resource.ResourceType = frtQuestionnaire then
       FValidatorContext.seeResource(resource as TFhirQuestionnaire);
     FSubscriptionManager.SeeResource(key, vkey, id, created, resource, conn, reload, session);
-    FQuestionnaireCache.clear(resource.ResourceType, id);
+    QuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
-      FQuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
+      QuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
     if resource.ResourceType = frtClaim then
       FClaimQueue.add(resource.Link);
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     if resource.ResourceType = frtStructureMap then
       FMaps.AddOrSetValue(TFHIRStructureMap(resource).url, TFHIRStructureMap(resource).Link);
     {$ENDIF}
@@ -1767,7 +1700,7 @@ begin
       else if aType = frtStructureDefinition then
         FValidatorContext.Profiles.DropProfile(aType, id);
       FSubscriptionManager.DropResource(key, vkey);
-      FQuestionnaireCache.clear(aType, id);
+      QuestionnaireCache.clear(aType, id);
       for i := FClaimQueue.Count - 1 downto 0 do
         if FClaimQueue[i].id = id then
           FClaimQueue.DeleteByIndex(i);
@@ -2134,8 +2067,8 @@ begin
   try
     inc(FLastResourceKey);
     result := FLastResourceKey;
-    inc(FResConfig[aType].LastResourceId);
-    id := inttostr(FResConfig[aType].LastResourceId);
+    inc(ResConfig[aType].LastResourceId);
+    id := inttostr(ResConfig[aType].LastResourceId);
   finally
     FLock.Unlock;
   end;
@@ -2152,8 +2085,8 @@ begin
     if IsNumericString(id) and StringIsInteger32(id) then
     begin
       i := StrToInt(id);
-      if (i > FResConfig[aType].LastResourceId) then
-        FResConfig[aType].LastResourceId := i;
+      if (i > ResConfig[aType].LastResourceId) then
+        ResConfig[aType].LastResourceId := i;
     end;
   finally
     FLock.Unlock;
@@ -2204,7 +2137,7 @@ begin
     resp.created := NowUTC;
     with resp.identifierList.append do
     begin
-      system := FBases[0] + '/claimresponses';
+      system := Bases[0] + '/claimresponses';
       value := claim.id;
     end;
     resp.request := TFhirReference.Create;
@@ -2222,7 +2155,7 @@ begin
   end;
 end;
 
-{$IFDEF FHIR3}
+{$IFNDEF FHIR2}
 function TFHIRDataStore.getMaps: TAdvMap<TFHIRStructureMap>;
 var
   s : String;
@@ -2382,149 +2315,5 @@ begin
   end;
 end;
 
-{ TQuestionnaireCache }
-
-constructor TQuestionnaireCache.Create;
-begin
-  inherited;
-  FLock := TCriticalSection.Create('TQuestionnaireCache');
-  FQuestionnaires := TAdvMap<TFhirQuestionnaire>.Create;
-  FForms := TAdvStringMatch.Create;
-  FForms.Forced := true;
-  FValueSetDependencies := TDictionary < String, TList < string >>.Create;
-end;
-
-destructor TQuestionnaireCache.Destroy;
-begin
-  FValueSetDependencies.free;
-  FForms.free;
-  FQuestionnaires.free;
-  FLock.free;
-  inherited;
-end;
-
-procedure TQuestionnaireCache.clear;
-begin
-  FLock.Lock('clear');
-  try
-    FQuestionnaires.clear;
-    FForms.clear;
-    FValueSetDependencies.clear;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.clearVS(id: string);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('clear(id)');
-  try
-    if FValueSetDependencies.TryGetValue(id, l) then
-    begin
-      for s in l do
-      begin
-        if FQuestionnaires.ContainsKey(s) then
-          FQuestionnaires.Remove(s);
-        if FForms.ExistsByKey(s) then
-          FForms.DeleteByKey(s);
-      end;
-      FValueSetDependencies.Remove(s);
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.clear(rtype: TFHIRResourceType; id: String);
-var
-  s: String;
-begin
-  s := CODES_TFHIRResourceType[rtype] + '/' + id;
-  FLock.Lock('clear(id)');
-  try
-    if FQuestionnaires.ContainsKey(s) then
-      FQuestionnaires.Remove(s);
-    if FForms.ExistsByKey(s) then
-      FForms.DeleteByKey(s);
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-function TQuestionnaireCache.getForm(rtype: TFHIRResourceType;
-  id: String): String;
-begin
-  FLock.Lock('getForm');
-  try
-    result := FForms[CODES_TFHIRResourceType[rtype] + '/' + id];
-  finally
-    FLock.Unlock;
-  end;
-
-end;
-
-function TQuestionnaireCache.getQuestionnaire(rtype: TFHIRResourceType;
-  id: String): TFhirQuestionnaire;
-begin
-  FLock.Lock('getQuestionnaire');
-  try
-    result := FQuestionnaires[CODES_TFHIRResourceType[rtype] + '/' + id]
-      .Link as TFhirQuestionnaire;
-    // comes off linked - must happen inside the lock
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.putForm(rtype: TFHIRResourceType;
-  id, form: String; dependencies: TList<String>);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('putForm');
-  try
-    FForms[CODES_TFHIRResourceType[rtype] + '/' + id] := form;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
-      begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
-      end;
-      if not l.Contains(id) then
-        l.add(id);
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.putQuestionnaire(rtype: TFHIRResourceType;
-  id: String; q: TFhirQuestionnaire; dependencies: TList<String>);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('putQuestionnaire');
-  try
-    FQuestionnaires[CODES_TFHIRResourceType[rtype] + '/' + id] := q.Link;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
-      begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
-      end;
-      if not l.Contains(id) then
-        l.add(id);
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
 
 end.

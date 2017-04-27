@@ -308,7 +308,9 @@ uses
   DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
   CvxServices in 'CvxServices.pas',
   ACIRServices in 'ACIRServices.pas',
-  ReverseClient in 'ReverseClient.pas';
+  ReverseClient in 'ReverseClient.pas',
+  FHIRStorageService in 'FHIRStorageService.pas',
+  FHIRServerContext in 'FHIRServerContext.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
