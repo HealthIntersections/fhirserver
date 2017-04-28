@@ -112,7 +112,7 @@ Type
       function Revert: HResult; stdcall;
       function LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
       function UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
-      function Stat(out statstg: TStatStg; grfStatFlag: DWord): HResult; stdcall;
+      function Stat(out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; stdcall;
       function Clone(out stm: IStream): HResult; stdcall;
       function Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
       function Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
@@ -246,7 +246,7 @@ Begin
   Result := iCount;
 End;
 
-Function TAdvStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: DWord): HResult;
+Function TAdvStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
 Begin
   // TStreamAdapter.stat does not clear the STATSTG structure.
   // http://qc.embarcadero.com/wc/qcmain.aspx?d=45528
