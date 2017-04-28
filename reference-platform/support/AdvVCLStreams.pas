@@ -112,7 +112,7 @@ Type
       function Revert: HResult; stdcall;
       function LockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
       function UnlockRegion(libOffset: TStreamLargeUInt; cb: TStreamLargeUInt; dwLockType: TStreamDWord): HResult; stdcall;
-      function Stat(out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; stdcall;
+      function Stat(out statstg: TStatStg; grfStatFlag: DWord): HResult; stdcall;
       function Clone(out stm: IStream): HResult; stdcall;
       function Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult; stdcall;
       function Write(pv: Pointer; cb: TStreamFixedUInt; pcbWritten: PStreamFixedUInt): HResult; stdcall;
@@ -274,7 +274,7 @@ End;
 Function TAdvIStreamAdapter.Read(pv: Pointer; cb: TStreamFixedUInt; pcbRead: PStreamFixedUInt): HResult;
 
 Var
-  iReadable : FixedUInt;
+  iReadable : TStreamFixedUInt;
 Begin
   Try
     If pv = Nil Then
