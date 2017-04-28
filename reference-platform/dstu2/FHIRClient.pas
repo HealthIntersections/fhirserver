@@ -684,7 +684,7 @@ begin
         put : indy.Put(url, source, result);
         delete : indy.delete(url);
         options : indy.Options(url);
-{%IFNDEF VER260}    patch : indy.Patch(url, source, result); {%ENDIF}
+{$IFNDEF VER260}    patch : indy.Patch(url, source, result); {$ENDIF}
       else
         raise Exception.Create('Unknown HTTP method '+inttostr(ord(verb)));
       end;

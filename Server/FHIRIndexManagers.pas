@@ -2072,9 +2072,12 @@ function TFhirIndexInformation.GetTargetsByName(types: TArray<String>; name: Str
 var
   i : integer;
   s : String;
+  res : TStringList;
   ok : boolean;
 begin
-  result := [];
+  res := TStringList.Create;
+  try
+    res.Duplicates := dupIgnore;
   for i := 0 to FIndexes.Count - 1 Do
     if SameText(FIndexes[i].Name, name) then
     begin
@@ -2082,7 +2085,12 @@ begin
       for s in types do
         ok := ok or (s = FIndexes[i].ResourceType);
       if ok then
-        result := result + FIndexes[i].TargetTypes;
+          for s in FIndexes[i].TargetTypes do
+            res.Add(s);
+      end;
+    result := res.ToStringArray;
+  finally
+    res.Free;
     end;
 end;
 
@@ -2141,7 +2149,7 @@ begin
         if result = nil then
         begin
           result := FComposites.item[i];
-          oTypes := [FComposites.item[i].FResourceType];
+          oTypes := TArray<String>.create(FComposites.item[i].FResourceType);
         end
         else
           raise Exception.Create('Ambiguous composite reference "'+name+'"');

@@ -871,7 +871,7 @@ begin
     try
       specified.Value := value;
       specified.UnitCode := space;
-      canonical := repository.TerminologyServer.Ucum.getCanonicalForm(specified);
+      canonical := repository.ServerContext.TerminologyServer.Ucum.getCanonicalForm(specified);
       try
         mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
         maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
@@ -963,7 +963,7 @@ begin
     f := true;
     tl := '';
     for a in types do
-      tl := tl+','+inttostr(FRepository.ResConfig[a].key);
+      tl := tl+','+inttostr(FResConfig[a].key);
     if (tl <> '') then
       tl := tl.Substring(1);
     if (tl = '') then
@@ -1085,7 +1085,7 @@ begin
   // firstly, the vs can be a logical reference or a literal reference
   if (vs.StartsWith('valueset/')) then
   begin
-    vso := FRepository.TerminologyServer.getValueSetByUrl(vs);
+    vso := FRepository.ServerContext.TerminologyServer.getValueSetByUrl(vs);
     try
       if vso = nil then
         vs := 'not-found'

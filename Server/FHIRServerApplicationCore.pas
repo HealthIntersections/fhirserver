@@ -67,7 +67,6 @@ Type
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
-    function createStore : TFHIRServerDataStore;
 
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
@@ -538,17 +537,29 @@ begin
   DoStop;
 end;
 
-function TFHIRService.createStore : TFHIRServerDataStore;
-begin
-  result := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString('fhir', 'web', '')), FterminologyServer, FINi, FindCmdLineSwitch('forload'));
-  result.ownername := Fini.readString('admin', 'ownername', '');
-  result.Validate := FIni.ReadBool('fhir', 'validate', true);
-end;
-
 procedure TFHIRService.InitialiseRestServer;
+var
+  ctxt : TFHIRServerContext;
+  store : TFHIRServerDataStore;
 begin
-  FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, TFHIRServerContext.Create(createStore));
-  FWebServer.Start(not FNotServing);
+  store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString('fhir', 'web', '')));
+  try
+    store.Validate := FIni.ReadBool('fhir', 'validate', true);
+    ctxt := TFHIRServerContext.Create(store.Link);
+    try
+      store.ServerContext := ctxt;
+      ctxt.TerminologyServer := FterminologyServer.Link;
+      ctxt.ForLoad := FindCmdLineSwitch('forload');
+      ctxt.ownername := Fini.readString('admin', 'ownername', '');
+      store.Initialise(FIni);
+      FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, ctxt.link);
+      FWebServer.Start(not FNotServing);
+    finally
+      ctxt.free;
+    end;
+  finally
+    store.free;
+  end;
 end;
 
 procedure TFHIRService.InstallDatabase;
@@ -662,10 +673,9 @@ function TFHIRServerDataStore.createOperationContext(lang: String): TFhirOperati
 var
   res : TFhirOperationManager;
 begin
-  res := TFhirOperationManager.Create(lang, self.Link);
+  res := TFhirOperationManager.Create(lang, ServerContext, self.Link);
   try
     res.Connection := DB.GetConnection('Operation');
-    res.OwnerName := OwnerName;
     result := res.Link;
   finally
     res.free;

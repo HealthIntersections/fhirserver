@@ -55,8 +55,7 @@ uses
   {$IFNDEF FHIR2}
   FHIRStructureMapUtilities,
   {$ENDIF}
-  FHIRStorageService,
-  ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
+  FHIRStorageService, FHIRServerContext, ServerUtilities, ServerValidator, QuestionnaireBuilder, SearchProcessor, ClosureManager, AccessControlEngine, MPISearch;
 
 const
   MAGIC_NUMBER = 941364592;
@@ -163,9 +162,9 @@ type
     FOperations : TAdvObjectList;
     FLang : String;
     FTestServer : Boolean;
-    FOwnerName : String;
 
     FSpaces: TFHIRIndexSpaces;
+    FServerContext : TFHIRServerContext;
 
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
@@ -246,7 +245,7 @@ type
     procedure CreateIndexer;
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
   public
-    Constructor Create(lang : String; repository : TFHIRDataStore);
+    Constructor Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRDataStore);
     Destructor Destroy; Override;
     function Link : TFhirOperationManager; overload;
 
@@ -270,7 +269,7 @@ type
 
     property lang : String read FLang write FLang;
     Property TestServer : boolean read FTestServer write FTestServer;
-    Property OwnerName : String read FOwnerName write FOwnerName;
+    Property ServerContext : TFHIRServerContext read FServerContext;
 
     // index maintenance
     procedure clear(a : TFhirResourceTypeSet);
@@ -651,12 +650,13 @@ end;
 
 { TFhirOperationManager }
 
-constructor TFhirOperationManager.Create(lang : String; repository : TFHIRDataStore);
+constructor TFhirOperationManager.Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRDataStore);
 begin
   inherited Create;
   FLang := lang;
+  FServerContext := ServerContext;
   FRepository := repository;
-  FFactory := TFHIRFactory.create(repository.Validator.Context.link, lang);
+  FFactory := TFHIRFactory.create(ServerContext.Validator.Context.link, lang);
   FOperations := TAdvObjectList.create;
 
 
@@ -716,7 +716,7 @@ begin
     for i := 0 to list.Count - 1 do
       list[i].Tags['internal'] := '1';
     {$IFNDEF FHIR2}
-    FRepository.TerminologyServer.declareCodeSystems(list);
+    FRepository.ServerContext.TerminologyServer.declareCodeSystems(list);
     {$ENDIF}
     storeResources(list, roConfig, true);
   finally
@@ -798,7 +798,7 @@ begin
     begin
       mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
       try
-        parser := comp.Create(FRepository.Validator.Context.link, lang);
+        parser := comp.Create(ServerContext.Validator.Context.link, lang);
         try
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
@@ -878,9 +878,9 @@ begin
   b :=  TBytesStream.Create;
   try
     if (xml) then
-      comp := TFHIRXmlComposer.Create(FRepository.Validator.Context.Link, 'en')
+      comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, 'en')
     else
-      comp := TFHIRJsonComposer.Create(FRepository.Validator.Context.Link, 'en');
+      comp := TFHIRJsonComposer.Create(ServerContext.Validator.Context.Link, 'en');
     try
       comp.SummaryOption := summary;
       comp.NoHeader := true;
@@ -969,8 +969,8 @@ begin
     c := ct.telecomList.Append;
     c.system := ContactPointSystemOther;
     c.value := 'http://healthintersections.com.au/';
-    if FRepository.FormalURLPlain <> '' then
-      oConf.url := AppendForwardSlash(FRepository.FormalURLPlainOpen)+'metadata'
+    if ServerContext.FormalURLPlain <> '' then
+      oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
     else
       oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
@@ -985,11 +985,11 @@ begin
     oConf.software.name := 'Reference Server';
     oConf.software.version := SERVER_VERSION;
     oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
-    if FRepository.FormalURLPlainOpen <> '' then
+    if ServerContext.FormalURLPlainOpen <> '' then
     begin
       oConf.implementation_ := TFhirCapabilityStatementImplementation.Create;
-      oConf.implementation_.description := 'FHIR Server running at '+FRepository.FormalURLPlainOpen;
-      oConf.implementation_.url := FRepository.FormalURLPlainOpen;
+      oConf.implementation_.description := 'FHIR Server running at '+ServerContext.FormalURLPlainOpen;
+      oConf.implementation_.url := ServerContext.FormalURLPlainOpen;
     end;
     if assigned(OnPopulateConformance) then
       OnPopulateConformance(self, oConf);
@@ -1030,9 +1030,9 @@ begin
     try
       html.append('<div><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+RELEASE_DATE+'. '+
        'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
-      for a in FRepository.ValidatorContext.allResourceNames do
+      for a in ServerContext.ValidatorContext.allResourceNames do
       begin
-        if FRepository.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
+        if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
         begin
           if a = 'Binary' then
             html.append('<tr><td>'+a+'</td>'+
@@ -1056,42 +1056,42 @@ begin
               end
               else
                 html.append('<td align="center"></td><td align="center"></td>');
-              if FRepository.ResConfig[a].cmdSearch and request.canRead(a) then
+              if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionSearchType;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
-              if FRepository.ResConfig[a].cmdUpdate and request.canWrite(a) then
+              if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionUpdate;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
-              if FRepository.ResConfig[a].cmdHistoryType and request.canRead(a) then
+              if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
-              if FRepository.ResConfig[a].cmdCreate and request.canWrite(a) then
+              if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionCreate;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
-              if FRepository.ResConfig[a].cmdDelete and request.canWrite(a) then
+              if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionDelete;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
               end
               else
                 html.append('<td></td>');
-              if FRepository.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
+              if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
               begin
                 res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
                 html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
@@ -1496,7 +1496,7 @@ begin
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary) values ('+searchKey+', '''+id+''', 0, 2, '+DBGetDate(FConnection.Owner.Platform)+', '+booleanToSQl(false)+')');
 
   if (request.compartments <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FRepository.ResConfig['Patient'].key)+' and Id in ('+request.compartments+'))'
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ServerContext.ResConfig['Patient'].key)+' and Id in ('+request.compartments+'))'
   else
     cmp := '';
 
@@ -1525,7 +1525,7 @@ begin
         begin
           FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
           'from Versions, Ids, Sessions '+
-          'where Ids.ResourceTypeKey = '+inttostr(FRepository.ResConfig[request.ResourceName].key)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
+          'where Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[request.ResourceName].key)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
           title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [request.ResourceName]);
           base := request.baseUrl+''+request.ResourceName+'/_history?';
         end;
@@ -1539,7 +1539,7 @@ begin
         else
         begin
           lt := '';
-          for rn in FRepository.ValidatorContext.allResourceNames do
+          for rn in ServerContext.ValidatorContext.allResourceNames do
             if request.canRead(rn) then
               lt := lt+','+inttostr(FRepository.ResourceTypeKeyForName(rn));
           FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
@@ -1950,7 +1950,7 @@ begin
   else
     s := inttostr(Session.Key);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
-  sp := TSearchProcessor.create(FRepository.ResConfig.Link);
+  sp := TSearchProcessor.create(ServerContext.ResConfig.Link);
   try
     sp.strict := strict;
     sp.typekey := typekey;
@@ -2069,7 +2069,7 @@ begin
           raise Exception.Create('Unknown Resource Search Parameter '''+p[1]+'''');
         if (length(p) = 3) then
         begin
-          sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(Repository.ResConfig[p[2]].key)+')');
+          sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(ServerContext.ResConfig[p[2]].key)+')');
         end
         else
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[0])+'))');
@@ -2086,7 +2086,7 @@ begin
         key2 := FRepository.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
           raise Exception.Create('Unknown Resource Parameter '+p[0]);
-        sel.Add('Ids.ResourceKey in (select IndexEntries.ResourceKey from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and Target in ('+keys.forAll+') and Ids.ResourceKey = IndexEntries.ResourceKey and Ids.ResourceTypeKey = '+inttostr(Repository.ResConfig[p[0]].key)+')');
+        sel.Add('Ids.ResourceKey in (select IndexEntries.ResourceKey from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and Target in ('+keys.forAll+') and Ids.ResourceKey = IndexEntries.ResourceKey and Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[p[0]].key)+')');
       end
       else
         raise Exception.Create('Unable to process include '+s);
@@ -2355,7 +2355,7 @@ begin
     end;
 
 
-    if ok and not check(response, not FRepository.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
       ok := false;
 
 
@@ -2364,7 +2364,7 @@ begin
       key := FRepository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
-      if  (request.IfMatch <> '') or  FRepository.ResConfig[request.ResourceName].versionUpdates then
+      if  (request.IfMatch <> '') or  ServerContext.ResConfig[request.ResourceName].versionUpdates then
       begin
         s := request.IfMatch;
 
@@ -2509,7 +2509,7 @@ begin
       if not FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments) Then
         ok := false;
 
-    if ok and not check(response, not FRepository.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
       ok := false;
 
 
@@ -2518,7 +2518,7 @@ begin
       key := FRepository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
-      if  (request.IfMatch <> '') or  FRepository.ResConfig[request.ResourceName].versionUpdates then
+      if  (request.IfMatch <> '') or  ServerContext.ResConfig[request.ResourceName].versionUpdates then
       begin
         s := request.IfMatch;
 
@@ -2712,8 +2712,8 @@ begin
         ctxt.IsAnyExtensionsAllowed := true;
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
-        FRepository.validator.validate(ctxt, request.Source, request.PostFormat, nil);
-        response.outcome := FRepository.validator.describe(ctxt);
+        ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, nil);
+        response.outcome := ServerContext.Validator.describe(ctxt);
       finally
         ctxt.Free;
       end;
@@ -2725,8 +2725,8 @@ begin
         ctxt.IsAnyExtensionsAllowed := true;
         ctxt.ResourceIdRule := risOptional;
         ctxt.OperationDescription := opDesc;
-        FRepository.validator.validate(ctxt, request.Resource, nil);
-        response.outcome := FRepository.validator.describe(ctxt);
+        ServerContext.Validator.validate(ctxt, request.Resource, nil);
+        response.outcome := ServerContext.Validator.describe(ctxt);
       finally
         ctxt.Free;
       end;
@@ -2823,7 +2823,7 @@ var
   cmp : String;
 begin
   if (compartments <> '') then
-    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FRepository.ResConfig['Patient'].key)+' and Id in ('+compartments+'))'
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ServerContext.ResConfig['Patient'].key)+' and Id in ('+compartments+'))'
   else
     cmp := '';
 
@@ -2874,7 +2874,7 @@ var
   itype : integer;
   exists : boolean;
 begin
-  iType := FRepository.ResConfig[aType].key;// FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+CODES_TFHIRResourceType[aType]+'''');
+  iType := ServerContext.ResConfig[aType].key;// FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+CODES_TFHIRResourceType[aType]+'''');
   result := iType > 0;
   if result then
   begin
@@ -3052,7 +3052,7 @@ begin
       for cr in crs do
       begin
         names.add(cr.Name);
-        result := check(response, not Repository.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
+        result := check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
                   check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule);
       end;
       if result then
@@ -3060,7 +3060,7 @@ begin
         begin
           for sp in cr.SearchParameters do
             FRepository.Indexes.Indexes.add(cr.Name, sp);
-          Repository.ValidatorContext.registerCustomResource(cr);
+          ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
       ig.Free;
@@ -3091,7 +3091,7 @@ begin
         while FConnection.FetchNext do
         begin
           s := FConnection.ColBlobByName['JsonContent'];
-          parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+          parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
           try
             result.Add(parser.resource.Link);
           finally
@@ -3129,7 +3129,7 @@ begin
       for cr in crs do
       begin
         names.Add(cr.Name);
-        result := result and check(response, not Repository.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
+        result := result and check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
                   check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule);
       end;
       if result then
@@ -3137,7 +3137,7 @@ begin
         begin
           for sp in cr.SearchParameters do
             FRepository.Indexes.Indexes.add(cr.Name, sp);
-          Repository.ValidatorContext.registerCustomResource(cr);
+          ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
       ig.Free;
@@ -3387,9 +3387,9 @@ begin
   if FIndexer = nil then
   begin
     FSpaces := TFHIRIndexSpaces.Create(FConnection);
-    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, FRepository.ValidatorContext.Link, FRepository.ResConfig.Link);
-    FIndexer.TerminologyServer := FRepository.TerminologyServer.Link;
-    FIndexer.Bases := FRepository.Bases;
+    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
+    FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
+    FIndexer.Bases := ServerContext.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
   end;
 end;
@@ -3453,7 +3453,7 @@ begin
     ''#13#10+
     '  &copy; HL7.org 2011-2013'#13#10+
     '  &nbsp;'#13#10+
-    '  '+FOwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
+    '  '+ServerContext.OwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
     '  &nbsp;'#13#10+
     '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+#13#10;
 
@@ -3514,7 +3514,7 @@ begin
   p := TParseMap.create(params);
   result := TMatchingResourceList.Create;
   try
-    sp := TSearchProcessor.create(FRepository.ResConfig.Link);
+    sp := TSearchProcessor.create(ServerContext.ResConfig.Link);
     try
       sp.typekey := key;
       sp.type_ := resourceName;
@@ -3601,15 +3601,15 @@ begin
       s := s.subString(0, s.indexOf('?'));
     sParts := s.Split(['/']);
     aType := sParts[0];
-    if not StringArrayExistsSensitive(CODES_TFhirResourceType, atype) and Not FRepository.ValidatorContext.hasCustomResource(aType) then
+    if not StringArrayExistsSensitive(CODES_TFhirResourceType, atype) and Not ServerContext.ValidatorContext.hasCustomResource(aType) then
       raise Exception.Create('Unknown resource type '+sParts[0]+' in deletion URL');
   end;
 
-  if (entry.request <> nil) and (entry.request.method = HttpVerbDELETE) and not FRepository.ResConfig[aType].cmdDelete then
+  if (entry.request <> nil) and (entry.request.method = HttpVerbDELETE) and not ServerContext.ResConfig[aType].cmdDelete then
     Raise Exception.create('Deleting Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions (entry '+inttostr(index+1)+')');
 
 
-  if not FRepository.ResConfig[aType].cmdUpdate and not FRepository.ResConfig[aType].cmdCreate then
+  if not ServerContext.ResConfig[aType].cmdUpdate and not ServerContext.ResConfig[aType].cmdCreate then
     Raise Exception.create('Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions (entry '+inttostr(index+1)+')');
 
   if (entry.resource <> nil) and  (entry.resource.id.Contains('[x]')) then
@@ -3782,7 +3782,7 @@ begin
       else
       begin
         baseok := false;
-        for b in FRepository.bases do
+        for b in ServerContext.bases do
           if entry.fullUrl.StartsWith(b) then
             baseOk := true;
       end;
@@ -3845,9 +3845,9 @@ begin
       if (j = -1) and (s.endsWith('html')) then
         j := ids.IndexByHtml(s);
       k := 0;
-      while (j = -1) and (k < FRepository.Bases.Count - 1) do
+      while (j = -1) and (k < serverContext.Bases.Count - 1) do
       begin
-        j := ids.IndexByName(FRepository.Bases[k]+s);
+        j := ids.IndexByName(ServerContext.Bases[k]+s);
         inc(k);
       end;
 
@@ -3909,9 +3909,9 @@ begin
 
       j := ids.IndexByName(url);
       k := 0;
-      while (j = -1) and (k < FRepository.Bases.Count - 1) do
+      while (j = -1) and (k < ServerContext.Bases.Count - 1) do
       begin
-        j := ids.IndexByName(FRepository.Bases[k]+ref.reference);
+        j := ids.IndexByName(ServerContext.Bases[k]+ref.reference);
         inc(k);
       end;
       if (j <> -1) then
@@ -4215,7 +4215,7 @@ begin
           request.PostFormat := ffXml;
           if not context.upload and FRepository.validate and (request.resource <> nil) then
           begin
-            comp := TFHIRXmlComposer.Create(FRepository.Validator.Context.Link, 'en');
+            comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, 'en');
             mem := TAdvMemoryStream.Create;
             m := TVCLStream.Create;
             try
@@ -4323,19 +4323,19 @@ function TFhirOperationManager.opAllowed(resource : string; command: TFHIRComman
 begin
   case command of
     fcmdUnknown : result := false;
-    fcmdRead : result := FRepository.ResConfig[resource].Supported;
-    fcmdVersionRead : result := FRepository.ResConfig[resource].Supported;
-    fcmdUpdate : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdUpdate;
-    fcmdDelete : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdDelete;
-    fcmdHistoryInstance : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdHistoryInstance;
-    fcmdHistoryType : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdHistoryType;
+    fcmdRead : result := ServerContext.ResConfig[resource].Supported;
+    fcmdVersionRead : result := ServerContext.ResConfig[resource].Supported;
+    fcmdUpdate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdUpdate;
+    fcmdDelete : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdDelete;
+    fcmdHistoryInstance : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdHistoryInstance;
+    fcmdHistoryType : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdHistoryType;
     fcmdHistorySystem : result := FRepository.SupportSystemHistory;
-    fcmdValidate : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdValidate;
-    fcmdSearch : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdSearch;
-    fcmdCreate : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdCreate;
+    fcmdValidate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdValidate;
+    fcmdSearch : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdSearch;
+    fcmdCreate : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdCreate;
     fcmdConformanceStmt : result := true;
     fcmdUpload, fcmdTransaction : result := FRepository.SupportTransaction;
-    fcmdOperation : result := FRepository.ResConfig[resource].Supported and FRepository.ResConfig[resource].cmdOperation;
+    fcmdOperation : result := ServerContext.ResConfig[resource].Supported and ServerContext.ResConfig[resource].cmdOperation;
   else
     result := false;
   end;
@@ -4349,7 +4349,7 @@ end;
 //  result := frtNull;
 //  b := false;
 //  for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-//    if  FRepository.ResConfig[a].key = key then
+//    if  ServerContext.ResConfig[a].key = key then
 //    begin
 //      result := a;
 //      b := true;
@@ -4388,7 +4388,7 @@ var
 begin
   mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
   try
-    parser := comp.Create(FRepository.Validator.Context.link, lang);
+    parser := comp.Create(ServerContext.Validator.Context.link, lang);
     try
       parser.source := mem;
       parser.ParserPolicy := xppDrop;
@@ -4442,11 +4442,11 @@ begin
   base := context.baseUrl;
   if id.StartsWith(base) then
     id := id.Substring(base.Length)
-  else for b in FRepository.Bases do
+  else for b in ServerContext.Bases do
     if id.StartsWith(b) then
       id := id.Substring(b.Length);
   aType := '';
-  for a in FRepository.ValidatorContext.allResourceNames do
+  for a in ServerContext.ValidatorContext.allResourceNames do
     if id.startsWith(a + '/') then
     begin
       aType:= a;
@@ -4463,7 +4463,7 @@ begin
       if FConnection.FetchNext then
       begin
         s := FConnection.ColBlobByName['JsonContent'];
-        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := TResourceWithReference.Create(id, parser.resource.Link);
         finally
@@ -4675,7 +4675,7 @@ var
 //        finally
 //          profile.free;
 //        end;
-//        op := FRepository.validator.validateInstance(nil, response.Resource, 'Produce Questionnaire', nil);
+//        op := ServerContext.Validator.validateInstance(nil, response.Resource, 'Produce Questionnaire', nil);
 //        try
 //          if (op.hasErrors) then
 //          begin
@@ -4733,7 +4733,7 @@ begin
         raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+    parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
     try
       result := parser.resource.Link as TFHIRResource;
       try
@@ -4770,7 +4770,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result.Add(parser.resource.Link);
         finally
@@ -4796,7 +4796,7 @@ var
 begin
   if id.StartsWith(base) and (base <> '') then
     id := id.Substring(base.Length)
-  else for b in FRepository.Bases do
+  else for b in ServerContext.Bases do
     if id.StartsWith(b) then
       id := id.Substring(b.Length);
   if id.startsWith(aType+'/') then
@@ -4812,7 +4812,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4842,7 +4842,7 @@ begin
     begin
       needSecure := FConnection.ColIntegerByName['Secure'] = 1;
       s := FConnection.ColBlobByName['JsonContent'];
-      parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+      parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
       try
         result := parser.resource.Link;
       finally
@@ -4876,9 +4876,9 @@ begin
     raise Exception.Create('Unable to find contained resource '+url);
   end;
 
-  for i := 0 to FRepository.Bases.Count - 1 do
-    if url.StartsWith(FRepository.Bases[i]) then
-      url := url.Substring(FRepository.Bases[i].Length);
+  for i := 0 to ServerContext.Bases.Count - 1 do
+    if url.StartsWith(ServerContext.Bases[i]) then
+      url := url.Substring(ServerContext.Bases[i].Length);
 
   if (url.StartsWith('http://') or url.StartsWith('https://')) then
     raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'Cannot resolve external reference: '+url, 404, IssueTypeNotFound);
@@ -4886,13 +4886,13 @@ begin
   parts := url.Split(['/']);
   if length(parts) = 2 then
   begin
-    if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not FRepository.ValidatorContext.hasCustomResource(parts[0]) then
+    if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not ServerContext.ValidatorContext.hasCustomResource(parts[0]) then
       raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
     rType := parts[0];
     id := parts[1];
   end else if (length(parts) = 4) and (parts[2] = '_history') then
   begin
-    if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not FRepository.ValidatorContext.hasCustomResource(parts[0]) then
+    if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not ServerContext.ValidatorContext.hasCustomResource(parts[0]) then
       raise ERestfulException.create('TFhirOperationManager', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
     rType := parts[0];
     id := parts[1];
@@ -4914,7 +4914,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(FRepository.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -5094,7 +5094,7 @@ begin
     se.Tag := se.event.dateTime.Link;
 
     se.source := TFhirAuditEventSource.create;
-    se.source.site := FOwnerName;
+    se.source.site := ServerContext.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
     se.source.identifier.value := FRepository.SystemId;
     se.source.identifier.system := 'urn:ietf:rfc:3986';
@@ -5174,7 +5174,7 @@ begin
     Connection.StartTransact;
     try
       // cut us off from the external request
-      request := TFHIRRequest.create(FRepository.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
+      request := TFHIRRequest.create(ServerContext.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
       response := TFHIRResponse.create;
       try
         for i := 0 to list.count - 1 do
@@ -5259,7 +5259,7 @@ begin
       begin
         tags := TFHIRTagList.create;
         try
-          parser := MakeParser(FRepository.Validator.Context, 'en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
+          parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -5297,7 +5297,7 @@ var
   parts : TArray<String>;
   list : TMatchingResourceList;
 begin
-  for s in FRepository.Bases do
+  for s in ServerContext.Bases do
     if url.StartsWith(s) then
       url := url.Substring(s.Length);
   if url.StartsWith('/') then
@@ -5396,13 +5396,13 @@ begin
     r := request.Resource as TFhirDomainResource;
     if (r <> nil) and ((r.text = nil) or (r.text.div_ = nil)) then
     begin
-      profile := FRepository.ValidatorContext.Profiles.ProfileByType[r.ResourceType].Link;
+      profile := ServerContext.ValidatorContext.Profiles.ProfileByType[r.ResourceType].Link;
       try
         if profile = nil then
           r.text := nil
         else
         begin
-          gen := TNarrativeGenerator.Create('', FRepository.ValidatorContext.Profiles.Link, FRepository.LookupCode, LookupReference, request.Link);
+          gen := TNarrativeGenerator.Create('', ServerContext.ValidatorContext.Profiles.Link, FRepository.LookupCode, LookupReference, request.Link);
           try
             gen.generate(r, profile);
           finally
@@ -5447,7 +5447,7 @@ end;
 //    result.source := TFhirMessageHeaderSource.create;
 //    result.source.endpoint := baseUrl+'/mailbox';
 //    result.source.name := 'Health Intersections';
-//    result.source.software := FOwnerName;
+//    result.source.software := ServerContext.OwnerName;
 //    result.source.version := FHIR_GENERATED_VERSION;
 //    result.source.contact := FFactory.makeContactPoint('email', 'grahame@healthintersections.com.au', '');
 //    result.link;
@@ -5506,7 +5506,7 @@ var
   utc : TDateAndTime;
   context : TFHIRValidatorContext;
 begin
-  context := FRepository.Validator.AcquireContext;
+  context := ServerContext.Validator.AcquireContext;
   try
     claim := GetResourceFrombundle(inbundle, incoming.dataList[0]) as TFhirClaim;
     id := MessageCreateResource(context, request, claim);
@@ -5532,7 +5532,7 @@ begin
       rem.free;
     end;
   finally
-    FRepository.Validator.YieldContext(context);
+    ServerContext.Validator.YieldContext(context);
   end;
 end;
 
@@ -5626,7 +5626,7 @@ begin
   end;
   if (resource is TFHIRStructureDefinition) then
   begin
-    if FRepository.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
+    if ServerContext.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
       raise Exception.Create('Cannot update a structure definition that is in use as a custom resource');
   end;
 end;
@@ -5641,7 +5641,7 @@ begin
   end;
   if (resource is TFHIRStructureDefinition) then
   begin
-    if FRepository.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
+    if ServerContext.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
       raise Exception.Create('Cannot delete a structure definition that is in use as a custom resource');
   end;
 end;
@@ -6092,7 +6092,7 @@ begin
           if id <> '' then
           begin
             fid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-            questionnaire := manager.FRepository.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+            questionnaire := manager.ServerContext.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
             questionnaire.checkNoImplicitRules('QuestionnaireGeneration', 'questionnaire');
             questionnaire.checkNoModifiers('QuestionnaireGeneration', 'questionnaire');
           end
@@ -6113,11 +6113,11 @@ begin
                 builder.Context := request.Link;
                 builder.onLookupReference := manager.LookupReference;
                 builder.QuestionnaireId := fid;
-                builder.Profiles := manager.FRepository.ValidatorContext.Profiles.Link;
+                builder.Profiles := manager.ServerContext.ValidatorContext.Profiles.Link;
                 builder.build;
                 questionnaire := builder.questionnaire.Link;
                 if id <> '' then
-                  manager.FRepository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
+                  manager.ServerContext.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
               finally
                 builder.Free;
               end;
@@ -6138,8 +6138,8 @@ begin
           ctxt.ResourceIdRule := risOptional;
           ctxt.IsAnyExtensionsAllowed := true;
           ctxt.OperationDescription := 'Produce Questionnaire';
-          manager.FRepository.validator.validate(ctxt, response.Resource);
-          op := manager.FRepository.validator.describe(ctxt);
+          manager.ServerContext.Validator.validate(ctxt, response.Resource);
+          op := manager.ServerContext.Validator.describe(ctxt);
         finally
           ctxt.Free;
         end;
@@ -6229,7 +6229,7 @@ begin
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
-            else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
+            else if not manager.ServerContext.TerminologyServer.isKnownValueSet(url, vs) then
               vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
@@ -6252,7 +6252,7 @@ begin
             offset := StrToIntDef(params.str['offset'], 0);
             limit := StrToIntDef(params.str['_limit'], 0);
 
-            dst := manager.FRepository.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
+            dst := manager.ServerContext.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
             try
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -6347,7 +6347,7 @@ begin
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.FRepository.TerminologyServer.lookupCode(req.coding, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            manager.ServerContext.TerminologyServer.lookupCode(req.coding, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -6442,7 +6442,7 @@ begin
           resp := TFHIRComposeOpResponse.Create;
           try
             try
-              manager.FRepository.TerminologyServer.composeCode(req, resp);
+              manager.ServerContext.TerminologyServer.composeCode(req, resp);
               response.Body := '';
               response.LastModifiedDate := now;
               response.Resource := resp.asParams;
@@ -6552,7 +6552,7 @@ begin
           resp := TFHIRSubsumesOpResponse.Create;
           try
             try
-              resp.outcome := manager.FRepository.TerminologyServer.subsumes(cs, req.codingA, req.codingB);
+              resp.outcome := manager.ServerContext.TerminologyServer.subsumes(cs, req.codingA, req.codingB);
               response.Resource := resp.asParams;
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -6814,7 +6814,7 @@ begin
       begin
         profiles := TValidationProfileSet.create(profile);
         try
-          manager.FRepository.validator.validate(ctxt, request.Source, request.PostFormat, profiles)
+          manager.ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
         finally
           profiles.Free;
         end;
@@ -6825,12 +6825,12 @@ begin
           request.resource := manager.GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
         profiles := TValidationProfileSet.create(profile);
         try
-          manager.FRepository.validator.validate(ctxt, request.Resource, profiles);
+          manager.ServerContext.Validator.validate(ctxt, request.Resource, profiles);
         finally
           profiles.Free;
         end;
       end;
-      outcome := manager.FRepository.validator.describe(ctxt);
+      outcome := manager.ServerContext.Validator.describe(ctxt);
     finally
       ctxt.Free;
     end;
@@ -6928,7 +6928,7 @@ begin
             end
             else if params.hasParameter('identifier') then
             begin
-              if not manager.FRepository.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
+              if not manager.ServerContext.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
                 vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], false, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
@@ -7000,7 +7000,7 @@ begin
               profile := buildExpansionProfile(request, manager, params);
               try
                 try
-                  response.resource := manager.FRepository.TerminologyServer.validate(vs, coded, profile, abstractOk);
+                  response.resource := manager.ServerContext.TerminologyServer.validate(vs, coded, profile, abstractOk);
                 except
                   on e : Exception do
                   begin
@@ -7237,7 +7237,7 @@ begin
       end
       else
       begin
-        url := manager.FRepository.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        url := manager.ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
         exists := false;
         for entry in bundle.entryList do
           if entry.fullUrl = url then
@@ -7246,7 +7246,7 @@ begin
         begin
           entry := bundle.entryList.Append;
           entry.resource := res.Link;
-          entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+          entry.fullUrl := manager.ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
         end;
       end
     end
@@ -7320,7 +7320,7 @@ begin
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := NowUTC;
-//            bundle.base := manager.FRepository.FormalURLPlain;
+//            bundle.base := manager.ServerContext.FormalURLPlain;
             {$IFNDEF FHIR2}
             bundle.identifier := TFhirIdentifier.Create;
             bundle.identifier.system := 'urn:ietf:rfc:3986';
@@ -7328,7 +7328,7 @@ begin
             {$ENDIF}
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
-            entry.fullUrl := manager.FRepository.FormalURLPlainOpen+'/Composition/'+composition.id;
+            entry.fullUrl := manager.ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
             addResource(manager, request.secure, bundle, composition, composition.subject, true, request.compartments);
             addSections(manager, request.secure, bundle, composition, composition.sectionList, request.compartments);
 
@@ -7546,9 +7546,9 @@ begin
           // we have to find the right concept map
           // it doesn't matter whether the value sets are actually defined or not
           if request.id <> '' then
-            cm := manager.FRepository.TerminologyServer.getConceptMapById(request.id)
+            cm := manager.ServerContext.TerminologyServer.getConceptMapById(request.id)
           else
-            cm := manager.FRepository.TerminologyServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
+            cm := manager.ServerContext.TerminologyServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
           if cm = nil then
             raise Exception.Create('Unable to find concept map to use');
           try
@@ -7573,7 +7573,7 @@ begin
             else
               raise Exception.Create('Unable to find code to translate (coding | codeableConcept | code');
             try
-              response.resource := manager.FRepository.TerminologyServer.translate(cm, coded.codingList[0]);
+              response.resource := manager.ServerContext.TerminologyServer.translate(cm, coded.codingList[0]);
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
@@ -7673,22 +7673,22 @@ begin
         sdParam.checkNoModifiers('GenerateSnapshot', 'profile');
         if sdParam.baseDefinition <> '' then
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.baseDefinition, sdBase) then
+          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.baseDefinition, sdBase) then
             raise Exception.Create('StructureDefinition base profile "'+sdParam.baseDefinition+'" not found');
         end
         else if params.hasParameter('base') then
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, params.str['base'], sdBase) then
+          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, params.str['base'], sdBase) then
             raise Exception.Create('Nominated base profile "'+params.str['base']+'" not found');
         end
         else
         begin
-          if not manager.Repository.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
+          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
             raise Exception.Create('Implicit base definition "'+sdBase.baseDefinition+'" not found');
         end;
 
         op := TFhirOperationOutcome.Create;
-        utils := TProfileUtilities.create(manager.Repository.ValidatorContext.link, op.issueList.Link);
+        utils := TProfileUtilities.create(manager.ServerContext.ValidatorContext.link, op.issueList.Link);
         try
           try
             utils.generateSnapshot(sdBase, sdParam, sdParam.url, sdParam.name);
@@ -7919,7 +7919,7 @@ begin
     raise Exception.Create('No Code found for terminology-info');
 
   if (id.type_ <> nil) then
-    manager.FRepository.TerminologyServer.getCodeView(id.type_, resp);
+    manager.ServerContext.TerminologyServer.getCodeView(id.type_, resp);
 
   if (id.system <> '') then
   begin
@@ -7936,7 +7936,7 @@ begin
 
   for card in resp.cards do
   begin
-    card.sourceLabel := manager.FRepository.OwnerName;
+    card.sourceLabel := manager.ServerContext.OwnerName;
     card.sourceURL := request.baseUrl;
     card.indicator := 'info';
   end;
@@ -7969,12 +7969,12 @@ begin
   if code = nil then
     raise Exception.Create('No Code found for terminology-info');
   if code is TFhirCoding then
-    manager.FRepository.TerminologyServer.getCodeView(code as TFHIRCoding, resp)
+    manager.ServerContext.TerminologyServer.getCodeView(code as TFHIRCoding, resp)
   else
-    manager.FRepository.TerminologyServer.getCodeView(code as TFHIRCodeableConcept, resp);
+    manager.ServerContext.TerminologyServer.getCodeView(code as TFHIRCodeableConcept, resp);
   for card in resp.cards do
   begin
-    card.sourceLabel := manager.FRepository.OwnerName;
+    card.sourceLabel := manager.ServerContext.OwnerName;
     card.sourceURL := request.baseUrl;
     card.indicator := 'info';
   end;
@@ -8032,7 +8032,7 @@ begin
               card.sourceURL := flag.author.reference;
             end;
             if card.sourceLabel = '' then
-              card.sourceLabel := manager.FRepository.OwnerName;
+              card.sourceLabel := manager.ServerContext.OwnerName;
             if card.sourceURL = '' then
               card.sourceURL := request.baseUrl;
             if flag.code.text <> '' then
@@ -8094,12 +8094,12 @@ begin
 
           template := nil;
           try
-            builder := TProfileUtilities.create(manager.FRepository.ValidatorContext.Link, nil);
+            builder := TProfileUtilities.create(manager.ServerContext.ValidatorContext.Link, nil);
             try
               template := builder.populateByProfile(profile);
               if template is TFhirDomainResource then
               begin
-                narr := TFHIRNarrativeGenerator.create(manager.FRepository.ValidatorContext.Link);
+                narr := TFHIRNarrativeGenerator.create(manager.ServerContext.ValidatorContext.Link);
                 try
                   narr.generate(template as TFhirDomainResource);
                 finally
@@ -8175,7 +8175,7 @@ begin
       r.checkNoImplicitRules('GenerateNarrative', 'resource');
       TFhirDomainResource(r).checkNoModifiers('GenerateNarrative', 'resource');
       (r as TFhirDomainResource).text := nil;
-      narr := TFHIRNarrativeGenerator.create(manager.FRepository.ValidatorContext.Link);
+      narr := TFHIRNarrativeGenerator.create(manager.ServerContext.ValidatorContext.Link);
       try
         narr.generate(r as TFhirDomainResource);
       finally
@@ -8274,7 +8274,7 @@ begin
           v := params.str['version'];
           if (v = '') and not params.hasParameter('concept') then
           begin
-            v := manager.FRepository.TerminologyServer.InitClosure(n);
+            v := manager.ServerContext.TerminologyServer.InitClosure(n);
             map := TFhirConceptMap.Create;
             response.resource := map.Link;
             map.id := NewGuidId;
@@ -8289,7 +8289,7 @@ begin
           end
           else
           begin
-            if not manager.FRepository.TerminologyServer.UseClosure(n, cm) then
+            if not manager.ServerContext.TerminologyServer.UseClosure(n, cm) then
               errorResp(404, StringFormat('closure name ''%s'' not known', [n]))
             else if (v <> '') and params.hasParameter('concept') then
              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
@@ -8427,10 +8427,10 @@ begin
     end
     else if request.Id = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and manager.FRepository.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and manager.ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
         ok := false
       else
-        manager.Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+        manager.Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
     else if request.SubId = '' then
     begin
@@ -8438,7 +8438,7 @@ begin
          Ok := false
       else
         manager.Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where ResourceVersionKey in (select MostRecent from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where ResourceVersionKey in (select MostRecent from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
     else
     begin
@@ -8446,7 +8446,7 @@ begin
         ok := false
       else
         manager.FConnection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and ResourceKey in (select ResourceKey from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.FRepository.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code';
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and ResourceKey in (select ResourceKey from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code';
     end;
 
     if ok then
@@ -8905,7 +8905,7 @@ begin
       manager.FConnection.Terminate;
       parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
       try
-        diff := TDifferenceEngine.create(manager.FRepository.ValidatorContext.Link);
+        diff := TDifferenceEngine.create(manager.ServerContext.ValidatorContext.Link);
         try
           response.Resource := diff.generateDifference(parser.resource, request.Resource, html);
           response.HTTPCode := 200;
@@ -8974,7 +8974,7 @@ begin
     request.Session.TestScript.id := inttostr(request.Session.Key);
     request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.Name;
     request.Session.TestScript.status := PublicationStatusActive;
-    request.Session.TestScript.publisher := manager.Repository.OwnerName;
+    request.Session.TestScript.publisher := manager.ServerContext.OwnerName;
     request.Session.TestScript.date := NowLocal;
     response.HTTPCode := 200;
     response.Resource := request.Session.TestScript.Link;
@@ -9064,7 +9064,7 @@ begin
             try
               outcome := manager.FFactory.makeByName(map.targetType);
               try
-                utils := TFHIRStructureMapUtilities.Create(manager.FRepository.Validator.Context.link, lib.Link, TServerTransformerServices.create(manager.FRepository.link));
+                utils := TFHIRStructureMapUtilities.Create(manager.ServerContext.Validator.Context.link, lib.Link, TServerTransformerServices.create(manager.FRepository.link));
                 try
                   try
                     utils.transform(nil, params.content, map, outcome);
@@ -9075,7 +9075,7 @@ begin
                     if outcome is TFHIRResource then
                       response.Resource := (outcome as TFHIRResource).link
                     else
-                      response.Resource := TFHIRCustomResource.createFromBase(manager.FRepository.ValidatorContext, outcome);
+                      response.Resource := TFHIRCustomResource.createFromBase(manager.ServerContext.ValidatorContext, outcome);
                   except
                     on e : exception do
                       manager.check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
@@ -9203,7 +9203,7 @@ begin
             cfg := TFHIRResourceConfig.Create();
             cfg.name := name;
             cfg.key := key;
-            manager.Repository.ResConfig.Add(name, cfg);
+            manager.ServerContext.ResConfig.Add(name, cfg);
           end;
         end;
 

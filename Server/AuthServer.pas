@@ -17,7 +17,7 @@ uses
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
-  FHIRStorageService, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
+  FHIRServerContext, FHIRStorageService, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
@@ -39,7 +39,7 @@ type
   private
     FLock : TCriticalSection;
     FIni : TIniFile;
-    FFhirStore : TFHIRStorageService;
+    FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
     FFilePath : String;
     FSSLPort : String;
@@ -74,7 +74,7 @@ type
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
-    procedure SetFhirStore(const Value: TFHIRStorageService);
+    procedure SetServerContext(const Value: TFHIRServerContext);
     function BuildLoginList(id : String) : String;
     function AltFile(path: String): String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
@@ -90,7 +90,7 @@ type
 
     procedure setCookie(response: TIdHTTPResponseInfo; const cookiename, cookieval, domain, path: String; expiry: TDateTime; secure: Boolean);
 
-    property FHIRStore : TFHIRStorageService read FFhirStore write SetFhirStore;
+    property ServerContext : TFHIRServerContext read FServerContext write SetServerContext;
     property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
     property FacebookAppid : String read FFacebookAppid;
@@ -146,7 +146,7 @@ destructor TAuth2Server.Destroy;
 begin
   FLoginTokens.Free;;
   FLock.Free;
-  FFhirStore.Free;
+  FServerContext.Free;
   FIni.Free;
   FSCIMServer.free;
   inherited;
@@ -278,10 +278,10 @@ end;
 
 
 
-procedure TAuth2Server.SetFhirStore(const Value: TFHIRStorageService);
+procedure TAuth2Server.SetServerContext(const Value: TFHIRServerContext);
 begin
-  FFhirStore.Free;
-  FFhirStore := Value;
+  FServerContext.Free;
+  FServerContext := Value;
 end;
 
 function TAuth2Server.TokenPath: String;
@@ -315,7 +315,7 @@ begin
     raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
   id := newguidid;
-  conn := FFhirStore.DB.GetConnection('oauth2');
+  conn := ServerContext.Storage.DB.GetConnection('oauth2');
   try
     conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');
     conn.release;
@@ -352,7 +352,7 @@ var
 begin
   variables.add('userlevel', '');
   variables.add('userinfo', '');
-  security := TFHIRSecurityRights.create(FFhirStore.ValidatorContext.Link, user, scope, true);
+  security := TFHIRSecurityRights.create(ServerContext.ValidatorContext.Link, user, scope, true);
   try
     if security.canAdministerUsers then
       variables.add('useradmin', '<input type="checkbox" name="useradmin" value="1"/> Administer Users')
@@ -445,7 +445,7 @@ begin
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   try
-    conn := FFhirStore.DB.GetConnection('OAuth2');
+    conn := ServerContext.Storage.DB.GetConnection('OAuth2');
     try
       conn.SQL := 'select Client, Name, Scope, Redirect, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 2 and OAuthLogins.SessionKey = Sessions.SessionKey';
       conn.Prepare;
@@ -498,7 +498,7 @@ begin
           conn.Terminate;
 
           session.scopes := scopes.CommaText.Replace(',', ' ');
-          FHIRStore.RegisterConsentRecord(session);
+          ServerContext.Storage.RegisterConsentRecord(session);
           response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
         finally
           scopes.Free;
@@ -597,7 +597,7 @@ begin
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
 
-  conn := FFhirStore.DB.GetConnection('OAuth2');
+  conn := ServerContext.Storage.DB.GetConnection('OAuth2');
   try
     if params.VarExists('id') and params.VarExists('username') and params.VarExists('password') then
     begin
@@ -611,7 +611,7 @@ begin
       if conn.CountSQL('select count(*) from OAuthLogins where Id = '''+SQLWrapString(id)+''' and Status = 1') <> 1 then
         raise Exception.Create('State failed - no login session active');
 
-      session := FFhirStore.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
+      session := ServerContext.Storage.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -628,7 +628,7 @@ begin
       uid := params.GetVar('userid');
       name := params.GetVar('fullName');
       expires := inttostr(60 * 24 * 10); // 10 days
-      session := FFhirStore.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
+      session := ServerContext.Storage.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -666,7 +666,7 @@ begin
       end;
       if not ok then
         raise Exception.Create('Processing the login failed ('+msg+')');
-      session := FFhirStore.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
+      session := ServerContext.Storage.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -746,7 +746,7 @@ begin
   domain := request.Host;
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
-  conn := FFhirStore.DB.GetConnection('OAuth2');
+  conn := ServerContext.Storage.DB.GetConnection('OAuth2');
   try
     if params.getVar('form') <> '' then
     begin
@@ -761,7 +761,7 @@ begin
 
       // update the login record
       // create a session
-      session := FFhirStore.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
+      session := ServerContext.Storage.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(token)+'''');
       finally
@@ -771,7 +771,7 @@ begin
     end
     else if params.getVar('id') <> '' then
     begin
-      if not FFhirStore.GetSessionByToken(params.GetVar('id'), session) then
+      if not ServerContext.Storage.GetSessionByToken(params.GetVar('id'), session) then
         raise Exception.Create('State Error (1)');
       try
         if conn.CountSQL('Select Count(*) from OAuthLogins where Status = 2 and SessionKey = '+inttostr(session.Key)) <> 1 then
@@ -842,10 +842,10 @@ begin
       // now, check the code
       errCode := 'invalid_request';
       code := checkNotEmpty(params.getVar('code'), 'code');
-      if not FFhirStore.GetSessionByToken(code, session) then // todo: why is session passed in too?
+      if not ServerContext.Storage.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise Exception.Create('Authorization Code not recognized');
       try
-        conn := FFhirStore.DB.GetConnection('OAuth2');
+        conn := ServerContext.Storage.DB.GetConnection('OAuth2');
         try
           conn.SQL := 'select Client, Redirect, Scope from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
           conn.prepare;
@@ -961,7 +961,7 @@ begin
       if FIni.ReadString(clientId, 'secret', '') <> clientSecret then
         raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
 
-      if not FFhirStore.GetSession(token, session, check) then
+      if not ServerContext.Storage.GetSession(token, session, check) then
       begin
         json := TJsonWriter.create;
         try

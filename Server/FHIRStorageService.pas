@@ -7,35 +7,12 @@ uses
   KCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
   KDBManager,
-  SCIMServer,
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
-  FHIRValidator, ServerValidator, FHIRSubscriptionManager, TerminologyServer, ServerUtilities;
 
-Const
-  OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
-  OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
+  FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
+
 
 Type
-  TQuestionnaireCache = class(TAdvObject)
-  private
-    FLock: TCriticalSection;
-    FQuestionnaires: TAdvMap<TFhirQuestionnaire>;
-    FForms: TAdvStringMatch;
-    FValueSetDependencies: TDictionary<String, TList<string>>;
-  public
-    Constructor Create; Override;
-    Destructor Destroy; Override;
-
-    procedure putQuestionnaire(rtype: TFHIRResourceType; id: String; q: TFhirQuestionnaire; dependencies: TList<String>);
-    procedure putForm(rtype: TFHIRResourceType; id: String; form: String; dependencies: TList<String>);
-
-    function getQuestionnaire(rtype: TFHIRResourceType; id: String) : TFhirQuestionnaire;
-    function getForm(rtype: TFHIRResourceType; id: String): String;
-
-    procedure clear(rtype: TFHIRResourceType; id: String); overload;
-    procedure clearVS(id: string);
-    procedure clear; overload;
-  end;
 
   TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatement) of object;
 
@@ -55,6 +32,8 @@ Type
     procedure progress(i : integer);
   end;
 
+  TFHIRStorageService = class;
+
   TFhirOperationManagerBase = class (TAdvObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
@@ -66,44 +45,18 @@ Type
   end;
 
   TFHIRStorageService = class (TAdvObject)
-  private
-    FFormalURLPlain: String;
-    FFormalURLSecure: String;
-    FFormalURLPlainOpen: String;
-    FFormalURLSecureOpen: String;
-    FFormalURLSecureClosed: String;
-    FOwnerName: String;
-    FBases: TStringList;
-    FQuestionnaireCache: TQuestionnaireCache;
-    FResConfig: TAdvMap<TFHIRResourceConfig>;
-    FForLoad : boolean;
-    procedure SetSCIMServer(const Value: TSCIMServer);
   protected
-    FValidatorContext : TFHIRServerWorkerContext;
     FDB: TKDBManager;
-    FSCIMServer: TSCIMServer;
     FIndexes : TFHIRIndexInformation;
     FSubscriptionManager: TSubscriptionManager;
-    FValidator: TFHIRValidator;
-    FTerminologyServer: TTerminologyServer;
     function GetTotalResourceCount: integer; virtual;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TFHIRStorageService; overload;
     Property DB: TKDBManager read FDB;
-    Property OwnerName: String read FOwnerName write FOwnerName;
-    Property Bases: TStringList read FBases;
-    property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
 
     Property TotalResourceCount: integer read GetTotalResourceCount;
-    property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
-    property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
-    property FormalURLPlainOpen: String read FFormalURLPlainOpen write FFormalURLPlainOpen;
-    property FormalURLSecureOpen: String read FFormalURLSecureOpen write FFormalURLSecureOpen;
-    property FormalURLSecureClosed: String read FFormalURLSecureClosed write FFormalURLSecureClosed;
-    Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
-    Property TerminologyServer: TTerminologyServer read FTerminologyServer;
 
     procedure RegisterConsentRecord(session: TFhirSession); virtual;
     function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession; virtual;
@@ -125,15 +78,11 @@ Type
     procedure CloseAll; virtual;
     property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager;
-    Property Validator: TFHIRValidator read FValidator;
-    Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
 
     function createOperationContext(lang : String) : TFhirOperationManagerBase; virtual;
     Procedure Yield(op : TFhirOperationManagerBase; exception : Exception); virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
-    property ForLoad : boolean read FForLoad write FForLoad;
-    property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
   end;
 
 
@@ -147,22 +96,8 @@ begin
 end;
 
 constructor TFHIRStorageService.Create;
-var
-  a: TFHIRResourceType;
-  cfg : TFHIRResourceConfig;
 begin
   inherited;
-  FBases := TStringList.Create;
-  FBases.add('http://localhost/');
-  FQuestionnaireCache := TQuestionnaireCache.Create;
-  FResConfig := TAdvMap<TFHIRResourceConfig>.create;
-  for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
-  begin
-    cfg := TFHIRResourceConfig.Create;
-    cfg.name := CODES_TFHIRResourceType[a];
-    cfg.Supported := false;
-    FResConfig.Add(cfg.name,  cfg);
-  end;
 end;
 
 function TFHIRStorageService.CreateImplicitSession(clientInfo: String;  server: Boolean): TFhirSession;
@@ -177,9 +112,6 @@ end;
 
 destructor TFHIRStorageService.Destroy;
 begin
-  FSCIMServer.Free;
-  FQuestionnaireCache.free;
-  FBases.free;
   inherited;
 end;
 
@@ -263,12 +195,6 @@ begin
   raise Exception.Create('The function "RunValidation" must be overridden in '+className);
 end;
 
-procedure TFHIRStorageService.SetSCIMServer(const Value: TSCIMServer);
-begin
-  FSCIMServer.Free;
-  FSCIMServer := Value;
-end;
-
 procedure TFHIRStorageService.Sweep;
 begin
   raise Exception.Create('The function "Sweep" must be overridden in '+className);
@@ -277,151 +203,6 @@ end;
 procedure TFHIRStorageService.Yield(op: TFhirOperationManagerBase; exception : Exception);
 begin
   raise Exception.Create('The function "Yield(op: TFhirOperationManagerBase; exception : Exception)" must be overridden in '+className);
-end;
-
-{ TQuestionnaireCache }
-
-constructor TQuestionnaireCache.Create;
-begin
-  inherited;
-  FLock := TCriticalSection.Create('TQuestionnaireCache');
-  FQuestionnaires := TAdvMap<TFhirQuestionnaire>.Create;
-  FForms := TAdvStringMatch.Create;
-  FForms.Forced := true;
-  FValueSetDependencies := TDictionary < String, TList < string >>.Create;
-end;
-
-destructor TQuestionnaireCache.Destroy;
-begin
-  FValueSetDependencies.free;
-  FForms.free;
-  FQuestionnaires.free;
-  FLock.free;
-  inherited;
-end;
-
-procedure TQuestionnaireCache.clear;
-begin
-  FLock.Lock('clear');
-  try
-    FQuestionnaires.clear;
-    FForms.clear;
-    FValueSetDependencies.clear;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.clearVS(id: string);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('clear(id)');
-  try
-    if FValueSetDependencies.TryGetValue(id, l) then
-    begin
-      for s in l do
-      begin
-        if FQuestionnaires.ContainsKey(s) then
-          FQuestionnaires.Remove(s);
-        if FForms.ExistsByKey(s) then
-          FForms.DeleteByKey(s);
-      end;
-      FValueSetDependencies.Remove(s);
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.clear(rtype: TFHIRResourceType; id: String);
-var
-  s: String;
-begin
-  s := CODES_TFHIRResourceType[rtype] + '/' + id;
-  FLock.Lock('clear(id)');
-  try
-    if FQuestionnaires.ContainsKey(s) then
-      FQuestionnaires.Remove(s);
-    if FForms.ExistsByKey(s) then
-      FForms.DeleteByKey(s);
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-function TQuestionnaireCache.getForm(rtype: TFHIRResourceType;
-  id: String): String;
-begin
-  FLock.Lock('getForm');
-  try
-    result := FForms[CODES_TFHIRResourceType[rtype] + '/' + id];
-  finally
-    FLock.Unlock;
-  end;
-
-end;
-
-function TQuestionnaireCache.getQuestionnaire(rtype: TFHIRResourceType;
-  id: String): TFhirQuestionnaire;
-begin
-  FLock.Lock('getQuestionnaire');
-  try
-    result := FQuestionnaires[CODES_TFHIRResourceType[rtype] + '/' + id]
-      .Link as TFhirQuestionnaire;
-    // comes off linked - must happen inside the lock
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.putForm(rtype: TFHIRResourceType;
-  id, form: String; dependencies: TList<String>);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('putForm');
-  try
-    FForms[CODES_TFHIRResourceType[rtype] + '/' + id] := form;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
-      begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
-      end;
-      if not l.Contains(id) then
-        l.add(id);
-    end;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TQuestionnaireCache.putQuestionnaire(rtype: TFHIRResourceType;
-  id: String; q: TFhirQuestionnaire; dependencies: TList<String>);
-var
-  s: String;
-  l: TList<String>;
-begin
-  FLock.Lock('putQuestionnaire');
-  try
-    FQuestionnaires[CODES_TFHIRResourceType[rtype] + '/' + id] := q.Link;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
-      begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
-      end;
-      if not l.Contains(id) then
-        l.add(id);
-    end;
-  finally
-    FLock.Unlock;
-  end;
 end;
 
 { TFhirOperationManagerBase }
