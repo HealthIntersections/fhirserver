@@ -20,7 +20,7 @@ uses
   AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
-  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext;
+  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, ServerUtilities;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
@@ -98,10 +98,9 @@ Type
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
   TExecuteSearchEvent = function (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String of object;
 
-  TSubscriptionManager = class (TAdvObject)
+  TSubscriptionManager = class (TFHIRServerWorker)
   private
     FLock : TCriticalSection;
-    FWorker : TWorkerContext;
     FSubscriptions : TSubscriptionEntryList;
     FSubscriptionTrackers  : TSubscriptionTrackerList;
     FLastSubscriptionKey, FLastNotificationQueueKey, FLastWebSocketKey : integer;
@@ -120,7 +119,6 @@ Type
     FSMSAccount: String;
     FBase : String;
     FOnGetSessionEvent: TGetSessionEvent;
-    FCompartments : TFHIRCompartmentList;
 
     FCloseAll : boolean;
     FSemaphores : TAdvMap<TWebSocketQueueInfo>;
@@ -162,7 +160,7 @@ Type
     procedure HandleWebSocketSubscribe(json : TJsonObject; connection: TIdWebSocket);
     function checkForClose(connection: TIdWebSocket; id : String; worked: boolean): boolean;
   public
-    Constructor Create(worker : TWorkerContext; Compartments : TFHIRCompartmentList);
+    Constructor Create(ServerContext : TAdvObject);
     Destructor Destroy; Override;
 
     procedure loadQueue(conn : TKDBConnection);
@@ -192,26 +190,23 @@ implementation
 
 uses
   FHIROperation,
+  FHIRServerContext,
   TwilioClient;
 
 { TSubscriptionManager }
 
-constructor TSubscriptionManager.Create(worker : TWorkerContext; Compartments : TFHIRCompartmentList);
+constructor TSubscriptionManager.Create(ServerContext : TAdvObject);
 begin
-  inherited Create;
+  inherited Create(TFHIRServerContext(ServerContext));
   FLock := TCriticalSection.Create('Subscriptions');
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
   FCloseAll := false;
-  FWorker := worker;
-  FCompartments := Compartments;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
-  FWorker.Free;
-  FCompartments.Free;
   wsWakeAll;
   FSemaphores.Free;
   FSubscriptionTrackers.Free;
@@ -222,12 +217,13 @@ begin
 end;
 
 
+// , TFHIRServerContext(ServerContext).ValidatorContext.link, TFHIRServerContext(ServerContext).Indexes.Compartments.Link
 procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResource);
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(FWorker.link, roSubscription, FCompartments.Link);
+  request := TFHIRRequest.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, roSubscription, TFHIRServerContext(ServerContext).Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Id := id;
@@ -326,7 +322,7 @@ var
   parser : TFHIRJsonParser;
   subscription : TFhirSubscription;
 begin
-  parser := TFHIRJsonParser.Create(FWorker.link, connection.request.AcceptLanguage);
+  parser := TFHIRJsonParser.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, connection.request.AcceptLanguage);
   try
     subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
   finally
@@ -652,9 +648,9 @@ begin
   try
     comp := nil;
     if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
-      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+      comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
     else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
-      comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
+      comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
     else if subst.channel.payload <> '' then
       raise Exception.Create('unknown payload type '+subst.channel.payload);
     try
@@ -947,7 +943,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(FWorker.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -976,7 +972,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(FWorker.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -1068,7 +1064,7 @@ begin
     try
       bundle.id := NewGuidId;
       bundle.link_List.AddRelRef('source', AppendForwardSlash(base)+'Subsecription/'+subscription.id);
-      request := TFHIRRequest.Create(FWorker.link, roSubscription, FCompartments.Link);
+      request := TFHIRRequest.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, roSubscription, TFHIRServerContext(ServerContext).Indexes.Compartments.Link);
       response := TFHIRResponse.Create;
       try
         bundle.entryList.Append.resource := resource.Link;

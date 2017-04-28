@@ -571,11 +571,11 @@ begin
   try
     client := TTwilioClient.Create;
     try
-      client.Account := ServerContext.Storage.SubscriptionManager.SMSAccount;
+      client.Account := ServerContext.SubscriptionManager.SMSAccount;
       if (client.Account <> '') and (HostSms <> '') then
       begin
-        client.Token := ServerContext.Storage.SubscriptionManager.SMSToken;
-        client.From := ServerContext.Storage.SubscriptionManager.SMSFrom;
+        client.Token := ServerContext.SubscriptionManager.SMSToken;
+        client.From := ServerContext.SubscriptionManager.SMSFrom;
         client.dest := HostSms;
         client.Body := msg;
         client.send;
@@ -717,7 +717,7 @@ begin
       req.CommandType := fcmdTransaction;
       req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
       req.resource.tags['duplicates'] := 'ignore';
-      req.session := FServerContext.Storage.CreateImplicitSession('service', true);
+      req.session := FServerContext.SessionManager.CreateImplicitSession('service', true);
       req.session.allowAll;
       req.LoadParams('');
       req.baseUrl := FServerContext.Bases[0];
@@ -812,7 +812,7 @@ begin
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
-      FServerContext.Storage.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+      FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
     if (request.CommandType = hcOption) then
     begin
@@ -928,7 +928,7 @@ begin
   try
     c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
     if c > -1 then
-      FServerContext.Storage.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+      FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
 
     if (request.CommandType = hcOption) then
     begin
@@ -1726,7 +1726,7 @@ begin
   ws := TIdWebSocket.Create(nil);
   try
     if ws.open(aContext, request, response) then
-      ServerContext.Storage.SubscriptionManager.HandleWebSocket(ws);
+      ServerContext.SubscriptionManager.HandleWebSocket(ws);
   finally
     ws.Free;
   end;
@@ -1964,25 +1964,25 @@ Begin
     begin
       if sUrl = 'logout' then
       begin
-        FServerContext.Storage.EndSession(sCookie, sClient);
+        FServerContext.SessionManager.EndSession(sCookie, sClient);
         oRequest.session := nil;
         redirect := true;
       end
       else if (sURL = 'internal') then
         redirect := true
-      else if (sUrl <> 'auth-login') and FServerContext.Storage.GetSession(sCookie, session, check) then
+      else if (sUrl <> 'auth-login') and FServerContext.SessionManager.GetSession(sCookie, session, check) then
       begin
         if check and not CheckSessionOK(session, sClient) then
           Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
         oRequest.session := session
       end
-      else if (secure and FServerContext.Storage.isOkBearer(sBearer, sClient, Session)) then
+      else if (secure and FServerContext.SessionManager.isOkBearer(sBearer, sClient, Session)) then
         oRequest.session := session
       else
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
     end
     else
-      oRequest.session := FServerContext.Storage.CreateImplicitSession(sClient, false);
+      oRequest.session := FServerContext.SessionManager.CreateImplicitSession(sClient, false);
 
     if not redirect then
     begin
@@ -2406,10 +2406,10 @@ begin
 
   if (sCookie <> '') and request.Document.StartsWith('/scim/logout') then
   begin
-    FServerContext.Storage.EndSession(sCookie, request.RemoteIP);
+    FServerContext.SessionManager.EndSession(sCookie, request.RemoteIP);
     response.Redirect('/closed');
   end
-  else if (FServerContext.Storage.GetSession(sCookie, session, check)) then
+  else if (FServerContext.SessionManager.GetSession(sCookie, session, check)) then
   begin
     try
       if check and not CheckSessionOK(session, request.RemoteIP) then
@@ -3026,9 +3026,9 @@ begin
   if result then
     result := session.Id = id;
   if result then
-    FServerContext.Storage.MarkSessionChecked(session.Cookie, session.Name)
+    FServerContext.SessionManager.MarkSessionChecked(session.Cookie, session.Name)
   else
-    FServerContext.Storage.EndSession(session.Cookie, ip);
+    FServerContext.SessionManager.EndSession(session.Cookie, ip);
 end;
 
 //procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
@@ -3094,7 +3094,7 @@ begin
     vars.Add('status.db', FormatTextToHTML(KDBManagers.dump));
     vars.Add('status.locks', FormatTextToHTML(DumpLocks));
     vars.Add('status.thread', ServerContext.TerminologyServer.BackgroundThreadStatus);
-    vars.Add('status.sessions', ServerContext.Storage.DumpSessions);
+    vars.Add('status.sessions', ServerContext.SessionManager.DumpSessions);
     vars.Add('status.web', WebDump);
     vars.Add('status.tx', ServerContext.TerminologyServer.Summary);
     vars.Add('status.web-total-count', inttostr(FTotalCount));

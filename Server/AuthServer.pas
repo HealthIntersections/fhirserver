@@ -611,7 +611,7 @@ begin
       if conn.CountSQL('select count(*) from OAuthLogins where Id = '''+SQLWrapString(id)+''' and Status = 1') <> 1 then
         raise Exception.Create('State failed - no login session active');
 
-      session := ServerContext.Storage.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
+      session := ServerContext.SessionManager.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -628,7 +628,7 @@ begin
       uid := params.GetVar('userid');
       name := params.GetVar('fullName');
       expires := inttostr(60 * 24 * 10); // 10 days
-      session := ServerContext.Storage.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
+      session := ServerContext.SessionManager.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -666,7 +666,7 @@ begin
       end;
       if not ok then
         raise Exception.Create('Processing the login failed ('+msg+')');
-      session := ServerContext.Storage.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
+      session := ServerContext.SessionManager.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
@@ -761,7 +761,7 @@ begin
 
       // update the login record
       // create a session
-      session := ServerContext.Storage.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
+      session := ServerContext.SessionManager.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
       try
         conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(token)+'''');
       finally
@@ -771,7 +771,7 @@ begin
     end
     else if params.getVar('id') <> '' then
     begin
-      if not ServerContext.Storage.GetSessionByToken(params.GetVar('id'), session) then
+      if not ServerContext.SessionManager.GetSessionByToken(params.GetVar('id'), session) then
         raise Exception.Create('State Error (1)');
       try
         if conn.CountSQL('Select Count(*) from OAuthLogins where Status = 2 and SessionKey = '+inttostr(session.Key)) <> 1 then
@@ -842,7 +842,7 @@ begin
       // now, check the code
       errCode := 'invalid_request';
       code := checkNotEmpty(params.getVar('code'), 'code');
-      if not ServerContext.Storage.GetSessionByToken(code, session) then // todo: why is session passed in too?
+      if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise Exception.Create('Authorization Code not recognized');
       try
         conn := ServerContext.Storage.DB.GetConnection('OAuth2');
@@ -961,7 +961,7 @@ begin
       if FIni.ReadString(clientId, 'secret', '') <> clientSecret then
         raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
 
-      if not ServerContext.Storage.GetSession(token, session, check) then
+      if not ServerContext.SessionManager.GetSession(token, session, check) then
       begin
         json := TJsonWriter.create;
         try

@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, Generics.Collections, kCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers,
-  FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer;
+  FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -45,8 +45,11 @@ Type
     FValidator: TFHIRValidator;
     FTerminologyServer: TTerminologyServer;
     FIndexes : TFHIRIndexInformation;
+    FSubscriptionManager : TSubscriptionManager;
+    FSessionManager : TFHIRSessionManager;
 
     FOwnerName: String;
+    FSystemId: String;
     FFormalURLPlain: String;
     FFormalURLSecure: String;
     FFormalURLPlainOpen: String;
@@ -56,6 +59,7 @@ Type
 
     procedure SetSCIMServer(const Value: TSCIMServer);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
+    procedure SetSubscriptionManager(const Value: TSubscriptionManager);
   public
     Constructor Create(storage : TFHIRStorageService);
     Destructor Destroy; override;
@@ -69,6 +73,8 @@ Type
     Property Validator: TFHIRValidator read FValidator;
     Property TerminologyServer: TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Indexes : TFHIRIndexInformation read FIndexes;
+    property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
+    property SessionManager : TFHIRSessionManager read FSessionManager;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
@@ -76,6 +82,7 @@ Type
     property FormalURLSecureOpen: String read FFormalURLSecureOpen write FFormalURLSecureOpen;
     property FormalURLSecureClosed: String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     Property OwnerName: String read FOwnerName write FOwnerName;
+    property SystemId: String read FSystemId write FSystemId;
     property ForLoad : boolean read FForLoad write FForLoad;
     property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
   end;
@@ -252,10 +259,13 @@ begin
   end;
   FValidatorContext := TFHIRServerWorkerContext.Create;
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
+  FSessionManager := TFHIRSessionManager.Create(self);
 end;
 
 destructor TFHIRServerContext.Destroy;
 begin
+  FSessionManager.Free;
+  FSubscriptionManager.Free;
   FIndexes.free;
   FTerminologyServer.Free;
   FValidator.free;
@@ -281,10 +291,17 @@ begin
 end;
 
 
+procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionManager);
+begin
+  FSubscriptionManager.Free;
+  FSubscriptionManager := Value;
+end;
+
 procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServer);
 begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
+  ValidatorContext.TerminologyServer := Value.Link;
 end;
 
 end.

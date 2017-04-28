@@ -5096,7 +5096,7 @@ begin
     se.source := TFhirAuditEventSource.create;
     se.source.site := ServerContext.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
-    se.source.identifier.value := FRepository.SystemId;
+    se.source.identifier.value := ServerContext.SystemId;
     se.source.identifier.system := 'urn:ietf:rfc:3986';
 
     c := se.source.type_List.Append;
@@ -5112,7 +5112,7 @@ begin
     begin
       p.userId := TFhirIdentifier.Create;
       p.userId.value := inttostr(session.Key);
-      p.userId.system := FRepository.SystemId;
+      p.userId.system := ServerContext.SystemId;
       p.altId := session.Id;
       p.name := session.Name;
     end;

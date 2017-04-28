@@ -310,7 +310,9 @@ uses
   ACIRServices in 'ACIRServices.pas',
   ReverseClient in 'ReverseClient.pas',
   FHIRStorageService in 'FHIRStorageService.pas',
-  FHIRServerContext in 'FHIRServerContext.pas';
+  FHIRServerContext in 'FHIRServerContext.pas',
+  MasterCareBridge in '..\bridge\MasterCareBridge.pas',
+  FHIRSessionManager in 'FHIRSessionManager.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

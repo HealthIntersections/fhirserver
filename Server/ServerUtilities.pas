@@ -29,6 +29,16 @@ type
     constructor Create; override;
   end;
 
+  TFHIRServerWorker = class (TAdvObject)
+  private
+    FServerContext : TAdvObject; // no link
+  public
+    Constructor Create(ServerContext : TAdvObject);
+    Destructor Destroy; override;
+
+    Property ServerContext : TAdvObject read FServerContext;
+  end;
+
 implementation
 
 constructor TFHIRResourceConfig.Create;
@@ -48,6 +58,19 @@ begin
   cmdOperation := true;
   versionUpdates := false;
   lastResourceId  := 0;
+end;
+
+{ TFHIRServerWorker }
+
+constructor TFHIRServerWorker.Create(ServerContext: TAdvObject);
+begin
+  inherited Create;
+  FServerContext := ServerContext;
+end;
+
+destructor TFHIRServerWorker.Destroy;
+begin
+  inherited;
 end;
 
 end.
