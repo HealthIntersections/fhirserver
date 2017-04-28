@@ -76,7 +76,7 @@ var
 begin
   client := TIdCustomHTTP.Create(nil);
   try
-    client.HTTPOptions := [hoNoProtocolErrorException, hoNoParseMetaHTTPEquiv, hoWaitForUnexpectedData, hoNoReadMultipartMIME,  hoNoParseXmlCharset, hoWantProtocolErrorContent];
+    client.HTTPOptions := [hoNoProtocolErrorException, hoNoParseMetaHTTPEquiv, hoWaitForUnexpectedData {$IFNDEF VER260} , hoNoReadMultipartMIME,  hoNoParseXmlCharset, hoWantProtocolErrorContent{$ENDIF}];
 
     client.Request.Accept := request.Accept;
     client.Request.AcceptCharSet := request.AcceptCharSet;

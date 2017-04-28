@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, JclDebug, EncdDecd,  HMAC,  NetEncoding,
+  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, JclDebug, EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
   EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
 
