@@ -3279,7 +3279,7 @@ Const
      frtVisionPrescription,
      frtCustom];
      
-  ALL_RESOURCE_TYPE_NAMES : Array of String = ['Account',
+ ALL_RESOURCE_TYPE_NAMES : Array[TFHIRResourceType] of String = ('Null', 'Account',
      'ActivityDefinition',
      'AdverseEvent',
      'AllergyIntolerance',
@@ -3396,7 +3396,7 @@ Const
      'TestScript',
      'ValueSet',
      'VisionPrescription',
-     'Custom'];
+     'Custom');
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
   CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
