@@ -8,7 +8,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
   KDBManager,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
 
 
@@ -47,7 +47,6 @@ Type
   TFHIRStorageService = class (TAdvObject)
   protected
     FDB: TKDBManager;
-    FIndexes : TFHIRIndexInformation;
     FSubscriptionManager: TSubscriptionManager;
     function GetTotalResourceCount: integer; virtual;
   public
@@ -76,7 +75,6 @@ Type
     procedure RunValidation; virtual;
 
     procedure CloseAll; virtual;
-    property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager;
 
     function createOperationContext(lang : String) : TFhirOperationManagerBase; virtual;

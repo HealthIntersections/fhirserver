@@ -1100,10 +1100,10 @@ begin
                 html.append('<td></td>');
               html.append('<td></td>');
 //                html.append('<br/>search</td><td><ul>');
-              for i := 0 to FRepository.Indexes.Indexes.count - 1 do
-                if (FRepository.Indexes.Indexes[i].ResourceType = a) then
-                  if FRepository.Indexes.Indexes[i].Name <> '_query' then
-                    addParam(res.searchParamList, html, FRepository.Indexes.Indexes[i].Name, FRepository.Indexes.Indexes[i].uri, FRepository.Indexes.Indexes[i].Description, FRepository.Indexes.Indexes[i].SearchType, FRepository.Indexes.Indexes[i].TargetTypes);
+              for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
+                if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
+                  if ServerContext.Indexes.Indexes[i].Name <> '_query' then
+                    addParam(res.searchParamList, html, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
 
 //              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
               addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
@@ -1961,7 +1961,7 @@ begin
     sp.lang := lang;
     sp.params := params;
     CreateIndexer;
-    sp.indexes := FRepository.Indexes.Link;
+    sp.indexes := ServerContext.Indexes.Link;
     sp.repository := FRepository.Link;
     sp.session := session.link;
     sp.countAllowed := true;
@@ -2019,7 +2019,7 @@ begin
     mpi.lang := lang;
     mpi.params := params;
     CreateIndexer;
-    mpi.indexes := FRepository.Indexes.Link;
+    mpi.indexes := ServerContext.Indexes.Link;
     mpi.repository := FRepository.Link;
     mpi.session := session.link;
     mpi.Connection := FConnection.link;
@@ -2064,7 +2064,7 @@ begin
       p := s.Split([':']);
       if (length(p) >= 2) and (length(p) <= 3) then
       begin
-        key2 := FRepository.Indexes.GetKeyByName(p[1]);
+        key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
           raise Exception.Create('Unknown Resource Search Parameter '''+p[1]+'''');
         if (length(p) = 3) then
@@ -2083,7 +2083,7 @@ begin
       p := s.Split([':']);
       if (length(p) = 2) then
       begin
-        key2 := FRepository.Indexes.GetKeyByName(p[1]);
+        key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
           raise Exception.Create('Unknown Resource Parameter '+p[0]);
         sel.Add('Ids.ResourceKey in (select IndexEntries.ResourceKey from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and Target in ('+keys.forAll+') and Ids.ResourceKey = IndexEntries.ResourceKey and Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[p[0]].key)+')');
@@ -3059,7 +3059,7 @@ begin
         for cr in crs do
         begin
           for sp in cr.SearchParameters do
-            FRepository.Indexes.Indexes.add(cr.Name, sp);
+            ServerContext.Indexes.Indexes.add(cr.Name, sp);
           ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
@@ -3136,7 +3136,7 @@ begin
         for cr in crs do
         begin
           for sp in cr.SearchParameters do
-            FRepository.Indexes.Indexes.add(cr.Name, sp);
+            ServerContext.Indexes.Indexes.add(cr.Name, sp);
           ServerContext.ValidatorContext.registerCustomResource(cr);
         end;
     finally
@@ -3300,9 +3300,9 @@ s := s +
   else
   begin
     s := s +'<tr><td colspan="4"><b>'+request.ResourceName+':</b></td></tr>'+#13#10;
-    for i := 0 to FRepository.Indexes.Indexes.Count - 1 Do
+    for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
     begin
-      ix := FRepository.Indexes.Indexes[i];
+      ix := ServerContext.Indexes.Indexes[i];
       if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) = 0) then
       begin
         desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, lang, ix.Description));
@@ -3319,9 +3319,9 @@ s := s +
       end;
     end;
 
-    for i := 0 to FRepository.Indexes.Indexes.Count - 1 Do
+    for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
     begin
-      ix := FRepository.Indexes.Indexes[i];
+      ix := ServerContext.Indexes.Indexes[i];
       if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) > 0) then
       begin
         pfx := ix.Name;
@@ -3329,9 +3329,9 @@ s := s +
         s := s +'<tr><td colspan="4"><b>'+ix.Name+'</b> ('+describeResourceTypes(types)+')<b>:</b></td></tr>'+#13#10;
         m := TStringList.create;
         try
-          for j := 0 to FRepository.Indexes.Indexes.Count - 1 Do
+          for j := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
           begin
-            ix2 := FRepository.Indexes.Indexes[j];
+            ix2 := ServerContext.Indexes.Indexes[j];
             ok := false;
             for rn in types do
               ok := ok or (ix2.ResourceType = rn);
@@ -3364,9 +3364,9 @@ s := s +
 '<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', lang)+'</td></tr>'#13#10+
 '<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', lang), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
 '<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', lang)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10;
-  for i := 0 to FRepository.Indexes.Indexes.Count - 1 Do
+  for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
   begin
-    ix := FRepository.Indexes.Indexes[i];
+    ix := ServerContext.Indexes.Indexes[i];
     if (ix.ResourceType = request.ResourceName) or ((request.ResourceName = '') and (ix.Name.startsWith('_'))) then
       s := s + '<option value="'+ix.Name+'">'+ix.Name+'</option>';
   end;
@@ -3387,7 +3387,7 @@ begin
   if FIndexer = nil then
   begin
     FSpaces := TFHIRIndexSpaces.Create(FConnection);
-    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, FRepository.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
+    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, ServerContext.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
@@ -3524,7 +3524,7 @@ begin
       sp.lang := lang;
       sp.params := p;
       CreateIndexer;
-      sp.indexes := FRepository.Indexes.Link;
+      sp.indexes := ServerContext.Indexes.Link;
       sp.repository := FRepository.Link;
       sp.countAllowed := false;
       sp.Connection := FConnection.link;
@@ -5227,14 +5227,14 @@ begin
   Connection.ExecSQL('delete from IndexEntries');
 
   k := Connection.CountSQL('select Max(IndexKey) from Indexes');
-  for i := 0 to FRepository.Indexes.Indexes.count - 1 do
+  for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
   begin
-    if Connection.CountSQL('select Count(IndexKey) from Indexes where Name = '''+ FRepository.Indexes.indexes[i].Name+'''') = 0 then
+    if Connection.CountSQL('select Count(IndexKey) from Indexes where Name = '''+ ServerContext.Indexes.indexes[i].Name+'''') = 0 then
     begin
       Connection.Sql := 'insert into Indexes (IndexKey, Name) values (:k, :d)';
       Connection.prepare;
       Connection.bindInteger('k', k);
-      Connection.bindString('d', FRepository.Indexes.indexes[i].Name);
+      Connection.bindString('d', ServerContext.Indexes.indexes[i].Name);
       Connection.execute;
       inc(k);
       Connection.terminate;

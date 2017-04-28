@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, kCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches,
-  FHIRTypes, FHIRResources, FHIRConstants,
+  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers,
   FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer;
 
 Const
@@ -44,6 +44,7 @@ Type
     FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
     FTerminologyServer: TTerminologyServer;
+    FIndexes : TFHIRIndexInformation;
 
     FOwnerName: String;
     FFormalURLPlain: String;
@@ -67,6 +68,7 @@ Type
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
     Property Validator: TFHIRValidator read FValidator;
     Property TerminologyServer: TTerminologyServer read FTerminologyServer write SetTerminologyServer;
+    property Indexes : TFHIRIndexInformation read FIndexes;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
@@ -77,6 +79,8 @@ Type
     property ForLoad : boolean read FForLoad write FForLoad;
     property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
   end;
+
+
 
 implementation
 
@@ -233,6 +237,7 @@ var
   cfg : TFHIRResourceConfig;
 begin
   Inherited Create;
+  FIndexes := TFHIRIndexInformation.create;
   FStorage := storage;
   FQuestionnaireCache := TQuestionnaireCache.Create;
   FBases := TStringList.Create;
@@ -251,6 +256,7 @@ end;
 
 destructor TFHIRServerContext.Destroy;
 begin
+  FIndexes.free;
   FTerminologyServer.Free;
   FValidator.free;
   FValidatorContext.Free;

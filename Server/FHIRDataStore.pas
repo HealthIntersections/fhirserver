@@ -202,7 +202,6 @@ constructor TFHIRDataStore.Create(DB: TKDBManager; AppFolder: String);
 begin
   inherited Create;
   LoadMessages; // load while thread safe
-  FIndexes := TFHIRIndexInformation.create;
   FAppFolder := AppFolder;
   FDB := DB;
   FSessions := TStringList.Create;
@@ -225,7 +224,7 @@ var
   implGuides : TAdvStringSet;
   cfg : TFHIRResourceConfig;
 begin
-  FSubscriptionManager := TSubscriptionManager.Create(ServerContext.ValidatorContext.link, FIndexes.Compartments.Link);
+  FSubscriptionManager := TSubscriptionManager.Create(ServerContext.ValidatorContext.link, ServerContext.Indexes.Compartments.Link);
   FSubscriptionManager.dataBase := FDB.Link;
   FSubscriptionManager.Base := 'http://localhost/';
   FSubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
@@ -344,7 +343,7 @@ begin
       for i := 0 to FTags.Count - 1 do
         FTagsByKey.add(inttostr(FTags[i].key), FTags[i].Link);
 
-      FIndexes.ReconcileIndexes(conn);
+      ServerContext.Indexes.ReconcileIndexes(conn);
 
 
       if ServerContext.TerminologyServer <> nil then
@@ -522,7 +521,6 @@ begin
   FNamingSystems.Free;
   FClaimQueue.free;
   FLock.free;
-  FIndexes.free;
   FDB.Free;
   inherited;
 end;
@@ -579,7 +577,7 @@ begin
       sp.baseURL := ServerContext.FormalURLPlainOpen; // todo: what?
       sp.lang := 'en';
       sp.params := params;
-      sp.indexes := FIndexes.Link;
+      sp.indexes := ServerContext.Indexes.Link;
       sp.repository := self.Link;
       sp.countAllowed := false;
       sp.Connection := conn.link;
@@ -1750,7 +1748,7 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
 begin
-  request := TFHIRRequest.Create(ServerContext.ValidatorContext.Link, origin, FIndexes.Compartments.Link);
+  request := TFHIRRequest.Create(ServerContext.ValidatorContext.Link, origin, ServerContext.Indexes.Compartments.Link);
   try
     request.ResourceName := res.fhirType;
     request.CommandType := fcmdCreate;

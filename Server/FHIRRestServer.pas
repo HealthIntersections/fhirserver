@@ -499,7 +499,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FServerContext.ValidatorContext.link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.ValidatorContext.link, roRest, FServerContext.Indexes.Compartments.Link);
   context := TOperationContext.Create;
   try
     response := TFHIRResponse.Create;
@@ -712,7 +712,7 @@ begin
 //    op := FServerContext.Storage.createOperationContext('en');
   context := TOperationContext.Create(true, callback, 'Load from '+name);
   try
-    req := TFHIRRequest.Create(FServerContext.ValidatorContext.Link, roUpload, FServerContext.Storage.Indexes.Compartments.Link);
+    req := TFHIRRequest.Create(FServerContext.ValidatorContext.Link, roUpload, FServerContext.Indexes.Compartments.Link);
     try
       req.CommandType := fcmdTransaction;
       req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
@@ -1882,7 +1882,7 @@ Var
 Begin
   relativeReferenceAdjustment := 0;
   Result := nil;
-  oRequest := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
+  oRequest := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roRest, FServerContext.Indexes.Compartments.Link);
   try
     oRequest.Lang := lang;
     oResponse.origin := sOrigin;
@@ -2490,7 +2490,7 @@ begin
     for a in FServerContext.ValidatorContext.allResourceNames do
     begin
       ix := counts.add(a);
-      if (comps = '') or FServerContext.Storage.Indexes.Compartments.existsInCompartment(frtPatient, a) then
+      if (comps = '') or FServerContext.Indexes.Compartments.existsInCompartment(frtPatient, a) then
         counts.Objects[ix] := TObject(0)
       else
         counts.Objects[ix] := TObject(-1);
@@ -2848,7 +2848,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
@@ -2890,7 +2890,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
-  request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Storage.Indexes.Compartments.Link);
+  request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
     request.Session := session.link;
