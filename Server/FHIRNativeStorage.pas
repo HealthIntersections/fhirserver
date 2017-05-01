@@ -153,7 +153,6 @@ type
     FFactory : TFHIRFactory;
     FIndexer : TFHIRIndexManager;
     FOperations : TAdvObjectList;
-    FLang : String;
     FTestServer : Boolean;
 
     FSpaces: TFHIRIndexSpaces;
@@ -214,29 +213,34 @@ type
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRProvenance);
 
     procedure CheckCompartments(actual, allowed : String);
-    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse);
     procedure executeReadInTransaction(entry : TFhirBundleEntryRequest; request: TFHIRRequest; response : TFHIRResponse);
 
     procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
 
-    function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean;
-    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean;
-    procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse);
-    Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String;
-    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
-    function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean;
-    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
-    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure SetConnection(const Value: TKDBConnection);
     procedure ReIndex;
     procedure CheckCreateNarrative(request : TFHIRRequest);
     procedure CreateIndexer;
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
+
+  protected
+    procedure StartTransaction; override;
+    procedure CommitTransaction; override;
+    procedure RollbackTransaction; override;
+    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse); override;
+    function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
+    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
+    procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
+    Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
+    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
+    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
   public
     Constructor Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService);
     Destructor Destroy; Override;
@@ -256,11 +260,10 @@ type
     function GetPatientId : String; virtual;
 
     // called when kernel actually wants to process against the store
-    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
+//    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
 
-    property lang : String read FLang write FLang;
     Property TestServer : boolean read FTestServer write FTestServer;
     Property ServerContext : TFHIRServerContext read FServerContext;
 
@@ -749,8 +752,7 @@ end;
 
 constructor TFHIRNativeOperationEngine.Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService);
 begin
-  inherited Create;
-  FLang := lang;
+  inherited Create(lang);
   FServerContext := ServerContext;
   FRepository := repository;
   FFactory := TFHIRFactory.create(ServerContext.Validator.Context.link, lang);
@@ -992,39 +994,6 @@ begin
   end;
 end;
 
-Function TFHIRNativeOperationEngine.Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;
-begin
-  Connection.StartTransact;
-  try
-    result := Request.Id;
-    case request.CommandType of
-      fcmdRead : ExecuteRead(request, response);
-      fcmdUpdate : ExecuteUpdate(context, request, response);
-      fcmdVersionRead : ExecuteVersionRead(request, response);
-      fcmdDelete : ExecuteDelete(request, response);
-      fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
-      fcmdSearch : ExecuteSearch(request, response);
-      fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-      fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
-      fcmdTransaction : ExecuteTransaction(context, request, response);
-      fcmdBatch : ExecuteBatch(context, request, response);
-      fcmdOperation : ExecuteOperation(context, request, response);
-      fcmdUpload : ExecuteUpload(context, request, response);
-      fcmdPatch : ExecutePatch(request, response);
-      fcmdValidate : ExecuteValidation(request, response, 'Validation')
-    else
-      Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
-    End;
-
-    Connection.Commit;
-  except
-    on e:exception do
-    begin
-      Connection.Rollback;
-      raise;
-    end;
- end;
-end;
 
 procedure TFHIRNativeOperationEngine.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 var
@@ -3494,6 +3463,11 @@ begin
   FConnection := Value;
 end;
 
+procedure TFHIRNativeOperationEngine.StartTransaction;
+begin
+  Connection.StartTransact;
+end;
+
 procedure TFHIRNativeOperationEngine.ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   s : String;
@@ -3654,6 +3628,11 @@ begin
   end;
 end;
 
+
+procedure TFHIRNativeOperationEngine.RollbackTransaction;
+begin
+  Connection.Rollback;
+end;
 
 //function TFHIRNativeOperationEngine.ResolveSearchIdCount(atype: TFHIRResourceType; compartmentId, compartments, baseURL, params: String): integer;
 //var
@@ -4473,6 +4452,11 @@ begin
   finally
     FConnection.terminate;
   end;
+end;
+
+procedure TFHIRNativeOperationEngine.CommitTransaction;
+begin
+  Connection.Commit;
 end;
 
 procedure TFHIRNativeOperationEngine.ProcessBlob(request: TFHIRRequest; response: TFHIRResponse; field : String; comp : TFHIRParserClass);

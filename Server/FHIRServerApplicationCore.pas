@@ -43,7 +43,7 @@ Uses
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
   FHIRStorageService,
-  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRNativeStorage, FHIRBase, FhirPath,
+  FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
   FHIRServerConstants, FHIRServerContext,
   SCIMServer;
 

@@ -8,7 +8,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
   KDBDialects, DateAndTime,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
 
 
@@ -37,8 +37,32 @@ Type
   TFHIROperationEngine = class (TAdvObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
+    FLang : String;
+  protected
+    procedure StartTransaction; virtual;
+    procedure CommitTransaction; virtual;
+    procedure RollbackTransaction; virtual;
+
+    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
+    function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
+    procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteDelete(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; virtual;
+    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
+    procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+
   public
+    constructor create(lang : String);
+
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
+    property lang : String read FLang write FLang;
 
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
@@ -255,14 +279,134 @@ end;
 
 { TFHIROperationEngine }
 
+procedure TFHIROperationEngine.CommitTransaction;
+begin
+  raise Exception.Create('The function "CommitTransaction" must be overridden in '+className);
+end;
+
+constructor TFHIROperationEngine.create(lang: String);
+begin
+  inherited create;
+  FLang := lang;
+end;
+
 function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
 begin
-  raise Exception.Create('The function "Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String" must be overridden in '+className);
+  StartTransaction;
+  try
+    result := Request.Id;
+    case request.CommandType of
+      fcmdRead : ExecuteRead(request, response);
+      fcmdUpdate : ExecuteUpdate(context, request, response);
+      fcmdVersionRead : ExecuteVersionRead(request, response);
+      fcmdDelete : ExecuteDelete(request, response);
+      fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
+      fcmdSearch : ExecuteSearch(request, response);
+      fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
+      fcmdConformanceStmt : ExecuteConformanceStmt(request, response);
+      fcmdTransaction : ExecuteTransaction(context, request, response);
+      fcmdBatch : ExecuteBatch(context, request, response);
+      fcmdOperation : ExecuteOperation(context, request, response);
+      fcmdUpload : ExecuteUpload(context, request, response);
+      fcmdPatch : ExecutePatch(request, response);
+      fcmdValidate : ExecuteValidation(request, response, 'Validation')
+    else
+      Raise Exception.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
+    End;
+
+    CommitTransaction;
+  except
+    on e:exception do
+    begin
+      RollbackTransaction;
+      raise;
+    end;
+  end;
+end;
+
+procedure TFHIROperationEngine.ExecuteBatch(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Batch" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "ConformanceStmt" function');
+end;
+
+function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
+begin
+  raise Exception.Create('This server does not implemnent the "Create" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteDelete(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Delete" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "History" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Operation" function');
+end;
+
+function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;
+begin
+  raise Exception.Create('This server does not implemnent the "Patch" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Read" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Search" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Transaction" function');
+end;
+
+function TFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
+begin
+  raise Exception.Create('This server does not implemnent the "Update" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteUpload(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "Upload" function');
+end;
+
+function TFHIROperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc: String): boolean;
+begin
+  raise Exception.Create('This server does not implemnent the "Validation" function');
+end;
+
+procedure TFHIROperationEngine.ExecuteVersionRead(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('This server does not implemnent the "VersionRead" function');
 end;
 
 function TFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
   raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
+end;
+
+procedure TFHIROperationEngine.RollbackTransaction;
+begin
+  raise Exception.Create('The function "RollbackTransaction" must be overridden in '+className);
+end;
+
+procedure TFHIROperationEngine.StartTransaction;
+begin
+  raise Exception.Create('The function "StartTransaction" must be overridden in '+className);
 end;
 
 end.

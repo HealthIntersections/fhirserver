@@ -52,7 +52,7 @@ Uses
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient,
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
-  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIROperation, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
   QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerContext, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXML, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Type
