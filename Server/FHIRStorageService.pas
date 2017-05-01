@@ -143,7 +143,7 @@ end;
 
 function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
 begin
-  raise Exception.Create('The function "ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet" must be overridden in '+className);
+  raise Exception.Create('Expanding valuesets is not implemented in this server');
 end;
 
 
@@ -179,7 +179,7 @@ end;
 
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
-  raise Exception.Create('The function "LookupCode(system, version, code: String): String" must be overridden in '+className);
+  raise Exception.Create('Looking up codes is not implemented in this server');
 end;
 
 procedure TFHIRStorageService.ProcessObservations;
