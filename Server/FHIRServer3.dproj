@@ -234,7 +234,6 @@
         <DCCReference Include="..\reference-platform\Support\AdvObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\RegExpr.pas"/>
         <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
-        <DCCReference Include="FHIROperation.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvIntegerObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="FHIRIndexManagers.pas"/>
@@ -277,7 +276,7 @@
         <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
         <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
-        <DCCReference Include="FHIRDataStore.pas"/>
+        <DCCReference Include="FHIRNativeStorage.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvProfilers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AnsiStringBuilder.pas"/>
@@ -372,8 +371,9 @@
         <DCCReference Include="ReverseClient.pas"/>
         <DCCReference Include="FHIRStorageService.pas"/>
         <DCCReference Include="FHIRServerContext.pas"/>
-        <DCCReference Include="..\bridge\MasterCareBridge.pas"/>
+        <DCCReference Include="..\bridge\ExampleBridge.pas"/>
         <DCCReference Include="FHIRSessionManager.pas"/>
+        <DCCReference Include="FHIRTagManager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -458,16 +458,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -809,7 +800,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

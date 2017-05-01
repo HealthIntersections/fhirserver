@@ -315,19 +315,7 @@ begin
     raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
   id := newguidid;
-  conn := ServerContext.Storage.DB.GetConnection('oauth2');
-  try
-    conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');
-    conn.release;
-
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      recordStack(e);
-      raise;
-    end;
-  end;
+  ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
 
   variables := TDictionary<String,String>.create;
   try
@@ -431,7 +419,6 @@ end;
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
-  conn : TKDBConnection;
   variables : TDictionary<String,String>;
   scopes : TStringList;
   redirect, state, scope : String;
@@ -445,86 +432,55 @@ begin
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   try
-    conn := ServerContext.Storage.DB.GetConnection('OAuth2');
-    try
-      conn.SQL := 'select Client, Name, Scope, Redirect, ClientState from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 2 and OAuthLogins.SessionKey = Sessions.SessionKey';
-      conn.Prepare;
-      conn.Execute;
-      if not conn.FetchNext then
-        raise Exception.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
-      client_id := conn.ColStringByName['Client'];
-      name := conn.ColStringByName['Name'];
-      redirect := conn.ColStringByName['Redirect'];
-      state := conn.ColStringByName['ClientState'];
-      scope := conn.ColStringByName['Scope'];
-      conn.Terminate;
+    if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope) then
+      raise Exception.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
 
-      if params.getVar('form') = 'true' then
-      begin
-        scopes := TStringList.create;
-        try
-          readScopes(scopes, params);
+    if params.getVar('form') = 'true' then
+    begin
+      scopes := TStringList.create;
+      try
+        readScopes(scopes, params);
 
-          session.JWT := TJWT.Create;
-          session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
-          session.jwt.issuer := FHost;
-          session.jwt.expires := session.Expires;
-          session.jwt.issuedAt := now;
-          session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
+        session.JWT := TJWT.Create;
+        session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
+        session.jwt.issuer := FHost;
+        session.jwt.expires := session.Expires;
+        session.jwt.issuedAt := now;
+        session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
 
-
-          if params.getVar('user') = '1' then
-          begin
-          // if user rights granted
-            session.jwt.subject := Names_TFHIRAuthProvider[session.Provider]+':'+session.id;
-            session.jwt.name := session.Name;
-            if session.Email <> '' then
-              session.jwt.email := session.Email;
-          end;
-          session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
-
-          conn.SQL := 'Update OAuthLogins set Status = 3, DateChosen = '+DBGetDate(conn.Owner.Platform)+', Rights = :r, Patient = :p, Jwt = :jwt where Id = '''+SQLWrapString(Session.OuterToken)+'''';
-          conn.prepare;
-          conn.BindBlobFromString('r', scopes.CommaText);
-          conn.BindBlobFromString('jwt', session.JWTPacked);
-          if params.getVar('patient') = '' then
-            conn.BindNull('p')
-          else
-          begin
-            conn.BindString('p', params.GetVar('patient'));
-            session.PatientList.Add(params.GetVar('patient'));
-          end;
-          conn.Execute;
-          conn.Terminate;
-
-          session.scopes := scopes.CommaText.Replace(',', ' ');
-          ServerContext.Storage.RegisterConsentRecord(session);
-          response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
-        finally
-          scopes.Free;
+        if params.getVar('user') = '1' then
+        begin
+        // if user rights granted
+          session.jwt.subject := Names_TFHIRAuthProvider[session.Provider]+':'+session.id;
+          session.jwt.name := session.Name;
+          if session.Email <> '' then
+            session.jwt.email := session.Email;
         end;
-      end
-      else
-      begin
-        variables := TDictionary<String,String>.create;
-        try
-          variables.Add('client', FIni.ReadString(client_id, 'name', ''));
-          variables.Add('/oauth2', FPath);
-          variables.Add('username', name);
-          variables.Add('patient-list', GetPatientListAsOptions);
-          loadScopeVariables(variables, scope, session.User);
-          OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
-        finally
-          variables.free;
-        end;
+        session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
+
+        ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
+        if params.GetVar('patient') <> '' then
+          session.PatientList.Add(params.GetVar('patient'));
+
+        session.scopes := scopes.CommaText.Replace(',', ' ');
+        ServerContext.Storage.RegisterConsentRecord(session);
+        response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
+      finally
+        scopes.Free;
       end;
-      conn.Release;
-    except
-      on e:exception do
-      begin
-        conn.Error(e);
-        recordStack(e);
-        raise;
+    end
+    else
+    begin
+      variables := TDictionary<String,String>.create;
+      try
+        variables.Add('client', FIni.ReadString(client_id, 'name', ''));
+        variables.Add('/oauth2', FPath);
+        variables.Add('username', name);
+        variables.Add('patient-list', GetPatientListAsOptions);
+        loadScopeVariables(variables, scope, session.User);
+        OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
+      finally
+        variables.free;
       end;
     end;
   finally
@@ -587,7 +543,6 @@ end;
 
 procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  conn : TKDBConnection;
   id, username, password, domain, state, jwt : String;
   authurl, token, expires, msg, uid, name, email : String;
   provider : TFHIRAuthProvider;
@@ -597,95 +552,84 @@ begin
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
 
-  conn := ServerContext.Storage.DB.GetConnection('OAuth2');
-  try
-    if params.VarExists('id') and params.VarExists('username') and params.VarExists('password') then
+  if params.VarExists('id') and params.VarExists('username') and params.VarExists('password') then
+  begin
+    id := params.GetVar('id');
+    username := params.GetVar('username');
+    password := params.GetVar('password');
+
+    if not FSCIMServer.CheckLogin(username, password) then
+      raise Exception.Create('Login failed');
+
+    if not ServerContext.Storage.hasOAuthSession(id, 1) then
+      raise Exception.Create('State failed - no login session active');
+
+    session := ServerContext.SessionManager.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
+    try
+      ServerContext.Storage.UpdateOAuthSession(id, 2, session.key);
+      setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+      response.Redirect(FPath+'/auth_choice');
+    finally
+      session.Free;
+    end;
+  end
+  else if request.document.startsWith(FPath+'/auth_dest/state/') then
+  begin
+    // HL7
+    if not CheckLoginToken(copy(request.document, 25, $FF), id, provider) then
+      raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
+    uid := params.GetVar('userid');
+    name := params.GetVar('fullName');
+    expires := inttostr(60 * 24 * 10); // 10 days
+    session := ServerContext.SessionManager.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
+    try
+      ServerContext.Storage.updateOAuthSession(id, 2, session.key);
+      setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+      response.Redirect(FPath+'/auth_choice');
+    finally
+      session.Free;
+    end;
+  end
+  else if (params.VarExists('state')) then
+  begin
+    if FSSLPort = '443' then
+      authurl := 'https://'+FHost+FPath+'/auth_dest'
+    else
+      authurl := 'https://'+FHost+':'+FSSLPort+FPath+'/auth_dest';
+
+    state := params.GetVar('state');
+    if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
+      raise Exception.Create('State Prefix mis-match');
+    if not CheckLoginToken(state, id, provider) then
+      raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
+    if params.VarExists('error') then
+      raise Exception.Create('error_description');
+
+    if provider = apGoogle then
     begin
-      id := params.GetVar('id');
-      username := params.GetVar('username');
-      password := params.GetVar('password');
-
-      if not FSCIMServer.CheckLogin(username, password) then
-        raise Exception.Create('Login failed');
-
-      if conn.CountSQL('select count(*) from OAuthLogins where Id = '''+SQLWrapString(id)+''' and Status = 1') <> 1 then
-        raise Exception.Create('State failed - no login session active');
-
-      session := ServerContext.SessionManager.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
-      try
-        conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
-        setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect(FPath+'/auth_choice');
-      finally
-        session.Free;
-      end;
-    end
-    else if request.document.startsWith(FPath+'/auth_dest/state/') then
-    begin
-      // HL7
-      if not CheckLoginToken(copy(request.document, 25, $FF), id, provider) then
-        raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
-      uid := params.GetVar('userid');
-      name := params.GetVar('fullName');
-      expires := inttostr(60 * 24 * 10); // 10 days
-      session := ServerContext.SessionManager.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
-      try
-        conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
-        setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect(FPath+'/auth_choice');
-      finally
-        session.Free;
-      end;
-    end
-    else if (params.VarExists('state')) then
-    begin
-      if FSSLPort = '443' then
-        authurl := 'https://'+FHost+FPath+'/auth_dest'
-      else
-        authurl := 'https://'+FHost+':'+FSSLPort+FPath+'/auth_dest';
-
-      state := params.GetVar('state');
-      if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
-        raise Exception.Create('State Prefix mis-match');
-      if not CheckLoginToken(state, id, provider) then
-        raise Exception.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)');
-      if params.VarExists('error') then
-        raise Exception.Create('error_description');
-
-      if provider = apGoogle then
-      begin
-        ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params.GetVar('code'), token, expires, jwt, msg);
-        if ok then
-          ok := GoogleGetDetails(token, FGoogleAppKey, jwt, uid, name, email, msg);
-      end
-      else
-      begin
-        ok := FacebookCheckLogin(FFacebookAppid, FFacebookAppSecret, authurl, params.GetVar('code'), token, expires, msg);
-        if ok then
-          ok := FacebookGetDetails(token, uid, name, email, msg);
-      end;
-      if not ok then
-        raise Exception.Create('Processing the login failed ('+msg+')');
-      session := ServerContext.SessionManager.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
-      try
-        conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
-        setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect(FPath+'/auth_choice');
-      finally
-        session.Free;
-      end;
+      ok := GoogleCheckLogin(FGoogleAppid, FGoogleAppSecret, authurl, params.GetVar('code'), token, expires, jwt, msg);
+      if ok then
+        ok := GoogleGetDetails(token, FGoogleAppKey, jwt, uid, name, email, msg);
     end
     else
-      raise Exception.Create('Login attempt not understood');
-    conn.release;
-  except
-    on e:exception do
     begin
-      conn.Error(e);
-      recordStack(e);
-      raise;
+      ok := FacebookCheckLogin(FFacebookAppid, FFacebookAppSecret, authurl, params.GetVar('code'), token, expires, msg);
+      if ok then
+        ok := FacebookGetDetails(token, uid, name, email, msg);
     end;
-  end;
+    if not ok then
+      raise Exception.Create('Processing the login failed ('+msg+')');
+    session := ServerContext.SessionManager.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
+    try
+      ServerContext.Storage.updateOAuthSession(id, 2, session.key);
+      setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+      response.Redirect(FPath+'/auth_choice');
+    finally
+      session.Free;
+    end;
+  end
+  else
+    raise Exception.Create('Login attempt not understood');
 end;
 
 procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -739,67 +683,54 @@ end;
 
 procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  conn : TKDBConnection;
   token, id, name, email, password, domain : String;
   variables : TDictionary<String,String>;
 begin
   domain := request.Host;
   if domain.Contains(':') then
     domain := domain.Substring(0, domain.IndexOf(':'));
-  conn := ServerContext.Storage.DB.GetConnection('OAuth2');
-  try
-    if params.getVar('form') <> '' then
-    begin
-      token := checkNotEmpty(params.GetVar('token'), 'token');
-      id := checkNotEmpty(params.GetVar('id'), 'id');
-      name := checkNotEmpty(params.GetVar('name'), 'name');
-      email := checkNotEmpty(params.GetVar('email'), 'email');
-      password := checkNotEmpty(params.GetVar('password'), 'password');
+  if params.getVar('form') <> '' then
+  begin
+    token := checkNotEmpty(params.GetVar('token'), 'token');
+    id := checkNotEmpty(params.GetVar('id'), 'id');
+    name := checkNotEmpty(params.GetVar('name'), 'name');
+    email := checkNotEmpty(params.GetVar('email'), 'email');
+    password := checkNotEmpty(params.GetVar('password'), 'password');
 
-      if FIni.ReadString('admin', 'password', '') <> password then
-        raise Exception.Create('Admin Password fail');
+    if FIni.ReadString('admin', 'password', '') <> password then
+      raise Exception.Create('Admin Password fail');
 
-      // update the login record
-      // create a session
-      session := ServerContext.SessionManager.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
-      try
-        conn.ExecSQL('Update OAuthLogins set Status = 2, SessionKey = '+inttostr(session.Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(token)+'''');
-      finally
-        session.Free;
-      end;
-      response.ContentText := 'done';
-    end
-    else if params.getVar('id') <> '' then
-    begin
-      if not ServerContext.SessionManager.GetSessionByToken(params.GetVar('id'), session) then
-        raise Exception.Create('State Error (1)');
-      try
-        if conn.CountSQL('Select Count(*) from OAuthLogins where Status = 2 and SessionKey = '+inttostr(session.Key)) <> 1 then
-          raise Exception.Create('State Error (2)');
-        setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
-        response.Redirect(FPath+'/auth_choice');
-      finally
-        session.Free;
-      end
-    end
-    else
-    begin
-      variables := TDictionary<String,String>.create;
-      try
-        variables.Add('/oauth2', FPath);
-        OnProcessFile(response, session, FPath+'/auth_skype.html', AltFile('/oauth_skype.html'), true, variables);
-      finally
-        variables.free;
-      end;
+    // update the login record
+    // create a session
+    session := ServerContext.SessionManager.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
+    try
+      ServerContext.Storage.updateOAuthSession(token, 2, session.Key);
+    finally
+      session.Free;
     end;
-    conn.Release;
-  except
-    on e:exception do
-    begin
-      response.ContentText := 'error: '+e.message;
-      conn.Error(e);
-      recordStack(e);
-      raise;
+    response.ContentText := 'done';
+  end
+  else if params.getVar('id') <> '' then
+  begin
+    if not ServerContext.SessionManager.GetSessionByToken(params.GetVar('id'), session) then
+      raise Exception.Create('State Error (1)');
+    try
+      if not ServerContext.Storage.hasOAuthSessionByKey(session.Key, 2) then
+        raise Exception.Create('State Error (2)');
+      setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+      response.Redirect(FPath+'/auth_choice');
+    finally
+      session.Free;
+    end
+  end
+  else
+  begin
+    variables := TDictionary<String,String>.create;
+    try
+      variables.Add('/oauth2', FPath);
+      OnProcessFile(response, session, FPath+'/auth_skype.html', AltFile('/oauth_skype.html'), true, variables);
+    finally
+      variables.free;
     end;
   end;
 end;
@@ -825,8 +756,7 @@ end;
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   code, clientId, clientSecret, uri, errCode : string;
-  psecret, pclientid : String;
-  conn : TKDBConnection;
+  psecret, pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
   launch, scope : String;
@@ -845,72 +775,54 @@ begin
       if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
         raise Exception.Create('Authorization Code not recognized');
       try
-        conn := ServerContext.Storage.DB.GetConnection('OAuth2');
+        if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope) then
+          raise Exception.Create('Authorization Code not recognized (2)');
+        psecret := FIni.ReadString(pclientId, 'secret', '');
+
+        // what happens now depends on whether there's a client secret or not
+        if (psecret = '') then
+        begin
+          // user must supply the correct client id
+          errCode := 'invalid_client';
+          clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
+          if clientId <> pclientid then
+            raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
+        end
+        else
+        begin
+          // client id and client secret must be in the basic header. Check them
+          clientId := request.AuthUsername;
+          clientSecret := request.AuthPassword;
+          if clientId <> pclientid then
+            raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
+          if clientSecret <> psecret then
+            raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
+        end;
+
+        // now check the redirect URL
+        uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
+        errCode := 'invalid_request';
+        if predirect <> uri then
+          raise Exception.Create('Mismatch between claimed and actual redirection URIs');
+
+        // ok, well, it's passed.
+        scope := pscope;
+        launch := readFromScope(scope, 'launch');
+        ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key);
+
+        json := TJsonWriter.create;
         try
-          conn.SQL := 'select Client, Redirect, Scope from OAuthLogins, Sessions where OAuthLogins.SessionKey = '+inttostr(session.key)+' and Status = 3 and OAuthLogins.SessionKey = Sessions.SessionKey';
-          conn.prepare;
-          conn.execute;
-          if not conn.fetchnext then
-            raise Exception.Create('Authorization Code not recognized (2)');
-
-          pclientid := conn.ColStringByName['Client'];
-          psecret := FIni.ReadString(pclientId, 'secret', '');
-
-          // what happens now depends on whether there's a client secret or not
-          if (psecret = '') then
-          begin
-            // user must supply the correct client id
-            errCode := 'invalid_client';
-            clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
-            if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
-          end
-          else
-          begin
-            // client id and client secret must be in the basic header. Check them
-            clientId := request.AuthUsername;
-            clientSecret := request.AuthPassword;
-            if clientId <> pclientid then
-              raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
-            if clientSecret <> psecret then
-              raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
-          end;
-
-          // now check the redirect URL
-          uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
-          errCode := 'invalid_request';
-          if conn.ColStringByName['Redirect'] <> uri then
-            raise Exception.Create('Mismatch between claimed and actual redirection URIs');
-
-          // ok, well, it's passed.
-          scope := conn.ColStringByName['Scope'];
-          launch := readFromScope(scope, 'launch');
-          conn.terminate;
-
-          conn.ExecSQL('Update OAuthLogins set Status = 4, DateTokenAccessed = '+DBGetDate(conn.owner.platform)+' where Id = '''+session.OuterToken+'''');
-
-          json := TJsonWriter.create;
-          try
-            json.Stream := buffer.link;
-            json.Start;
-            json.Value('access_token', session.Cookie);
-            json.Value('token_type', 'Bearer');
-            json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
-            json.Value('id_token', session.JWTPacked);
-            json.Value('scope', scope);
-            json.Value('patient', launch);
-            json.Finish;
-          finally
-            json.Free;
-          end;
-          conn.Release;
-        except
-          on e:exception do
-          begin
-            conn.Error(e);
-            recordStack(e);
-            raise;
-          end;
+          json.Stream := buffer.link;
+          json.Start;
+          json.Value('access_token', session.Cookie);
+          json.Value('token_type', 'Bearer');
+          json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+          json.Value('id_token', session.JWTPacked);
+          json.Value('scope', scope);
+          json.Value('patient', launch);
+          json.Finish;
+        finally
+          json.Free;
         end;
       finally
         session.free;

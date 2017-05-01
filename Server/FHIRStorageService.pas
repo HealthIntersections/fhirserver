@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   KCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
-  KDBManager, DateAndTime,
+  KDBDialects, DateAndTime,
 
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
@@ -34,7 +34,7 @@ Type
 
   TFHIRStorageService = class;
 
-  TFhirOperationManagerBase = class (TAdvObject)
+  TFHIROperationEngine = class (TAdvObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
   public
@@ -46,17 +46,26 @@ Type
 
   TFHIRStorageService = class (TAdvObject)
   protected
-    FDB: TKDBManager;
     function GetTotalResourceCount: integer; virtual;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TFHIRStorageService; overload;
-    Property DB: TKDBManager read FDB;
 
+    // OAuth Support
+    procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); virtual;
+    function fetchOAuthDetails(key, status : integer; var client_id, name, redirect, state, scope : String) : boolean; virtual;
+    procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); virtual;
+    function hasOAuthSession(id : String; status : integer) : boolean; virtual;
+    function hasOAuthSessionByKey(key, status : integer) : boolean; virtual;
+    procedure updateOAuthSession(id : String; state, key : integer); virtual;
+    procedure RegisterConsentRecord(session: TFhirSession); virtual;
+
+    // server total counts:
+    function FetchResourceCounts(cmpFilter : String) : TStringList; virtual;
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
-    procedure RegisterConsentRecord(session: TFhirSession); virtual;
+
     procedure Sweep; virtual;
     procedure RecordFhirSession(session: TFhirSession); virtual;
     procedure CloseFhirSession(key: integer); virtual;
@@ -72,8 +81,8 @@ Type
 
     procedure CloseAll; virtual;
 
-    function createOperationContext(lang : String) : TFhirOperationManagerBase; virtual;
-    Procedure Yield(op : TFhirOperationManagerBase; exception : Exception); virtual;
+    function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
+    Procedure Yield(op : TFHIROperationEngine; exception : Exception); virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
   end;
@@ -98,9 +107,9 @@ begin
   inherited;
 end;
 
-function TFHIRStorageService.createOperationContext(lang: String): TFhirOperationManagerBase;
+function TFHIRStorageService.createOperationContext(lang: String): TFHIROperationEngine;
 begin
-  raise Exception.Create('The function "createOperationContext(lang: String): TFhirOperationManagerBase" must be overridden in '+className);
+  raise Exception.Create('The function "createOperationContext(lang: String): TFHIROperationEngine" must be overridden in '+className);
 end;
 
 destructor TFHIRStorageService.Destroy;
@@ -114,9 +123,29 @@ begin
 end;
 
 
+function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
+begin
+  raise Exception.Create('This server does not support OAuth');
+end;
+
+function TFHIRStorageService.FetchResourceCounts(cmpFilter : String): TStringList;
+begin
+  raise Exception.Create('The function "FetchResourceCounts(cmpFilter : String): TStringList" must be overridden in '+className);
+end;
+
 function TFHIRStorageService.GetTotalResourceCount: integer;
 begin
   raise Exception.Create('The function "GetTotalResourceCount: integer" must be overridden in '+className);
+end;
+
+function TFHIRStorageService.hasOAuthSession(id: String; status : integer): boolean;
+begin
+  raise Exception.Create('This server does not support OAuth');
+end;
+
+function TFHIRStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
+begin
+  raise Exception.Create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.Link: TFHIRStorageService;
@@ -159,6 +188,16 @@ begin
   raise Exception.Create('The function "RecordFhirSession(session: TFhirSession)" must be overridden in '+className);
 end;
 
+procedure TFHIRStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
+begin
+  raise Exception.Create('This server does not support OAuth');
+end;
+
+procedure TFHIRStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state: String);
+begin
+  raise Exception.Create('This server does not support OAuth');
+end;
+
 procedure TFHIRStorageService.RegisterAuditEvent(session: TFhirSession; ip: String);
 begin
   raise Exception.Create('The function "RegisterAuditEvent(session: TFhirSession; ip: String)" must be overridden in '+className);
@@ -166,7 +205,7 @@ end;
 
 procedure TFHIRStorageService.RegisterConsentRecord(session: TFhirSession);
 begin
-  raise Exception.Create('The function "RegisterConsentRecord(session: TFhirSession)" must be overridden in '+className);
+  raise Exception.Create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.RunValidation;
@@ -179,12 +218,17 @@ begin
   raise Exception.Create('The function "Sweep" must be overridden in '+className);
 end;
 
-procedure TFHIRStorageService.Yield(op: TFhirOperationManagerBase; exception : Exception);
+procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer);
 begin
-  raise Exception.Create('The function "Yield(op: TFhirOperationManagerBase; exception : Exception)" must be overridden in '+className);
+  raise Exception.Create('This server does not support OAuth');
 end;
 
-{ TFhirOperationManagerBase }
+procedure TFHIRStorageService.Yield(op: TFHIROperationEngine; exception : Exception);
+begin
+  raise Exception.Create('The function "Yield(op: TFHIROperationEngine; exception : Exception)" must be overridden in '+className);
+end;
+
+{ TFHIROperationEngine }
 
 
 { TOperationContext }
@@ -209,14 +253,14 @@ begin
 end;
 
 
-{ TFhirOperationManagerBase }
+{ TFHIROperationEngine }
 
-function TFhirOperationManagerBase.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
+function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
 begin
   raise Exception.Create('The function "Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String" must be overridden in '+className);
 end;
 
-function TFhirOperationManagerBase.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
+function TFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
   raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
 end;

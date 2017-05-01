@@ -8,7 +8,7 @@ uses
   AdvObjects,
   KDBManager,
   FHIRSupport,
-  FHIRIndexManagers, FHIRDataStore;
+  FHIRIndexManagers;
 
 Type
   TMPICertainty = (mcNull, mcCertain, mcProbable, mcPossible);
@@ -17,7 +17,6 @@ Type
   private
     // inputs
     Fparams: TParseMap;
-    Frepository: TFHIRDataStore;
     FcompartmentId: string;
     FConnection: TKDBConnection;
     FbaseURL: string;
@@ -40,7 +39,6 @@ Type
     procedure SetConnection(const Value: TKDBConnection);
     procedure Setindexes(const Value: TFHIRIndexInformation);
     procedure Setparams(const Value: TParseMap);
-    procedure Setrepository(const Value: TFHIRDataStore);
     procedure Setsession(const Value: TFHIRSession);
 
     function baseSQL(sort, score : String; certainty : TMPICertainty) : String;
@@ -62,7 +60,6 @@ Type
     property lang : string read Flang write Flang;
     property params : TParseMap read Fparams write Setparams;
     property indexes : TFHIRIndexInformation read Findexes write Setindexes;
-    property repository : TFHIRDataStore read Frepository write Setrepository;
     property session : TFHIRSession read Fsession write Setsession;
     property Connection : TKDBConnection read FConnection write SetConnection;
     property key : String read FKey write FKey;
@@ -94,7 +91,6 @@ destructor TMPISearchProcessor.Destroy;
 begin
   FConnection.Free;
   Findexes.Free;
-  Frepository.Free;
   Fsession.Free;
 
   inherited;
@@ -247,11 +243,6 @@ begin
   Fparams := Value;
 end;
 
-procedure TMPISearchProcessor.Setrepository(const Value: TFHIRDataStore);
-begin
-  Frepository.Free;
-  Frepository := Value;
-end;
 
 procedure TMPISearchProcessor.Setsession(const Value: TFHIRSession);
 begin

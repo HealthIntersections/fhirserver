@@ -704,7 +704,7 @@ procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base 
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
-//  op : TFhirOperationManager;
+//  op : TFHIRNativeOperationEngine;
   cursor : integer;
   context : TOperationContext;
 begin
@@ -2348,7 +2348,7 @@ end;
 
 procedure TFhirWebServer.ProcessRequest(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
-  op : TFhirOperationManagerBase;
+  op : TFHIROperationEngine;
   t : cardinal;
 begin
   FLock.Lock;
@@ -2475,7 +2475,6 @@ function TFhirWebServer.BuildFhirHomePage(comps, lang, host, sBaseURL : String; 
 var
   counts : TStringList;
   a : String;
-  db : TKDBConnection;
   s : String;
   names : TStringList;
   profiles : TAdvStringMatch;
@@ -2505,32 +2504,7 @@ begin
     profiles := TAdvStringMatch.create;
     try
       profiles.forced := true;
-      if FServerContext.Storage <> nil then
-      begin
-        db := FServerContext.Storage.DB.GetConnection('fhir');
-        try
-          db.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
-
-          db.prepare;
-          db.execute;
-          while db.fetchNext do
-          begin
-            j := counts.IndexOf(db.ColStringByname['ResourceName']);
-            if j = -1 then
-              j := counts.add(db.ColStringByname['ResourceName']);
-            counts.objects[j] := TObject(db.ColIntegerByName['Count']);
-          end;
-          db.terminate;
-          db.Release;
-        except
-          on e:exception do
-          begin
-            db.Error(e);
-            recordStack(e);
-            raise;
-          end;
-        end;
-      end;
+      counts := FServerContext.Storage.FetchResourceCounts(cmp);
 
      s := host+sBaseURL;
      b := TStringBuilder.Create;
@@ -2749,7 +2723,7 @@ end;
 
 function TFhirWebServer.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 var
-  store : TFhirOperationManagerBase;
+  store : TFHIROperationEngine;
 begin
   store := FServerContext.Storage.createOperationContext(TFHIRRequest(context).Lang);
   try

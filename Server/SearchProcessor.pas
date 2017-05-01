@@ -9,7 +9,7 @@ uses
   AdvObjects, DateAndTime, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   KDBManager,
-  FHIRIndexManagers, FHIRDataStore, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities,
+  FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
   UcumServices;
 
 const
@@ -30,9 +30,8 @@ const
 type
   TQuantityOperation = (qopEqual, qopNotEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopStartsAfter, qopEndsBefore, qopApproximate);
 
-  TSearchProcessor = class (TAdvObject)
+  TSearchProcessor = class (TFHIRServerWorker)
   private
-    FResConfig: TADvMap<TFHIRResourceConfig>;
     FLink: String;
     FSort: String;
     FFilter: String;
@@ -44,7 +43,6 @@ type
     FBaseURL: String;
     FIndexes: TFhirIndexInformation;
     FLang: String;
-    FRepository: TFHIRDataStore;
     FSession : TFhirSession;
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
@@ -61,7 +59,6 @@ type
     Function ProcessSearchFilter(value : String) : String;
     Function ProcessParam(types : TArray<String>; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
     procedure SetIndexes(const Value: TFhirIndexInformation);
-    procedure SetRepository(const Value: TFHIRDataStore);
     procedure SplitByCommas(value: String; list: TStringList);
     function findPrefix(var value: String; subst: String): boolean;
     procedure checkDateFormat(s : string);
@@ -85,7 +82,7 @@ type
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure SetConnection(const Value: TKDBConnection);
   public
-    constructor create(ResConfig: TADvMap<TFHIRResourceConfig>);
+    constructor create(serverContext : TAdvObject);
     Destructor Destroy; override;
     procedure Build;
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
@@ -99,7 +96,6 @@ type
     property lang : String read FLang write FLang;
     property params : TParseMap read FParams write FParams;
     property indexes : TFhirIndexInformation read FIndexes write SetIndexes;
-    property repository : TFHIRDataStore read FRepository write SetRepository;
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
     property Connection : TKDBConnection read FConnection write SetConnection;
@@ -174,10 +170,10 @@ begin
     filter := 'Ids.MasterResourceKey is null and Ids.ResourceTypeKey = '+inttostr(typekey);
 
   if (compartmentId <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig['Patient'].key)+' and Id = '''+compartmentId+''')';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Patient'].key)+' and Id = '''+compartmentId+''')';
 
   if (compartments <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(FResConfig['Patient'].key)+' and Id in ('+compartments+'))';
+    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Patient'].key)+' and Id in ('+compartments+'))';
 
   link_ := '';
   first := false;
@@ -871,7 +867,7 @@ begin
     try
       specified.Value := value;
       specified.UnitCode := space;
-      canonical := repository.ServerContext.TerminologyServer.Ucum.getCanonicalForm(specified);
+      canonical := TFHIRServerContext(ServerContext).TerminologyServer.Ucum.getCanonicalForm(specified);
       try
         mincv := normaliseDecimal(canonical.Value.lowerBound.AsDecimal);
         maxcv := normaliseDecimal(canonical.Value.upperBound.AsDecimal);
@@ -963,7 +959,7 @@ begin
     f := true;
     tl := '';
     for a in types do
-      tl := tl+','+inttostr(FResConfig[a].key);
+      tl := tl+','+inttostr(TFHIRServerContext(ServerContext).ResConfig[a].key);
     if (tl <> '') then
       tl := tl.Substring(1);
     if (tl = '') then
@@ -1085,7 +1081,7 @@ begin
   // firstly, the vs can be a logical reference or a literal reference
   if (vs.StartsWith('valueset/')) then
   begin
-    vso := FRepository.ServerContext.TerminologyServer.getValueSetByUrl(vs);
+    vso := TFHIRServerContext(ServerContext).TerminologyServer.getValueSetByUrl(vs);
     try
       if vso = nil then
         vs := 'not-found'
@@ -1133,13 +1129,6 @@ begin
   FIndexes.Free;
   FIndexes := Value;
 end;
-
-procedure TSearchProcessor.SetRepository(const Value: TFHIRDataStore);
-begin
-  FRepository.Free;
-  FRepository := Value;
-end;
-
 
 
 procedure TSearchProcessor.SetSession(const Value: TFhirSession);
@@ -1308,10 +1297,9 @@ begin
     raise exception.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
 end;
 
-constructor TSearchProcessor.create(ResConfig: TADvMap<TFHIRResourceConfig>);
+constructor TSearchProcessor.create(serverContext : TAdvObject);
 begin
-  Inherited Create;
-  FResConfig := ResConfig;
+  Inherited Create(serverContext);
   FStrict := false;
   FWarnings := TFhirOperationOutcomeIssueList.create;
 end;
@@ -1320,10 +1308,8 @@ destructor TSearchProcessor.Destroy;
 begin
   FWarnings.Free;
   FConnection.Free;
-  FRepository.Free;
   FSession.Free;
   FIndexes.Free;
-  FResConfig.Free;
   inherited;
 end;
 

@@ -29,13 +29,13 @@ procedure ExecuteFhirServerTests(all: boolean);
 //
 //  TFHIRQuestionnaireBuilderTests = class (TAdvObject)
 //  private
-//    FDataStore: TFHIRDataStore;
+//    FDataStore: TFHIRNativeStorageService;
 //    function LoadJsonResource(filename : String) : TFhirResource;
 //    procedure SaveResource(resource : TFhirResource; filename : String);
 //    procedure RoundTrip(filename : String; name : String);
 //    procedure RunTests(srcDir : String); overload;
 //  public
-//    class procedure RunTests(ini : TIniFile; dataStore: TFHIRDataStore); overload;
+//    class procedure RunTests(ini : TIniFile; dataStore: TFHIRNativeStorageService); overload;
 //  end;
 
 
@@ -192,7 +192,7 @@ end;
 //  end;
 //end;
 //
-//class procedure TFHIRQuestionnaireBuilderTests.RunTests(ini : TInifile; dataStore: TFHIRDataStore);
+//class procedure TFHIRQuestionnaireBuilderTests.RunTests(ini : TInifile; dataStore: TFHIRNativeStorageService);
 //var
 //  this : TFHIRQuestionnaireBuilderTests;
 //  srcDir : string;

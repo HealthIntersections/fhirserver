@@ -4,9 +4,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, kCritSct,
-  AdvObjects, AdvGenerics, AdvStringMatches,
-  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers,
-  FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager;
+  AdvObjects, AdvGenerics, AdvStringMatches, OIDSupport,
+  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
+  FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -36,6 +36,7 @@ Type
 
   TFHIRServerContext = class (TAdvObject)
   private
+    FLock: TCriticalSection;
     FStorage : TFHIRStorageService;
     FQuestionnaireCache: TQuestionnaireCache;
     FBases: TStringList;
@@ -47,6 +48,11 @@ Type
     FIndexes : TFHIRIndexInformation;
     FSubscriptionManager : TSubscriptionManager;
     FSessionManager : TFHIRSessionManager;
+    FTagManager : TFHIRTagManager;
+    FNamingSystems : TAdvMap<TFHIRNamingSystem>;
+    {$IFNDEF FHIR2}
+    FMaps : TAdvMap<TFHIRStructureMap>;
+    {$ENDIF}
 
     FOwnerName: String;
     FSystemId: String;
@@ -55,7 +61,12 @@ Type
     FFormalURLPlainOpen: String;
     FFormalURLSecureOpen: String;
     FFormalURLSecureClosed: String;
+
     FForLoad : boolean;
+    FSupportTransaction: Boolean;
+    FDoAudit: Boolean;
+    FSupportSystemHistory: Boolean;
+    FValidate: Boolean;
 
     procedure SetSCIMServer(const Value: TSCIMServer);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -75,6 +86,8 @@ Type
     property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
     property SessionManager : TFHIRSessionManager read FSessionManager;
+    property TagManager : TFHIRTagManager read FTagManager;
+    property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
@@ -83,8 +96,19 @@ Type
     property FormalURLSecureClosed: String read FFormalURLSecureClosed write FFormalURLSecureClosed;
     Property OwnerName: String read FOwnerName write FOwnerName;
     property SystemId: String read FSystemId write FSystemId;
+
     property ForLoad : boolean read FForLoad write FForLoad;
-    property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
+    Property SupportTransaction: Boolean read FSupportTransaction write FSupportTransaction;
+    Property DoAudit: Boolean read FDoAudit write FDoAudit;
+    Property SupportSystemHistory: Boolean read FSupportSystemHistory write FSupportSystemHistory;
+    Property Validate: Boolean read FValidate write FValidate;
+
+    function oid2Uri(oid : String) : String;
+    procedure seeNamingSystem(key : integer; ns : TFhirNamingSystem);
+    {$IFNDEF FHIR2}
+    procedure seeMap(map : TFHIRStructureMap);
+    function getMaps : TAdvMap<TFHIRStructureMap>;
+    {$ENDIF}
   end;
 
 
@@ -244,6 +268,7 @@ var
   cfg : TFHIRResourceConfig;
 begin
   Inherited Create;
+  FLock := TCriticalSection.Create('ServerContext');
   FIndexes := TFHIRIndexInformation.create;
   FStorage := storage;
   FQuestionnaireCache := TQuestionnaireCache.Create;
@@ -260,10 +285,20 @@ begin
   FValidatorContext := TFHIRServerWorkerContext.Create;
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
   FSessionManager := TFHIRSessionManager.Create(self);
+  FTagManager := TFHIRTagManager.create;
+  FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
+  {$IFNDEF FHIR2}
+  FMaps := TAdvMap<TFHIRStructureMap>.create;
+  {$ENDIF}
 end;
 
 destructor TFHIRServerContext.Destroy;
 begin
+  {$IFNDEF FHIR2}
+  FMaps.Free;
+  {$ENDIF}
+  FNamingSystems.Free;
+  FTagManager.Free;
   FSessionManager.Free;
   FSubscriptionManager.Free;
   FIndexes.free;
@@ -275,6 +310,7 @@ begin
   FStorage.Free;
   FBases.free;
   FSCIMServer.Free;
+  FLock.Free;
   inherited;
 end;
 
@@ -282,6 +318,26 @@ end;
 function TFHIRServerContext.Link: TFHIRServerContext;
 begin
   result := TFHIRServerContext(inherited Link);
+end;
+
+procedure TFHIRServerContext.seeMap(map: TFHIRStructureMap);
+begin
+  FLock.Lock;
+  try
+    FMaps.AddOrSetValue(map.url, map.Link);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TFHIRServerContext.seeNamingSystem(key : integer; ns: TFhirNamingSystem);
+begin
+  FLock.Lock;
+  try
+    FNamingSystems.AddOrSetValue(inttostr(key), ns.Link);
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 procedure TFHIRServerContext.SetSCIMServer(const Value: TSCIMServer);
@@ -302,6 +358,47 @@ begin
   FTerminologyServer.Free;
   FTerminologyServer := Value;
   ValidatorContext.TerminologyServer := Value.Link;
+end;
+
+{$IFNDEF FHIR2}
+function TFHIRServerContext.getMaps: TAdvMap<TFHIRStructureMap>;
+var
+  s : String;
+begin
+  FLock.Lock;
+  try
+    result := TAdvMap<TFHIRStructureMap>.create;
+    for s in FMaps.Keys do
+      result.Add(s, FMaps[s].Link);
+  finally
+    FLock.Unlock;
+  end;
+end;
+{$ENDIF}
+
+function TFHIRServerContext.oid2Uri(oid: String): String;
+var
+  ns : TFHIRNamingSystem;
+begin
+  result := '';
+  FLock.Lock;
+  try
+		result := UriForKnownOid(oid);
+		if (result = '') then
+    begin
+  		for ns in FNamingSystems.Values do
+      begin
+        if ns.hasOid(oid) then
+        begin
+          result := ns.getUri;
+          if (result <> '') then
+            exit;
+        end;
+      end;
+    end;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 end.

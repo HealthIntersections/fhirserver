@@ -136,7 +136,7 @@ uses
   OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas',
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
   CurrencySupport in '..\reference-platform\Support\CurrencySupport.pas',
-  FHIRDataStore in '..\server\FHIRDataStore.pas',
+  FHIRNativeStorage in '..\Server\FHIRNativeStorage.pas',
   SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
   AdvProfilers in '..\reference-platform\Support\AdvProfilers.pas',
   AnsiStringBuilder in '..\reference-platform\Support\AnsiStringBuilder.pas',

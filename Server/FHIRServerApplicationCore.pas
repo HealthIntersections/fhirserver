@@ -43,15 +43,15 @@ Uses
   KDBManager, KDBOdbcExpress, KDBDialects,
   TerminologyServer,
   FHIRStorageService,
-  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRDataStore, FHIRBase, FhirPath,
+  FHIRRestServer, DBInstaller, FHIRConstants, FHIROperation, FHIRNativeStorage, FHIRBase, FhirPath,
   FHIRServerConstants, FHIRServerContext,
   SCIMServer;
 
 Type
-  TFHIRServerDataStore = class (TFHIRDataStore)
+  TFHIRServerDataStore = class (TFHIRNativeStorageService)
   public
-    function createOperationContext(lang : String) : TFhirOperationManagerBase; override;
-    Procedure Yield(op : TFhirOperationManagerBase; e : Exception); override;
+    function createOperationContext(lang : String) : TFHIROperationEngine; override;
+    Procedure Yield(op : TFHIROperationEngine; e : Exception); override;
   end;
 
   TFHIRService = class (TSystemService)
@@ -544,11 +544,11 @@ var
 begin
   store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString('fhir', 'web', '')));
   try
-    store.Validate := FIni.ReadBool('fhir', 'validate', true);
     ctxt := TFHIRServerContext.Create(store.Link);
     try
       store.ServerContext := ctxt;
       ctxt.TerminologyServer := FterminologyServer.Link;
+      ctxt.Validate := FIni.ReadBool('fhir', 'validate', true);
       ctxt.ForLoad := FindCmdLineSwitch('forload');
       ctxt.ownername := Fini.readString('admin', 'ownername', '');
       store.Initialise(FIni);
@@ -669,11 +669,11 @@ end;
 
 { TFHIRServerDataStore }
 
-function TFHIRServerDataStore.createOperationContext(lang: String): TFhirOperationManagerBase;
+function TFHIRServerDataStore.createOperationContext(lang: String): TFHIROperationEngine;
 var
-  res : TFhirOperationManager;
+  res : TFHIRNativeOperationEngine;
 begin
-  res := TFhirOperationManager.Create(lang, ServerContext, self.Link);
+  res := TFHIRNativeOperationEngine.Create(lang, ServerContext, self.Link);
   try
     res.Connection := DB.GetConnection('Operation');
     result := res.Link;
@@ -682,13 +682,13 @@ begin
   end;
 end;
 
-procedure TFHIRServerDataStore.Yield(op: TFhirOperationManagerBase; e : Exception);
+procedure TFHIRServerDataStore.Yield(op: TFHIROperationEngine; e : Exception);
 begin
   try
     if e = nil then
-      TFhirOperationManager(op).Connection.Release
+      TFHIRNativeOperationEngine(op).Connection.Release
     else
-      TFhirOperationManager(op).Connection.Error(e);
+      TFHIRNativeOperationEngine(op).Connection.Error(e);
   finally
     op.Free;
   end;
