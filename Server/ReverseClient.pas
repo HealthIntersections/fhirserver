@@ -7,6 +7,9 @@ uses
   AdvObjects,
   IdCustomHttpServer, IdContext, IdHttp;
 
+Const
+  SECURE_TOKEN_HEADER = 'X-Proxy-SSL-Token';
+
 Type
   TReverseProxyInfo = class(TAdvObject)
   private
@@ -25,6 +28,7 @@ Type
     Fresponse: TIdHTTPResponseInfo;
     Fcontext: TIdContext;
     Fproxy: TReverseProxyInfo;
+    FSecureToken: String;
     procedure Setproxy(const Value: TReverseProxyInfo);
 
     function getOutput : TStream;
@@ -34,6 +38,7 @@ Type
     property context: TIdContext read Fcontext write Fcontext;
     property request: TIdHTTPRequestInfo read Frequest write Frequest;
     property response: TIdHTTPResponseInfo read Fresponse write Fresponse;
+    property SecureToken : String read FSecureToken write FSecureToken;
 
     procedure execute;
   end;
@@ -72,7 +77,6 @@ procedure TReverseClient.execute;
 var
   client : TIdCustomHTTP;
   url, s : String;
-  i : integer;
 begin
   client := TIdCustomHTTP.Create(nil);
   try
@@ -115,6 +119,9 @@ begin
     client.Request.TransferEncoding := request.TransferEncoding;
     for s in request.CustomHeaders do
       client.Request.CustomHeaders.Add(s);
+    if SecureToken <> '' then
+      client.Request.CustomHeaders.Add(SECURE_TOKEN_HEADER+': '+SecureToken);
+
     s := request.RawHTTPCommand;
     s := s.Substring(s.IndexOf(' ')+1);
     s := s.substring(0, s.IndexOf(' '));
@@ -173,6 +180,8 @@ begin
     response.ServerSoftware := client.response.Server;
     response.ResponseText := client.response.ResponseText;
     response.ResponseNo := client.response.ResponseCode;
+    for s in client.response.CustomHeaders do
+      response.CustomHeaders.Add(s);
 
 
 //    response.AuthRealm := client.Response.AuthRealm;

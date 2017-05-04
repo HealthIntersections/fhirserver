@@ -53,7 +53,8 @@ Uses
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, SCIMServer, FHIRServerContext, FHIRServerConstants, CDSHooksUtilities, FHIRXhtml, MsXML, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, MsXML,
+  FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -108,7 +109,7 @@ Type
 
   TFhirWebServer = Class(TAdvObject)
   Private
-    FIni : TIniFile;
+    FIni : TFHIRServerIniFile;
     FLock : TCriticalSection;
 
     // sated vs actual: to allow for a reverse proxy
@@ -116,6 +117,7 @@ Type
     FStatedPort : Integer;
     FActualSSLPort : Integer;
     FStatedSSLPort : Integer;
+    FSecureToken : String;
     FCertFile : String;
     FRootCertFile : String;
     FSSLPassword : String;
@@ -162,6 +164,7 @@ Type
 
     function BuildCompartmentList(session : TFHIRSession) : String;
 
+    function hasInternalSSLToken(request : TIdHTTPRequestInfo) : boolean;
     procedure cacheResponse(response : TIdHTTPResponseInfo; caching : TFHIRCacheControl);
     procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
     function GetResource(session : TFhirSession; rtype : String; lang, id, ver, op : String) : TFhirResource;
@@ -195,7 +198,7 @@ Type
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkExit(AContext: TIdContext);
-    Procedure ReverseProxy(proxy : TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
+    Procedure ReverseProxy(proxy : TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
@@ -205,7 +208,7 @@ Type
     function extractFileData(form : TMimeMessage; const name: String; var sContentType : String): TStream;
     Procedure StartServer(active : boolean);
     Procedure StopServer;
-    Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
+    Function ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TFHIRServerIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
     Procedure ProcessRequest(context : TOperationContext; request : TFHIRRequest; response : TFHIRResponse);
@@ -227,7 +230,7 @@ Type
 
     Procedure Start(active : boolean);
     Procedure Stop;
-    Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TIniFile; callback : TInstallerCallback);
+    Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TFHIRServerIniFile; callback : TInstallerCallback);
 
     Property ServerContext : TFHIRServerContext read FServerContext;
   End;
@@ -313,44 +316,46 @@ Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
   FName := Name;
-  FIni := TIniFile.Create(ini);                    FHost := FIni.ReadString('web', 'host', '');
-  HostSms := FIni.ReadString('sms', 'owner', '');
+  FIni := TFHIRServerIniFile.Create(ini);
+  FHost := FIni.ReadString(voVersioningNotApplicable, 'web', 'host', '');
+  HostSms := FIni.ReadString(voVersioningNotApplicable, 'sms', 'owner', '');
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
   FPatientViewServers := TDictionary<String, String>.create;
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
   FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
+  FSecureToken := FIni.ReadString(voVersioningNotApplicable, 'web', 'secure-token', '');
 
-  FSourcePath := ProcessPath(ExtractFilePath(ini), FIni.ReadString('fhir', 'web', ''));
+  FSourcePath := ProcessPath(ExtractFilePath(ini), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
   logt('Load User Sub-system');
-  FSCIMServer := TSCIMServer.Create(db.link, FSourcePath, FIni.ReadString('scim', 'salt', ''), Fhost, FIni.ReadString('scim', 'default-rights', ''), false);
+  FSCIMServer := TSCIMServer.Create(db.link, FSourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), Fhost, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
   FSCIMServer.OnProcessFile := ReturnProcessedFile;
   context.SCIMServer := FSCIMServer.Link;
 
   logt('Load & Cache Store: ');
-  FOwnerName := Fini.readString('admin', 'ownername', '');
+  FOwnerName := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
   if FOwnerName = '' then
     FOwnerName := 'Health Intersections';
-  FAdminEmail := Fini.readString('admin', 'email', '');
+  FAdminEmail := Fini.readString(voVersioningNotApplicable, 'admin', 'email', '');
   if FAdminEmail = '' then
     raise Exception.Create('Ad admin email is required');
 
   // Base Web server configuration
-  FBasePath := FIni.ReadString('web', 'base', '');
-  FSecurePath := FIni.ReadString('web', 'secure', '');
-  FActualPort := FIni.ReadInteger('web', 'http', 0);
-  FStatedPort := FIni.ReadInteger('web', 'stated-http', FActualPort);
-  FActualSSLPort := FIni.ReadInteger('web', 'https', 0);
-  FStatedSSLPort := FIni.ReadInteger('web', 'stated-https', FActualSSLPort);
-  FCertFile := FIni.ReadString('web', 'certname', '');
-  FRootCertFile := FIni.ReadString('web', 'cacertname', '');
-  FSSLPassword := FIni.ReadString('web', 'certpword', '');
-  FHomePage := FIni.ReadString('web', 'homepage', 'homepage.html');
-  FFacebookLike := FIni.ReadString('facebook.com', 'like', '') = '1';
+  FBasePath := FIni.ReadString(voMaybeVersioned, 'web', 'base', '');
+  FSecurePath := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
+  FActualPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'http', 0);
+  FStatedPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-http', FActualPort);
+  FActualSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'https', 0);
+  FStatedSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-https', FActualSSLPort);
+  FCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'certname', '');
+  FRootCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'cacertname', '');
+  FSSLPassword := FIni.ReadString(voMaybeVersioned, 'web', 'certpword', '');
+  FHomePage := FIni.ReadString(voMaybeVersioned, 'web', 'homepage', 'homepage.html');
+  FFacebookLike := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'like', '') = '1';
   ts := TStringList.Create;
   try
-    FIni.ReadSection('reverse-proxy', ts);
+    FIni.ReadSection(voMaybeVersioned, 'reverse-proxy', ts);
     for s in ts do
-      FReverseProxyList.Add(TReverseProxyInfo.create(s, FIni.ReadString('reverse-proxy', s, '')));
+      FReverseProxyList.Add(TReverseProxyInfo.create(s, FIni.ReadString(voMaybeVersioned, 'reverse-proxy', s, '')));
   finally
     ts.Free;
   end;
@@ -360,23 +365,23 @@ Begin
 //  FServerContext.Storage.ownername := FOwnerName;
 //  FServerContext.Storage.Validate := FIni.ReadBool('fhir', 'validate', true);
 
-  if FIni.ReadString('web', 'host', '') <> '' then
+  if FIni.ReadString(voMaybeVersioned, 'web', 'host', '') <> '' then
   begin
-    if FIni.ReadString('web', 'base', '') <> '' then
-      s := FIni.ReadString('web', 'base', '')
+    if FIni.ReadString(voMaybeVersioned, 'web', 'base', '') <> '' then
+      s := FIni.ReadString(voMaybeVersioned, 'web', 'base', '')
     else
-      s := FIni.ReadString('web', 'secure', '');
+      s := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
   end;
   logt(inttostr(FServerContext.Storage.TotalResourceCount)+' resources');
-  FServerContext.FormalURLPlain := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort);
-  FServerContext.FormalURLSecure := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort);
-  FServerContext.FormalURLPlainOpen := 'http://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
-  FServerContext.FormalURLSecureOpen := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
-  FServerContext.FormalURLSecureClosed := 'https://'+FIni.ReadString('web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
+  FServerContext.FormalURLPlain := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort);
+  FServerContext.FormalURLSecure := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort);
+  FServerContext.FormalURLPlainOpen := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
+  FServerContext.FormalURLSecureOpen := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
+  FServerContext.FormalURLSecureClosed := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
 
-  if FIni.ReadString('web', 'insecure', '') = 'conformance' then
+  if FIni.ReadString(voMaybeVersioned, 'web', 'insecure', '') = 'conformance' then
     FServerContext.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem'])
-  else if FIni.ReadString('web', 'insecure', '') = 'conformance+patient' then
+  else if FIni.ReadString(voMaybeVersioned, 'web', 'insecure', '') = 'conformance+patient' then
     FServerContext.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem', 'Patient'])
   else
     FServerContext.ValidatorContext.setNonSecureTypes([]);
@@ -387,24 +392,24 @@ Begin
     txu := 'http://'+FHost+':'+inttostr(FStatedPort);
   FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
 
-  if FIni.SectionExists('patient-view') then
+  if FIni.SectionExists(voVersioningNotApplicable, 'patient-view') then
   begin
     ts := TStringList.create;
     try
-      FIni.ReadSection('patient-view', ts);
+      FIni.ReadSection(voVersioningNotApplicable, 'patient-view', ts);
       for s in ts do
-        FPatientViewServers.Add(s, FIni.ReadString('patient-view', s, ''));
+        FPatientViewServers.Add(s, FIni.ReadString(voVersioningNotApplicable, 'patient-view', s, ''));
     finally
       ts.free;
     end;
   end;
-  if FIni.readString('web', 'clients', '') = '' then
+  if FIni.readString(voVersioningNotApplicable, 'web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
-  FAuthServer := TAuth2Server.Create(FIni.readString('web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort), FSCIMServer.Link);
+  FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort), FSCIMServer.Link);
   FAuthServer.ServerContext := FServerContext.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
-  FAuthServer.Path := FIni.ReadString('web', 'auth-path', '/oauth2');
+  FAuthServer.Path := FIni.ReadString(voMaybeVersioned, 'web', 'auth-path', '/oauth2');
   FAuthServer.RootCert := FRootCertFile;
   FAuthServer.SSLCert := FCertFile;
   FAuthServer.SSLPassword := FSSLPassword;
@@ -452,11 +457,6 @@ Begin
   FTerminologyWebServer.free;
   FIni.Free;
   FAuthServer.Free;
-  if FServerContext.Storage <> nil then
-  begin
-    FServerContext.Storage.CloseAll;
-    FServerContext.Storage.Free;
-  end;
   FPatientViewServers.Free;
   FClients.Free;
   FPatientHooks.Free;
@@ -700,7 +700,7 @@ Begin
   end;
 End;
 
-procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base : String; ini : TIniFile; callback : TInstallerCallback);
+procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base : String; ini : TFHIRServerIniFile; callback : TInstallerCallback);
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
@@ -844,8 +844,8 @@ begin
       HandleRequest(AContext, request, response, false, false, FBasePath)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'FSecurePath', false) then
       HandleWebSockets(AContext, request, response, false, false, FSecurePath)
-    else if request.Document.StartsWith(FSecurePath, false) then
-      HandleRequest(AContext, request, response, false, false, FSecurePath)
+    else if request.Document.StartsWith(FSecurePath, false) and hasInternalSSLToken(request) then
+      HandleRequest(AContext, request, response, true, true, FSecurePath)
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
@@ -858,7 +858,7 @@ begin
       for rp in FReverseProxyList do
         if request.Document.StartsWith(rp.path) then
         begin
-          ReverseProxy(rp, AContext, request, session, response);
+          ReverseProxy(rp, AContext, request, session, response, false);
           handled := true;
           break;
         end;
@@ -920,8 +920,9 @@ end;
 Procedure TFhirWebServer.SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   session : TFHIRSession;
-  check : boolean;
+  check, handled : boolean;
   c : integer;
+  rp : TReverseProxyInfo;
 begin
   session := nil;
   MarkEntry(AContext, request, response);
@@ -967,9 +968,20 @@ begin
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
     else
     begin
-      response.ResponseNo := 404;
-      response.ContentText := 'Document '+request.Document+' not found';
-      logt('miss: '+request.Document);
+      handled := false;
+      for rp in FReverseProxyList do
+        if request.Document.StartsWith(rp.path) then
+        begin
+          ReverseProxy(rp, AContext, request, session, response, true);
+          handled := true;
+          break;
+        end;
+      if not handled then
+      begin
+        response.ResponseNo := 404;
+        response.ContentText := 'Document '+request.Document+' not found';
+        logt('miss: '+request.Document);
+      end;
     end;
   finally
     markExit(AContext);
@@ -1755,6 +1767,11 @@ begin
 end;
 
 
+function TFhirWebServer.hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
+begin
+  result := request.RawHeaders.Values[SECURE_TOKEN_HEADER] = FSecureToken;
+end;
+
 procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : Exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
 var
   issue : TFhirOperationOutcome;
@@ -2087,7 +2104,7 @@ begin
   end;
 end;
 
-Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
+Function TFhirWebServer.ProcessZip(lang : String; oStream : TStream; name, base : String; init : boolean; ini : TFHIRServerIniFile; context : TOperationContext; var cursor : integer) : TFHIRBundle;
 var
   rdr : TAdvZipReader;
   p : TFHIRParser;
@@ -2106,7 +2123,7 @@ begin
   result := TFHIRBundle.Create(BundleTypeTransaction);
   try
     if init and (ini <> nil) then
-      inc.CommaText := ini.ReadString('control', 'include', '');
+      inc.CommaText := ini.ReadString(voVersioningNotApplicable, 'control', 'include', '');
     result.id := NewGuidURN;
 //    result.base := base;
     rdr := carry.link as TAdvZipReader;
@@ -2132,7 +2149,7 @@ begin
       end
       else
       begin
-        iStart := ini.ReadInteger('process', 'start', 0);
+        iStart := ini.ReadInteger(voVersioningNotApplicable, 'process', 'start', 0);
         iEnd := iStart + 1000;
         if iEnd > rdr.Parts.Count - 1 then
           iEnd := rdr.Parts.Count - 1;
@@ -2479,7 +2496,6 @@ var
   names : TStringList;
   profiles : TAdvStringMatch;
   i, j, ix : integer;
-  cmp : String;
   b : TStringBuilder;
   pol : String;
 begin
@@ -2495,16 +2511,11 @@ begin
         counts.Objects[ix] := TObject(-1);
     end;
 
-    if (comps <> '') then
-      cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ServerContext.ResConfig['Patient'].key)+' and Id in ('+comps+'))'
-    else
-      cmp := '';
-
     pol := FServerContext.Storage.ProfilesAsOptionList;
     profiles := TAdvStringMatch.create;
     try
       profiles.forced := true;
-      counts := FServerContext.Storage.FetchResourceCounts(cmp);
+      counts := FServerContext.Storage.FetchResourceCounts(comps);
 
      s := host+sBaseURL;
      b := TStringBuilder.Create;
@@ -2580,7 +2591,7 @@ begin
         for a in FServerContext.ValidatorContext.allResourceNames do
         begin
           ix := counts.IndexOf(a);
-          if (integer(counts.objects[ix]) > -1) and (FServerContext.ResConfig[a].Supported)  then
+          if (ix >= 0) and (integer(counts.objects[ix]) > -1) and (FServerContext.ResConfig[a].Supported)  then
             names.Add(a);
         end;
 
@@ -3114,8 +3125,8 @@ begin
     s := s.Replace('[%securehost%]', FHost+':'+inttostr(FStatedSSLPort), [rfReplaceAll]);
   if s.Contains('[%fitbit-redirect%]') then
     s := s.Replace('[%fitbit-redirect%]', FitBitInitiate(
-       FAuthServer.Ini.ReadString('fitbit', 'secret', ''), // secret,
-       FAuthServer.Ini.ReadString('fitbit', 'key', ''), //key
+       FAuthServer.Ini.ReadString(voVersioningNotApplicable, 'fitbit', 'secret', ''), // secret,
+       FAuthServer.Ini.ReadString(voVersioningNotApplicable, 'fitbit', 'key', ''), //key
        NewGuidId, //nonce
        'https://local.healthintersections.com.au:961/closed/_web/fitbit.html') //callback
     , [rfReplaceAll]);
@@ -3140,7 +3151,7 @@ begin
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;
 
-procedure TFhirWebServer.ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo);
+procedure TFhirWebServer.ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
 var
   client : TReverseClient;
 begin
@@ -3150,6 +3161,8 @@ begin
     client.context := AContext;
     client.request := request;
     client.response := response;
+    if secure then
+      client.SecureToken := FSecureToken;
     client.execute;
   finally
     client.free;

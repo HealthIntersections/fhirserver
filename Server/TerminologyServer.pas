@@ -15,7 +15,7 @@ uses
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices, ACIRServices,
   CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
-  FHIRValueSetChecker, ClosureManager, ServerAdaptations,
+  FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, SnomedExpressions;
 
 Type
@@ -47,7 +47,7 @@ Type
     property webBase : String read FWebBase write FWebBase;
 
     // load external terminology resources (snomed, Loinc, etc)
-    procedure load(ini : TIniFile);
+    procedure load(ini : TFHIRServerIniFile);
     // functional services
 
     // if this id identifies a value set known to the external resources (if it does, construct it and return it)
@@ -102,7 +102,6 @@ uses
 constructor TTerminologyServer.Create(db : TKDBManager);
 begin
   inherited;
-  NCTSAssertion(FHIR_GENERATED_VERSION = '1.4.0', 'CSA-1', 'Version must be 1.4.0');
   FExpansions := TAdvStringObjectMatch.create;
   FExpansions.PreventDuplicates;
   FDependencies := TAdvStringObjectMatch.create;
@@ -118,7 +117,7 @@ begin
   inherited;
 end;
 
-procedure TTerminologyServer.load(ini : TIniFile);
+procedure TTerminologyServer.load(ini : TFHIRServerIniFile);
 var
   fn, s : string;
   p : TCodeSystemProvider;
@@ -134,27 +133,27 @@ begin
   p := TUSStateCodeServices.Create(Fdb);
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
-  p := TIETFLanguageCodeServices.Create(ini.ReadString('lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));
+  p := TIETFLanguageCodeServices.Create(ini.ReadString(voVersioningNotApplicable, 'lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   logt(' - done');
 
 
-  if ini.ReadString('RxNorm', 'database', '') <> '' then
+  if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
   begin
     logt('Connect to RxNorm');
     RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 0, 'SQL Server Native Client 11.0',
-        Ini.ReadString('database', 'server', ''), Ini.ReadString('RxNorm', 'database', ''),
-        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
-  if ini.ReadString('NciMeta', 'database', '') <> '' then
+  if ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', '') <> '' then
   begin
     logt('Connect to NciMeta');
     NciMeta := TNciMetaServices.Create(TKDBOdbcDirect.create('ncimeta', 100, 0, 'SQL Server Native Client 11.0',
-        Ini.ReadString('database', 'server', ''), Ini.ReadString('NciMeta', 'database', ''),
-        Ini.ReadString('database', 'username', ''), Ini.ReadString('database', 'password', '')));
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
-  fn := ini.ReadString('snomed', 'cache', '');
+  fn := ini.ReadString(voVersioningNotApplicable, 'snomed', 'cache', '');
   if fn <> '' then
   begin
     def := true;
@@ -172,7 +171,7 @@ begin
       def := false;
     end;
   end;
-  fn := ini.ReadString('loinc', 'cache', '');
+  fn := ini.ReadString(voVersioningNotApplicable, 'loinc', 'cache', '');
   if fn <> '' then
   begin
     logt('Load Loinc from '+fn);
@@ -180,7 +179,7 @@ begin
     Loinc.Load(fn);
     logt(' - done');
   end;
-  fn := ini.ReadString('ucum', 'source', '');
+  fn := ini.ReadString(voVersioningNotApplicable, 'ucum', 'source', '');
   if fn = '' then
     raise Exception.Create('Unable to start because [ucum] source= is not specified in the ini file');
   logt('Load Ucum from '+fn);

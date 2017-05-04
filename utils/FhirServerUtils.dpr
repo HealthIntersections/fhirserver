@@ -131,7 +131,6 @@ uses
   OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas',
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
   CurrencySupport in '..\reference-platform\Support\CurrencySupport.pas',
-  FHIRNativeStorage in '..\Server\FHIRNativeStorage.pas',
   SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
   AdvProfilers in '..\reference-platform\Support\AdvProfilers.pas',
   AnsiStringBuilder in '..\reference-platform\Support\AnsiStringBuilder.pas',
@@ -220,7 +219,6 @@ uses
   ServerAdaptations in '..\Server\ServerAdaptations.pas',
   FHIRValueSetChecker in '..\Server\FHIRValueSetChecker.pas',
   FHIRValueSetExpander in '..\Server\FHIRValueSetExpander.pas',
-  FHIROperation in '..\Server\FHIROperation.pas',
   MPISearch in '..\Server\MPISearch.pas',
   SearchProcessor in '..\Server\SearchProcessor.pas',
   FHIRSearchSyntax in '..\Server\FHIRSearchSyntax.pas',
@@ -229,7 +227,12 @@ uses
   ObservationStatsEvaluator in '..\Server\ObservationStatsEvaluator.pas',
   DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
   ACIRServices in '..\Server\ACIRServices.pas',
-  CvxServices in '..\Server\CvxServices.pas';
+  CvxServices in '..\Server\CvxServices.pas',
+  FHIRStorageService in '..\Server\FHIRStorageService.pas',
+  FHIRNativeStorage in '..\Server\FHIRNativeStorage.pas',
+  FHIRServerContext in '..\Server\FHIRServerContext.pas',
+  FHIRTagManager in '..\Server\FHIRTagManager.pas',
+  FHIRSessionManager in '..\Server\FHIRSessionManager.pas';
 
 {$R *.res}
 

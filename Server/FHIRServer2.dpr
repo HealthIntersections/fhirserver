@@ -123,7 +123,6 @@ uses
   AdvObjectMatches in '..\reference-platform\Support\AdvObjectMatches.pas',
   RegExpr in '..\reference-platform\Support\RegExpr.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
-  FHIROperation in 'FHIROperation.pas',
   AdvIntegerObjectMatches in '..\reference-platform\Support\AdvIntegerObjectMatches.pas',
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
   FHIRIndexManagers in 'FHIRIndexManagers.pas',
@@ -166,7 +165,6 @@ uses
   OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas',
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
   CurrencySupport in '..\reference-platform\Support\CurrencySupport.pas',
-  FHIRNativeStorage in 'FHIRNativeStorage.pas',
   SnomedImporter in '..\Libraries\snomed\SnomedImporter.pas',
   AdvProfilers in '..\reference-platform\Support\AdvProfilers.pas',
   AnsiStringBuilder in '..\reference-platform\Support\AnsiStringBuilder.pas',
@@ -255,7 +253,8 @@ uses
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas',
   ACIRServices in 'ACIRServices.pas',
-  ReverseClient in 'ReverseClient.pas';
+  ReverseClient in 'ReverseClient.pas',
+  FHIRNativeStorage in 'FHIRNativeStorage.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

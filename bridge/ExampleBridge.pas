@@ -39,7 +39,7 @@ Type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(cmpFilter : String) : TStringList; override;
+    function FetchResourceCounts(comps : String) : TStringList; override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -52,8 +52,6 @@ Type
     procedure ProcessSubscriptions; override;
     procedure ProcessObservations; override;
     procedure RunValidation; override;
-
-    procedure CloseAll; override;
 
     function createOperationContext(lang : String) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
@@ -209,20 +207,15 @@ begin
   // this server doesn't track sessions
 end;
 
-procedure TExampleFhirServerStorage.CloseAll;
-begin
-  // this server doesn't track sessions
-end;
-
 function TExampleFhirServerStorage.createOperationContext(lang: String): TFHIROperationEngine;
 begin
   result := TExampleFHIROperationEngine.create(lang);
 end;
 
 
-function TExampleFhirServerStorage.FetchResourceCounts(cmpFilter: String): TStringList;
+function TExampleFhirServerStorage.FetchResourceCounts(comps: String): TStringList;
 begin
-  // ignore cmpFilter for now
+  // ignore comps for now
   result := TStringList.Create;
   result.AddObject('Patient', TObject(1));
 end;

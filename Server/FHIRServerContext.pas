@@ -299,6 +299,7 @@ begin
   {$ENDIF}
   FNamingSystems.Free;
   FTagManager.Free;
+  FSessionManager.CloseAll;
   FSessionManager.Free;
   FSubscriptionManager.Free;
   FIndexes.free;
@@ -320,6 +321,7 @@ begin
   result := TFHIRServerContext(inherited Link);
 end;
 
+    {$IFNDEF FHIR2}
 procedure TFHIRServerContext.seeMap(map: TFHIRStructureMap);
 begin
   FLock.Lock;
@@ -329,6 +331,7 @@ begin
     FLock.Unlock;
   end;
 end;
+    {$ENDIF}
 
 procedure TFHIRServerContext.seeNamingSystem(key : integer; ns: TFhirNamingSystem);
 begin

@@ -17,7 +17,8 @@ uses
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
-  FHIRServerContext, FHIRStorageService, FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities;
+  FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
+  ServerUtilities, FHIRServerContext, FHIRStorageService;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
@@ -38,7 +39,7 @@ type
   TAuth2Server = class (TAdvObject)
   private
     FLock : TCriticalSection;
-    FIni : TIniFile;
+    FIni : TFHIRServerIniFile;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
     FFilePath : String;
@@ -108,7 +109,7 @@ type
     function BasePath : String;
     function TokenPath : String;
     Property EndPoint : String read FEndPoint write FEndPoint;
-    Property Ini : TIniFile read FIni;
+    Property Ini : TFHIRServerIniFile read FIni;
     property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
   end;
 
@@ -125,20 +126,20 @@ constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String; S
 begin
   inherited create;
   FSCIMServer := SCIM;
-  FIni := TIniFile.Create(ini);
+  FIni := TFHIRServerIniFile.Create(ini);
   FFilePath := filePath;
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TCriticalSection.Create('auth-server');
   FLoginTokens := TStringList.create;
 
-  FHL7Appid := FIni.ReadString('hl7.org', 'app-id', '');
-  FHL7AppSecret := FIni.ReadString('hl7.org', 'app-secret', '');
-  FFacebookAppid := FIni.ReadString('facebook.com', 'app-id', '');
-  FFacebookAppSecret := FIni.ReadString('facebook.com', 'app-secret', '');
-  FGoogleAppid := FIni.ReadString('google.com', 'app-id', '');
-  FGoogleAppSecret := FIni.ReadString('google.com', 'app-secret', '');
-  FGoogleAppKey := FIni.ReadString('google.com', 'app-key', '');
+  FHL7Appid := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-id', '');
+  FHL7AppSecret := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-secret', '');
+  FFacebookAppid := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-id', '');
+  FFacebookAppSecret := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-secret', '');
+  FGoogleAppid := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-id', '');
+  FGoogleAppSecret := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-secret', '');
+  FGoogleAppKey := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-key', '');
   FPath := '/auth';
 end;
 
@@ -256,7 +257,7 @@ begin
   i := 0;
   result := false;
   repeat
-    s := FIni.ReadString(client_id, 'redirect'+inttostr(i), '');
+    s := FIni.ReadString(voVersioningNotApplicable, client_id, 'redirect'+inttostr(i), '');
     result := s = redirect_uri;
     inc(i);
   until result or (s = '');
@@ -297,13 +298,12 @@ var
   state : String;
   aud : String;
   id : String;
-  conn : TKDBConnection;
   variables : TDictionary<String,String>;
 begin
   if params.GetVar('response_type') <> 'code' then
     raise Exception.Create('Only response_type allowed is ''code''');
   client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id');
-  if FIni.ReadString(client_id, 'name', '') = '' then
+  if FIni.ReadString(voVersioningNotApplicable, client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
   redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
   if not isAllowedRedirect(client_id, redirect_uri) then
@@ -321,7 +321,7 @@ begin
   try
     variables.Add('/oauth2', FPath);
     variables.Add('idmethods', BuildLoginList(id));
-    variables.Add('client', FIni.ReadString(client_id, 'name', ''));
+    variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
     OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
   finally
     variables.free;
@@ -473,7 +473,7 @@ begin
     begin
       variables := TDictionary<String,String>.create;
       try
-        variables.Add('client', FIni.ReadString(client_id, 'name', ''));
+        variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
         variables.Add('/oauth2', FPath);
         variables.Add('username', name);
         variables.Add('patient-list', GetPatientListAsOptions);
@@ -697,7 +697,7 @@ begin
     email := checkNotEmpty(params.GetVar('email'), 'email');
     password := checkNotEmpty(params.GetVar('password'), 'password');
 
-    if FIni.ReadString('admin', 'password', '') <> password then
+    if FIni.ReadString(voVersioningNotApplicable, 'admin', 'password', '') <> password then
       raise Exception.Create('Admin Password fail');
 
     // update the login record
@@ -777,7 +777,7 @@ begin
       try
         if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope) then
           raise Exception.Create('Authorization Code not recognized (2)');
-        psecret := FIni.ReadString(pclientId, 'secret', '');
+        psecret := FIni.ReadString(voVersioningNotApplicable, pclientId, 'secret', '');
 
         // what happens now depends on whether there's a client secret or not
         if (psecret = '') then
@@ -870,7 +870,7 @@ begin
       clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
       clientSecret := checkNotEmpty(params.getVar('client_secret'), 'client_secret');
 
-      if FIni.ReadString(clientId, 'secret', '') <> clientSecret then
+      if FIni.ReadString(voVersioningNotApplicable, clientId, 'secret', '') <> clientSecret then
         raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
 
       if not ServerContext.SessionManager.GetSession(token, session, check) then

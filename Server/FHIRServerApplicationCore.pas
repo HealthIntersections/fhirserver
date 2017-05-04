@@ -44,7 +44,7 @@ Uses
   TerminologyServer,
   FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
-  FHIRServerConstants, FHIRServerContext,
+  FHIRServerConstants, FHIRServerContext, ServerUtilities,
   SCIMServer;
 
 Type
@@ -58,7 +58,7 @@ Type
   private
     FStartTime : cardinal;
     TestMode : Boolean;
-    FIni : TIniFile;
+    FIni : TFHIRServerIniFile;
     FDb : TKDBManager;
     FTerminologyServer : TTerminologyServer;
     FWebServer : TFhirWebServer;
@@ -183,22 +183,22 @@ begin
       begin
         FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
         if not FindCmdLineSwitch('sdest', dest, true, [clstValueNextParam]) then
-          dest := svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
+          dest := svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
         svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
       end
       else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
-        svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString('internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+        svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
         generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
-          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('RxNorm', 'database', ''),
-          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
+          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
       else if FindCmdLineSwitch('ncistems', dir, true, []) then
       begin
         generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
-          svc.FIni.ReadString('database', 'server', ''), svc.FIni.ReadString('NciMeta', 'database', ''),
-          svc.FIni.ReadString('database', 'username', ''), svc.FIni.ReadString('database', 'password', '')))
+          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
+          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
   //    procedure ReIndex;
   //    procedure clear(types : String);
@@ -232,7 +232,7 @@ constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: Strin
 begin
   FStartTime := GetTickCount;
   inherited create(ASystemName, ADisplayName);
-  FIni := TIniFile.Create(AIniName);
+  FIni := TFHIRServerIniFile.Create(AIniName);
 end;
 
 destructor TFHIRService.Destroy;
@@ -294,22 +294,20 @@ var
   dbi : TFHIRDatabaseInstaller;
   meta : TKDBMetaData;
 begin
-  dbn := FIni.ReadString('database', 'database', '');
-  ddr := FIni.ReadString('database', 'driver', 'SQL Server Native Client 11.0');
-  if FIni.ValueExists('database', 'database'+FHIR_GENERATED_VERSION) then
-     dbn := FIni.ReadString('database', 'database'+FHIR_GENERATED_VERSION, '');
+  dbn := FIni.ReadString(voMaybeVersioned, 'database', 'database', '');
+  ddr := FIni.ReadString(voMaybeVersioned, 'database', 'driver', 'SQL Server Native Client 11.0');
   if TestMode then
     FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
-  else if FIni.ReadString('database', 'type', '') = 'mssql' then
+  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mssql' then
   begin
-    logt('Database mssql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
+    logt('Database mssql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
     FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr,
-      FIni.ReadString('database', 'server', ''), dbn,
-      FIni.ReadString('database', 'username', ''), FIni.ReadString('database', 'password', ''));
+      FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
+      FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
   end
-  else if FIni.ReadString('database', 'type', '') = 'mysql' then
+  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mysql' then
   begin
-    logt('Database mysql://'+FIni.ReadString('database', 'server', '')+'/'+dbn);
+    logt('Database mysql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
     raise Exception.Create('Not Done Yet');
     // principally because of text indexing, but also because I don't know how to connect to a mysql server in an open source way
   end
@@ -386,7 +384,7 @@ var
   st : TStringList;
   s, src : String;
   first : boolean;
-  ini : TIniFile;
+  ini : TFHIRServerIniFile;
   i : integer;
 begin
   FNotServing := true;
@@ -410,10 +408,10 @@ begin
   logt('Load database from sources listed in '+fn);
   if not FileExists(fn) then
     raise Exception.Create('Load Ini file '+fn+' not found');
-  ini := TIniFile.Create(fn);
+  ini := TFHIRServerIniFile.Create(fn);
   st := TStringList.Create;
   try
-    ini.ReadSection({$IFDEF FHIR4}'files-4' {$ELSE} 'files-3'{$ENDIF}, st);
+    ini.ReadSection(voMustBeVersioned, 'files', st);
     first := true;
     for s in st do
     begin
@@ -431,7 +429,7 @@ begin
       src := locate(s, fn, first);
       f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
       try
-        FWebServer.Transaction(f, first, src, ini.ReadString('files', s, ''), nil, callback);
+        FWebServer.Transaction(f, first, src, ini.ReadString(voMustBeVersioned, 'files', s, ''), nil, callback);
       finally
         f.Free;
       end;
@@ -453,12 +451,12 @@ end;
 
 procedure TFHIRService.LoadbyProfile(fn: String; init : boolean);
 var
-  ini : TIniFile;
+  ini : TFHIRServerIniFile;
   f : TFileStream;
   i : integer;
 begin
   FNotServing := true;
-  ini := TIniFile.Create(fn);
+  ini := TFHIRServerIniFile.Create(fn);
   try
     fn := fn.Replace('.dstu', '');
     if FDb = nil then
@@ -466,7 +464,7 @@ begin
     CanStart;
     if init then
     begin
-      fn := ini.ReadString('control', 'load', '');
+      fn := ini.ReadString(voVersioningNotApplicable, 'control', 'load', '');
       logt('Load database from '+fn);
       f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
@@ -475,20 +473,20 @@ begin
         f.Free;
       end;
     end;
-    for i := 1 to ini.ReadInteger('control', 'files', 0) do
+    for i := 1 to ini.ReadInteger(voVersioningNotApplicable, 'control', 'files', 0) do
     begin
-      fn := ini.ReadString('control', 'file'+inttostr(i), '');
+      fn := ini.ReadString(voVersioningNotApplicable, 'control', 'file'+inttostr(i), '');
       if (fn <> '') then
       begin
         repeat
           logt('Load '+fn);
           f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
           try
-            FWebServer.Transaction(f, false, fn, ini.ReadString('control', 'base'+inttostr(i), ''), ini, callback);
+            FWebServer.Transaction(f, false, fn, ini.ReadString(voVersioningNotApplicable, 'control', 'base'+inttostr(i), ''), ini, callback);
           finally
             f.Free;
           end;
-        until ini.ReadInteger('process', 'start', -1) = -1;
+        until ini.ReadInteger(voVersioningNotApplicable, 'process', 'start', -1) = -1;
       end;
     end;
     logt('done');
@@ -542,15 +540,15 @@ var
   ctxt : TFHIRServerContext;
   store : TFHIRServerDataStore;
 begin
-  store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString('fhir', 'web', '')));
+  store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
   try
     ctxt := TFHIRServerContext.Create(store.Link);
     try
       store.ServerContext := ctxt;
       ctxt.TerminologyServer := FterminologyServer.Link;
-      ctxt.Validate := FIni.ReadBool('fhir', 'validate', true);
+      ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
       ctxt.ForLoad := FindCmdLineSwitch('forload');
-      ctxt.ownername := Fini.readString('admin', 'ownername', '');
+      ctxt.ownername := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
       store.Initialise(FIni);
       FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, ctxt.link);
       FWebServer.Start(not FNotServing);
@@ -571,19 +569,19 @@ var
 
 begin
   // check that user account details are provided
-  salt := FIni.ReadString('scim', 'salt', '');
+  salt := FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', '');
   if (salt = '') then
     raise Exception.Create('You must define a scim salt in the ini file');
-  dr := FIni.ReadString('scim', 'default-rights', '');
+  dr := FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', '');
   if (dr = '') then
     raise Exception.Create('You must define some default rights for SCIM users in the ini file');
-  un := FIni.ReadString('admin', 'username', '');
+  un := FIni.ReadString(voVersioningNotApplicable, 'admin', 'username', '');
   if (un = '') then
     raise Exception.Create('You must define an admin username in the ini file');
   FindCmdLineSwitch('password', pw, true, [clstValueNextParam]);
   if (pw = '') then
     raise Exception.Create('You must provide a admin password as a parameter to the command');
-  em := FIni.ReadString('admin', 'email', '');
+  em := FIni.ReadString(voVersioningNotApplicable, 'admin', 'email', '');
   if (em = '') then
     raise Exception.Create('You must define an admin email in the ini file');
 
@@ -595,7 +593,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   logt('mount database');
-  scim := TSCIMServer.Create(FDB.Link, '', salt, FIni.ReadString('web', 'host', ''), FIni.ReadString('scim', 'default-rights', ''), true);
+  scim := TSCIMServer.Create(FDB.Link, '', salt, FIni.ReadString(voVersioningNotApplicable, 'web', 'host', ''), FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('setup');
     try

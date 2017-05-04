@@ -1672,14 +1672,15 @@ end;
 
 procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
 var
-  index, i : integer;
+  index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
   iFlags : Byte;
   s : String;
+  {$IFNDEF FHIR2}
   iRefs : TCardinalArray;
-  {$IFDEF FHIR3}
+  i : integer;
   p : TFHIRLookupOpRespProperty_;
   d : TFHIRLookupOpRespDesignation;
   {$ENDIF}
@@ -1689,7 +1690,7 @@ begin
   begin
     CodeList.GetInformation(index, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR2}
     if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;

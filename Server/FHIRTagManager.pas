@@ -16,7 +16,7 @@ type
     FLastTagVersionKey: integer;
     FLastTagKey: integer;
   public
-    constructor Create();
+    constructor Create(); override;
     destructor Destroy; override;
 
     property LastTagVersionKey: integer read FLastTagVersionKey write FLastTagVersionKey;

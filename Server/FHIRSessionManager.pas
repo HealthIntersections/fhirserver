@@ -540,6 +540,7 @@ var
   session : TFhirSession;
   d: TDateTime;
 begin
+  key := 0;
   d := UniversalDateTime;
   FLock.Lock('sweep2');
   try

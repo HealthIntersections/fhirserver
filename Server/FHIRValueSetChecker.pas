@@ -115,13 +115,15 @@ end;
 
 procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeInclude; var cs: TCodeSystemProvider);
 var
+  {$IFNDEF FHIR2}
   ivs: TFhirUri;
   other: TFhirValueSet;
+  {$ENDIF}
   checker: TValueSetChecker;
   ccf: TFhirValueSetComposeIncludeFilter;
 begin
   cc.checkNoModifiers('ValueSetChecker.prepare', desc);
-  {$IFDEF FHIR3}
+  {$IFNDEF FHIR3}
   for ivs in cc.valueSetList do
   begin
     other := FStore.getValueSetByUrl(ivs.value);
@@ -203,15 +205,18 @@ end;
 
 function TValueSetChecker.check(system, version, code : String; abstractOk : boolean; displays : TStringList; var message : String) : boolean;
 var
-  checker : TValueSetChecker;
+//  checker : TValueSetChecker;
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   cc : TFhirValueSetComposeInclude;
-  uri : TFhirUri;
+//  uri : TFhirUri;
   excluded : boolean;
   {$IFDEF FHIR2}
   i : integer;
   isabstract : boolean;
+  {$ELSE}
+  checker : TValueSetChecker;
+  uri : TFhirUri;
   {$ENDIF}
 begin
   result := false;
@@ -274,7 +279,7 @@ begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
         end;
-        {$IFDEF FHIR3}
+        {$IFNDEF FHIR2}
         for uri in cc.valueSetList do
         begin
           checker := TValueSetChecker(FOthers.matches[uri.value]);

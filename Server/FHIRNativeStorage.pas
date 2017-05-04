@@ -41,7 +41,7 @@ uses
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
   FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
-  CDSHooksUtilities, FHIRStructureMapUtilities, ObservationStatsEvaluator, ClosureManager,
+  CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager,
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
   FHIRServerContext, FHIRStorageService, FHIRServerConstants;
 
@@ -677,7 +677,7 @@ type
     constructor Create(DB: TKDBManager; AppFolder: String);
     Destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
-    procedure Initialise(ini: TIniFile);
+    procedure Initialise(ini: TFHIRServerIniFile);
     procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -715,7 +715,7 @@ type
     function hasOAuthSessionByKey(key, status : integer) : boolean; override;
     procedure updateOAuthSession(id : String; state, key : integer); override;
 
-    function FetchResourceCounts(cmpFilter : String) : TStringList; override;
+    function FetchResourceCounts(comps : String) : TStringList; override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
@@ -1086,7 +1086,7 @@ begin
     oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
     {$ENDIF}
     {$IFDEF FHIR2}
-    FRepository.TerminologyServer.declareSystems(oConf);
+    ServerContext.TerminologyServer.declareSystems(oConf);
     {$ENDIF}
     if assigned(OnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
       OnPopulateConformance(self, oConf);
@@ -9352,9 +9352,8 @@ begin
   FClaimQueue := TFHIRClaimList.Create;
 End;
 
-procedure TFHIRNativeStorageService.Initialise(ini: TIniFile);
+procedure TFHIRNativeStorageService.Initialise(ini: TFHIRServerIniFile);
 var
-  i : integer;
   conn: TKDBConnection;
   rn, fn : String;
   implGuides : TAdvStringSet;
@@ -9363,15 +9362,15 @@ begin
   ServerContext.SubscriptionManager := TSubscriptionManager.Create(ServerContext);
   ServerContext.SubscriptionManager.dataBase := FDB.Link;
   ServerContext.SubscriptionManager.Base := 'http://localhost/';
-  ServerContext.SubscriptionManager.SMTPHost := ini.ReadString('email', 'Host', '');
-  ServerContext.SubscriptionManager.SMTPPort := ini.ReadString('email', 'Port', '');
-  ServerContext.SubscriptionManager.SMTPUsername := ini.ReadString('email', 'Username', '');
-  ServerContext.SubscriptionManager.SMTPPassword := ini.ReadString('email', 'Password', '');
-  ServerContext.SubscriptionManager.SMTPUseTLS := ini.ReadBool('email', 'Secure', false);
-  ServerContext.SubscriptionManager.SMTPSender := ini.ReadString('email', 'Sender', '');
-  ServerContext.SubscriptionManager.SMSAccount := ini.ReadString('sms', 'account', '');
-  ServerContext.SubscriptionManager.SMSToken := ini.ReadString('sms', 'token', '');
-  ServerContext.SubscriptionManager.SMSFrom := ini.ReadString('sms', 'from', '');
+  ServerContext.SubscriptionManager.SMTPHost := ini.ReadString(voVersioningNotApplicable, 'email', 'Host', '');
+  ServerContext.SubscriptionManager.SMTPPort := ini.ReadString(voVersioningNotApplicable, 'email', 'Port', '');
+  ServerContext.SubscriptionManager.SMTPUsername := ini.ReadString(voVersioningNotApplicable, 'email', 'Username', '');
+  ServerContext.SubscriptionManager.SMTPPassword := ini.ReadString(voVersioningNotApplicable, 'email', 'Password', '');
+  ServerContext.SubscriptionManager.SMTPUseTLS := ini.ReadBool(voVersioningNotApplicable, 'email', 'Secure', false);
+  ServerContext.SubscriptionManager.SMTPSender := ini.ReadString(voVersioningNotApplicable, 'email', 'Sender', '');
+  ServerContext.SubscriptionManager.SMSAccount := ini.ReadString(voVersioningNotApplicable, 'sms', 'account', '');
+  ServerContext.SubscriptionManager.SMSToken := ini.ReadString(voVersioningNotApplicable, 'sms', 'token', '');
+  ServerContext.SubscriptionManager.SMSFrom := ini.ReadString(voVersioningNotApplicable, 'sms', 'from', '');
   ServerContext.SubscriptionManager.OnExecuteOperation := DoExecuteOperation;
   ServerContext.SubscriptionManager.OnExecuteSearch := DoExecuteSearch;
   ServerContext.SubscriptionManager.OnGetSessionEvent := ServerContext.SessionManager.GetSessionByKey;
@@ -9731,15 +9730,21 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.FetchResourceCounts(cmpFilter : String): TStringList;
+function TFHIRNativeStorageService.FetchResourceCounts(comps : String): TStringList;
 var
   conn : TKDBConnection;
   j : integer;
+  cmp : String;
 begin
+  if (comps <> '') then
+    cmp := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ServerContext.ResConfig['Patient'].key)+' and Id in ('+comps+'))'
+  else
+    cmp := '';
+
   result := TStringList.create;
   conn := DB.GetConnection('fhir-home-page');
   try
-    conn.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmpFilter+' group by ResourceName';
+    conn.sql := 'select ResourceName, count(*) as Count from Ids,  Types where Ids.ResourceTypeKey = Types.ResourceTypeKey '+cmp+' group by ResourceName';
     conn.prepare;
     conn.execute;
     while conn.fetchNext do
@@ -10261,8 +10266,7 @@ end;
 
 procedure TFHIRNativeStorageService.Sweep;
 var
-  key, i: integer;
-  session: TFhirSession;
+  key : integer;
   d: TDateTime;
   list: TFhirResourceList;
   storage: TFHIRNativeOperationEngine;

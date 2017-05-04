@@ -86,7 +86,7 @@ Type
     procedure RegisterConsentRecord(session: TFhirSession); virtual;
 
     // server total counts:
-    function FetchResourceCounts(cmpFilter : String) : TStringList; virtual;
+    function FetchResourceCounts(comps : String) : TStringList; virtual; // comps = comma delimited list of patient compartments
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
 
@@ -103,8 +103,6 @@ Type
     procedure ProcessObservations; virtual;
     procedure RunValidation; virtual;
 
-    procedure CloseAll; virtual;
-
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
@@ -115,11 +113,6 @@ Type
 implementation
 
 { TFHIRStorageService }
-
-procedure TFHIRStorageService.CloseAll;
-begin
-  raise Exception.Create('The function "CloseAll" must be overridden in '+className);
-end;
 
 procedure TFHIRStorageService.CloseFhirSession(key: integer);
 begin
@@ -152,9 +145,9 @@ begin
   raise Exception.Create('This server does not support OAuth');
 end;
 
-function TFHIRStorageService.FetchResourceCounts(cmpFilter : String): TStringList;
+function TFHIRStorageService.FetchResourceCounts(comps : String): TStringList;
 begin
-  raise Exception.Create('The function "FetchResourceCounts(cmpFilter : String): TStringList" must be overridden in '+className);
+  raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
 end;
 
 function TFHIRStorageService.GetTotalResourceCount: integer;

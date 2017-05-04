@@ -68,7 +68,6 @@ type
     procedure init(worker : TWorkerContext);
     procedure processScopes(scopes: TStringList; base : TFHIRSecurityRights; secure : boolean);
   public
-//    constructor create(config : TIniFile); overload;
     constructor create(worker : TWorkerContext; user : TSCIMUser; secure : boolean); overload;
     constructor create(worker : TWorkerContext; base : TSCIMUser; choice : String; secure : boolean); overload;
     constructor create(worker : TWorkerContext; base : TSCIMUser; choice : TStringList; secure : boolean); overload;
