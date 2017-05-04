@@ -123,7 +123,7 @@ var
   ccf: TFhirValueSetComposeIncludeFilter;
 begin
   cc.checkNoModifiers('ValueSetChecker.prepare', desc);
-  {$IFNDEF FHIR3}
+  {$IFNDEF FHIR2}
   for ivs in cc.valueSetList do
   begin
     other := FStore.getValueSetByUrl(ivs.value);
@@ -214,10 +214,9 @@ var
   {$IFDEF FHIR2}
   i : integer;
   isabstract : boolean;
-  {$ELSE}
+  {$ENDIF}
   checker : TValueSetChecker;
   uri : TFhirUri;
-  {$ENDIF}
 begin
   result := false;
   {special case:}
