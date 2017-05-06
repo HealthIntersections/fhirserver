@@ -7,7 +7,7 @@ uses
   AdvObjects, DateSupport, GuidSupport, StringSupport,
   SCIMServer, DateAndTime,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSecurity,
-  ServerUtilities, FHIRStorageService, ServerValidator;
+  FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
 
 Const
   IMPL_COOKIE_PREFIX = 'implicit-';
@@ -86,6 +86,7 @@ var
   p: TFhirAuditEventParticipant;
   key : integer;
 begin
+  session := nil;
   new := false;
   FLock.Lock('CreateImplicitSession');
   try
@@ -118,9 +119,9 @@ begin
   if new then
   begin
     if server then
-      session.User := TFHIRServerContext(serverContext).SCIMServer.loadUser(SCIM_SYSTEM_USER, key)
+      session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_SYSTEM_USER, key)
     else
-      session.User := TFHIRServerContext(serverContext).SCIMServer.loadUser(SCIM_ANONYMOUS_USER, key);
+      session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
     session.name := session.User.username + ' (' + clientInfo + ')';
     session.UserKey := key;
     session.scopes := TFHIRSecurityRights.allScopes;
@@ -316,7 +317,7 @@ begin
       result.outerToken := NewGuidURN;
       result.id := NewGuidURN;
       result.UserKey := userkey;
-      result.User := TFHIRServerContext(serverContext).SCIMServer.loadUser(userkey);
+      result.User := TFHIRServerContext(serverContext).UserProvider.loadUser(userkey);
       result.name := result.User.formattedName;
       result.expires := LocalDateTime + DATETIME_SECOND_ONE * 500;
       result.Cookie := NewGuidURN;
@@ -390,7 +391,7 @@ begin
   if (not result) then
   begin
     StringSplit(token, '.', id, hash);
-    result := StringIsInteger32(id) and TFHIRServerContext(ServerContext).SCIMServer.CheckId(id, username,
+    result := StringIsInteger32(id) and TFHIRServerContext(ServerContext).UserProvider.CheckId(id, username,
       password);
     if (result and (password = hash)) then
     begin
@@ -399,7 +400,7 @@ begin
         session.innerToken := token;
         session.outerToken := '$BEARER';
         session.id := id;
-        session.User := TFHIRServerContext(ServerContext).SCIMServer.loadUser(username, key);
+        session.User := TFHIRServerContext(ServerContext).UserProvider.loadUser(username, key);
         session.UserKey := key;
         session.name := session.User.bestName;
         session.expires := LocalDateTime + DATETIME_SECOND_ONE * 0.25;
@@ -504,9 +505,9 @@ begin
     session.email := email;
     session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
     if provider = apInternal then
-      session.User := TFHIRServerContext(serverContext).SCIMServer.loadUser(id, key)
+      session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(id, key)
     else
-      session.User := TFHIRServerContext(serverContext).SCIMServer.loadOrCreateUser(USER_SCHEME_PROVIDER[provider] + '#' + id, name, email, key);
+      session.User := TFHIRServerContext(serverContext).UserProvider.loadOrCreateUser(USER_SCHEME_PROVIDER[provider] + '#' + id, name, email, key);
     session.UserKey := key;
     if session.name = '' then
       session.name := session.User.bestName;

@@ -547,10 +547,14 @@ begin
       store.ServerContext := ctxt;
       ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
-      ctxt.ForLoad := FindCmdLineSwitch('forload');
+      ctxt.ForLoad := not FindCmdLineSwitch('noload');
       ctxt.ownername := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
       store.Initialise(FIni);
-      FWebServer := TFhirWebServer.create(FIni.FileName, FDb, DisplayName, FTerminologyServer, ctxt.link);
+      FWebServer := TFhirWebServer.create(FIni.link, FDb, DisplayName, FTerminologyServer, ctxt.link);
+      ctxt.userProvider := TSCIMServer.Create(Fdb.link, FWebServer.SourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
+      ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
+      FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
+
       FWebServer.Start(not FNotServing);
     finally
       ctxt.free;

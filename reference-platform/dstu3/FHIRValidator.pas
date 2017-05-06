@@ -2760,8 +2760,8 @@ begin
         vs := resolveBindingReference(ctxt, profile, Binding.ValueSet);
         if (warning(ctxt, IssueTypeCODEINVALID, element.locStart, element.locEnd, path, vs <> nil, 'ValueSet ' + describeReference(Binding.ValueSet) + ' not found')) then
         begin
+          cc := readAsCodeableConcept(element);
           try
-            cc := readAsCodeableConcept(element);
             try
               if (cc.CodingList.IsEmpty) then
               begin
@@ -3250,6 +3250,7 @@ var
   msg : String;
   expr : TFHIRExpressionNode;
 begin
+  ok := false;
   for inv in ed.constraintList do
     if inv.expression <> '' then
     begin

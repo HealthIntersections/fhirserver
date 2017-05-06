@@ -254,7 +254,8 @@ uses
   DifferenceEngine in '..\reference-platform\dstu2\DifferenceEngine.pas',
   ACIRServices in 'ACIRServices.pas',
   ReverseClient in 'ReverseClient.pas',
-  FHIRNativeStorage in 'FHIRNativeStorage.pas';
+  FHIRNativeStorage in 'FHIRNativeStorage.pas',
+  FHIRUserProvider in 'FHIRUserProvider.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

@@ -787,10 +787,10 @@ begin
             package.Free;
           end;
         finally
-          subst.Free;
+          res.free;
         end;
       finally
-        res.free;
+        subst.Free;
       end;
       NotifySuccess(userkey, SubscriptionKey);
     except
@@ -931,6 +931,7 @@ function TSubscriptionManager.LoadResourceFromDBByVer(conn: TKDBConnection; vkey
 var
   parser : TFHIRParser;
 begin
+  result := nil;
   conn.SQL := 'select ResourceName, Ids.Id, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
@@ -958,6 +959,7 @@ function TSubscriptionManager.LoadResourceFromDBByKey(conn: TKDBConnection; key:
 var
   parser : TFHIRParser;
 begin
+  result := nil;
   conn.SQL := 'select ResourceName, Ids.Id, UserKey, XmlContent From Versions, Ids, Types, Sessions '+
     'where IDs.ResourceKey = '+inttostr(key)+' and Versions.SessionKey = Sessions.SessionKey and '+
     'Versions.ResourceVersionKey = IDs.MostRecent and IDs.ResourceTypeKey = Types.ResourceTypeKey';

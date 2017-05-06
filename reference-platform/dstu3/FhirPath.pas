@@ -246,6 +246,7 @@ type
     function funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+    function funcHasValue(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
 
 
     function equal(left, right : TFHIRObject) : boolean;  overload;
@@ -328,6 +329,7 @@ var
   td : TFhirElementDefinitionType;
   t : String;
 begin
+  types := nil;
   if (xPathStartsWithValueRef and context.contains('.') and path.startsWith(context.substring(context.lastIndexOf('.')+1))) then
     types := TFHIRTypeDetails.Create(csSINGLETON, [context.substring(0, context.lastIndexOf('.'))])
   else if not context.contains('.') then
@@ -433,6 +435,7 @@ begin
     pfSlice: checkParamCount(lexer, location, exp, 2);
     pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
     pfConformsTo: checkParamCount(lexer, location, exp, 1);
+    pfHasValue: checkParamCount(lexer, location, exp, 0);
   end;
 end;
 
@@ -1049,6 +1052,23 @@ begin
   result := TFHIRSelectionList.Create;
   if focus.Count > 0 then
     result.Add(focus[0].Link);
+end;
+
+function TFHIRExpressionEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+var
+  res : TFHIRSelectionList;
+  sw : String;
+begin
+  result := TFHIRSelectionList.Create;
+  try
+    if (focus.count = 1) then
+      result.add(TFHIRBoolean.create(focus[0].value.hasPrimitiveValue))
+    else
+      result.add(TFHIRBoolean.create(false));
+    result.Link;
+  finally
+    result.Free;
+  end;
 end;
 
 function TFHIRExpressionEngine.funcIif(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
@@ -2848,6 +2868,7 @@ begin
     pfSlice: result := funcSlice(context, focus, exp);
     pfCheckModifiers: result := funcCheckModifiers(context, focus, exp);
     pfConformsTo: result := funcConformsTo(context, focus, exp);
+    pfHasValue : result := funcHasValue(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
   end;
@@ -3145,6 +3166,8 @@ begin
         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
         end;
+      pfHasValue:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
     else
       raise EFHIRPath.create('not Implemented yet?');
     end;

@@ -18,7 +18,7 @@ uses
   FacebookSupport, SCIMServer, SCIMObjects,
 
   FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
-  ServerUtilities, FHIRServerContext, FHIRStorageService;
+  FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
@@ -59,7 +59,7 @@ type
     FHL7Appid : String;
     FHL7AppSecret : String;
     FAdminEmail : String;
-    FSCIMServer : TSCIMServer;
+    FUserProvider : TFHIRUserProvider;
     FEndPoint: String;
     FOnDoSearch : TDoSearchEvent;
     FPath: String;
@@ -81,9 +81,10 @@ type
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
     procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
     procedure readScopes(scopes: TStringList; params: TParseMap);
+    procedure SetUserProvider(const Value: TFHIRUserProvider);
 
   public
-    Constructor Create(ini : String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
+    Constructor Create(ini : String; filePath, Host, SSLPort : String);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -111,6 +112,7 @@ type
     Property EndPoint : String read FEndPoint write FEndPoint;
     Property Ini : TFHIRServerIniFile read FIni;
     property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
+    property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
   end;
 
 
@@ -122,10 +124,9 @@ uses
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String; SCIM : TSCIMServer);
+constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String);
 begin
   inherited create;
-  FSCIMServer := SCIM;
   FIni := TFHIRServerIniFile.Create(ini);
   FFilePath := filePath;
   FHost := host;
@@ -149,7 +150,7 @@ begin
   FLock.Free;
   FServerContext.Free;
   FIni.Free;
-  FSCIMServer.free;
+  FUserProvider.free;
   inherited;
 end;
 
@@ -283,6 +284,12 @@ procedure TAuth2Server.SetServerContext(const Value: TFHIRServerContext);
 begin
   FServerContext.Free;
   FServerContext := Value;
+end;
+
+procedure TAuth2Server.SetUserProvider(const Value: TFHIRUserProvider);
+begin
+  FUserProvider.Free;
+  FUserProvider := Value;
 end;
 
 function TAuth2Server.TokenPath: String;
@@ -558,7 +565,7 @@ begin
     username := params.GetVar('username');
     password := params.GetVar('password');
 
-    if not FSCIMServer.CheckLogin(username, password) then
+    if not FUserProvider.CheckLogin(username, password) then
       raise Exception.Create('Login failed');
 
     if not ServerContext.Storage.hasOAuthSession(id, 1) then

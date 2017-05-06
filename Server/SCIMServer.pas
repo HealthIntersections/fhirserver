@@ -9,15 +9,10 @@ uses
   KDBManager, AdvJSON, KCritSct, DateAndTime,
   StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists, AdvExceptions,
-  SCIMSearch, SCIMObjects;
-
-Const
-  SCIM_ANONYMOUS_USER = 'ANONYMOUS';
-  SCIM_SYSTEM_USER = 'SYSTEM';
+  ServerUtilities,
+  FHIRUserProvider, SCIMSearch, SCIMObjects;
 
 Type
-  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
-
   TSCIMCharIssuer = class (TAdvObject)
   private
     cursor : char;
@@ -26,7 +21,7 @@ Type
     function next : char;
   end;
 
-  TSCIMServer = class (TAdvObject)
+  TSCIMServer = class (TFHIRUserProvider)
   private
     db : TKDBManager;
     lock : TCriticalSection;
@@ -35,7 +30,6 @@ Type
     salt : String;
     host : String;
     FAnonymousRights : TStringList;
-    FOnProcessFile : TProcessFileEvent;
     FFilePath : String;
 
 
@@ -72,12 +66,12 @@ Type
     Destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
-    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession);
-    Function loadUser(key : integer) : TSCIMUser; overload;
-    Function loadUser(id : String; var key : integer) : TSCIMUser; overload;
-    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser;
-    function CheckLogin(username, password : String) : boolean;
-    function CheckId(id : String; var username, hash : String) : boolean;
+    Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); override;
+    Function loadUser(key : integer) : TSCIMUser; overload; override;
+    Function loadUser(id : String; var key : integer) : TSCIMUser; overload; override;
+    function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
+    function CheckLogin(username, password : String) : boolean; override;
+    function CheckId(id : String; var username, hash : String) : boolean; override;
 
     // install
     Procedure DefineSystem(conn : TKDBConnection);
@@ -85,7 +79,6 @@ Type
     Procedure DefineAnonymousUser(conn : TKDBConnection);
 
     property AnonymousRights : TStringList read FAnonymousRights;
-    property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
   end;
 
 
@@ -169,7 +162,7 @@ begin
   FFilePath := filePath;
   lock := TCriticalSection.Create('scim');
 
-  if not forInstall then
+  if not forInstall and (db <> nil) then
   begin
     conn := db.GetConnection('scim.load');
     try
@@ -534,6 +527,7 @@ function TSCIMServer.loadUser(key: integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
+  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select Password, Content from Users where Status = 1 and UserKey = '''+inttostr(key)+'''';
@@ -562,6 +556,7 @@ function TSCIMServer.loadUser(id: String; var key : integer): TSCIMUser;
 var
   conn : TKDBConnection;
 begin
+  result := nil;
   conn := db.GetConnection('scim.loadUser');
   try
     conn.SQL := 'Select UserKey, Password, Content from Users where Status = 1 and UserName = '''+SQLWrapString(id)+'''';

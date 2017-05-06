@@ -247,7 +247,7 @@ var
   LComp0 : Pointer;
   LComp1 : Pointer;
   LCompLen : Word;
-  offset : cardinal;
+  offset : integer;
   b : TBytes;
 const
   BUF_LEN = 1024;

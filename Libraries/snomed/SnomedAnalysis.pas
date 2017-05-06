@@ -692,7 +692,7 @@ begin
           inc(c);
       if (c = 0) then
         inc(rel.FIndCount);
-      if Length(rel.FCounts) < c+1 then
+      if cardinal(Length(rel.FCounts)) < c+1 then
         SetLength(rel.FCounts, c+1);
       rel.FCounts[c] := rel.FCounts[c] + 1;
       if c > rel.FDupl then

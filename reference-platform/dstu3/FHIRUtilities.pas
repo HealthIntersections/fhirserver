@@ -168,6 +168,11 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
+  TFhirIdentifierListHelper = class helper for TFhirIdentifierList
+  public
+    function BySystem(uri : String) : TFhirIdentifier;
+  end;
+
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
   private
     function getevent: TFhirAuditEvent;
@@ -4279,6 +4284,18 @@ begin
   finally
     result.Free;
   end;
+end;
+
+{ TFhirIdentifierListHelper }
+
+function TFhirIdentifierListHelper.BySystem(uri : String): TFhirIdentifier;
+var
+  id : TFhirIdentifier;
+begin
+  result := nil;
+  for id in self do
+    if id.system = uri then
+      exit(id);
 end;
 
 end.

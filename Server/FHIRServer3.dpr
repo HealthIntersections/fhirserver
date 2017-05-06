@@ -312,7 +312,8 @@ uses
   FHIRServerContext in 'FHIRServerContext.pas',
   ExampleBridge in '..\bridge\ExampleBridge.pas',
   FHIRSessionManager in 'FHIRSessionManager.pas',
-  FHIRTagManager in 'FHIRTagManager.pas';
+  FHIRTagManager in 'FHIRTagManager.pas',
+  FHIRUserProvider in 'FHIRUserProvider.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

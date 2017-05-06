@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, Generics.Collections, kCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches, OIDSupport,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
-  FHIRValidator, ServerValidator, SCIMServer, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager;
+  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -41,7 +41,7 @@ Type
     FQuestionnaireCache: TQuestionnaireCache;
     FBases: TStringList;
     FResConfig: TAdvMap<TFHIRResourceConfig>;
-    FSCIMServer: TSCIMServer;
+    FUserProvider : TFHIRUserProvider;
     FValidatorContext : TFHIRServerWorkerContext;
     FValidator: TFHIRValidator;
     FTerminologyServer: TTerminologyServer;
@@ -68,7 +68,7 @@ Type
     FSupportSystemHistory: Boolean;
     FValidate: Boolean;
 
-    procedure SetSCIMServer(const Value: TSCIMServer);
+    procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
   public
@@ -87,7 +87,7 @@ Type
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
     property SessionManager : TFHIRSessionManager read FSessionManager;
     property TagManager : TFHIRTagManager read FTagManager;
-    property SCIMServer : TSCIMServer read FSCIMServer write SetSCIMServer;
+    property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
@@ -310,7 +310,7 @@ begin
   FQuestionnaireCache.free;
   FStorage.Free;
   FBases.free;
-  FSCIMServer.Free;
+  UserProvider.Free;
   FLock.Free;
   inherited;
 end;
@@ -343,10 +343,10 @@ begin
   end;
 end;
 
-procedure TFHIRServerContext.SetSCIMServer(const Value: TSCIMServer);
+procedure TFHIRServerContext.SetUserProvider(const Value: TFHIRUserProvider);
 begin
-  FSCIMServer.Free;
-  FSCIMServer := Value;
+  FUserProvider.Free;
+  FUserProvider := Value;
 end;
 
 

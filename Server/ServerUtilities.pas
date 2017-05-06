@@ -3,11 +3,14 @@ unit ServerUtilities;
 interface
 
 uses
-  SysUtils, Classes, IniFiles,
+  SysUtils, Classes, IniFiles, Generics.Collections,
+  IdCustomHTTPServer,
   AdvObjects,
-  FHIRResources, FHIRConstants;
+  FHIRResources, FHIRConstants, FHIRSupport;
 
 type
+  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
+
   TFHIRResourceConfig = class (TAdvObject)
   public
     name : String;
@@ -44,11 +47,12 @@ type
 
   TFHIRServerIniFile = class (TAdvObject)
   private
-    FIni : TIniFile;
+    FIni : TCustomIniFile;
     function GetFileName: string;
   public
     constructor Create(const FileName: string);
     Destructor Destroy; override;
+    Function Link : TFHIRServerIniFile; overload;
 
     property FileName: string read GetFileName;
 
@@ -105,7 +109,10 @@ end;
 constructor TFHIRServerIniFile.Create(const FileName: string);
 begin
   inherited create;
-  FIni := TIniFile.Create(filename);
+  if filename <> '' then
+    FIni := TIniFile.Create(filename)
+  else
+    FIni := TMemIniFile.Create('');
 end;
 
 destructor TFHIRServerIniFile.Destroy;
@@ -122,6 +129,11 @@ end;
 function TFHIRServerIniFile.GetFileName: string;
 begin
   result := FIni.FileName;
+end;
+
+function TFHIRServerIniFile.Link: TFHIRServerIniFile;
+begin
+  result := TFHIRServerIniFile(inherited Link);
 end;
 
 function TFHIRServerIniFile.ReadBool(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Boolean): Boolean;

@@ -308,7 +308,8 @@ uses
   ACIRServices in 'ACIRServices.pas',
   ReverseClient in 'ReverseClient.pas',
   FHIRStorageService in 'FHIRStorageService.pas',
-  FHIRNativeStorage in 'FHIRNativeStorage.pas';
+  FHIRNativeStorage in 'FHIRNativeStorage.pas',
+  FHIRUserProvider in 'FHIRUserProvider.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

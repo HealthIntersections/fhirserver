@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, JclDebug, EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
   EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
 
@@ -54,7 +54,7 @@ Uses
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
   QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, MsXML,
-  FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
+  FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -134,7 +134,6 @@ Type
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
     FOwnerName : String;
     FAdminEmail : String;
-    FSCIMServer : TSCIMServer;
     FTotalCount : cardinal;
     FRestCount : cardinal;
     FStartTime : cardinal;
@@ -186,7 +185,6 @@ Type
 
     function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
-    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
 //    Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header : String; Request : TFHIRRequest); overload;
     function CheckSessionOK(session : TFhirSession; ip : string) : Boolean;
@@ -225,14 +223,18 @@ Type
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
   Public
-    Constructor Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+    Constructor Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
 
     Procedure Start(active : boolean);
     Procedure Stop;
     Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TFHIRServerIniFile; callback : TInstallerCallback);
+    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
 
     Property ServerContext : TFHIRServerContext read FServerContext;
+    property AuthServer : TAuth2Server read FAuthServer;
+    Property SourcePath : String read FSourcePath;
+    property Host : String read FHost;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -308,7 +310,7 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFileName; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+Constructor TFhirWebServer.Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
 var
   s, txu : String;
   ts : TStringList;
@@ -316,7 +318,7 @@ Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
   FName := Name;
-  FIni := TFHIRServerIniFile.Create(ini);
+  FIni := ini;
   FHost := FIni.ReadString(voVersioningNotApplicable, 'web', 'host', '');
   HostSms := FIni.ReadString(voVersioningNotApplicable, 'sms', 'owner', '');
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
@@ -325,11 +327,8 @@ Begin
   FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
   FSecureToken := FIni.ReadString(voVersioningNotApplicable, 'web', 'secure-token', '');
 
-  FSourcePath := ProcessPath(ExtractFilePath(ini), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
+  FSourcePath := ProcessPath(ExtractFilePath(ini.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
   logt('Load User Sub-system');
-  FSCIMServer := TSCIMServer.Create(db.link, FSourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), Fhost, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
-  FSCIMServer.OnProcessFile := ReturnProcessedFile;
-  context.SCIMServer := FSCIMServer.Link;
 
   logt('Load & Cache Store: ');
   FOwnerName := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
@@ -361,10 +360,7 @@ Begin
   end;
 
 
-  FServerContext := context; // .Create(db.Link, FSourcePath, terminologyServer, FINi, FSCIMServer.Link, loadStore);
-//  FServerContext.Storage.ownername := FOwnerName;
-//  FServerContext.Storage.Validate := FIni.ReadBool('fhir', 'validate', true);
-
+  FServerContext := context; 
   if FIni.ReadString(voMaybeVersioned, 'web', 'host', '') <> '' then
   begin
     if FIni.ReadString(voMaybeVersioned, 'web', 'base', '') <> '' then
@@ -390,7 +386,8 @@ Begin
     txu := 'http://'+FHost
   else
     txu := 'http://'+FHost+':'+inttostr(FStatedPort);
-  FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
+  if terminologyServer <> nil then
+    FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
 
   if FIni.SectionExists(voVersioningNotApplicable, 'patient-view') then
   begin
@@ -405,7 +402,7 @@ Begin
   end;
   if FIni.readString(voVersioningNotApplicable, 'web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
-  FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort), FSCIMServer.Link);
+  FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort));
   FAuthServer.ServerContext := FServerContext.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
@@ -452,8 +449,7 @@ End;
 Destructor TFhirWebServer.Destroy;
 Begin
   carry.Free;
-  FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
-  FSCIMServer.Free;
+  FAdaptors.Free;
   FTerminologyWebServer.free;
   FIni.Free;
   FAuthServer.Free;
@@ -461,6 +457,7 @@ Begin
   FClients.Free;
   FPatientHooks.Free;
   FReverseProxyList.Free;
+  FServerContext.free;
   FLock.Free;
   Inherited;
 End;
@@ -557,7 +554,7 @@ Begin
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
-  if (active) then
+  if (active) and (ServerContext.SubscriptionManager <> nil) then
   begin
     FThread := TFhirServerMaintenanceThread.create(self);
     smsStatus('The server '+ServerContext.FormalURLPlain+' for '+ServerContext.OwnerName+' has started');
@@ -625,7 +622,8 @@ end;
 
 Procedure TFhirWebServer.Stop;
 Begin
-  smsStatus('The server '+ServerContext.FormalURLPlain+' for '+ServerContext.OwnerName+' is stopping');
+  if ServerContext.SubscriptionManager <> nil then
+    smsStatus('The server '+ServerContext.FormalURLPlain+' for '+ServerContext.OwnerName+' is stopping');
   if FThread <> nil then
     FThread.Terminate;
   StopServer;
@@ -850,7 +848,7 @@ begin
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/'+FHomepage, AltFile('/'+FHomepage), false)
-    else if FTerminologyWebServer.handlesRequest(request.Document) then
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, false)
     else
     begin
@@ -960,7 +958,7 @@ begin
   //    HandleRequest(AContext, request, response, true, false, FBasePath)
     else if request.Document.StartsWith(FSecurePath, false) then
       HandleRequest(AContext, request, response, true, true, FSecurePath)
-    else if FTerminologyWebServer.handlesRequest(request.Document) then
+    else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, true)
     else if request.Document.StartsWith(FAuthServer.Path) then
       FAuthServer.HandleRequest(AContext, request, session, response)
@@ -1091,6 +1089,7 @@ Begin
         oStream := TStringStream.Create(request.UnparsedParams);
 
         try
+          oResponse := TFHIRResponse.Create;
           try
             response.CustomHeaders.add('Access-Control-Allow-Origin: *');
   //          response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
@@ -1101,7 +1100,7 @@ Begin
               response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
             if request.RawHeaders.Values['X-Request-Id'] <> '' then
               response.CustomHeaders.add('X-Request-Id: '+request.RawHeaders.Values['X-Request-Id']);
-            oResponse := TFHIRResponse.Create;
+            oRequest := nil;
             Try
               if request.AuthUsername = 'Bearer' then
                 sCookie := request.AuthPassword
@@ -1113,7 +1112,6 @@ Begin
               end;
               sBearer := sCookie;
 
-              oRequest := nil;
               oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
                  request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
                  oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
@@ -1349,18 +1347,18 @@ begin
         finally
           questionnaire.Free;
         end;
+        // insert page headers:
+        s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
+        s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION)+
+          '<p><a href="'+builder.QuestionnaireId+'">Questionnaire for this form</a>.'+
+          ' The QuestionnaireAnswers should be submitted as a POST to <i>'+request.baseUrl+'$qa-post</i> with a questionnaire reference of <a href="'+builder.QuestionnaireId+'">'+builder.QuestionnaireId+'</a></p>'#13#10);
+        s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+        s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
       finally
         builder.free;
       end;
     end;
 
-    // insert page headers:
-    s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION)+
-      '<p><a href="'+builder.QuestionnaireId+'">Questionnaire for this form</a>.'+
-      ' The QuestionnaireAnswers should be submitted as a POST to <i>'+request.baseUrl+'$qa-post</i> with a questionnaire reference of <a href="'+builder.QuestionnaireId+'">'+builder.QuestionnaireId+'</a></p>'#13#10);
-    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
-    s := s.replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "'+request.baseUrl+'$qa-post";');
     response.body := s;
     result := Now; //don't want anyone caching anything
     response.ContentType := 'text/html; charset=UTF-8';
@@ -2226,6 +2224,7 @@ var
   body : boolean;
   res : TFHIRResource;
 begin
+  ownsStream := false;
   gzip := false;
   response.ResponseNo := oResponse.HTTPCode;
   response.ContentType := oResponse.ContentType;
@@ -2433,7 +2432,7 @@ begin
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage), 'Session Expired', HTTP_ERR_UNAUTHORIZED);
       if not session.canAdministerUsers then
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage), 'This Session is not authorised to manage users', HTTP_ERR_UNAUTHORIZED);
-      FSCIMServer.processRequest(acontext, request, response, session);
+      ServerContext.UserProvider.processRequest(acontext, request, response, session);
     finally
       session.Free;
     end;
@@ -2833,6 +2832,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
+  result := nil;
   request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try
@@ -2875,6 +2875,7 @@ var
   response : TFHIRResponse;
   context : TOperationContext;
 begin
+  result := nil;
   request := TFHIRRequest.create(FServerContext.ValidatorContext.Link, roRest, FServerContext.Indexes.Compartments.Link);
   response := TFHIRResponse.Create;
   try

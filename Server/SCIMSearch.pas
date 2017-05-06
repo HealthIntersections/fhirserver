@@ -232,6 +232,7 @@ var
   ap, s : String;
   test : TSCIMSearchFilterTest;
 begin
+  result := nil;
   if peek = sltOpen then
   begin
     inc(Cursor);
@@ -310,6 +311,7 @@ function TSCIMSearchParser.parseValuePath(path: String): TSCIMSearchFilter;
 var
   vp : TSCIMSearchFilterValuePath;
 begin
+  result := nil;
   vp := TSCIMSearchFilterValuePath.Create;
   try
     vp.FAttributePath := path;
