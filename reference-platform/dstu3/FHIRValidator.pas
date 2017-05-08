@@ -145,6 +145,7 @@ Type
     FContext: TWorkerContext;
     FExtensionDomains: TStringList;
     FPathEngine : TFHIRExpressionEngine;
+    FEntryElement : TFHIRMMElement;
 
 //    function LoadDoc(name: String; isFree: boolean = false): IXMLDomDocument2;
 
@@ -158,7 +159,8 @@ Type
 
     // function isKnownType(code : String) : boolean;
     function genFullUrl(bundleBase, entryBase, ty, id: String): String;
-    Function resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
+    Function resolveInBundle(entries: TAdvList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement; overload;
+    function resolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject; overload;
     function getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
     function sliceMatches(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; path: String; slice, ed: TFHIRElementDefinition; profile: TFHIRStructureDefinition): boolean;
     function resolveType(ctxt : TFHIRValidatorContext; t: String): TFHIRElementDefinition;
@@ -235,6 +237,7 @@ Type
     procedure validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
+    function FHIRPathResolveReference(source : TFHIRExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject;
   public
     Constructor Create(context: TWorkerContext);
     Destructor Destroy; Override;
@@ -370,6 +373,11 @@ begin
   result := path.substring(path.lastIndexOf('.') + 1);
 end;
 
+function isAbstractType(s : String) : boolean;
+begin
+  result := StringArrayExistsSensitive(['Resource', 'DomainResource'], s);
+end;
+
 function TNodeStack.push(element: TFHIRMMElement; count: integer; definition: TFHIRElementDefinition; type_: TFHIRElementDefinition): TNodeStack;
 var
   t, lp: String;
@@ -398,7 +406,10 @@ begin
         if (t.endsWith('[x]')) then
           result.logicalPaths.Add(lp + '.' + t.substring(0, t.length - 3) + type_.path);
       end;
-      result.logicalPaths.Add(type_.path);
+      if (isAbstractType(type_.path)) then
+        result.logicalPaths.Add(element.fhirType)
+      else
+        result.logicalPaths.Add(type_.path);
     end
     else if (definition <> nil) then
     begin
@@ -448,6 +459,7 @@ begin
   inherited Create;
   FContext := context;
   FPathEngine := TFHIRExpressionEngine.create(FContext.link);
+  FPathEngine.OnResolveReference := FHIRPathResolveReference;
 end;
 
 destructor TFHIRValidator.Destroy;
@@ -457,6 +469,51 @@ begin
   inherited;
 end;
 
+function TFHIRValidator.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;
+var
+  propE, propFU, propR : TFHIRProperty;
+  item : TFHIRObject;
+  u : String;
+begin
+  result := nil;
+  propE := bundle.getPropertyValue('entry');
+  try
+    for item in propE.Values do
+    begin
+      u := '';
+      propFU := item.getPropertyValue('fullUrl');
+      try
+        if propFU.hasValue then
+          u := propFU.Values[0].primitiveValue;
+      finally
+        propFU.Free;
+      end;
+      if (u = url) then
+      begin
+        propR := item.getPropertyValue('resource');
+        try
+          if propR.hasValue then
+            exit(propR.Values[0].Link);
+        finally
+          propR.Free;
+        end;
+      end;
+    end;
+  finally
+    propE.Free;
+  end;
+end;
+
+function TFHIRValidator.FHIRPathResolveReference(source: TFHIRExpressionEngine; appInfo: TAdvObject; url: String): TFHIRObject;
+begin
+  if not (appInfo is TFHIRObject) then
+    exit(nil);
+  result := nil;
+  if TFHIRObject(appInfo).fhirType = 'Bundle' then
+    result := ResolveInBundle(TFHIRObject(appInfo), url);
+  if (result = nil) and (FEntryElement.FhirType = 'Bundle') then
+    result := ResolveInBundle(FEntryElement, url);
+end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement);
 var
@@ -579,6 +636,7 @@ var
 begin
   stack := TNodeStack.create(element);
   try
+    FEntryElement := element; // for bundle resolution
     validateResource(ctxt, element, element, nil, profiles, ctxt.resourceIdRule, stack);
   finally
     stack.free;
@@ -3261,7 +3319,7 @@ begin
         inv.Tag := expr;
       end;
       try
-        ok := FPathEngine.evaluateToBoolean(nil, resource, element, expr);
+        ok := FPathEngine.evaluateToBoolean(resource, resource, element, expr);
       except
         on e : Exception do
         begin

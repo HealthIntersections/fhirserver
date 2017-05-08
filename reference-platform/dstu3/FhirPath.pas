@@ -153,6 +153,7 @@ type
   TFHIRExpressionEngine = class;
 
   TFHIRPathDebugEvent = procedure (source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage) of object;
+  TFHIRResolveReferenceEvent = function (source : TFHIRExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject of object;
 
   TFHIRExpressionEngine = class (TAdvObject)
   private
@@ -160,6 +161,7 @@ type
     FOndebug : TFHIRPathDebugEvent;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
+    FOnResolveReference: TFHIRResolveReferenceEvent;
 
     procedure log(name, value : String);
     function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
@@ -284,6 +286,7 @@ type
     constructor Create(context : TWorkerContext);
     destructor Destroy; override;
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
+    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRExpressionNode; overload;
@@ -1301,8 +1304,58 @@ begin
 end;
 
 function TFHIRExpressionEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+var
+  item : TFHIRSelection;
+  s, id : String;
+  p : TFHIRProperty;
+  res, c : TFHIRObject;
 begin
-  raise EFHIRPath.create('The function '+exp.name+' is not done yet');
+  result := TFHIRSelectionList.Create();
+  try
+    for item in focus do
+    begin
+      s := convertToString(item.value);
+      if (item.value.fhirType = 'Reference') then
+      begin
+        p := item.value.getPropertyValue('reference');
+        try
+          if (p.hasValue) then
+            s := convertToString(p.Values[0]);
+        finally
+          p.free;
+        end;
+      end;
+      res := nil;
+      if (s.startsWith('#')) then
+      begin
+        id := s.substring(1);
+        p := context.resource.getPropertyValue('contained');
+        try
+          for c in p.Values do
+          begin
+            if (id = c.getId) then
+            begin
+              res := c;
+              break;
+            end;
+          end
+        finally
+          p.Free;
+        end;
+      end
+      else
+      begin
+        if not assigned(FOnResolveReference) then
+          raise EFHIRPath.create('resolve() - resolution services are '+exp.name+' not implemented yet');
+        res := FOnResolveReference(self, context.appInfo, s);
+      end;
+      if (res <> nil) then
+        result.add(res);
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
 end;
 
 function TFHIRExpressionEngine.funcSelect(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;

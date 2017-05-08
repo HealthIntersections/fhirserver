@@ -232,7 +232,8 @@ uses
   FHIRNativeStorage in '..\Server\FHIRNativeStorage.pas',
   FHIRServerContext in '..\Server\FHIRServerContext.pas',
   FHIRTagManager in '..\Server\FHIRTagManager.pas',
-  FHIRSessionManager in '..\Server\FHIRSessionManager.pas';
+  FHIRSessionManager in '..\Server\FHIRSessionManager.pas',
+  FHIRUserProvider in '..\Server\FHIRUserProvider.pas';
 
 {$R *.res}
 

@@ -140,6 +140,7 @@ type
   TFHIRObject = class;
   TFHIRObjectList = class;
   TFHIRPropertyList = class;
+  TFHIRSelection = class;
   TFHIRSelectionList = class;
 
   TFHIRProperty = class (TAdvObject)
@@ -156,6 +157,8 @@ type
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     Destructor Destroy; Override;
+
+    Function Link : TFHIRProperty; overload;
 
     Property hasValue : Boolean read GetHasValue;
     Property Name : String read FName;
@@ -235,6 +238,7 @@ type
     procedure Assign(oSource : TAdvObject); override;
 
     procedure ListChildrenByName(name : string; list : TFHIRSelectionList);
+
     // property access API
     // getting access to the properties
     function createPropertyList(bPrimitiveValues : boolean) : TFHIRPropertyList;
@@ -242,6 +246,7 @@ type
 
     // create a class that is the correct type for the named property
     function createPropertyValue(propName : string): TFHIRObject; virtual;
+    function getPropertyValue(propName : string): TFHIRProperty; virtual;
 
     // set the value of the property. For properties with cardinality > 1, append to the list, or use insertProperty
     procedure setProperty(propName : string; propValue : TFHIRObject); virtual;
@@ -945,6 +950,23 @@ procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TAdvL
 begin
   if checkValid then
     raise Exception.Create('Property '+name+' is not valid');
+end;
+
+function TFHIRObject.getPropertyValue(propName: string): TFHIRProperty;
+var
+  list : TFHIRPropertyList;
+  p : TFHIRProperty;
+begin
+  result := nil;
+  list := TFHIRPropertyList.Create;
+  try
+    ListProperties(list, true, true);
+    for p in list do
+      if p.Name = propName then
+        exit(p.Link);
+  finally
+    list.Free;
+  end;
 end;
 
 function TFHIRObject.HasXmlCommentsStart: Boolean;
@@ -1872,6 +1894,11 @@ end;
 function TFHIRProperty.GetHasValue: Boolean;
 begin
   result := (FList <> nil) and (Flist.Count > 0);
+end;
+
+function TFHIRProperty.Link: TFHIRProperty;
+begin
+  result := TFHIRProperty(inherited link);
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; Value: TBytes);

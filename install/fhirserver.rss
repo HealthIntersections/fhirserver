@@ -3,11 +3,23 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.140 2017-05-08</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.140.exe</link>
+			<description>2017-05-08 (v1.0.140): fix fhirpath bug from Madrid Connectathon</description>
+		</item>
+<item><title>FHIRServer release 1.0.139 2017-05-07</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.139.exe</link>
+			<description>2017-05-07 (v1.0.139): fix validation bug</description>
+		</item>
+		<item><title>FHIRServer release 1.0.138 2017-05-06</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.138.exe</link>
+			<description>2017-05-06 (v1.0.138): fix validation bug</description>
+		</item>
 		<item><title>FHIRServer release 1.0.137 2017-05-03</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.137.exe</link>
 			<description>2017-05-03 (v1.0.137): ReverseProxy support for SSL</description>
 		</item>
-<item><title>FHIRServer release 1.0.136 2017-04-03</title>
+		<item><title>FHIRServer release 1.0.136 2017-04-03</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.136.exe</link>
 			<description>2017-04-03 (v1.0.136): fix to correct FHIR version in installer</description>
 		</item>

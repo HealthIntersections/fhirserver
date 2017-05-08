@@ -75,3 +75,5 @@ Server/win64_3/Debug/dunitx-results.xml
 *.o
 *.ppu
 Exec/certificates/local.healthintersections.com.au.int.cer
+Server/FHIRServer4.cfg
+bridge/ExampleBridgeServer.stat
