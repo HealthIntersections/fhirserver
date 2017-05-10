@@ -27,7 +27,7 @@ TFHIROperationEngine
   - you also must override the transaction methods, though you are not required to
   - do anything with them
 
-Finally, you actually to set the server up, using the boilerplate show below in
+Finally, you actually to set the server up, using the boilerplate shown below in
 TExampleFhirServer.Start
 }
 

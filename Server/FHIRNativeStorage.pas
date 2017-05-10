@@ -1447,17 +1447,24 @@ begin
       end;
 
 
-    if ok and (not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid) or
-       not FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments)) then
+    if ok and not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid) then
       ok := false;
+
+    if ok and (not FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments)) then
+    begin
+      response.HTTPCode := 204;
+      response.Message := 'No Content';
+      response.ContentType := 'text/plain';
+      response.Body := '';
+      ok := false;
+    end;
 
     if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang), IssueTypeForbidden) then
       ok := false;
 
 
-    if ok and (request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', IssueTypeInvalid) Then
+    if ok and ((request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', IssueTypeInvalid)) Then
       ok := false;
-
 
     if ok then
     begin

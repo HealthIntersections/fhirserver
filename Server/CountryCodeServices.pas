@@ -121,7 +121,7 @@ end;
 
 function TCountryCodeServices.Code(context : TCodeSystemProviderContext) : string;
 begin
-  result := FCodes.KeyByIndex[integer(context)-1];
+  result := FCodes.KeyByIndex[integer(context)];
 end;
 
 function TCountryCodeServices.Definition(context: TCodeSystemProviderContext): string;
@@ -137,7 +137,7 @@ end;
 
 function TCountryCodeServices.Display(context : TCodeSystemProviderContext; lang : String) : string;
 begin
-  result := FCodes.ValueByIndex[integer(context)-1];
+  result := FCodes.ValueByIndex[integer(context)];
 end;
 
 procedure TCountryCodeServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
