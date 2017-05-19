@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes,
   AdvStreams, AdvStringMatches, AdvObjectLists, AdvObjects,
-  XMLIntf, MsXML;
+  MsXML, XMLIntf;
 
 type
   TSourceLocation = record

@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes,
   StringSupport, EncodeSupport, TextUtilities,
   AdvStreams, AdvVCLStreams,  AdvObjects,
-  MsXml, XmlBuilder, Xml.XmlIntf;
+  MsXml, XmlIntf, XmlBuilder;
 
 Type
   TMsXmlBuilder = class (TXmlBuilder)

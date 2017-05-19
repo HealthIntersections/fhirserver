@@ -213,7 +213,6 @@ type
     // lexer
     FToken : TStringBuilder;
     FPeek : String;
-    FValue: String;
     FLexType: TGraphQLLexType;
     FLocation : TSourceLocation;
     Function getNextChar : Char;
@@ -585,7 +584,7 @@ begin
         if (ch = '\') Then
         Begin
           if not More then
-            EGraphQLException.Create('premature termination of GraphQL during a string constant');
+            raise EGraphQLException.Create('premature termination of GraphQL during a string constant');
           ch := getNextChar;
           case ch of
             '"':FToken.Append('"');
@@ -604,7 +603,7 @@ begin
               FToken.Append(chr(StrToInt('$'+hex)));
               end
           Else
-            EGraphQLException.Create('not supported in GraphQL: \'+ch);
+            raise EGraphQLException.Create('not supported in GraphQL: \'+ch);
           End;
           ch := #0;
         End
