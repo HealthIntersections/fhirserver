@@ -3,15 +3,14 @@ unit FHIRGraphQL;
 interface
 
 uses
-  SysUtils, Classes, DUnitX.TestFramework,
+  SysUtils, Classes,
   AdvObjects, AdvGenerics,
-  MsXml, MsXmlparser, TextUtilities,
+  MsXml, MsXmlparser,
   GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser,
-  FHIRTestWorker;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRParser;
 
 type
-  TFHIRGraphQLEngineDereferenceEvent = function(context : TFHIRResource; reference : TFHIRReference; out resource : TFHIRResource) : boolean of Object;
+  TFHIRGraphQLEngineDereferenceEvent = function(context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
 
   TFHIRGraphQLEngine = class (TAdvObject)
   private
@@ -23,8 +22,10 @@ type
     procedure SetDocument(const Value: TGraphQLDocument);
     procedure SetFocus(const Value: TFHIRResource);
 
-    procedure processObject(source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
+    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
+    procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
+    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue);
 
   public
     Constructor Create; override;
@@ -45,18 +46,6 @@ type
     property OnFollowReference : TFHIRGraphQLEngineDereferenceEvent read FOnFollowReference write FOnFollowReference;
 
     procedure execute;
-  end;
-
-  GraphQLTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  end;
-
-  [TextFixture]
-  TFHIRGraphQLTests = class (TObject)
-  public
-    [GraphQLTestCase]
-    procedure TestCase(source,output,context: String);
   end;
 
 implementation
@@ -98,16 +87,39 @@ begin
   if FDocument.Operations.Count <> 1 then
     raise Exception.Create('Unable to process graphql');
 
-  processObject(FFocus, FOutput, FDocument.Operations[0].SelectionSet);
+  processObject(FFocus, FFocus, FOutput, FDocument.Operations[0].SelectionSet);
 end;
 
-procedure TFHIRGraphQLEngine.processObject(source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
+procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue);
+var
+  arg: TGraphQLArgument;
+  value: TFHIRObject;
+  new: TGraphQLObjectValue;
+begin
+  arg := target.addField(sel.field.Alias, prop.IsList);
+  for value in prop.Values do
+  begin
+    if value.isPrimitive then
+      processPrimitive(arg, value)
+    else
+    begin
+      if sel.field.SelectionSet.Empty then
+        raise EGraphQLException.Create('No Fields selected on a complex object');
+      new := TGraphQLObjectValue.Create;
+      try
+        arg.Values.Add(new.Link);
+        processObject(context, value, new, sel.field.SelectionSet);
+      finally
+        new.Free;
+      end;
+    end;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
 var
   sel : TGraphQLSelection;
-  new : TGraphQLObjectValue;
   prop : TFHIRProperty;
-  arg : TGraphQLArgument;
-  value : TFHIRObject;
 begin
   for sel in selection do
   begin
@@ -115,34 +127,15 @@ begin
     begin
       prop := source.getPropertyValue(sel.field.Name);
       try
-        if prop.hasValue then
+        if prop = nil then
         begin
-          arg := TGraphQLArgument.Create;
-          try
-            arg.Name := sel.field.Alias;
-            arg.list := prop.IsList;
-            target.Fields.Add(arg.Link);
-            for value in prop.Values do
-            begin
-              if value.isPrimitive then
-                processPrimitive(arg, value)
-              else
-              begin
-                if sel.field.SelectionSet.Empty then
-                  raise EGraphQLException.Create('No Fields selected on a complex object');
-                new := TGraphQLObjectValue.Create;
-                try
-                  arg.Values.Add(new.Link);
-                  processObject(value, new, sel.field.SelectionSet);
-                finally
-                  new.Free;
-                end;
-              end;
-            end;
-          finally
-            arg.Free;
-          end;
-        end;
+          if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
+            processReference(context, source, sel.field, target)
+          else
+            raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
+        end
+        else if prop.hasValue then
+          processValues(context, sel, prop, target);
       finally
         prop.Free;
       end;
@@ -164,69 +157,39 @@ begin
 end;
 
 
-{ GraphQLTestCaseAttribute }
-
-function GraphQLTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+procedure TFHIRGraphQLEngine.processReference(context : TFHIRResource; source: TFHIRObject; field: TGraphQLField; target: TGraphQLObjectValue);
 var
-  tests : IXMLDomDocument2;
-  test : IXmlDomElement;
-  i: integer;
-  s : String;
+  ref : TFhirReference;
+  ok : boolean;
+  ctxt, dest : TFhirResource;
+  arg: TGraphQLArgument;
+  new : TGraphQLObjectValue;
 begin
-  tests := TMsXmlParser.Parse('C:\work\org.hl7.fhir\build\tests\graphql\manifest.xml');
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  i := 0;
-  while (test <> nil) and (test.nodeName = 'test') do
-  begin
-    inc(i);
-    test := TMsXmlParser.NextSibling(test);
-  end;
-  setLength(result, i);
-  i := 0;
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  while (test <> nil) and (test.nodeName = 'test') do
-  begin
-    result[i].Name := test.getAttribute('name');
-    SetLength(result[i].Values, 3);
-    s := test.getAttribute('source');
-    result[i].Values[0] := s;
-    s := test.getAttribute('output');
-    result[i].Values[1] := s;
-    s := test.getAttribute('context');
-    result[i].Values[2] := s;
-    inc(i);
-    test := TMsXmlParser.NextSibling(test);
-  end;
-end;
+  if not (source is TFhirReference) then
+    raise EGraphQLException.Create('Not done yet');
+  if not assigned(FOnFollowReference) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
 
-{ TFHIRGraphQLTests }
-
-procedure TFHIRGraphQLTests.TestCase(source, output, context: String);
-var
-  parts : TArray<String>;
-  gql : TFHIRGraphQLEngine;
-  str : TStringBuilder;
-begin
-  parts := context.Split(['/']);
-  if length(parts) <> 3 then
-    raise Exception.Create('not done yet '+source+' '+output+' '+context);
-  gql := TFHIRGraphQLEngine.Create;
+  ref := TFhirReference(source).Link;
   try
-    gql.FFocus := TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
-    gql.FDocument := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
-    gql.execute;
-    str := TStringBuilder.create;
-    try
-      gql.output.write(str, 0);
-      StringToFile(str.ToString, 'C:\work\org.hl7.fhir\build\tests\graphql\'+output+'.out', TEncoding.UTF8);
-    finally
-      str.free;
-    end;
+    ok := FOnFollowReference(context, ref, ctxt, dest);
+    if ok then
+      try
+        arg := target.addField(field.Alias, false);
+        new := TGraphQLObjectValue.Create;
+        try
+          arg.Values.Add(new.Link);
+          processObject(ctxt, dest, new, field.SelectionSet);
+        finally
+          new.Free;
+        end;
+      finally
+        ctxt.Free;
+        dest.Free;
+      end;
   finally
-    gql.Free;
+    ref.Free;
   end;
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRGraphQLTests);
 end.

@@ -17,8 +17,6 @@ Type
     procedure TestResource;
 
     [TestCase]
-    procedure TestCustomDoc;
-    [TestCase]
     procedure TestCustomDoc2;
   End;
 
@@ -48,24 +46,6 @@ uses
   IdGlobalProtocols, TextUtilities, ShellSupport, XmlTests;
 
 { TJsonTests }
-
-procedure TJsonTests.TestCustomDoc;
-var
-  json : TJsonObject;
-  f : TFileStream;
-begin
-  f := TFileStream.Create('C:\work\fhir.org\resource-policy.json', fmopenRead + fmShareDenyWrite);
-  try
-    json := TJSONParser.Parse(f);
-    try
-      assert.IsNotNull(json);
-    finally
-      json.Free;
-    end;
-  finally
-    f.Free;
-  end;
-end;
 
 procedure TJsonTests.TestCustomDoc2;
 var

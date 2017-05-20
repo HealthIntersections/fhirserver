@@ -243,7 +243,10 @@ uses
   FHIRStorageService in '..\Server\FHIRStorageService.pas',
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
-  FHIRTestWorker in '..\reference-platform\r4\tests\FHIRTestWorker.pas';
+  FHIRTestWorker in '..\reference-platform\r4\tests\FHIRTestWorker.pas',
+  JsonTests in '..\reference-platform\support\Tests\JsonTests.pas',
+  XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
+  GraphQLTests in 'GraphQLTests.pas';
 
 var
   runner : ITestRunner;

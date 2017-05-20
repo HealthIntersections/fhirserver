@@ -3,7 +3,7 @@ unit GraphQL;
 interface
 
 uses
-  SysUtils, Classes, DUnitX.TestFramework,
+  SysUtils, Classes,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvTextExtractors, AdvStringStreams,
   XmlBuilder;
@@ -69,6 +69,7 @@ Type
     Destructor Destroy; override;
     Function Link : TGraphQLObjectValue; overload;
     property Fields : TAdvList<TGraphQLArgument> read FFields;
+    function addField(name : String; isList : boolean) : TGraphQLArgument;
     procedure write(str : TStringBuilder; indent : integer); override;
   end;
 
@@ -258,35 +259,6 @@ type
     Function Link : TGraphQLParser; overload;
     class function parse(source : String) : TGraphQLDocument;
     class function parseFile(filename : String) : TGraphQLDocument;
-  end;
-
-  [TextFixture]
-  TGraphQLTests = Class (TObject)
-  private
-  public
-    [TestCase] Procedure TestSimple;
-    [TestCase] Procedure TestComment;
-    [TestCase] Procedure TestMutation;
-    [TestCase] Procedure TestShort;
-    [TestCase] Procedure TestSelectionSet;
-    [TestCase] Procedure TestNested;
-    [TestCase] Procedure TestMe;
-    [TestCase] Procedure TestUser;
-    [TestCase] Procedure TestArguments1;
-    [TestCase] Procedure TestArguments2;
-    [TestCase] Procedure TestArguments3;
-    [TestCase] Procedure TestArguments4;
-    [TestCase] Procedure TestAlias1;
-    [TestCase] Procedure TestAlias2;
-    [TestCase] Procedure TestFragments0;
-    [TestCase] Procedure TestFragments1;
-    [TestCase] Procedure TestFragments2;
-    [TestCase] Procedure TestFragments3;
-    [TestCase] Procedure TestFragments4;
-    [TestCase] Procedure TestFragments5;
-    [TestCase] Procedure TestObject1;
-    [TestCase] Procedure TestObject2;
-    [TestCase] Procedure TestVariable;
   end;
 
 implementation
@@ -1058,328 +1030,6 @@ begin
 end;
 
 
-{ TGraphQLTests }
-
-procedure TGraphQLTests.TestSelectionSet;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  id'+#13#10+
-'  firstName'+#13#10+
-'  lastName'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestShort;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  field'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestSimple;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    name'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestUser;
-begin
-  TGraphQLParser.parse(
-'# `user` represents one of many users in a graph of data, referred to by a'+#13#10+
-'# unique identifier.'+#13#10+
-'{'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    name'+#13#10+
-'  }'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestVariable;
-begin
-  TGraphQLParser.parse(
-'query getZuckProfile($devicePicSize: Int) {'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'    profilePic(size: $devicePicSize)'+#13#10+
-'  }'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestAlias1;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'    smallPic: profilePic(size: 64)'+#13#10+
-'    bigPic: profilePic(size: 1024)'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestAlias2;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  zuck: user(id: 4) {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestArguments1;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'    profilePic(size: 100)'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestArguments2;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'    profilePic(width: 100, height: 50)'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestArguments3;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  picture(width: 200, height: 100)'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestArguments4;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  picture(height: 100, width: 200)'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestComment;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  # test this'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    name'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestFragments0;
-begin
-  TGraphQLParser.parse(
-'query noFragments {'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    friends(first: 10) {'+#13#10+
-'      id'+#13#10+
-'      name'+#13#10+
-'      profilePic(size: 50)'+#13#10+
-'    }'+#13#10+
-'    mutualFriends(first: 10) {'+#13#10+
-'      id'+#13#10+
-'      name'+#13#10+
-'      profilePic(size: 50)'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestFragments1;
-begin
-  TGraphQLParser.parse(
-'query withFragments {'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    friends(first: 10) {'+#13#10+
-'      ...friendFields'+#13#10+
-'    }'+#13#10+
-'    mutualFriends(first: 10) {'+#13#10+
-'      ...friendFields'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10+
-''+#13#10+
-'fragment friendFields on User {'+#13#10+
-'  id'+#13#10+
-'  name'+#13#10+
-'  profilePic(size: 50)'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestFragments2;
-begin
-  TGraphQLParser.parse(
-'query withNestedFragments {'+#13#10+
-'  user(id: 4) {'+#13#10+
-'    friends(first: 10) {'+#13#10+
-'      ...friendFields'+#13#10+
-'    }'+#13#10+
-'    mutualFriends(first: 10) {'+#13#10+
-'      ...friendFields'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10+
-''+#13#10+
-'fragment friendFields on User {'+#13#10+
-'  id'+#13#10+
-'  name'+#13#10+
-'  ...standardProfilePic'+#13#10+
-'}'+#13#10+
-''+#13#10+
-'fragment standardProfilePic on User {'+#13#10+
-'  profilePic(size: 50)'+#13#10+
-'}'+#13#10).Free;
-end;
-
-
-procedure TGraphQLTests.TestFragments3;
-begin
-  TGraphQLParser.parse(
-'query FragmentTyping {'+#13#10+
-'  profiles(handles: ["zuck", "cocacola"]) {'+#13#10+
-'    handle'+#13#10+
-'    ...userFragment'+#13#10+
-'    ...pageFragment'+#13#10+
-'  }'+#13#10+
-'}'+#13#10+
-''+#13#10+
-'fragment userFragment on User {'+#13#10+
-'  friends {'+#13#10+
-'    count'+#13#10+
-'  }'+#13#10+
-'}'+#13#10+
-''+#13#10+
-'fragment pageFragment on Page {'+#13#10+
-'  likers {'+#13#10+
-'    count'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestFragments4;
-begin
-  TGraphQLParser.parse(
-'query inlineFragmentTyping {'+#13#10+
-'  profiles(handles: ["zuck", "cocacola"]) {'+#13#10+
-'    handle'+#13#10+
-'    ... on User {'+#13#10+
-'      friends {'+#13#10+
-'        count'+#13#10+
-'      }'+#13#10+
-'    }'+#13#10+
-'    ... on Page {'+#13#10+
-'      likers {'+#13#10+
-'        count'+#13#10+
-'      }'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestFragments5;
-begin
-  TGraphQLParser.parse(
-'query inlineFragmentNoType($expandedInfo: Boolean) {'+#13#10+
-'  user(handle: "zuck") {'+#13#10+
-'    id'+#13#10+
-'    name'+#13#10+
-'    ... @include(if: $expandedInfo) {'+#13#10+
-'      firstName'+#13#10+
-'      lastName'+#13#10+
-'      birthday'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10).Free;
-end;
-
-procedure TGraphQLTests.TestMe;
-begin
-  TGraphQLParser.parse(
-'# `me` could represent the currently logged in viewer.'+#13#10+
-'{'+#13#10+
-'  me {'+#13#10+
-'    name'+#13#10+
-'  }'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestMutation;
-begin
-  TGraphQLParser.parse(
-'mutation {'+#13#10+
-'  likeStory(storyID: 12345) {'+#13#10+
-'    story {'+#13#10+
-'      likeCount'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestNested;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  me {'+#13#10+
-'    id'+#13#10+
-'    firstName'+#13#10+
-'    lastName'+#13#10+
-'    birthday {'+#13#10+
-'      month'+#13#10+
-'      day'+#13#10+
-'    }'+#13#10+
-'    friends {'+#13#10+
-'      name'+#13#10+
-'    }'+#13#10+
-'  }'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestObject1;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  nearestThing(location: { lon: 12.43, lat: -53.211 })'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
-procedure TGraphQLTests.TestObject2;
-begin
-  TGraphQLParser.parse(
-'{'+#13#10+
-'  nearestThing(location: { lat: -53.211, lon: 12.43 })'+#13#10+
-'}'+#13#10
-).Free;
-end;
-
 { TGraphQLValue }
 
 function TGraphQLValue.Link: TGraphQLValue;
@@ -1481,6 +1131,29 @@ end;
 
 { TGraphQLObjectValue }
 
+function TGraphQLObjectValue.addField(name: String; isList: boolean): TGraphQLArgument;
+var
+  t : TGraphQLArgument;
+begin
+  result := nil;
+  for t in FFields do
+    if (t.Name = name) then
+      result := t;
+  if result = nil then
+  begin
+    result := TGraphQLArgument.Create;
+    try
+      result.Name := name;
+      result.list := IsList;
+      FFields.Add(result.Link);
+    finally
+      result.Free;
+    end;
+  end
+  else
+    result.list := true;
+end;
+
 constructor TGraphQLObjectValue.Create;
 begin
   inherited;
@@ -1524,6 +1197,4 @@ begin
   str.Append('}');
 end;
 
-initialization
-  TDUnitX.RegisterTestFixture(TGraphQLTests);
 end.
