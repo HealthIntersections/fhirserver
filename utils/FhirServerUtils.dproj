@@ -362,6 +362,8 @@
         <DCCReference Include="..\Server\FHIRTagManager.pas"/>
         <DCCReference Include="..\Server\FHIRSessionManager.pas"/>
         <DCCReference Include="..\Server\FHIRUserProvider.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRGraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

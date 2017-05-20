@@ -11,7 +11,7 @@ public class Generator {
       definitions = new DefinitionsLoader4().loadDefinitions(args[0]);
     else if (args[2].equals("3"))
       definitions = new DefinitionsLoader3().loadDefinitions(args[0]);
-    else if (args[2].equals("3"))
+    else if (args[2].equals("2"))
       definitions = new DefinitionsLoader2().loadDefinitions(args[0]);
     else
       throw new Error("Unsupported version "+args[2]);

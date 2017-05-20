@@ -219,6 +219,7 @@ type
     FCommentsStart: TAdvStringList;
     FCommentsEnd: TAdvStringList;
     FFormat : TFHIRFormat;
+    FNoCompose: boolean;
     function GetCommentsStart: TAdvStringList;
     function GetCommentsEnd: TAdvStringList;
     procedure SetTag(const Value: TAdvObject);
@@ -295,6 +296,8 @@ type
     Property xml_commentsEnd : TAdvStringList read GetCommentsEnd;
 
     Property _source_format : TFHIRFormat read FFormat write FFormat;
+
+    property noCompose : boolean read FNoCompose write FNoCompose; // used by various filtering techniques to ensure that an element is not rendered
   end;
 
   TFHIRObjectClass = class of TFHIRObject;

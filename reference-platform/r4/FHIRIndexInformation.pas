@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-04-24T09:03:06+10:00
+// FHIR v3.1.0 generated 2017-05-10T01:10:01+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -230,9 +230,10 @@ begin
   indexes.add('AdverseEvent', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('AdverseEvent', 'actuality', 'AE | PAE', SearchParamTypeTOKEN, [], 'AdverseEvent.actuality', SearchXpathUsageNormal);
+  indexes.add('AdverseEvent', 'category', 'ProductProblem | ProductQuality | ProductUseError | WrongDose | IncorrectPrescribingInformation | WrongTechnique | WrongRouteOfAdministration | WrongRate | WrongDuration | WrongTime | ExpiredDrug | MedicalDeviceUseError | ProblemDifferentManufacturer'+' | UnsafePhysicalEnvironment', SearchParamTypeTOKEN, [], 'AdverseEvent.category', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'date', 'When the event occurred', SearchParamTypeDATE, [], 'AdverseEvent.date', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'event', 'Type of the event itself in releation to the subject', SearchParamTypeTOKEN, [], 'AdverseEvent.event', SearchXpathUsageNormal);
-  indexes.add('AdverseEvent', 'kind', 'AdverseEvent | SeriousAdverseEvent | ProductProblem | ProductUseError | MedicalDeviceUseError | ProblemDifferentManufacturer | NearMiss | UnsafeCondition', SearchParamTypeTOKEN, [], 'AdverseEvent.kind', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'location', 'Location where adverse event occurred', SearchParamTypeREFERENCE, ['Location'], 'AdverseEvent.location', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'recorder', 'Who recorded the adverse event', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'AdverseEvent.recorder', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'resultingcondition', 'Effect on the subject due to this event', SearchParamTypeREFERENCE, ['Condition'], 'AdverseEvent.resultingCondition', SearchXpathUsageNormal);
@@ -676,7 +677,7 @@ begin
   indexes.add('Communication', 'part-of', 'Part of this action', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Communication.partOf', SearchXpathUsageNormal);
   indexes.add('Communication', 'patient', 'Focus of message', SearchParamTypeREFERENCE, ['Patient'], 'Communication.subject', SearchXpathUsageNormal);
   indexes.add('Communication', 'received', 'When received', SearchParamTypeDATE, [], 'Communication.received', SearchXpathUsageNormal);
-  indexes.add('Communication', 'recipient', 'Message recipient', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'Communication.recipient', SearchXpathUsageNormal);
+  indexes.add('Communication', 'recipient', 'Message recipient', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Organization', 'CareTeam', 'Device', 'Patient', 'RelatedPerson'], 'Communication.recipient', SearchXpathUsageNormal);
   indexes.add('Communication', 'sender', 'Message sender', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'Communication.sender', SearchXpathUsageNormal);
   indexes.add('Communication', 'sent', 'When sent', SearchParamTypeDATE, [], 'Communication.sent', SearchXpathUsageNormal);
   indexes.add('Communication', 'status', 'preparation | in-progress | suspended | aborted | completed | entered-in-error', SearchParamTypeTOKEN, [], 'Communication.status', SearchXpathUsageNormal);

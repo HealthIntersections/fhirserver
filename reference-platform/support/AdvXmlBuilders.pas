@@ -71,8 +71,8 @@ Type
     function Text(Const sValue : String) : TSourceLocation; override;
     function Entity(Const sValue : String) : TSourceLocation; override;
     function TagText(Const sName, sValue : String) : TSourceLocation; override;
-    Procedure WriteXml(iElement : IXMLDomElement); override;
-    Procedure WriteXmlNode(iNode : IXMLDOMNode); overload; override;
+    Procedure WriteMsXml(iElement : IXMLDomElement); override;
+    Procedure WriteMsXmlNode(iNode : IXMLDOMNode); overload; override;
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
     procedure CData(text : String);
@@ -353,7 +353,7 @@ begin
   result.col := 0; //xml.col;
 end;
 
-procedure TAdvXmlBuilder.WriteXml(iElement: IXMLDomElement);
+procedure TAdvXmlBuilder.WriteMsXml(iElement: IXMLDomElement);
 var
   attr : IXMLDOMNode;
   a: Integer;
@@ -370,12 +370,12 @@ begin
   else
   begin
     Open(iElement.nodeName);
-    WriteXmlNode(iElement);
+    WriteMsXmlNode(iElement);
     Close(iElement.nodeName);
   end;
 end;
 
-procedure TAdvXmlBuilder.WriteXmlNode(iNode: IXMLDOMNode);
+procedure TAdvXmlBuilder.WriteMsXmlNode(iNode: IXMLDOMNode);
 var
   n : IXMLDOMNode;
   i : integer;
@@ -384,7 +384,7 @@ begin
   begin
     n := iNode.childNodes[i];
     case n.nodeType of
-      NODE_ELEMENT : WriteXml(n as IXMlDOmElement);
+      NODE_ELEMENT : WriteMsXml(n as IXMlDOmElement);
       NODE_COMMENT : Comment(n.text);
       NODE_TEXT : Text(n.text);
       NODE_PROCESSING_INSTRUCTION :

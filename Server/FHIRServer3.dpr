@@ -85,6 +85,7 @@ ucum search
 }
 
 uses
+  FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   Windows,
   SysUtils,
   Classes,
@@ -313,7 +314,10 @@ uses
   ExampleBridge in '..\bridge\ExampleBridge.pas',
   FHIRSessionManager in 'FHIRSessionManager.pas',
   FHIRTagManager in 'FHIRTagManager.pas',
-  FHIRUserProvider in 'FHIRUserProvider.pas';
+  FHIRUserProvider in 'FHIRUserProvider.pas',
+  GraphQL in '..\Libraries\GraphQL.pas',
+  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

@@ -943,7 +943,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally
@@ -973,7 +973,7 @@ begin
       result := LoadBinaryResource('en', conn.ColBlobByName['Content'])
     else
     begin
-      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
+      parser := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ffXml, conn.ColBlobByName['XmlContent'], xppDrop);
       try
         result := parser.resource.Link as TFHIRResource;
       finally

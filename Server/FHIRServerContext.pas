@@ -305,6 +305,9 @@ begin
   FIndexes.free;
   FTerminologyServer.Free;
   FValidator.free;
+  if FValidatorContext.AdvObjectReferenceCount > 0 then
+    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
+  
   FValidatorContext.Free;
   FResConfig.free;
   FQuestionnaireCache.free;

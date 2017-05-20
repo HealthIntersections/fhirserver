@@ -368,7 +368,7 @@ begin
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')
   else
   {$ENDIF}
-    raise Exception.Create('Not a supported filter');
+    raise ETerminologyError.Create('Not a supported filter');
 end;
 
 function TIETFLanguageCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

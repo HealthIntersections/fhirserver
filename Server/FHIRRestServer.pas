@@ -47,13 +47,15 @@ Uses
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
   IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
+  MsXML, GraphQL,
+
+  FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
+  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient,
 
-  FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
-  FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, MsXML,
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Type
@@ -3230,7 +3232,7 @@ begin
     repeat
       FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'sleeping';
       sleep(1000);
-      if not FServer.ServerContext.ForLoad then
+      if FServer.ServerContext.ForLoad then
       begin
         if (not terminated) then
         begin

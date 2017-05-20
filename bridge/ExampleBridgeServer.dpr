@@ -210,7 +210,9 @@ uses
   UriServices in '..\Server\UriServices.pas',
   logging in '..\Server\logging.pas',
   FHIRUserProvider in '..\Server\FHIRUserProvider.pas',
-  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas';
+  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
+  GraphQL in '..\reference-platform\support\GraphQL.pas',
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas';
 
 var
   gsrv : TExampleFhirServer;

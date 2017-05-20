@@ -22,9 +22,9 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIME
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes,
   StringSupport, EncodeSupport, TextUtilities,
   AdvStreams, AdvVCLStreams,  AdvObjects,
-  MsXml, XmlIntf, XmlBuilder;
+  XmlIntf, MsXml, XmlBuilder;
 
 Type
   TMsXmlBuilder = class (TXmlBuilder)
@@ -68,10 +68,10 @@ Type
     function Text(Const sValue : String) : TSourceLocation; override;
     function Entity(Const sValue : String) : TSourceLocation; override;
     function TagText(Const sName, sValue : String) : TSourceLocation; override;
-    Procedure WriteXml(iElement : IXMLDomElement); override;
+    Procedure WriteMSXml(iElement : MsXml.IXMLDomElement); override;
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
-    Procedure WriteXmlNode(iDoc : IXMLDOMNode); override;
+    Procedure WriteMSXmlNode(iDoc : MsXml.IXMLDOMNode); override;
 
     Procedure WriteXml(iElement : IXMLNode; first : boolean); override;
     Procedure WriteXmlNode(iDoc : IXMLNode; first : boolean); override;
@@ -354,7 +354,7 @@ begin
   raise Exception.Create('Not supported yet');
 end;
 
-procedure TMsXmlBuilder.WriteXml(iElement: IXMLDomElement);
+procedure TMsXmlBuilder.WriteMsXml(iElement: IXMLDomElement);
 var
   i : integer;
   oElem : IXMLDOMElement;
@@ -408,7 +408,7 @@ begin
   raise Exception.Create('Not supported yet');
 end;
 
-procedure TMsXmlBuilder.WriteXmlNode(iDoc: IXMLDOMNode);
+procedure TMsXmlBuilder.WriteMsXmlNode(iDoc: IXMLDOMNode);
 begin
   raise Exception.Create('Not supported yet');
 end;

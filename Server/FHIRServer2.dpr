@@ -255,7 +255,9 @@ uses
   ACIRServices in 'ACIRServices.pas',
   ReverseClient in 'ReverseClient.pas',
   FHIRNativeStorage in 'FHIRNativeStorage.pas',
-  FHIRUserProvider in 'FHIRUserProvider.pas';
+  FHIRUserProvider in 'FHIRUserProvider.pas',
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
+  GraphQL in '..\reference-platform\support\GraphQL.pas';
 
 begin
   logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';

@@ -41,20 +41,12 @@ unit KDBManager;
 interface
 
 uses
-  StringSupport,
-  AdvExceptions,
-  kCritSct,
-  KSettings,
-  KDBLogging,
-  Classes,
-  Contnrs,
-  IniFiles,
-  KDBDialects,
-  SysUtils,
-  DateAndTime,
-  KDate,
-  GuidSupport,
-  AdvObjects, AdvGenerics;
+  SysUtils, Classes, Contnrs, IniFiles, Generics.Collections,
+  kCritSct, KSettings,
+
+  StringSupport, GuidSupport,
+  AdvExceptions, AdvObjects, AdvGenerics,
+  KDBLogging, KDBDialects, DateAndTime, KDate;
 
 {!Script Hide}
 const
@@ -750,7 +742,7 @@ type
   private
     FLock : TCriticalSection;
     FHooks : TAdvList<TKDBHook>;
-    FList : TAdvList<TKDBManager>;
+    FList : TList<TKDBManager>;
     procedure AddConnMan(AConnMan : TKDBManager);
     procedure RemoveConnMan(AConnMan : TKDBManager);
     function GetConnMan(i : Integer):TKDBManager;
@@ -1422,7 +1414,6 @@ begin
 
   FClosing := false;
   GManagers.AddConnMan(self);
-  Free; // special case - can't free if it's linked in the manager, so manually undo that
   init;
 end;
 
@@ -1435,11 +1426,8 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.Destroy';
 begin
 
   FClosing := true;
-  Link; // see note above
-  Link;
   if GManagers <> nil then
-
-  GManagers.RemoveConnMan(self);
+    GManagers.RemoveConnMan(self);
 
 
   FAvail.free;
@@ -1772,7 +1760,7 @@ begin
   inherited create;
   FLock := TCriticalSection.create;
   FHooks := TAdvList<TKDBHook>.create;
-  FList := TAdvList<TKDBManager>.create;
+  FList := TList<TKDBManager>.create;
 end;
 
 destructor TKDBManagerList.destroy;
@@ -1800,7 +1788,7 @@ var
 begin
   Lock;
   try
-    FList.Add(AConnMan.Link);
+    FList.Add(AConnMan);
     for i := 0 to FHooks.count -1 do
       FHooks[i].FHook(AConnMan, true);
   finally

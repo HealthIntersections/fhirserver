@@ -128,9 +128,9 @@ begin
   Unii := TUniiServices.Create(Fdb.Link);
   Cvx := TCvxServices.Create(Fdb.Link);
   ACIR := TACIRServices.Create;
-  CountryCode := TCountryCodeServices.Create(Fdb.Link);
+  CountryCode := TCountryCodeServices.Create(Fdb);
   AreaCode := TAreaCodeServices.Create();
-  p := TUSStateCodeServices.Create(Fdb);
+  p := TUSStateCodeServices.Create(Fdb.Link);
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TIETFLanguageCodeServices.Create(ini.ReadString(voVersioningNotApplicable, 'lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));

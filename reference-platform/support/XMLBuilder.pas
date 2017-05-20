@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes,
   AdvStreams, AdvStringMatches, AdvObjectLists, AdvObjects,
-  MsXML, XMLIntf;
+  XmlIntf, MsXML;
 
 type
   TSourceLocation = record
@@ -104,12 +104,12 @@ type
     procedure ProcessingInstruction(sName, sText : String); overload; virtual; abstract;
     procedure DocType(sText : String); overload; virtual; abstract;
 
-    Procedure WriteXml(iElement : IXMLDomElement); overload; virtual; abstract;
-    Procedure WriteXmlNode(iDoc : IXMLDOMNode); overload; virtual; abstract;
+    Procedure WriteMSXml(iElement : MsXml.IXMLDomElement); virtual; abstract;
+    Procedure WriteMSXmlNode(iDoc : MsXml.IXMLDOMNode); virtual; abstract;
 
-    Procedure WriteXml(iElement : IXMLNode; first : boolean); overload; virtual; abstract;
-    Procedure WriteXmlNode(iNode : IXMLNode; first : boolean); overload; virtual; abstract;
-    Procedure WriteXmlDocument(iDoc : IXMLDocument); overload; virtual; abstract;
+    Procedure WriteXml(iElement : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
+    Procedure WriteXmlNode(iNode : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
+    Procedure WriteXmlDocument(iDoc : XmlIntf.IXMLDocument); overload; virtual; abstract;
 
     procedure inject(Const aBytes : TBytes); Overload; virtual; abstract; // not supported on all implementations
 

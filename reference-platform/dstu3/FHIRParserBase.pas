@@ -2001,7 +2001,7 @@ Header(Session, FBaseURL, lang, FVersion)+
     ul := ul + '?'
   else
     ul := ul + '&';
-  s.append('<p><a href="'+ul+'_format=xml"><img src="/rss.png"> Atom (XML)</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
+  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
 
     if (bundle.type_ in [BundleTypeSearchset, BundleTypeHistory])  then
     begin

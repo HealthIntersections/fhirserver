@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-04-24T09:03:06+10:00
+// FHIR v3.1.0 generated 2017-05-10T01:10:01+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -654,20 +654,35 @@ Type
     ActionParticipantTypeRelatedPerson); {@enum.value ActionParticipantTypeRelatedPerson  }
   TFhirActionParticipantTypeEnumList = set of TFhirActionParticipantTypeEnum;
 
-  {@Enum TFhirAdverseEventKindEnum
-    Overall categorization of the event, e.g. real or potential from http://hl7.org/fhir/ValueSet/adverse-event-kind
+  {@Enum TFhirAdverseEventActualityEnum
+    Overall nature of the event, e.g. real or potential from http://hl7.org/fhir/ValueSet/adverse-event-actuality
   }
-  TFhirAdverseEventKindEnum = (
-    AdverseEventKindNull,  {@enum.value AdverseEventKindNull Value is missing from Instance }
-    AdverseEventKindAdverseEvent, {@enum.value AdverseEventKindAdverseEvent  }
-    AdverseEventKindSeriousAdverseEvent, {@enum.value AdverseEventKindSeriousAdverseEvent  }
-    AdverseEventKindProductProblem, {@enum.value AdverseEventKindProductProblem  }
-    AdverseEventKindProductUseError, {@enum.value AdverseEventKindProductUseError  }
-    AdverseEventKindMedicalDeviceUseError, {@enum.value AdverseEventKindMedicalDeviceUseError  }
-    AdverseEventKindProblemDifferentManufacturer, {@enum.value AdverseEventKindProblemDifferentManufacturer  }
-    AdverseEventKindNearMiss, {@enum.value AdverseEventKindNearMiss  }
-    AdverseEventKindUnsafeCondition); {@enum.value AdverseEventKindUnsafeCondition  }
-  TFhirAdverseEventKindEnumList = set of TFhirAdverseEventKindEnum;
+  TFhirAdverseEventActualityEnum = (
+    AdverseEventActualityNull,  {@enum.value AdverseEventActualityNull Value is missing from Instance }
+    AdverseEventActualityAE, {@enum.value AdverseEventActualityAE  }
+    AdverseEventActualityPAE); {@enum.value AdverseEventActualityPAE  }
+  TFhirAdverseEventActualityEnumList = set of TFhirAdverseEventActualityEnum;
+
+  {@Enum TFhirAdverseEventCategoryEnum
+    Overall categorization of the event, e.g. product related or situational from http://hl7.org/fhir/ValueSet/adverse-event-category
+  }
+  TFhirAdverseEventCategoryEnum = (
+    AdverseEventCategoryNull,  {@enum.value AdverseEventCategoryNull Value is missing from Instance }
+    AdverseEventCategoryProductProblem, {@enum.value AdverseEventCategoryProductProblem  }
+    AdverseEventCategoryProductQuality, {@enum.value AdverseEventCategoryProductQuality  }
+    AdverseEventCategoryProductUseError, {@enum.value AdverseEventCategoryProductUseError  }
+    AdverseEventCategoryWrongDose, {@enum.value AdverseEventCategoryWrongDose  }
+    AdverseEventCategoryIncorrectPrescribingInformation, {@enum.value AdverseEventCategoryIncorrectPrescribingInformation  }
+    AdverseEventCategoryWrongTechnique, {@enum.value AdverseEventCategoryWrongTechnique  }
+    AdverseEventCategoryWrongRouteOfAdministration, {@enum.value AdverseEventCategoryWrongRouteOfAdministration  }
+    AdverseEventCategoryWrongRate, {@enum.value AdverseEventCategoryWrongRate  }
+    AdverseEventCategoryWrongDuration, {@enum.value AdverseEventCategoryWrongDuration  }
+    AdverseEventCategoryWrongTime, {@enum.value AdverseEventCategoryWrongTime  }
+    AdverseEventCategoryExpiredDrug, {@enum.value AdverseEventCategoryExpiredDrug  }
+    AdverseEventCategoryMedicalDeviceUseError, {@enum.value AdverseEventCategoryMedicalDeviceUseError  }
+    AdverseEventCategoryProblemDifferentManufacturer, {@enum.value AdverseEventCategoryProblemDifferentManufacturer  }
+    AdverseEventCategoryUnsafePhysicalEnvironment); {@enum.value AdverseEventCategoryUnsafePhysicalEnvironment  }
+  TFhirAdverseEventCategoryEnumList = set of TFhirAdverseEventCategoryEnum;
 
   {@Enum TFhirAllergyClinicalStatusEnum
     The clinical status of the allergy or intolerance. from http://hl7.org/fhir/ValueSet/allergy-clinical-status
@@ -1270,6 +1285,9 @@ Type
     ConditionClinicalNull,  {@enum.value ConditionClinicalNull Value is missing from Instance }
     ConditionClinicalActive, {@enum.value ConditionClinicalActive  }
     ConditionClinicalRecurrence, {@enum.value ConditionClinicalRecurrence  }
+    ConditionClinicalRelapse, {@enum.value ConditionClinicalRelapse  }
+    ConditionClinicalWellControlled, {@enum.value ConditionClinicalWellControlled  }
+    ConditionClinicalPoorlyControlled, {@enum.value ConditionClinicalPoorlyControlled  }
     ConditionClinicalInactive, {@enum.value ConditionClinicalInactive  }
     ConditionClinicalRemission, {@enum.value ConditionClinicalRemission  }
     ConditionClinicalResolved); {@enum.value ConditionClinicalResolved  }
@@ -13711,8 +13729,10 @@ Const
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
   SYSTEMS_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type');
-  CODES_TFhirAdverseEventKindEnum : Array[TFhirAdverseEventKindEnum] of String = ('', 'AdverseEvent', 'SeriousAdverseEvent', 'ProductProblem', 'ProductUseError', 'MedicalDeviceUseError', 'ProblemDifferentManufacturer', 'NearMiss', 'UnsafeCondition');
-  SYSTEMS_TFhirAdverseEventKindEnum : Array[TFhirAdverseEventKindEnum] of String = ('', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind', 'http://hl7.org/fhir/adverse-event-kind');
+  CODES_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'AE', 'PAE');
+  SYSTEMS_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'http://hl7.org/fhir/adverse-event-actuality', 'http://hl7.org/fhir/adverse-event-actuality');
+  CODES_TFhirAdverseEventCategoryEnum : Array[TFhirAdverseEventCategoryEnum] of String = ('', 'ProductProblem', 'ProductQuality', 'ProductUseError', 'WrongDose', 'IncorrectPrescribingInformation', 'WrongTechnique', 'WrongRouteOfAdministration', 'WrongRate', 'WrongDuration', 'WrongTime', 'ExpiredDrug', 'MedicalDeviceUseError', 'ProblemDifferentManufacturer', 'UnsafePhysicalEnvironment');
+  SYSTEMS_TFhirAdverseEventCategoryEnum : Array[TFhirAdverseEventCategoryEnum] of String = ('', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category');
   CODES_TFhirAllergyClinicalStatusEnum : Array[TFhirAllergyClinicalStatusEnum] of String = ('', 'active', 'inactive', 'resolved');
   SYSTEMS_TFhirAllergyClinicalStatusEnum : Array[TFhirAllergyClinicalStatusEnum] of String = ('', 'http://hl7.org/fhir/allergy-clinical-status', 'http://hl7.org/fhir/allergy-clinical-status', 'http://hl7.org/fhir/allergy-clinical-status');
   CODES_TFhirAllergyVerificationStatusEnum : Array[TFhirAllergyVerificationStatusEnum] of String = ('', 'unconfirmed', 'confirmed', 'refuted', 'entered-in-error');
@@ -13815,8 +13835,8 @@ Const
   SYSTEMS_TFhirConceptMapEquivalenceEnum : Array[TFhirConceptMapEquivalenceEnum] of String = ('', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence', 'http://hl7.org/fhir/concept-map-equivalence');
   CODES_TFhirConceptmapUnmappedModeEnum : Array[TFhirConceptmapUnmappedModeEnum] of String = ('', 'provided', 'fixed', 'other-map');
   SYSTEMS_TFhirConceptmapUnmappedModeEnum : Array[TFhirConceptmapUnmappedModeEnum] of String = ('', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode');
-  CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'recurrence', 'inactive', 'remission', 'resolved');
-  SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
+  CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'recurrence', 'relapse', 'well-controlled', 'poorly-controlled', 'inactive', 'remission', 'resolved');
+  SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
   CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
   SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
   CODES_TFhirConsentStateCodesEnum : Array[TFhirConsentStateCodesEnum] of String = ('', 'draft', 'proposed', 'active', 'rejected', 'inactive', 'entered-in-error');
@@ -14091,8 +14111,10 @@ Function TFhirResourceTypesEnumListAsInteger(aSet : TFhirResourceTypesEnumList) 
 Function IntegerAsTFhirResourceTypesEnumList(i : integer) : TFhirResourceTypesEnumList; overload;
 Function TFhirActionParticipantTypeEnumListAsInteger(aSet : TFhirActionParticipantTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirActionParticipantTypeEnumList(i : integer) : TFhirActionParticipantTypeEnumList; overload;
-Function TFhirAdverseEventKindEnumListAsInteger(aSet : TFhirAdverseEventKindEnumList) : Integer; overload;
-Function IntegerAsTFhirAdverseEventKindEnumList(i : integer) : TFhirAdverseEventKindEnumList; overload;
+Function TFhirAdverseEventActualityEnumListAsInteger(aSet : TFhirAdverseEventActualityEnumList) : Integer; overload;
+Function IntegerAsTFhirAdverseEventActualityEnumList(i : integer) : TFhirAdverseEventActualityEnumList; overload;
+Function TFhirAdverseEventCategoryEnumListAsInteger(aSet : TFhirAdverseEventCategoryEnumList) : Integer; overload;
+Function IntegerAsTFhirAdverseEventCategoryEnumList(i : integer) : TFhirAdverseEventCategoryEnumList; overload;
 Function TFhirAllergyClinicalStatusEnumListAsInteger(aSet : TFhirAllergyClinicalStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirAllergyClinicalStatusEnumList(i : integer) : TFhirAllergyClinicalStatusEnumList; overload;
 Function TFhirAllergyVerificationStatusEnumListAsInteger(aSet : TFhirAllergyVerificationStatusEnumList) : Integer; overload;
@@ -36323,12 +36345,12 @@ begin
  end;
 
 
-function TFhirAdverseEventKindEnumListAsInteger(aSet : TFhirAdverseEventKindEnumList) : Integer;
+function TFhirAdverseEventActualityEnumListAsInteger(aSet : TFhirAdverseEventActualityEnumList) : Integer;
 var
-  a : TFhirAdverseEventKindEnum;
+  a : TFhirAdverseEventActualityEnum;
 begin
   result := 0;
-  for a := low(TFhirAdverseEventKindEnum) to high(TFhirAdverseEventKindEnum) do
+  for a := low(TFhirAdverseEventActualityEnum) to high(TFhirAdverseEventActualityEnum) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -36336,12 +36358,39 @@ begin
   end;
 end;
 
-function IntegerAsTFhirAdverseEventKindEnumList(i : Integer) : TFhirAdverseEventKindEnumList;
+function IntegerAsTFhirAdverseEventActualityEnumList(i : Integer) : TFhirAdverseEventActualityEnumList;
 var
-  aLoop : TFhirAdverseEventKindEnum;
+  aLoop : TFhirAdverseEventActualityEnum;
 begin
   result := [];
-  for aLoop := low(TFhirAdverseEventKindEnum) to high(TFhirAdverseEventKindEnum) Do
+  for aLoop := low(TFhirAdverseEventActualityEnum) to high(TFhirAdverseEventActualityEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirAdverseEventCategoryEnumListAsInteger(aSet : TFhirAdverseEventCategoryEnumList) : Integer;
+var
+  a : TFhirAdverseEventCategoryEnum;
+begin
+  result := 0;
+  for a := low(TFhirAdverseEventCategoryEnum) to high(TFhirAdverseEventCategoryEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirAdverseEventCategoryEnumList(i : Integer) : TFhirAdverseEventCategoryEnumList;
+var
+  aLoop : TFhirAdverseEventCategoryEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirAdverseEventCategoryEnum) to high(TFhirAdverseEventCategoryEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

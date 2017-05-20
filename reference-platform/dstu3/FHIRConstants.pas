@@ -39,7 +39,7 @@ This is the dstu3 version of the FHIR code
 
 interface
 
-// FHIR v3.0.1 generated 2017-04-20T10:05:40+10:00
+// FHIR v3.0.1 generated 2017-04-27T17:09:41+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -3279,7 +3279,7 @@ Const
      frtVisionPrescription,
      frtCustom];
      
-  ALL_RESOURCE_TYPE_NAMES : Array[TFHIRResourceType] of String = ('Null', 'Account',
+  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', 'Account',
      'ActivityDefinition',
      'AdverseEvent',
      'AllergyIntolerance',
@@ -3516,7 +3516,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '3.0.1';
 
-  FHIR_GENERATED_DATE = '2017-04-20T10:05:40+10:00';
+  FHIR_GENERATED_DATE = '2017-04-27T17:09:41+10:00';
 
 
 

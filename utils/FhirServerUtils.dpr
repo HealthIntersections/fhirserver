@@ -233,7 +233,9 @@ uses
   FHIRServerContext in '..\Server\FHIRServerContext.pas',
   FHIRTagManager in '..\Server\FHIRTagManager.pas',
   FHIRSessionManager in '..\Server\FHIRSessionManager.pas',
-  FHIRUserProvider in '..\Server\FHIRUserProvider.pas';
+  FHIRUserProvider in '..\Server\FHIRUserProvider.pas',
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
+  GraphQL in '..\reference-platform\support\GraphQL.pas';
 
 {$R *.res}
 

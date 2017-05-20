@@ -294,7 +294,7 @@ Type
   TJSONLexer = class (TAdvTextExtractor)
   Private
     FPeek : String;
-    FValue: String;
+    FValue: TStringBuilder;
     FLexType: TJSONLexType;
     FStates : TStringList;
     FLastLocationBWS : TSourceLocation;
@@ -305,12 +305,13 @@ Type
     procedure ParseWord(sWord : String; ch : Char; aType : TJSONLexType);
     Procedure JsonError(sMsg : String);
     Function Path : String;
+    function GetValue: String;
   Public
     Constructor Create(oStream : TAdvStream); Overload;
     Destructor Destroy; Override;
     Procedure Start;
     Property LexType : TJSONLexType read FLexType;
-    Property Value : String read FValue;
+    Property Value : String read GetValue;
     Procedure Next;
     Function Consume(aType : TJsonLexType):String;
   End;
@@ -796,10 +797,10 @@ end;
 procedure TJSONLexer.ParseWord(sWord : String; ch : Char; aType : TJSONLexType);
 Begin
   FLexType := aType;
-  FValue := ch;
-  While More and (Length(FValue) < length(sWord)) and (FValue = copy(sWord, 1, length(FValue))) Do
-    FValue := FValue + getNextChar;
-  if FValue <> sWord Then
+  FValue.Append(ch);
+  While More and (FValue.Length < length(sWord)) and (FValue.ToString = copy(sWord, 1, FValue.Length)) Do
+    FValue.Append(getNextChar);
+  if FValue.ToString <> sWord Then
     JsonError('Syntax error in json reading special word '+sWord);
 End;
 
@@ -815,6 +816,7 @@ begin
   Until Not More Or not CharInSet(ch, [' ', #13, #10, #9]);
   FLastLocationAWS := FLocation;
 
+  FValue.Clear;
   If Not More Then
     FLexType := jltEof
   Else case ch of
@@ -823,7 +825,6 @@ begin
     '"' :
       Begin
       FLexType := jltString;
-      FValue := '';
       repeat
         ch := getNextChar;
         if (ch = '\') Then
@@ -832,12 +833,12 @@ begin
             JsonError('premature termination of json stream during a string');
           ch := getNextChar;
           case ch of
-            '"':FValue := FValue + '"';
-            '\':FValue := FValue + '\';
-            '/':FValue := FValue + '/';
-            'n':FValue := FValue + #10;
-            'r':FValue := FValue + #13;
-            't':FValue := FValue + #09;
+            '"':FValue.append('"');
+            '\':FValue.append('\');
+            '/':FValue.append('/');
+            'n':FValue.append(#10);
+            'r':FValue.append(#13);
+            't':FValue.append(#09);
             'u':
               begin
               setLength(hex, 4);
@@ -845,7 +846,7 @@ begin
               hex[2] := getNextChar;
               hex[3] := getNextChar;
               hex[4] := getNextChar;
-              FValue := FValue + chr(StrToInt('$'+hex));
+              FValue.append(chr(StrToInt('$'+hex)));
               end
           Else
             JsonError('not supported: \'+ch);
@@ -853,7 +854,7 @@ begin
           ch := #0;
         End
         Else if (ch <> '"') then
-          FValue := FValue + ch;
+          FValue.append(ch);
       until not More or (ch = '"');
       if ch <> '"' Then
         JsonError('premature termination of json stream during a string');
@@ -868,11 +869,11 @@ begin
     '0'..'9', '-' :
       Begin
       FLexType := jltNumber;
-      FValue := '';
+      FValue.Clear;
       exp := false;
       while More and (CharInSet(ch, ['0'..'9', '.', '-']) or (not exp and (CharInSet(ch, ['0'..'9', '.', '-', 'e', 'E'])))) do
       Begin
-        FValue := FValue + ch;
+        FValue.append(ch);
         if (ch = 'e') or (ch = 'E') then
         exp := true;
         ch := getNextChar;
@@ -904,11 +905,16 @@ begin
   end;
 end;
 
+function TJSONLexer.GetValue: String;
+begin
+  result := FValue.ToString;
+end;
+
 function TJSONLexer.Consume(aType: TJsonLexType): String;
 begin
   if FLexType <> aType Then
     JsonError('JSON syntax error - found '+Codes_TJSONLexType[FLexType]+' expecting '+Codes_TJSONLexType[aType]);
-  result := FValue;
+  result := Value;
   Next;
 end;
 
@@ -923,11 +929,13 @@ begin
   FLocation.line := 1;
   FLocation.col := 1;
   FStates := TStringList.Create;
+  FValue := TStringBuilder.create;
 end;
 
 destructor TJSONLexer.Destroy;
 begin
   FStates.Free;
+  FValue.free;
   inherited;
 end;
 
@@ -941,13 +949,13 @@ var
   i : integer;
 begin
   if FStates.count = 0 then
-    result := FValue
+    result := Value
   else
   begin
     result := '';
     for i := FStates.count-1 downto 1 do
       result := result + '/'+FStates[i];
-    result := result + FValue;
+    result := result + Value;
   end;
 end;
 
@@ -1184,7 +1192,7 @@ Begin
     jltNull :
       Begin
       FItemType := jpitNull;
-      FItemValue := FLex.FValue;
+      FItemValue := FLex.Value;
       FValueStart := FLex.FLastLocationAWS;
       FValueEnd := FLex.FLocation;
       FLex.Next;
@@ -1192,7 +1200,7 @@ Begin
     jltString :
       Begin
       FItemType := jpitString;
-      FItemValue := FLex.FValue;
+      FItemValue := FLex.Value;
       FValueStart := FLex.FLastLocationAWS;
       FValueEnd := FLex.FLocation;
       FLex.Next;
@@ -1200,7 +1208,7 @@ Begin
     jltBoolean :
       Begin
       FItemType := jpitBoolean;
-      FItemValue := FLex.FValue;
+      FItemValue := FLex.Value;
       FValueStart := FLex.FLastLocationAWS;
       FValueEnd := FLex.FLocation;
       FLex.Next;
@@ -1208,7 +1216,7 @@ Begin
     jltNumber :
       Begin
       FItemType := jpitNumber;
-      FItemValue := FLex.FValue;
+      FItemValue := FLex.Value;
       FValueStart := FLex.FLastLocationAWS;
       FValueEnd := FLex.FLocation;
       FLex.Next;

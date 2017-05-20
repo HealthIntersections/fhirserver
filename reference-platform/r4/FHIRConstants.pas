@@ -39,7 +39,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-04-24T09:03:06+10:00
+// FHIR v3.1.0 generated 2017-05-10T01:10:01+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -109,9 +109,10 @@ Type
     spAdverseEvent__security, {@enum.value "_security" spAdverseEvent__security Security Labels applied to this resource }
     spAdverseEvent__tag, {@enum.value "_tag" spAdverseEvent__tag Tags applied to this resource }
     spAdverseEvent__text, {@enum.value "_text" spAdverseEvent__text Search on the narrative of the resource }
+    spAdverseEvent_Actuality, {@enum.value "actuality" spAdverseEvent_Actuality AE | PAE }
+    spAdverseEvent_Category, {@enum.value "category" spAdverseEvent_Category ProductProblem | ProductQuality | ProductUseError | WrongDose | IncorrectPrescribingInformation | WrongTechnique | WrongRouteOfAdministration | WrongRate | WrongDuration | WrongTime | ExpiredDrug | MedicalDeviceUseError | ProblemDifferentManufacturer | UnsafePhysicalEnvironment }
     spAdverseEvent_Date, {@enum.value "date" spAdverseEvent_Date When the event occurred }
     spAdverseEvent_Event, {@enum.value "event" spAdverseEvent_Event Type of the event itself in releation to the subject }
-    spAdverseEvent_Kind, {@enum.value "kind" spAdverseEvent_Kind AdverseEvent | SeriousAdverseEvent | ProductProblem | ProductUseError | MedicalDeviceUseError | ProblemDifferentManufacturer | NearMiss | UnsafeCondition }
     spAdverseEvent_Location, {@enum.value "location" spAdverseEvent_Location Location where adverse event occurred }
     spAdverseEvent_Recorder, {@enum.value "recorder" spAdverseEvent_Recorder Who recorded the adverse event }
     spAdverseEvent_Resultingcondition, {@enum.value "resultingcondition" spAdverseEvent_Resultingcondition Effect on the subject due to this event }
@@ -3279,7 +3280,7 @@ Const
      frtVisionPrescription,
      frtCustom];
      
- ALL_RESOURCE_TYPE_NAMES : Array[TFHIRResourceType] of String = ('Null', 'Account',
+  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', 'Account',
      'ActivityDefinition',
      'AdverseEvent',
      'AllergyIntolerance',
@@ -3400,7 +3401,7 @@ Const
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
   CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
-  CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'event', 'kind', 'location', 'recorder', 'resultingcondition', 'seriousness', 'severity', 'study', 'subject', 'substance');
+  CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actuality', 'category', 'date', 'event', 'location', 'recorder', 'resultingcondition', 'seriousness', 'severity', 'study', 'subject', 'substance');
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'asserter', 'category', 'clinical-status', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'route', 'severity', 'type', 'verification-status');
   CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'incomingreferral', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
   CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
@@ -3516,7 +3517,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '3.1.0';
 
-  FHIR_GENERATED_DATE = '2017-04-24T09:03:06+10:00';
+  FHIR_GENERATED_DATE = '2017-05-10T01:10:01+10:00';
 
 
 
