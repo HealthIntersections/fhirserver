@@ -19,6 +19,7 @@ Type
   public
     Function Link : TGraphQLValue; overload;
     procedure write(str : TStringBuilder; indent : integer); virtual;
+    function isValue(v : String): boolean; virtual;
   end;
 
   TGraphQLVariableValue = class (TGraphQLValue)
@@ -39,6 +40,7 @@ Type
     Function Link : TGraphQLNumberValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
+    function isValue(v : String): boolean; override;
   end;
 
   TGraphQLNameValue = class (TGraphQLValue)
@@ -49,6 +51,7 @@ Type
     Function Link : TGraphQLValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
+    function isValue(v : String): boolean; override;
   end;
 
   TGraphQLStringValue = class (TGraphQLValue)
@@ -59,6 +62,7 @@ Type
     Function Link : TGraphQLStringValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
+    function isValue(v : String): boolean; override;
   end;
 
   TGraphQLObjectValue = class (TGraphQLValue)
@@ -88,6 +92,8 @@ Type
     property Name : String read FName write FName;
     property list : boolean read FList write FList;
     property Values : TAdvList<TGraphQLValue> read FValues;
+
+    function hasValue(value : String) : boolean;
   end;
 
   TGraphQLDirective = class (TAdvObject)
@@ -282,6 +288,16 @@ destructor TGraphQLArgument.Destroy;
 begin
   FValues.Free;
   inherited;
+end;
+
+function TGraphQLArgument.hasValue(value: String): boolean;
+var
+  v : TGraphQLValue;
+begin
+  result := false;
+  for v in FValues do
+    if (v.isValue(value)) then
+      exit(true);
 end;
 
 function TGraphQLArgument.Link: TGraphQLArgument;
@@ -1032,6 +1048,11 @@ end;
 
 { TGraphQLValue }
 
+function TGraphQLValue.isValue(v: String): boolean;
+begin
+  result := false;
+end;
+
 function TGraphQLValue.Link: TGraphQLValue;
 begin
   result := TGraphQLValue(inherited Link);
@@ -1048,6 +1069,11 @@ constructor TGraphQLNumberValue.Create(value: String);
 begin
   Inherited Create;
   FValue := value;
+end;
+
+function TGraphQLNumberValue.isValue(v: String): boolean;
+begin
+  result := v = FValue;
 end;
 
 function TGraphQLNumberValue.Link: TGraphQLNumberValue;
@@ -1086,6 +1112,11 @@ begin
   FValue := value;
 end;
 
+function TGraphQLNameValue.isValue(v: String): boolean;
+begin
+  result := v = FValue;
+end;
+
 function TGraphQLNameValue.Link: TGraphQLValue;
 begin
   result := TGraphQLNameValue(inherited Link);
@@ -1102,6 +1133,11 @@ constructor TGraphQLStringValue.Create(value: String);
 begin
   Inherited Create;
   FValue := value;
+end;
+
+function TGraphQLStringValue.isValue(v: String): boolean;
+begin
+  result := v = FValue;
 end;
 
 function TGraphQLStringValue.Link: TGraphQLStringValue;

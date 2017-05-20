@@ -35,7 +35,7 @@ type
     function ResolveReference(context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
   public
     [GraphQLTestCase]
-    procedure TestCase(source,output,context: String);
+    procedure TestCase(source,output,context,resource: String);
   end;
 
 
@@ -114,13 +114,15 @@ begin
   while (test <> nil) and (test.nodeName = 'test') do
   begin
     result[i].Name := test.getAttribute('name');
-    SetLength(result[i].Values, 3);
+    SetLength(result[i].Values, 4);
     s := test.getAttribute('source');
     result[i].Values[0] := s;
     s := test.getAttribute('output');
     result[i].Values[1] := s;
     s := test.getAttribute('context');
     result[i].Values[2] := s;
+    s := test.getAttribute('resource');
+    result[i].Values[3] := s;
     inc(i);
     test := TMsXmlParser.NextSibling(test);
   end;
@@ -141,21 +143,27 @@ begin
     target := TFHIRXmlParser.ParseFile(nil, 'en', filename);
 end;
 
-procedure TFHIRGraphQLTests.TestCase(source, output, context: String);
+procedure TFHIRGraphQLTests.TestCase(source, output, context, resource: String);
 var
   parts : TArray<String>;
   gql : TFHIRGraphQLEngine;
   str : TStringBuilder;
   ok : boolean;
   msg : String;
+  filename : String;
 begin
   parts := context.Split(['/']);
   if length(parts) <> 3 then
     raise Exception.Create('not done yet '+source+' '+output+' '+context);
+  if resource <> '' then
+    filename := 'C:\work\org.hl7.fhir\build\publish\'+resource+'.xml'
+  else
+    filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
+
   gql := TFHIRGraphQLEngine.Create;
   try
     gql.OnFollowReference := ResolveReference;
-    gql.Focus := TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
+    gql.Focus := TFHIRXmlParser.ParseFile(nil, 'en', filename);
     gql.QueryDocument := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
     try
       gql.execute;
@@ -165,6 +173,7 @@ begin
     end;
     if ok then
     begin
+      Assert.IsTrue(output <> '$error', 'Expected to fail, but didn''t');
       str := TStringBuilder.create;
       try
         gql.output.write(str, 0);

@@ -22,6 +22,7 @@ type
     procedure SetDocument(const Value: TGraphQLDocument);
     procedure SetFocus(const Value: TFHIRResource);
 
+    function hasArgument(arguments : TAdvList<TGraphQLArgument>; name, value : String) : boolean;
     procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
     procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
@@ -88,6 +89,16 @@ begin
     raise Exception.Create('Unable to process graphql');
 
   processObject(FFocus, FFocus, FOutput, FDocument.Operations[0].SelectionSet);
+end;
+
+function TFHIRGraphQLEngine.hasArgument(arguments: TAdvList<TGraphQLArgument>; name, value: String): boolean;
+var
+  arg : TGraphQLArgument;
+begin
+  for arg in arguments do
+    if (arg.Name = name) and arg.hasValue(value) then
+      exit(true);
+  result := false;
 end;
 
 procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue);
@@ -186,7 +197,9 @@ begin
       finally
         ctxt.Free;
         dest.Free;
-      end;
+      end
+    else if not hasArgument(field.Arguments, 'optional', 'true') then
+      raise EGraphQLException.Create('Unable to resolve reference to '+ref.reference);
   finally
     ref.Free;
   end;
