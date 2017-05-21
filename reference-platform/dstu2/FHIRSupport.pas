@@ -46,7 +46,7 @@ uses
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
-  MimeMessage, DateAndTime, JWT, SCIMObjects, MsXml,
+  MimeMessage, DateAndTime, JWT, SCIMObjects, MsXml, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
@@ -312,6 +312,7 @@ Type
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
     FAdaptor: TFHIRFormatAdaptor;
+    FGraphQL: TGraphQLDocument;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -322,6 +323,7 @@ Type
     function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
     procedure SetResourceName(const Value: String);
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
+    procedure SetGraphQL(const Value: TGraphQLDocument);
   Public
     Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
@@ -428,6 +430,8 @@ Type
 
     Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
     Property patchXml : IXMLDOMElement read FPatchXml write FPatchXml;
+    property GraphQL : TGraphQLDocument read FGraphQL write SetGraphQL;
+
     {@member Tags
       Tags on the request - if it's a resource directly
     }
@@ -1227,6 +1231,7 @@ begin
   FProvenance.Free;
   FForm.Free;
   FParams.Free;
+  FGraphQL.Free;
   inherited;
 end;
 
@@ -1343,6 +1348,12 @@ procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
 begin
   FForm.Free;
   FForm := Value;
+end;
+
+procedure TFHIRRequest.SetGraphQL(const Value: TGraphQLDocument);
+begin
+  FGraphQL.Free;
+  FGraphQL := Value;
 end;
 
 procedure TFHIRRequest.SetPatchJson(const Value: TJsonArray);

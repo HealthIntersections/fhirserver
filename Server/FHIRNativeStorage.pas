@@ -36,10 +36,10 @@ uses
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
-  KDBManager, KDBDialects, XmlSupport, MsXml, XmlPatch, MsXmlParser,
+  KDBManager, KDBDialects, XmlSupport, MsXml, XmlPatch, MsXmlParser, GraphQL,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
-  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath,
+  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL,
   FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager,
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
@@ -178,7 +178,7 @@ type
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource;
-    function getResourceByReference(source : TFHIRDomainResource; url, compartments : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
+    function getResourceByReference(source : TFHIRResource; url, compartments : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>;
@@ -222,12 +222,14 @@ type
     procedure CheckCreateNarrative(request : TFHIRRequest);
     procedure CreateIndexer;
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
+    procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
 
   protected
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
-    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse); override;
+    function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); override;
@@ -1553,6 +1555,56 @@ begin
   end;
 end;
 
+procedure TFHIRNativeOperationEngine.ExecuteGraphQL(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  gql : TFHIRGraphQLEngine;
+  str : TStringBuilder;
+begin
+  try
+    if ExecuteRead(request, response, true) then
+    begin
+      gql := TFHIRGraphQLEngine.Create;
+      try
+        gql.appInfo := request.Link;
+        gql.OnFollowReference := GraphFollowReference;
+        if request.GraphQL <> nil then
+          gql.queryDocument := request.GraphQL.Link
+        else if request.Parameters.VarExists('query') then
+          gql.queryDocument := TGraphQLParser.parse(request.Parameters.Value['query'])
+        else
+          raise EGraphQLException.Create('Unable to find GraphQL to execute');
+        gql.focus := response.Resource.Link;
+        gql.execute;
+        response.Resource := nil;
+        str := TStringBuilder.Create;
+        try
+          gql.output.write(str, 0);
+          response.Body := str.ToString;
+        finally
+          str.Free;
+        end;
+        response.ContentType := 'application/json';
+      finally
+        gql.Free;
+      end;
+    end;
+  except
+    on e : EGraphQLException do
+    begin
+      response.HTTPCode := 400;
+      response.Message := 'Error in GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeInvalid);
+    end;
+    on e : Exception do
+    begin
+      response.HTTPCode := 500;
+      response.Message := 'Error processing GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeException);
+    end;
+  end;
+end;
+
+
 function TFHIRNativeOperationEngine.BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
 var
   cmp : String;
@@ -1807,13 +1859,14 @@ begin
 end;
 
 
-procedure TFHIRNativeOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse);
+function TFHIRNativeOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 var
   resourceKey : integer;
   field : String;
   comp : TFHIRParserClass;
   needsObject : boolean;
 begin
+  result := false;
   try
     NotFound(request, response);
     if request.canRead(request.ResourceName) and check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
@@ -1829,13 +1882,13 @@ begin
           Begin
             if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
               check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed)
-            else if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
+            else if not ignoreHeaders and (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
               response.Message := 'Not Modified';
               response.Body := '';
             end
-            else if (request.IfModifiedSince <> 0) and (request.IfModifiedSince > TSToDateTime(FConnection.ColTimeStampByName['StatedDate'])) then
+            else if not ignoreHeaders and (request.IfModifiedSince <> 0) and (request.IfModifiedSince > TSToDateTime(FConnection.ColTimeStampByName['StatedDate'])) then
             begin
               response.HTTPCode := 304;
               response.Message := 'Not Modified';
@@ -1843,6 +1896,7 @@ begin
             end
             else
             begin
+              result := true;
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
@@ -1933,7 +1987,7 @@ begin
       request.Id := s;
       s := NextSegment(url);
       if (s = '') then
-        ExecuteRead(request, response)
+        ExecuteRead(request, response, false)
       else if (s.StartsWith('$')) then
         raise Exception.Create('not done yet') // resource instance level operation
       else if (s = '_history') then
@@ -4354,17 +4408,21 @@ var
   i : integer;
   op : TFhirOperation;
 begin
-  for i := 0 to FOperations.count - 1 do
+  if request.OperationName = 'graphql' then
+    executeGraphQL(context, request, response)
+  else
   begin
-    op := TFhirOperation(FOperations[i]);
-    if (op.HandlesRequest(request)) then
+    for i := 0 to FOperations.count - 1 do
     begin
-      op.Execute(context, self, request, response);
-      exit;
+      op := TFhirOperation(FOperations[i]);
+      if (op.HandlesRequest(request)) then
+      begin
+        op.Execute(context, self, request, response);
+        exit;
+      end;
     end;
+    raise Exception.Create('Unknown operation '+request.ResourceName+'/$'+request.OperationName);
   end;
-  raise Exception.Create('Unknown operation '+request.ResourceName+'/$'+request.OperationName);
-
 end;
 
 function typeForReference(ref : String) : String;
@@ -4872,6 +4930,20 @@ begin
 end;
 
 
+function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+var
+  req : TFHIRRequest;
+  secure : boolean;
+begin
+  req := TFHIRRequest(appInfo);
+  target := getResourceByReference(context, reference.reference, req.compartments, true, secure);
+  result := (target <> nil) and (not secure or req.secure);
+  if result then
+    targetContext := target.Link
+  else
+    target.Free;
+end;
+
 function TFHIRNativeOperationEngine.GetResourceById(request: TFHIRRequest; aType : String; id, base: String; var needSecure : boolean): TFHIRResource;
 var
   resourceKey : integer;
@@ -4941,7 +5013,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.getResourceByReference(source : TFHIRDomainResource; url, compartments: string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
+function TFHIRNativeOperationEngine.getResourceByReference(source : TFHIRResource; url, compartments: string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
 var
   parser : TFHIRParser;
   s : TBytes;
@@ -4953,9 +5025,9 @@ var
 begin
   result := nil;
   ver := '';
-  if url.StartsWith('#') then
+  if url.StartsWith('#') and (source is TFHIRDomainResource) then
   begin
-    for res in source.containedList do
+    for res in TFHIRDomainResource(source).containedList do
       if '#'+res.id = url then
         exit(res);
     raise Exception.Create('Unable to find contained resource '+url);

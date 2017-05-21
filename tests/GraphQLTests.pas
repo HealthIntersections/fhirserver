@@ -5,6 +5,7 @@ interface
 uses
   SysUtils, Classes, DUnitX.TestFramework,
   StringSupport, TextUtilities,
+  AdvObjects,
   MsXml, MsXmlParser,
   GraphQL, FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRGraphQL,
   FHIRTestWorker, JsonTests;
@@ -32,7 +33,7 @@ type
   [TextFixture]
   TFHIRGraphQLTests = class (TObject)
   private
-    function ResolveReference(context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    function ResolveReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
   public
     [GraphQLTestCase]
     procedure TestCase(source,output,context,resource: String);
@@ -130,17 +131,35 @@ end;
 
 { TFHIRGraphQLTests }
 
-function TFHIRGraphQLTests.ResolveReference(context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
+function TFHIRGraphQLTests.ResolveReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
 var
   parts : TArray<String>;
+  res : TFHIRResource;
   filename : String;
 begin
   targetContext := nil;
-  parts := reference.reference.Split(['/']);
-  filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
-  result := FileExists(filename);
-  if result then
-    target := TFHIRXmlParser.ParseFile(nil, 'en', filename);
+  target := nil;
+  if reference.reference.startsWith('#') then
+  begin
+    if not (context is TFhirDomainResource) then
+      exit(false);
+    for res in TFhirDomainResource(context).containedList do
+      if '#'+res.id = reference.reference then
+      begin
+        targetContext := context.Link;
+        target := res.Link;
+        exit(true);
+      end;
+    result := false;
+  end
+  else
+  begin
+    parts := reference.reference.Split(['/']);
+    filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
+    result := FileExists(filename);
+    if result then
+      target := TFHIRXmlParser.ParseFile(nil, 'en', filename);
+  end;
 end;
 
 procedure TFHIRGraphQLTests.TestCase(source, output, context, resource: String);
@@ -169,7 +188,11 @@ begin
       gql.execute;
       ok := true;
     except
-      ok := false;
+      on e : Exception do
+      begin
+        ok := false;
+        msg:= e.Message;
+      end;
     end;
     if ok then
     begin
@@ -185,7 +208,7 @@ begin
       end;
     end
     else
-      Assert.IsTrue(output = '$error');
+      Assert.IsTrue(output = '$error', 'Error, but proper output was expected ('+msg+')');
   finally
     gql.Free;
   end;

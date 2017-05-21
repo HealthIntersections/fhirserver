@@ -2053,6 +2053,10 @@ Begin
             begin
               oRequest.patchXml := TMsXmlParser.parse(oPostStream).documentElement;
             end
+            else if (oRequest.CommandType = fcmdOperation) and (sContentType = 'application/graphql') then
+            begin
+              oRequest.GraphQL := TGraphQLParser.parse(oPostStream);
+            end
             else if oRequest.CommandType <> fcmdWebUI then
               try
                 parser := MakeParser(FServerContext.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
@@ -2368,6 +2372,7 @@ procedure TFhirWebServer.ProcessRequest(context : TOperationContext; request: TF
 var
   op : TFHIROperationEngine;
   t : cardinal;
+  us, cs : String;
 begin
   FLock.Lock;
   try
@@ -2401,9 +2406,14 @@ begin
     FLock.Unlock;
   end;
   if request.session = nil then // during OAuth only
-    logt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user=(in-oauth), params='+request.Parameters.Source+'. rt = '+inttostr(t))
+    us := 'user=(in-oauth)'
   else
-    logt('Request: cmd='+CODES_TFHIRCommandType[request.CommandType]+', type='+request.ResourceName+', id='+request.Id+', user='+request.Session.Name+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
+    us := 'user='+request.Session.Name;
+  if request.CommandType = fcmdOperation then
+    cs := '$'+request.OperationName
+  else
+    cs := 'cmd='+CODES_TFHIRCommandType[request.CommandType];
+  logt('Request: '+cs+', type='+request.ResourceName+', id='+request.Id+', '+us+', params='+request.Parameters.Source+'. rt = '+inttostr(t));
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);

@@ -12,9 +12,6 @@
         <Projects Include="utils\FhirServerUtils.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="npp\fhirnpp.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="install\helper\installer.dproj">
             <Dependencies/>
         </Projects>
@@ -37,6 +34,9 @@
             <Dependencies/>
         </Projects>
         <Projects Include="bridge\ExampleBridgeServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -73,15 +73,6 @@
     </Target>
     <Target Name="FhirServerUtils:Make">
         <MSBuild Projects="utils\FhirServerUtils.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="fhirnpp">
-        <MSBuild Projects="npp\fhirnpp.dproj"/>
-    </Target>
-    <Target Name="fhirnpp:Clean">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirnpp:Make">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
     </Target>
     <Target Name="installer">
         <MSBuild Projects="install\helper\installer.dproj"/>
@@ -155,14 +146,23 @@
     <Target Name="ExampleBridgeServer:Make">
         <MSBuild Projects="bridge\ExampleBridgeServer.dproj" Targets="Make"/>
     </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;fhirnpp;installer;fhirtests4;FHIRServer3;fhirtests3;fhirtests2;FHIRServer2;dstu1;ExampleBridgeServer"/>
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;fhirtests2;FHIRServer2;dstu1;ExampleBridgeServer;fhirnpp"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;fhirnpp:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;fhirtests2:Clean;FHIRServer2:Clean;dstu1:Clean;ExampleBridgeServer:Clean"/>
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;fhirtests2:Clean;FHIRServer2:Clean;dstu1:Clean;ExampleBridgeServer:Clean;fhirnpp:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;fhirnpp:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;fhirtests2:Make;FHIRServer2:Make;dstu1:Make;ExampleBridgeServer:Make"/>
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;fhirtests2:Make;FHIRServer2:Make;dstu1:Make;ExampleBridgeServer:Make;fhirnpp:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

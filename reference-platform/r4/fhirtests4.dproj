@@ -220,6 +220,7 @@
         <DCCReference Include="DifferenceEngine.pas"/>
         <DCCReference Include="DifferenceEngineTests.pas"/>
         <DCCReference Include="tests\FHIRPathTests.pas"/>
+        <DCCReference Include="..\support\GraphQL.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

@@ -120,7 +120,8 @@ uses
   ShellSupport in '..\support\ShellSupport.pas',
   DifferenceEngine in 'DifferenceEngine.pas',
   DifferenceEngineTests in 'DifferenceEngineTests.pas',
-  FHIRPathTests in 'tests\FHIRPathTests.pas';
+  FHIRPathTests in 'tests\FHIRPathTests.pas',
+  GraphQL in '..\support\GraphQL.pas';
 
 var
   s: String;

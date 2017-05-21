@@ -315,7 +315,7 @@ uses
   FHIRSessionManager in 'FHIRSessionManager.pas',
   FHIRTagManager in 'FHIRTagManager.pas',
   FHIRUserProvider in 'FHIRUserProvider.pas',
-  GraphQL in '..\Libraries\GraphQL.pas',
+  GraphQL in '..\reference-platform\support\GraphQL.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas';
 

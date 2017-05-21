@@ -43,7 +43,7 @@ Type
     procedure CommitTransaction; virtual;
     procedure RollbackTransaction; virtual;
 
-    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); virtual;
@@ -289,7 +289,7 @@ begin
   try
     result := Request.Id;
     case request.CommandType of
-      fcmdRead : ExecuteRead(request, response);
+      fcmdRead : ExecuteRead(request, response, false);
       fcmdUpdate : ExecuteUpdate(context, request, response);
       fcmdVersionRead : ExecuteVersionRead(request, response);
       fcmdDelete : ExecuteDelete(request, response);
@@ -352,7 +352,7 @@ begin
   raise Exception.Create('This server does not implemnent the "Patch" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
   raise Exception.Create('This server does not implemnent the "Read" function');
 end;

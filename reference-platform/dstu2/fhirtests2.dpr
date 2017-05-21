@@ -119,7 +119,8 @@ uses
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   FHIRXhtml in 'FHIRXhtml.pas',
   InternetFetcher in '..\support\InternetFetcher.pas',
-  FHIRContext in 'FHIRContext.pas';
+  FHIRContext in 'FHIRContext.pas',
+  GraphQL in '..\support\GraphQL.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

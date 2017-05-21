@@ -82,13 +82,13 @@ Type
 
     function patientCreate(request: TFHIRRequest; response : TFHIRResponse) : String;
     procedure patientUpdate(request: TFHIRRequest; response : TFHIRResponse);
-    procedure patientRead(request: TFHIRRequest; response : TFHIRResponse);
+    function patientRead(request: TFHIRRequest; response : TFHIRResponse) : boolean;
   protected
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
 
-    procedure ExecuteRead(request: TFHIRRequest; response : TFHIRResponse); override;
+    function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
@@ -374,10 +374,10 @@ begin
 
 end;
 
-procedure TExampleFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse);
+function TExampleFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
   case request.ResourceEnum of
-    frtPatient: patientRead(request, response);
+    frtPatient: result := patientRead(request, response);
   else
     raise Exception.Create('The resource "'+request.ResourceName+'" is not supported by this server');
   end;
@@ -520,7 +520,7 @@ begin
   end;
 end;
 
-procedure TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response: TFHIRResponse);
+function TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response: TFHIRResponse) : boolean;
 var
   data : TAdvStringList;
 begin

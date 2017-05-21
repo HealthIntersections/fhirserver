@@ -965,7 +965,7 @@ begin
   try
     ListProperties(list, true, true);
     for p in list do
-      if p.Name = propName then
+      if (p.Name = propName) or (p.name.endsWith('[x]') and propName.startsWith(p.Name.subString(0, p.Name.length-3))) then
         exit(p.Link);
   finally
     list.Free;

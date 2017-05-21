@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes,
   StringSupport, TextUtilities,
-  AdvObjects, AdvGenerics, AdvTextExtractors, AdvStringStreams,
+  AdvObjects, AdvGenerics, AdvTextExtractors, AdvStringStreams, AdvVclStreams,
   XmlBuilder;
 
 Type
@@ -30,6 +30,7 @@ Type
     Function Link : TGraphQLVariableValue; overload;
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
+    function ToString : String; override;
   end;
 
   TGraphQLNumberValue = class (TGraphQLValue)
@@ -41,6 +42,7 @@ Type
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
+    function ToString : String; override;
   end;
 
   TGraphQLNameValue = class (TGraphQLValue)
@@ -52,6 +54,7 @@ Type
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
+    function ToString : String; override;
   end;
 
   TGraphQLStringValue = class (TGraphQLValue)
@@ -63,6 +66,7 @@ Type
     property Value : String read FValue write FValue;
     procedure write(str : TStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
+    function ToString : String; override;
   end;
 
   TGraphQLObjectValue = class (TGraphQLValue)
@@ -215,6 +219,7 @@ Type
     Function Link : TGraphQLDocument; overload;
     property Operations : TAdvList<TGraphQLOperation> read FOperations;
     property Fragments : TAdvList<TGraphQLFragment> read FFragments;
+    function fragment(name : String) : TGraphQLFragment;
   end;
 
   TGraphQLPunctuator = (gqlpBang, gqlpDollar, gqlpOpenBrace, gqlpCloseBrace, gqlpEllipse, gqlpColon, gqlpEquals, gqlpAt, gqlpOpenSquare, gqlpCloseSquare, gqlpOpenCurly, gqlpVertical, gqlpCloseCurly);
@@ -263,7 +268,8 @@ type
     Constructor Create; overload; override;
     Destructor Destroy; override;
     Function Link : TGraphQLParser; overload;
-    class function parse(source : String) : TGraphQLDocument;
+    class function parse(source : String) : TGraphQLDocument; overload;
+    class function parse(source : TStream) : TGraphQLDocument; overload;
     class function parseFile(filename : String) : TGraphQLDocument;
   end;
 
@@ -524,6 +530,16 @@ begin
   inherited;
 end;
 
+function TGraphQLDocument.fragment(name: String): TGraphQLFragment;
+var
+  f : TGraphQLFragment;
+begin
+  result := nil;
+  for f in Fragments do
+    if f.Name = name then
+      exit(f);
+end;
+
 function TGraphQLDocument.Link: TGraphQLDocument;
 begin
   result := TGraphQLDocument(inherited Link);
@@ -674,6 +690,32 @@ begin
   stream := TAdvStringStream.Create;
   try
     stream.Bytes := TENcoding.UTF8.GetBytes(source);
+    this := TGraphQLParser.Create(stream.link);
+    try
+      this.next;
+      result := TGraphQLDocument.Create;
+      try
+        this.parseDocument(result);
+        result.Link;
+      finally
+        result.free;
+      end;
+    finally
+      this.free;
+    end;
+  finally
+    stream.Free;
+  end;
+end;
+
+class function TGraphQLParser.parse(source: TStream): TGraphQLDocument;
+var
+  this : TGraphQLParser;
+  stream : TAdvVCLStream;
+begin
+  stream := TAdvVCLStream.Create;
+  try
+    stream.Stream := source;
     this := TGraphQLParser.Create(stream.link);
     try
       this.next;
@@ -1081,6 +1123,11 @@ begin
   result := TGraphQLNumberValue(inherited Link);
 end;
 
+function TGraphQLNumberValue.ToString: String;
+begin
+  result := FValue;
+end;
+
 procedure TGraphQLNumberValue.write(str : TStringBuilder; indent : integer);
 begin
   str.append(FValue);
@@ -1097,6 +1144,11 @@ end;
 function TGraphQLVariableValue.Link: TGraphQLVariableValue;
 begin
   result := TGraphQLVariableValue(inherited Link);
+end;
+
+function TGraphQLVariableValue.ToString: String;
+begin
+  result := '$'+FValue;
 end;
 
 procedure TGraphQLVariableValue.write(str : TStringBuilder; indent : integer);
@@ -1122,6 +1174,11 @@ begin
   result := TGraphQLNameValue(inherited Link);
 end;
 
+function TGraphQLNameValue.ToString: String;
+begin
+  result := FValue;
+end;
+
 procedure TGraphQLNameValue.write(str: TStringBuilder; indent : integer);
 begin
   str.append(FValue);
@@ -1143,6 +1200,11 @@ end;
 function TGraphQLStringValue.Link: TGraphQLStringValue;
 begin
   result := TGraphQLStringValue(inherited Link);
+end;
+
+function TGraphQLStringValue.ToString: String;
+begin
+  result := FValue;
 end;
 
 procedure TGraphQLStringValue.write(str: TStringBuilder; indent : integer);
