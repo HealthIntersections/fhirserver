@@ -8,18 +8,21 @@ uses
   AdvObjects, AdvGenerics,
   MsXml, MsXmlparser,
   GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRPath;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRUtilities, FHIRPath;
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
+  TFHIRGraphQLEngineReverseDereferenceEvent = procedure (appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFhirResource>) of Object;
 
   TFHIRGraphQLEngine = class (TAdvObject)
   private
+    FOnFollowReference: TFHIRGraphQLEngineDereferenceEvent;
+    FOnFollowReverseReference: TFHIRGraphQLEngineReverseDereferenceEvent;
+
     FFocus: TFHIRResource;
     FQueryName: String;
     FOutput: TGraphQLObjectValue;
     FDocument: TGraphQLDocument;
-    FOnFollowReference: TFHIRGraphQLEngineDereferenceEvent;
     FAppinfo: TAdvObject;
     procedure SetDocument(const Value: TGraphQLDocument);
     procedure SetFocus(const Value: TFHIRResource);
@@ -29,9 +32,11 @@ type
     function targetTypeOk(arguments : TAdvList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
 
     function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TAdvList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TAdvList<TFHIRObject>;
+    function filterResources(fhirpath : TGraphQLArgument; values : TAdvList<TFHIRResource>)  : TAdvList<TFHIRResource>;
     procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
     procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
+    procedure processReverseReference(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
     procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode : boolean);
     procedure SetAppInfo(const Value: TAdvObject);
 
@@ -53,6 +58,7 @@ type
     property output : TGraphQLObjectValue read FOutput;
 
     property OnFollowReference : TFHIRGraphQLEngineDereferenceEvent read FOnFollowReference write FOnFollowReference;
+    property OnFollowReverseReference : TFHIRGraphQLEngineReverseDereferenceEvent read FOnFollowReverseReference write FOnFollowReverseReference;
 
     procedure execute;
   end;
@@ -219,6 +225,44 @@ begin
   end;
 end;
 
+function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; values: TAdvList<TFHIRResource>): TAdvList<TFHIRResource>;
+var
+  p : TFHIRProperty;
+  v : TFhirResource;
+  fpe : TFHIRExpressionEngine;
+  node : TFHIRExpressionNode;
+begin
+  result := TAdvList<TFHIRResource>.create;
+  try
+    if values.Count > 0 then
+    begin
+      if (fhirpath = nil) then
+        for v in values do
+          result.Add(v.Link)
+      else
+      begin
+        fpe := TFHIRExpressionEngine.Create(nil);
+        try
+          node := fpe.parse(fhirpath.Values[0].ToString);
+          try
+            for v in values do
+              if fpe.evaluateToBoolean(nil, v, v, node) then
+                result.Add(v.Link)
+          finally
+            node.Free;
+          end;
+        finally
+          fpe.Free;
+        end;
+      end;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+
 function TFHIRGraphQLEngine.hasArgument(arguments: TAdvList<TGraphQLArgument>; name, value: String): boolean;
 var
   arg : TGraphQLArgument;
@@ -284,6 +328,8 @@ begin
         begin
           if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
             processReference(context, source, sel.field, target)
+          else if isResourceName(sel.field.Name) and (source is TFhirResource) then
+            processReverseReference(source as TFhirResource, sel.field, target)
           else
             raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
         end
@@ -378,6 +424,55 @@ begin
       raise EGraphQLException.Create('Unable to resolve reference to '+ref.reference);
   finally
     ref.Free;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processReverseReference(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
+var
+  arg, parg : TGraphQLArgument;
+  list, vl : TAdvList<TFHIRResource>;
+  v : TFhirResource;
+  new : TGraphQLObjectValue;
+  params : TAdvList<TGraphQLArgument>;
+begin
+  if not assigned(FOnFollowReverseReference) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
+
+  parg := field.argument('_reference');
+  if (parg = nil) or (parg.values.count <> 1) then
+    raise Exception.Create('Reverse References must have an argument "_reference" which specifies which search parameter to use for reverse reference matching');
+  list := TAdvList<TFHIRResource>.create;
+  try
+    params := TAdvList<TGraphQLArgument>.create;
+    try
+      for arg in field.Arguments do
+        if (arg.Name <> '_reference') and (arg.Name <> 'fhirpath') then
+          params.add(arg.Link);
+      FOnFollowReverseReference(FAppinfo, source.fhirType, source.id, field.Name, parg.values[0].ToString, params, list);
+    finally
+      params.Free;
+    end;
+    vl := filterResources(field.argument('fhirpath'), list);
+    try
+      if not vl.Empty then
+      begin
+        arg := target.addField(field.Alias, true);
+        for v in vl do
+        begin
+          new := TGraphQLObjectValue.Create;
+          try
+            arg.Values.Add(new.Link);
+            processObject(v, v, new, field.SelectionSet);
+          finally
+            new.Free;
+          end;
+        end;
+      end;
+    finally
+      vl.Free;
+    end;
+  finally
+    list.Free;
   end;
 end;
 

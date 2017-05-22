@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport,
+  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
@@ -224,6 +224,7 @@ type
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    procedure GraphFollowReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFhirResource>);
 
   protected
     procedure StartTransaction; override;
@@ -1567,6 +1568,7 @@ begin
       try
         gql.appInfo := request.Link;
         gql.OnFollowReference := GraphFollowReference;
+        gql.OnFollowReverseReference := GraphFollowReverseReference;
         if request.GraphQL <> nil then
           gql.queryDocument := request.GraphQL.Link
         else if request.Parameters.VarExists('query') then
@@ -4942,6 +4944,86 @@ begin
     targetContext := target.Link
   else
     target.Free;
+end;
+
+procedure TFHIRNativeOperationEngine.GraphFollowReverseReference(appInfo: TAdvObject; focusType, focusId, requestType, requestParam: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFhirResource>);
+var
+  sql : String;
+  ik, tk, rk : integer;
+  sp : TSearchProcessor;
+  pm : TParseMap;
+  url : String;
+  b : TStringBuilder;
+  json : TFHIRJsonParser;
+  request : TFHIRRequest;
+  p : TGraphQLArgument;
+begin
+  request := TFHIRRequest(appInfo);
+  rk := FRepository.ResourceTypeKeyForName(requestType);
+  if not FindResource(focusType, focusId, false, tk, request, nil, TFHIRRequest(appinfo).compartments) then
+    raise Exception.Create('Unable to find resource '+focusType+'/'+focusId+' internally');  // which would be pretty weird because we must have already found it in this transaction
+  ik := ServerContext.Indexes.GetKeyByName(requestParam);
+  sql := 'Select Ids.ResourceKey, JsonContent from Ids, Versions where Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Ids.ResourceTypeKey = '+inttostr(rk)+
+    ' and Ids.ResourceKey in (select ResourceKey from IndexEntries where IndexKey = '+inttostr(ik)+' and target = '+inttostr(tk)+') ';
+  if not params.Empty then
+  begin
+    b := TStringBuilder.create;
+    try
+      for p in params do
+      begin
+        b.append(p.Name.replace('_', '-'));
+        b.append('=');
+        b.append(EncodeMIME(p.Values[0].toString));
+        b.Append('&');
+      end;
+      url := b.ToString;
+    finally
+      b.Free;
+    end;
+
+    sp := TSearchProcessor.create(ServerContext);
+    try
+      sp.strict := true;
+      sp.typekey := rk;
+      sp.type_ := requestType;
+      sp.compartmentId := request.compartmentId;
+      sp.compartments := request.compartments;
+      sp.baseURL := request.baseURL;
+      sp.lang := lang;
+      sp.params := TParseMap.create(url);
+      CreateIndexer;
+      sp.indexes := ServerContext.Indexes.Link;
+      sp.session := request.session.link;
+      sp.countAllowed := true;
+      sp.Connection := FConnection.link;
+
+      sp.build;
+
+      sql := sql + ' and '+sp.filter;
+    finally
+      sp.Free;
+    end;
+  end;
+  sql := sql + ' order by Ids.ResourceKey DESC';
+  json := TFHIRJsonParser.Create(request.Context.link, request.lang);
+  try
+    FConnection.Sql := sql;
+    FConnection.Prepare;
+    try
+      FConnection.Execute;
+      while FConnection.FetchNext do
+      begin
+        json.source := FConnection.ColMemoryByName['JsonContent'];
+        json.source.Position := 0;
+        json.Parse;
+        list.Add(json.resource.Link);
+      end;
+    finally
+      FConnection.Terminate;
+    end;
+  finally
+    json.Free;
+  end;
 end;
 
 function TFHIRNativeOperationEngine.GetResourceById(request: TFHIRRequest; aType : String; id, base: String; var needSecure : boolean): TFHIRResource;

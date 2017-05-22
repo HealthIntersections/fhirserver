@@ -3,9 +3,9 @@ unit GraphQLTests;
 interface
 
 uses
-  SysUtils, Classes, DUnitX.TestFramework,
+  SysUtils, Classes, DUnitX.TestFramework, Variants,
   StringSupport, TextUtilities,
-  AdvObjects,
+  AdvObjects, AdvGenerics,
   MsXml, MsXmlParser,
   GraphQL, FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRGraphQL,
   FHIRTestWorker, JsonTests;
@@ -34,6 +34,7 @@ type
   TFHIRGraphQLTests = class (TObject)
   private
     function ResolveReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
+    procedure ResolveReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFhirResource>);
   public
     [GraphQLTestCase]
     procedure TestCase(source,output,context,resource: String);
@@ -122,7 +123,7 @@ begin
     result[i].Values[1] := s;
     s := test.getAttribute('context');
     result[i].Values[2] := s;
-    s := test.getAttribute('resource');
+    s := VarToStr(test.getAttribute('resource'));
     result[i].Values[3] := s;
     inc(i);
     test := TMsXmlParser.NextSibling(test);
@@ -162,6 +163,14 @@ begin
   end;
 end;
 
+procedure TFHIRGraphQLTests.ResolveReverseReference(appInfo: TAdvObject; focusType, focusId, requestType, requestParam: String; params : TAdvList<TGraphQLArgument>; list: TAdvList<TFhirResource>);
+begin
+  if (requestType = 'Condition') and (requestParam = 'patient') then
+    list.add(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
+  else
+    raise Exception.Create('Not done yet');
+end;
+
 procedure TFHIRGraphQLTests.TestCase(source, output, context, resource: String);
 var
   parts : TArray<String>;
@@ -182,6 +191,7 @@ begin
   gql := TFHIRGraphQLEngine.Create;
   try
     gql.OnFollowReference := ResolveReference;
+    gql.OnFollowReverseReference := ResolveReverseReference;
     gql.Focus := TFHIRXmlParser.ParseFile(nil, 'en', filename);
     gql.QueryDocument := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
     try

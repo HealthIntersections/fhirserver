@@ -128,6 +128,7 @@ Type
     Property Arguments : TAdvList<TGraphQLArgument> read FArguments;
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
     property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    function argument(name : String) : TGraphQLArgument;
   end;
 
   TGraphQLFragmentSpread = class (TAdvObject)
@@ -371,6 +372,16 @@ begin
 end;
 
 { TGraphQLField }
+
+function TGraphQLField.argument(name: String): TGraphQLArgument;
+var
+  p : TGraphQLArgument;
+begin
+  result := nil;
+  for p in Arguments do
+    if p.Name = name then
+      exit(p);
+end;
 
 constructor TGraphQLField.Create;
 begin
