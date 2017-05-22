@@ -61,7 +61,7 @@ uses
 procedure TFHIRParserTests.RoundTripTest(filename: String);
 var
   r : TFHIRResource;
-  fn, j1, j2, x1, x2 : String;
+  fn, j1, j2, x1, x2 : String;             
   b : boolean;
   msg : String;
   re : TFHIRMMElement;
@@ -161,7 +161,7 @@ end;
 
 constructor FHIRParserTestCaseAttribute.Create;
 begin
-  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples', '.xml');
+  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples', '.xml', 20);
 end;
 
 initialization

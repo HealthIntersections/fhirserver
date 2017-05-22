@@ -121,7 +121,7 @@ end;
 
 constructor StructureMapTestCaseAttribute.Create;
 begin
-  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\guides\ccda\maps', '.map');
+  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\guides\ccda\maps', '.map', 0);
 end;
 
 { TMapTransformTests }
@@ -211,5 +211,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
-  TDUnitX.RegisterTestFixture(TMapTransformTests);
+//  TDUnitX.RegisterTestFixture(TMapTransformTests);
 end.

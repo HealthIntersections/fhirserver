@@ -3899,7 +3899,7 @@ var
   ed : TFhirElementDefinition;
 begin
   for ed in sd.snapshot.elementList do
-    {$IFDEF FHIR3}
+    {$IFNDEF FHIR2}
     if (name.equals('#'+ed.id)) then
     {$ELSE}
     if (name.equal(ed.Name)) then

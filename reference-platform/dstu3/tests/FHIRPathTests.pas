@@ -48,7 +48,7 @@ var
   gn, s : String;
   v : OleVariant;
 begin
-  tests := TMsXmlParser.Parse('C:\work\FHIRPath\tests\stu3\tests-fhir-r3.xml');
+  tests := TMsXmlParser.Parse('C:\work\fluentpath\tests\stu3\tests-fhir-r3.xml');
 
   group := TMsXmlParser.FirstChild(tests.documentElement);
   i := 0;

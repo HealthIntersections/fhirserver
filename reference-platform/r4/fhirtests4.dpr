@@ -119,7 +119,7 @@ uses
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   ShellSupport in '..\support\ShellSupport.pas',
   DifferenceEngine in 'DifferenceEngine.pas',
-  DifferenceEngineTests in 'DifferenceEngineTests.pas',
+  DifferenceEngineTests in 'tests\DifferenceEngineTests.pas',
   FHIRPathTests in 'tests\FHIRPathTests.pas',
   GraphQL in '..\support\GraphQL.pas';
 

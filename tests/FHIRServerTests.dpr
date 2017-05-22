@@ -246,7 +246,17 @@ uses
   FHIRTestWorker in '..\reference-platform\r4\tests\FHIRTestWorker.pas',
   JsonTests in '..\reference-platform\support\Tests\JsonTests.pas',
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
-  GraphQLTests in 'GraphQLTests.pas';
+  GraphQLTests in 'GraphQLTests.pas',
+  SnomedTests in 'SnomedTests.pas',
+  DecimalTests in '..\reference-platform\support\tests\DecimalTests.pas',
+  IETFLangTests in 'IETFLangTests.pas',
+  JWTTests in '..\reference-platform\support\Tests\JWTTests.pas',
+  DifferenceEngineTests in '..\reference-platform\r4\tests\DifferenceEngineTests.pas',
+  FHIRClientTests in '..\reference-platform\r4\tests\FHIRClientTests.pas',
+  FHIRParserTests in '..\reference-platform\r4\tests\FHIRParserTests.pas',
+  FHIRPathTests in '..\reference-platform\r4\tests\FHIRPathTests.pas',
+  FHIRValidatorTests in '..\reference-platform\r4\tests\FHIRValidatorTests.pas',
+  StructureMapTests in '..\reference-platform\r4\tests\StructureMapTests.pas';
 
 var
   runner : ITestRunner;
@@ -254,6 +264,10 @@ var
   logger : ITestLogger;
   nunitLogger : ITestLogger;
 begin
+  GBasePath  := paramstr(1);
+  if GBasePath = '' then
+    GBasePath := 'C:\work\org.hl7.fhir';
+
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;
   exit;

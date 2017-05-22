@@ -46,7 +46,6 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>FHIRServerTests</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
@@ -339,6 +338,16 @@
         <DCCReference Include="..\reference-platform\support\Tests\JsonTests.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\XmlTests.pas"/>
         <DCCReference Include="GraphQLTests.pas"/>
+        <DCCReference Include="SnomedTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\tests\DecimalTests.pas"/>
+        <DCCReference Include="IETFLangTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\JWTTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\DifferenceEngineTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\FHIRClientTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\FHIRParserTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\FHIRPathTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\FHIRValidatorTests.pas"/>
+        <DCCReference Include="..\reference-platform\r4\tests\StructureMapTests.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -449,7 +449,10 @@ function CompareBytes(bytes1, bytes2 : TBytes) : Integer;
 begin
   result := length(bytes1) - length(bytes2);
   if result = 0 then
-    result := integer(not compareMem(@bytes1[0], @bytes2[0], length(bytes1)));
+    if (length(bytes1) = 0) then
+      result := 0
+    else
+      result := integer(not compareMem(@bytes1[0], @bytes2[0], length(bytes1)));
 End;
 
 function SameBytes(bytes1, bytes2 : TBytes) : Boolean;

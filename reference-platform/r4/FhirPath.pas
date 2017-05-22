@@ -45,7 +45,7 @@ uses
   FHIRParser;
 
 const
-  FHIR_TYPES_STRING : Array of String = ['string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary'];
+  FHIR_TYPES_STRING : Array[0..8] of String = ('string', 'uri', 'code', 'oid', 'id', 'uuid', 'sid', 'markdown', 'base64Binary');
 
 type
   EFHIRPath = class (Exception)
@@ -153,6 +153,7 @@ type
   TFHIRExpressionEngine = class;
 
   TFHIRPathDebugEvent = procedure (source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage) of object;
+  TFHIRResolveReferenceEvent = function (source : TFHIRExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject of object;
 
   TFHIRExpressionEngine = class (TAdvObject)
   private
@@ -160,6 +161,7 @@ type
     FOndebug : TFHIRPathDebugEvent;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
+    FOnResolveReference: TFHIRResolveReferenceEvent;
 
     procedure log(name, value : String);
     function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
@@ -246,6 +248,7 @@ type
     function funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+    function funcHasValue(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
 
 
     function equal(left, right : TFHIRObject) : boolean;  overload;
@@ -283,6 +286,7 @@ type
     constructor Create(context : TWorkerContext);
     destructor Destroy; override;
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
+    property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRExpressionNode; overload;
@@ -328,6 +332,7 @@ var
   td : TFhirElementDefinitionType;
   t : String;
 begin
+  types := nil;
   if (xPathStartsWithValueRef and context.contains('.') and path.startsWith(context.substring(context.lastIndexOf('.')+1))) then
     types := TFHIRTypeDetails.Create(csSINGLETON, [context.substring(0, context.lastIndexOf('.'))])
   else if not context.contains('.') then
@@ -433,6 +438,7 @@ begin
     pfSlice: checkParamCount(lexer, location, exp, 2);
     pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
     pfConformsTo: checkParamCount(lexer, location, exp, 1);
+    pfHasValue: checkParamCount(lexer, location, exp, 0);
   end;
 end;
 
@@ -472,10 +478,18 @@ begin
     for sd in worker.allStructures do
       if (sd.kind <> StructureDefinitionKindLogical) then
       begin
+        {$IFNDEF FHIR2}
         if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
           allTypes.add(sd.id);
         if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
           primitiveTypes.add(sd.id);
+        {$ELSE}
+        raise Exception.Create('Debug this');
+        if (sd.constrainedType = DefinedTypesNull) then
+          allTypes.add(sd.id);
+        if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
+          primitiveTypes.add(sd.id);
+        {$ENDIF}
     end;
 end;
 
@@ -1043,6 +1057,23 @@ begin
     result.Add(focus[0].Link);
 end;
 
+function TFHIRExpressionEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+var
+  res : TFHIRSelectionList;
+  sw : String;
+begin
+  result := TFHIRSelectionList.Create;
+  try
+    if (focus.count = 1) then
+      result.add(TFHIRBoolean.create(focus[0].value.hasPrimitiveValue))
+    else
+      result.add(TFHIRBoolean.create(false));
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TFHIRExpressionEngine.funcIif(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
 var
   n1 : TFHIRSelectionList;
@@ -1273,8 +1304,58 @@ begin
 end;
 
 function TFHIRExpressionEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+var
+  item : TFHIRSelection;
+  s, id : String;
+  p : TFHIRProperty;
+  res, c : TFHIRObject;
 begin
-  raise EFHIRPath.create('The function '+exp.name+' is not done yet');
+  result := TFHIRSelectionList.Create();
+  try
+    for item in focus do
+    begin
+      s := convertToString(item.value);
+      if (item.value.fhirType = 'Reference') then
+      begin
+        p := item.value.getPropertyValue('reference');
+        try
+          if (p.hasValue) then
+            s := convertToString(p.Values[0]);
+        finally
+          p.free;
+        end;
+      end;
+      res := nil;
+      if (s.startsWith('#')) then
+      begin
+        id := s.substring(1);
+        p := context.resource.getPropertyValue('contained');
+        try
+          for c in p.Values do
+          begin
+            if (id = c.getId) then
+            begin
+              res := c;
+              break;
+            end;
+          end
+        finally
+          p.Free;
+        end;
+      end
+      else
+begin
+        if not assigned(FOnResolveReference) then
+          raise EFHIRPath.create('resolve() - resolution services are '+exp.name+' not implemented yet');
+        res := FOnResolveReference(self, context.appInfo, s);
+      end;
+      if (res <> nil) then
+        result.add(res);
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
 end;
 
 function TFHIRExpressionEngine.funcSelect(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
@@ -2840,6 +2921,7 @@ begin
     pfSlice: result := funcSlice(context, focus, exp);
     pfCheckModifiers: result := funcCheckModifiers(context, focus, exp);
     pfConformsTo: result := funcConformsTo(context, focus, exp);
+    pfHasValue : result := funcHasValue(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
   end;
@@ -3137,6 +3219,8 @@ begin
         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, ['string'])]);
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
         end;
+      pfHasValue:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
     else
       raise EFHIRPath.create('not Implemented yet?');
     end;
@@ -3815,7 +3899,11 @@ var
   ed : TFhirElementDefinition;
 begin
   for ed in sd.snapshot.elementList do
+    {$IFNDEF FHIR2}
     if (name.equals('#'+ed.id)) then
+    {$ELSE}
+    if (name.equal(ed.Name)) then
+    {$ENDIF}
       exit(ed);
   result := nil;
 end;

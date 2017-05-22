@@ -891,11 +891,12 @@ begin
       refinements(result);
     end;
     result.stop := cursor;
+
+    rule(peek = #0, 'Found content ("'+peekDisp+'") after end of expression');
     result.link;
   finally
     result.free;
   end;
-  rule(peek = #0, 'Found content ("'+peekDisp+'") after end of expression');
 end;
 
 function TSnomedExpressionParser.peek : char;

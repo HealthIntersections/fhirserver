@@ -19332,7 +19332,7 @@ end;
 procedure TFhirNarrative.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, new){4}
-  else if (propName = 'div') then Div_Element := new as TFhirXHtmlNode{4}
+  else if (propName = 'div') then Div_Element := asXhtml(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;

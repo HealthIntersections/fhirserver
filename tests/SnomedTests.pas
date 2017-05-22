@@ -86,10 +86,10 @@ begin
   Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ESnomedServices);
   Assert.WillRaise(procedure begin p('128045006:{363698007=564590041}') end, ESnomedServices);
   Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:3636980071=56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071,56459004}') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004') end, ESnomedServices);
-  Assert.WillRaise(procedure begin p('128045006:{363698007=56459004},') end, ESnomedServices);
+  Assert.WillRaise(procedure begin p('128045006:3636980071=56459004}') end, ESnomedParser);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071,56459004}') end, ESnomedParser);
+  Assert.WillRaise(procedure begin p('128045006:{3636980071=56459004') end, ESnomedParser);
+  Assert.WillRaise(procedure begin p('128045006:{363698007=56459004},') end, ESnomedParser);
   Assert.WillRaise(procedure begin p('128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}') end, ESnomedServices);
 end;
 
@@ -148,7 +148,7 @@ end;
 procedure TSnomedTests.Setup;
 begin
   FServices := TSnomedServices.Create;
-  FServices.Load('C:\ProgramData\fhirserver\snomed_20160930_au.cache');
+  FServices.Load('C:\ProgramData\fhirserver\snomed_20161031_au.cache');
 end;
 
 procedure TSnomedTests.TearDown;
@@ -231,5 +231,5 @@ end;
 
 
 initialization
-//  TDUnitX.RegisterTestFixture(TSnomedTests);
+  TDUnitX.RegisterTestFixture(TSnomedTests);
 end.
