@@ -7377,9 +7377,9 @@ begin
 
               if request.Parameters.VarExists('_include') then
                 manager.CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
-              if entry.resource.ResourceType = frtPatient then
+              if (entry.resource.ResourceType = frtPatient) and (entry.resource.id = request.id) then
               begin
-                if patient = nil then
+                if (patient = nil) then
                   patient := entry.resource.link
                 else
                   raise Exception.Create('Multiple patient resources found in patient compartment');
