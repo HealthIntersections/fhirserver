@@ -1,5 +1,34 @@
 unit FHIRGraphQL;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
 interface
 
 uses
@@ -12,32 +41,38 @@ uses
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineReverseDereferenceEvent = procedure (appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFhirResource>) of Object;
+  TFHIRGraphQLEngineReverseDereferenceEvent = procedure (appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; start, limit : integer; list : TAdvList<TFhirResource>) of Object;
+  TFHIRGraphQLEngineSearchEvent = function (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle of Object;
 
   TFHIRGraphQLEngine = class (TAdvObject)
   private
-    FOnFollowReference: TFHIRGraphQLEngineDereferenceEvent;
-    FOnFollowReverseReference: TFHIRGraphQLEngineReverseDereferenceEvent;
+    FOnFollowReference : TFHIRGraphQLEngineDereferenceEvent;
+    FOnFollowReverseReference : TFHIRGraphQLEngineReverseDereferenceEvent;
+    FOnSearch : TFHIRGraphQLEngineSearchEvent;
 
-    FFocus: TFHIRResource;
-    FQueryName: String;
-    FOutput: TGraphQLObjectValue;
-    FDocument: TGraphQLDocument;
-    FAppinfo: TAdvObject;
+    FFocus : TFHIRResource;
+    FQueryName : String;
+    FOutput : TGraphQLObjectValue;
+    FDocument : TGraphQLDocument;
+    FAppinfo : TAdvObject;
+
     procedure SetDocument(const Value: TGraphQLDocument);
     procedure SetFocus(const Value: TFHIRResource);
 
     procedure checkNoDirectives(directives : TAdvList<TGraphQLDirective>);
+    function readInteger(value, name : String): integer;
     function hasArgument(arguments : TAdvList<TGraphQLArgument>; name, value : String) : boolean;
     function targetTypeOk(arguments : TAdvList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
 
     function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TAdvList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TAdvList<TFHIRObject>;
-    function filterResources(fhirpath : TGraphQLArgument; values : TAdvList<TFHIRResource>)  : TAdvList<TFHIRResource>;
+    function filterResources(fhirpath : TGraphQLArgument; bnd : TFHIRBundle)  : TAdvList<TFHIRResource>; overload;
+    function filterResources(fhirpath : TGraphQLArgument; list : TAdvList<TFHIRResource>)  : TAdvList<TFHIRResource>; overload;
     procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
     procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
     procedure processReverseReference(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
     procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode : boolean);
+    procedure processSearch(target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure SetAppInfo(const Value: TAdvObject);
 
   public
@@ -59,6 +94,7 @@ type
 
     property OnFollowReference : TFHIRGraphQLEngineDereferenceEvent read FOnFollowReference write FOnFollowReference;
     property OnFollowReverseReference : TFHIRGraphQLEngineReverseDereferenceEvent read FOnFollowReverseReference write FOnFollowReverseReference;
+    property OnSearch : TFHIRGraphQLEngineSearchEvent read FOnSearch write FOnSearch;
 
     procedure execute;
   end;
@@ -138,7 +174,10 @@ begin
     raise Exception.Create('Unable to process graphql');
 
   checkNoDirectives(FDocument.Operations[0].Directives);
-  processObject(FFocus, FFocus, FOutput, FDocument.Operations[0].SelectionSet);
+  if FFocus = nil then
+    processSearch(FOutput, FDocument.Operations[0].SelectionSet)
+  else
+    processObject(FFocus, FFocus, FOutput, FDocument.Operations[0].SelectionSet);
 end;
 
 function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TAdvList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TAdvList<TFHIRObject>;
@@ -225,19 +264,56 @@ begin
   end;
 end;
 
-function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; values: TAdvList<TFHIRResource>): TAdvList<TFHIRResource>;
+function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; bnd : TFHIRBundle): TAdvList<TFHIRResource>;
 var
   p : TFHIRProperty;
-  v : TFhirResource;
+  be : TFhirBundleEntry;
   fpe : TFHIRExpressionEngine;
   node : TFHIRExpressionNode;
 begin
   result := TAdvList<TFHIRResource>.create;
   try
-    if values.Count > 0 then
+    if bnd.entryList.Count > 0 then
     begin
       if (fhirpath = nil) then
-        for v in values do
+        for be in bnd.entryList do
+          result.Add(be.resource.Link)
+      else
+      begin
+        fpe := TFHIRExpressionEngine.Create(nil);
+        try
+          node := fpe.parse(fhirpath.Values[0].ToString);
+          try
+            for be in bnd.entryList do
+              if fpe.evaluateToBoolean(nil, be.resource, be.resource, node) then
+                result.Add(be.resource.Link)
+          finally
+            node.Free;
+          end;
+        finally
+          fpe.Free;
+        end;
+      end;
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; list : TAdvList<TFhirResource>): TAdvList<TFHIRResource>;
+var
+  p : TFHIRProperty;
+  v : TFHIRResource;
+  fpe : TFHIRExpressionEngine;
+  node : TFHIRExpressionNode;
+begin
+  result := TAdvList<TFHIRResource>.create;
+  try
+    if list.Count > 0 then
+    begin
+      if (fhirpath = nil) then
+        for v in list do
           result.Add(v.Link)
       else
       begin
@@ -245,7 +321,7 @@ begin
         try
           node := fpe.parse(fhirpath.Values[0].ToString);
           try
-            for v in values do
+            for v in list do
               if fpe.evaluateToBoolean(nil, v, v, node) then
                 result.Add(v.Link)
           finally
@@ -301,6 +377,13 @@ begin
       end;
     end;
   end;
+end;
+
+function TFHIRGraphQLEngine.readInteger(value, name: String): integer;
+begin
+  result := StrToIntDef(value, -1);
+  if result = -1 then
+    raise EGraphQLException.Create('Illegal value for '+name+': '+value);
 end;
 
 function IsPrimitive(typename : String) : boolean;
@@ -434,7 +517,10 @@ var
   v : TFhirResource;
   new : TGraphQLObjectValue;
   params : TAdvList<TGraphQLArgument>;
+  start, limit : integer;
 begin
+  start := 0;
+  limit := 0;
   if not assigned(FOnFollowReverseReference) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
 
@@ -446,9 +532,15 @@ begin
     params := TAdvList<TGraphQLArgument>.create;
     try
       for arg in field.Arguments do
-        if (arg.Name <> '_reference') and (arg.Name <> 'fhirpath') then
+      begin
+        if arg.Name = 'start' then
+          start := readInteger(arg.Values[0].toString, 'start')
+        else if arg.Name = 'limit' then
+          limit := readInteger(arg.Values[0].toString, 'limit')
+        else if (arg.Name <> '_reference') and (arg.Name <> 'fhirpath') then
           params.add(arg.Link);
-      FOnFollowReverseReference(FAppinfo, source.fhirType, source.id, field.Name, parg.values[0].ToString, params, list);
+      end;
+      FOnFollowReverseReference(FAppinfo, source.fhirType, source.id, field.Name, parg.values[0].ToString, params, start, limit, list);
     finally
       params.Free;
     end;
@@ -473,6 +565,90 @@ begin
     end;
   finally
     list.Free;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
+var
+  sel : TGraphQLSelection;
+  vl : TAdvList<TFHIRResource>;
+  v : TFhirResource;
+  start, limit : integer;
+  params : TAdvList<TGraphQLArgument>;
+  arg : TGraphQLArgument;
+  new : TGraphQLObjectValue;
+  bnd : TFHIRBundle;
+  link : TFhirBundleLink;
+begin
+  for sel in selection do
+  begin
+    if (sel.Field = nil) then
+      raise EGraphQLException.Create('Only field selections are allowed in this context');
+    checkNoDirectives(sel.Field.Directives);
+
+    start := 0;
+    limit := 0;
+    if not assigned(FOnSearch) then
+      raise EGraphQLException.Create('Resource Referencing services not provided');
+    params := TAdvList<TGraphQLArgument>.create;
+    try
+      for arg in sel.field.Arguments do
+      begin
+        if arg.Name = 'start' then
+          start := readInteger(arg.Values[0].toString, 'start')
+        else if arg.Name = 'limit' then
+          limit := readInteger(arg.Values[0].toString, 'limit')
+        else if (arg.Name = 'id') then
+          params.add(TGraphQLArgument.Create('_id', arg.values[0].link))
+        else if (arg.Name <> 'fhirpath') then
+          params.add(arg.Link);
+      end;
+      bnd := FOnSearch(FAppinfo, sel.field.Name, params, start, limit);
+      try
+        arg := nil;
+        new := nil;
+        for link in bnd.link_List do
+          if StringArrayExistsSensitive(['first', 'next', 'last', 'previous'], link.relation) then
+          begin
+            if (arg = nil) then
+            begin
+              arg := target.addField(sel.field.Alias, true);
+              new := TGraphQLObjectValue.Create;
+              arg.Values.Add(new.Link);
+              new.addField('type', false).Values.Add(TGraphQLStringValue.create('paging'));
+            end;
+            new.addField(link.relation, false).Values.Add(TGraphQLStringValue.create(link.url.Substring(link.url.IndexOf('?'))));
+          end;
+
+        vl := filterResources(sel.field.argument('fhirpath'), bnd);
+        try
+          if not vl.Empty then
+          begin
+            arg := target.addField(sel.field.Alias, true);
+            for v in vl do
+            begin
+              new := TGraphQLObjectValue.Create;
+              try
+                new.addField('type', false).Values.Add(TGraphQLStringValue.create('resource'));
+                arg.Values.Add(new.Link);
+                processObject(v, v, new, sel.field.SelectionSet);
+              finally
+                new.Free;
+              end;
+            end;
+          end;
+        finally
+          vl.Free;
+        end;
+
+
+        // todo: search links
+      finally
+        bnd.Free;
+      end;
+    finally
+      params.Free;
+    end;
   end;
 end;
 

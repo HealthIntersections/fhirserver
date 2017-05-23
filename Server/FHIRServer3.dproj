@@ -354,7 +354,6 @@
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIROperations.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FhirOpBase.pas"/>
-        <DCCReference Include="..\Libraries\fluentpath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRIndexInformation.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRXhtml.pas"/>
@@ -463,7 +462,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -805,16 +813,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

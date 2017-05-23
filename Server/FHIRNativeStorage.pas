@@ -168,7 +168,7 @@ type
     function hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
     function hasConfidentialitySecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
 
-    procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; adaptor : TFHIRFormatAdaptor; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
+    procedure chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; loadObjects : boolean; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean); overload;
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean;
     function FindSavedSearch(const sId : String; Session : TFHIRSession; typeKey : integer; var id, link, sql, title, base : String; var total : Integer; var summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean): boolean;
     function BuildSearchResultSet(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean):String;
@@ -223,8 +223,11 @@ type
     procedure CreateIndexer;
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteGraphQLSystem(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    procedure GraphFollowReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFhirResource>);
+    procedure GraphFollowReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; start, limit : integer; list : TAdvList<TFhirResource>);
+    function GraphSearch(appInfo : TAdvObject; requestType : String; params : TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle;
 
   protected
     procedure StartTransaction; override;
@@ -1557,6 +1560,62 @@ begin
 end;
 
 procedure TFHIRNativeOperationEngine.ExecuteGraphQL(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  if request.id = '' then
+    ExecuteGraphQLSystem(context, request, response)
+  else
+    ExecuteGraphQLInstance(context, request, response);
+end;
+
+procedure TFHIRNativeOperationEngine.ExecuteGraphQLSystem(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  gql : TFHIRGraphQLEngine;
+  str : TStringBuilder;
+begin
+  try
+    gql := TFHIRGraphQLEngine.Create;
+    try
+      gql.appInfo := request.Link;
+      gql.OnFollowReference := GraphFollowReference;
+      gql.OnFollowReverseReference := GraphFollowReverseReference;
+      gql.OnSearch := GraphSearch;
+      if request.GraphQL <> nil then
+        gql.queryDocument := request.GraphQL.Link
+      else if request.Parameters.VarExists('query') then
+        gql.queryDocument := TGraphQLParser.parse(request.Parameters.Value['query'])
+      else
+        raise EGraphQLException.Create('Unable to find GraphQL to execute');
+      gql.focus := nil;
+      gql.execute;
+      response.Resource := nil;
+      str := TStringBuilder.Create;
+      try
+        gql.output.write(str, 0);
+        response.Body := str.ToString;
+      finally
+        str.Free;
+      end;
+      response.ContentType := 'application/json';
+    finally
+      gql.Free;
+    end;
+  except
+    on e : EGraphQLException do
+    begin
+      response.HTTPCode := 400;
+      response.Message := 'Error in GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeInvalid);
+    end;
+    on e : Exception do
+    begin
+      response.HTTPCode := 500;
+      response.Message := 'Error processing GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeException);
+    end;
+  end;
+end;
+
+procedure TFHIRNativeOperationEngine.ExecuteGraphQLInstance(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   gql : TFHIRGraphQLEngine;
   str : TStringBuilder;
@@ -1790,7 +1849,7 @@ begin
       if offset < 0 then
         offset := 0;
 
-      chooseField(response.Format, soFull, request.Adaptor, field, comp, needsObject);
+      chooseField(response.Format, soFull, request.loadObjects, field, comp, needsObject);
       if (not needsObject) then
         comp := nil;
 
@@ -1875,7 +1934,7 @@ begin
     begin
       if (length(request.id) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments) then
       begin
-        chooseField(response.Format, request.Summary, request.Adaptor, field, comp, needsObject);
+        chooseField(response.Format, request.Summary, request.loadObjects, field, comp, needsObject);
         FConnection.SQL := 'Select Secure, StatedDate, VersionId, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' order by ResourceVersionKey desc';
         FConnection.Prepare;
         try
@@ -2336,7 +2395,7 @@ begin
                 bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
 
-            chooseField(response.Format, summaryStatus, request.Adaptor, field, comp, needsObject);
+            chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
             if (not needsObject) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
 
@@ -2896,7 +2955,7 @@ begin
       if (length(request.id) <= ID_LENGTH) and (length(request.subid) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, true, resourceKey, request, response, request.compartments) then
       begin
         VersionNotFound(request, response);
-        chooseField(response.Format, request.Summary, request.Adaptor, field, comp, needsObject);
+        chooseField(response.Format, request.Summary, request.loadObjects, field, comp, needsObject);
 
         FConnection.SQL := 'Select Secure, VersionId, StatedDate, '+field+' from Versions where ResourceKey = '+inttostr(resourceKey)+' and VersionId = :v';
         FConnection.Prepare;
@@ -4946,7 +5005,7 @@ begin
     target.Free;
 end;
 
-procedure TFHIRNativeOperationEngine.GraphFollowReverseReference(appInfo: TAdvObject; focusType, focusId, requestType, requestParam: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFhirResource>);
+procedure TFHIRNativeOperationEngine.GraphFollowReverseReference(appInfo: TAdvObject; focusType, focusId, requestType, requestParam: String; params: TAdvList<TGraphQLArgument>; start, limit : integer; list: TAdvList<TFhirResource>);
 var
   sql : String;
   ik, tk, rk : integer;
@@ -4957,6 +5016,7 @@ var
   json : TFHIRJsonParser;
   request : TFHIRRequest;
   p : TGraphQLArgument;
+  i : integer;
 begin
   request := TFHIRRequest(appInfo);
   rk := FRepository.ResourceTypeKeyForName(requestType);
@@ -5011,18 +5071,56 @@ begin
     FConnection.Prepare;
     try
       FConnection.Execute;
+      i := 0;
       while FConnection.FetchNext do
       begin
-        json.source := FConnection.ColMemoryByName['JsonContent'];
-        json.source.Position := 0;
-        json.Parse;
-        list.Add(json.resource.Link);
+        inc(i);
+        if (i > start) and ((limit = 0) or (i < start + limit)) then
+        begin
+          json.source := FConnection.ColMemoryByName['JsonContent'];
+          json.source.Position := 0;
+          json.Parse;
+          list.Add(json.resource.Link);
+        end;
       end;
     finally
       FConnection.Terminate;
     end;
   finally
     json.Free;
+  end;
+end;
+
+
+function TFHIRNativeOperationEngine.GraphSearch(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle;
+var
+  request : TFHIRRequest;
+  response : TFHIRResponse;
+  b : TStringBuilder;
+  p : TGraphQLArgument;
+begin
+  request := TFHIRRequest(appInfo);
+  request.loadObjects := true;
+  request.ResourceName := requestType;
+  response := TFHIRResponse.Create;
+  try
+    b := TStringBuilder.create;
+    try
+      for p in params do
+      begin
+        b.append(p.Name[1]+ p.Name.substring(1).replace('_', '-'));
+        b.append('=');
+        b.append(EncodeMIME(p.Values[0].toString));
+        b.Append('&');
+      end;
+      request.Parameters := TParseMap.create(b.toString);
+      ExecuteSearch(request, response);
+    finally
+      b.free;
+    end;
+    result := response.Bundle.Link;
+  finally
+    response.Free;
   end;
 end;
 
@@ -5885,14 +5983,14 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; adaptor : TFHIRFormatAdaptor; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean)
+procedure TFHIRNativeOperationEngine.chooseField(aFormat : TFHIRFormat; summary : TFHIRSummaryOption; loadObjects : boolean; out fieldName : String; out comp : TFHIRParserClass; out needsObject : boolean)
 ;
 var
   s : String;
 begin
   fieldName := '';
   comp := nil;
-  needsObject := adaptor <> nil;
+  needsObject := loadObjects;
 
   if aFormat = ffJson then
   begin
@@ -7362,7 +7460,7 @@ begin
             id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
-          manager.chooseField(response.Format, wantsummary, request.Adaptor, field, prsr, needsObject);
+          manager.chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
 
           manager.FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
               'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+

@@ -291,7 +291,6 @@ uses
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\r4\FHIROperations.pas',
   FhirOpBase in '..\reference-platform\r4\FhirOpBase.pas',
-  fluentpath in '..\Libraries\fluentpath.pas',
   FHIRIndexInformation in '..\reference-platform\r4\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
   FHIRXhtml in '..\reference-platform\r4\FHIRXhtml.pas',

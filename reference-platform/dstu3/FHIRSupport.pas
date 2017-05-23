@@ -313,6 +313,7 @@ Type
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
     FAdaptor : TFHIRFormatAdaptor;
+    FLoadObjects : boolean;
     FGraphQL: TGraphQLDocument;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
@@ -325,6 +326,7 @@ Type
     procedure SetResourceName(const Value: String);
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
     procedure SetGraphQL(const Value: TGraphQLDocument);
+    procedure SetParams(const Value: TParseMap);
   Public
     Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
@@ -362,7 +364,7 @@ Type
       any parameters associated with the request (part after the ? in the url). Use
       for search/update
     }
-    property Parameters : TParseMap read FParams;
+    property Parameters : TParseMap read FParams write SetParams;
 
     function hasTestingTag : boolean;
     {!Script Show}
@@ -488,6 +490,7 @@ Type
 
     property requestId : String read FrequestId write FrequestId;
     property strictSearch : boolean read FStrictSearch write FStrictSearch;
+    property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;
 
   {@Class TFHIRResponse
@@ -1231,7 +1234,7 @@ end;
 
 destructor TFHIRRequest.Destroy;
 begin
-  FAdaptor.free;
+  FAdaptor.Free;
   FCompartmentInformation.free;
   FCustom.Free;
   FWorker.Free;
@@ -1353,7 +1356,7 @@ end;
 
 procedure TFHIRRequest.SetAdaptor(const Value: TFHIRFormatAdaptor);
 begin
-  FAdaptor.free;
+  FAdaptor.Free;
   FAdaptor := Value;
 end;
 
@@ -1367,6 +1370,12 @@ procedure TFHIRRequest.SetGraphQL(const Value: TGraphQLDocument);
 begin
   FGraphQL.Free;
   FGraphQL := Value;
+end;
+
+procedure TFHIRRequest.SetParams(const Value: TParseMap);
+begin
+  FParams.free;
+  FParams := Value;
 end;
 
 procedure TFHIRRequest.SetPatchJson(const Value: TJsonArray);

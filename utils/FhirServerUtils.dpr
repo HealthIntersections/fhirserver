@@ -203,7 +203,6 @@ uses
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   FHIROperations in '..\reference-platform\dstu3\FHIROperations.pas',
   FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
-  fluentpath in '..\Libraries\fluentpath.pas',
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',

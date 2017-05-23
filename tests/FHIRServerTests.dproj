@@ -307,7 +307,6 @@
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIROperations.pas"/>
         <DCCReference Include="..\reference-platform\r4\FhirOpBase.pas"/>
-        <DCCReference Include="..\Libraries\fluentpath.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRIndexInformation.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRMetaModel.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRXhtml.pas"/>
