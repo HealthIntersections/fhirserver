@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
+  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry, DUnitX.TestFramework,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
@@ -4464,7 +4464,7 @@ begin
   dr := TFhirDocumentReference(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\documentreference-example.xml'));
   try
     dr.asZip(fn).Free;
-    Assert.IsTrue(fn <> '');               !
+    Assert.IsTrue(fn <> '');
   finally
     dr.Free;
   end;
