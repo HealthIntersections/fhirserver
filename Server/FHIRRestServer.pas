@@ -874,6 +874,8 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
+    else if OWinSecurity and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
+      HandleOWinToken(AContext, false, request, response)
     else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
@@ -889,8 +891,6 @@ begin
 
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
-    else if OWinSecurity and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
-      HandleOWinToken(AContext, false, request, response)
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'FSecurePath', false) then
@@ -978,11 +978,23 @@ begin
   session := nil;
   MarkEntry(AContext, request, response);
   try
-    c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-    if c > -1 then
-      FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+    if (request.AuthUsername = INTERNAL_SECRET) then
+      FServerContext.SessionManager.GetSession(request.AuthPassword, session, check);
+    if (session = nil) then
+    begin
+      c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+      if c > -1 then
+        FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+    end;
 
-    if (request.CommandType = hcOption) then
+    if OWinSecurity and ((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) then
+    begin
+      response.ResponseNo := 401;
+      response.ResponseText := 'Unauthorized';
+      response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
+      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
+    end
+    else if (request.CommandType = hcOption) then
     begin
       response.ResponseNo := 200;
       response.ContentText := 'ok';
@@ -993,6 +1005,8 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
+    else if OWinSecurity and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
+      HandleOWinToken(AContext, true, request, response)
     else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
@@ -1017,8 +1031,6 @@ begin
       FAuthServer.HandleRequest(AContext, request, session, response)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
-    else if OWinSecurity and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
-      HandleOWinToken(AContext, true, request, response)
     else
     begin
       handled := false;
