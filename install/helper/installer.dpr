@@ -1,7 +1,7 @@
 ﻿Library InstallHelper;
 
 uses
-  FastMM4 in '..\..\Library\Core\FastMem\FastMM4.pas',
+  FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   WIndows,
   SysUtils,
   OdbcCore in '..\..\Libraries\db\OdbcCore.pas',
@@ -85,7 +85,8 @@ uses
   GUIDSupport in '..\..\reference-platform\support\GUIDSupport.pas',
   HL7V2DateSupport in '..\..\reference-platform\support\HL7V2DateSupport.pas',
   AdvGenerics in '..\..\reference-platform\support\AdvGenerics.pas',
-  KDBOdbcExpress in '..\..\Libraries\db\KDBOdbcExpress.pas';
+  KDBOdbcExpress in '..\..\Libraries\db\KDBOdbcExpress.pas',
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
