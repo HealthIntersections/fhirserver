@@ -1,6 +1,5 @@
 unit FHIRClient;
 
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -706,6 +705,8 @@ begin
   end;
   if ct <> '' then
     indy.Request.ContentType := ct;
+  if smartToken <> nil then
+    indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;
 
   ok := false;
   result := TMemoryStream.create;
@@ -792,7 +793,7 @@ begin
   else
     token := authoriseByOWinHttp(server, username, password);
   try
-    smartToken := TSmartOnFhirAccessToken.Create;
+  smartToken := TSmartOnFhirAccessToken.Create;
     smartToken.accessToken := token.str['access_token'];
     smartToken.expires := now + (StrToInt(token.num['expires_in']) * DATETIME_SECOND_ONE);
   finally
@@ -810,15 +811,17 @@ var
   ss : TStringStream;
   resp : TMemoryStream;
 begin
+  createClient;
   indy.Request.ContentType := 'application/x-www-form-encoded';
 
-  ss := TStringStream.Create('grant_type=password&username='+username+'&password='+EncodeString(password));
+  ss := TStringStream.Create('grant_type=password&username='+username+'&password='+(password));
   try
     resp := TMemoryStream.create;
     Try
-      indy.Post(url, ss, resp);
+      indy.Post(server, ss, resp);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
         raise exception.create('unexpected condition');
+      resp.Position := 0;
       result := TJSONParser.Parse(resp);
     finally
       resp.Free;
@@ -835,7 +838,6 @@ begin
   else if indy <> nil then
     indy.Disconnect;
 end;
-
 
 end.
 

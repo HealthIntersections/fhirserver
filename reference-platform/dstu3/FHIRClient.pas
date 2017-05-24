@@ -705,6 +705,8 @@ begin
   end;
   if ct <> '' then
     indy.Request.ContentType := ct;
+  if smartToken <> nil then
+    indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;
 
   ok := false;
   result := TMemoryStream.create;
@@ -809,15 +811,17 @@ var
   ss : TStringStream;
   resp : TMemoryStream;
 begin
+  createClient;
   indy.Request.ContentType := 'application/x-www-form-encoded';
 
-  ss := TStringStream.Create('grant_type=password&username='+username+'&password='+EncodeString(password));
+  ss := TStringStream.Create('grant_type=password&username='+username+'&password='+(password));
   try
     resp := TMemoryStream.create;
     Try
-      indy.Post(url, ss, resp);
+      indy.Post(server, ss, resp);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
         raise exception.create('unexpected condition');
+      resp.Position := 0;
       result := TJSONParser.Parse(resp);
     finally
       resp.Free;
