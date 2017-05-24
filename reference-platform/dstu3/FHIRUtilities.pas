@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry, DUnitX.TestFramework,
+  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
@@ -493,6 +493,12 @@ type
     function asZipPart(i: integer) : TAdvZipPart;
   end;
 
+  TFhirReferenceHelper = class helper for TFhirReference
+  public
+    function isRelative : boolean;
+    function getType : String;
+    function getId : String;
+  end;
 
 function Path(const parts : array of String) : String;
 
@@ -526,15 +532,6 @@ function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
-
-type
-  [TextFixture]
-  TFHIRUtilityTests = Class (TObject)
-  private
-  public
-    [TestCase] Procedure TestZipGeneration;
-  end;
-
 
 implementation
 
@@ -4454,24 +4451,5 @@ begin
   end;
 end;
 
-{ TFHIRUtilityTests }
-
-procedure TFHIRUtilityTests.TestZipGeneration;
-var
-  dr : TFHIRDocumentReference;
-  fn : String;
-begin
-  dr := TFhirDocumentReference(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\documentreference-example.xml'));
-  try
-    dr.asZip(fn).Free;
-    Assert.IsTrue(fn <> '');
-  finally
-    dr.Free;
-  end;
-
-end;
-
-initialization
-  TDUnitX.RegisterTestFixture(TFHIRUtilityTests);
 end.
 

@@ -255,7 +255,8 @@ uses
   FHIRParserTests in '..\reference-platform\r4\tests\FHIRParserTests.pas',
   FHIRPathTests in '..\reference-platform\r4\tests\FHIRPathTests.pas',
   FHIRValidatorTests in '..\reference-platform\r4\tests\FHIRValidatorTests.pas',
-  StructureMapTests in '..\reference-platform\r4\tests\StructureMapTests.pas';
+  StructureMapTests in '..\reference-platform\r4\tests\StructureMapTests.pas',
+  FHIRUtilitiesTests in '..\reference-platform\r4\tests\FHIRUtilitiesTests.pas';
 
 var
   runner : ITestRunner;
