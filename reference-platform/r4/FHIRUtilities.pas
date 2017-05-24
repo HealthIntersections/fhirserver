@@ -532,6 +532,7 @@ type
   TFHIRUtilityTests = Class (TObject)
   private
   public
+    [TestCase] Procedure TestZipPartCreation;
     [TestCase] Procedure TestZipGeneration;
   end;
 
@@ -4347,7 +4348,10 @@ begin
           zip.Parts.Add(content.attachment.asZipPart(i));
         end;
         zip.WriteZip;
-        filename := makeFileName(description)+'.zip';
+        if (contentList.Count = 1) and (contentList[0].attachment.title <> '') then
+          filename := makeFileName(contentList[0].attachment.title)+'.zip'
+        else
+          filename := makeFileName(description)+'.zip';
       finally
         zip.Free;
       end;
@@ -4363,70 +4367,110 @@ end;
 
 { TFHIRAttachmentHelper }
 
+Const
+  KNOWN_MIME_TYPES : array of String = [
+    'text/plain',
+    'text/html',
+    'text/xml',
+    'application/xml',
+    'application/json',
+    'text/css',
+    'image/x-icon',
+    'image/png',
+    'image/gif',
+    'image/jpeg',
+    'video/mpeg',
+    'text/javascript'
+    ];
+
+  KNOWN_MIME_EXTENSIONS : array of String = [
+    '.txt',
+    '.html',
+    '.xml',
+    '.xml',
+    '.json',
+    '.css',
+    '.ico',
+    '.png',
+    '.gif',
+    '.jpg',
+    '.mpeg',
+    '.js'
+    ];
+
 Function GetExtForMimeType(mimeType: String): String;
 Var
   fReg: TRegistry;
   ts : TStringList;
   s : String;
+  i : integer;
 Begin
   mimeType := lowercase(mimeType);
-  if (mimeType = 'text/css') Then
-    result := '.css'
-  Else if mimeType = 'image/x-icon' Then
-    result := '.ico'
-  Else if mimeType = 'image/png' Then
-    result := '.png'
-  Else if mimeType = 'image/gif' Then
-    result := '.gif'
-  Else if mimeType = 'image/jpeg' Then
-    result := '.jpg'
-  Else if mimeType = 'video/mpeg' Then
-    result := '.mpg'
-  Else if mimeType = 'text/javascript' Then
-    result := '.js'
-  Else
-  Begin
+  i := StringArrayIndexOfInsensitive(KNOWN_MIME_TYPES, mimeType);
+  if i > -1 then
+    exit(KNOWN_MIME_EXTENSIONS[i]);
+  Try
+    fReg := TRegistry.Create;
     Try
-      fReg := TRegistry.Create;
-      Try
-        fReg.RootKey := HKEY_LOCAL_MACHINE;
-        fReg.OpenKeyReadOnly('Software\Classes');
-        ts := TStringList.Create;
-        try
-          freg.GetKeyNames(ts);
+      fReg.RootKey := HKEY_LOCAL_MACHINE;
+      fReg.OpenKeyReadOnly('Software\Classes');
+      ts := TStringList.Create;
+      try
+        freg.GetKeyNames(ts);
+        fReg.CloseKey;
+        for s in ts do
+        begin
+          fReg.OpenKeyReadOnly('Software\Classes\'+s);
+          if freg.ReadString('Content Type').ToLower = mimeType then
+            exit('.'+s);
           fReg.CloseKey;
-          for s in ts do
-          begin
-            fReg.OpenKeyReadOnly('Software\Classes\'+s);
-            if freg.ReadString('Content Type').ToLower = mimeType then
-              exit('.'+s);
-            fReg.CloseKey;
-        end;
-        finally
-          ts.Free;
-        end;
-      Finally
-        freg.Free;
-      End;
-    Except
+      end;
+      finally
+        ts.Free;
+      end;
+    Finally
+      freg.Free;
     End;
+  Except
   End;
+  if mimeType.Contains('+xml') then
+    result := '.xml';
+  if mimeType.Contains('+json') then
+    result := '.json';
   If Result = '' Then
     Result := '.bin';
 End;
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+var
+  fetcher : TInternetFetcher;
 begin
   result := TAdvZipPart.Create;
   try
-    result.Size := Length(data);
-    if length(data) > 0 then
-      move(result.Data^, data[0], length(data));
+    if (url <> '') and (Length(data) = 0) then
+    begin
+      fetcher := TInternetFetcher.create;
+      try
+        fetcher.URL := url;
+        fetcher.Buffer := result.Link;
+        fetcher.Fetch;
+      finally
+        fetcher.free;
+      end;
+    end
+    else
+    begin
+      result.Size := Length(data);
+      if length(data) > 0 then
+        move(result.Data^, data[0], length(data));
+    end;
     result.Name := title;
     result.Comment := contentType;
     if result.Name = '' then
-      result.Name := 'file'+inttostr(i)+GetExtForMimeType(result.Comment);
+      result.Name := 'file'+inttostr(i)+GetExtForMimeType(result.Comment)
+    else if not result.name.contains('.') then
+      result.Name := result.Name+GetExtForMimeType(result.Comment);
     result.Link;
   finally
     result.Free;
@@ -4447,7 +4491,29 @@ begin
   finally
     dr.Free;
   end;
+end;
 
+procedure TFHIRUtilityTests.TestZipPartCreation;
+var
+  att : TFhirAttachment;
+  p : TAdvZipPart;
+begin
+  att := TFHIRAttachment.create;
+  try
+    att.title := 'test';
+    att.data := TEncoding.UTF8.GetBytes('Some test text');
+    att.contentType := 'text/plain';
+    p := att.asZipPart(0);
+    try
+      Assert.IsTrue(p.Name = 'test.txt');
+      Assert.IsTrue(p.Size > 0);
+      Assert.IsTrue(p.Comment = 'text/plain');
+    finally
+      p.Free;
+    end;
+  finally
+    att.Free;
+  end;
 end;
 
 initialization
