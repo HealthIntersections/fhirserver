@@ -87,6 +87,10 @@ Uses
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
+Const
+  OWIN_TOKEN_PATH = 'oauth/token';
+  INTERNAL_SECRET = '\8u8J*O{a0Y78.}o%ql9';
+
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
   private
@@ -106,6 +110,20 @@ Type
     procedure Execute; override;
   public
     constructor create(server : TFHIRWebServer);
+  end;
+
+  TOWinprovider = class (TAdvObject)
+  private
+    FSessions : TAdvMap<TFhirSession>;
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+    property sessions : TAdvMap<TFhirSession> read FSessions;
+
+    function supportsInsecure : boolean; virtual;
+
+    // the user key will subsequently be available at Request.Session.ExternalUserKey
+    function checkDetails(username, password: String; var key : integer) : boolean; virtual;
   end;
 
   TFHIRWebServerClientInfo = class (TAdvObject)
@@ -186,6 +204,7 @@ Type
     FPatientViewServers : TDictionary<String, String>;
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
+    FOWinProvider: TOWinprovider;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -233,6 +252,7 @@ Type
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    Procedure HandleOWinToken(AContext: TIdContext; secure : boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure ProcessOutput(oRequest : TFHIRRequest; oResponse : TFHIRResponse; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment : integer; pretty, gzip : boolean);
     function extractFileData(form : TMimeMessage; const name: String; var sContentType : String): TStream;
     Procedure StartServer(active : boolean);
@@ -253,6 +273,7 @@ Type
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
+    procedure SetOWinProvider(const Value: TOWinprovider);
   Public
     Constructor Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
@@ -266,6 +287,7 @@ Type
     property AuthServer : TAuth2Server read FAuthServer;
     Property SourcePath : String read FSourcePath;
     property Host : String read FHost;
+    property OWinProvider : TOWinprovider read FOWinProvider write SetOWinProvider;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -489,6 +511,7 @@ Begin
   FPatientHooks.Free;
   FReverseProxyList.Free;
   FServerContext.free;
+  FOWinProvider.Free;
   FLock.Free;
   Inherited;
 End;
@@ -674,6 +697,7 @@ Begin
     FPlainServer.OnCommandOther := PlainRequest;
     FPlainServer.OnConnect := DoConnect;
     FPlainServer.OnDisconnect := DoDisconnect;
+    FPlainServer.OnParseAuthentication := ParseAuthenticationHeader;
     FPlainServer.Active := active;
   end;
   if FActualSSLPort > 0 then
@@ -825,7 +849,7 @@ End;
 procedure TFhirWebServer.ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
 begin
   VHandled := AAuthType = 'Bearer';
-  VUserName := AAuthType;
+  VUserName := INTERNAL_SECRET;
   VPassword := AAuthData;
 end;
 
@@ -839,11 +863,23 @@ begin
   session := nil;
   MarkEntry(AContext, request, response);
   try
-    c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
-    if c > -1 then
-      FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
+    if (request.AuthUsername = INTERNAL_SECRET) then
+      FServerContext.SessionManager.GetSession(request.AuthPassword, session, check);
+    if (session = nil) then
+    begin
+      c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
+      if c > -1 then
+        FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check);
+    end;
 
-    if (request.CommandType = hcOption) then
+    if (OWinProvider <> nil) and (((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) or not OWinProvider.supportsInsecure) then
+    begin
+      response.ResponseNo := 401;
+      response.ResponseText := 'Unauthorized';
+      response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
+      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
+    end
+    else if (request.CommandType = hcOption) then
     begin
       response.ResponseNo := 200;
       response.ContentText := 'ok';
@@ -869,6 +905,8 @@ begin
 
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
+    else if (OWinProvider <> nil) and OWinProvider.supportsInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
+      HandleOWinToken(AContext, false, request, response)
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'FSecurePath', false) then
@@ -995,6 +1033,8 @@ begin
       FAuthServer.HandleRequest(AContext, request, session, response)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
+    else if (OWinProvider <> nil) and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
+      HandleOWinToken(AContext, true, request, response)
     else
     begin
       handled := false;
@@ -1048,6 +1088,54 @@ begin
     response.ResponseNo := 301;
     response.ResponseText := 'Moved Permanently';
     response.Location := FAuthServer.BasePath+'/discovery';
+  end;
+end;
+
+procedure TFhirWebServer.HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  pm : TParseMap;
+  json : TJsonObject;
+  userkey : integer;
+  token : String;
+  session : TFHIRSession;
+begin
+  response.ResponseNo := 400;
+  response.ResponseText := 'Request Error';
+  if request.ContentType <> 'application/x-www-form-encoded' then
+    response.ContentText := 'Unknown content type - must be application/x-www-form-encoded'
+  else
+  begin
+    try
+      pm := TParseMap.create(StreamToString(request.PostStream, TEncoding.UTF8));
+      try
+        if pm.GetVar('grant_type') <> 'password' then
+          response.ContentText := 'Unknown content type - must be ''password'''
+        else if not OWinProvider.checkDetails(pm.GetVar('username'), pm.GetVar('password'), userkey) then
+          response.ContentText := 'Unknown usernmame/password'
+        else
+        begin
+          session := FServerContext.SessionManager.CreateImplicitSession(pm.GetVar('username'), false);
+          session.ExternalUserKey := userkey;
+          json := TJsonObject.Create;
+          try
+            json.str['access_token'] := session.Cookie;
+            json.num['expires_in'] := inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE));
+            json.str['token_type'] := 'bearer';
+            response.ResponseNo := 200;
+            response.ResponseText := 'OK';
+            response.ContentType := 'application/json';
+            response.ContentText := TJSONWriter.writeObjectStr(json, true);
+          finally
+            json.Free;
+          end;
+        end;
+      finally
+        pm.Free;
+      end;
+    except
+      on e:Exception do
+        response.ContentText := e.Message;
+    end;
   end;
 end;
 
@@ -1133,7 +1221,7 @@ Begin
               response.CustomHeaders.add('X-Request-Id: '+request.RawHeaders.Values['X-Request-Id']);
             oRequest := nil;
             Try
-              if request.AuthUsername = 'Bearer' then
+              if request.AuthUsername = INTERNAL_SECRET then
                 sCookie := request.AuthPassword
               else
               begin
@@ -1898,6 +1986,12 @@ begin
     end;
   end;
   response.WriteContent;
+end;
+
+procedure TFhirWebServer.SetOWinProvider(const Value: TOWinprovider);
+begin
+  FOWinProvider.Free;
+  FOWinProvider := Value;
 end;
 
 function extractProp(contentType, name : String) : string;
@@ -3439,6 +3533,30 @@ procedure TFHIRWebServerPatientViewContext.SetManager(const Value: TCDSHooksMana
 begin
   FManager.Free;
   FManager := Value;
+end;
+
+{ TOWinprovider }
+
+function TOWinprovider.checkDetails(username, password: String; var key: integer): boolean;
+begin
+  raise Exception.Create('Need to override checkdetails in '+ClassName);
+end;
+
+constructor TOWinprovider.Create;
+begin
+  inherited;
+  FSessions := TAdvMap<TFhirSession>.create;
+end;
+
+destructor TOWinprovider.Destroy;
+begin
+  FSessions.Free;
+  inherited;
+end;
+
+function TOWinprovider.supportsInsecure: boolean;
+begin
+  result := false;
 end;
 
 Initialization

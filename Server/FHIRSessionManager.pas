@@ -130,13 +130,14 @@ begin
         session.name := clientInfo;
         session.expires := UniversalDateTime + DATETIME_SECOND_ONE * 60 * 60;
         // 1 hour
-        session.Cookie := '';
+        session.Cookie := NewGuidId;
         session.provider := apNone;
         session.originalUrl := '';
         session.email := '';
         session.anonymous := true;
         session.userkey := 0;
         FSessions.AddObject(IMPL_COOKIE_PREFIX + clientInfo, session.Link);
+        FSessions.AddObject(session.Cookie, session.Link);
         result := session.Link as TFhirSession;
       finally
         session.free;
@@ -349,7 +350,7 @@ begin
       result.User := TFHIRServerContext(serverContext).UserProvider.loadUser(userkey);
       result.name := result.User.formattedName;
       result.expires := LocalDateTime + DATETIME_SECOND_ONE * 500;
-      result.Cookie := NewGuidURN;
+      result.Cookie := NewGuidId;
       result.provider := apInternal;
       result.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
       result.scopes := TFHIRSecurityRights.allScopes;

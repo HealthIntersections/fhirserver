@@ -103,6 +103,12 @@ Type
     destructor Destroy; override;
   end;
 
+  TExampleOWinprovider = class (TOWinprovider)
+  public
+    function supportsInsecure : boolean; override;
+    function checkDetails(username, password: String; var key : integer) : boolean; override;
+  end;
+
   TExampleFHIROperationEngine = class (TFHIROperationEngine)
   private
     FData : TExampleServerData;
@@ -120,7 +126,7 @@ Type
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
-    function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
+    function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
     Constructor create(Data : TExampleServerData; lang : String);
   end;
@@ -355,6 +361,7 @@ begin
       ctxt.UserProvider := TExampleFHIRUserProvider.Create;
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
+      FWebServer.OWinProvider := TExampleOWinprovider.create;
       FWebServer.Start(true);
     finally
       ctxt.free;
@@ -696,6 +703,19 @@ function TExampleFHIRUserProvider.loadUser(id: String; var key: integer): TSCIMU
 begin
   key := 1;
   result := LoadUser(key);
+end;
+
+{ TExampleOWinprovider }
+
+function TExampleOWinprovider.checkDetails(username, password: String; var key: integer): boolean;
+begin
+  result := true;
+  key := 1;
+end;
+
+function TExampleOWinprovider.supportsInsecure: boolean;
+begin
+  result := true;
 end;
 
 end.

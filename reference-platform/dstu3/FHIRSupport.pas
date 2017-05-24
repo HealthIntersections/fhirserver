@@ -154,6 +154,7 @@ Type
     FSecure : boolean;
     FUserKey: integer;
     FTestScript: TFhirTestScript;
+    FExternalUserKey: integer;
 
     procedure SetJwt(const Value: TJWT);
     procedure SetUser(const Value: TSCIMUser);
@@ -258,6 +259,7 @@ Type
     property PatientList : TStringList read FPatientList;
     Property anonymous : boolean read Fanonymous write Fanonymous;
     Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
+    property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
   end;
 
   {@Class TFHIRRequest
@@ -1358,6 +1360,8 @@ procedure TFHIRRequest.SetAdaptor(const Value: TFHIRFormatAdaptor);
 begin
   FAdaptor.Free;
   FAdaptor := Value;
+  if FAdaptor <> nil then
+    FLoadObjects := true;
 end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
@@ -1374,7 +1378,7 @@ end;
 
 procedure TFHIRRequest.SetParams(const Value: TParseMap);
 begin
-  FParams.free;
+  FParams.Free;
   FParams := Value;
 end;
 
