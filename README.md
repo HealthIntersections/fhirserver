@@ -50,6 +50,8 @@ and also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Hom
 
 After that, compiling should be simple: open the file fhirprojects.groupproj in your version of delphi, and compile all projects
 
+Note that the FHIRServer is a *big* compile. You may have problems compiling in resource constrained environments.
+
 Running
 -------
 

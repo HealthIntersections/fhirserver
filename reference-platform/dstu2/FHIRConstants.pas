@@ -39,7 +39,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2016-05-27T22:57:07+10:00
+// FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRResources;
@@ -181,16 +181,9 @@ Type
     spBasic_Author, {@enum.value "author" spBasic_Author Who created }
     spBasic_Code, {@enum.value "code" spBasic_Code Kind of Resource }
     spBasic_Created, {@enum.value "created" spBasic_Created When created }
-    spBasic_Description, {@enum.value "description" spBasic_Description Text search against the description }
-    spBasic_Identifier, {@enum.value "identifier" spBasic_Identifier Logical identifier for the module (e.g. CMS-143) }
-    spBasic_Keyword, {@enum.value "keyword" spBasic_Keyword Keywords associated with the module }
-    spBasic_MinScore, {@enum.value "minScore" spBasic_MinScore The minimum relevance score of any match that will be returned }
+    spBasic_Identifier, {@enum.value "identifier" spBasic_Identifier Business identifier }
     spBasic_Patient, {@enum.value "patient" spBasic_Patient Identifies the focus of this resource }
-    spBasic_Status, {@enum.value "status" spBasic_Status Status of the module }
-    spBasic_Subject, {@enum.value "subject" spBasic_Subject Identifies the focus of this resource }
-    spBasic_Title, {@enum.value "title" spBasic_Title Text search against the title }
-    spBasic_Topic, {@enum.value "topic" spBasic_Topic Topics associated with the module }
-    spBasic_Version); {@enum.value "version" spBasic_Version Version of the module (e.g. 1.0.0) }
+    spBasic_Subject); {@enum.value "subject" spBasic_Subject Identifies the focus of this resource }
 
   {@Enum TSearchParamsBinary
     Search Parameters for Binary
@@ -2421,7 +2414,7 @@ Const
      frtVisionPrescription,
      frtCustom];
      
-  ALL_RESOURCE_TYPE_NAMES : Array of String = ['Account',
+  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', 'Account',
      'AllergyIntolerance',
      'Appointment',
      'AppointmentResponse',
@@ -2515,14 +2508,14 @@ Const
      'TestScript',
      'ValueSet',
      'VisionPrescription',
-     'Custom'];
+     'Custom');
      
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'reporter', 'route', 'severity', 'status', 'substance', 'type');
   CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'date', 'identifier', 'location', 'part-status', 'patient', 'practitioner', 'status');
   CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
   CODES_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'address', 'altid', 'date', 'desc', 'identity', 'name', 'object-type', 'participant', 'patient', 'policy', 'reference', 'site', 'source', 'subtype', 'type', 'user');
-  CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'created', 'description', 'identifier', 'keyword', 'minScore', 'patient', 'status', 'subject', 'title', 'topic', 'version');
+  CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
   CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contenttype');
   CODES_TSearchParamsBodySite : Array[TSearchParamsBodySite] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'identifier', 'patient');
   CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composition', 'message', 'type');
@@ -2612,7 +2605,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '1.0.2';
 
-  FHIR_GENERATED_DATE = '2016-05-27T22:57:07+10:00';
+  FHIR_GENERATED_DATE = '2015-10-24T07:41:03+11:00';
 
 
 

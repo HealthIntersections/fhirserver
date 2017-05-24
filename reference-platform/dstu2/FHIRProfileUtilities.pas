@@ -1475,14 +1475,16 @@ end;
 
 function TBaseWorkerContext.allResourceNames: TArray<String>;
 var
+  a : TFHIRResourceType;
   i : integer;
   s : string;
 begin
   FLock.Lock;
   try
-    SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) + FCustomResources.Count);
-    for i := 0 to length(ALL_RESOURCE_TYPE_NAMES)-1 do
-      result[i] := ALL_RESOURCE_TYPE_NAMES[i];
+    SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) - 1 + FCustomResources.Count);
+    for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
+      if (a <> frtNull) then
+        result[ord(a)-1] := ALL_RESOURCE_TYPE_NAMES[a];
     i := length(ALL_RESOURCE_TYPE_NAMES);
     for s in FCustomResources.Keys do
     begin

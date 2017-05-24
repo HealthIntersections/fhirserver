@@ -1321,7 +1321,7 @@ public class DelphiGenerator {
     for (String name : names) {
       SearchParameterDefn sp = params.get(name);
       b.append("  indexes.add('"+r.getName()+"', '"+sp.getCode()+"', '"+defCodeType.escape(removeEoln(sp.getDescription()))+"', SearchParamType"+getTitle(sp.getType().toString())+", "+
-          getTarget(sp.getWorkingTargets(), 800)+", '"+defCodeType.escape(sp.getExpression())+"', SearchXpathUsage"+Utilities.capitalize(sp.getxPathUsage().toCode())+");\r\n");
+          getTarget(sp.getWorkingTargets(), 800)+", '"+defCodeType.escape(sp.getExpression())+"', SearchXpathUsage"+Utilities.capitalize(sp.getxPathUsage() == null ? "" : sp.getxPathUsage().toCode())+");\r\n");
     }
 
     
