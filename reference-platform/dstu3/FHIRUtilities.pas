@@ -36,10 +36,11 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
+  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
+  AdvZipWriters, AdvZipParts,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
@@ -482,6 +483,15 @@ type
     function getComponent(system : String; var comp : TFhirObservationComponent) : boolean; overload;
   end;
 
+  TFHIRDocumentReferenceHelper = class helper for TFHIRDocumentReference
+  public
+    function asZip(var filename : String) : TStream;
+  end;
+
+  TFHIRAttachmentHelper = class helper for TFHIRAttachment
+  public
+    function asZipPart(i: integer) : TAdvZipPart;
+  end;
 
 
 function Path(const parts : array of String) : String;
@@ -516,6 +526,15 @@ function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+
+type
+  [TextFixture]
+  TFHIRUtilityTests = Class (TObject)
+  private
+  public
+    [TestCase] Procedure TestZipGeneration;
+  end;
+
 
 implementation
 
@@ -1600,7 +1619,7 @@ end;
       li.addText('Import all the codes that are part of '+imp.Value);
     end;
     for (ConceptSetComponent inc : vs.Compose.Include) begin
-      genInclude(ul, inc, 'Include', codeSystems);      
+      genInclude(ul, inc, 'Include', codeSystems);
     end;
     for (ConceptSetComponent exc : vs.Compose.Exclude) begin
       genInclude(ul, exc, 'Exclude', codeSystems);      
@@ -1612,7 +1631,7 @@ end;
     li := ul.addTag('li');
     AtomEntry e := codeSystems.(inc.System.toString);
     
-    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then 
+    if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
     end; else begin 
@@ -4298,5 +4317,161 @@ begin
       exit(id);
 end;
 
+{ TFHIRDocumentReferenceHelper }
+
+function makeFileName(s : String) : String;
+var
+  b : TStringBuilder;
+  ws : boolean;
+  ch : char;
+begin
+  b := TStringBuilder.Create;
+  try
+    ws := true;
+    for ch in s do
+    begin
+      if not CharInSet(ch, ['a'..'z', 'A'..'Z', '0'..'9', '_', '-']) then
+        ws := true
+      else if ws then
+      begin
+        b.Append(uppercase(ch));
+        ws := false;
+      end
+      else
+        b.Append(ch);
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TFHIRDocumentReferenceHelper.asZip(var filename: String): TStream;
+var
+  vcl : TAdvVCLStream;
+  zip : TAdvZipWriter;
+  content : TFhirDocumentReferenceContent;
+  i : integer;
+begin
+  result := TMemoryStream.Create;
+  try
+    vcl := TAdvVCLStream.Create;
+    try
+      vcl.Stream := result;
+      zip := TAdvZipWriter.Create;
+      try
+        zip.Stream := vcl.Link;
+        i := 0;
+        for content in contentList do
+        begin
+          inc(i);
+          zip.Parts.Add(content.attachment.asZipPart(i));
+        end;
+        zip.WriteZip;
+        filename := makeFileName(description)+'.zip';
+      finally
+        zip.Free;
+      end;
+    finally
+      vcl.Free;
+    end;
+    result.Position := 0;
+  except
+    result.free;
+    raise;
+  end;
+end;
+
+{ TFHIRAttachmentHelper }
+
+Function GetExtForMimeType(mimeType: String): String;
+Var
+  fReg: TRegistry;
+  ts : TStringList;
+  s : String;
+Begin
+  mimeType := lowercase(mimeType);
+  if (mimeType = 'text/css') Then
+    result := '.css'
+  Else if mimeType = 'image/x-icon' Then
+    result := '.ico'
+  Else if mimeType = 'image/png' Then
+    result := '.png'
+  Else if mimeType = 'image/gif' Then
+    result := '.gif'
+  Else if mimeType = 'image/jpeg' Then
+    result := '.jpg'
+  Else if mimeType = 'video/mpeg' Then
+    result := '.mpg'
+  Else if mimeType = 'text/javascript' Then
+    result := '.js'
+  Else
+  Begin
+    Try
+      fReg := TRegistry.Create;
+      Try
+        fReg.RootKey := HKEY_LOCAL_MACHINE;
+        fReg.OpenKeyReadOnly('Software\Classes');
+        ts := TStringList.Create;
+        try
+          freg.GetKeyNames(ts);
+          fReg.CloseKey;
+          for s in ts do
+          begin
+            fReg.OpenKeyReadOnly('Software\Classes\'+s);
+            if freg.ReadString('Content Type').ToLower = mimeType then
+              exit('.'+s);
+            fReg.CloseKey;
+        end;
+        finally
+          ts.Free;
+        end;
+      Finally
+        freg.Free;
+      End;
+    Except
+    End;
+  End;
+  If Result = '' Then
+    Result := '.bin';
+End;
+
+
+function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+begin
+  result := TAdvZipPart.Create;
+  try
+    result.Size := Length(data);
+    if length(data) > 0 then
+      move(result.Data^, data[0], length(data));
+    result.Name := title;
+    result.Comment := contentType;
+    if result.Name = '' then
+      result.Name := 'file'+inttostr(i)+GetExtForMimeType(result.Comment);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+{ TFHIRUtilityTests }
+
+procedure TFHIRUtilityTests.TestZipGeneration;
+var
+  dr : TFHIRDocumentReference;
+  fn : String;
+begin
+  dr := TFhirDocumentReference(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\documentreference-example.xml'));
+  try
+    dr.asZip(fn).Free;
+    Assert.IsTrue(fn <> '');               !
+  finally
+    dr.Free;
+  end;
+
+end;
+
+initialization
+  TDUnitX.RegisterTestFixture(TFHIRUtilityTests);
 end.
 
