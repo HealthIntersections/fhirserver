@@ -103,12 +103,6 @@ Type
     destructor Destroy; override;
   end;
 
-  TExampleOWinprovider = class (TOWinprovider)
-  public
-    function supportsInsecure : boolean; override;
-    function checkDetails(username, password: String; var key : integer) : boolean; override;
-  end;
-
   TExampleFHIROperationEngine = class (TFHIROperationEngine)
   private
     FData : TExampleServerData;
@@ -162,14 +156,13 @@ Type
   end;
 
   TExampleFHIRUserProvider = class (TFHIRUserProvider)
-  private
-
   public
     Function loadUser(key : integer) : TSCIMUser; overload; override;
     Function loadUser(id : String; var key : integer) : TSCIMUser; overload; override;
-    function CheckLogin(username, password : String) : boolean; override;
+    function CheckLogin(username, password : String; var key : integer) : boolean; override;
     function CheckId(id : String; var username, hash : String) : boolean; override;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
+    function allowInsecure : boolean; override;
   end;
 
   TExampleFhirServer = class
@@ -361,7 +354,7 @@ begin
       ctxt.UserProvider := TExampleFHIRUserProvider.Create;
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
-      FWebServer.OWinProvider := TExampleOWinprovider.create;
+      FWebServer.OWinSecurity := true;
       FWebServer.Start(true);
     finally
       ctxt.free;
@@ -669,6 +662,11 @@ end;
 
 { TExampleFHIRUserProvider }
 
+function TExampleFHIRUserProvider.allowInsecure: boolean;
+begin
+  result := true;
+end;
+
 function TExampleFHIRUserProvider.CheckId(id: String; var username, hash: String): boolean;
 begin
   if (id = 'user') then
@@ -681,9 +679,11 @@ begin
     result := false;
 end;
 
-function TExampleFHIRUserProvider.CheckLogin(username, password: String): boolean;
+function TExampleFHIRUserProvider.CheckLogin(username, password: String; var key : integer): boolean;
 begin
   result := (username = 'user') and (HashStringToCode32('Password') = HashStringToCode32(password));
+  if result then
+    Key := 1;
 end;
 
 function TExampleFHIRUserProvider.loadOrCreateUser(id, name, email: String; var key: integer): TSCIMUser;
@@ -705,17 +705,5 @@ begin
   result := LoadUser(key);
 end;
 
-{ TExampleOWinprovider }
-
-function TExampleOWinprovider.checkDetails(username, password: String; var key: integer): boolean;
-begin
-  result := true;
-  key := 1;
-end;
-
-function TExampleOWinprovider.supportsInsecure: boolean;
-begin
-  result := true;
-end;
 
 end.

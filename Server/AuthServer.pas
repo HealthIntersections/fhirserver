@@ -583,6 +583,7 @@ var
   authurl, token, expires, msg, uid, name, email : String;
   provider : TFHIRAuthProvider;
   ok : boolean;
+  key : integer;
 begin
   domain := request.Host;
   if domain.Contains(':') then
@@ -594,7 +595,7 @@ begin
     username := params.GetVar('username');
     password := params.GetVar('password');
 
-    if not FUserProvider.CheckLogin(username, password) then
+    if not FUserProvider.CheckLogin(username, password, key) then
       raise Exception.Create('Login failed');
 
     if not ServerContext.Storage.hasOAuthSession(id, 1) then

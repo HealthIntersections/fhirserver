@@ -99,7 +99,7 @@ Type
     Function loadUser(key : integer) : TSCIMUser; overload; override;
     Function loadUser(id : String; var key : integer) : TSCIMUser; overload; override;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; override;
-    function CheckLogin(username, password : String) : boolean; override;
+    function CheckLogin(username, password : String; var key : integer) : boolean; override;
     function CheckId(id : String; var username, hash : String) : boolean; override;
 
     // install
@@ -148,7 +148,7 @@ begin
   end;
 end;
 
-function TSCIMServer.CheckLogin(username, password: String): boolean;
+function TSCIMServer.CheckLogin(username, password: String; var key : integer): boolean;
 var
   conn : TKDBConnection;
 begin

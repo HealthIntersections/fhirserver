@@ -112,20 +112,6 @@ Type
     constructor create(server : TFHIRWebServer);
   end;
 
-  TOWinprovider = class (TAdvObject)
-  private
-    FSessions : TAdvMap<TFhirSession>;
-  public
-    Constructor Create; override;
-    Destructor Destroy; override;
-    property sessions : TAdvMap<TFhirSession> read FSessions;
-
-    function supportsInsecure : boolean; virtual;
-
-    // the user key will subsequently be available at Request.Session.ExternalUserKey
-    function checkDetails(username, password: String; var key : integer) : boolean; virtual;
-  end;
-
   TFHIRWebServerClientInfo = class (TAdvObject)
   private
     FContext: TIdContext;
@@ -204,7 +190,7 @@ Type
     FPatientViewServers : TDictionary<String, String>;
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
-    FOWinProvider: TOWinprovider;
+    FOWinSecurity : boolean;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -273,7 +259,6 @@ Type
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
-    procedure SetOWinProvider(const Value: TOWinprovider);
   Public
     Constructor Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
@@ -287,7 +272,7 @@ Type
     property AuthServer : TAuth2Server read FAuthServer;
     Property SourcePath : String read FSourcePath;
     property Host : String read FHost;
-    property OWinProvider : TOWinprovider read FOWinProvider write SetOWinProvider;
+    property OWinSecurity : boolean read FOWinSecurity write FOWinSecurity;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -511,7 +496,6 @@ Begin
   FPatientHooks.Free;
   FReverseProxyList.Free;
   FServerContext.free;
-  FOWinProvider.Free;
   FLock.Free;
   Inherited;
 End;
@@ -872,7 +856,7 @@ begin
         FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check);
     end;
 
-    if (OWinProvider <> nil) and (((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) or not OWinProvider.supportsInsecure) then
+    if OWinSecurity and (((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) or not ServerContext.UserProvider.allowInsecure) then
     begin
       response.ResponseNo := 401;
       response.ResponseText := 'Unauthorized';
@@ -905,7 +889,7 @@ begin
 
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
-    else if (OWinProvider <> nil) and OWinProvider.supportsInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
+    else if OWinSecurity and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
       HandleOWinToken(AContext, false, request, response)
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath)
@@ -1033,7 +1017,7 @@ begin
       FAuthServer.HandleRequest(AContext, request, session, response)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
-    else if (OWinProvider <> nil) and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
+    else if OWinSecurity and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
       HandleOWinToken(AContext, true, request, response)
     else
     begin
@@ -1110,7 +1094,7 @@ begin
       try
         if pm.GetVar('grant_type') <> 'password' then
           response.ContentText := 'Unknown content type - must be ''password'''
-        else if not OWinProvider.checkDetails(pm.GetVar('username'), pm.GetVar('password'), userkey) then
+        else if not ServerContext.UserProvider.CheckLogin(pm.GetVar('username'), pm.GetVar('password'), userkey) then
           response.ContentText := 'Unknown usernmame/password'
         else
         begin
@@ -1986,12 +1970,6 @@ begin
     end;
   end;
   response.WriteContent;
-end;
-
-procedure TFhirWebServer.SetOWinProvider(const Value: TOWinprovider);
-begin
-  FOWinProvider.Free;
-  FOWinProvider := Value;
 end;
 
 function extractProp(contentType, name : String) : string;
@@ -3533,30 +3511,6 @@ procedure TFHIRWebServerPatientViewContext.SetManager(const Value: TCDSHooksMana
 begin
   FManager.Free;
   FManager := Value;
-end;
-
-{ TOWinprovider }
-
-function TOWinprovider.checkDetails(username, password: String; var key: integer): boolean;
-begin
-  raise Exception.Create('Need to override checkdetails in '+ClassName);
-end;
-
-constructor TOWinprovider.Create;
-begin
-  inherited;
-  FSessions := TAdvMap<TFhirSession>.create;
-end;
-
-destructor TOWinprovider.Destroy;
-begin
-  FSessions.Free;
-  inherited;
-end;
-
-function TOWinprovider.supportsInsecure: boolean;
-begin
-  result := false;
 end;
 
 Initialization

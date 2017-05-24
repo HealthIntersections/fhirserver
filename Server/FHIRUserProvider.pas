@@ -51,12 +51,14 @@ type
 
     Function loadUser(key : integer) : TSCIMUser; overload; virtual;
     Function loadUser(id : String; var key : integer) : TSCIMUser; overload; virtual;
-    function CheckLogin(username, password : String) : boolean; virtual;
+    function CheckLogin(username, password : String; var key : integer) : boolean; virtual;
     function CheckId(id : String; var username, hash : String) : boolean; virtual;
     function loadOrCreateUser(id, name, email : String; var key : integer) : TSCIMUser; virtual;
 
     Procedure processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFHIRSession); virtual;
     property OnProcessFile : TProcessFileEvent read FOnProcessFile write FOnProcessFile;
+
+    function allowInsecure : boolean; virtual;
   end;
 
 implementation
@@ -68,12 +70,17 @@ begin
   result := TFHIRUserProvider(inherited Link);
 end;
 
+function TFHIRUserProvider.allowInsecure: boolean;
+begin
+  result := false;
+end;
+
 function TFHIRUserProvider.CheckId(id: String; var username, hash: String): boolean;
 begin
   raise Exception.Create('TFHIRUserProvider.CheckId must be override in '+className);
 end;
 
-function TFHIRUserProvider.CheckLogin(username, password: String): boolean;
+function TFHIRUserProvider.CheckLogin(username, password: String; var key : integer): boolean;
 begin
   raise Exception.Create('TFHIRUserProvider.CheckLogin must be override in '+className);
 end;
