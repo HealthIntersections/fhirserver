@@ -1102,7 +1102,10 @@ begin
   else
   begin
     try
-      pm := TParseMap.create(StreamToString(request.PostStream, TEncoding.UTF8));
+      if request.PostStream <> Nil then
+        pm := TParseMap.create(StreamToString(request.PostStream, TEncoding.UTF8))
+      else
+        pm := TParseMap.create(request.UnparsedParams);
       try
         if pm.GetVar('grant_type') <> 'password' then
           response.ContentText := 'Unknown content type - must be ''password'''
