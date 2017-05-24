@@ -1097,8 +1097,8 @@ var
 begin
   response.ResponseNo := 400;
   response.ResponseText := 'Request Error';
-  if request.ContentType <> 'application/x-www-form-encoded' then
-    response.ContentText := 'Unknown content type - must be application/x-www-form-encoded'
+  if request.ContentType <> 'application/x-www-form-urlencoded' then
+    response.ContentText := 'Unknown content type - must be application/x-www-form-urlencoded'
   else
   begin
     try
