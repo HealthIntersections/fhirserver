@@ -33,7 +33,8 @@ interface
 
 uses
   SysUtils, Classes, kCritSct,
-  AdvObjects, DateSupport, GuidSupport, StringSupport,
+  DateSupport, GuidSupport, StringSupport,
+  AdvObjects, AdvGenerics,
   SCIMServer, DateAndTime,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSecurity,
   FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
@@ -45,7 +46,7 @@ Type
   TFHIRSessionManager = class (TFHIRServerWorker)
   private
     FLock: TCriticalSection;
-    FSessions: TStringList;
+    FSessions: TAdvMap<TFHIRSession>;
     FLastSessionKey: integer;
   public
     constructor Create(ServerContext : TAdvObject);
@@ -76,8 +77,8 @@ uses
 constructor TFHIRSessionManager.Create;
 begin
   inherited Create(ServerContext);
-  FSessions := TStringList.Create;
   FLock := TCriticalSection.Create('session-manager');
+  FSessions := TAdvMap<TFHIRSession>.Create;
 end;
 
 destructor TFHIRSessionManager.Destroy;
@@ -90,16 +91,10 @@ end;
 procedure TFHIRSessionManager.CloseAll;
 var
   i: integer;
-  session: TFhirSession;
 begin
   FLock.Lock('close all');
   try
-    for i := FSessions.Count - 1 downto 0 do
-    begin
-      session := TFhirSession(FSessions.Objects[i]);
-      session.free;
-      FSessions.Delete(i);
-    end;
+    FSessions.Clear;
   finally
     FLock.Unlock;
   end;
@@ -136,8 +131,7 @@ begin
         session.email := '';
         session.anonymous := true;
         session.userkey := 0;
-        FSessions.AddObject(IMPL_COOKIE_PREFIX + clientInfo, session.Link);
-        FSessions.AddObject(session.Cookie, session.Link);
+        FSessions.Add(session.Cookie, session.Link);
         result := session.Link as TFhirSession;
       finally
         session.free;
@@ -209,60 +203,54 @@ begin
   key := 0;
   FLock.Lock('EndSession');
   try
-    i := FSessions.IndexOf(sCookie);
-    if i > -1 then
+    if FSessions.TryGetValue(sCookie, session) then
     begin
-      session := TFhirSession(FSessions.Objects[i]);
+      se := TFhirAuditEvent.Create;
       try
-        se := TFhirAuditEvent.Create;
-        try
-          se.event := TFhirAuditEventEvent.Create;
-          se.event.type_ := TFHIRCoding.Create;
-          C := se.event.type_;
-          C.code := '110114';
-          C.system := 'http://nema.org/dicom/dcid';
-          C.Display := 'User Authentication';
-          C := se.event.subtypeList.append;
-          C.code := '110123';
-          C.system := 'http://nema.org/dicom/dcid';
-          C.Display := 'Logout';
-          se.event.action := AuditEventActionE;
-          se.event.outcome := AuditEventOutcome0;
-          se.event.dateTime := NowUTC;
-          se.source := TFhirAuditEventSource.Create;
-          se.source.site := TFHIRServerContext(serverContext).OwnerName;
-          se.source.identifier := TFhirIdentifier.Create;
-          se.source.identifier.system := 'urn:ietf:rfc:3986';
-          se.source.identifier.value := TFHIRServerContext(serverContext).SystemId;
-          C := se.source.type_List.append;
-          C.code := '3';
-          C.Display := 'Web Server';
-          C.system := 'http://hl7.org/fhir/security-source-type';
+        se.event := TFhirAuditEventEvent.Create;
+        se.event.type_ := TFHIRCoding.Create;
+        C := se.event.type_;
+        C.code := '110114';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'User Authentication';
+        C := se.event.subtypeList.append;
+        C.code := '110123';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'Logout';
+        se.event.action := AuditEventActionE;
+        se.event.outcome := AuditEventOutcome0;
+        se.event.dateTime := NowUTC;
+        se.source := TFhirAuditEventSource.Create;
+        se.source.site := TFHIRServerContext(serverContext).OwnerName;
+        se.source.identifier := TFhirIdentifier.Create;
+        se.source.identifier.system := 'urn:ietf:rfc:3986';
+        se.source.identifier.value := TFHIRServerContext(serverContext).SystemId;
+        C := se.source.type_List.append;
+        C.code := '3';
+        C.Display := 'Web Server';
+        C.system := 'http://hl7.org/fhir/security-source-type';
 
-          // participant - the web browser / user proxy
-          p := se.participantList.append;
-          p.userId := TFhirIdentifier.Create;
-          p.userId.system := TFHIRServerContext(serverContext).SystemId;
-          p.userId.value := inttostr(session.key);
-          p.altId := session.id;
-          p.name := session.name;
-          if (ip <> '') then
-          begin
-            p.network := TFhirAuditEventParticipantNetwork.Create;
-            p.network.address := ip;
-            p.network.type_ := NetworkType2;
-            p.requestor := true;
-          end;
-
-          TFHIRServerContext(serverContext).Storage.QueueResource(se, se.event.dateTime);
-        finally
-          se.free;
+        // participant - the web browser / user proxy
+        p := se.participantList.append;
+        p.userId := TFhirIdentifier.Create;
+        p.userId.system := TFHIRServerContext(serverContext).SystemId;
+        p.userId.value := inttostr(session.key);
+        p.altId := session.id;
+        p.name := session.name;
+        if (ip <> '') then
+        begin
+          p.network := TFhirAuditEventParticipantNetwork.Create;
+          p.network.address := ip;
+          p.network.type_ := NetworkType2;
+          p.requestor := true;
         end;
-        key := session.key;
-        FSessions.Delete(i);
+
+        TFHIRServerContext(serverContext).Storage.QueueResource(se, se.event.dateTime);
       finally
-        session.free;
+        se.free;
       end;
+      key := session.key;
+      FSessions.Remove(sCookie);
     end;
   finally
     FLock.Unlock;
@@ -278,11 +266,9 @@ begin
   key := 0;
   FLock.Lock('GetSession');
   try
-    i := FSessions.IndexOf(sCookie);
-    result := i > -1;
+    result := FSessions.TryGetValue(sCookie, session);
     if result then
     begin
-      session := TFhirSession(FSessions.Objects[i]);
       session.useCount := session.useCount + 1;
       if session.expires > UniversalDateTime then
       begin
@@ -295,7 +281,7 @@ begin
         result := false;
         try
           key := session.key;
-          FSessions.Delete(i);
+          FSessions.Remove(sCookie);
         finally
           session.free;
         end;
@@ -310,34 +296,27 @@ end;
 
 function TFHIRSessionManager.GetSessionByKey(userkey: integer): TFhirSession;
 var
-  c, i, key: integer;
+  c : integer;
+  session : TFHIRSession;
 begin
-  c := -1;
-  key := 0;
+  c := 0;
   result := nil;
   FLock.Lock('GetSession');
   try
-    for i := 0 to FSessions.Count - 1 do
-      if TFhirSession(FSessions.Objects[i]).UserKey = userkey then
-        c := i;
-    if (c <> -1) then
-    begin
-      result := FSessions.Objects[c] as TFhirSession;
-      result.useCount := result.useCount + 1;
-      if (result.expires > UniversalDateTime) and not ((result.provider in [apFacebook, apGoogle]) and (result.NextTokenCheck < UniversalDateTime)) then
-        result.Link
-      else
+    for session in FSessions.Values do
+      if session.UserKey = userkey then
       begin
-        key := result.Key;
-        FSessions.Delete(c);
-        result.Free;
-        result := nil;
+        session.useCount := session.useCount + 1;
+        c := session.Key;
+        if (session.expires > UniversalDateTime) and not ((session.provider in [apFacebook, apGoogle]) and (session.NextTokenCheck < UniversalDateTime)) then
+          result := session.Link
+        else
+          FSessions.Remove(session.Cookie);
       end;
-    end;
   finally
     FLock.Unlock;
   end;
-  if c > 0 then
+  if (result = nil) and (c <> 0) then
     TFHIRServerContext(serverContext).Storage.CloseFhirSession(c);
   if result = nil then
   begin
@@ -358,7 +337,7 @@ begin
       try
         inc(FLastSessionKey);
         result.key := FLastSessionKey;
-        FSessions.AddObject(result.Cookie, result.Link);
+        FSessions.Add(result.Cookie, result.Link);
       finally
         FLock.Unlock;
       end;
@@ -371,21 +350,19 @@ begin
   end;
 end;
 
-function TFHIRSessionManager.GetSessionByToken(outerToken: String;
-  var session: TFhirSession): Boolean;
+function TFHIRSessionManager.GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
 var
-  i: integer;
+  t : TFHIRSession;
 begin
   result := false;
   session := nil;
   FLock.Lock('GetSessionByToken');
   try
-    for i := 0 to FSessions.Count - 1 do
-      if (TFhirSession(FSessions.Objects[i]).outerToken = outerToken) or
-        (TFhirSession(FSessions.Objects[i]).JWTPacked = outerToken) then
+    for t in FSessions.Values do
+      if (t.outerToken = outerToken) or (t.JWTPacked = outerToken) then
       begin
         result := true;
-        session := TFhirSession(FSessions.Objects[i]).Link;
+        session := t.Link;
         session.useCount := session.useCount + 1;
         break;
       end;
@@ -401,17 +378,17 @@ var
   se: TFhirAuditEvent;
   C: TFHIRCoding;
   p: TFhirAuditEventParticipant;
+  t : TFHIRSession;
 begin
   result := false;
   session := nil;
   FLock.Lock('GetSessionByToken');
   try
-    for i := 0 to FSessions.Count - 1 do
-      if (TFhirSession(FSessions.Objects[i]).innerToken = token) and
-        (TFhirSession(FSessions.Objects[i]).outerToken = '$BEARER') then
+    for t in FSessions.values do
+      if (t.innerToken = token) and (t.outerToken = '$BEARER') then
       begin
         result := true;
-        session := TFhirSession(FSessions.Objects[i]).Link;
+        session := t.Link;
         session.useCount := session.useCount + 1;
         break;
       end;
@@ -429,6 +406,7 @@ begin
       try
         session.innerToken := token;
         session.outerToken := '$BEARER';
+        session.Cookie := token;
         session.id := id;
         session.User := TFHIRServerContext(ServerContext).UserProvider.loadUser(username, key);
         session.UserKey := key;
@@ -444,7 +422,7 @@ begin
         try
           inc(FLastSessionKey);
           session.key := FLastSessionKey;
-          FSessions.AddObject(token, session.Link);
+          FSessions.Add(session.Cookie, session.Link);
           session.Link;
         finally
           FLock.Unlock;
@@ -503,10 +481,8 @@ var
 begin
   FLock.Lock('MarkSessionChecked');
   try
-    i := FSessions.IndexOf(sCookie);
-    if i > -1 then
+    if FSessions.TryGetValue(sCookie, session) then
     begin
-      session := TFhirSession(FSessions.Objects[i]);
       session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
       session.name := sName;
     end;
@@ -551,7 +527,7 @@ begin
     try
       inc(FLastSessionKey);
       session.key := FLastSessionKey;
-      FSessions.AddObject(session.Cookie, session.Link);
+      FSessions.Add(session.Cookie, session.Link);
     finally
       FLock.Unlock;
     end;
@@ -575,14 +551,13 @@ begin
   d := UniversalDateTime;
   FLock.Lock('sweep2');
   try
-    for i := FSessions.Count - 1 downto 0 do
+    for session in FSessions.Values do
     begin
-      session := TFhirSession(FSessions.Objects[i]);
       if session.expires < d then
       begin
         try
           key := session.key;
-          FSessions.Delete(i);
+          FSessions.Remove(Session.Cookie);
           break;
         finally
           session.free;
@@ -620,9 +595,8 @@ begin
 
     FLock.Lock('DumpSessions');
     try
-      for i := FSessions.Count - 1 downto 0 do
+      for session in FSessions.values do
       begin
-        session := TFhirSession(FSessions.Objects[i]);
         session.describe(b);
         b.Append(#13#10);
       end;

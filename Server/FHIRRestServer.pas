@@ -1114,18 +1114,22 @@ begin
         else
         begin
           session := FServerContext.SessionManager.CreateImplicitSession(pm.GetVar('username'), false);
-          session.ExternalUserKey := userkey;
-          json := TJsonObject.Create;
           try
-            json.str['access_token'] := session.Cookie;
-            json.num['expires_in'] := inttostr(trunc((session.Expires - UniversalDateTime) / DATETIME_SECOND_ONE));
-            json.str['token_type'] := 'bearer';
-            response.ResponseNo := 200;
-            response.ResponseText := 'OK';
-            response.ContentType := 'application/json';
-            response.ContentText := TJSONWriter.writeObjectStr(json, true);
+            session.ExternalUserKey := userkey;
+            json := TJsonObject.Create;
+            try
+              json.str['access_token'] := session.Cookie;
+              json.num['expires_in'] := inttostr(trunc((session.Expires - UniversalDateTime) / DATETIME_SECOND_ONE));
+              json.str['token_type'] := 'bearer';
+              response.ResponseNo := 200;
+              response.ResponseText := 'OK';
+              response.ContentType := 'application/json';
+              response.ContentText := TJSONWriter.writeObjectStr(json, true);
+            finally
+              json.Free;
+            end;
           finally
-            json.Free;
+            session.Free;
           end;
         end;
       finally
