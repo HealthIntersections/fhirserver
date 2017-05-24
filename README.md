@@ -40,11 +40,15 @@ library (Streams, Indy) that mean that some fiddling with IFDEFs may be necessar
 Support for Free Pascal(/Lazarus) would be good, but requires substantial work to deal with the 
 difference between delphi and FPC unicode implementations. Contributions are welcome
 
-Some of these projects depend on the MarkdownProcessor at 
-https://github.com/grahamegrieve/delphi-markdown. You need to get a copy of 
-this and fix the paths for the markdown processor units in the .dprs.
+The FhirServer depends on the following other GitHub repositories:
+https://github.com/grahamegrieve/delphi-markdown
+https://github.com/VSoftTechnologies/DUnitX
 
-After that, compiling should be simple: open the file fhirprojects.groupproj in your version of delphi, and compile
+You need to get a copy of these and fix the paths for the markdown processor units in the .dprs.
+
+and also you need to install https://bitbucket.org/sglienke/testinsight/wiki/Home (all delphi users should have this installed!)
+
+After that, compiling should be simple: open the file fhirprojects.groupproj in your version of delphi, and compile all projects
 
 Running
 -------
