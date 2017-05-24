@@ -4365,6 +4365,9 @@ begin
           zip.Parts.Add(content.attachment.asZipPart(i));
         end;
         zip.WriteZip;
+        if (contentList.Count = 1) and (contentList[0].attachment.title <> '') then
+          filename := makeFileName(contentList[0].attachment.title)+'.zip'
+        else
         filename := makeFileName(description)+'.zip';
       finally
         zip.Free;
@@ -4381,29 +4384,48 @@ end;
 
 { TFHIRAttachmentHelper }
 
+Const
+  KNOWN_MIME_TYPES : array of String = [
+    'text/plain',
+    'text/html',
+    'text/xml',
+    'application/xml',
+    'application/json',
+    'text/css',
+    'image/x-icon',
+    'image/png',
+    'image/gif',
+    'image/jpeg',
+    'video/mpeg',
+    'text/javascript'
+    ];
+
+  KNOWN_MIME_EXTENSIONS : array of String = [
+    '.txt',
+    '.html',
+    '.xml',
+    '.xml',
+    '.json',
+    '.css',
+    '.ico',
+    '.png',
+    '.gif',
+    '.jpg',
+    '.mpeg',
+    '.js'
+    ];
+
 Function GetExtForMimeType(mimeType: String): String;
 Var
   fReg: TRegistry;
   ts : TStringList;
   s : String;
+  i : integer;
 Begin
   mimeType := lowercase(mimeType);
-  if (mimeType = 'text/css') Then
-    result := '.css'
-  Else if mimeType = 'image/x-icon' Then
-    result := '.ico'
-  Else if mimeType = 'image/png' Then
-    result := '.png'
-  Else if mimeType = 'image/gif' Then
-    result := '.gif'
-  Else if mimeType = 'image/jpeg' Then
-    result := '.jpg'
-  Else if mimeType = 'video/mpeg' Then
-    result := '.mpg'
-  Else if mimeType = 'text/javascript' Then
-    result := '.js'
-  Else
-  Begin
+  i := StringArrayIndexOfInsensitive(KNOWN_MIME_TYPES, mimeType);
+  if i > -1 then
+    exit(KNOWN_MIME_EXTENSIONS[i]);
     Try
       fReg := TRegistry.Create;
       Try
@@ -4428,27 +4450,85 @@ Begin
       End;
     Except
     End;
-  End;
+  if mimeType.Contains('+xml') then
+    result := '.xml';
+  if mimeType.Contains('+json') then
+    result := '.json';
   If Result = '' Then
     Result := '.bin';
 End;
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+var
+  fetcher : TInternetFetcher;
 begin
   result := TAdvZipPart.Create;
   try
+    if (url <> '') and (Length(data) = 0) then
+    begin
+      fetcher := TInternetFetcher.create;
+      try
+        fetcher.URL := url;
+        fetcher.Buffer := result.Link;
+        fetcher.Fetch;
+      finally
+        fetcher.free;
+      end;
+    end
+    else
+    begin
     result.Size := Length(data);
     if length(data) > 0 then
-      move(result.Data^, data[0], length(data));
+        move(data[0], result.Data^, length(data));
+    end;
     result.Name := title;
     result.Comment := contentType;
     if result.Name = '' then
-      result.Name := 'file'+inttostr(i)+GetExtForMimeType(result.Comment);
+      result.Name := 'file'+inttostr(i)+GetExtForMimeType(result.Comment)
+    else if not result.name.contains('.') then
+      result.Name := result.Name+GetExtForMimeType(result.Comment);
     result.Link;
   finally
     result.Free;
   end;
+end;
+
+{ TFhirReferenceHelper }
+
+function TFhirReferenceHelper.getId: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 1]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 3]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.getType: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 2]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 4]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.isRelative: boolean;
+begin
+  result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
 end;
 
 end.

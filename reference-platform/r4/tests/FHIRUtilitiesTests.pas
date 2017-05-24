@@ -3,7 +3,7 @@ unit FHIRUtilitiesTests;
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   DUnitX.TestFramework,
   AdvZipParts,
   FHIRTypes, FHIRResources, FHIRParser, FHIRUtilities;
@@ -15,6 +15,7 @@ type
   public
     [TestCase] Procedure TestZipPartCreation;
     [TestCase] Procedure TestZipGeneration;
+    [TestCase] Procedure TestReferenceAnalysis;
   end;
 
 
@@ -22,14 +23,60 @@ implementation
 
 { TFHIRUtilityTests }
 
+procedure TFHIRUtilityTests.TestReferenceAnalysis;
+var
+  ref : TFhirReference;
+begin
+  ref := TFhirReference.Create;
+  try
+    ref.reference := 'http://hl7.org/fhir/Patient/example';
+    Assert.IsTrue(not ref.isRelative);
+    Assert.IsTrue(ref.getType = 'Patient');
+    Assert.IsTrue(ref.getId = 'example');
+  finally
+    ref.Free;
+  end;
+  ref := TFhirReference.Create;
+  try
+    ref.reference := 'http://hl7.org/fhir/Patient/example/history/2';
+    Assert.IsTrue(not ref.isRelative);
+    Assert.IsTrue(ref.getType = 'Patient');
+    Assert.IsTrue(ref.getId = 'example');
+  finally
+    ref.Free;
+  end;
+  ref := TFhirReference.Create;
+  try
+    ref.reference := 'Patient/example';
+    Assert.IsTrue(ref.isRelative);
+    Assert.IsTrue(ref.getType = 'Patient');
+    Assert.IsTrue(ref.getId = 'example');
+  finally
+    ref.Free;
+  end;
+end;
+
 procedure TFHIRUtilityTests.TestZipGeneration;
 var
   dr : TFHIRDocumentReference;
   fn : String;
+  f : TFileStream;
+  s : TStream;
 begin
-  dr := TFhirDocumentReference(TFHIRJsonParser.ParseFile(nil, 'en', 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\dr.json'));//'C:\work\org.hl7.fhir\build\publish\documentreference-example.xml'));
+  dr := TFhirDocumentReference(TFHIRJsonParser.ParseFile(nil, 'en', 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//'C:\work\org.hl7.fhir\build\publish\documentreference-example.xml'));
   try
-    dr.asZip(fn).Free;
+    s:= dr.asZip(fn);
+    try
+      s.Position := 0;
+      f := TFIleStream.create('c:\temp\test.zip', fmCreate);
+      try
+        f.CopyFrom(s, s.Size)
+      finally
+        f.Free;
+      end;
+    finally
+     s.Free;
+    end;
     Assert.IsTrue(fn <> '');
   finally
     dr.Free;

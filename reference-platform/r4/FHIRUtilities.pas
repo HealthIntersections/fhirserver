@@ -493,6 +493,12 @@ type
     function asZipPart(i: integer) : TAdvZipPart;
   end;
 
+  TFhirReferenceHelper = class helper for TFhirReference
+  public
+    function isRelative : boolean;
+    function getType : String;
+    function getId : String;
+  end;
 
 function Path(const parts : array of String) : String;
 
@@ -4454,7 +4460,7 @@ begin
     begin
       result.Size := Length(data);
       if length(data) > 0 then
-        move(result.Data^, data[0], length(data));
+        move(data[0], result.Data^, length(data));
     end;
     result.Name := title;
     result.Comment := contentType;
@@ -4466,6 +4472,43 @@ begin
   finally
     result.Free;
   end;
+end;
+
+{ TFhirReferenceHelper }
+
+function TFhirReferenceHelper.getId: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 1]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 3]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.getType: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 2]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 4]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.isRelative: boolean;
+begin
+  result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
 end;
 
 end.
