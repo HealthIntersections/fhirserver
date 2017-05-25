@@ -4365,7 +4365,7 @@ end;
 { TFHIRAttachmentHelper }
 
 Const
-  KNOWN_MIME_TYPES : array of String = [
+  KNOWN_MIME_TYPES : array[0..11] of String = (
     'text/plain',
     'text/html',
     'text/xml',
@@ -4378,9 +4378,9 @@ Const
     'image/jpeg',
     'video/mpeg',
     'text/javascript'
-    ];
+    );
 
-  KNOWN_MIME_EXTENSIONS : array of String = [
+  KNOWN_MIME_EXTENSIONS : array[0..11] of String = (
     '.txt',
     '.html',
     '.xml',
@@ -4393,7 +4393,7 @@ Const
     '.jpg',
     '.mpeg',
     '.js'
-    ];
+    );
 
 Function GetExtForMimeType(mimeType: String): String;
 Var
