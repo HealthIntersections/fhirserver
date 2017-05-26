@@ -35,20 +35,22 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvGenerics,
-  MsXml, MsXmlparser,
+  MsXml, MsXmlparser, ParseMap,
   GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRUtilities, FHIRPath;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPath;
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
-  TFHIRGraphQLEngineReverseDereferenceEvent = procedure (appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; start, limit : integer; list : TAdvList<TFhirResource>) of Object;
-  TFHIRGraphQLEngineSearchEvent = function (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle of Object;
+  TFHIRGraphQLEngineLookupEvent = function (appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean of Object;
+  TFHIRGraphQLEngineListResourcesEvent = procedure (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>) of Object;
+  TFHIRGraphQLEngineSearchEvent = function (appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle of Object;
 
   TFHIRGraphQLEngine = class (TAdvObject)
   private
     FOnFollowReference : TFHIRGraphQLEngineDereferenceEvent;
-    FOnFollowReverseReference : TFHIRGraphQLEngineReverseDereferenceEvent;
     FOnSearch : TFHIRGraphQLEngineSearchEvent;
+    FOnListResources : TFHIRGraphQLEngineListResourcesEvent;
+    FOnLookup : TFHIRGraphQLEngineLookupEvent;
 
     FFocus : TFHIRResource;
     FQueryName : String;
@@ -70,9 +72,13 @@ type
     procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
     procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
-    procedure processReverseReference(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
+    procedure processReverseReferenceList(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
+    procedure processReverseReferenceSearch(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
     procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode : boolean);
     procedure processSearch(target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
+    procedure processSearchSingle(target : TGraphQLObjectValue; field : TGraphQLField);
+    procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField);
+    procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField);
     procedure SetAppInfo(const Value: TAdvObject);
 
   public
@@ -93,10 +99,42 @@ type
     property output : TGraphQLObjectValue read FOutput;
 
     property OnFollowReference : TFHIRGraphQLEngineDereferenceEvent read FOnFollowReference write FOnFollowReference;
-    property OnFollowReverseReference : TFHIRGraphQLEngineReverseDereferenceEvent read FOnFollowReverseReference write FOnFollowReverseReference;
     property OnSearch : TFHIRGraphQLEngineSearchEvent read FOnSearch write FOnSearch;
+    property OnListResources : TFHIRGraphQLEngineListResourcesEvent read FOnListResources write FOnListResources;
+    property OnLookup : TFHIRGraphQLEngineLookupEvent read FOnLookup write FOnLookup;
 
     procedure execute;
+  end;
+
+  TFHIRGraphQLSearchWrapper = class (TFHIRObject)
+  private
+    FBundle: TFhirBundle;
+    FParseMap : TParseMap;
+    procedure SetBundle(const Value: TFhirBundle);
+    function extractLink(name : String) : TFhirString;
+    function extractParam(name : String; int : boolean) : TFhirObject;
+  public
+    Constructor Create(bundle : TFhirBundle);
+    Destructor Destroy; override;
+
+    property Bundle : TFhirBundle read FBundle write SetBundle;
+    function fhirType : String; override;
+
+    function getPropertyValue(propName : string): TFHIRProperty; override;
+  end;
+
+  TFHIRGraphQLSearchEdge = class (TFHIRObject)
+  private
+    FEntry: TFhirBundleEntry;
+    procedure SetEntry(const Value: TFhirBundleEntry);
+  public
+    Constructor Create(entry : TFhirBundleEntry);
+    Destructor Destroy; override;
+
+    property Entry : TFhirBundleEntry read FEntry write SetEntry;
+    function fhirType : String; override;
+
+    function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
 
 implementation
@@ -391,6 +429,17 @@ begin
   result := StringArrayExistsSensitive(['boolean', 'integer', 'string', 'decimal', 'uri', 'base64Binary', 'instant', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'markdown', 'unsignedInt', 'positiveInt'], typename);
 end;
 
+function isResourceName(name : String; suffix : string) : boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in CODES_TFhirResourceType do
+    if s + suffix = name then
+      exit(true);
+end;
+
+
 procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
 var
   sel : TGraphQLSelection;
@@ -406,18 +455,22 @@ begin
       prop := source.getPropertyValue(sel.field.Name);
       if (prop = nil) and sel.field.Name.startsWith('_') then
         prop := source.getPropertyValue(sel.field.Name.substring(1));
-      try
-        if prop = nil then
-        begin
-          if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
-            processReference(context, source, sel.field, target)
-          else if isResourceName(sel.field.Name) and (source is TFhirResource) then
-            processReverseReference(source as TFhirResource, sel.field, target)
-          else
-            raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
-        end
+      if prop = nil then
+      begin
+        if (sel.field.Name = 'resourceType') and (source is TFHIRResource) then
+          target.addField('resourceType', false).Values.Add(TGraphQLStringValue.Create(source.fhirType))
+        else if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
+          processReference(context, source, sel.field, target)
+        else if isResourceName(sel.field.Name, 'List') and (source is TFhirResource) then
+          processReverseReferenceList(source as TFhirResource, sel.field, target)
+        else if isResourceName(sel.field.Name, 'Connection') and (source is TFhirResource) then
+          processReverseReferenceSearch(source as TFhirResource, sel.field, target)
         else
-        begin
+          raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
+      end
+      else
+      begin
+        try
           if not IsPrimitive(prop.Type_) and sel.field.Name.startsWith('_') then
             raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
 
@@ -428,9 +481,9 @@ begin
           finally
             vl.Free;
           end;
+        finally
+          prop.Free;
         end;
-      finally
-        prop.Free;
       end;
     end
     else if sel.InlineFragment <> nil then
@@ -510,40 +563,42 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processReverseReference(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
+procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
 var
-  arg, parg : TGraphQLArgument;
   list, vl : TAdvList<TFHIRResource>;
   v : TFhirResource;
-  new : TGraphQLObjectValue;
   params : TAdvList<TGraphQLArgument>;
-  start, limit : integer;
+  a, arg, parg : TGraphQLArgument;
+  new : TGraphQLObjectValue;
+  link : TFhirBundleLink;
 begin
-  start := 0;
-  limit := 0;
-  if not assigned(FOnFollowReverseReference) then
+  if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
-
-  parg := field.argument('_reference');
-  if (parg = nil) or (parg.values.count <> 1) then
-    raise Exception.Create('Reverse References must have an argument "_reference" which specifies which search parameter to use for reverse reference matching');
-  list := TAdvList<TFHIRResource>.create;
+  list := TAdvList<TFhirResource>.create;
   try
     params := TAdvList<TGraphQLArgument>.create;
     try
-      for arg in field.Arguments do
-      begin
-        if arg.Name = 'start' then
-          start := readInteger(arg.Values[0].toString, 'start')
-        else if arg.Name = 'limit' then
-          limit := readInteger(arg.Values[0].toString, 'limit')
-        else if (arg.Name <> '_reference') and (arg.Name <> 'fhirpath') then
-          params.add(arg.Link);
-      end;
-      FOnFollowReverseReference(FAppinfo, source.fhirType, source.id, field.Name, parg.values[0].ToString, params, start, limit, list);
+      parg := nil;
+      for a in field.Arguments do
+        if (a.Name <> '_reference') then
+          params.Add(a.Link)
+        else if (parg = nil) then
+          parg := a
+        else
+          raise EGraphQLException.Create('Duplicate parameter _reference');
+      if parg = nil then
+        raise EGraphQLException.Create('Missing parameter _reference');
+      arg := TGraphQLArgument.Create;
+      params.Add(arg);
+      arg.Name := parg.Values[0].ToString;
+      arg.Values.Add(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
+      FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), params, list);
     finally
       params.Free;
     end;
+    arg := nil;
+    new := nil;
+
     vl := filterResources(field.argument('fhirpath'), list);
     try
       if not vl.Empty then
@@ -568,17 +623,54 @@ begin
   end;
 end;
 
+procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
+var
+  bnd : TFHIRBundle;
+  bndWrapper : TFHIRGraphQLSearchWrapper;
+  params : TAdvList<TGraphQLArgument>;
+  a, arg, parg : TGraphQLArgument;
+  new : TGraphQLObjectValue;
+begin
+  if not assigned(FOnSearch) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
+  params := TAdvList<TGraphQLArgument>.create;
+  try
+    parg := nil;
+    for a in field.Arguments do
+      if (a.Name <> '_reference') then
+        params.Add(a.Link)
+      else if (parg = nil) then
+        parg := a
+      else
+        raise EGraphQLException.Create('Duplicate parameter _reference');
+    if parg = nil then
+      raise EGraphQLException.Create('Missing parameter _reference');
+    arg := TGraphQLArgument.Create;
+    params.Add(arg);
+    arg.Name := parg.Values[0].ToString;
+    arg.Values.Add(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
+    bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
+    try
+      bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
+      try
+        arg := target.addField(field.Alias, false);
+        new := TGraphQLObjectValue.Create;
+        arg.Values.Add(new);
+        processObject(nil, bndWrapper, new, field.SelectionSet);
+      finally
+        bndWrapper.Free;
+      end;
+    finally
+      bnd.Free;
+    end;
+  finally
+    params.Free;
+  end;
+end;
+
 procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
 var
   sel : TGraphQLSelection;
-  vl : TAdvList<TFHIRResource>;
-  v : TFhirResource;
-  start, limit : integer;
-  params : TAdvList<TGraphQLArgument>;
-  arg : TGraphQLArgument;
-  new : TGraphQLObjectValue;
-  bnd : TFHIRBundle;
-  link : TFhirBundleLink;
 begin
   for sel in selection do
   begin
@@ -586,70 +678,278 @@ begin
       raise EGraphQLException.Create('Only field selections are allowed in this context');
     checkNoDirectives(sel.Field.Directives);
 
-    start := 0;
-    limit := 0;
-    if not assigned(FOnSearch) then
-      raise EGraphQLException.Create('Resource Referencing services not provided');
-    params := TAdvList<TGraphQLArgument>.create;
+    if (isResourceName(sel.Field.Name, '')) then
+      processSearchSingle(target, sel.Field)
+    else if (isResourceName(sel.Field.Name, 'List')) then
+      processSearchSimple(target, sel.Field)
+    else if (isResourceName(sel.Field.Name, 'Connection')) then
+      processSearchFull(target, sel.Field);
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processSearchSingle(target: TGraphQLObjectValue; field: TGraphQLField);
+var
+  id : String;
+  arg : TGraphQLArgument;
+  res : TFhirResource;
+  new : TGraphQLObjectValue;
+begin
+  if not assigned(FOnLookup) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
+  id := '';
+  for arg in field.Arguments do
+    if (arg.Name = 'id') and (arg.Values.Count = 1) then
+      id := arg.Values[0].ToString
+    else
+      raise EGraphQLException.Create('Unknown or invalid parameter '+arg.Name);
+  if (id = '') then
+    raise EGraphQLException.Create('No id found');
+  if not FOnLookup(FAppinfo, field.Name, id, res) then
+    raise EGraphQLException.Create('Resource '+field.Name+'/'+id+' not found');
+  try
+    arg := target.addField(field.Alias, false);
+    new := TGraphQLObjectValue.Create;
     try
-      for arg in sel.field.Arguments do
+      arg.Values.Add(new.Link);
+      processObject(res, res, new, field.SelectionSet);
+    finally
+      new.Free;
+    end;
+  finally
+    res.Free;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processSearchSimple(target: TGraphQLObjectValue; field: TGraphQLField);
+var
+  list, vl : TAdvList<TFHIRResource>;
+  v : TFhirResource;
+  arg : TGraphQLArgument;
+  new : TGraphQLObjectValue;
+  link : TFhirBundleLink;
+begin
+  if not assigned(FOnListResources) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
+  list := TAdvList<TFhirResource>.create;
+  try
+    FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
+    arg := nil;
+    new := nil;
+
+    vl := filterResources(field.argument('fhirpath'), list);
+    try
+      if not vl.Empty then
       begin
-        if arg.Name = 'start' then
-          start := readInteger(arg.Values[0].toString, 'start')
-        else if arg.Name = 'limit' then
-          limit := readInteger(arg.Values[0].toString, 'limit')
-        else if (arg.Name = 'id') then
-          params.add(TGraphQLArgument.Create('_id', arg.values[0].link))
-        else if (arg.Name <> 'fhirpath') then
-          params.add(arg.Link);
-      end;
-      bnd := FOnSearch(FAppinfo, sel.field.Name, params, start, limit);
-      try
-        arg := nil;
-        new := nil;
-        for link in bnd.link_List do
-          if StringArrayExistsSensitive(['first', 'next', 'last', 'previous'], link.relation) then
-          begin
-            if (arg = nil) then
-            begin
-              arg := target.addField(sel.field.Alias, true);
-              new := TGraphQLObjectValue.Create;
-              arg.Values.Add(new.Link);
-              new.addField('type', false).Values.Add(TGraphQLStringValue.create('paging'));
-            end;
-            new.addField(link.relation, false).Values.Add(TGraphQLStringValue.create(link.url.Substring(link.url.IndexOf('?'))));
+        arg := target.addField(field.Alias, true);
+        for v in vl do
+        begin
+          new := TGraphQLObjectValue.Create;
+          try
+            arg.Values.Add(new.Link);
+            processObject(v, v, new, field.SelectionSet);
+          finally
+            new.Free;
           end;
-
-        vl := filterResources(sel.field.argument('fhirpath'), bnd);
-        try
-          if not vl.Empty then
-          begin
-            arg := target.addField(sel.field.Alias, true);
-            for v in vl do
-            begin
-              new := TGraphQLObjectValue.Create;
-              try
-                new.addField('type', false).Values.Add(TGraphQLStringValue.create('resource'));
-                arg.Values.Add(new.Link);
-                processObject(v, v, new, sel.field.SelectionSet);
-              finally
-                new.Free;
-              end;
-            end;
-          end;
-        finally
-          vl.Free;
         end;
-
-
-        // todo: search links
-      finally
-        bnd.Free;
       end;
     finally
-      params.Free;
+      vl.Free;
+    end;
+  finally
+    list.Free;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processSearchFull(target: TGraphQLObjectValue; field: TGraphQLField);
+var
+  bnd : TFHIRBundle;
+  bndWrapper : TFHIRGraphQLSearchWrapper;
+  arg, carg : TGraphQLArgument;
+  new : TGraphQLObjectValue;
+  params : TAdvList<TGraphQLArgument>;
+  l,r: String;
+begin
+  if not assigned(FOnSearch) then
+    raise EGraphQLException.Create('Resource Referencing services not provided');
+  params := TAdvList<TGraphQLArgument>.create;
+  try
+    carg := nil;
+    for arg in field.Arguments do
+      if arg.Name = 'cursor' then
+        carg := arg
+      else
+        params.Add(arg.Link);
+    if (carg <> nil) then
+    begin
+      params.Clear;
+      StringSplit(carg.Values[0].ToString, ':', l, r);
+      params.Add(TGraphQLArgument.Create('search-id', TGraphQLStringValue.Create(l)));
+      params.Add(TGraphQLArgument.Create('search-offset', TGraphQLStringValue.Create(r)));
+    end;
+
+    bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
+    try
+      bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
+      try
+        arg := target.addField(field.Alias, false);
+        new := TGraphQLObjectValue.Create;
+        arg.Values.Add(new);
+        processObject(nil, bndWrapper, new, field.SelectionSet);
+      finally
+        bndWrapper.Free;
+      end;
+    finally
+      bnd.Free;
+    end;
+  finally
+    params.Free;
+  end;
+end;
+
+{ TFHIRGraphQLSearchWrapper }
+
+constructor TFHIRGraphQLSearchWrapper.Create(bundle : TFhirBundle);
+var
+  s : String;
+begin
+  inherited Create;
+  FBundle := bundle;
+  s := bundle.link_List.Matches['self'];
+  FParseMap := TParseMap.create(s.Substring(s.IndexOf('?')+1));
+end;
+
+destructor TFHIRGraphQLSearchWrapper.Destroy;
+begin
+  FParseMap.free;
+  FBundle.Free;
+  inherited;
+end;
+
+function TFHIRGraphQLSearchWrapper.extractLink(name: String): TFhirString;
+var
+  s : String;
+  pm : TParseMap;
+begin
+  s := FBundle.link_List.Matches[name];
+  if s = '' then
+    result := nil
+  else
+  begin
+    pm := TParseMap.create(s.Substring(s.IndexOf('?')+1));
+    try
+      result := TFhirString.Create(pm.GetVar('search-id')+':'+pm.GetVar('search-offset'));
+    finally
+      pm.Free;
     end;
   end;
+end;
+
+function TFHIRGraphQLSearchWrapper.extractParam(name: String; int : boolean): TFhirObject;
+var
+  s : String;
+begin
+  s := FParseMap.GetVar(name);
+  if s = '' then
+    result := nil
+  else if int then
+    result := TFhirInteger.Create(s)
+  else
+    result := TFhirString.Create(s);
+end;
+
+function TFHIRGraphQLSearchWrapper.fhirType: String;
+begin
+  result := '*Connection';
+end;
+
+  // http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&search-offset=50&_count=50
+
+function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
+var
+  prop : TFHIRProperty;
+  list : TAdvList<TFHIRGraphQLSearchEdge>;
+  be : TFHIRBundleEntry;
+begin
+  if propName = 'first' then
+    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('first'))
+  else if propName = 'previous' then
+    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('previous'))
+  else if propName = 'next' then
+    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('next'))
+  else if propName = 'last' then
+    result := TFHIRProperty.Create(self, propname, 'string', false, TFhirString, extractLink('last'))
+  else if propName = 'count' then
+    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirString, FBundle.totalElement.link)
+  else if propName = 'offset' then
+    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirInteger, extractParam('search-offset', true))
+  else if propName = 'pagesize' then
+    result := TFHIRProperty.Create(self, propname, 'integer', false, TFhirInteger, extractParam('_count', true))
+  else if propName = 'edges' then
+  begin
+    list := TAdvList<TFHIRGraphQLSearchEdge>.create;
+    try
+      for be in FBundle.entryList do
+        list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
+      result := TFHIRProperty.Create(self, propname, 'integer', true, TFhirInteger, TAdvList<TFHIRObject>(list));
+    finally
+      list.Free;
+    end;
+  end
+  else
+    result := nil;
+end;
+
+procedure TFHIRGraphQLSearchWrapper.SetBundle(const Value: TFhirBundle);
+begin
+  FBundle.Free;
+  FBundle := Value;
+end;
+
+{ TFHIRGraphQLSearchEdge }
+
+constructor TFHIRGraphQLSearchEdge.Create(entry: TFhirBundleEntry);
+begin
+  inherited Create;
+  FEntry := entry;
+end;
+
+destructor TFHIRGraphQLSearchEdge.Destroy;
+begin
+  FEntry.Free;
+  inherited;
+end;
+
+function TFHIRGraphQLSearchEdge.fhirType: String;
+begin
+  result := '*Edge';
+end;
+
+function TFHIRGraphQLSearchEdge.getPropertyValue(propName: string): TFHIRProperty;
+begin
+  if propName = 'mode' then
+  begin
+    if FEntry.search <> nil then
+      result := TFHIRProperty.Create(self, propname, 'code', false, TFhirEnum, FEntry.search.modeElement.Link)
+    else
+      result := TFHIRProperty.Create(self, propname, 'code', false, TFhirEnum, TFHIRObject(nil));
+  end
+  else if propName = 'score' then
+  begin
+    if FEntry.search <> nil then
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, TFhirDecimal, FEntry.search.scoreElement.Link)
+    else
+      result := TFHIRProperty.Create(self, propname, 'decimal', false, TFhirDecimal, TFHIRObject(nil));
+  end
+  else if propName = 'resource' then
+    result := TFHIRProperty.Create(self, propname, 'resource', false, TFhirResource, FEntry.resource.Link)
+  else
+    result := nil;
+end;
+
+procedure TFHIRGraphQLSearchEdge.SetEntry(const Value: TFhirBundleEntry);
+begin
+  FEntry.Free;
+  FEntry := value;
 end;
 
 end.

@@ -156,10 +156,10 @@ begin
       begin
         if msg.severity in [IssueSeverityFatal, IssueSeverityError] then
         begin
-        if msg.locationList.count = 1 then
-          System.writeln('Error @ '+ msg.locationList[0].value+': '+msg.details.text)
-        else
-          System.writeln('Error @ unknown: '+msg.details.text);
+//        if msg.locationList.count = 1 then
+//          System.writeln('Error @ '+ msg.locationList[0].value+': '+msg.details.text)
+//        else
+//          System.writeln('Error @ unknown: '+msg.details.text);
         inc(ec);
         end;
       end;

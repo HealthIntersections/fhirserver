@@ -373,7 +373,7 @@ Begin
   else
   begin
     if Values.Count > 1 then
-      raise EGraphQLException.Create('Internal error: non list has '+inttostr(values.Count)+' values');
+      raise EGraphQLException.Create('Internal error: non list "'+Name+'" has '+inttostr(values.Count)+' values');
     if Values.Count = 0 then
       str.Append('null')
     else
@@ -870,9 +870,8 @@ begin
     if hasPunctuation('(') then
     begin
       consumePunctuation('(');
-      repeat
+      while not hasPunctuation(')') do
         result.Arguments.Add(parseArgument);
-      until hasPunctuation(')');
       consumePunctuation(')');
     end;
     while hasPunctuation('@') do

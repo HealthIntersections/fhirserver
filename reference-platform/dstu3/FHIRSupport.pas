@@ -1472,6 +1472,8 @@ end;
 
 function TFHIRResponse.GetBundle: TFhirBundle;
 begin
+  if not (resource is TFHIRBundle) then
+    raise Exception.Create('Attempt to cast a '+resource.FhirType+' to a Bundle');
   result := FResource as TFhirBundle;
 end;
 

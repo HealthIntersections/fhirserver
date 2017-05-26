@@ -154,6 +154,7 @@ type
   Public
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFHIRObjectList); Overload;
+    Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TAdvList<TFHIRObject>); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
     Destructor Destroy; Override;
@@ -1914,6 +1915,20 @@ begin
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
     FList.Add(TFhirString.Create(String(EncodeBase64(@value[0], length(value)))));
+end;
+
+constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TAdvList<TFHIRObject>);
+var
+  i : integer;
+begin
+  Create;
+  FName := sName;
+  FType := sType;
+  FClass := cClass;
+  FIsList := bList;
+  FList := TFHIRObjectList.create;
+  for I := 0 to oList.count - 1 do
+    FList.Add(oList[i].Link);
 end;
 
 { TFHIRPropertyList }

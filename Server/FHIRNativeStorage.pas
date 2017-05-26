@@ -225,9 +225,12 @@ type
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLSystem(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+
+    function GraphLookup(appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean;
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
-    procedure GraphFollowReverseReference(appInfo : TAdvObject; focusType, focusId, requestType, requestParam : String; params : TAdvList<TGraphQLArgument>; start, limit : integer; list : TAdvList<TFhirResource>);
-    function GraphSearch(appInfo : TAdvObject; requestType : String; params : TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle;
+    function GraphSearch(appInfo : TAdvObject; requestType : String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle;
+    procedure GraphListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
+
 
   protected
     procedure StartTransaction; override;
@@ -1577,8 +1580,9 @@ begin
     try
       gql.appInfo := request.Link;
       gql.OnFollowReference := GraphFollowReference;
-      gql.OnFollowReverseReference := GraphFollowReverseReference;
       gql.OnSearch := GraphSearch;
+      gql.OnLookup := GraphLookup;
+      gql.OnListResources := GraphListResources;
       if request.GraphQL <> nil then
         gql.queryDocument := request.GraphQL.Link
       else if request.Parameters.VarExists('query') then
@@ -1627,7 +1631,9 @@ begin
       try
         gql.appInfo := request.Link;
         gql.OnFollowReference := GraphFollowReference;
-        gql.OnFollowReverseReference := GraphFollowReverseReference;
+        gql.OnSearch := GraphSearch;
+        gql.OnLookup := GraphLookup;
+        gql.OnListResources := GraphListResources;
         if request.GraphQL <> nil then
           gql.queryDocument := request.GraphQL.Link
         else if request.Parameters.VarExists('query') then
@@ -5005,10 +5011,10 @@ begin
     target.Free;
 end;
 
-procedure TFHIRNativeOperationEngine.GraphFollowReverseReference(appInfo: TAdvObject; focusType, focusId, requestType, requestParam: String; params: TAdvList<TGraphQLArgument>; start, limit : integer; list: TAdvList<TFhirResource>);
+procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFHIRResource>);
 var
   sql : String;
-  ik, tk, rk : integer;
+  rk : integer;
   sp : TSearchProcessor;
   pm : TParseMap;
   url : String;
@@ -5016,15 +5022,10 @@ var
   json : TFHIRJsonParser;
   request : TFHIRRequest;
   p : TGraphQLArgument;
-  i : integer;
 begin
   request := TFHIRRequest(appInfo);
   rk := FRepository.ResourceTypeKeyForName(requestType);
-  if not FindResource(focusType, focusId, false, tk, request, nil, TFHIRRequest(appinfo).compartments) then
-    raise Exception.Create('Unable to find resource '+focusType+'/'+focusId+' internally');  // which would be pretty weird because we must have already found it in this transaction
-  ik := ServerContext.Indexes.GetKeyByName(requestParam);
-  sql := 'Select Ids.ResourceKey, JsonContent from Ids, Versions where Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Ids.ResourceTypeKey = '+inttostr(rk)+
-    ' and Ids.ResourceKey in (select ResourceKey from IndexEntries where IndexKey = '+inttostr(ik)+' and target = '+inttostr(tk)+') ';
+  sql := 'Select Ids.ResourceKey, JsonContent from Ids, Versions where Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Ids.ResourceTypeKey = '+inttostr(rk)+' ';
   if not params.Empty then
   begin
     b := TStringBuilder.create;
@@ -5071,17 +5072,12 @@ begin
     FConnection.Prepare;
     try
       FConnection.Execute;
-      i := 0;
       while FConnection.FetchNext do
       begin
-        inc(i);
-        if (i > start) and ((limit = 0) or (i < start + limit)) then
-        begin
-          json.source := FConnection.ColMemoryByName['JsonContent'];
-          json.source.Position := 0;
-          json.Parse;
-          list.Add(json.resource.Link);
-        end;
+        json.source := FConnection.ColMemoryByName['JsonContent'];
+        json.source.Position := 0;
+        json.Parse;
+        list.Add(json.resource.Link);
       end;
     finally
       FConnection.Terminate;
@@ -5091,8 +5087,23 @@ begin
   end;
 end;
 
+function TFHIRNativeOperationEngine.GraphLookup(appInfo: TAdvObject; requestType, id: String; var res: TFHIRResource): boolean;
+var
+  req : TFHIRRequest;
+  secure : boolean;
+  base : String;
+begin
+  req := TFHIRRequest(appInfo);
+  res := GetResourceById(req, requestType, id, base, secure);
+  result := (res <> nil) and (not secure or req.secure);
+  if (not result and (res <> nil)) then
+  begin
+    res.Free;
+    res := nil;
+  end;
+end;
 
-function TFHIRNativeOperationEngine.GraphSearch(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; start, limit : integer) : TFHIRBundle;
+function TFHIRNativeOperationEngine.GraphSearch(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>) : TFHIRBundle;
 var
   request : TFHIRRequest;
   response : TFHIRResponse;
@@ -5100,8 +5111,10 @@ var
   p : TGraphQLArgument;
 begin
   request := TFHIRRequest(appInfo);
+  request.CommandType := fcmdSearch;
   request.loadObjects := true;
   request.ResourceName := requestType;
+  request.strictSearch := true;
   response := TFHIRResponse.Create;
   try
     b := TStringBuilder.create;
@@ -5118,6 +5131,8 @@ begin
     finally
       b.free;
     end;
+    if response.resource is TFHIROperationOutcome then
+      raise EGraphQLException.Create(TFHIROperationOutcome(response.resource).asExceptionMessage);
     result := response.Bundle.Link;
   finally
     response.Free;
