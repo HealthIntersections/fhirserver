@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvTextExtractors, AdvStringStreams, AdvVclStreams,
-  XmlBuilder;
+  XmlBuilder, AdvJson;
 
 Type
   EGraphQLException = class (Exception);
@@ -102,7 +102,8 @@ Type
   private
     FFields : TAdvList<TGraphQLArgument>;
   public
-    Constructor Create; override;
+    Constructor Create; overload; override;
+    Constructor Create(json : TJsonObject); overload;
     Destructor Destroy; override;
     Function Link : TGraphQLObjectValue; overload;
     property Fields : TAdvList<TGraphQLArgument> read FFields;
@@ -116,9 +117,11 @@ Type
     FValues: TAdvList<TGraphQLValue>;
     FList: boolean;
     procedure write(str : TStringBuilder; indent : integer);
+    procedure valuesFromNode(json : TJsonNode);
   public
     Constructor Create; overload; override;
     Constructor Create(name : String; value : TGraphQLValue); overload;
+    Constructor Create(name : String; json : TJsonNode); overload;
 
     Destructor Destroy; override;
     Function Link : TGraphQLArgument; overload;
@@ -127,6 +130,8 @@ Type
     property Values : TAdvList<TGraphQLValue> read FValues;
 
     function hasValue(value : String) : boolean;
+    procedure addValue(value : TGraphQLValue);
+
   end;
 
   TGraphQLDirective = class (TAdvObject)
@@ -236,7 +241,6 @@ Type
     property TypeCondition : String read FTypeCondition write FTypeCondition;
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
     property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
-
   end;
 
   TGraphQLDocument = class (TAdvObject)
@@ -250,6 +254,23 @@ Type
     property Operations : TAdvList<TGraphQLOperation> read FOperations;
     property Fragments : TAdvList<TGraphQLFragment> read FFragments;
     function fragment(name : String) : TGraphQLFragment;
+    function operation(name : String) : TGraphQLOperation;
+  end;
+
+  TGraphQLPackage = class (TAdvObject)
+  private
+    FDocument: TGraphQLDocument;
+    FOperationName: String;
+    FVariables: TAdvList<TGraphQLArgument>;
+    procedure SetDocument(const Value: TGraphQLDocument);
+  public
+    Constructor Create; overload; override;
+    Constructor Create(document : TGraphQLDocument); overload;
+    Destructor Destroy; override;
+    function Link : TGraphQLPackage; overload;
+    property Document : TGraphQLDocument read FDocument write SetDocument;
+    property OperationName : String read FOperationName write FOperationName;
+    property Variables : TAdvList<TGraphQLArgument> read FVariables;
   end;
 
   TGraphQLPunctuator = (gqlpBang, gqlpDollar, gqlpOpenBrace, gqlpCloseBrace, gqlpEllipse, gqlpColon, gqlpEquals, gqlpAt, gqlpOpenSquare, gqlpCloseSquare, gqlpOpenCurly, gqlpVertical, gqlpCloseCurly);
@@ -298,9 +319,10 @@ type
     Constructor Create; overload; override;
     Destructor Destroy; override;
     Function Link : TGraphQLParser; overload;
-    class function parse(source : String) : TGraphQLDocument; overload;
-    class function parse(source : TStream) : TGraphQLDocument; overload;
-    class function parseFile(filename : String) : TGraphQLDocument;
+    class function parse(source : String) : TGraphQLPackage; overload;
+    class function parse(source : TStream) : TGraphQLPackage; overload;
+    class function parseFile(filename : String) : TGraphQLPackage;
+    class function parseJson(source : TStream) : TGraphQLPackage; overload;
   end;
 
 implementation
@@ -313,11 +335,23 @@ begin
   FValues := TAdvList<TGraphQLValue>.create;
 end;
 
+procedure TGraphQLArgument.addValue(value: TGraphQLValue);
+begin
+  FValues.Add(value);
+end;
+
 constructor TGraphQLArgument.Create(name: String; value: TGraphQLValue);
 begin
   Create;
   self.name := name;
   FValues.Add(value);
+end;
+
+constructor TGraphQLArgument.Create(name: String; json: TJsonNode);
+begin
+  Create;
+  self.name := name;
+  valuesFromNode(json);
 end;
 
 destructor TGraphQLArgument.Destroy;
@@ -340,6 +374,28 @@ function TGraphQLArgument.Link: TGraphQLArgument;
 begin
  result := TGraphQLArgument(inherited Link);
 end;
+
+procedure TGraphQLArgument.valuesFromNode(json: TJsonNode);
+var
+  v : TJsonNode;
+begin
+  if json is TJsonString then
+    values.Add(TGraphQLStringValue.Create(TJsonString(json).value))
+  else if json is TJsonNumber then
+    values.Add(TGraphQLNumberValue.Create(TJsonNumber(json).value))
+  else if json is TJsonBoolean then
+    values.Add(TGraphQLNameValue.Create(BooleanToString(TJsonBoolean(json).value).ToLower))
+  else if json is TJsonObject then
+    values.Add(TGraphQLObjectValue.Create(TJsonObject(v)))
+  else if json is TJsonArray then
+  begin
+    for v in TJsonArray(json) do
+      valuesFromNode(v);
+  end
+  else
+    raise EGraphQLException.Create('Unexpected JSON type for "'+name+'": '+json.ClassName)
+end;
+
 
 procedure TGraphQLArgument.write(str: TStringBuilder; indent : integer);
 var
@@ -585,6 +641,16 @@ begin
   result := TGraphQLDocument(inherited Link);
 end;
 
+function TGraphQLDocument.operation(name: String): TGraphQLOperation;
+var
+  o : TGraphQLOperation;
+begin
+  result := nil;
+  for o in Operations do
+    if o.Name = name then
+      exit(o);
+end;
+
 { TGraphQLParser }
 
 function TGraphQLParser.getNextChar: Char;
@@ -722,10 +788,11 @@ begin
   end;
 end;
 
-class function TGraphQLParser.parse(source: String): TGraphQLDocument;
+class function TGraphQLParser.parse(source: String): TGraphQLPackage;
 var
   this : TGraphQLParser;
   stream : TAdvStringStream;
+  doc : TGraphQLDocument;
 begin
   stream := TAdvStringStream.Create;
   try
@@ -733,12 +800,12 @@ begin
     this := TGraphQLParser.Create(stream.link);
     try
       this.next;
-      result := TGraphQLDocument.Create;
+      doc := TGraphQLDocument.Create;
       try
-        this.parseDocument(result);
-        result.Link;
+        this.parseDocument(doc);
+        result := TGraphQLPackage.create(doc.Link);
       finally
-        result.free;
+        doc.free;
       end;
     finally
       this.free;
@@ -748,10 +815,11 @@ begin
   end;
 end;
 
-class function TGraphQLParser.parse(source: TStream): TGraphQLDocument;
+class function TGraphQLParser.parse(source: TStream): TGraphQLPackage;
 var
   this : TGraphQLParser;
   stream : TAdvVCLStream;
+  doc : TGraphQLDocument;
 begin
   stream := TAdvVCLStream.Create;
   try
@@ -759,12 +827,12 @@ begin
     this := TGraphQLParser.Create(stream.link);
     try
       this.next;
-      result := TGraphQLDocument.Create;
+      doc := TGraphQLDocument.Create;
       try
-        this.parseDocument(result);
-        result.Link;
+        this.parseDocument(doc);
+        result := TGraphQLPackage.create(doc.Link);
       finally
-        result.free;
+        doc.free;
       end;
     finally
       this.free;
@@ -890,7 +958,7 @@ begin
   end;
 end;
 
-class function TGraphQLParser.parseFile(filename: String): TGraphQLDocument;
+class function TGraphQLParser.parseFile(filename: String): TGraphQLPackage;
 var
   src : String;
 begin
@@ -949,6 +1017,48 @@ begin
     result.Link;
   finally
     result.Free;
+  end;
+end;
+
+class function TGraphQLParser.parseJson(source: TStream): TGraphQLPackage;
+var
+  json : TJsonObject;
+  vl : TJsonObject;
+  n : String;
+  this : TGraphQLParser;
+  stream : TAdvStringStream;
+  v : TJsonNode;
+begin
+  json := TJSONParser.Parse(source);
+  try
+    result := TGraphQLPackage.Create(TGraphQLDocument.Create);
+    try
+      result.FOperationName := json.str['operationName'];
+      stream := TAdvStringStream.Create;
+      try
+        stream.Bytes := TENcoding.UTF8.GetBytes(json.str['query']);
+        this := TGraphQLParser.Create(stream.link);
+        try
+          this.next;
+          this.parseDocument(result.FDocument);
+        finally
+          this.free;
+        end;
+      finally
+        stream.Free;
+      end;
+      if json.has('variables') then
+      begin
+        vl := json.obj['variables'];
+        for n in vl.properties.Keys do
+          result.Variables.Add(TGraphQLArgument.create(n, vl.properties[n]));
+      end;
+      result.Link;
+    finally
+      result.Free;
+    end;
+  finally
+    json.Free;
   end;
 end;
 
@@ -1064,8 +1174,6 @@ begin
       result.DefaultValue := parseValue;
 
     end;
-
-
     result.Link;
   finally
     result.Free;
@@ -1187,7 +1295,7 @@ end;
 
 function TGraphQLVariableValue.ToString: String;
 begin
-  result := '$'+FValue;
+  result := FValue;
 end;
 
 procedure TGraphQLVariableValue.write(str : TStringBuilder; indent : integer);
@@ -1297,6 +1405,15 @@ begin
   FFields := TAdvList<TGraphQLArgument>.create;
 end;
 
+constructor TGraphQLObjectValue.Create(json: TJsonObject);
+var
+  n : String;
+begin
+  Create;
+  for n in json.properties.Keys do
+    FFields.Add(TGraphQLArgument.Create(n, json.properties[n]));
+end;
+
 destructor TGraphQLObjectValue.Destroy;
 begin
   FFields.Free;
@@ -1332,6 +1449,38 @@ begin
   end;
   str.Append(se);
   str.Append('}');
+end;
+
+{ TGraphQLPackage }
+
+constructor TGraphQLPackage.Create;
+begin
+  inherited;
+  FVariables := TAdvList<TGraphQLArgument>.create;
+end;
+
+constructor TGraphQLPackage.Create(document: TGraphQLDocument);
+begin
+  Create;
+  FDocument := Document;
+end;
+
+destructor TGraphQLPackage.Destroy;
+begin
+  FDocument.Free;
+  FVariables.Free;
+  inherited;
+end;
+
+function TGraphQLPackage.Link: TGraphQLPackage;
+begin
+  result := TGraphQLPackage(inherited Link);
+end;
+
+procedure TGraphQLPackage.SetDocument(const Value: TGraphQLDocument);
+begin
+  FDocument.Free;
+  FDocument := Value;
 end;
 
 end.

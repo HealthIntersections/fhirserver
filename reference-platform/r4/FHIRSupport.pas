@@ -316,7 +316,7 @@ Type
     FStrictSearch: boolean;
     FAdaptor : TFHIRFormatAdaptor;
     FLoadObjects : boolean;
-    FGraphQL: TGraphQLDocument;
+    FGraphQL: TGraphQLPackage;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -327,7 +327,7 @@ Type
     function RecogniseCustomResource(stype : String; var resourceType : TFhirResourceType) : boolean;
     procedure SetResourceName(const Value: String);
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
-    procedure SetGraphQL(const Value: TGraphQLDocument);
+    procedure SetGraphQL(const Value: TGraphQLPackage);
     procedure SetParams(const Value: TParseMap);
   Public
     Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
@@ -435,7 +435,7 @@ Type
 
     Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
     Property patchXml : IXMLDOMElement read FPatchXml write FPatchXml;
-    property GraphQL : TGraphQLDocument read FGraphQL write SetGraphQL;
+    property GraphQL : TGraphQLPackage read FGraphQL write SetGraphQL;
 
     {@member Tags
       Tags on the request - if it's a resource directly
@@ -1370,7 +1370,7 @@ begin
   FForm := Value;
 end;
 
-procedure TFHIRRequest.SetGraphQL(const Value: TGraphQLDocument);
+procedure TFHIRRequest.SetGraphQL(const Value: TGraphQLPackage);
 begin
   FGraphQL.Free;
   FGraphQL := Value;
@@ -1472,6 +1472,8 @@ end;
 
 function TFHIRResponse.GetBundle: TFhirBundle;
 begin
+  if not (resource is TFHIRBundle) then
+    raise Exception.Create('Attempt to cast a '+resource.FhirType+' to a Bundle');
   result := FResource as TFhirBundle;
 end;
 

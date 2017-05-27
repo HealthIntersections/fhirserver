@@ -2177,6 +2177,10 @@ Begin
             begin
               oRequest.GraphQL := TGraphQLParser.parse(oPostStream);
             end
+            else if (oRequest.CommandType = fcmdOperation) and (oRequest.OperationName = 'graphql') and (sContentType = 'application/json') then
+            begin
+              oRequest.GraphQL := TGraphQLParser.parseJson(oPostStream);
+            end
             else if oRequest.CommandType <> fcmdWebUI then
               try
                 parser := MakeParser(FServerContext.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);

@@ -1584,9 +1584,9 @@ begin
       gql.OnLookup := GraphLookup;
       gql.OnListResources := GraphListResources;
       if request.GraphQL <> nil then
-        gql.queryDocument := request.GraphQL.Link
+        gql.GraphQL := request.GraphQL.Link
       else if request.Parameters.VarExists('query') then
-        gql.queryDocument := TGraphQLParser.parse(request.Parameters.Value['query'])
+        gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
         raise EGraphQLException.Create('Unable to find GraphQL to execute');
       gql.focus := nil;
@@ -1635,9 +1635,9 @@ begin
         gql.OnLookup := GraphLookup;
         gql.OnListResources := GraphListResources;
         if request.GraphQL <> nil then
-          gql.queryDocument := request.GraphQL.Link
+          gql.GraphQL := request.GraphQL.Link
         else if request.Parameters.VarExists('query') then
-          gql.queryDocument := TGraphQLParser.parse(request.Parameters.Value['query'])
+          gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
           raise EGraphQLException.Create('Unable to find GraphQL to execute');
         gql.focus := response.Resource.Link;

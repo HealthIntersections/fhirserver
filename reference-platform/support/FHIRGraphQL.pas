@@ -53,14 +53,19 @@ type
     FOnLookup : TFHIRGraphQLEngineLookupEvent;
 
     FFocus : TFHIRResource;
-    FQueryName : String;
     FOutput : TGraphQLObjectValue;
-    FDocument : TGraphQLDocument;
+    FGraphQL : TGraphQLPackage;
     FAppinfo : TAdvObject;
+    FWorkingVariables: TAdvMap<TGraphQLArgument>;
 
-    procedure SetDocument(const Value: TGraphQLDocument);
+    procedure SetGraphQL(const Value: TGraphQLPackage);
     procedure SetFocus(const Value: TFHIRResource);
 
+    function getSingleValue(arg : TGraphQLArgument) : string;
+    function resolveValues(arg : TGraphQLArgument; max : integer = -1; vars : String = '') : TAdvList<TGraphQLValue>;
+
+    function checkBooleanDirective(dir : TGraphQLDirective) : Boolean;
+    function checkDirectives(directives : TAdvList<TGraphQLDirective>) : boolean;
     procedure checkNoDirectives(directives : TAdvList<TGraphQLDirective>);
     function readInteger(value, name : String): integer;
     function hasArgument(arguments : TAdvList<TGraphQLArgument>; name, value : String) : boolean;
@@ -80,6 +85,7 @@ type
     procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField);
     procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField);
     procedure SetAppInfo(const Value: TAdvObject);
+    procedure processVariables(op : TGraphQLOperation);
 
   public
     Constructor Create; override;
@@ -90,10 +96,7 @@ type
     property focus : TFHIRResource read FFocus write SetFocus;
 
     // the graphql document to execute
-    property queryDocument : TGraphQLDocument read FDocument write SetDocument;
-
-    // the name of the query (if there is more than one
-    property queryName : String read FQueryName write FQueryName;
+    property GraphQL : TGraphQLPackage read FGraphQL write SetGraphQL;
 
     // where output is going to go
     property output : TGraphQLObjectValue read FOutput;
@@ -141,16 +144,65 @@ implementation
 
 { TFHIRGraphQLEngine }
 
-procedure TFHIRGraphQLEngine.checkNoDirectives(directives: TAdvList<TGraphQLDirective>);
+function TFHIRGraphQLEngine.checkBooleanDirective(dir: TGraphQLDirective): Boolean;
+var
+  vl : TAdvList<TGraphQLValue>;
 begin
-  if not directives.Empty then
-    raise EGraphQLException.Create('Directives are not supported');
+  if dir.Arguments.Count <> 1 then
+    raise EGraphQLException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
+  if dir.Arguments[0].Name <> 'if' then
+    raise EGraphQLException.Create('Unable to process @'+dir.Name+': expected a single argument "if"');
+  vl := resolveValues(dir.Arguments[0], 1);
+  try
+    result := vl[0].ToString = 'true';
+  finally
+    vl.Free;
+  end;
+end;
+
+function TFHIRGraphQLEngine.checkDirectives(directives: TAdvList<TGraphQLDirective>) : boolean;
+var
+  dir, skip, include : TGraphQLDirective;
+begin
+  skip := nil;
+  include := nil;
+  for dir in directives do
+    if dir.Name = 'skip' then
+    begin
+      if (skip = nil) then
+        skip := dir
+      else
+        raise EGraphQLException.Create('Duplicate @skip directives');
+    end
+    else if dir.Name = 'include' then
+    begin
+      if (include = nil) then
+        include := dir
+      else
+        raise EGraphQLException.Create('Duplicate @include directives');
+    end
+    else
+      raise EGraphQLException.Create('Directive "'+dir.Name+'" is not recognised');
+  if (skip <> nil) and (include <> nil) then
+    raise EGraphQLException.Create('Cannot mix @skip and @include directives');
+  if skip <> nil then
+    result := not checkBooleanDirective(skip)
+  else if include <> nil then
+    result := checkBooleanDirective(include)
+  else
+    result := true;
+end;
+
+procedure TFHIRGraphQLEngine.checkNoDirectives(
+  directives: TAdvList<TGraphQLDirective>);
+begin
+
 end;
 
 constructor TFHIRGraphQLEngine.Create;
 begin
   inherited;
-
+  FWorkingVariables := TAdvMap<TGraphQLArgument>.create;
 end;
 
 destructor TFHIRGraphQLEngine.Destroy;
@@ -158,7 +210,8 @@ begin
   FAppinfo.Free;
   FFocus.Free;
   FOutput.Free;
-  FDocument.Free;
+  FGraphQL.Free;
+  FWorkingVariables.Free;
   inherited;
 end;
 
@@ -168,10 +221,10 @@ begin
   FAppinfo := Value;
 end;
 
-procedure TFHIRGraphQLEngine.SetDocument(const Value: TGraphQLDocument);
+procedure TFHIRGraphQLEngine.SetGraphQL(const Value: TGraphQLPackage);
 begin
-  FDocument.Free;
-  FDocument := Value;
+  FGraphQL.Free;
+  FGraphQL := Value;
 end;
 
 procedure TFHIRGraphQLEngine.SetFocus(const Value: TFHIRResource);
@@ -184,12 +237,22 @@ function TFHIRGraphQLEngine.targetTypeOk(arguments: TAdvList<TGraphQLArgument>; 
 var
   list : TStringList;
   arg : TGraphQLArgument;
+  vl : TAdvList<TGraphQLValue>;
+  v : TGraphQLValue;
 begin
   list := TStringList.Create;
   try
     for arg in arguments do
-      if (arg.Name = 'type') and (arg.Values.Count = 1) then
-        list.Add(arg.Values[0].ToString());
+      if (arg.Name = 'type') then
+      begin
+        vl := resolveValues(arg);
+        try
+          for v in vl do
+            list.Add(v.ToString);
+        finally
+          vl.Free;
+        end;
+      end;
     if list.Count = 0 then
       result := true
     else
@@ -200,22 +263,36 @@ begin
 end;
 
 procedure TFHIRGraphQLEngine.execute;
+var
+  op : TGraphQLOperation;
 begin
-  if FDocument = nil then
+  if FGraphQL = nil then
     raise Exception.Create('Unable to process graphql - graphql document missing');
 
   FOutput.Free;
   FOutput := TGraphQLObjectValue.Create;
 
   // todo: initial conditions
-  if FDocument.Operations.Count <> 1 then
-    raise Exception.Create('Unable to process graphql');
-
-  checkNoDirectives(FDocument.Operations[0].Directives);
-  if FFocus = nil then
-    processSearch(FOutput, FDocument.Operations[0].SelectionSet)
+  if GraphQL.OperationName <> '' then
+  begin
+    op := GraphQL.Document.operation(GraphQL.OperationName);
+    if op = nil then
+      raise EGraphQLException.Create('Unable to find operation "'+GraphQL.OperationName+'"');
+  end
+  else if (GraphQL.Document.Operations.Count = 1) then
+    op := GraphQL.Document.Operations[0]
   else
-    processObject(FFocus, FFocus, FOutput, FDocument.Operations[0].SelectionSet);
+    raise EGraphQLException.Create('No operation name provided, so expected to find a single operation');
+
+  if op.operationType = qglotMutation then
+    raise EGraphQLException.Create('Mutation operations are not supported');
+
+  checkNoDirectives(op.Directives);
+  processVariables(op);
+  if FFocus = nil then
+    processSearch(FOutput, op.SelectionSet)
+  else
+    processObject(FFocus, FFocus, FOutput, op.SelectionSet);
 end;
 
 function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TAdvList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TAdvList<TFHIRObject>;
@@ -246,6 +323,7 @@ var
   v : TFHIRObject;
   fpe : TFHIRExpressionEngine;
   node: TFHIRExpressionNode;
+  vl : TAdvList<TGraphQLValue>;
 begin
   result := TAdvList<TFHIRObject>.create;
   try
@@ -255,19 +333,24 @@ begin
       try
         for arg in arguments do
         begin
-          if (arg.Values.Count <> 1) then
-            raise Exception.Create('Incorrect number of arguments');
-          if values[0].isPrimitive then
-            raise Exception.Create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
-          if (arg.Name = 'fhirpath') then
-            fp.Append(' and '+arg.Values[0].ToString)
-          else
-          begin
-            p := values[0].getPropertyValue(arg.Name);
-            if p = nil then
-              raise Exception.Create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
-            p.Free;
-            fp.Append(' and '+arg.Name+' = '''+arg.Values[0].ToString+'''');
+          vl := resolveValues(arg);
+          try
+            if (vl.Count <> 1) then
+              raise Exception.Create('Incorrect number of arguments');
+            if values[0].isPrimitive then
+              raise Exception.Create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
+            if (arg.Name = 'fhirpath') then
+              fp.Append(' and '+vl[0].ToString)
+            else
+            begin
+              p := values[0].getPropertyValue(arg.Name);
+              if p = nil then
+                raise Exception.Create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
+              p.Free;
+              fp.Append(' and '+arg.Name+' = '''+vl[0].ToString+'''');
+            end;
+          finally
+            vl.Free;
           end;
         end;
         if fp.Length = 0 then
@@ -320,7 +403,7 @@ begin
       begin
         fpe := TFHIRExpressionEngine.Create(nil);
         try
-          node := fpe.parse(fhirpath.Values[0].ToString);
+          node := fpe.parse(getSingleValue(fhirpath));
           try
             for be in bnd.entryList do
               if fpe.evaluateToBoolean(nil, be.resource, be.resource, node) then
@@ -357,7 +440,7 @@ begin
       begin
         fpe := TFHIRExpressionEngine.Create(nil);
         try
-          node := fpe.parse(fhirpath.Values[0].ToString);
+          node := fpe.parse(getSingleValue(fhirpath));
           try
             for v in list do
               if fpe.evaluateToBoolean(nil, v, v, node) then
@@ -375,6 +458,7 @@ begin
     result.Free;
   end;
 end;
+
 
 
 function TFHIRGraphQLEngine.hasArgument(arguments: TAdvList<TGraphQLArgument>; name, value: String): boolean;
@@ -408,12 +492,32 @@ begin
         raise EGraphQLException.Create('No Fields selected on a complex object');
       new := TGraphQLObjectValue.Create;
       try
-        arg.Values.Add(new.Link);
+        arg.addValue(new.Link);
         processObject(context, value, new, sel.field.SelectionSet);
       finally
         new.Free;
       end;
     end;
+  end;
+end;
+
+procedure TFHIRGraphQLEngine.processVariables(op : TGraphQLOperation);
+var
+  varRef : TGraphQLVariable;
+  v, varDef : TGraphQLArgument;
+begin
+  for varRef in op.Variables do
+  begin
+    varDef := nil;
+    for v in FGraphQL.Variables do
+      if v.Name = varRef.Name then
+        varDef := v;
+    if varDef <> nil then
+      FWorkingVariables.add(varRef.Name, varDef.Link)// todo: check type?
+    else if varRef.DefaultValue <> nil then
+      FWorkingVariables.Add(varRef.Name, TGraphQLArgument.Create(varRef.Name, varRef.DefaultValue.Link))
+    else
+      raise EGraphQLException.Create('No value found for variable ');
   end;
 end;
 
@@ -451,53 +555,56 @@ begin
   begin
     if (sel.Field <> nil) then
     begin
-      checkNoDirectives(sel.Field.Directives);
-      prop := source.getPropertyValue(sel.field.Name);
-      if (prop = nil) and sel.field.Name.startsWith('_') then
-        prop := source.getPropertyValue(sel.field.Name.substring(1));
-      if prop = nil then
+      if (checkDirectives(sel.Field.Directives)) then
       begin
-        if (sel.field.Name = 'resourceType') and (source is TFHIRResource) then
-          target.addField('resourceType', false).Values.Add(TGraphQLStringValue.Create(source.fhirType))
-        else if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
-          processReference(context, source, sel.field, target)
-        else if isResourceName(sel.field.Name, 'List') and (source is TFhirResource) then
-          processReverseReferenceList(source as TFhirResource, sel.field, target)
-        else if isResourceName(sel.field.Name, 'Connection') and (source is TFhirResource) then
-          processReverseReferenceSearch(source as TFhirResource, sel.field, target)
-        else
-          raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
-      end
-      else
-      begin
-        try
-          if not IsPrimitive(prop.Type_) and sel.field.Name.startsWith('_') then
+        prop := source.getPropertyValue(sel.field.Name);
+        if (prop = nil) and sel.field.Name.startsWith('_') then
+          prop := source.getPropertyValue(sel.field.Name.substring(1));
+        if prop = nil then
+        begin
+          if (sel.field.Name = 'resourceType') and (source is TFHIRResource) then
+            target.addField('resourceType', false).addValue(TGraphQLStringValue.Create(source.fhirType))
+          else if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
+            processReference(context, source, sel.field, target)
+          else if isResourceName(sel.field.Name, 'List') and (source is TFhirResource) then
+            processReverseReferenceList(source as TFhirResource, sel.field, target)
+          else if isResourceName(sel.field.Name, 'Connection') and (source is TFhirResource) then
+            processReverseReferenceSearch(source as TFhirResource, sel.field, target)
+          else
             raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
-
-          vl := filter(context, prop, sel.field.Arguments, prop.Values, sel.field.Name.startsWith('_'));
+        end
+        else
+        begin
           try
-           if not vl.Empty then
-             processValues(context, sel, prop, target, vl, sel.field.Name.startsWith('_'));
+            if not IsPrimitive(prop.Type_) and sel.field.Name.startsWith('_') then
+              raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
+
+            vl := filter(context, prop, sel.field.Arguments, prop.Values, sel.field.Name.startsWith('_'));
+            try
+             if not vl.Empty then
+               processValues(context, sel, prop, target, vl, sel.field.Name.startsWith('_'));
+            finally
+              vl.Free;
+            end;
           finally
-            vl.Free;
+            prop.Free;
           end;
-        finally
-          prop.Free;
         end;
       end;
     end
     else if sel.InlineFragment <> nil then
     begin
-      checkNoDirectives(sel.InlineFragment.Directives);
-      if sel.InlineFragment.TypeCondition = '' then
-        raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
-      if source.fhirType = sel.InlineFragment.TypeCondition then
-        processObject(context, source, target, sel.InlineFragment.SelectionSet);
+      if (checkDirectives(sel.InlineFragment.Directives)) then
+      begin
+        if sel.InlineFragment.TypeCondition = '' then
+          raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
+        if source.fhirType = sel.InlineFragment.TypeCondition then
+          processObject(context, source, target, sel.InlineFragment.SelectionSet);
+      end;
     end
-    else
+    else if checkDirectives(sel.FragmentSpread.Directives) then
     begin
-      checkNoDirectives(sel.FragmentSpread.Directives);
-      fragment := queryDocument.fragment(sel.FragmentSpread.Name);
+      fragment := FGraphQL.Document.fragment(sel.FragmentSpread.Name);
       if fragment = nil then
         raise EGraphQLException.Create('Unable to resolve fragment '+sel.FragmentSpread.Name);
 
@@ -515,11 +622,11 @@ var
 begin
   s := value.fhirType;
   if (s = 'integer') or (s = 'decimal') or (s = 'unsignedInt') or (s = 'positiveInt') then
-    arg.values.add(TGraphQLNumberValue.Create(value.primitiveValue))
+    arg.addValue(TGraphQLNumberValue.Create(value.primitiveValue))
   else if (s = 'boolean') then
-    arg.values.add(TGraphQLNameValue.Create(value.primitiveValue))
+    arg.addValue(TGraphQLNameValue.Create(value.primitiveValue))
   else
-    arg.values.add(TGraphQLStringValue.Create(value.primitiveValue));
+    arg.addValue(TGraphQLStringValue.Create(value.primitiveValue));
 end;
 
 
@@ -546,7 +653,7 @@ begin
           arg := target.addField(field.Alias, false);
           new := TGraphQLObjectValue.Create;
           try
-            arg.Values.Add(new.Link);
+            arg.addValue(new.Link);
             processObject(ctxt, dest, new, field.SelectionSet);
           finally
             new.Free;
@@ -590,8 +697,8 @@ begin
         raise EGraphQLException.Create('Missing parameter _reference');
       arg := TGraphQLArgument.Create;
       params.Add(arg);
-      arg.Name := parg.Values[0].ToString;
-      arg.Values.Add(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
+      arg.Name := getSingleValue(parg);
+      arg.addValue(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
       FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), params, list);
     finally
       params.Free;
@@ -608,7 +715,7 @@ begin
         begin
           new := TGraphQLObjectValue.Create;
           try
-            arg.Values.Add(new.Link);
+            arg.addValue(new.Link);
             processObject(v, v, new, field.SelectionSet);
           finally
             new.Free;
@@ -647,15 +754,15 @@ begin
       raise EGraphQLException.Create('Missing parameter _reference');
     arg := TGraphQLArgument.Create;
     params.Add(arg);
-    arg.Name := parg.Values[0].ToString;
-    arg.Values.Add(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
+    arg.Name := getSingleValue(parg);
+    arg.addValue(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
     try
       bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
       try
         arg := target.addField(field.Alias, false);
         new := TGraphQLObjectValue.Create;
-        arg.Values.Add(new);
+        arg.addValue(new);
         processObject(nil, bndWrapper, new, field.SelectionSet);
       finally
         bndWrapper.Free;
@@ -698,10 +805,10 @@ begin
     raise EGraphQLException.Create('Resource Referencing services not provided');
   id := '';
   for arg in field.Arguments do
-    if (arg.Name = 'id') and (arg.Values.Count = 1) then
-      id := arg.Values[0].ToString
+    if (arg.Name = 'id') then
+      id := getSingleValue(arg)
     else
-      raise EGraphQLException.Create('Unknown or invalid parameter '+arg.Name);
+      raise EGraphQLException.Create('Unknown/invalid parameter '+arg.Name);
   if (id = '') then
     raise EGraphQLException.Create('No id found');
   if not FOnLookup(FAppinfo, field.Name, id, res) then
@@ -710,7 +817,7 @@ begin
     arg := target.addField(field.Alias, false);
     new := TGraphQLObjectValue.Create;
     try
-      arg.Values.Add(new.Link);
+      arg.addValue(new.Link);
       processObject(res, res, new, field.SelectionSet);
     finally
       new.Free;
@@ -745,7 +852,7 @@ begin
         begin
           new := TGraphQLObjectValue.Create;
           try
-            arg.Values.Add(new.Link);
+            arg.addValue(new.Link);
             processObject(v, v, new, field.SelectionSet);
           finally
             new.Free;
@@ -782,7 +889,7 @@ begin
     if (carg <> nil) then
     begin
       params.Clear;
-      StringSplit(carg.Values[0].ToString, ':', l, r);
+      StringSplit(getSingleValue(carg), ':', l, r);
       params.Add(TGraphQLArgument.Create('search-id', TGraphQLStringValue.Create(l)));
       params.Add(TGraphQLArgument.Create('search-offset', TGraphQLStringValue.Create(r)));
     end;
@@ -793,7 +900,7 @@ begin
       try
         arg := target.addField(field.Alias, false);
         new := TGraphQLObjectValue.Create;
-        arg.Values.Add(new);
+        arg.addValue(new);
         processObject(nil, bndWrapper, new, field.SelectionSet);
       finally
         bndWrapper.Free;
@@ -951,5 +1058,55 @@ begin
   FEntry.Free;
   FEntry := value;
 end;
+
+function TFHIRGraphQLEngine.getSingleValue(arg: TGraphQLArgument): string;
+var
+  vl : TAdvList<TGraphQLValue>;
+begin
+  vl := resolveValues(arg, 1);
+  try
+    if vl.Count = 0 then
+      exit('');
+    result := vl[0].ToString;
+  finally
+    vl.Free;
+  end;
+end;
+
+function TFHIRGraphQLEngine.resolveValues(arg: TGraphQLArgument; max: integer; vars : String): TAdvList<TGraphQLValue>;
+var
+  v : TGraphQLValue;
+  a : TGraphQLArgument;
+  vl : TAdvList<TGraphQLValue>;
+begin
+  result := TAdvList<TGraphQLValue>.create;
+  try
+    for v in arg.Values do
+      if not (v is TGraphQLVariableValue) then
+        result.Add(v.Link)
+      else
+      begin
+        if vars.Contains(':'+v.ToString+':') then
+          raise EGraphQLException.Create('Recursive reference to variable '+v.ToString);
+        if FWorkingVariables.TryGetValue(v.ToString, a) then
+        begin
+          vl := resolveValues(a, -1, vars+':'+v.ToString+':');
+          try
+            result.AddAll(vl);
+          finally
+            vl.Free;
+          end;
+        end
+        else
+          raise EGraphQLException.Create('No value found for variable "'+v.ToString+'" in "'+arg.Name+'"');
+      end;
+    if (max <> -1) and (result.Count > max) then
+      raise EGraphQLException.Create('Only '+integer.ToString(max)+' values are allowed for "'+arg.Name+'", but '+inttostr(result.Count)+' enoucntered');
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
 
 end.

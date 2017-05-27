@@ -69,7 +69,7 @@ type
     function Search(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle;
   public
     [GraphQLTestCase]
-    procedure TestCase(source,output,context,resource: String);
+    procedure TestCase(source,output,context,resource,opName: String);
   end;
 
 
@@ -114,7 +114,7 @@ end;
 
 procedure TFHIRGraphQLParserTests.TestCase(body: String);
 var
-  doc : TGraphQLDocument;
+  doc : TGraphQLPackage;
 begin
   doc := TGraphQLParser.parse(body);
   try
@@ -148,7 +148,7 @@ begin
   while (test <> nil) and (test.nodeName = 'test') do
   begin
     result[i].Name := test.getAttribute('name');
-    SetLength(result[i].Values, 4);
+    SetLength(result[i].Values, 5);
     s := test.getAttribute('source');
     result[i].Values[0] := s;
     s := test.getAttribute('output');
@@ -157,6 +157,8 @@ begin
     result[i].Values[2] := s;
     s := VarToStr(test.getAttribute('resource'));
     result[i].Values[3] := s;
+    s := VarToStr(test.getAttribute('operation'));
+    result[i].Values[4] := s;
     inc(i);
     test := TMsXmlParser.NextSibling(test);
   end;
@@ -250,7 +252,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLTests.TestCase(source, output, context, resource: String);
+procedure TFHIRGraphQLTests.TestCase(source, output, context, resource, opName: String);
 var
   parts : TArray<String>;
   gql : TFHIRGraphQLEngine;
@@ -279,7 +281,9 @@ begin
     gql.OnSearch := Search;
     if (filename <> '') then
       gql.Focus := TFHIRXmlParser.ParseFile(nil, 'en', filename);
-    gql.QueryDocument := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
+    gql.GraphQL := TGraphQLParser.parseFile('C:\work\org.hl7.fhir\build\tests\graphql\'+source);
+    gql.GraphQL.OperationName := opName;
+    gql.GraphQL.variables.Add(TGraphQLArgument.Create('var', TGraphQLNameValue.Create('true')));
     try
       gql.execute;
       ok := true;
