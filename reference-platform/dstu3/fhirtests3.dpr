@@ -121,7 +121,8 @@ uses
   DifferenceEngine in 'DifferenceEngine.pas',
   DifferenceEngineTests in 'DifferenceEngineTests.pas',
   FHIRPathTests in 'tests\FHIRPathTests.pas',
-  GraphQL in '..\support\GraphQL.pas';
+  GraphQL in '..\support\GraphQL.pas',
+  AdvZipWriters in '..\support\AdvZipWriters.pas';
 
 var
   s: String;

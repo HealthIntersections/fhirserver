@@ -331,6 +331,7 @@ type
     function hint(source : String; typeCode : TFhirIssueTypeEnum; path : string; test : boolean; msg : string) : boolean;
 
     function hasErrors : boolean;
+    function asExceptionMessage : String;
   end;
 
   TFhirConceptMapElementHelper = class helper (TFhirElementHelper) for TFhirConceptMapElement
@@ -1770,6 +1771,25 @@ end;
 
 { TFHIROperationOutcomeHelper }
 
+
+function TFHIROperationOutcomeHelper.asExceptionMessage: String;
+var
+  b : TStringBuilder;
+  issue : TFhirOperationOutcomeIssue;
+begin
+  b := TStringBuilder.Create;
+  try
+    for issue in issueList do
+    begin
+      if (b.Length > 0) then
+        b.Append(', ');
+      b.append(issue.summary);
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 function TFHIROperationOutcomeHelper.error(source : String; typeCode : TFhirIssueTypeEnum; path: string; test: boolean; msg: string): boolean;
 var

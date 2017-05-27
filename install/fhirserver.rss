@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.143 2017-05-23</title>
+		<item><title>FHIRServer release 1.0.144 2017-05-27</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.144.exe</link>
+			<description>2017-05-27 (v1.0.144): More GraphQL support</description>
+		</item>
+<item><title>FHIRServer release 1.0.143 2017-05-23</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.143.exe</link>
 			<description>2017-05-23 (v1.0.143): fix bug in Patient/$everything operation</description>
 		</item>
-<item><title>FHIRServer release 1.0.142 2017-05-22</title>
+		<item><title>FHIRServer release 1.0.142 2017-05-22</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.142.exe</link>
 			<description>2017-05-22 (v1.0.142): GraphQL support</description>
 		</item>
