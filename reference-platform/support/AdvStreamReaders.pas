@@ -50,6 +50,7 @@ Type
   TAdvStreamReader = class(TAdvTextReader)
   private
     FBufferedData: TStringBuilder;
+    FBufferOffset : Integer;
     FBufferSize: Integer;
     FDetectBOM: Boolean;
     FNoDataInStream: Boolean;
@@ -57,6 +58,7 @@ Type
     FStream: TAdvStream;
     FCursor : Integer;
     FEncoding: TEncoding;
+    FCheckEncoding : boolean;
     function DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
     function SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
     procedure FillBuffer(var Encoding: TEncoding);
@@ -112,6 +114,7 @@ begin
     raise EArgumentException.CreateResFmt(@SParamIsNil, ['Encoding']); // DO NOT LOCALIZE
 
   FBufferedData := TStringBuilder.Create;
+  FBufferOffset := 0;
   FEncoding := Encoding;
   FBufferSize := BufferSize;
   if FBufferSize < 128 then
@@ -161,6 +164,7 @@ begin
   begin
     FBufferedData.Free;
     FBufferedData := nil;
+    FBufferOffset := 0;
   end;
 end;
 
@@ -168,7 +172,8 @@ procedure TAdvStreamReader.DiscardBufferedData;
 begin
   if FBufferedData <> nil then
   begin
-    FBufferedData.Remove(0, FBufferedData.Length);
+    FBufferedData.Clear;
+    FBufferOffset := 0;
     FNoDataInStream := False;
   end;
 end;
@@ -223,12 +228,17 @@ begin
   ok := false;
   repeat
     try
+      if FCheckEncoding and (FEncoding.GetCharCount(LBuffer, StartIndex, ByteBufLen) = 0) then
+      begin
+        SetLength(LBuffer, Length(LBuffer) + BufferPadding);
+        FStream.Read(LBuffer[ByteBufLen], 1);
+        inc(ByteBufLen);
+      end;
+
       LString := FEncoding.GetString(LBuffer, StartIndex, ByteBufLen);
       ok := true;
     except
-      SetLength(LBuffer, Length(LBuffer) + BufferPadding);
-      FStream.Read(LBuffer[ByteBufLen], 1);
-      inc(ByteBufLen);
+      FCheckEncoding := true;
     end;
   until ok;
 
@@ -238,9 +248,9 @@ end;
 
 function TAdvStreamReader.GetEndOfStream: Boolean;
 begin
-  if not FNoDataInStream and (FBufferedData <> nil) and (FBufferedData.Length < 1) then
+  if not FNoDataInStream and (FBufferedData <> nil) and (FBufferedData.Length < 1+FBufferOffset) then
     FillBuffer(FEncoding);
-  Result := FNoDataInStream and ((FBufferedData = nil) or (FBufferedData.Length = 0));
+  Result := FNoDataInStream and ((FBufferedData = nil) or (FBufferedData.Length = FBufferOffset));
 end;
 
 function TAdvStreamReader.Peek: Integer;
@@ -248,33 +258,31 @@ begin
   Result := -1;
   if (FBufferedData <> nil) and (not EndOfStream) then
   begin
-    if FBufferedData.Length < 1 then
+    if FBufferedData.Length < 1 + FBufferOffset  then
       FillBuffer(FEncoding);
-    Result := Integer(FBufferedData.Chars[0]);
+    Result := Integer(FBufferedData.Chars[FBufferOffset]);
   end;
 end;
 
-function TAdvStreamReader.Read(const Buffer: TCharArray; Index,
-  Count: Integer): Integer;
+function TAdvStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := -1;
   if (FBufferedData <> nil) and (not EndOfStream) then
   begin
-    while (FBufferedData.Length < Count) and (not EndOfStream) and (not FNoDataInStream) do
+    while (FBufferedData.Length < Count + FBufferOffset) and (not EndOfStream) and (not FNoDataInStream) do
       FillBuffer(FEncoding);
 
-    if FBufferedData.Length > Count then
+    if FBufferedData.Length > Count + FBufferOffset then
       Result := Count
     else
-      Result := FBufferedData.Length;
+      Result := FBufferedData.Length - FBufferOffset;
 
-    FBufferedData.CopyTo(0, Buffer, Index, Result);
-    FBufferedData.Remove(0, Result);
+    FBufferedData.CopyTo(FBufferOffset, Buffer, Index, Result);
+    inc(FBufferOffset, result);
   end;
 end;
 
-function TAdvStreamReader.ReadBlock(const Buffer: TCharArray; Index,
-  Count: Integer): Integer;
+function TAdvStreamReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := Read(Buffer, Index, Count);
 end;
@@ -284,10 +292,10 @@ begin
   Result := -1;
   if (FBufferedData <> nil) and (not EndOfStream) then
   begin
-    if FBufferedData.Length < 1 then
+    if FBufferedData.Length < 1 + FBufferOffset then
       FillBuffer(FEncoding);
-    Result := Integer(FBufferedData.Chars[0]);
-    FBufferedData.Remove(0, 1);
+    Result := Integer(FBufferedData.Chars[FBufferOffset]);
+    inc(FBufferOffset);
   end;
 end;
 
@@ -304,10 +312,10 @@ begin
 
   while True do
   begin
-    if (NewLineIndex + 2 > FBufferedData.Length) and (not FNoDataInStream) then
+    if (NewLineIndex + 2 > FBufferedData.Length + FBufferOffset) and (not FNoDataInStream) then
       FillBuffer(FEncoding);
 
-    if NewLineIndex >= FBufferedData.Length then
+    if NewLineIndex >= FBufferedData.Length + FBufferOffset then
     begin
       if FNoDataInStream then
       begin
@@ -317,23 +325,23 @@ begin
       else
       begin
         FillBuffer(FEncoding);
-        if FBufferedData.Length = 0 then
+        if FBufferedData.Length = FBufferOffset then
           Break;
       end;
     end;
-    if FBufferedData[NewLineIndex] = #10 then
+    if FBufferedData[NewLineIndex + FBufferOffset] = #10 then
     begin
       PostNewLineIndex := NewLineIndex + 1;
       Break;
     end
     else
-    if (FBufferedData[NewLineIndex] = #13) and (NewLineIndex + 1 < FBufferedData.Length) and (FBufferedData[NewLineIndex + 1] = #10) then
+    if (FBufferedData[NewLineIndex + FBufferOffset] = #13) and (NewLineIndex + 1 < FBufferedData.Length + FBufferOffset) and (FBufferedData[NewLineIndex + 1] = #10) then
     begin
       PostNewLineIndex := NewLineIndex + 2;
       Break;
     end
     else
-    if FBufferedData[NewLineIndex] = #13 then
+    if FBufferedData[NewLineIndex + FBufferOffset] = #13 then
     begin
       PostNewLineIndex := NewLineIndex + 1;
       Break;
@@ -342,9 +350,9 @@ begin
     Inc(NewLineIndex);
   end;
 
-  Result := FBufferedData.ToString;
+  Result := FBufferedData.ToString.Substring(FBufferOffset);
   SetLength(Result, NewLineIndex);
-  FBufferedData.Remove(0, PostNewLineIndex);
+  inc(FBufferOffset, PostNewLineIndex);
 end;
 
 function TAdvStreamReader.ReadToEnd: string;
@@ -355,8 +363,9 @@ begin
     repeat
       FillBuffer(FEncoding);
     until FNoDataInStream;
-    Result := FBufferedData.ToString;
-    FBufferedData.Remove(0, FBufferedData.Length);
+    Result := FBufferedData.ToString.Substring(FBufferOffset);
+    FBufferedData.Clear;
+    FBufferOffset := 0;
   end;
 end;
 
