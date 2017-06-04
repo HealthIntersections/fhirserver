@@ -163,8 +163,8 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
     function subsumesTest(codeA, codeB : String) : String; override;
   end;
 
@@ -1911,7 +1911,7 @@ begin
     result := s+' ';
 end;
 
-procedure TFhirCodeSystemProvider.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TFhirCodeSystemProvider.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
 var
   b : TStringBuilder;
   ctxt : TFhirCodeSystemProviderContext;
@@ -2180,7 +2180,7 @@ begin
     result := TFhirCodeSystemProviderContext.Create(c.Link);
 end;
 
-procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
 {$IFNDEF FHIR2}
 var
   context : TFhirCodeSystemConcept;

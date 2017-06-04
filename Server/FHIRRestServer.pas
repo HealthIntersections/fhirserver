@@ -1446,7 +1446,7 @@ begin
     s := FServerContext.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
-      builder := TQuestionnaireBuilder.Create;
+      builder := TQuestionnaireBuilder.Create(request.Lang);
       try
         questionnaire := FServerContext.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try
@@ -1622,7 +1622,7 @@ begin
     s := FServerContext.QuestionnaireCache.getForm(frtStructureDefinition, id);
     if s = '' then
     begin
-      builder := TQuestionnaireBuilder.Create;
+      builder := TQuestionnaireBuilder.Create(request.Lang);
       try
         questionnaire := FServerContext.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
         try

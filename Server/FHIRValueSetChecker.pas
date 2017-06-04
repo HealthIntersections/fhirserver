@@ -263,7 +263,7 @@ begin
         else
           try
             result := (abstractOk or not cs.IsAbstract(ctxt)) and ((FProfile = nil) or not FProfile.activeOnly or not cs.isInactive(ctxt));
-            cs.Displays(ctxt, displays, '');
+            cs.Displays(ctxt, displays, Fprofile.displayLanguage);
           finally
             cs.Close(ctxt);
           end;
@@ -429,7 +429,7 @@ begin
         begin
           message := '';
           if (code.codingList[i].display <> '') and (list.IndexOf(code.codingList[i].display) < 0) then
-            result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc);
+            result.AddParameter('message', 'The display "'+code.codingList[i].display+'" is not a valid display for the code '+cc.substring(1));
           if list.Count > 0 then
             result.AddParameter('display', list[0]);
         end
@@ -514,7 +514,7 @@ begin
       result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
       if result then
       begin
-        cs.displays(loc, displays, '');
+        cs.displays(loc, displays, FProfile.displayLanguage);
         exit;
       end
       else
@@ -555,7 +555,7 @@ begin
         try
           result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
           if result then
-            cs.displays(loc, displays, '');
+            cs.displays(loc, displays, FProfile.displayLanguage);
         finally
           cs.Close(loc);
         end;
@@ -572,7 +572,7 @@ begin
             try
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if loc <> nil then
-                cs.displays(loc, displays, '');
+                cs.displays(loc, displays, FProfile.displayLanguage);
             finally
               cs.Close(loc);
             end;
@@ -586,7 +586,7 @@ begin
                 message := msg;
               result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
               if loc <> nil then
-                cs.displays(loc, displays, '');
+                cs.displays(loc, displays, FProfile.displayLanguage);
             finally
               cs.Close(loc);
             end;

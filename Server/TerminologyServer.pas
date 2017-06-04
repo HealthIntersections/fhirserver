@@ -90,15 +90,15 @@ Type
     function expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer) : TFHIRValueSet; overload;
     function expandVS(vs: TFHIRValueSet; cacheId : String; profile : TFhirExpansionProfile; textFilter : String; dependencies : TStringList; limit, count, offset : integer): TFHIRValueSet; overload;
 
-    procedure lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
+    procedure lookupCode(coding : TFhirCoding; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
     function validate(vs : TFHIRValueSet; coding : TFhirCoding; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters; overload;
     function validate(vs : TFHIRValueSet; coded : TFhirCodeableConcept; profile : TFhirExpansionProfile; abstractOk : boolean) : TFhirParameters; overload;
-    function translate(cm : TLoadedConceptMap; coding : TFhirCoding) : TFHIRParameters; overload;
-    function translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
-    function translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters; overload;
+    function translate(lang : String; cm : TLoadedConceptMap; coding : TFhirCoding) : TFHIRParameters; overload;
+    function translate(lang : String; source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters; overload;
+    function translate(lang : String; source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters; overload;
     Function MakeChecker(uri : string; profile : TFhirExpansionProfile) : TValueSetChecker;
-    function getDisplayForCode(system, version, code : String): String;
-    function checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
+    function getDisplayForCode(lang : String; system, version, code : String): String;
+    function checkCode(op : TFhirOperationOutcome; lang, path : string; code : string; system, version : string; display : string) : boolean;
     {$IFNDEF FHIR2}
     procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
     {$ENDIF}
@@ -108,8 +108,8 @@ Type
     function UseClosure(name : String; out cm : TClosureManager) : boolean;
     function enterIntoClosure(conn : TKDBConnection; name, uri, code : String) : integer;
 
-    procedure getCodeView(coding : TFHIRCoding; response : TCDSHookResponse); overload;
-    procedure getCodeView(coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
+    procedure getCodeView(lang : String; coding : TFHIRCoding; response : TCDSHookResponse); overload;
+    procedure getCodeView(lang : String; coding : TFhirCodeableConcept; response : TCDSHookResponse); overload;
 
     // database maintenance
     procedure BuildIndexes(prog : boolean);
@@ -239,7 +239,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.lookupCode(coding : TFhirCoding; props : TList<String>; resp : TFHIRLookupOpResponse);
+procedure TTerminologyServer.lookupCode(coding : TFhirCoding; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
 var
   provider : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -278,8 +278,8 @@ begin
         {$ENDIF}
       end;
       if (hasProp('display', true)) then
-        resp.display := provider.Display(ctxt, '');
-      provider.extendLookup(ctxt, props, resp);
+        resp.display := provider.Display(ctxt, lang);
+      provider.extendLookup(ctxt, lang, props, resp);
     finally
       provider.Close(ctxt);
     end;
@@ -580,7 +580,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.checkCode(op : TFhirOperationOutcome; path : string; code : string; system, version : string; display : string) : boolean;
+function TTerminologyServer.checkCode(op : TFhirOperationOutcome; lang, path : string; code : string; system, version : string; display : string) : boolean;
 var
   cs : TFhirCodeSystem;
   cp : TCodeSystemProvider;
@@ -601,7 +601,7 @@ begin
   end
   else if system.StartsWith('http://loinc.org') and (Loinc <> nil) then
   begin
-    d := Loinc.GetDisplayByName(code);
+    d := Loinc.GetDisplayByName(code, Loinc.LangsForLang(lang));
     if op.warning('InstanceValidator', IssueTypeCodeInvalid, path, d <> '', 'The LOINC code "'+code+'" is unknown') then
       result := op.warning('InstanceValidator', IssueTypeCodeInvalid, path, (display = '') or (display = d), 'Display for Loinc Code "'+code+'" should be "'+d+'"');
   end
@@ -780,20 +780,20 @@ begin
 end;
 
 
-function TTerminologyServer.getDisplayForCode(system, version, code: String): String;
+function TTerminologyServer.getDisplayForCode(lang : String; system, version, code: String): String;
 var
   provider : TCodeSystemProvider;
 begin
   provider := getProvider(system, version, nil, true);
   if provider <> nil then
   try
-    result := provider.getDisplay(code, '');
+    result := provider.getDisplay(code, lang);
   finally
     provider.Free;
   end;
 end;
 
-procedure TTerminologyServer.getCodeView(coding: TFHIRCoding; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(lang : String; coding: TFHIRCoding; response: TCDSHookResponse);
 var
   card : TCDSHookCard;
   cs : TCodeSystemProvider;
@@ -803,19 +803,19 @@ begin
   begin
     try
       card := response.addCard;
-      cs.getCDSInfo(card, webBase, coding.code, coding.display);
+      cs.getCDSInfo(card, lang, webBase, coding.code, coding.display);
     finally
       cs.Free;
     end;
   end;
 end;
 
-procedure TTerminologyServer.getCodeView(coding: TFhirCodeableConcept; response: TCDSHookResponse);
+procedure TTerminologyServer.getCodeView(lang : String; coding: TFhirCodeableConcept; response: TCDSHookResponse);
 var
   c : TFhirCoding;
 begin
   for c in coding.codingList do
-    getCodeView(c, response);
+    getCodeView(lang, c, response);
 end;
 
 function TTerminologyServer.InitClosure(name: String) : String;
@@ -903,7 +903,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters;
+function TTerminologyServer.translate(lang : String; source : TFHIRValueSet; coding : TFhirCoding; target : TFHIRValueSet) : TFHIRParameters;
 var
   op : TFHIROperationOutcome;
   list : TLoadedConceptMapList;
@@ -920,7 +920,7 @@ begin
   op := TFhirOperationOutcome.Create;
   try
     try
-      if not checkCode(op, '', coding.code, coding.system, coding.version, coding.display) then
+      if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
         raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
       // check to see whether the coding is already in the target value set, and if so, just return it
@@ -996,10 +996,10 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters;
+function TTerminologyServer.translate(lang : String; source : TFHIRValueSet; coded : TFhirCodeableConcept; target : TFHIRValueSet) : TFHIRParameters;
 begin
   if coded.codingList.count = 1 then
-    result := translate(source, coded.codingList[0], target)
+    result := translate(lang, source, coded.codingList[0], target)
   else
     raise Exception.Create('Not done yet');
 end;
@@ -1275,7 +1275,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.translate(cm: TLoadedConceptMap; coding: TFhirCoding): TFHIRParameters;
+function TTerminologyServer.translate(lang : String; cm: TLoadedConceptMap; coding: TFhirCoding): TFHIRParameters;
 var
   op : TFHIROperationOutcome;
   g : TFhirConceptMapGroup;
@@ -1288,7 +1288,7 @@ begin
   op := TFhirOperationOutcome.Create;
   try
     try
-      if not checkCode(op, '', coding.code, coding.system, coding.version, coding.display) then
+      if not checkCode(op, lang, '', coding.code, coding.system, coding.version, coding.display) then
         raise Exception.Create('Code '+coding.code+' in system '+coding.system+' not recognized');
 
 //      // check to see whether the coding is already in the target value set, and if so, just return it

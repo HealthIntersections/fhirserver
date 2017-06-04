@@ -119,11 +119,11 @@ Type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); virtual;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); virtual;
     function subsumesTest(codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); virtual;
+    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); virtual;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; virtual;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; virtual; abstract;
@@ -160,7 +160,7 @@ end;
 
 
 
-procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse);
+procedure TCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
 begin
   // nothing here
 end;
@@ -172,7 +172,7 @@ begin
   result := filterLocate(ctxt, code, msg);
 end;
 
-procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implemeentation for code system '+system(nil)+' for code '+code+' ('+display+')';
 end;

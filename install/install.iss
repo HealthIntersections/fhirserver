@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.144
+AppVerName=1.0.147
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.144
+OutputBaseFilename=fhirserver3-1.0.147
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -118,7 +118,7 @@ Source: "C:\work\fhirserver\install\load.ini";                                  
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_256.cache";                  DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc_259.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 

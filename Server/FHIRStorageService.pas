@@ -134,7 +134,7 @@ Type
 
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); virtual;
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
+    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
   end;
 
@@ -163,7 +163,7 @@ begin
   inherited;
 end;
 
-function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
+function TFHIRStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet;
 begin
   raise Exception.Create('Expanding valuesets is not implemented in this server');
 end;

@@ -55,10 +55,24 @@ also:
   v2 & v3 data type
 }
 Const
-  LOINC_CACHE_VERSION = '9';
+  LOINC_CACHE_VERSION = '11';
   NO_PARENT = $FFFFFFFF;
 
+  CL_OFFSET_Description = 0;
+  CL_OFFSET_OtherNames = 4;
+  CL_OFFSET_Component = 8;
+  CL_OFFSET_Property = 12;
+  CL_OFFSET_TimeAspect = 16;
+  CL_OFFSET_System = 20;
+  CL_OFFSET_Scale = 24;
+  CL_OFFSET_Method = 28;
+  CL_OFFSET_Class = 32;
+  CL_OFFSET_Flags = 36;
+  CL_OFFSET_Stems = 37;
+  CL_OFFSET_Entry = 41;
+
 Type
+  TLangArray = array of byte;
   TLoincPropertyType = (lptComponents, lptProperties, lptTimeAspects, lptSystems, lptScales, lptMethods, lptClasses);
 
 type
@@ -69,6 +83,22 @@ type
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
   //   the fifth structure is the multi-axial heirarchy - parent, children, descendants, concepts, and descendent concepts
 
+  // 0. language list
+  TLoincLanguages = class (TAdvObject)
+  private
+    FMaster : TBytes;
+    FLength : Cardinal;
+    FBuilder : TAdvBytesBuilder;
+  public
+
+    procedure GetEntry(iIndex : byte; var lang, country : String);
+    function count : integer;
+
+    Procedure StartBuild;
+    Function AddEntry(lang, country: String) : byte;
+    Procedure DoneBuild;
+  end;
+
   // 1. a list of strings
   //   each entry in the String starts with a byte length, and then the series of characters (2 bytes)
   // we store loinc descriptions, and other names in here
@@ -78,10 +108,10 @@ type
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
     Public
-      Function GetEntry(iIndex : Cardinal):String;
+      Function GetEntry(iIndex : Cardinal; var lang : byte):String;
 
       Procedure StartBuild;
-      Function AddEntry(Const s : String) : Cardinal;
+      Function AddEntry(lang : byte; Const s : String) : Cardinal;
       Procedure DoneBuild;
   End;
 
@@ -99,6 +129,7 @@ type
 const
   FLAG_LONG_COMMON = 1;
   FLAG_LONG_RELATED = 2;
+  CONCEPT_LENGTH = 13;
 
 Type
   // word index. Every word is 5 bytes - a 4 byte index into the strings, and a 1 byte flag
@@ -107,7 +138,7 @@ Type
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
-   Public
+    Public
       Procedure GetEntry(iIndex : Cardinal; var index : Cardinal; var flags : Byte);
       Function Count : Integer;
       Function GetString(iIndex : Cardinal) : Cardinal;
@@ -141,7 +172,6 @@ Type
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
     Public
-      Function GetWords(iIndex : Cardinal) : TWordArray;
       Function GetCardinals(iIndex : Cardinal) : TCardinalArray;
       Function Getlength(iIndex : Cardinal) : Cardinal;
 
@@ -154,14 +184,17 @@ Type
   // 3. a list of concepts
   TLOINCConcepts = class (TAdvObject)
     Private
+      FRefs:TLOINCReferences; // no own
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
+      function getForLang(langs : TLangArray; ref : cardinal) : cardinal;
     Public
-      Procedure GetConcept(iIndex : Word; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
+      Constructor Create(refs : TLOINCReferences);
+      Procedure GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
 
       Procedure StartBuild;
-      Function AddConcept(iName : Cardinal; iChildren : Cardinal; iConcepts : Cardinal) : Word;
+      Function AddConcept(iName : Cardinal; childByLang : boolean; iChildren : Cardinal; iConcepts : Cardinal) : Cardinal;
       Procedure DoneBuild;
 
   End;
@@ -197,29 +230,34 @@ Const
 Type
   TLOINCCodeList = class (TAdvObject)
     Private
+      FRefs:TLOINCReferences; // no own
       FCodeLength, FReclength : Cardinal;
       FMaster : TBytes;
       FLength : Cardinal;
       FBuilder : TAdvBytesBuilder;
       procedure SetCodeLength(const Value: Cardinal);
+      function getForLang(langs : TLangArray;  ref : cardinal) : cardinal;
     Public
+      Constructor Create(refs : TLOINCReferences);
+      Destructor Destroy; override;
+
       Function FindCode(sCode : String; var iIndex : Cardinal) : Boolean;
 
-      Procedure GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word; var iFlags : Byte);
+      Procedure GetInformation(iIndex: Cardinal; langs : TLangArray; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : cardinal; var iFlags : Byte);
 
       // we presume that the Codes are registered in order
       Procedure StartBuild;
-      Function AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
+      Function AddCode(sCode : String; iDescriptions, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
       Procedure DoneBuild;
 
       // these need to be called after Done Build
-      Procedure SetComponent(iIndex : Cardinal; iValue : Word);
-      Procedure SetProperty(iIndex : Cardinal; iValue : Word);
-      Procedure SetTimeAspect(iIndex : Cardinal; iValue : Word);
-      Procedure SetSystem(iIndex : Cardinal; iValue : Word);
-      Procedure SetScale(iIndex : Cardinal; iValue : Word);
-      Procedure SetMethod(iIndex : Cardinal; iValue : Word);
-      Procedure SetClass(iIndex : Cardinal; iValue : Word);
+      Procedure SetComponents(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetPropertys(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetTimeAspects(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetSystems(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetScales(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetMethods(iIndex : Cardinal; iValue : cardinal);
+      Procedure SetClasses(iIndex : Cardinal; iValue : cardinal);
       Procedure SetStems(iIndex : Cardinal; iValue : Cardinal);
 
       Function Count : Integer;
@@ -277,7 +315,7 @@ Type
   TLoincSubsetId = (lsiNull, lsiAll, lsiOrder, lsiObs, lsiOrderObs, lsiOrderSubset, lsiTypeObservation, lsiTypeClinical, lsiTypeAttachment,
     lsiTypeSurvey, lsiInternal, lsi3rdParty, lsiActive, lsiDeprecated, lsiDiscouraged, lsiTrial);
   TLoincSubsets = Array [TLoincSubsetId] of Cardinal;
-  TLoincPropertyIds = Array [TLoincPropertyType] of Word;
+  TLoincPropertyIds = Array [TLoincPropertyType] of Cardinal;
 
   THolder = class (TCodeSystemProviderFilterContext)
   private
@@ -288,6 +326,7 @@ Type
 
   TLOINCServices = class (TCodeSystemProvider)
   Private
+    FLang : TLoincLanguages;
     FDesc : TLoincStrings;
     FCode : TLOINCCodeList;
     FRefs : TLOINCReferences;
@@ -300,7 +339,7 @@ Type
     FAnswerLists : TLOINCAnswersList;
     FHeirarchyRoots : TCardinalArray;
 
-    FRoot : Word;
+    FRoot : Cardinal;
     FLoaded: Boolean;
     FVersion: String;
     FKey: integer;
@@ -308,7 +347,8 @@ Type
     function FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
     function FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
     function FilterByHeirarchy(op: TFhirFilterOperatorEnum; value: String; transitive: boolean): TCodeSystemProviderFilterContext;
-    function GetConceptDesc(iConcept : Word):String;
+    function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
+    function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -316,15 +356,19 @@ Type
 
     Procedure Load(Const sFilename : String);
     Procedure Save(Const sFilename : String);
-    Function GetDisplayByName(Const sCode : String) : String;
-    procedure GetDisplaysByName(Const sCode : String; list : TStringList);
+    function langsForLang(lang : String): TLangArray;
+    function supportsLang(lang : String): boolean;
+
+    Function GetDisplayByName(Const sCode : String; langs : TLangArray) : String;
+    procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TStringList);
     Function Search(sText : String; all: boolean) : TMatchArray; overload;
-    Function GetPropertyId(aType : TLoincPropertyType; const sName : String) : Word;
-    Function GetPropertyCodes(iProp : Word) : TCardinalArray;
-    Function GetConceptName(iConcept : Word): String;
+    Function GetPropertyId(aType : TLoincPropertyType; langs : TLangArray; const sName : String) : cardinal;
+    Function GetPropertyCodes(iProp : cardinal) : TCardinalArray;
+    Function GetConceptName(iConcept : cardinal): String;
     Function IsCode(sCode : String): Boolean;
     Function IsMACode(sCode : String): Boolean;
 
+    Property Lang : TLoincLanguages read FLang;
     Property Desc : TLoincStrings read FDesc;
     Property Refs : TLOINCReferences read FRefs;
     Property Concepts : TLOINCConcepts read FConcepts;
@@ -335,7 +379,7 @@ Type
     Property AnswerLists : TLOINCAnswersList read FAnswerLists;
 
 
-    Property Root : Word read FRoot write FRoot;
+    Property Root : Cardinal read FRoot write FRoot;
     Property Loaded : Boolean read FLoaded write FLoaded;
     Property LOINCVersion : String read FVersion write FVersion;
     Property Properties : TLoincPropertyIds read FProperties Write FProperties;
@@ -370,8 +414,8 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
   End;
@@ -405,7 +449,7 @@ Implementation
 
 { TLoincStrings }
 
-function TLoincStrings.GetEntry(iIndex: Cardinal): String;
+function TLoincStrings.GetEntry(iIndex: Cardinal; var lang : byte): String;
 begin
   if iIndex = 0 Then
   begin
@@ -416,19 +460,28 @@ begin
   if (iIndex > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name');
   SetLength(Result, Word(FMaster[iIndex]));
-  if (Byte(FMaster[iIndex]) + iIndex > FLength) then
+  if (iIndex + 3 + length(result) > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name (2)');
-  if Byte(FMaster[iIndex]) > 0 Then
-    Move(FMaster[iIndex+2], result[1], Length(Result)*2);
+  if Length(result) > 0 Then
+  begin
+    Move(FMaster[iIndex+2], lang, 1);
+    Move(FMaster[iIndex+3], result[1], Length(Result)*2);
+  end;
 end;
 
-function TLoincStrings.AddEntry(const s: String): Cardinal;
+function TLoincStrings.AddEntry(lang : byte; const s: String): Cardinal;
 begin
-  if Length(s) > 255 Then
+  if Length(s) > 2000 Then
     raise exception.Create('LOINC Description too long: '+s);
   result := FBuilder.Length;
   FBuilder.AddWord(Length(s));
-  FBuilder.AddString(s);
+  if (length(s) > 0) then
+  begin
+    FBuilder.Append(lang);
+    if s[1] < ' ' then
+      writeln('error');
+    FBuilder.AddString(s);
+  end;
 end;
 
 procedure TLoincStrings.DoneBuild;
@@ -445,7 +498,7 @@ end;
 
 { TLOINCReferences }
 
-Function TLOINCReferences.GetWords(iIndex: Cardinal) : TWordArray;
+{Function TLOINCReferences.GetWords(iIndex: Cardinal) : TWordArray;
 var
   i : integer;
   lw : Cardinal;
@@ -464,7 +517,7 @@ begin
     inc(iIndex, 2);
   End;
 end;
-
+}
 Function TLOINCReferences.GetCardinals(iIndex: Cardinal) : TCardinalArray;
 var
   i : integer;
@@ -490,7 +543,7 @@ var
   iLoop : Integer;
 Begin
   if Length(a) > 65535 Then
-    raise exception.Create('LOINC reference list too long');
+    raise exception.Create('LOINC reference list too long ('+inttostr(length(a))+')');
   result := FBuilder.Length;
   FBuilder.Append(Byte(0));// for words
   FBuilder.AddCardinal(length(a));
@@ -531,21 +584,51 @@ end;
 
 { TLOINCConcepts }
 
-Procedure TLOINCConcepts.GetConcept(iIndex : Word; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
+Procedure TLOINCConcepts.GetConcept(iIndex : Cardinal; langs : TLangArray; var iName : Cardinal; var iChildren : Cardinal; var iConcepts : Cardinal);
+var
+  b : byte;
 begin
   if (iIndex >= FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name');
-  Move(FMaster[iIndex*12+0], iName, 4);
-  Move(FMaster[iIndex*12+4], iChildren, 4);
-  Move(FMaster[iIndex*12+8], iConcepts, 4);
+  Move(FMaster[iIndex*CONCEPT_LENGTH+0], iName, 4);
+  Move(FMaster[iIndex*CONCEPT_LENGTH+4], b, 1);
+  Move(FMaster[iIndex*CONCEPT_LENGTH+5], iChildren, 4);
+  Move(FMaster[iIndex*CONCEPT_LENGTH+9], iConcepts, 4);
+  if b <> 0 then
+    iChildren := getForLang(langs, iChildren);
 end;
 
-function TLOINCConcepts.AddConcept(iName : Cardinal; iChildren : Cardinal; iConcepts : Cardinal) : Word;
+function TLOINCConcepts.getForLang(langs: TLangArray; ref: cardinal): cardinal;
+var
+  dlist : TCardinalArray;
+  l : byte;
 begin
-  result := FBuilder.Length div 12;
+  dlist := FRefs.GetCardinals(ref);
+  result := dlist[0];
+  for l in langs do
+  begin
+    result := dlist[l];
+    if result <> 0 then
+      exit;
+  end;
+end;
+
+function TLOINCConcepts.AddConcept(iName : Cardinal; childByLang : boolean; iChildren : Cardinal; iConcepts : Cardinal) : Cardinal;
+begin
+  result := FBuilder.Length div CONCEPT_LENGTH;
   FBuilder.AddCardinal(iName);
+  if (childByLang) then
+    FBuilder.Append(1)
+  else
+    FBuilder.Append(0);
   FBuilder.AddCardinal(iChildren);
   FBuilder.AddCardinal(iConcepts);
+end;
+
+constructor TLOINCConcepts.Create(refs: TLOINCReferences);
+begin
+  Inherited Create;
+  FRefs := refs;
 end;
 
 procedure TLOINCConcepts.DoneBuild;
@@ -569,74 +652,77 @@ begin
 end;
 
 
-Function TLOINCCodeList.AddCode(sCode : String; iDescription, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
+Function TLOINCCodeList.AddCode(sCode : String; iDescriptions, iOtherNames, iEntry : Cardinal; iFlags : Byte) : Cardinal;
 var
   s : AnsiString;
   i : integer;
 begin
-  Result := FBuilder.Length;
-  Result := Result div (FCodeLength+31);
+  Result := FBuilder.Length div FReclength;
   SetLength(s, FCodeLength);
   FillChar(s[1], FCodeLength, 32);
   for I := 1 to length(sCode) do
     s[i] := AnsiChar(sCode[i]);
   FBuilder.AddAnsiString(s);
-{00}  FBuilder.AddCardinal(iDescription);
-{04}  FBuilder.AddCardinal(iOtherNames);
-{08}  FBuilder.AddWord(0); // Component
-{10}  FBuilder.AddWord(0); // Property
-{12}  FBuilder.AddWord(0); // TimeAspect
-{14}  FBuilder.AddWord(0); // System
-{16}  FBuilder.AddWord(0); // Scale
-{18}  FBuilder.AddWord(0); // Method
-{20}  FBuilder.AddWord(0); // Class
-{22}  FBuilder.Append(iFlags);
-{23}  FBuilder.AddCardinal(0); // stems
-{27}  FBuilder.AddCardinal(iEntry);
-{31}
+  FBuilder.AddCardinal(iDescriptions);
+  FBuilder.AddCardinal(iOtherNames);
+  FBuilder.AddCardinal(0); // Component
+  FBuilder.AddCardinal(0); // Property
+  FBuilder.AddCardinal(0); // TimeAspect
+  FBuilder.AddCardinal(0); // System
+  FBuilder.AddCardinal(0); // Scale
+  FBuilder.AddCardinal(0); // Method
+  FBuilder.AddCardinal(0); // Class
+  FBuilder.Append(iFlags);
+  FBuilder.AddCardinal(0); // stems
+  FBuilder.AddCardinal(iEntry);
 end;
 
 procedure TLOINCCodeList.SetCodeLength(const Value: Cardinal);
 begin
   FCodeLength := Value;
-  FRecLength := FCodeLength+31;
+  FRecLength := FCodeLength+CL_OFFSET_Entry+4;
 end;
 
-Procedure TLOINCCodeList.SetComponent(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetComponents(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*(FRecLength) +FCodeLength+8], 2);
+  Move(iValue, FMaster[iIndex*(FRecLength) +FCodeLength+CL_OFFSET_Component], 4);
 End;
 
-Procedure TLOINCCodeList.SetProperty(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetPropertys(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+10], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_Property], 4);
 End;
 
-Procedure TLOINCCodeList.SetTimeAspect(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetTimeAspects(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+12], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_TimeAspect], 4);
 End;
 
-Procedure TLOINCCodeList.SetSystem(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetSystems(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+14], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_System], 4);
 End;
 
-Procedure TLOINCCodeList.SetScale(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetScales(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+16], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_Scale], 4);
 End;
 
-Procedure TLOINCCodeList.SetMethod(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetMethods(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+18], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_Method], 4);
 End;
 
-Procedure TLOINCCodeList.SetClass(iIndex : Cardinal; iValue : Word);
+Procedure TLOINCCodeList.SetClasses(iIndex : Cardinal; iValue : cardinal);
 Begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+20], 2);
+  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+CL_OFFSET_Class], 4);
 End;
 
+
+destructor TLOINCCodeList.Destroy;
+begin
+  inherited;
+end;
 
 procedure TLOINCCodeList.DoneBuild;
 begin
@@ -680,23 +766,47 @@ begin
 end;
 
 
-Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word; var iFlags : Byte);
+function TLOINCCodeList.getForLang(langs: TLangArray; ref: cardinal): cardinal;
+var
+  dlist : TCardinalArray;
+  l : byte;
+begin
+  dlist := FRefs.GetCardinals(ref);
+  result := dlist[0];
+  for l in langs do
+  begin
+    result := dlist[l];
+    if result <> 0 then
+      exit;
+  end;
+end;
+
+Procedure TLOINCCodeList.GetInformation(iIndex: Cardinal; langs : TLangArray; var sCode : String; var iDescription, iOtherNames, iEntry, iStems : Cardinal; var iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal; var iFlags : Byte);
 Begin
   if iIndex > FLength div FRecLength - 1 Then
     Raise Exception.Create('Attempt to access invalid LOINC index at '+inttostr(iIndex*FRecLength));
   sCode := trim(asCopy(FMaster, iIndex*FRecLength, FCodeLength));
-{0}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+0], iDescription, 4);
-{4}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+4], iOtherNames, 4);
-{8}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+8], iComponent, 2);
-{10}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+10], iProperty, 2);
-{12}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+12], iTimeAspect, 2);
-{14}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+14], iSystem, 2);
-{16}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+16], iScale, 2);
-{18}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+18], iMethod, 2);
-{20}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+20], iClass, 2);
-{22}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+22], iFlags, 1);
-{23}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+23], iStems, 4);
-{27}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+27], iEntry, 4);
+{0}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Description], iDescription, 4);
+{4}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_OtherNames], iOtherNames, 4);
+{8}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Component], iComponent, 4);
+{12}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Property], iProperty, 4);
+{16}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_TimeAspect], iTimeAspect, 4);
+{20}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_System], iSystem, 4);
+{24}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Scale], iScale, 4);
+{28}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Method], iMethod, 4);
+{32}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Class], iClass, 4);
+{36}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Flags], iFlags, 1);
+{37}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Stems], iStems, 4);
+{41}  Move(FMaster[(iIndex*FRecLength)+FCodeLength+CL_OFFSET_Entry], iEntry, 4);
+
+  iDescription := getForLang(langs, iDescription);
+  iComponent := getForLang(langs, iComponent);
+  iProperty := getForLang(langs, iProperty);
+  iTimeAspect := getForLang(langs, iTimeAspect);
+  iSystem := getForLang(langs, iSystem);
+  iScale := getForLang(langs, iScale);
+  iMethod := getForLang(langs, iMethod);
+  iClass := getForLang(langs, iClass);
 end;
 
 function TLOINCCodeList.Count: Integer;
@@ -704,9 +814,20 @@ begin
   result := FLength div FRecLength;
 end;
 
-procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
+constructor TLOINCCodeList.Create(refs: TLOINCReferences);
 begin
-  Move(iValue, FMaster[iIndex*FRecLength+FCodeLength+23], 4);
+  Inherited Create;
+  FRefs := refs;
+end;
+
+procedure TLOINCCodeList.SetStems(iIndex, iValue: Cardinal);
+var
+  offset : cardinal;
+begin
+  offset := (iIndex*FRecLength)+FCodeLength+CL_OFFSET_Stems;
+  if (offset + 4 > length(FMaster)) then
+    raise Exception.Create('Write off end');
+  Move(iValue, FMaster[offset], 4);
 end;
 
 { TLOINCServices }
@@ -714,10 +835,11 @@ end;
 constructor TLOINCServices.Create;
 begin
   inherited;
+  FLang := TLoincLanguages.Create;
   FDesc := TLoincStrings.Create;
-  FCode := TLOINCCodeList.Create;
   FRefs := TLOINCReferences.Create;
-  FConcepts := TLOINCConcepts.Create;
+  FCode := TLOINCCodeList.Create(FRefs);
+  FConcepts := TLOINCConcepts.Create(FRefs);
   FWords := TLoincWords.Create;
   FStems := TLoincStems.Create;
   FEntries := TLOINCHeirarchyEntryList.create;
@@ -738,103 +860,105 @@ begin
   FRefs.Free;
   FConcepts.Free;
   FDesc.Free;
+  FLang.Free;
   FCode.Free;
   inherited;
 end;
 
-function TLOINCServices.GetConceptName(iConcept: Word): String;
+function TLOINCServices.GetConceptName(iConcept: cardinal): String;
 var
   iName : Cardinal;
   iChildren : Cardinal;
   iCodes : Cardinal;
+  lang : byte;
 begin
-  Concepts.GetConcept(iConcept, iName, iChildren, iCodes);
-  result := Desc.GetEntry(iName);
+  Concepts.GetConcept(iConcept, 0, iName, iChildren, iCodes);
+  result := Desc.GetEntry(iName, lang);
 end;
 
-procedure TLOINCServices.GetDisplaysByName(Const sCode : String; list : TStringList);
+procedure TLOINCServices.GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TStringList);
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : cardinal;
   iFlags : Byte;
   names : TCardinalArray;
   name : Cardinal;
+  ilang, l : byte;
+  s : String;
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    list.Add(Desc.GetEntry(iDescription));
+    list.Add(Desc.GetEntry(iDescription, ilang));
     if iOtherNames <> 0 then
     begin
       names := FRefs.GetCardinals(iOtherNames);
       for name in names do
-        list.Add(Desc.GetEntry(name));
+      begin
+        s := Desc.GetEntry(name, ilang);
+        for l in langs do
+          if l = ilang then
+            list.Add(s);
+      end;
     end;
   End
 end;
 
 
-function TLOINCServices.GetDisplayByName(const sCode: String): String;
+function TLOINCServices.GetDisplayByName(const sCode: String; langs : TLangArray): String;
 var
   iIndex : Cardinal;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
   sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
+  ilang : byte;
 begin
   if CodeList.FindCode(sCode, iIndex) then
   Begin
-    CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    result := Desc.GetEntry(iDescription)
+    result := Desc.GetEntry(iDescription, ilang);
   End
   Else
     result := '';
 end;
 
-function TLOINCServices.GetPropertyCodes(iProp: Word): TCardinalArray;
+function TLOINCServices.GetPropertyCodes(iProp: cardinal): TCardinalArray;
 var
   iName : Cardinal;
   iChildren : Cardinal;
   iCodes : Cardinal;
 begin
-  Concepts.GetConcept(iProp, iName, iChildren, iCodes);
+  Concepts.GetConcept(iProp, 0, iName, iChildren, iCodes);
   result := Refs.GetCardinals(iCodes);
 end;
 
-function TLOINCServices.GetPropertyId(aType: TLoincPropertyType; const sName: String): Word;
+function TLOINCServices.GetPropertyId(aType: TLoincPropertyType; langs : TLangArray; const sName: String): cardinal;
 var
   iName : Cardinal;
   iChildren : Cardinal;
   iCodes : Cardinal;
-  aChildren : TWordArray;
+  aChildren : TCardinalArray;
   i : Integer;
   iDummy : Cardinal;
-
-  {
-  b2, b3, b4 : Boolean;
-
-  iDescription, iOtherNames : Cardinal;
-  sCode1 : String;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt : Word;
-  iFlags : Byte;
-}
+  lang : byte;
 
 begin
   // get all the children of the property code
   // iterate them looking for a name match
-  Concepts.GetConcept(Properties[aType], iName, iChildren, iCodes);
-  aChildren := Refs.GetWords(iChildren);
+  Concepts.GetConcept(Properties[aType], langs, iName, iChildren, iCodes);
+  aChildren := Refs.GetCardinals(iChildren);
   result := 0;
   For i := 0 to High(aChildren) Do
   Begin
-    Concepts.GetConcept(aChildren[i], iName, iChildren, iDummy);
-    if SameText(sName, Desc.GetEntry(iName)) Then
+    Concepts.GetConcept(aChildren[i], langs, iName, iChildren, iDummy);
+    if SameText(sName, Desc.GetEntry(iName, lang)) Then
     Begin
       result := aChildren[i];
       exit;
@@ -862,6 +986,52 @@ begin
   result := false;
 end;
 
+function TLOINCServices.langsForLang(lang: String): TLangArray;
+  procedure add(b : byte);
+  begin
+    SetLength(result, length(result)+1);
+    result[length(result)-1] := b;
+  end;
+var
+  i : integer;
+  llang, country : string;
+begin
+  if lang = '' then
+    result := [0]
+  else
+  begin
+    result := [];
+
+    // first pass, exact matches
+    for i := 0 to FLang.count - 1 do
+    begin
+      FLang.GetEntry(i, llang, country);
+      if (llang +'-'+country = lang) then
+        add(i);
+    end;
+    if length(result) = 0 then
+    begin
+      // look for preferred match where country = lang
+      for i := 0 to FLang.count - 1 do
+      begin
+        FLang.GetEntry(i, llang, country);
+        if (llang +'-'+llang.ToUpper = lang) then
+          add(i);
+      end;
+      // other possible matches
+      for i := 0 to FLang.count - 1 do
+      begin
+        FLang.GetEntry(i, llang, country);
+        if lang = llang then
+          add(i);
+      end;
+    end;
+
+    // always fall back to english
+    add(0);
+  end;
+end;
+
 function TLOINCServices.Link: TLOINCServices;
 begin
   result := TLOINCServices(Inherited Link);
@@ -887,6 +1057,8 @@ begin
       if oRead.ReadString <> LOINC_CACHE_VERSION Then
         raise exception.create('the LOINC cache must be rebuilt using the ''Import LOINC'' operation in the manager application.');
       FCode.CodeLength := oRead.ReadInteger;
+      FLang.FMaster := ReadBytes;
+      FLang.FLength := Length(FLang.FMaster);
       FCode.FMaster := ReadBytes;
       FCode.FLength := Length(FCode.FMaster);
       FDesc.FMaster := ReadBytes;
@@ -944,6 +1116,7 @@ begin
     try
       oWrite.WriteString(LOINC_CACHE_VERSION);
       oWrite.WriteInteger(FCode.CodeLength);
+      WriteBytes(FLang.FMaster);
       WriteBytes(FCode.FMaster);
       WriteBytes(FDesc.FMaster);
       WriteBytes(FRefs.FMaster);
@@ -981,6 +1154,27 @@ begin
     children[i] := matches[i].index;
   result := THolder.Create;
   THolder(result).Children := children;
+end;
+
+function TLOINCServices.supportsLang(lang: String): boolean;
+var
+  i : integer;
+  llang, country : string;
+begin
+  if lang = '' then
+    result := false
+  else
+  begin
+    for i := 0 to FLang.count - 1 do
+    begin
+      FLang.GetEntry(i, llang, country);
+      if (llang = lang) then
+        exit(true);
+      if (llang +'-'+country = lang) then
+        exit(true);
+    end;
+    result := false;
+  end;
 end;
 
 type
@@ -1098,12 +1292,13 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     iDescription, iStems, iOtherNames : Cardinal;
     iEntry : Cardinal;
     sCode1 : String;
-    iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+    iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
     iFlags : Byte;
     matches : integer;
     ok : boolean;
+    lang : byte;
   Begin
-    CodeList.GetInformation(iCodeIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(iCodeIndex, 0, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     r1 := 0;
     matches := 0;
     Desc := Refs.GetCardinals(iStems);
@@ -1117,10 +1312,10 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
           begin
             r1 := r1 + 20 + (20 / length(desc));
             ok := true;
-            assert(FDesc.GetEntry(words[i].stem) = FDesc.GetEntry(desc[j]));
+            assert(FDesc.GetEntry(words[i].stem, lang) = FDesc.GetEntry(desc[j], lang));
           end
           else
-            assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
+            assert(FDesc.GetEntry(words[i].stem, lang) <> FDesc.GetEntry(desc[j], lang));
         if ok then
           inc(matches);
       end;
@@ -1138,6 +1333,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     Desc : TCardinalArray;
     matches : integer;
     ok : boolean;
+    lang : byte;
   Begin
     Entries.GetEntry(index, code, text, parent, children, descendants, concepts, descendentConcepts, stems);
     r1 := 0;
@@ -1156,7 +1352,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
             ok := true;
           end
           else
-            assert(FDesc.GetEntry(words[i].stem) <> FDesc.GetEntry(desc[j]));
+            assert(FDesc.GetEntry(words[i].stem, lang) <> FDesc.GetEntry(desc[j], lang));
         end;
         if ok then
           inc(matches);
@@ -1164,7 +1360,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     end;
 
     if (not all or (matches = length(words))) and (r1  > 0) Then
-      AddResult(iCount, index, FDesc.GetEntry(code), 1000000+r1, false); // these always come first
+      AddResult(iCount, index, FDesc.GetEntry(code, lang), 1000000+r1, false); // these always come first
   End;
 
 var
@@ -1239,7 +1435,7 @@ begin
     SetLength(result, 100);
     for i := 0 to Code.Count - 1 Do
     Begin
-      Code.GetInformation(i, sCode1, iDescription, iOtherNames, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
+      Code.GetInformation(i, lang, sCode1, iDescription, iOtherNames, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iv2dt, iv3dt, iFlags);
 
       s := Desc.GetEntry(iDescription);
       if false Then
@@ -1413,6 +1609,7 @@ end;
 function TLoincServices.FindStem(s: String; var index: Integer): Boolean;
 var
   L, H, I, c: Integer;
+  lang : byte;
 begin
   Result := False;
   L := 0;
@@ -1420,7 +1617,7 @@ begin
   while L <= H do
   begin
     I := (L + H) shr 1;
-    C := CompareStr(FDesc.GetEntry(FStems.GetString(i)), s);
+    C := CompareStr(FDesc.GetEntry(FStems.GetString(i), lang), s);
     if C < 0 then L := I + 1 else
     begin
       H := I - 1;
@@ -1435,19 +1632,23 @@ begin
 end;
 
 
-procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
 var
   b : TStringBuilder;
   iIndex : Cardinal;
   iDescription, iOtherNames, iStems : Cardinal;
-  sCode1 : String;
+  sCode1, s : String;
   iEntry : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   iRefs : TCardinalArray;
   i : integer;
   first : boolean;
+  langs : TLangArray;
+  ll, ilang : byte;
+  ok : boolean;
 begin
+  langs := langsForLang(lang);
   b := TStringBuilder.Create;
   try
     iRefs := nil;
@@ -1457,22 +1658,22 @@ begin
     Begin
       card.addLink('Further Detail', baseURL+'/loinc/doco/?type=loinc&code='+code);
 
-      CodeList.GetInformation(iIndex, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
-      b.Append('LOINC Code '+code+' : '+Desc.GetEntry(iDescription)+#13#10#13#10);
+      CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      b.Append('LOINC Code '+code+' : '+Desc.GetEntry(iDescription, ll)+#13#10#13#10);
       if iComponent <> 0 Then
-        b.Append('* Component: '+GetConceptDesc(iComponent)+#13#10);
+        b.Append('* Component: '+GetConceptDesc(iComponent, langs)+#13#10);
       if iProperty <> 0 Then
-        b.Append('* Property: '+GetConceptDesc(iProperty)+#13#10);
+        b.Append('* Property: '+GetConceptDesc(iProperty, langs)+#13#10);
       if iTimeAspect <> 0 Then
-        b.Append('* Time Aspect: '+GetConceptDesc(iTimeAspect)+#13#10);
+        b.Append('* Time Aspect: '+GetConceptDesc(iTimeAspect, langs)+#13#10);
       if iSystem <> 0 Then
-        b.Append('* System: '+GetConceptDesc(iSystem)+#13#10);
+        b.Append('* System: '+GetConceptDesc(iSystem, langs)+#13#10);
       if iScale <> 0 Then
-        b.Append('* Scale: '+GetConceptDesc(iScale)+#13#10);
+        b.Append('* Scale: '+GetConceptDesc(iScale, langs)+#13#10);
       if iMethod <> 0 Then
-        b.Append('* Method: '+GetConceptDesc(iMethod)+#13#10);
+        b.Append('* Method: '+GetConceptDesc(iMethod, langs)+#13#10);
       if iClass <> 0 Then
-        b.Append('* Class: '+GetConceptDesc(iClass)+#13#10);
+        b.Append('* Class: '+GetConceptDesc(iClass, langs)+#13#10);
 
       b.Append('* Type: ');
       if iFlags and FLAGS_CLIN > 0 Then
@@ -1511,11 +1712,19 @@ begin
         for i := Low(iRefs) To High(iRefs) Do
           if iRefs[i] <> 0 Then
           begin
-            if first then
-              first := false
-            else
-              b.Append(', ');
-            b.Append(desc.GetEntry(iRefs[i]));
+            s := desc.GetEntry(iRefs[i], ll);
+            ok := false;
+            for ilang in langs do
+              if (ilang = ll) then
+                ok := true;
+            if ok then
+            begin
+              if first then
+                first := false
+              else
+                b.Append(', ');
+              b.Append(s);
+            end;
           End;
         b.Append(#13#10);
       End;
@@ -1536,6 +1745,7 @@ var
   filt :  TFhirValueSetComposeIncludeFilter;
   i : integer;
   cc : TFhirValueSetComposeIncludeConcept;
+  lang : byte;
 begin
   result := nil;
   if (id = '') then
@@ -1566,7 +1776,7 @@ begin
       result.status := PublicationStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
-      result.description := 'All LOINC codes for '+Desc.GetEntry(text);
+      result.description := 'All LOINC codes for '+Desc.GetEntry(text, lang);
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -1589,7 +1799,7 @@ begin
       result.status := PublicationStatusActive;
       result.version := Version(nil);
       result.name := 'LOINC Answer List '+id.Substring(20);
-      result.description := 'LOINC Answer list for '+Desc.GetEntry(text);
+      result.description := 'LOINC Answer list for '+Desc.GetEntry(text, lang);
       result.date := NowUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
@@ -1599,8 +1809,8 @@ begin
       begin
         cc := inc.conceptList.Append;
         FAnswerLists.GetEntry(answers[i], code, text, children);
-        cc.code := Desc.GetEntry(code);
-        cc.display := Desc.GetEntry(text);
+        cc.code := Desc.GetEntry(code, lang);
+        cc.display := Desc.GetEntry(text, lang);
       end;
       result.link;
     finally
@@ -1636,17 +1846,18 @@ var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry, iCode, iOther : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
+  lang : byte;
 begin
   index := integer(context)-1;
   if index > CodeList.Count then
   begin
     FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther);
-    result := Desc.GetEntry(iCode);
+    result := Desc.GetEntry(iCode, lang);
   end
   else
-    CodeList.GetInformation(integer(context)-1, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(integer(context)-1, 0, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
@@ -1654,30 +1865,33 @@ var
   index : integer;
   iCode, iDescription, iStems, iOtherNames, iOther : Cardinal;
   iEntry : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
+  ilang : byte;
 begin
   index := integer(context)-1;
   if index > CodeList.Count then
     FAnswerLists.GetEntry(index - CodeList.Count, iCode, iDescription, iOther)
   else
-    CodeList.GetInformation(index, result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
-  result := Desc.GetEntry(iDescription);
+    CodeList.GetInformation(index, langsForLang(lang), result, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+  result := Desc.GetEntry(iDescription, ilang);
 end;
 
 procedure TLOINCServices.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
 begin
-  GetDisplaysByName(Code(context), list);
+  GetDisplaysByName(Code(context), langsForLang(lang), list);
 end;
 
-procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TLOINCServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
 var
   index : integer;
   iDescription, iStems, iOtherNames : Cardinal;
   iEntry : Cardinal;
-  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Word;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass : Cardinal;
   iFlags : Byte;
   s : String;
+  langs : TLangArray;
+  ilang, ll : byte;
   {$IFNDEF FHIR2}
   iRefs : TCardinalArray;
   i : integer;
@@ -1685,10 +1899,11 @@ var
   d : TFHIRLookupOpRespDesignation;
   {$ENDIF}
 begin
+  langs := langsForLang(lang);
   index := integer(ctxt)-1;
   if index < CodeList.Count then
   begin
-    CodeList.GetInformation(index, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(index, langs, s, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 
   {$IFNDEF FHIR2}
     if hasProp(props, 'COMPONENT', true) and (iComponent <> 0) Then
@@ -1696,49 +1911,49 @@ begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'COMPONENT';
-      p.description := GetConceptDesc(iComponent);
+      p.description := GetConceptDesc(iComponent, langs);
     End;
     if hasProp(props, 'PROPERTY', true) and (iProperty <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'PROPERTY';
-      p.description := GetConceptDesc(iProperty);
+      p.description := GetConceptDesc(iProperty, langs);
     End;
     if hasProp(props, 'TIME_ASPCT', true) and (iTimeAspect <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'TIME_ASPCT';
-      p.description := GetConceptDesc(iTimeAspect);
+      p.description := GetConceptDesc(iTimeAspect, langs);
     End;
     if hasProp(props, 'SYSTEM', true) and (iSystem <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'SYSTEM';
-      p.description := GetConceptDesc(iSystem);
+      p.description := GetConceptDesc(iSystem, langs);
     End;
     if hasProp(props, 'SCALE_TYP', true) and (iScale <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'SCALE_TYP';
-      p.description := GetConceptDesc(iScale);
+      p.description := GetConceptDesc(iScale, langs);
     End;
     if hasProp(props, 'METHOD_TYP', true) and (iMethod <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'METHOD_TYP';
-      p.description := GetConceptDesc(iMethod);
+      p.description := GetConceptDesc(iMethod, langs);
     End;
     if hasProp(props, 'CLASS', true) and (iClass <> 0) Then
     Begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'CLASS';
-      p.description := GetConceptDesc(iClass);
+      p.description := GetConceptDesc(iClass, langs);
     End;
     if hasProp(props, 'CLASSTYPE', true) Then
     Begin
@@ -1809,14 +2024,18 @@ begin
       for i := Low(iRefs) To High(iRefs) Do
         if iRefs[i] <> 0 Then
         begin
-          d := TFHIRLookupOpRespDesignation.create;
-          resp.designationList.Add(d);
-          d.value := Desc.GetEntry(iRefs[i]);
-          d.use := TFHIRCoding.Create;
-          d.use.system := 'http://snomed.info/sct';
-          d.use.code := '446211000124102';
-          d.use.display := 'Alias name';
-        End;
+          s := Desc.GetEntry(iRefs[i], ll);
+          if useLang(ll, langs, false) then
+          begin
+            d := TFHIRLookupOpRespDesignation.create;
+            resp.designationList.Add(d);
+            d.value := s;
+            d.use := TFHIRCoding.Create;
+            d.use.system := 'http://snomed.info/sct';
+            d.use.code := '446211000124102';
+            d.use.display := 'Alias name';
+          End;
+        end;
     End;
     {$ENDIF}
   End;
@@ -1824,7 +2043,7 @@ end;
 
 procedure TLoincServices.Displays(code: String; list: TStringList; lang : String);
 begin
-  GetDisplaysByName(code, list);
+  GetDisplaysByName(code, langsForLang(lang), list);
 end;
 
 
@@ -1835,7 +2054,7 @@ end;
 
 function TLoincServices.getDisplay(code: String; lang : String): String;
 begin
-  result := GetDisplayByName(code);
+  result := GetDisplayByName(code, langsForLang(lang));
   if result = '' then
     raise Exception.create('unable to find '+code+' in '+system(nil));
 end;
@@ -1865,6 +2084,16 @@ end;
 function TLoincServices.TotalCount: integer;
 begin
   result := CodeList.Count;
+end;
+
+function TLOINCServices.useLang(lang: byte; langs: TLangArray; incLast : boolean): boolean;
+var
+  b: byte;
+begin
+  result := false;
+  for b := 0 to length(langs) - 1  do
+    if (langs[b] = lang) and (inclast or ((b = 0) or (b < length(langs) - 1))) then
+      exit(true);
 end;
 
 function TLOINCServices.version(context: TCodeSystemProviderContext): String;
@@ -1897,7 +2126,7 @@ end;
 
 function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
 var
-  id : word;
+  id : Cardinal;
   iName, iChildren, iCodes : Cardinal;
   aChildren : LoincServices.TCardinalArray;
 begin
@@ -1906,10 +2135,10 @@ begin
 
   result := THolder.create;
   try
-    id := GetPropertyId(prop, value);
+    id := GetPropertyId(prop, [0], value);
     if (id <> 0) then
     begin
-      Concepts.GetConcept(id, iName, iChildren, iCodes);
+      Concepts.GetConcept(id, [0], iName, iChildren, iCodes);
       aChildren := Refs.GetCardinals(iCodes);
       THolder(result).Children := aChildren;
     end;
@@ -2140,6 +2369,7 @@ var
   L, H, I, d : Cardinal;
   C: Integer;
   s : String;
+  lang : byte;
 begin
   if Length(FMaster) = 0 Then
     Result := False
@@ -2152,7 +2382,7 @@ begin
     begin
       I := (L + H) shr 1;
       Move(FMaster[i*32], d, 4);
-      s := Strings.GetEntry(d);
+      s := Strings.GetEntry(d, lang);
       C := CompareStr(s, sCode);
       if C < 0 then L := I + 1 else
       begin
@@ -2230,6 +2460,7 @@ var
   L, H, I, d : integer;
   C: Integer;
   s : String;
+  lang : byte;
 begin
   if Length(FMaster) = 0 Then
     Result := False
@@ -2244,7 +2475,7 @@ begin
       if (i * 12) > length(FMaster) - 4 then
         writeln('err');
       Move(FMaster[i*12], d, 4);
-      s := Strings.GetEntry(d);
+      s := Strings.GetEntry(d.MaxValue, lang);
       C := AnsiCompareStr(s, sCode);
       if C < 0 then L := I + 1 else
       begin
@@ -2274,21 +2505,63 @@ begin
   FBuilder := TAdvBytesBuilder.Create;
 end;
 
-function TLOINCServices.GetConceptDesc(iConcept : Word):String;
+function TLOINCServices.GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
 var
   iName : Cardinal;
   iChildren : Cardinal;
   iCodes : Cardinal;
+  lang : byte;
 Begin
   if iConcept = 0 then
     result := ''
   Else
   Begin
-    Concepts.GetConcept(iConcept, iName, iChildren, iCodes);
-    result := Desc.GetEntry(iname);
+    Concepts.GetConcept(iConcept, langs, iName, iChildren, iCodes);
+    result := Desc.GetEntry(iname, lang);
   End;
 End;
 
+
+{ TLoincLanguages }
+
+function TLoincLanguages.AddEntry(lang, country: String): byte;
+begin
+  if Length(lang) <> 2 Then
+    raise exception.Create('LOINC Language code too long: '+lang);
+  if Length(country) <> 2 Then
+    raise exception.Create('LOINC Language code too long: '+country);
+  assert(FBuilder.Length mod 10 = 0);
+  result := FBuilder.Length div 10;
+  FBuilder.AddString(lang+'-'+country);
+end;
+
+function TLoincLanguages.count: integer;
+begin
+  result := FLength div 10;
+end;
+
+procedure TLoincLanguages.DoneBuild;
+begin
+  FMaster := FBuilder.AsBytes;
+  FLength := Length(FMaster);
+  FBuilder.Free;
+end;
+
+procedure TLoincLanguages.GetEntry(iIndex: byte; var lang, country: String);
+var
+  s : String;
+begin
+  if ((iIndex +1) * 10 > FLength) then
+    Raise Exception.Create('Wrong length index getting LOINC language code');
+  SetLength(s, 5);
+  Move(FMaster[iIndex*10], s[1], 10);
+  StringSplit(s, '-', lang, country);
+end;
+
+procedure TLoincLanguages.StartBuild;
+begin
+  FBuilder := TAdvBytesBuilder.Create;
+end;
 
 End.
 

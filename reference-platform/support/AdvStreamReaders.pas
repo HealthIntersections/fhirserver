@@ -304,6 +304,7 @@ var
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;
 begin
+  raise Exception.Create('This needs debugging for FBufferOffset');
   Result := '';
   if FBufferedData = nil then
     Exit;

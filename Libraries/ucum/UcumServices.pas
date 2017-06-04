@@ -257,7 +257,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
@@ -420,7 +420,7 @@ begin
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
 var
   s : String;
   b : TStringBuilder;

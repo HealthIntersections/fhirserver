@@ -625,9 +625,9 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
     function subsumesTest(codeA, codeB : String) : String; overload; override;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; slang, baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function getRefSet(id : int64) : TSnomedReferenceSetMemberArray;
 
@@ -2135,7 +2135,7 @@ begin
   index := L;
 end;
 
-procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TSnomedServices.getCDSInfo(card: TCDSHookCard; slang, baseURL, code, display: String);
 var
   b : TStringBuilder;
   Identity : UInt64;
@@ -3241,7 +3241,7 @@ begin
   Displays(Code(context), list, lang);
 end;
 
-procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse);
+procedure TSnomedServices.extendLookup(ctxt: TCodeSystemProviderContext; slang : String; props : TList<String>; resp : TFHIRLookupOpResponse);
 var
   Identity : UInt64;
   Flags, lang : Byte;

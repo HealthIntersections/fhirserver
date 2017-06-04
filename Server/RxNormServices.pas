@@ -108,8 +108,8 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; baseURL, code, display : String); override;
-    procedure extendLookup(ctxt : TCodeSystemProviderContext; props : TList<String>; resp : TFHIRLookupOpResponse); override;
+    procedure getCDSInfo(card : TCDSHookCard; lang, baseURL, code, display : String); override;
+    procedure extendLookup(ctxt : TCodeSystemProviderContext; lang : String; props : TList<String>; resp : TFHIRLookupOpResponse); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
@@ -437,7 +437,7 @@ begin
   list.AddStrings(TUMLSConcept(context).FOthers);
 end;
 
-procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; props: TList<String>; resp: TFHIRLookupOpResponse);
+procedure TUMLSServices.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
 var
   qry : TKDBConnection;
   b : boolean;
@@ -497,7 +497,7 @@ begin
   raise Exception.Create('ChildCount not supported by RXNorm'); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
-procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; baseURL, code, display: String);
+procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; lang, baseURL, code, display: String);
 begin
 //    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
   card.detail := 'Not done yet';

@@ -67,7 +67,7 @@ const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSet; ref : TFhirReference; lang : String; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSet of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFHIRRequest; uri : String) : TResourceWithReference of object;
 
@@ -103,6 +103,7 @@ Type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFHIRRequest;
     FDependencies: TList<String>;
+    FLang : String;
 
     function nextId(prefix : string) : String;
 
@@ -166,7 +167,7 @@ Type
     procedure SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
     procedure SetContext(const Value: TFHIRRequest);
   public
-    Constructor Create; override;
+    Constructor Create(lang : String);
     Destructor Destroy; override;
 
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
@@ -351,7 +352,7 @@ begin
     try
       ref.reference := url;
       try
-        result := OnExpand(nil, ref, MaxListboxCodings, 0, 0, false, dependencies);
+        result := OnExpand(nil, ref, FLang, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -400,7 +401,7 @@ begin
     begin
       vs := TFhirValueSet(Fprofile.contained[ref.reference.Substring(1)]);
       try
-        result := OnExpand(vs, nil, MaxListboxCodings, 0, 0, false, dependencies);
+        result := OnExpand(vs, nil, FLang, MaxListboxCodings, 0, 0, false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -427,7 +428,7 @@ begin
       result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.reference)].link as TFhirValueSet
     else
       try
-        result := OnExpand(nil, ref, MaxListboxCodings, 0, 0,false, dependencies);
+        result := OnExpand(nil, ref, FLang, MaxListboxCodings, 0, 0,false, dependencies);
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
@@ -1243,9 +1244,10 @@ end;
 
 constructor TQuestionnaireBuilder.create;
 begin
-  inherited;
+  inherited create;
   vsCache := TAdvStringMatch.create;
   FDependencies := TList<String>.create;
+  FLang := lang;
 end;
 
 function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : TFhirItemTypeEnum; path, id, name : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet) : TFHIRQuestionnaireItemQuestion;

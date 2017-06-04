@@ -59,7 +59,7 @@ Type
 
     function processFind(pm : TParseMap) : String;
     function processValidate(pm : TParseMap) : String;
-    function processExpand(pm : TParseMap) : String;
+    function processExpand(pm : TParseMap; lang : string) : String;
     function processTranslate(pm : TParseMap) : String;
 
     function chooseSnomedRelease() : String;
@@ -222,7 +222,7 @@ begin
       else if pm.getVar('op') = 'validate' then
         vars['validate.results'] := processValidate(pm)
       else if pm.getVar('op') = 'expand' then
-        vars['expand.results'] := processExpand(pm)
+        vars['expand.results'] := processExpand(pm, request.AcceptLanguage)
       else if pm.getVar('op') = 'translate' then
         vars['translate.results'] := processTranslate(pm);
 
@@ -481,7 +481,7 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.processExpand(pm: TParseMap): String;
+function TTerminologyWebServer.processExpand(pm: TParseMap; lang : string): String;
 var
   res : TFHIRValueSet;
   vs : TFHIRValueSet;
@@ -492,6 +492,8 @@ begin
   try
     profile.includeDefinition := pm.GetVar('nodetails') <> '1';
     profile.limitedExpansion := true;
+    if lang <> '' then
+      profile.displayLanguage := lang;
 
     try
       res := FServer.expandVS(vs, vs.url, profile, pm.GetVar('filter'), 1000, 0, 0);
@@ -527,7 +529,7 @@ begin
     resp := TFHIRLookupOpResponse.Create;
     try
       try
-        FServer.lookupCode(coding, nil, resp);
+        FServer.lookupCode(coding, 'en', nil, resp);
         p := resp.asParams;
         try
           result := '<div>'+paramsAsHtml(p)+'</div>'#13 +
@@ -1009,35 +1011,87 @@ end;
 
 procedure TTerminologyWebServer.HandleLoincRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  code : String;
+  code, lang, country : String;
   pub : TLoincPublisher;
   html : THtmlPublisher;
+  mem : TMemoryStream;
+  op : TBytes;
+  i : integer;
+  st : TStringList;
 begin
   FServer.Loinc.RecordUse;
-  if request.Document.StartsWith('/loinc/doco/')  then
+  if request.Document.StartsWith('/loinc/doco/') then
   begin
     code := request.UnparsedParams;
-    logt('Loinc Doco: '+code);
-
-    try
-      html := THtmlPublisher.Create;
-      pub := TLoincPublisher.create(FServer.Loinc, FFHIRPath);
+    lang := request.Document.Substring(12);
+    if ((lang = '') and (code = '')) or ((lang <> '') and not FServer.Loinc.supportsLang(lang)) then
+    begin
+      st := TStringList.create;
       try
-        html.Version := SERVER_VERSION;
-        html.BaseURL := '/loinc/doco/';
-        html.Lang := request.AcceptLanguage;
-        pub.PublishDict(code, '/loinc/doco/', html);
-        response.ContentText := html.output;
-        response.ResponseNo := 200;
+        for i := 0 to FServer.Loinc.Lang.count - 1 do
+        begin
+          FServer.Loinc.Lang.GetEntry(i, lang, country);
+          st.add(lang+'-'+country);
+        end;
+        st.sort;
+        html := THtmlPublisher.Create;
+        try
+          html.Version := SERVER_VERSION;
+          html.BaseURL := '/loinc/doco/';
+          html.Lang := lang;
+          html.Header('LOINC Languages');
+          html.StartList();
+          for i := 0 to st.count - 1 do
+          begin
+            html.StartListItem;
+            html.URL(st[i], st[i]);
+            html.EndListItem;
+          end;
+          html.EndList();
+          mem := TMemoryStream.Create;
+          response.ContentStream := mem;
+          response.FreeContentStream := true;
+          op := TEncoding.UTF8.GetBytes(html.output);
+          mem.Write(op, 0, length(op));
+          mem.Position := 0;
+          response.ContentType := 'text/html; charset=utf-8';
+          response.ResponseNo := 200;
+        finally
+          html.free;
+        end;
       finally
-        html.free;
-        pub.free;
+        st.free;
       end;
-    except
-      on e:exception do
-      begin
-        response.ResponseNo := 500;
-        response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+    end
+    else
+    begin
+      logt('Loinc Doco: '+code);
+      try
+        html := THtmlPublisher.Create;
+        pub := TLoincPublisher.create(FServer.Loinc, FFHIRPath, lang);
+        try
+          html.Version := SERVER_VERSION;
+          html.BaseURL := '/loinc/doco/'+lang;
+          html.Lang := Lang;
+          pub.PublishDict(code, '/loinc/doco/'+lang, html);
+          mem := TMemoryStream.Create;
+          response.ContentStream := mem;
+          response.FreeContentStream := true;
+          op := TEncoding.UTF8.GetBytes(html.output);
+          mem.Write(op, 0, length(op));
+          mem.Position := 0;
+          response.ContentType := 'text/html; charset=utf-8';
+          response.ResponseNo := 200;
+        finally
+          html.free;
+          pub.free;
+        end;
+      except
+        on e:exception do
+        begin
+          response.ResponseNo := 500;
+          response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+        end;
       end;
     end;
   end
@@ -1115,7 +1169,7 @@ begin
       coding.version := pm.GetVar('version');
       coding.code := pm.GetVar('code');
       try
-        res := FServer.translate(nil, coding, vs);
+        res := FServer.translate('en', nil, coding, vs);
         try
           result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res)+'</pre>'#13#10+'<pre class="xml">'+asXml(res)+'</pre>';
         finally

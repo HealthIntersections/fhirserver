@@ -677,7 +677,7 @@ object Form4: TForm4
     Top = 0
     Width = 596
     Height = 395
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     Style = tsButtons
     TabOrder = 1
@@ -709,7 +709,6 @@ object Form4: TForm4
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = -1
         DesignSize = (
           588
           41)
@@ -1550,7 +1549,7 @@ object Form4: TForm4
         Left = 0
         Top = 41
         Width = 588
-        Height = 60
+        Height = 79
         Align = alTop
         BevelInner = bvLowered
         BevelOuter = bvNone
@@ -1561,31 +1560,32 @@ object Form4: TForm4
           Left = 5
           Top = 5
           Width = 578
-          Height = 50
+          Height = 69
           Align = alClient
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitHeight = 50
           DesignSize = (
             578
-            50)
+            69)
           object Label7: TLabel
             Left = 4
             Top = 4
             Width = 596
-            Height = 45
+            Height = 64
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
             Caption = 
               'This pane allows you to import LOINC to a pre-processed file. Ch' +
-              'oose a folder containing the LOINC files loinc.csv, mafile.csv, ' +
-              'and answers.csv. The content will be processed to a ready to use' +
-              ' form, about 50MB, and the process takes about 10min. Once the p' +
-              'rocess is complete, the file can be put in the FHIRServer.ini fi' +
-              'le, [loinc] cache value'
+              'oose a folder containing the LOINC files as desribed at https://' +
+              'github.com/grahamegrieve/fhirserver/wiki/Importing-LOINC. The co' +
+              'ntent will be processed to a ready to use form, about 200MB, and' +
+              ' the process takes about 15min. Once the process is complete, th' +
+              'e file can be put in the FHIRServer.ini file, [loinc] cache valu' +
+              'e'
             WordWrap = True
-            ExplicitWidth = 693
           end
         end
       end
@@ -1770,15 +1770,17 @@ object Form4: TForm4
       end
       object Panel13: TPanel
         Left = 0
-        Top = 101
+        Top = 120
         Width = 588
-        Height = 171
+        Height = 152
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
+        ExplicitTop = 101
+        ExplicitHeight = 171
         DesignSize = (
           588
-          171)
+          152)
         object Label10: TLabel
           Left = 10
           Top = 6

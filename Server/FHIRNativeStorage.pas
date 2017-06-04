@@ -711,7 +711,7 @@ type
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
-    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
+    function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(r: TFhirResource); overload; override;
     procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload; override;
@@ -1594,7 +1594,10 @@ begin
       response.Resource := nil;
       str := TStringBuilder.Create;
       try
-        gql.output.write(str, 0);
+        str.Append('{'+#13#10);
+        str.Append('  "data" : '+#13#10);
+        gql.output.write(str, 1);
+        str.Append('}'+#13#10);
         response.Body := str.ToString;
       finally
         str.Free;
@@ -1645,7 +1648,10 @@ begin
         response.Resource := nil;
         str := TStringBuilder.Create;
         try
-          gql.output.write(str, 0);
+          str.Append('{'+#13#10);
+          str.Append('  "data" : '+#13#10);
+          gql.output.write(str, 1);
+          str.Append('}'+#13#10);
           response.Body := str.ToString;
         finally
           str.Free;
@@ -6457,7 +6463,7 @@ begin
           try
             if questionnaire = nil then
             begin
-              builder := TQuestionnaireBuilder.Create;
+              builder := TQuestionnaireBuilder.Create(request.Lang);
               try
                 builder.Profile := profile.link;
                 builder.OnExpand := manager.FRepository.ExpandVS;
@@ -6603,6 +6609,8 @@ begin
             count := StrToIntDef(params.str['count'], 0);
             offset := StrToIntDef(params.str['offset'], 0);
             limit := StrToIntDef(params.str['_limit'], 0);
+            if profile.displayLanguage = '' then
+              profile.displayLanguage := request.Lang;
 
             dst := manager.ServerContext.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
             try
@@ -6699,7 +6707,7 @@ begin
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.ServerContext.TerminologyServer.lookupCode(req.coding, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            manager.ServerContext.TerminologyServer.lookupCode(req.coding, request.Lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -7351,6 +7359,8 @@ begin
 
               profile := buildExpansionProfile(request, manager, params);
               try
+                if profile.displayLanguage = '' then
+                  profile.displayLanguage := request.Lang;
                 try
                   response.resource := manager.ServerContext.TerminologyServer.validate(vs, coded, profile, abstractOk);
                 except
@@ -7925,7 +7935,7 @@ begin
             else
               raise Exception.Create('Unable to find code to translate (coding | codeableConcept | code');
             try
-              response.resource := manager.ServerContext.TerminologyServer.translate(cm, coded.codingList[0]);
+              response.resource := manager.ServerContext.TerminologyServer.translate(request.Lang, cm, coded.codingList[0]);
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
@@ -8271,7 +8281,7 @@ begin
     raise Exception.Create('No Code found for terminology-info');
 
   if (id.type_ <> nil) then
-    manager.ServerContext.TerminologyServer.getCodeView(id.type_, resp);
+    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, id.type_, resp);
 
   if (id.system <> '') then
   begin
@@ -8321,9 +8331,9 @@ begin
   if code = nil then
     raise Exception.Create('No Code found for terminology-info');
   if code is TFhirCoding then
-    manager.ServerContext.TerminologyServer.getCodeView(code as TFHIRCoding, resp)
+    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, code as TFHIRCoding, resp)
   else
-    manager.ServerContext.TerminologyServer.getCodeView(code as TFHIRCodeableConcept, resp);
+    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, code as TFHIRCodeableConcept, resp);
   for card in resp.cards do
   begin
     card.sourceLabel := manager.ServerContext.OwnerName;
@@ -9945,7 +9955,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
+function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSet;
 var
   profile : TFhirExpansionProfile;
 begin

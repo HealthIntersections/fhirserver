@@ -600,6 +600,7 @@ begin
     ini.WriteString('loinc-import', 'source', edtLoincSource.text);
     ini.WriteString('loinc-import', 'date', edtLoincVersion.Text);
     ini.WriteString('loinc-import', 'dest', edtLoincDest.text);
+    start := now;
 
     wantStop := false;
     btnLoincImportStop.Visible := true;
