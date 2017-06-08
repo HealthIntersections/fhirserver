@@ -223,14 +223,24 @@ begin
 end;
 
 
-function readIdFromLocation(location : String) : String;
+function readIdFromLocation(resType, location : String) : String;
 var
   a : TArray<String>;
 begin
   a := location.split(['/']);
-  if length(a) < 4 then
-    raise Exception.Create('Unable to process location header');
-  result := a[length(a)-3]; // 1 for offset, 2 for _history and vers
+  if length(a) < 2 then
+    raise Exception.Create('Unable to process location header (too short)');
+  if a[length(a)-2] = '_history' then
+  begin
+    if length(a) < 4 then
+      raise Exception.Create('Unable to process location header (too short for a version specific location). Location: '+location);
+    if a[length(a)-4] <> resType  then
+      raise Exception.Create('Unable to process location header (version specific, but resource doesn''t match). Location: '+location);
+    result := a[length(a)-3]; // 1 for offset, 2 for _history and vers
+  end
+  else if a[length(a)-2] <> resType then
+    raise Exception.Create('Unable to process location header (resource doesn''t match). Location: '+location);
+  result := a[length(a)-1];
 end;
 
 function TFhirClient.createResource(resource: TFhirResource; var id : String): TFHIRResource;
@@ -242,7 +252,7 @@ begin
     result := nil;
     try
       result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), post, src);
-      id := readIdFromLocation(getHeader('Location'));
+      id := readIdFromLocation(CODES_TFhirResourceType[resource.resourceType], getHeader('Location'));
       result.link;
     finally
       result.free;
