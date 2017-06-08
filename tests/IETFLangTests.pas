@@ -76,7 +76,7 @@ var
 begin
   o := FDefinitions.parse(code, msg);
   try
-    Assert.IsNotNull(o);
+    Assert.IsNotNull(o, msg);
     Assert.IsEmpty(msg);
   finally
     o.Free;
@@ -98,6 +98,7 @@ begin
   pass('en');
   pass('en-AU');
   pass('en-Latn-AU');
+  pass('en-Brai-US');
 end;
 
 procedure TIETFLangTests.TestWrong;

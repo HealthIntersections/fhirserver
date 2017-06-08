@@ -33,7 +33,6 @@ Interface
 
 Uses
   SysUtils, Classes, ActiveX, ComObj,
-  MsXml, MsXmlParser,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
   FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,

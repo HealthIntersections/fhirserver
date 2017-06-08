@@ -70,13 +70,13 @@ Uses
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
-  kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects, MsXmlParser,
+  kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
   DCPsha256, AdvJSON, libeay32, RDFUtilities,
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
   IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
-  MsXML, GraphQL,
+  MXML, GraphQL, MsXml, MsXmlParser,
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
@@ -2171,7 +2171,7 @@ Begin
             end
             else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/xml-patch+xml') then
             begin
-              oRequest.patchXml := TMsXmlParser.parse(oPostStream).documentElement;
+              oRequest.patchXml := TMXmlParser.parse(oPostStream, [xpResolveNamespaces]);
             end
             else if (oRequest.CommandType = fcmdOperation) and (sContentType = 'application/graphql') then
             begin

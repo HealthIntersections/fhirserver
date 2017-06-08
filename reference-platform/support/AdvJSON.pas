@@ -34,7 +34,7 @@ uses
   Windows, SysUtils, Classes,
   BytesSupport, StringSupport,
   AdvObjects, AdvGenerics, AdvStreams, AdvVCLStreams, AdvTextFormatters, AdvTextExtractors, AdvObjectLists, AdvStringBuilders,
-  TextUtilities, XMLBuilder;
+  TextUtilities, ParserSupport;
 
 Function JSONString(const value : String) : String;
 

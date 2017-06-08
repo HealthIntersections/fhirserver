@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, DUnitX.TestFramework, Variants,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics,
-  MsXml, MsXmlParser,
+  MXML,
   GraphQL, FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRGraphQL,
   FHIRTestWorker, JsonTests;
 
@@ -129,38 +129,36 @@ end;
 
 function GraphQLTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
 var
-  tests : IXMLDomDocument2;
-  test : IXmlDomElement;
+  tests : TMXmlElement;
+  test : TMXmlElement;
   i: integer;
-  s : String;
 begin
-  tests := TMsXmlParser.Parse('C:\work\org.hl7.fhir\build\tests\graphql\manifest.xml');
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  i := 0;
-  while (test <> nil) and (test.nodeName = 'test') do
-  begin
-    inc(i);
-    test := TMsXmlParser.NextSibling(test);
-  end;
-  setLength(result, i);
-  i := 0;
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  while (test <> nil) and (test.nodeName = 'test') do
-  begin
-    result[i].Name := test.getAttribute('name');
-    SetLength(result[i].Values, 5);
-    s := test.getAttribute('source');
-    result[i].Values[0] := s;
-    s := test.getAttribute('output');
-    result[i].Values[1] := s;
-    s := test.getAttribute('context');
-    result[i].Values[2] := s;
-    s := VarToStr(test.getAttribute('resource'));
-    result[i].Values[3] := s;
-    s := VarToStr(test.getAttribute('operation'));
-    result[i].Values[4] := s;
-    inc(i);
-    test := TMsXmlParser.NextSibling(test);
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\graphql\manifest.xml', [xpDropWhitespace]);
+  try
+    test := tests.document.first;
+    i := 0;
+    while (test <> nil) and (test.Name = 'test') do
+    begin
+      inc(i);
+      test := test.Next;
+    end;
+    setLength(result, i);
+    i := 0;
+    test := tests.document.first;
+    while (test <> nil) and (test.Name = 'test') do
+    begin
+      result[i].Name := test.attribute['name'];
+      SetLength(result[i].Values, 5);
+      result[i].Values[0] := test.attribute['source'];
+      result[i].Values[1] := test.attribute['output'];
+      result[i].Values[2] := test.attribute['context'];
+      result[i].Values[3] := test.attribute['resource'];
+      result[i].Values[4] := test.attribute['operation'];
+      inc(i);
+      test := test.Next;
+    end;
+  finally
+    tests.Free;
   end;
 end;
 

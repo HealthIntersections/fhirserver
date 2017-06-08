@@ -33,49 +33,50 @@ interface
 
 uses
   SysUtils,
-  AdvObjects, StringSupport,
-  MsXml, MsXmlParser;
+  StringSupport, AdvObjects, AdvGenerics,
+  MXML;
 
 type
   TXmlPatchEngine = class (TAdvObject)
   private
-    class procedure remove(sel : String; targetRoot : IXMLDOMNode);
-    class procedure add(doc : IXMLDOMDocument2; op : IXMLDOMElement; targetRoot : IXMLDOMNode);
-    class procedure replace(doc : IXMLDOMDocument2; op : IXMLDOMElement; targetRoot : IXMLDOMNode);
-    class procedure addChildNodes(doc : IXMLDOMDocument2; source, target : IXMLDomNode; pos : String);
+    class procedure remove(doc : TMXmlDocument; sel : String; target : TMXmlElement);
+    class procedure add(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
+    class procedure replace(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
+    class procedure addChildNodes(doc : TMXmlDocument; source, target : TMXmlElement; pos : String);
   public
-    class procedure execute(doc : IXMLDOMDocument2; targetRoot : IXMLDOMNode; patch : IXMLDOMElement);
+    class procedure execute(doc : TMXmlDocument; target : TMXmlElement; patch : TMXmlElement);
   end;
 
 implementation
 
 { TXmlPatchEngine }
 
-class procedure TXmlPatchEngine.execute(doc : IXMLDOMDocument2; targetRoot : IXMLDOMNode; patch: IXMLDOMElement);
+class procedure TXmlPatchEngine.execute(doc : TMXmlDocument; target : TMXmlElement; patch: TMXmlElement);
 begin
   if doc = nil then
     raise Exception.Create('No Target Document Root Found');
-  if targetRoot = nil then
-    raise Exception.Create('No Target Document Found');
+  if target = nil then
+    raise Exception.Create('No Target Element Found');
   if patch = nil then
     raise Exception.Create('No Patch Operations Found');
-  patch := TMsXmlParser.FirstChild(patch);
+  patch := patch.firstElement;
   if patch = nil then
     raise Exception.Create('No Patch Operations Found');
 
-  doc.setProperty('SelectionNamespaces', 'xmlns:f="http://hl7.org/fhir" xmlns:h="http://www.w3.org/1999/xhtml"');
+  doc.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
+  doc.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
 
   while (patch <> nil) do
   begin
-    if (patch.baseName = 'remove') then
-      remove(patch.getAttribute('sel'), targetRoot)
-    else if (patch.baseName = 'add') then
-      add(doc, patch, targetRoot)
-    else if (patch.baseName = 'replace') then
-      replace(doc, patch, targetRoot)
+    if (patch.localName = 'remove') then
+      remove(doc, patch.attribute['sel'], target)
+    else if (patch.localName = 'add') then
+      add(doc, patch, target)
+    else if (patch.localName = 'replace') then
+      replace(doc, patch, target)
     else
-      raise Exception.Create('Unknown Patch Operation "'+patch.baseName+'"');
-    patch := TMsXmlParser.NextSibling(patch);
+      raise Exception.Create('Unknown Patch Operation "'+patch.localName+'"');
+    patch := patch.nextElement;
   end;
 end;
 
@@ -93,128 +94,152 @@ begin
     attrName := '';
 end;
 
-class procedure TXmlPatchEngine.add(doc : IXMLDOMDocument2; op : IXMLDOMElement; targetRoot : IXMLDOMNode);
+class procedure TXmlPatchEngine.add(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
 var
-  matches : IXMLDOMNodeList;
-  elem : IXMLDOMElement;
+  matches : TAdvList<TMXmlNode>;
+  elem : TMXmlElement;
   sel, typ, pos : String;
 begin
-  sel := op.getAttribute('sel');
-  if op.getAttributeNode('type') <> nil then
-    typ := op.getAttribute('type');
-  if op.getAttributeNode('pos') <> nil then
-    pos := op.getAttribute('pos');
+  sel := op.attribute['sel'];
+  typ := op.attribute['type'];
+  pos := op.attribute['pos'];
 
-  matches := targetRoot.selectNodes(sel);
-  if matches.length = 0 then
-    raise Exception.Create('No match found for '+sel+' performing addition');
-  if matches.length > 1 then
-    raise Exception.Create('The xpath '+sel+' matched multiple nodes performing addition');
+  matches := doc.select(sel, target);
+  try
+    if matches.count = 0 then
+      raise Exception.Create('No match found for '+sel+' performing addition');
+    if matches.count > 1 then
+      raise Exception.Create('The xpath '+sel+' matched multiple nodes performing addition');
 
-  if typ = '' then
-    addChildNodes(doc, op, matches.item[0], pos)
-  else if typ.StartsWith('@') then
-  begin
-    elem := matches.item[0] as IXmlDomElement;
-    elem.setAttribute(typ.Substring(1), op.text);
-  end
-  else if typ.StartsWith('namespace::') then
-  begin
-    elem := matches.item[0] as IXmlDomElement;
-    elem.setAttribute('xmlns:'+typ.Substring(11), op.text);
-  end
-  else
-    raise Exception.Create('Unknown value for type: '+typ);
-end;
-
-class procedure TXmlPatchEngine.replace(doc : IXMLDOMDocument2; op : IXMLDOMElement; targetRoot : IXMLDOMNode);
-var
-  matches : IXMLDOMNodeList;
-  n, ce : IXMLDOMElement;
-  sel : String;
-  i : integer;
-begin
-  sel := op.getAttribute('sel');
-
-  matches := targetRoot.selectNodes(sel);
-  if matches.length = 0 then
-    raise Exception.Create('No match found for '+sel+' performing replace');
-  if matches.length > 1 then
-    raise Exception.Create('The xpath '+sel+' matched multiple nodes performing replace');
-
-  case matches.item[0].nodeType of
-    NODE_ELEMENT :
-      begin
-        n := TMsXmlParser.FirstChild(op);
-        ce := doc.createNode(NODE_ELEMENT, n.baseName, n.namespaceURI) as IXMLDOMElement;
-        for i := 0 to n.attributes.length - 1 do
-          ce.setAttribute(n.attributes.item[i].nodeName, n.attributes.item[i].nodeValue);
-        addChildNodes(doc, n, ce, '');
-        matches.item[0].parentNode.replaceChild(ce, matches.item[0]);
-      end;
-    NODE_TEXT,
-    NODE_COMMENT,
-    NODE_ATTRIBUTE : matches.item[0].text := op.text;
-  else
-    raise Exception.Create('Unsupported Node Type for replace');
+    if typ = '' then
+      addChildNodes(doc, op, matches[0] as TMXmlElement, pos)
+    else if typ.StartsWith('@') then
+    begin
+      elem := matches[0] as TMXmlElement;
+      elem.attribute[typ.Substring(1)] := op.text;
+    end
+    else if typ.StartsWith('namespace::') then
+    begin
+      elem := matches[0] as TMXmlElement;
+      elem.attribute['xmlns:'+typ.Substring(11)] := op.text;
+    end
+    else
+      raise Exception.Create('Unknown value for type: '+typ);
+  finally
+    matches.Free;
   end;
 end;
 
-class procedure TXmlPatchEngine.remove(sel: String; targetRoot: IXMLDOMNode);
+class procedure TXmlPatchEngine.replace(doc : TMXmlDocument; op : TMXmlElement; target : TMXmlElement);
 var
-  matches : IXMLDOMNodeList;
-  elem : IXMLDOMElement;
+  matches : TAdvList<TMXmlNode>;
+  n, ce : TMXmlElement;
+  sel : String;
+  i : integer;
+begin
+  sel := op.attribute['sel'];
+
+  matches := doc.select(sel, target);
+  try
+    if matches.count = 0 then
+      raise Exception.Create('No match found for '+sel+' performing replace');
+    if matches.count > 1 then
+      raise Exception.Create('The xpath '+sel+' matched multiple nodes performing replace');
+
+    case TMXmlNamedNode(matches[0]).nodeType of
+      ntElement :
+        begin
+          n := op.first;
+          ce := TMXmlElement.Create(ntElement, TMXmlElement(n).Name, n.localName, n.namespaceURI);
+          try
+            ce.Attributes.addAll(n.Attributes);
+            addChildNodes(doc, n, ce, '');
+            TMXmlElement(matches[0]).parent.Children.replace(TMXmlElement(matches[0]), ce.Link);
+            ce.Parent := matches[0].parent;
+          finally
+            ce.Free;
+          end;
+        end;
+      ntText,
+      ntComment : TMXmlElement(matches[0]).text := op.text;
+      ntAttribute : TMXmlAttribute(matches[0]).value := op.text;
+    else
+      raise Exception.Create('Unsupported Node Type for replace');
+    end;
+  finally
+    matches.Free;
+  end;
+end;
+
+class procedure TXmlPatchEngine.remove(doc : TMXmlDocument; sel: String; target: TMXmlElement);
+var
+  matches : TAdvList<TMXmlNode>;
+  elem : TMXmlElement;
   attrName : String;
 begin
   checkEndsWithAttribute(sel, attrName);
 
-  matches := targetRoot.selectNodes(sel);
-  if matches.length = 0 then
-    raise Exception.Create('Nothing to delete found for xpath '+sel);
-  if matches.length > 1 then
-    raise Exception.Create('The xpath '+sel+' matched multiple nodes');
-  if attrName <> '' then
-  begin
-    elem := matches.item[0] as IXmlDomElement;
-    elem.removeAttribute(attrName)
-  end
-  else
-    matches.item[0].parentNode.removeChild(matches.item[0]);
+  matches := doc.select(sel, target);
+  try
+    if matches.count = 0 then
+      raise Exception.Create('Nothing to delete found for xpath '+sel);
+    if matches.count > 1 then
+      raise Exception.Create('The xpath '+sel+' matched multiple nodes');
+
+    if attrName <> '' then
+    begin
+      elem := matches[0] as TMXmlElement;
+      elem.Attributes.Remove(attrName)
+    end
+    else
+      matches[0].parent.Children.remove(matches[0] as TMXmlElement);
+  finally
+    matches.Free;
+  end;
 end;
 
-class procedure TXmlPatchEngine.addChildNodes(doc : IXMLDOMDocument2; source, target: IXMLDomNode; pos : String);
+class procedure TXmlPatchEngine.addChildNodes(doc : TMXmlDocument; source, target: TMXmlElement; pos : String);
 var
-  n, c : IXmlDomNode;
-  ce, elem : IXMLDOMElement;
+  n, c : TMXmlElement;
+  ce, elem : TMXmlElement;
   i : integer;
 begin
-  n := source.firstChild;
+  n := source.first;
   while n <> nil do
   begin
     case n.nodeType of
-      NODE_ELEMENT :
+      ntElement :
         begin
-        ce := doc.createNode(NODE_ELEMENT, n.baseName, n.namespaceURI) as IXMLDOMElement;
-        elem := (n as IXMLDOMElement);
-        for i := 0 to elem.attributes.length - 1 do
-          ce.setAttribute(elem.attributes.item[i].nodeName, elem.attributes.item[i].nodeValue);
-        addChildNodes(doc, n, ce, '');
-        c := ce;
+        ce := TMXmlElement.create(ntElement, n.Name, n.localName, n.namespaceURI);
+        try
+          elem := (n as TMXmlElement);
+          ce.Attributes.addAll(elem.attributes);
+          addChildNodes(doc, n, ce, '');
+          c := ce.Link;
+        finally
+          ce.Free;
         end;
-      NODE_TEXT :
-        c := doc.createTextNode(n.text);
-      NODE_COMMENT :
-        c := doc.createComment(n.text);
+        end;
+      ntText :
+        c := TMXmlElement.createText(n.text);
+      ntComment :
+        c := TMXmlElement.createComment(n.text);
     else
-      raise Exception.Create('Node type not supported '+inttostr(n.nodeType));
+      raise Exception.Create('Node type not supported '+inttostr(ord(n.nodeType)));
     end;
     if pos = '' then
-      target.appendChild(c)
+    begin
+      target.Children.add(c);
+      c.Parent := target;
+    end
     else if (pos = 'before') then
-      target.parentNode.insertBefore(c, target)
+    begin
+      target.parent.Children.insert(target.parent.Children.IndexOf(target), c);
+      c.Parent := target.Parent;
+    end
     else
       raise Exception.Create('Pos "'+pos+'" not supported');
-    n := n.nextSibling;
+    n := n.next;
   end;
 end;
 

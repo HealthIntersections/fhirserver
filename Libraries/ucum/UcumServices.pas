@@ -33,10 +33,10 @@ Interface
 
 Uses
   SysUtils, Classes,
-  MsXml,
   MathSupport, FileSupport,
   AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
-  DecimalSupport, UcumHandlers, UcumValidators, UcumExpressions, Ucum,
+  DecimalSupport, ParserSupport, MXML,
+  UcumHandlers, UcumValidators, UcumExpressions, Ucum,
   FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser, CDSHooksUtilities,
   TerminologyServices;
 
@@ -88,9 +88,9 @@ Type
     FCommonUnits : TFhirValueSet;
 
     Function ParseDecimal(S,s1 : String):TSmartDecimal;
-    Function ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
-    Function ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
-    Function ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
+    Function ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
+    Function ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
+    Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
     Function GetPropertyIndex(const sName : String):Integer;
 
   public
@@ -281,8 +281,7 @@ Type
 Implementation
 
 Uses
-  MsXmlParser,
-  UcumSearch;
+ UcumSearch;
 
 { TUcumServices }
 
@@ -877,44 +876,42 @@ end;
 
 procedure TUcumServices.Import(const sFilename: String);
 var
-  oParser : TMsXmlParser;
-  oXml : IXMLDomDocument2;
-  oElem : IXMLDOMElement;
+  oXml : TMXmlDocument;
+  oElem : TMXmlElement;
   oErrors : TAdvStringList;
 begin
-  oParser := TMsXmlParser.Create;
+  oXml := TMXmlParser.parseFile(sFilename, [xpDropWhitespace]);
   try
-    oXml := oParser.Parse(sFilename);
-  Finally
-    oParser.Free;
-  End;
-  if oXml.documentElement.nodeName <> 'root' Then
-    raise EUCUMServices.create('Invalid ucum essence file');
-  FModel.Clear;
-  FModel.Version := TMsXmlParser.GetAttribute(oXml.documentElement, 'version');
-  FModel.RevisionDate := TMsXmlParser.GetAttribute(oXml.documentElement, 'revision-date');
-  FModel.RevisionDate := copy(FModel.RevisionDate, 8, length(FModel.RevisionDate)-9);
-  oElem := TMsXmlParser.FirstChild(oXml.documentElement);
-  while (oElem <> nil) Do
-  Begin
-   if oElem.NodeName = 'prefix' Then
-     FModel.prefixes.Add(ParsePrefix(oElem))
-   Else if oElem.NodeName = 'base-unit' Then
-     FModel.baseUnits.Add(ParseBaseUnit(oElem))
-   Else if oElem.NodeName = 'unit' Then
-     FModel.definedUnits.Add(ParseUnit(oElem))
-   else
-     raise EUCUMServices.create('unrecognised element '+oElem.nodename);
-    oElem := TMsXmlParser.NextSibling(oElem);
-  End;
-  oErrors := TAdvStringList.Create;
-  Try
-    Validate(oErrors);
-    if oErrors.Count > 0 then
-      raise EUCUMServices.create(oErrors.asText);
-  Finally
-    oErrors.Free;
-  End;
+    if oXml.document.Name <> 'root' Then
+      raise EUCUMServices.create('Invalid ucum essence file');
+    FModel.Clear;
+    FModel.Version := oXml.document.attribute['version'];
+    FModel.RevisionDate := oXml.document.Attribute['revision-date'];
+    FModel.RevisionDate := copy(FModel.RevisionDate, 8, length(FModel.RevisionDate)-9);
+    oElem := oXml.document.firstElement;
+    while (oElem <> nil) Do
+    Begin
+     if oElem.Name = 'prefix' Then
+       FModel.prefixes.Add(ParsePrefix(oElem))
+     Else if oElem.Name = 'base-unit' Then
+       FModel.baseUnits.Add(ParseBaseUnit(oElem))
+     Else if oElem.Name = 'unit' Then
+       FModel.definedUnits.Add(ParseUnit(oElem))
+     else
+       raise EUCUMServices.create('unrecognised element '+oElem.Name);
+      oElem := oElem.nextElement;
+    End;
+    oErrors := TAdvStringList.Create;
+    Try
+      Validate(oErrors);
+      if oErrors.Count > 0 then
+        raise EUCUMServices.create(oErrors.asText);
+    Finally
+      oErrors.Free;
+    End;
+  finally
+    oXml.Free;
+  end;
 end;
 
 function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
@@ -1015,25 +1012,25 @@ begin
     result := TSmartDecimal.ValueOf(s);
 end;
 
-Function TUcumServices.ParsePrefix(oElem : IXMLDOMElement):TUcumPrefix;
+Function TUcumServices.ParsePrefix(oElem : TMXmlElement):TUcumPrefix;
 var
-  oChild : IXMLDOMElement;
+  oChild : TMXmlElement;
   s : String;
 Begin
   result := TUcumPrefix.Create;
   try
-    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
-    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
-    oChild := TMsXmlParser.FirstChild(oElem);
+    result.code := oElem.attribute['Code'];
+    result.codeUC := oElem.attribute['CODE'];
+    oChild := oElem.firstElement;
     while oChild <> nil do
     Begin
-      if oChild.nodeName = 'name' Then
-        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
-      else if oChild.nodeName = 'printSymbol' Then
-        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
-      else if oChild.nodeName = 'value' Then
+      if oChild.Name = 'name' Then
+        result.names.Add(oChild.allText)
+      else if oChild.Name = 'printSymbol' Then
+        result.printSymbol := oChild.allText
+      else if oChild.Name = 'value' Then
       begin
-        s := TmsXmlParser.GetAttribute(oChild, 'value');
+        s := oChild.attribute['value'];
         result.value := ParseDecimal(s, result.Code);
         result.SetPrecision(24); // arbitrarily high. even when an integer, these numbers are precise
         if s[2] = 'e' Then
@@ -1042,8 +1039,8 @@ Begin
           result.Text := s;
       End
       else
-        raise EUCUMServices.Create('unknown element in prefix: '+oChild.NodeName);
-      oChild := TMsXmlParser.NextSibling(oChild);
+        raise EUCUMServices.Create('unknown element in prefix: '+oChild.Name);
+      oChild := oChild.nextElement;
     End;
     result.Link;
   Finally
@@ -1051,30 +1048,30 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseBaseUnit(oElem : IXMLDOMElement):TUcumBaseUnit;
+Function TUcumServices.ParseBaseUnit(oElem : TMXmlElement):TUcumBaseUnit;
 var
-  oChild : IXMLDOMElement;
+  oChild : TMXmlElement;
   s : String;
 Begin
   result := TUcumBaseUnit.Create;
   try
-    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
-    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
-    s := TMsXmlParser.GetAttribute(oElem, 'dim');
+    result.code := oElem.attribute['Code'];
+    result.codeUC := oElem.attribute['CODE'];
+    s := oElem.attribute['dim'];
     if s <> '' Then
       result.dim := s[1];
-    oChild := TMsXmlParser.FirstChild(oElem);
+    oChild := oElem.firstElement;
     while oChild <> nil do
     Begin
-      if oChild.nodeName = 'name' Then
-        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
-      else if oChild.nodeName = 'printSymbol' Then
-        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
-      else if oChild.nodeName = 'property' Then
-        result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
+      if oChild.Name = 'name' Then
+        result.names.Add(oChild.allText)
+      else if oChild.Name = 'printSymbol' Then
+        result.printSymbol := oChild.allText
+      else if oChild.Name = 'property' Then
+        result.PropertyType := GetPropertyIndex(oChild.allText)
       else
-        raise EUCUMServices.Create('unknown element in base unit: '+oChild.NodeName);
-      oChild := TMsXmlParser.NextSibling(oChild);
+        raise EUCUMServices.Create('unknown element in base unit: '+oChild.Name);
+      oChild := oChild.nextElement;
     End;
     result.Link;
   Finally
@@ -1082,38 +1079,38 @@ Begin
   End;
 End;
 
-Function TUcumServices.ParseUnit(oElem : IXMLDOMElement):TUcumDefinedUnit;
+Function TUcumServices.ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
 var
-  oChild : IXMLDOMElement;
+  oChild : TMXmlElement;
 Begin
   result := TUcumDefinedUnit.Create;
   try
-    result.code := TMsXmlParser.GetAttribute(oElem, 'Code');
-    result.codeUC := TMsXmlParser.GetAttribute(oElem, 'CODE');
-    result.metric := TMsXmlParser.GetAttribute(oElem, 'isMetric') = 'yes';
-    result.isSpecial := TMsXmlParser.GetAttribute(oElem, 'isSpecial') = 'yes';
-    result.class_ := TMsXmlParser.GetAttribute(oElem, 'class');
-    oChild := TMsXmlParser.FirstChild(oElem);
+    result.code := oElem.attribute['Code'];
+    result.codeUC := oElem.attribute['CODE'];
+    result.metric := oElem.attribute['isMetric'] = 'yes';
+    result.isSpecial := oElem.attribute['isSpecial'] = 'yes';
+    result.class_ := oElem.attribute['class'];
+    oChild := oElem.firstElement;
     while oChild <> nil do
     Begin
-      if oChild.nodeName = 'name' Then
-        result.names.Add(TMsXmlParser.TextContent(oChild, ttAsIs))
-      else if oChild.nodeName = 'printSymbol' Then
-        result.printSymbol := TMsXmlParser.TextContent(oChild, ttAsIs)
-      else if oChild.nodeName = 'property' Then
-        result.PropertyType := GetPropertyIndex(TMsXmlParser.TextContent(oChild, ttAsIs))
-      else if oChild.nodeName = 'value' Then
+      if oChild.Name = 'name' Then
+        result.names.Add(oChild.allText)
+      else if oChild.Name = 'printSymbol' Then
+        result.printSymbol := oChild.allText
+      else if oChild.Name = 'property' Then
+        result.PropertyType := GetPropertyIndex(oChild.allText)
+      else if oChild.Name = 'value' Then
       begin
-        result.value.unit_ := TMsXmlParser.GetAttribute(oChild, 'Unit');
-        result.value.unitUC := TMsXmlParser.GetAttribute(oChild, 'UNIT');
-        result.value.value := ParseDecimal(TmsXmlParser.GetAttribute(oChild, 'value'), result.value.unit_);
+        result.value.unit_ := oChild.attribute['Unit'];
+        result.value.unitUC := oChild.attribute['UNIT'];
+        result.value.value := ParseDecimal(oChild.attribute['value'], result.value.unit_);
         if result.value.value.IsWholeNumber then
           result.value.SetPrecision(24);
-        result.value.text := TMsXmlParser.TextContent(oChild, ttAsIs);
+        result.value.text := oChild.allText
       End
       else
-        raise EUCUMServices.Create('unknown element in unit: '+oChild.NodeName);
-      oChild := TMsXmlParser.NextSibling(oChild);
+        raise EUCUMServices.Create('unknown element in unit: '+oChild.Name);
+      oChild := oChild.nextElement;
     End;
     result.Link;
   Finally

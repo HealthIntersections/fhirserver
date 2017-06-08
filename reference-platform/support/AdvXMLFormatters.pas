@@ -259,7 +259,10 @@ Begin
   commitPending;
 
   FLastText := false;
-  ProducePretty('<!--' + sComment + '-->');
+  if sComment.endsWith('-') then
+    ProducePretty('<!--' + sComment + ' -->')
+  else
+    ProducePretty('<!--' + sComment + '-->')
 End;
 
 

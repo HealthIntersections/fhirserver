@@ -31,10 +31,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, ActiveX, Variants,
+  SysUtils, Classes,
   StringSupport, EncodeSupport,
   AdvStreams, AdvVCLStreams,  AdvBuffers, AdvObjects, AdvXmlFormatters, AdvMemories, AdvStringMatches, AdvGenerics,
-  XmlBuilder, MsXml, MsXmlParser, Xml.xmlintf, Xml.XMLDoc, Xml.adomxmldom;
+  XmlBuilder, ParserSupport;
 
 Type
 
@@ -47,8 +47,6 @@ Type
     depth : integer;
     started : boolean;
     function getNSRep(uri, name : String):String;
-    function nsIsUsed(elem : IXmlNode; ns : String) : boolean;
-    Procedure defineNamespace(element, attribute : IXMLNode);
   Public
     destructor Destroy; override;
 
@@ -71,15 +69,10 @@ Type
     function Text(Const sValue : String) : TSourceLocation; override;
     function Entity(Const sValue : String) : TSourceLocation; override;
     function TagText(Const sName, sValue : String) : TSourceLocation; override;
-    Procedure WriteMsXml(iElement : IXMLDomElement); override;
-    Procedure WriteMsXmlNode(iNode : IXMLDOMNode); overload; override;
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
     procedure CData(text : String);
 
-    Procedure WriteXml(iElement : IXMLNode; first : boolean); override;
-    Procedure WriteXmlNode(iNode : IXMLNode; first : boolean); override;
-    Procedure WriteXmlDocument(iDoc : IXMLDocument); override;
     procedure inject(const bytes : TBytes); override;
   End;
 
@@ -156,7 +149,7 @@ begin
   xml.ProduceBytes(bytes);
 end;
 
-function TAdvXmlBuilder.nsIsUsed(elem: IXmlNode; ns: String): boolean;
+{function TAdvXmlBuilder.nsIsUsed(elem: IXmlNode; ns: String): boolean;
 var
   i : integer;
 begin
@@ -171,6 +164,7 @@ begin
     if elem.ChildNodes[i].NodeType = ntElement then
       result := result or nsIsUsed(elem.ChildNodes[i], ns);
 end;
+}
 
 Procedure TAdvXmlBuilder.Build(oStream: TStream);
 begin
@@ -205,7 +199,7 @@ begin
 end;
 
 
-procedure TAdvXmlBuilder.defineNamespace(element, attribute: IXMLNode);
+{procedure TAdvXmlBuilder.defineNamespace(element, attribute: IXMLNode);
 var
   ns : String;
 begin
@@ -228,7 +222,7 @@ begin
   else if nsIsUsed(element, ns) then
     xml.AddAttribute(attribute.NodeName, ns)
 end;
-
+}
 procedure TAdvXmlBuilder.defineNS(abbrev, uri: String);
 begin
   CurrentNamespaces.Add(uri, abbrev);
@@ -353,66 +347,6 @@ begin
   result.col := 0; //xml.col;
 end;
 
-procedure TAdvXmlBuilder.WriteMsXml(iElement: IXMLDomElement);
-var
-  attr : IXMLDOMNode;
-  a: Integer;
-begin
-  if iElement.attributes <> nil then
-    for a := 0 to iElement.attributes.length - 1 do
-    begin
-      attr := iElement.attributes[a];
-      AddAttribute(attr.nodeName, attr.nodeValue);
-    end;
-
-  if iElement.childNodes.length = 0 then
-    Tag(iElement.nodeName)
-  else
-  begin
-    Open(iElement.nodeName);
-    WriteMsXmlNode(iElement);
-    Close(iElement.nodeName);
-  end;
-end;
-
-procedure TAdvXmlBuilder.WriteMsXmlNode(iNode: IXMLDOMNode);
-var
-  n : IXMLDOMNode;
-  i : integer;
-begin
-  for i := 0 to iNode.childNodes.length - 1  do
-  begin
-    n := iNode.childNodes[i];
-    case n.nodeType of
-      NODE_ELEMENT : WriteMsXml(n as IXMlDOmElement);
-      NODE_COMMENT : Comment(n.text);
-      NODE_TEXT : Text(n.text);
-      NODE_PROCESSING_INSTRUCTION :
-        begin
-//        if n.attributes <> nil then
-//          for a := 0 to n.attributes.length - 1 do
-//          begin
-//            attr := n.attributes[a];
-//            AddAttribute(attr.nodeName, attr.nodeValue);
-//          end;
-        ProcessingInstruction(n.nodeName, n.text);
-        end;
-    else
-      raise Exception.Create('Unhandled node type on document: '+inttostr(n.nodeType));
-//  NODE_CDATA_SECTION = $00000004;
-//  NODE_ENTITY_REFERENCE = $00000005;
-//  NODE_ENTITY = $00000006;
-//  NODE_PROCESSING_INSTRUCTION = $00000007;
-//  NODE_DOCUMENT = $00000009;
-//  NODE_DOCUMENT_TYPE = $0000000A;
-//  NODE_DOCUMENT_FRAGMENT = $0000000B;
-//  NODE_NOTATION = $0000000C;
-//      NODE_ATTRIBUTE = $00000002;
-//      NODE_INVALID = $00000000;
-    end;
-  end;
-end;
-
 function TAdvXmlBuilder.Entity(Const sValue : String) : TSourceLocation;
 begin
   raise Exception.Create('entities not supported');
@@ -437,13 +371,13 @@ end;
 { TAdvXmlBuilderCanonicalizationTests }
 
 class procedure TAdvXmlBuilderCanonicalizationTests.check(source: String; can: TXmlCanonicalisationMethodSet; target: String);
-var
+{var
   doc : IXMLDocument;
-  dom : TXMLDocument;
+  dom : TMXMLDocument;
   xb : TAdvXmlBuilder;
-  s : String;
+  s : String;}
 begin
-  dom := TXMLDocument.Create(nil);
+(*  dom := TMXMLDocument.Create;
   doc := dom;
   dom.DOMVendor := OpenXML4Factory;
   dom.ParseOptions := [poPreserveWhiteSpace];
@@ -462,6 +396,7 @@ begin
   end;
   if s <> target then
     raise Exception.Create('Mismatch');
+    *)
 end;
 
 class procedure TAdvXmlBuilderCanonicalizationTests.Test;
@@ -650,7 +585,7 @@ begin
 
 end;
 
-procedure TAdvXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
+(*procedure TAdvXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
 var
   attr : IXMLNode;
   a: Integer;
@@ -733,6 +668,6 @@ begin
     end;
   end;
 end;
-
+ *)
 
 end.

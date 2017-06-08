@@ -19,12 +19,12 @@ are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -47,10 +47,25 @@ Type
     Function ReadString(Var s : String; iLength : Integer) : Integer;
   end;
 
+  TAdvStringReader = class(TAdvTextReader)
+  private
+    FContent : String;
+    FCursor : integer;
+  public
+    constructor Create(content : String);
+    function Peek: Integer; override;
+    function Read: Integer; overload; override;
+    function Read(const Buffer: TCharArray; Index, Count: Integer): Integer; overload; override;
+    function ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer; override;
+    function ReadLine: string; override;
+    function ReadToEnd: string; override;
+  end;
+
   TAdvStreamReader = class(TAdvTextReader)
   private
-    FBufferedData: TStringBuilder;
-    FBufferOffset : Integer;
+    FBufferedData: TCharArray;
+    FBufferStart : Integer;
+    FBufferEnd : Integer;
     FBufferSize: Integer;
     FDetectBOM: Boolean;
     FNoDataInStream: Boolean;
@@ -59,6 +74,7 @@ Type
     FCursor : Integer;
     FEncoding: TEncoding;
     FCheckEncoding : boolean;
+    FClosed : boolean;
     function DetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
     function SkipPreamble(Encoding: TEncoding; Buffer: TBytes): Integer;
     procedure FillBuffer(var Encoding: TEncoding);
@@ -70,8 +86,8 @@ Type
     constructor Create(aStream: TAdvStream; DetectBOM: Boolean); overload;
     constructor Create(const Filename: string); overload;
     constructor Create(const Filename: string; DetectBOM: Boolean); overload;
-    constructor Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024); overload;
-    constructor Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024); overload;
+    constructor Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0); overload;
+    constructor Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0); overload;
     destructor Destroy; override;
     procedure Close; override;
     procedure DiscardBufferedData;
@@ -104,7 +120,7 @@ begin
   Create(aStream, TEncoding.UTF8, DetectBOM);
 end;
 
-constructor TAdvStreamReader.Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024);
+constructor TAdvStreamReader.Create(aStream: TAdvStream; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
 begin
   Create;
 
@@ -113,12 +129,17 @@ begin
   if not Assigned(Encoding) then
     raise EArgumentException.CreateResFmt(@SParamIsNil, ['Encoding']); // DO NOT LOCALIZE
 
-  FBufferedData := TStringBuilder.Create;
-  FBufferOffset := 0;
-  FEncoding := Encoding;
   FBufferSize := BufferSize;
-  if FBufferSize < 128 then
+  if FBufferSize = 0 then
+    FBufferSize := aStream.Readable;
+  if FBufferSize = 0 then
     FBufferSize := 128;
+  SetLength(FBufferedData, BufferSize);
+  FBufferEnd := 0;
+  FBufferStart := 0;
+  FClosed := false;
+
+  FEncoding := Encoding;
   FNoDataInStream := False;
   FStream := aStream;
   FDetectBOM := DetectBOM;
@@ -126,7 +147,7 @@ begin
   FCursor := 0;
 end;
 
-constructor TAdvStreamReader.Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 1024);
+constructor TAdvStreamReader.Create(const Filename: string; Encoding: TEncoding; DetectBOM: Boolean = False; BufferSize: Integer = 0);
 var
   oFile : TAdvFile;
 begin
@@ -160,20 +181,16 @@ begin
   FStream.Free;
   FStream := nil;
 
-  if FBufferedData <> nil then
-  begin
-    FBufferedData.Free;
-    FBufferedData := nil;
-    FBufferOffset := 0;
-  end;
+  DiscardBufferedData;
+  FClosed := true;
 end;
 
 procedure TAdvStreamReader.DiscardBufferedData;
 begin
-  if FBufferedData <> nil then
+  if not FClosed then
   begin
-    FBufferedData.Clear;
-    FBufferOffset := 0;
+    FBufferEnd := 0;
+    FBufferStart := 0;
     FNoDataInStream := False;
   end;
 end;
@@ -206,6 +223,7 @@ var
   StartIndex: Integer;
   ByteBufLen: Integer;
   ok : boolean;
+  tries : integer;
 begin
   SetLength(LBuffer, FBufferSize + BufferPadding);
 
@@ -226,6 +244,7 @@ begin
   // Convert to string and calc byte count for the string
   ByteBufLen := BytesRead - StartIndex;
   ok := false;
+  tries := 0;
   repeat
     try
       if FCheckEncoding and (FEncoding.GetCharCount(LBuffer, StartIndex, ByteBufLen) = 0) then
@@ -233,52 +252,68 @@ begin
         SetLength(LBuffer, Length(LBuffer) + BufferPadding);
         FStream.Read(LBuffer[ByteBufLen], 1);
         inc(ByteBufLen);
+        inc(tries);
       end;
 
       LString := FEncoding.GetString(LBuffer, StartIndex, ByteBufLen);
       ok := true;
     except
-      FCheckEncoding := true;
+      if FCheckEncoding and (tries > FEncoding.GetMaxByteCount(1)) then
+        raise
+      else
+        FCheckEncoding := true;
     end;
   until ok;
 
-  // Add string to character data buffer
-  FBufferedData.Append(LString);
+  if (Length(LString) > 0) then
+  begin
+    // Add string to character data buffer
+    if (FBufferStart > 0) and (FBufferEnd = FBufferStart) then
+    begin
+      FBufferStart := 0;
+      FBufferEnd := 0;
+    end;
+    if Length(FBufferedData) < FBufferEnd + length(LString) then
+      SetLength(FBufferedData, Length(FBufferedData) + length(LString) * 2);
+
+    Move(LString[1], FBufferedData[FBufferEnd], length(LString) * SizeOf(Char));
+    inc(FBufferEnd, length(LString));
+  end;
 end;
 
 function TAdvStreamReader.GetEndOfStream: Boolean;
 begin
-  if not FNoDataInStream and (FBufferedData <> nil) and (FBufferedData.Length < 1+FBufferOffset) then
+  if not FNoDataInStream and (not FClosed) and (FBufferEnd <= FBufferStart) then
     FillBuffer(FEncoding);
-  Result := FNoDataInStream and ((FBufferedData = nil) or (FBufferedData.Length = FBufferOffset));
+  Result := FNoDataInStream and ((FClosed) or (FBufferEnd = FBufferStart));
 end;
 
 function TAdvStreamReader.Peek: Integer;
 begin
   Result := -1;
-  if (FBufferedData <> nil) and (not EndOfStream) then
+  if (not FClosed) and (not EndOfStream) then
   begin
-    if FBufferedData.Length < 1 + FBufferOffset  then
+    if FBufferEnd < 1 + FBufferStart  then
       FillBuffer(FEncoding);
-    Result := Integer(FBufferedData.Chars[FBufferOffset]);
+    Result := Integer(FBufferedData[FBufferStart]);
   end;
 end;
 
 function TAdvStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := -1;
-  if (FBufferedData <> nil) and (not EndOfStream) then
+  if (not FClosed) and (not EndOfStream) then
   begin
-    while (FBufferedData.Length < Count + FBufferOffset) and (not EndOfStream) and (not FNoDataInStream) do
+    while (FBufferEnd < Count + FBufferStart) and (not EndOfStream) and (not FNoDataInStream) do
       FillBuffer(FEncoding);
 
-    if FBufferedData.Length > Count + FBufferOffset then
+    if FBufferEnd > Count + FBufferStart then
       Result := Count
     else
-      Result := FBufferedData.Length - FBufferOffset;
+      Result := FBufferEnd - FBufferStart;
 
-    FBufferedData.CopyTo(FBufferOffset, Buffer, Index, Result);
-    inc(FBufferOffset, result);
+    move(FBufferedData[FBufferStart], buffer[0], result * Sizeof(char));
+    inc(FBufferStart, result);
   end;
 end;
 
@@ -290,12 +325,12 @@ end;
 function TAdvStreamReader.Read: Integer;
 begin
   Result := -1;
-  if (FBufferedData <> nil) and (not EndOfStream) then
+  if (not FClosed) and (not EndOfStream) then
   begin
-    if FBufferedData.Length < 1 + FBufferOffset then
+    if FBufferEnd < 1 + FBufferStart then
       FillBuffer(FEncoding);
-    Result := Integer(FBufferedData.Chars[FBufferOffset]);
-    inc(FBufferOffset);
+    Result := Integer(FBufferedData[FBufferStart]);
+    inc(FBufferStart);
   end;
 end;
 
@@ -304,19 +339,19 @@ var
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;
 begin
-  raise Exception.Create('This needs debugging for FBufferOffset');
-  Result := '';
-  if FBufferedData = nil then
+  raise Exception.Create('This needs debugging for buffer changes');
+{  Result := '';
+  if FClosed then
     Exit;
   NewLineIndex := 0;
   PostNewLineIndex := 0;
 
   while True do
   begin
-    if (NewLineIndex + 2 > FBufferedData.Length + FBufferOffset) and (not FNoDataInStream) then
+    if (NewLineIndex + 2 > FBufferEnd + FBufferStart) and (not FNoDataInStream) then
       FillBuffer(FEncoding);
 
-    if NewLineIndex >= FBufferedData.Length + FBufferOffset then
+    if NewLineIndex >= FBufferEnd + FBufferStart then
     begin
       if FNoDataInStream then
       begin
@@ -326,23 +361,23 @@ begin
       else
       begin
         FillBuffer(FEncoding);
-        if FBufferedData.Length = FBufferOffset then
+        if FBufferEnd = FBufferStart then
           Break;
       end;
     end;
-    if FBufferedData[NewLineIndex + FBufferOffset] = #10 then
+    if FBufferedData[NewLineIndex + FBufferStart] = #10 then
     begin
       PostNewLineIndex := NewLineIndex + 1;
       Break;
     end
     else
-    if (FBufferedData[NewLineIndex + FBufferOffset] = #13) and (NewLineIndex + 1 < FBufferedData.Length + FBufferOffset) and (FBufferedData[NewLineIndex + 1] = #10) then
+    if (FBufferedData[NewLineIndex + FBufferStart] = #13) and (NewLineIndex + 1 < FBufferEnd + FBufferStart) and (FBufferedData[NewLineIndex + 1] = #10) then
     begin
       PostNewLineIndex := NewLineIndex + 2;
       Break;
     end
     else
-    if FBufferedData[NewLineIndex + FBufferOffset] = #13 then
+    if FBufferedData[NewLineIndex + FBufferStart] = #13 then
     begin
       PostNewLineIndex := NewLineIndex + 1;
       Break;
@@ -351,22 +386,24 @@ begin
     Inc(NewLineIndex);
   end;
 
-  Result := FBufferedData.ToString.Substring(FBufferOffset);
+  Result := FBufferedData.ToString.Substring(FBufferStart);
   SetLength(Result, NewLineIndex);
-  inc(FBufferOffset, PostNewLineIndex);
+  inc(FBufferStart, PostNewLineIndex);}
 end;
 
 function TAdvStreamReader.ReadToEnd: string;
 begin
+  raise Exception.Create('This needs debugging for FBufferStart');
   Result := '';
-  if (FBufferedData <> nil) and (not EndOfStream) then
+  if (not FClosed) and (not EndOfStream) then
   begin
     repeat
       FillBuffer(FEncoding);
     until FNoDataInStream;
-    Result := FBufferedData.ToString.Substring(FBufferOffset);
-    FBufferedData.Clear;
-    FBufferOffset := 0;
+    SetLength(result, FBufferEnd - FBufferStart);
+    Move(FBufferedData[FBufferStart], result[1], length(result) * Sizeof(Char));
+    FBufferEnd := 0;
+    FBufferStart := 0;
   end;
 end;
 
@@ -406,6 +443,54 @@ begin
   SetLength(oBuffer, iLength);
   result := ReadBlock(oBuffer, 0, iLength);
   SetString(s, pchar(oBuffer), result);
+end;
+
+{ TAdvStringReader }
+
+constructor TAdvStringReader.Create(content: String);
+begin
+  inherited Create;
+  FContent := content;
+  FCursor := 1;
+end;
+
+function TAdvStringReader.Peek: Integer;
+begin
+  if FCursor > FContent.Length then
+    result := -1
+  else
+    result := ord(FContent[FCursor]);
+end;
+
+function TAdvStringReader.Read: Integer;
+begin
+  if FCursor > FContent.Length then
+    result := -1
+  else
+  begin
+    result := ord(FContent[FCursor]);
+    inc(FCursor);
+  end;
+end;
+
+function TAdvStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TAdvStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TAdvStringReader.ReadLine: string;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TAdvStringReader.ReadToEnd: string;
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 end.

@@ -36,7 +36,7 @@ uses
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
-  KDBManager, KDBDialects, XmlSupport, MsXml, XmlPatch, MsXmlParser, GraphQL,
+  KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL,
@@ -2674,7 +2674,7 @@ var
   list : TMatchingResourceList;
   parser : TFHIRParser;
   json, json2 : TJsonObject;
-  xml : IXMLDOMDocument2;
+  xml : TMXmlDocument;
   ms : TAdvMemoryStream;
 begin
   result := false;
@@ -2738,7 +2738,7 @@ begin
       else if (request.patchJson <> nil) then
         json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
       else
-        xml := TMsXmlParser.Parse(FConnection.ColBlobByName['XmlContent'])
+        xml := TMXmlParser.Parse(FConnection.ColBlobByName['XmlContent'], [xpResolveNamespaces])
     finally
       FConnection.Terminate;
     end;
@@ -2773,11 +2773,11 @@ begin
         else
         begin
           TXmlPatchEngine.execute(xml, xml, request.patchXml);
-          request.Source.AsUnicode := xml.xml;
+          request.Source.AsUnicode := xml.ToXml;
           request.PostFormat := ffXml;
           parser := TFHIRXmlParser.Create(request.Context.link, request.lang);
           try
-            TFHIRXmlParser(parser).element := xml.documentElement;
+            TFHIRXmlParser(parser).element := xml.document.Link;
             parser.parse();
             request.Resource := parser.resource.Link;
           finally

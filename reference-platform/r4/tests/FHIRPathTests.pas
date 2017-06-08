@@ -35,7 +35,7 @@ uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, StringSupport, AdvGenerics,
   FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes,
-  MsXml, MsXmlParser, DUnitX.TestFramework;
+  MXML, DUnitX.TestFramework;
 
 Type
   [TextFixture]
@@ -53,8 +53,8 @@ Type
   TFHIRPathTest = Class (TObject)
   private
     engine : TFHIRExpressionEngine;
-
-    function findTest(path : String) : IXMLDOMElement;
+    tests : TMXmlElement;
+    function findTest(path : String) : TMXmlElement;
   Published
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
@@ -65,58 +65,60 @@ Type
 
 implementation
 
-var
-  tests : IXMLDOMDocument2;
 
 { FHIRPathTestCaseAttribute }
 
 function FHIRPathTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
 var
-  group, test : IXMLDOMElement;
+  tests : TMXmlElement;
+  group, test : TMXmlElement;
   i, g, t : integer;
   gn, s : String;
   v : OleVariant;
 begin
-  tests := TMsXmlParser.Parse('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml');
-
-  group := TMsXmlParser.FirstChild(tests.documentElement);
-  i := 0;
-  g := 0;
-  while group <> nil do
-  begin
-    inc(g);
-    test := TMsXmlParser.FirstChild(group);
-    gn := group.getAttribute('name');
-    t := 0;
-    while test <> nil do
+  tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
+  try
+    group := tests.document.first;
+    i := 0;
+    g := 0;
+    while group <> nil do
     begin
-      inc(t);
-      s := VarToStrDef(test.getAttribute('name'), '');
-      if (s = '') then
-        s := gn+' '+inttostr(t);
+      inc(g);
+      test := group.first;
+      gn := group.attribute['name'];
+      t := 0;
+      while test <> nil do
+      begin
+        inc(t);
+        s := VarToStrDef(test.attribute['name'], '');
+        if (s = '') then
+          s := gn+' '+inttostr(t);
 
-      s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
+        s := s + ' ('+inttostr(g)+'.'+inttostr(t)+')';
 
-      SetLength(result, i+1);
-      result[i].Name := s;
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := s;
-      inc(i);
-      test := TMsXmlParser.NextSibling(test);
+        SetLength(result, i+1);
+        result[i].Name := s;
+        SetLength(result[i].Values, 1);
+        result[i].Values[0] := s;
+        inc(i);
+        test := test.Next;
+      end;
+      group := group.Next;
     end;
-    group := TMsXmlParser.NextSibling(group);
+  finally
+    tests.free;
   end;
 end;
 
 
 { TFHIRPathTest }
 
-function TFHIRPathTest.findTest(path: String): IXMLDOMElement;
+function TFHIRPathTest.findTest(path: String): TMXmlElement;
 var
   l, r : String;
   gs, ts, g, t : integer;
 var
-  group, test : IXMLDOMElement;
+  group, test : TMXmlElement;
 begin
   result := nil;
   StringSplit(path, '(', l, r);
@@ -125,27 +127,27 @@ begin
   gs := StrToInt(l);
   ts := StrToInt(r);
 
-  group := TMsXmlParser.FirstChild(tests.documentElement);
+  group := tests.document.first;
   g := 0;
   while group <> nil do
   begin
     inc(g);
-    test := TMsXmlParser.FirstChild(group);
+    test := group.first;
     t := 0;
     while test <> nil do
     begin
       inc(t);
       if (g = gs) and (t = ts) then
         result := test;
-      test := TMsXmlParser.NextSibling(test);
+      test := test.Next;
     end;
-    group := TMsXmlParser.NextSibling(group);
+    group := group.Next;
   end;
 end;
 
 procedure TFHIRPathTest.FHIRPathTest(Name: String);
 var
-  test : IXMLDOMElement;
+  test : TMXmlElement;
   input, expression, s, tn : String;
   fail, ok : boolean;
   res : TFHIRResource;
@@ -153,13 +155,13 @@ var
   node : TFHIRExpressionNode;
   p : TFHIRXmlParser;
   f :  TFileStream;
-  expected : TInterfaceList;
+  expected : TAdvList<TMXmlElement>;
   i : integer;
 begin
   test := findTest(name);
-  input := test.getAttribute('inputfile');
-  expression := TMsXmlParser.NamedChild(test, 'expression').text;
-  fail := TMsXmlParser.NamedChild(test, 'expression').getAttribute('invalid') = 'true';
+  input := test.attribute['inputfile'];
+  expression := test.element('expression').text;
+  fail := test.element('expression').attribute['invalid'] = 'true';
   res := nil;
 
   outcome := nil;
@@ -196,7 +198,7 @@ begin
           outcome := TFHIRSelectionList.create;
         end;
       end;
-      if (TMsXmlParser.GetAttribute(test, 'predicate') = 'true') then
+      if (test.attribute['predicate'] = 'true') then
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
@@ -206,16 +208,16 @@ begin
       if (s <> '') then
         writeln(s);
 
-      expected := TInterfaceList.Create;
+      expected := TAdvList<TMXmlElement>.Create;
       try
-        TMsXmlParser.getNamedChildrenWithWildcard(test, 'output', expected);
+        test.listElements('output', expected);
         Assert.isTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d', [expected.count, outcome.count]));
         for i := 0 to outcome.count- 1 do
         begin
-          tn := IXMLDomElement(expected[i]).getAttribute('type');
+          tn := TMXmlElement(expected[i]).attribute['type'];
           if (tn <> '') then
             Assert.isTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s', [i, tn, outcome[i].value.fhirType()]));
-          s := IXMLDomElement(expected[i]).Text;
+          s := TMXmlElement(expected[i]).Text;
           if (s <> '') then
           begin
             Assert.isTrue(outcome[i].value is TFHIRPrimitiveType, StringFormat('Outcome %d: Value should be a primitive type but was %s', [i, outcome[i].value.fhirType()]));
@@ -233,56 +235,16 @@ begin
     outcome.free;
   end;
 end;
-(*
 
-
-    } catch (Exception e) {
-    }
-
-
-*)
-
-
-(*
-var
-  test, target, patch, error, patched, outcome : IXMLDOMElement;
-  s : String;
-  ok : boolean;
-begin
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  while test <> nil do
-  begin
-    if (test.nodeName = 'case') and (name = test.getAttribute('name')) then
-    begin
-      target := TMsXmlParser.NamedChild(test, 'target');
-      patch := TMsXmlParser.NamedChild(test, 'patch');
-      error := TMsXmlParser.NamedChild(test, 'error');
-      patched := TMsXmlParser.NamedChild(test, 'patched');
-      if patched <> nil then
-        patched := TMsXmlParser.FirstChild(patched);
-
-      if (error <> nil) then
-        Assert.WillRaiseWithMessage(
-          procedure begin
-            //
-          end, Exception, error.text)
-      else
-      begin
-        // ok :=
-        Assert.IsTrue(ok, s);
-      end;
-    end;
-    test := TMsXmlParser.NextSibling(test);
-  end;
-end;
-  *)
 procedure TFHIRPathTest.setup;
 begin
+  tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
   engine := TFHIRExpressionEngine.Create(TTestingWorkerContext.Use);
 end;
 
 procedure TFHIRPathTest.teardown;
 begin
+  tests.Free;
   engine.Free;
 end;
 

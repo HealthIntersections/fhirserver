@@ -42,8 +42,7 @@ uses
   StringSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRContext,
   FHIRSupport, FHIRProfileUtilities, FHIRPath,
-  MsXml, MsXmlParser, AdvJson,
-  DUnitX.TestFramework;
+  AdvJson, DUnitX.TestFramework;
 
 var
   GBasePath : String;
@@ -108,8 +107,8 @@ begin
   begin
     GWorkerContext := TTestingWorkerContext.create;
 //    GWorkerContext.LoadFromDefinitions(IncludeTrailingBackslash(GBasePath)+'build\\publish\\validation-min.xml.zip');
-    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\\publish\\profiles-types.xml');
-    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\\publish\\profiles-resources.xml');
+    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\publish\profiles-types.xml');
+    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\publish\profiles-resources.xml');
   end;
   result := GWorkerContext.link;
 end;

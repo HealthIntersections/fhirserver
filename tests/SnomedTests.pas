@@ -195,7 +195,6 @@ var
   pe, ce : TSnomedExpression;
   result : boolean;
 begin
-  AllocConsole;
   pe := FServices.ParseExpression( p);
   try
     ce := FServices.ParseExpression( c);

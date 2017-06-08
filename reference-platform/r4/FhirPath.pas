@@ -39,8 +39,7 @@ uses
   SysUtils, Classes, Math, RegExpr, Generics.Collections, Character,
   StringSupport, TextUtilities, SystemSupport, MathSupport,
   AdvObjects, AdvGenerics, DecimalSupport, DateAndTime,
-  XmlBuilder,
-
+  ParserSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRConstants,
   FHIRParser;
 

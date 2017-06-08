@@ -952,7 +952,7 @@ begin
   Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
   begin
     if IsComponentSelected('r3') then
-      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.0')
+      s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.1')
     else
       s := MyDllCheckDatabase(ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
     result := s = '';
@@ -969,7 +969,7 @@ begin
         if (isTaskSelected('db')) then
           result := true
         else
-          MsgBox('The database must be reinitialized because the FHIR version has changed (is '+s+', needs to be 3.0.0). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
+          MsgBox('The database must be reinitialized because the FHIR version has changed (is '+s+', needs to be 3.0.1). Please go back back to tasks, and select ''Initialize Data Base''', mbError, MB_OK); 
       end
       else
         MsgBox(s, mbError, MB_OK); 

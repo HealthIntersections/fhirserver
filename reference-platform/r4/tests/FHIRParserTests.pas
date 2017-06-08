@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  Windows, SysUtils, Classes,
   DUnitX.TestFramework,
   FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel,
   FHIRContext, FHIRTestWorker, XmlTests, JsonTests;
@@ -67,6 +67,7 @@ var
   re : TFHIRMMElement;
   ctxt : TWorkerContext;
 begin
+//  AllocConsole;
   r := TFHIRXmlParser.parseFile(nil, 'en', filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');

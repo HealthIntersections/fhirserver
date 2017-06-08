@@ -225,7 +225,7 @@
         <DCCReference Include="..\reference-platform\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\reference-platform\Support\XMLBuilder.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvWinInetClients.pas"/>
-        <DCCReference Include="..\reference-platform\Support\MsXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvXmlBuilders.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvJSON.pas"/>
         <DCCReference Include="..\reference-platform\Support\AfsResourceVolumes.pas"/>
@@ -319,7 +319,6 @@
         <DCCReference Include="FHIRSubscriptionManager.pas"/>
         <DCCReference Include="ServerValidator.pas"/>
         <DCCReference Include="..\reference-platform\Support\IdWebSocket.pas"/>
-        <DCCReference Include="..\reference-platform\Support\MsXML.pas"/>
         <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
         <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
         <DCCReference Include="..\reference-platform\r4\QuestionnaireBuilder.pas"/>
@@ -335,10 +334,10 @@
         <DCCReference Include="..\reference-platform\r4\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRConstants.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRSupport.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRValidator.pas"/>
@@ -354,7 +353,7 @@
         <DCCReference Include="..\reference-platform\r4\FhirOpBase.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRIndexInformation.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRMetaModel.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRXhtml.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRStructureMapUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
@@ -363,7 +362,7 @@
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
         <DCCReference Include="ObservationStatsEvaluator.pas"/>
         <DCCReference Include="OpenMHealthServer.pas"/>
-        <DCCReference Include="..\reference-platform\r4\DifferenceEngine.pas"/>
+        <DCCReference Include="..\reference-platform\support\DifferenceEngine.pas"/>
         <DCCReference Include="CvxServices.pas"/>
         <DCCReference Include="ACIRServices.pas"/>
         <DCCReference Include="ReverseClient.pas"/>
@@ -372,6 +371,8 @@
         <DCCReference Include="FHIRUserProvider.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRGraphQL.pas"/>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\MicroXml.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

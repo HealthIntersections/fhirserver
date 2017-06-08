@@ -35,8 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvGenerics,
-  MsXml, MsXmlparser, ParseMap,
-  GraphQL,
+  ParseMap, GraphQL,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPath;
 
 type

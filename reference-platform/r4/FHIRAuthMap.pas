@@ -73,7 +73,6 @@ const
     tcOther, // frtConsent
     tcFinancial , // frtContract
     tcFinancial , // frtCoverage
-    tcOther , // frtDataElement
     tcClinical,  // frtDetectedIssue
     tcOther , // frtDevice
     tcOther , // frtDeviceComponent
@@ -81,7 +80,7 @@ const
     tcOther , // frtDeviceUseRequest
     tcClinical, // frtDeviceUseStatement
     tcClinical, // frtDiagnosticReport
-    tcClinical , // frtDiagnosticRequest
+
     tcDocuments , // frtDocumentManifest
     tcDocuments, // frtDocumentReference
     tcFinancial , // frtEligibilityRequest

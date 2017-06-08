@@ -70,7 +70,7 @@ uses
   NppPlugin, SciSupport,
   GuidSupport, FileSupport, SystemSupport,
   AdvObjects, AdvGenerics, AdvBuffers, AdvWinInetClients,
-  XmlBuilder, MsXml, MsXmlParser, TextUtilities,
+  ParserSupport, XmlBuilder, MsXml, MsXmlParser, TextUtilities,
 
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,

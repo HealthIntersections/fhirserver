@@ -189,14 +189,6 @@ type
     property object_List : TFhirAuditEventEntityList read GetObjectList;
   end;
 
-  TFHIRTFhirContractHelper = class helper for TFhirContract
-  private
-    function getActorList: TFhirContractAgentList;
-  public
-    property actorList : TFhirContractAgentList read getActorList;
-  end;
-
-
   TFHIRElementHelper = class helper for TFHIRElement
   public
     function addExtension(url : String) : TFHIRExtension; overload;
@@ -1752,7 +1744,6 @@ begin
     frtCodeSystem: result := TFHIRCodeSystem(res).url;
     frtConceptMap: result := TFHIRConceptMap(res).url;
     frtCapabilityStatement: result := TFHIRCapabilityStatement(res).url;
-    frtDataElement: result := TFHIRDataElement(res).url;
     frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
     frtOperationDefinition: result := TFHIROperationDefinition(res).url;
@@ -4086,12 +4077,6 @@ begin
   value.Free;
 end;
 
-{ TFHIRTFhirContractHelper }
-
-function TFHIRTFhirContractHelper.getActorList: TFhirContractAgentList;
-begin
-  result := agentList;
-end;
 
 { TFhirCodingHelper }
 

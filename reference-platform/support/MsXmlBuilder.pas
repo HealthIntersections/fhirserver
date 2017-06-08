@@ -4,24 +4,24 @@ unit MsXmlBuilder;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -33,24 +33,28 @@ Interface
 Uses
   SysUtils, Classes,
   StringSupport, EncodeSupport, TextUtilities,
-  AdvStreams, AdvVCLStreams,  AdvObjects,
-  XmlIntf, MsXml, XmlBuilder;
+  AdvStreams, AdvVCLStreams,  AdvObjects, AdvGenerics,
+  MXML, XmlBuilder, ParserSupport;
 
 Type
   TMsXmlBuilder = class (TXmlBuilder)
   private
     FExternal : Boolean;
-    FDom : IXMLDomDocument2;
-    FFragment : IXMLDOMDocumentFragment;
-    FStack : TInterfaceList;
-    FAttributes : TInterfaceList;
+    FStack : TAdvList<TMXmlElement>;
+    FDoc : TMXmlDocument;
+    FAttributes : TAdvMap<TMXmlAttribute>;
     FSourceLocation : TSourceLocation;
     Function Pad(offset : integer = 0) : String;
     function ReadTextLength(s : string):String;
     function ReadTextLengthWithEscapes(pfx, s, sfx : string):String;
+//    procedure WriteMsXml(iElement: IXMLDomElement);
+//    procedure WriteMsXmlNode(iDoc: IXMLDOMNode);
+//    procedure WriteXmlDocument(iDoc: IXMLDocument);
+//    procedure WriteXmlNode(iDoc: IXMLNode; first: boolean);
   Public
     Constructor Create; Override;
-    Procedure Start(oNode : IXmlDomNode); overload;
+    Destructor Destroy; override;
+    Procedure Start(oNode : TMXmlElement); overload;
     Procedure Start(); overload; override;
     Procedure StartFragment; override;
     Procedure Finish; override;
@@ -68,14 +72,10 @@ Type
     function Text(Const sValue : String) : TSourceLocation; override;
     function Entity(Const sValue : String) : TSourceLocation; override;
     function TagText(Const sName, sValue : String) : TSourceLocation; override;
-    Procedure WriteMSXml(iElement : MsXml.IXMLDomElement); override;
+    Procedure WriteXml(iElement : TMXmlElement); override;
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
-    Procedure WriteMSXmlNode(iDoc : MsXml.IXMLDOMNode); override;
 
-    Procedure WriteXml(iElement : IXMLNode; first : boolean); override;
-    Procedure WriteXmlNode(iDoc : IXMLNode; first : boolean); override;
-    Procedure WriteXmlDocument(iDoc : IXMLDocument); overload; override;
     procedure inject(const bytes : TBytes); override;
   End;
 
@@ -95,22 +95,17 @@ begin
   result.col := 0;
 end;
 
-procedure TMsXmlBuilder.Start(oNode : IXmlDomNode);
+procedure TMsXmlBuilder.Start(oNode : TMXmlElement);
 begin
-  FStack := TInterfaceList.Create;
-  FAttributes := TInterfaceList.Create;
   if oNode = nil Then
   Begin
-    FDom := LoadMsXMLDom;
+    FDoc := TMXmlDocument.create;
     if CharEncoding <> '' Then
-      FDom.appendChild(FDom.createProcessingInstruction('xml', 'version="1.0" encoding="'+CharEncoding+'"'));
-    FStack.Add(FDom);
+      FDoc.addC(TMXmlElement.createProcessingInstruction(CharEncoding));
+    FStack.Add(FDoc.Link);
   End
   else
-  Begin
-    FDom := oNode.ownerDocument as IXMLDomDocument2;
-    FStack.Add(oNode);
-  End;
+    FStack.Add(oNode.Link);
   FSourceLocation.line := 0;
   FSourceLocation.col := 0;
 end;
@@ -132,10 +127,7 @@ procedure TMsXmlBuilder.Finish;
 Begin
   if FStack.Count > 1 Then
     RaiseError('Close', 'Document is not finished');
-  FStack.Free;
-  FStack := nil;
-  FAttributes.Free;
-  FAttributes := nil;
+  FDoc.Free;
 End;
 
 procedure TMsXmlBuilder.inject(const bytes: TBytes);
@@ -146,27 +138,16 @@ end;
 procedure TMsXmlBuilder.Build(oStream: TStream);
 Var
   vAdapter : Variant;
-  s : String;
+  b : TBytes;
 begin
   assert(FAttributes = nil);
   assert(not FExternal);
-
-  vAdapter := TStreamAdapter.Create(oStream) As IStream;
-  if FFragment <> nil then
-  begin
-    s := FFragment.text;
-    if s <> '' then
-      oStream.write(s[1], length(s));
-  end
-  else
-  begin
-    FDom.save(vAdapter);
-    FDom := nil;
-  end;
+  b := TEncoding.UTF8.GetBytes(FStack[0].ToXml(true));
+  oStream.Write(b[0], length(b));
 end;
 
 
-function HasElements(oElem : IXMLDOMElement) : Boolean;
+{function HasElements(oElem : IXMLDOMElement) : Boolean;
 var
   oChild : IXMLDOMNode;
 Begin
@@ -178,82 +159,75 @@ Begin
     oChild := oChild.nextSibling;
   End;
 End;
-
+}
 function TMsXmlBuilder.Open(const sName: String) : TSourceLocation;
 var
-  oElem : IXMLDOMElement;
-  oParent : IXMLDOMNode;
+  oElem : TMXmlElement;
+  oParent : TMXmlElement;
   iLoop : integer;
   len : integer;
 begin
-  if CurrentNamespaces.DefaultNS <> '' Then
-  begin
-    oElem := FDom.createNode(NODE_ELEMENT, sName, CurrentNamespaces.DefaultNS) as IXMLDOMElement;
-    len := length(sName)+3
-  end
-  Else
-  begin
-    oElem := FDom.createElement(sName) as IXMLDOMElement;
-    len := length(sName);
+  oElem := nil;
+  try
+    if CurrentNamespaces.DefaultNS <> '' Then
+    begin
+      oElem := TMXmlElement.Create(ntElement, sName, CurrentNamespaces.DefaultNS);
+      len := length(sName)+3
+    end
+    Else
+    begin
+      oElem := TMXmlElement.Create(ntElement, sName);
+      len := length(sName);
+    end;
+    oParent := FStack.Last;
+    if IsPretty and (oParent.NodeType = ntElement) Then
+      oParent.addC(TMXmlElement.createText(ReadTextLength(#13#10+pad)));
+    oParent.addC(oElem);
+    inc(FSourceLocation.col, len+2);
+    for iLoop := 0 to FAttributes.Count - 1 Do
+      oElem.attributes.addAll(FAttributes);
+    FAttributes.Clear;
+    FStack.Add(oElem.Link);
+    result.line := FSourceLocation.line;
+    result.col := FSourceLocation.col;
+  finally
+    oElem.Free;
   end;
-  if FStack.Count > 0 then
-  Begin
-    oParent := FStack[FStack.Count - 1] as IXMLDOMNode;
-    if IsPretty and (oParent.NodeType = NODE_ELEMENT) Then
-      oParent.appendChild(FDom.createTextNode(ReadTextLength(#13#10+pad)));
-    oParent.appendChild(oElem);
-  End
-  else
-    FDom.appendChild(oElem);
-  inc(FSourceLocation.col, len+2);
-  for iLoop := 0 to FAttributes.Count - 1 Do
-    oElem.attributes.setNamedItem(FAttributes[iLoop] as IXMLDOMAttribute);
-  FAttributes.Clear;
-  FStack.Add(oElem);
-  result.line := FSourceLocation.line;
-  result.col := FSourceLocation.col;
 end;
 
 procedure TMsXmlBuilder.Close(const sName: String);
-var
-  oElem : IXMLDOMElement;
 begin
   if IsPretty Then
   Begin
-    oElem := FStack[FStack.Count - 1] as IXMLDOMElement;
-    If HasElements(oElem) Then
-      oElem.appendChild(FDom.createTextNode(readTextLength(#13#10+pad(-1))));
+    If FStack.Last.HasChildren Then
+      FStack.Last.addC(TMXmlElement.createText(readTextLength(#13#10+pad(-1))));
   End;
   FStack.Delete(FStack.Count - 1)
 end;
 
 
 procedure TMsXmlBuilder.AddAttribute(const sName, sValue: String);
-var
-  oAttr : IXMLDOMAttribute;
 begin
-  oAttr := FDom.createAttribute(sName);
-  oAttr.value := sValue;
-  FAttributes.Add(oAttr);
+  FAttributes.AddOrSetValue(sName, TMXmlAttribute.Create(sValue));
   ReadTextLengthWithEscapes(sName+'="', sValue, '"');
 end;
 
 function TMsXmlBuilder.Text(const sValue: String) : TSourceLocation;
-var
-  oElem : IXMLDOMNode;
 begin
-  oElem := FStack[FStack.Count - 1] as IXMLDOMNode;
-  oElem.appendChild(FDom.createTextNode(ReadTextLengthWithEscapes('', sValue, '')));
+  FStack.Last.addC(TMXmlElement.createText(ReadTextLengthWithEscapes('', sValue, '')));
   result.line := FSourceLocation.line;
   result.col := FSourceLocation.col;
 end;
 
-function TMsXmlBuilder.Entity(const sValue: String) : TSourceLocation;
-var
-  oElem : IXMLDOMElement;
+procedure TMsXmlBuilder.WriteXml(iElement: TMXmlElement);
 begin
-  oElem := FStack[FStack.Count - 1] as IXMLDOMElement;
-  oElem.appendChild(FDom.createEntityReference(sValue));
+  raise Exception.Create('TMsXmlBuilder.WriteXml not Done Yet');
+
+end;
+
+function TMsXmlBuilder.Entity(const sValue: String) : TSourceLocation;
+begin
+  FStack.Last.addC(TMXmlElement.createText('&'+sValue+';'));
   inc(FSourceLocation.col, length(sValue)+2);
   result.line := FSourceLocation.line;
   result.col := FSourceLocation.col;
@@ -318,13 +292,10 @@ begin
 end;
 
 Procedure TMsXmlBuilder.Comment(Const sContent : String);
-var
-  oElem : IXMLDOMNode;
 begin
-  oElem := FStack[FStack.Count - 1] as IXMLDOMNode;
-  if IsPretty and (oElem.nodeType = NODE_ELEMENT) Then
-    oElem.appendChild(FDom.createTextNode(ReadTextLength(#13#10+pad)));
-  oElem.appendChild(FDom.createComment(sContent));
+  if IsPretty and (FStack.Last.nodeType = ntElement) Then
+    FStack.Last.addC(TMXmlElement.createText(ReadTextLength(#13#10+pad)));
+  FStack.Last.addC(TMXmlElement.createComment(sContent));
   ReadTextLength('<!--'+sContent+'-->');
 End;
 
@@ -347,6 +318,17 @@ begin
   inherited;
   CurrentNamespaces.DefaultNS := 'urn:hl7-org:v3';
   CharEncoding := 'UTF-8';
+  FStack := TAdvList<TMXmlElement>.Create;
+  FAttributes := TAdvMap<TMXmlAttribute>.Create;
+end;
+
+destructor TMsXmlBuilder.Destroy;
+begin
+  FStack.Free;
+  FStack := nil;
+  FAttributes.Free;
+  FAttributes := nil;
+  inherited;
 end;
 
 procedure TMsXmlBuilder.DocType(sText: String);
@@ -354,7 +336,7 @@ begin
   raise Exception.Create('Not supported yet');
 end;
 
-procedure TMsXmlBuilder.WriteMsXml(iElement: IXMLDomElement);
+{procedure TMsXmlBuilder.WriteMsXml(iElement: IXMLDomElement);
 var
   i : integer;
   oElem : IXMLDOMElement;
@@ -364,41 +346,34 @@ begin
     if (iElement.childNodes[i].nodeType <> NODE_TEXT) or not StringIsWhitespace(iElement.childNodes[i].text) Then
       oElem.appendChild(iElement.childNodes[i].CloneNode(true));
 end;
+}
 
 procedure TMsXmlBuilder.AddAttributeNS(const sNamespace, sName, sValue: String);
 var
-  oAttr : IXMLDOMAttribute;
+  attr : TMXmlAttribute;
 begin
-  oAttr := FDom.createNode(NODE_ATTRIBUTE, sName, sNamespace) as IXMLDOMAttribute;
-  oAttr.value := sValue;
-  FAttributes.Add(oAttr);
-  ReadTextLengthWithEscapes('s1:'+sName+'="', sValue, '"');
+  attr := TMXmlAttribute.Create(sValue);
+  try
+    attr.NamespaceURI := sNamespace;
+    attr.LocalName := sName;
+    FAttributes.AddOrSetValue(sName, attr.link);
+  finally
+    attr.free;
+  end;
+  ReadTextLengthWithEscapes(sName+'="', sValue, '"');
 end;
 
 procedure TMsXmlBuilder.Start;
 begin
-  FStack := TInterfaceList.Create;
-  FAttributes := TInterfaceList.Create;
-  FDom := LoadMsXMLDom;
-  if CharEncoding <> '' Then
-    FDom.appendChild(FDom.createProcessingInstruction('xml', 'version="1.0" encoding="'+CharEncoding+'"'));
-  FStack.Add(FDom);
-  FSourceLocation.line := 0;
-  FSourceLocation.col := 0;
+  Start(nil);
 end;
 
 procedure TMsXmlBuilder.StartFragment;
 begin
-  FStack := TInterfaceList.Create;
-  FAttributes := TInterfaceList.Create;
-  FDom := LoadMsXMLDom;
-  FFragment := FDom.createDocumentFragment;
-  FStack.Add(FFragment);
-  FSourceLocation.line := 0;
-  FSourceLocation.col := 0;
+  Start(nil);
 end;
 
-procedure TMsXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
+{procedure TMsXmlBuilder.WriteXml(iElement: IXMLNode; first : boolean);
 begin
   raise Exception.Create('Not supported yet');
 end;
@@ -418,4 +393,5 @@ begin
   raise Exception.Create('Not supported yet');
 end;
 
+}
 End.

@@ -38,7 +38,7 @@ This is the dstu2 version of the FHIR code
 
 interface
 
-// FHIR v1.0.2 generated 2016-05-27T22:57:07+10:00
+// FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -667,69 +667,6 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirQuestionnaire read FReturn write SetReturn;
-  end;
-
-  //Operation guidance (guidance)
-  TFHIRGuidanceOpRequest = class (TFHIROperationRequest)
-  private
-    FRequestList : TAdvList<TFhirBasic>;
-    FInputResourceList : TAdvList<TFhirDomainResource>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property requestList : TAdvList<TFhirBasic> read FRequestList;
-    property inputResourceList : TAdvList<TFhirDomainResource> read FInputResourceList;
-  end;
-
-  TFHIRGuidanceOpResponse = class (TFHIROperationResponse)
-  private
-    FResponseList : TAdvList<TFhirBasic>;
-    FOutputResourceList : TAdvList<TFhirDomainResource>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property responseList : TAdvList<TFhirBasic> read FResponseList;
-    property outputResourceList : TAdvList<TFhirDomainResource> read FOutputResourceList;
-  end;
-
-  //Operation guidance-requirements (guidanceRequirements)
-  TFHIRGuidanceRequirementsOpRequest = class (TFHIROperationRequest)
-  private
-    FModuleIdentifierList : TAdvList<TFhirIdentifier>;
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property moduleIdentifierList : TAdvList<TFhirIdentifier> read FModuleIdentifierList;
-  end;
-
-  TFHIRGuidanceRequirementsOpResponse = class (TFHIROperationResponse)
-  private
-    FResult : TFhirBasic;
-    procedure SetResult(value : TFhirBasic);
-  protected
-    function isKnownName(name : String) : boolean; override;
-  public
-    constructor Create; overload; override;
-    destructor Destroy; override;
-    procedure load(params : TFHIRParameters); overload; override;
-    procedure load(params : TParseMap); overload; override;
-    function asParams : TFHIRParameters; override;
-    property result : TFhirBasic read FResult write SetResult;
   end;
 
 implementation
@@ -2451,7 +2388,7 @@ begin
     if (FIdentifier <> '') then
       result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRString.create(FProfile));{oz.5f}
+      result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
     if (FUrl <> '') then
       result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
       result.addParameter('supportedOnly', TFHIRBoolean.create(FSupportedOnly));{oz.5f}
@@ -2511,209 +2448,6 @@ end;
 function TFHIRQuestionnaireOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
-end;
-
-constructor TFHIRGuidanceOpRequest.create;
-begin
-  inherited create();
-  FRequestList := TAdvList<TFhirBasic>.create;
-  FInputResourceList := TAdvList<TFhirDomainResource>.create;
-end;
-
-procedure TFHIRGuidanceOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  for p in params.parameterList do
-    if p.name = 'request' then
-      FRequestList.Add((p.resource as TFhirBasic).Link);{ob.2}
-  for p in params.parameterList do
-    if p.name = 'inputResource' then
-      FInputResourceList.Add((p.resource as TFhirDomainResource).Link);{ob.2}
-  loadExtensions(params);
-end;
-
-procedure TFHIRGuidanceOpRequest.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRGuidanceOpRequest.Destroy;
-begin
-  FRequestList.free;
-  FInputResourceList.free;
-  inherited;
-end;
-
-function TFHIRGuidanceOpRequest.asParams : TFhirParameters;
-var
-  v1 : TFhirBasic;
-  v2 : TFhirDomainResource;
-begin
-  result := TFHIRParameters.create;
-  try
-    for v1 in FRequestList do
-      result.AddParameter('request', v1.Link);
-    for v2 in FInputResourceList do
-      result.AddParameter('inputResource', v2.Link);
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRGuidanceOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['request', 'inputResource'], name);
-end;
-
-constructor TFHIRGuidanceOpResponse.create;
-begin
-  inherited create();
-  FResponseList := TAdvList<TFhirBasic>.create;
-  FOutputResourceList := TAdvList<TFhirDomainResource>.create;
-end;
-
-procedure TFHIRGuidanceOpResponse.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  for p in params.parameterList do
-    if p.name = 'response' then
-      FResponseList.Add((p.resource as TFhirBasic).Link);{ob.2}
-  for p in params.parameterList do
-    if p.name = 'outputResource' then
-      FOutputResourceList.Add((p.resource as TFhirDomainResource).Link);{ob.2}
-  loadExtensions(params);
-end;
-
-procedure TFHIRGuidanceOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRGuidanceOpResponse.Destroy;
-begin
-  FResponseList.free;
-  FOutputResourceList.free;
-  inherited;
-end;
-
-function TFHIRGuidanceOpResponse.asParams : TFhirParameters;
-var
-  v1 : TFhirBasic;
-  v2 : TFhirDomainResource;
-begin
-  result := TFHIRParameters.create;
-  try
-    for v1 in FResponseList do
-      result.AddParameter('response', v1.Link);
-    for v2 in FOutputResourceList do
-      result.AddParameter('outputResource', v2.Link);
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRGuidanceOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['response', 'outputResource'], name);
-end;
-
-constructor TFHIRGuidanceRequirementsOpRequest.create;
-begin
-  inherited create();
-  FModuleIdentifierList := TAdvList<TFhirIdentifier>.create;
-end;
-
-procedure TFHIRGuidanceRequirementsOpRequest.load(params : TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  for p in params.parameterList do
-    if p.name = 'moduleIdentifier' then
-      FModuleIdentifierList.Add((p.value as TFhirIdentifier).Link);{a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRGuidanceRequirementsOpRequest.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRGuidanceRequirementsOpRequest.Destroy;
-begin
-  FModuleIdentifierList.free;
-  inherited;
-end;
-
-function TFHIRGuidanceRequirementsOpRequest.asParams : TFhirParameters;
-var
-  v1 : TFhirIdentifier;
-begin
-  result := TFHIRParameters.create;
-  try
-    for v1 in FModuleIdentifierList do
-      result.AddParameter('moduleIdentifier', v1.Link);
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRGuidanceRequirementsOpRequest.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['moduleIdentifier'], name);
-end;
-
-procedure TFHIRGuidanceRequirementsOpResponse.SetResult(value : TFhirBasic);
-begin
-  FResult.free;
-  FResult := value;
-end;
-
-constructor TFHIRGuidanceRequirementsOpResponse.create;
-begin
-  inherited create();
-end;
-
-procedure TFHIRGuidanceRequirementsOpResponse.load(params : TFHIRParameters);
-begin
-  FResult := (params.res['result'] as TFhirBasic).Link;{ob.5a}
-  loadExtensions(params);
-end;
-
-procedure TFHIRGuidanceRequirementsOpResponse.load(params : TParseMap);
-begin
-  loadExtensions(params);
-end;
-
-destructor TFHIRGuidanceRequirementsOpResponse.Destroy;
-begin
-  FResult.free;
-  inherited;
-end;
-
-function TFHIRGuidanceRequirementsOpResponse.asParams : TFhirParameters;
-begin
-  result := TFHIRParameters.create;
-  try
-    if (FResult <> nil) then
-      result.addParameter('result', FResult.Link);{oz.5a}
-    writeExtensions(result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRGuidanceRequirementsOpResponse.isKnownName(name : String) : boolean;
-begin
-  result := StringArrayExists(['result'], name);
 end;
 
 end.

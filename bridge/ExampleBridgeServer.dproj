@@ -186,7 +186,7 @@
         <DCCReference Include="..\reference-platform\support\MathSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MemorySupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MimeMessage.pas"/>
-        <DCCReference Include="..\reference-platform\support\MsXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
         <DCCReference Include="..\reference-platform\support\MsXmlParser.pas"/>
         <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
@@ -214,7 +214,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIROperations.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRSecurity.pas"/>
@@ -223,7 +223,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRValidator.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRXhtml.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FhirOpBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\NarrativeGenerator.pas"/>
@@ -296,6 +296,8 @@
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRGraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\MicroXml.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -348,12 +350,27 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
@@ -704,27 +721,12 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>

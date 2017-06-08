@@ -1,0 +1,28 @@
+  <TContact>
+    <Index>0</Index>
+    <Name Title="Mr" First="Hamish" Middle="" Last="Programmer"
+Suffix="BSc"/>
+<!--    <Gender>Male</Gender> -->
+    <Birth>1973-12-03</Birth>
+    <Addresses>
+      <Address.1 Display="Home" Number="2/23" Street="Unlikely Street"
+Suburb="Coolness" PostCode="6342" City="Perth" State="WA" Country="Australia"/>
+      <Address.2 Display="Work" Number="Suite 8 137-141" Street="Main
+Street" Suburb="Osborne Park" PostCode="6017" City="Perth" State="WA"
+Country="Australia"/>
+    </Addresses>
+    <Phones>
+      <Phone.1 Display="Home" Value="08 5555 2342"/>
+      <Phone.2 Display="Mobile" Value="0405 555 555"/>
+      <Phone.3 Display="Work" Value="08 9202 5555"/>
+    </Phones>
+    <Faxes>
+      <Fax.1 Display="Work" Value="08 9202 5599"/>
+    </Faxes>
+    <Emails>
+      <Email.1 Display="Hamish Programmer (Work)" Value="hamish@kestral.com.au"
+Target="SMTP"/>
+      <Email.2 Display="Hamish Programmer (MSN)"
+Value="hamish@hotmail.com"/>
+    </Emails>
+  </TContact> 

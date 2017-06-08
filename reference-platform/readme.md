@@ -53,12 +53,13 @@ wants to help, assistance will be welcome.
 FHIR Versions
 -------------
 This reference implementation supports 3 FHIR versions:
-* FHIR DSTU 1 - no longer maintained actively
+* FHIR DSTU 1 - no longer maintained actively (no longer compiling - needs week)
 * FHIR DSTU 2 - stable supported release 
-* FHIR DSTU 3 - current trunk. This is unstable and may not work at times
+* FHIR DSTU 3 - stable supported release
+* FHIR DSTU 4 - current trunk. This is unstable and may not work at times
 
 To save implementers from confusion, you must add one of the following
-defines to your project options: FHIR_DSTU1, FHIR2, or FHIR3 
+defines to your project options: FHIR1, FHIR2, FHIR3, or FHIR4,
 depending on which version you want to support (as well as including the 
 correct files)
 
@@ -221,3 +222,4 @@ Note: this pattern arose experimentally seeking a reproducible
 pattern that would make it easy to keep objects alive when you
 need them, and not have any leaks, in a large programming team.
 Once you're used to it, it's hard to think any other way.
+

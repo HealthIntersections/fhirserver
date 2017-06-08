@@ -165,7 +165,6 @@ uses
   MsXmlParser in '..\reference-platform\Support\MsXmlParser.pas',
   XMLBuilder in '..\reference-platform\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\reference-platform\Support\AdvWinInetClients.pas',
-  MsXmlBuilder in '..\reference-platform\Support\MsXmlBuilder.pas',
   AdvXmlBuilders in '..\reference-platform\Support\AdvXmlBuilders.pas',
   AdvJSON in '..\reference-platform\Support\AdvJSON.pas',
   AfsResourceVolumes in '..\reference-platform\Support\AfsResourceVolumes.pas',
@@ -260,7 +259,6 @@ uses
   FHIRSubscriptionManager in 'FHIRSubscriptionManager.pas',
   ServerValidator in 'ServerValidator.pas',
   IdWebSocket in '..\reference-platform\Support\IdWebSocket.pas',
-  MsXML in '..\reference-platform\Support\MsXML.pas',
   MimeMessage in '..\reference-platform\Support\MimeMessage.pas',
   kCritSct in '..\reference-platform\Support\kCritSct.pas',
   QuestionnaireBuilder in '..\reference-platform\dstu3\QuestionnaireBuilder.pas',
@@ -276,10 +274,10 @@ uses
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
   FHIRParser in '..\reference-platform\dstu3\FHIRParser.pas',
-  FHIRParserBase in '..\reference-platform\dstu3\FHIRParserBase.pas',
+  FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRConstants in '..\reference-platform\dstu3\FHIRConstants.pas',
   FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
-  FHIRLang in '..\reference-platform\dstu3\FHIRLang.pas',
+  FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',
   FHIRClient in '..\reference-platform\dstu3\FHIRClient.pas',
   FHIRValidator in '..\reference-platform\dstu3\FHIRValidator.pas',
@@ -295,7 +293,7 @@ uses
   FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
-  FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
+  FHIRXhtml in '..\reference-platform\support\FHIRXhtml.pas',
   FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
@@ -304,7 +302,7 @@ uses
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',
   OpenMHealthServer in 'OpenMHealthServer.pas',
-  DifferenceEngine in '..\reference-platform\dstu3\DifferenceEngine.pas',
+  DifferenceEngine in '..\reference-platform\support\DifferenceEngine.pas',
   CvxServices in 'CvxServices.pas',
   ACIRServices in 'ACIRServices.pas',
   ReverseClient in 'ReverseClient.pas',
@@ -316,7 +314,10 @@ uses
   FHIRUserProvider in 'FHIRUserProvider.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
-  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas';
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
+  ParserSupport in '..\reference-platform\support\ParserSupport.pas',
+  MXML in '..\reference-platform\support\MXML.pas',
+  MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

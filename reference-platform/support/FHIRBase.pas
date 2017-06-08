@@ -39,7 +39,7 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvStringMatches, AdvStringLists, AdvGenerics,
-  DateAndTime, DateSupport, EncodeSupport, XMLBuilder, EncdDecd, DecimalSupport;
+  DateAndTime, DateSupport, EncodeSupport, EncdDecd, DecimalSupport, ParserSupport;
 
 Const
   ID_LENGTH = 64;

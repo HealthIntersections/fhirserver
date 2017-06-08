@@ -42,7 +42,7 @@ Uses
   StringSupport, MathSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvObjectLists, Advbuffers, AdvMemories, AdvVCLStreams, AdvNameBuffers,
 
-  MsXml, XmlBuilder, MsXmlParser, AdvXmlEntities, AdvJSON,
+  ParserSupport, MXML, AdvXmlEntities, AdvJSON,
 
   FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
@@ -252,13 +252,13 @@ Type
     procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profiles: TValidationProfileSet); overload;
     procedure validate(ctxt : TFHIRValidatorContext; obj: TJsonObject; profile: String); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement; profile: String); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement; profiles: TValidationProfileSet); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profiles: TValidationProfileSet); overload;
 
-    procedure validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument; profile: String); overload;
-    procedure validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument; profiles: TValidationProfileSet); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String); overload;
+    procedure validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet); overload;
 
     procedure validate(ctxt : TFHIRValidatorContext; source : TAdvBuffer; format : TFHIRFormat); overload;
     procedure validate(ctxt : TFHIRValidatorContext; source : TAdvBuffer; format : TFHIRFormat; profile : String); overload;
@@ -515,7 +515,7 @@ begin
     result := ResolveInBundle(FEntryElement, url);
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement);
 var
   profiles : TValidationProfileSet;
 begin
@@ -539,7 +539,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement; profile: String);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -551,7 +551,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: IXMLDOMElement; profiles: TValidationProfileSet);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TMXmlElement; profiles: TValidationProfileSet);
 var
   w : TFHIRMMElement;
   x : TFHIRMMXmlParser;
@@ -601,7 +601,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument);
 var
   profiles : TValidationProfileSet;
 begin
@@ -613,7 +613,7 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument; profile: String);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profile: String);
 var
   profiles : TValidationProfileSet;
 begin
@@ -625,9 +625,9 @@ begin
   end;
 end;
 
-procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: IXMLDOMDocument; profiles: TValidationProfileSet);
+procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; document: TMXmlDocument; profiles: TValidationProfileSet);
 begin
-  validate(ctxt, document.documentElement, profiles);
+  validate(ctxt, document.document, profiles);
 end;
 
 procedure TFHIRValidator.validate(ctxt : TFHIRValidatorContext; element: TFHIRMMElement; profiles: TValidationProfileSet);
@@ -635,7 +635,7 @@ var
   stack : TNodeStack;
 begin
   stack := TNodeStack.create(element);
-  try
+  try 
     FEntryElement := element; // for bundle resolution
     validateResource(ctxt, element, element, nil, profiles, ctxt.resourceIdRule, stack);
   finally
@@ -1920,21 +1920,6 @@ begin
 end;
 
 
-//function TFHIRValidator.LoadDoc(name : String; isFree : boolean) : IXMLDomDocument2;
-//Var
-//  LVariant: Variant;
-//  buf : TAdvNameBuffer;
-//Begin
-//  buf := FContext.GetSourceByName(name);
-//  LVariant := LoadMsXMLDomV(isfree);
-//  Result := IUnknown(TVarData(LVariant).VDispatch) as IXMLDomDocument2;
-//  result.async := false;
-//  if isFree then
-//    result.resolveExternals := true;
-//  if not result.loadXML(TrimBof(buf.AsUnicode)) then
-//    raise Exception.create('unable to parse XML because '+result.parseError.reason);
-//end;
-//
 function TFHIRValidator.getCriteriaForDiscriminator(ctxt : TFHIRValidatorContext; path: String; ed: TFHIRElementDefinition; discriminator: String; profile: TFHIRStructureDefinition)
   : TFHIRElementDefinition;
 var

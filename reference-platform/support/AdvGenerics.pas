@@ -142,6 +142,7 @@ Type
 
     procedure Exchange(Index1, Index2: Integer);
     procedure Move(CurIndex, NewIndex: Integer);
+    procedure Replace(old, new : T);
 
     function First: T;
     function Last: T;
@@ -248,6 +249,7 @@ Type
     function ContainsValue(const Value: T): Boolean;
     function ToArray: TArray<TAdvPair<T>>; override; final;
 
+    procedure addAll(other : TAdvMap<T>);
     property Items[const Key: String]: T read GetItem write SetItem; default;
     property Count: Integer read FCount;
     property IsEmpty : Boolean read GetEmpty;
@@ -746,6 +748,17 @@ begin
   Result := IndexOfItem(Value, Direction);
   if Result >= 0 then
     Delete(Result);
+end;
+
+procedure TAdvList<T>.Replace(old, new: T);
+var
+  i : integer;
+begin
+  i := IndexOf(old);
+  if i = -1 then
+    raise Exception.Create('Item not found to delete');
+  Insert(i, new);
+  Delete(i+1);
 end;
 
 procedure TAdvList<T>.DoDelete(Index: Integer; Notification: TCollectionNotification);
@@ -1368,6 +1381,14 @@ begin
     Destroy;
 end;
 
+
+procedure TAdvMap<T>.addAll(other: TAdvMap<T>);
+var
+  s : String;
+begin
+  for s in other.Keys do
+    AddOrSetValue(s, other[s].link);
+end;
 
 procedure TAdvMap<T>.AddOrSetValue(const Key: String; const Value: T);
 var

@@ -78,14 +78,14 @@ uses
   FHIRBase in '..\support\FHIRBase.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
   FHIRResources in 'FHIRResources.pas',
-  FHIRParserBase in 'FHIRParserBase.pas',
+  FHIRParserBase in '..\support\FHIRParserBase.pas',
   FHIRSupport in 'FHIRSupport.pas',
   ParseMap in '..\support\ParseMap.pas',
   MsXmlParser in '..\support\MsXmlParser.pas',
   AdvMemories in '..\support\AdvMemories.pas',
   XMLBuilder in '..\support\XMLBuilder.pas',
   AdvWinInetClients in '..\support\AdvWinInetClients.pas',
-  MsXmlBuilder in '..\support\MsXmlBuilder.pas',
+  MXmlBuilder in '..\support\MXmlBuilder.pas',
   TextUtilities in '..\support\TextUtilities.pas',
   AdvVCLStreams in '..\support\AdvVCLStreams.pas',
   AdvXmlBuilders in '..\support\AdvXmlBuilders.pas',
@@ -93,7 +93,7 @@ uses
   AdvXMLEntities in '..\support\AdvXMLEntities.pas',
   AdvJSON in '..\support\AdvJSON.pas',
   AdvGenerics in '..\support\AdvGenerics.pas',
-  FHIRLang in 'FHIRLang.pas',
+  FHIRLang in '..\support\FHIRLang.pas',
   FHIRPath in 'FHIRPath.pas',
   AfsResourceVolumes in '..\support\AfsResourceVolumes.pas',
   AfsVolumes in '..\support\AfsVolumes.pas',
@@ -117,10 +117,12 @@ uses
   AdvZipUtilities in '..\support\AdvZipUtilities.pas',
   AdvZipDeclarations in '..\support\AdvZipDeclarations.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
-  FHIRXhtml in 'FHIRXhtml.pas',
+  FHIRXhtml in '..\support\FHIRXhtml.pas',
   InternetFetcher in '..\support\InternetFetcher.pas',
   FHIRContext in 'FHIRContext.pas',
-  GraphQL in '..\support\GraphQL.pas';
+  GraphQL in '..\support\GraphQL.pas',
+  ParserSupport in '..\support\ParserSupport.pas',
+  MXML in '..\support\MXML.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

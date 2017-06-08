@@ -24,13 +24,10 @@
         <Projects Include="reference-platform\dstu3\fhirtests3.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="Server\FHIRServer2.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="reference-platform\dstu1\dstu1.dproj">
+        <Projects Include="reference-platform\dstu2\fhirtests2.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="bridge\ExampleBridgeServer.dproj">
@@ -110,15 +107,6 @@
     <Target Name="fhirtests3:Make">
         <MSBuild Projects="reference-platform\dstu3\fhirtests3.dproj" Targets="Make"/>
     </Target>
-    <Target Name="fhirtests2">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj"/>
-    </Target>
-    <Target Name="fhirtests2:Clean">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="fhirtests2:Make">
-        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
-    </Target>
     <Target Name="FHIRServer2">
         <MSBuild Projects="Server\FHIRServer2.dproj"/>
     </Target>
@@ -128,14 +116,14 @@
     <Target Name="FHIRServer2:Make">
         <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dstu1">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj"/>
+    <Target Name="fhirtests2">
+        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj"/>
     </Target>
-    <Target Name="dstu1:Clean">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Clean"/>
+    <Target Name="fhirtests2:Clean">
+        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dstu1:Make">
-        <MSBuild Projects="reference-platform\dstu1\dstu1.dproj" Targets="Make"/>
+    <Target Name="fhirtests2:Make">
+        <MSBuild Projects="reference-platform\dstu2\fhirtests2.dproj" Targets="Make"/>
     </Target>
     <Target Name="ExampleBridgeServer">
         <MSBuild Projects="bridge\ExampleBridgeServer.dproj"/>
@@ -156,13 +144,13 @@
         <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;fhirtests2;FHIRServer2;dstu1;ExampleBridgeServer;fhirnpp"/>
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirnpp"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;fhirtests2:Clean;FHIRServer2:Clean;dstu1:Clean;ExampleBridgeServer:Clean;fhirnpp:Clean"/>
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirnpp:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;fhirtests2:Make;FHIRServer2:Make;dstu1:Make;ExampleBridgeServer:Make;fhirnpp:Make"/>
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirnpp:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

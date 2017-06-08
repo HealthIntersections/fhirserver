@@ -103,7 +103,7 @@ uses
   MathSupport in '..\reference-platform\support\MathSupport.pas',
   MemorySupport in '..\reference-platform\support\MemorySupport.pas',
   MimeMessage in '..\reference-platform\support\MimeMessage.pas',
-  MsXmlBuilder in '..\reference-platform\support\MsXmlBuilder.pas',
+  MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas',
   MsXmlParser in '..\reference-platform\support\MsXmlParser.pas',
   OIDSupport in '..\reference-platform\support\OIDSupport.pas',
   ParseMap in '..\reference-platform\support\ParseMap.pas',
@@ -127,11 +127,11 @@ uses
   FHIRConstants in '..\reference-platform\dstu3\FHIRConstants.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
-  FHIRLang in '..\reference-platform\dstu3\FHIRLang.pas',
+  FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIROperations in '..\reference-platform\dstu3\FHIROperations.pas',
   FHIRParser in '..\reference-platform\dstu3\FHIRParser.pas',
-  FHIRParserBase in '..\reference-platform\dstu3\FHIRParserBase.pas',
+  FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
   FHIRSecurity in '..\reference-platform\dstu3\FHIRSecurity.pas',
@@ -140,7 +140,7 @@ uses
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',
   FHIRValidator in '..\reference-platform\dstu3\FHIRValidator.pas',
-  FHIRXhtml in '..\reference-platform\dstu3\FHIRXhtml.pas',
+  FHIRXhtml in '..\reference-platform\support\FHIRXhtml.pas',
   FhirOpBase in '..\reference-platform\dstu3\FhirOpBase.pas',
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   NarrativeGenerator in '..\reference-platform\dstu3\NarrativeGenerator.pas',
@@ -212,7 +212,9 @@ uses
   FHIRUserProvider in '..\Server\FHIRUserProvider.pas',
   FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
-  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas';
+  FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
+  ParserSupport in '..\reference-platform\support\ParserSupport.pas',
+  MXML in '..\reference-platform\support\MXML.pas';
 
 var
   gsrv : TExampleFhirServer;

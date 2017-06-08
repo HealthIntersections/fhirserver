@@ -77,7 +77,7 @@ uses
   AdvMemories in '..\support\AdvMemories.pas',
   XMLBuilder in '..\support\XMLBuilder.pas',
   AdvWinInetClients in '..\support\AdvWinInetClients.pas',
-  MsXmlBuilder in '..\support\MsXmlBuilder.pas',
+  MXmlBuilder in '..\support\MXmlBuilder.pas',
   TextUtilities in '..\support\TextUtilities.pas',
   AdvVCLStreams in '..\support\AdvVCLStreams.pas',
   AdvXmlBuilders in '..\support\AdvXmlBuilders.pas',
@@ -95,7 +95,9 @@ uses
   AdvStringObjectMatches in '..\support\AdvStringObjectMatches.pas',
   JWT in '..\support\JWT.pas',
   HMAC in '..\support\HMAC.pas',
-  libeay32 in '..\support\libeay32.pas';
+  libeay32 in '..\support\libeay32.pas',
+  ParserSupport in '..\support\ParserSupport.pas',
+  MXML in '..\support\MXML.pas';
 
 procedure SaveStringToFile(s : AnsiString; fn : String);
 var

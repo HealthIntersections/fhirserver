@@ -34,17 +34,22 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, Soap.EncdDecd,
-  StringSupport, GuidSupport, BytesSupport, EncodeSupport, TextUtilities, ShellApi,
-  AdvObjects,
-  MsXml, MsXmlParser, XmlPatch,
-  DUnitX.TestFramework;
+  Windows, SysUtils, Classes, Soap.EncdDecd, ShellApi,
+  StringSupport, GuidSupport, BytesSupport, EncodeSupport, TextUtilities, FileSupport,
+  AdvObjects, AdvGenerics, AdvStringLists, AdvCSVExtractors, AdvFiles,
+  MXML, XmlPatch, DUnitX.TestFramework;
 
 Type
+  XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  protected
+    function GetCaseInfoArray : TestCaseInfoArray; override;
+  end;
+
   [TextFixture]
-  TXmlTests = Class (TObject)
-  Private
+  TXmlParserTests = Class (TObject)
   Published
+    [XmlParserTestCase]
+    procedure ParserTest(Name : String);
   End;
 
   XmlPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -55,7 +60,7 @@ Type
   [TextFixture]
   TXmlPatchTests = Class (TObject)
   Private
-    tests : IXMLDOMDocument2;
+    tests : TMXmlDocument;
     engine : TXmlPatchEngine;
   Published
     [SetupFixture] procedure setup;
@@ -194,80 +199,93 @@ begin
   result := DecodeBase64(AnsiString(text));
 end;
 
-function CompareAttributes(path : String; src, tgt : IXMLDOMNamedNodeMap) : string;
+function CompareAttributes(path : String; src, tgt : TMXmlElement) : string;
 var
-  i : integer;
-  sa, ta : IXMLDOMNode;
-  sn : String;
+//  i : integer;
+//  sa, ta : IXMLDOMNode;
+//  sn : String;
   b1, b2 : TBytes;
+  a, b : TMXmlAttribute;
+  s : String;
 begin
-  for i := 0 to src.length - 1 do
+  result := '';
+  for s in src.Attributes.Keys do
   begin
-    sa := src.item[i];
-    sn := sa.nodeName;
-    if not ((sn = 'xmlns') or sn.StartsWith('xmlns:')) then
+    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
     begin
-      ta := tgt.getNamedItem(sn);
-      if (ta = nil) then
-        exit('Attributes differ at '+path+': missing attribute '+sn);
-      if normalise(sa.text) <> normalise(ta.text) then
+      a := src.Attributes[s];
+      if not tgt.Attributes.TryGetValue(s, b) then
+        exit('Attributes differ at '+path+': missing attribute '+s);
+      if normalise(a.value) <> normalise(b.value) then
       begin
-        b1 := unBase64(sa.text);
-        b2 := unBase64(ta.text);
+        b1 := unBase64(a.value);
+        b2 := unBase64(b.value);
         if not sameBytes(b1, b2) then
-          exit('Attributes differ at '+path+': value '+normalise(sa.text) +'/'+ normalise(ta.text));
+          exit('Attributes differ at '+path+': value '+normalise(a.value) +'/'+ normalise(b.value));
       end;
     end;
   end;
-  result := '';
+  for s in tgt.Attributes.Keys do
+  begin
+    if not ((s = 'xmlns') or s.StartsWith('xmlns:')) then
+    begin
+      a := tgt.Attributes[s];
+      if not src.Attributes.TryGetValue(s, b) then
+        exit('Attributes differ at '+path+': missing attribute '+s);
+      if normalise(a.value) <> normalise(b.value) then
+      begin
+        b1 := unBase64(a.value);
+        b2 := unBase64(b.value);
+        if not sameBytes(b1, b2) then
+          exit('Attributes differ at '+path+': value '+normalise(a.value) +'/'+ normalise(b.value));
+      end;
+    end;
+  end;
 end;
 
-function skipBlankText(node : IXMLDOMNode) : IXMLDOMNode;
+function skipBlankText(node : TMXmlElement) : TMXmlElement;
 begin
-  while (node <> nil) and (((node.nodeType = NODE_TEXT) and StringIsWhitespace(node.text)) or (node.nodeType = NODE_COMMENT)) do
-    node := node.nextSibling;
+  while (node <> nil) and (((node.nodeType = ntText) and StringIsWhitespace(node.text)) or (node.nodeType = ntComment)) do
+    node := node.next;
   result := node;
 end;
 
-function CompareElements(path : String; e1, e2 : IXMLDOMElement) : String;
+function CompareElements(path : String; e1, e2 : TMXmlElement) : String;
 var
-  c1, c2 : IXMLDOMNode;
+  c1, c2 : TMXmlElement;
   s : String;
 begin
   if e1.namespaceURI <> e2.namespaceURI then
     exit('Namespaces differ at '+path+': '+e1.namespaceURI+'/'+e2.namespaceURI);
-  if e1.baseName <> e2.baseName then
-    exit('Names differ at '+path+': '+e1.baseName+'/'+e2.baseName);
-  path := path + '/'+e1.baseName;
-  s := compareAttributes(path, e1.attributes, e2.attributes);
-  if (s <> '') then
-    exit(s);
-  s := compareAttributes(path, e2.attributes, e1.attributes);
+  if e1.localName <> e2.localName then
+    exit('Names differ at '+path+': '+e1.localName+'/'+e2.localName);
+  path := path + '/'+e1.localName;
+  s := compareAttributes(path, e1, e2);
   if (s <> '') then
     exit(s);
 
-  c1 := e1.firstChild;
-  c2 := e2.firstChild;
+  c1 := e1.first;
+  c2 := e2.first;
   c1 := skipBlankText(c1);
   c2 := skipBlankText(c2);
   while (c1 <> nil) and (c2 <> nil) do
   begin
     if (c1.nodeType <> c2.nodeType) then
-      exit('node type mismatch in children of '+path+': '+inttostr(e1.nodeType)+'/'+inttostr(e2.nodeType));
-    if (c1.nodeType = NODE_TEXT) then
+      exit('node type mismatch in children of '+path+': '+inttostr(ord(e1.nodeType))+'/'+inttostr(ord(e2.nodeType)));
+    if (c1.nodeType = ntText) then
     begin
       if normalise(c1.text) <> normalise(c2.text) then
         exit('Text differs at '+path+': '+normalise(c1.text) +'/'+ normalise(c2.text));
     end
-    else if (c1.nodeType = NODE_ELEMENT) then
+    else if (c1.nodeType = ntElement) then
     begin
-      s := CompareElements(path, c1 as IXMLDOMElement, c2 as IXMLDOMElement);
+      s := CompareElements(path, c1, c2);
       if (s <> '') then
         exit(s);
     end;
 
-    c1 := skipBlankText(c1.nextSibling);
-    c2 := skipBlankText(c2.nextSibling);
+    c1 := skipBlankText(c1.next);
+    c2 := skipBlankText(c2.next);
   end;
   if (c1 <> nil) then
     exit('node mismatch - more nodes in source in children of '+path);
@@ -277,9 +295,21 @@ begin
 end;
 
 function CompareXml(filename1, filename2 : String; var msg : string) : boolean;
+var
+  src, tgt : TMXmlDocument;
 begin
-  msg := CompareElements('', TMsXmlParser.Parse(filename1).documentElement, TMsXmlParser.Parse(filename2).documentElement);
-  result := msg = '';
+  src := TMXmlParser.ParseFile(filename1, [xpResolveNamespaces]);
+  try
+    tgt := TMXmlParser.ParseFile(filename2, [xpResolveNamespaces]);
+    try
+      msg := CompareElements('', src.document, tgt.document);
+      result := msg = '';
+    finally
+      tgt.Free;
+    end;
+  finally
+    src.free;
+  end
 end;
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
@@ -318,26 +348,30 @@ end;
 
 function XmlPatchTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
 var
-  tests : IXMLDOMDocument2;
-  test : IXMLDOMElement;
+  tests : TMXmlDocument;
+  test : TMXmlElement;
   i : integer;
   s : String;
 begin
-  tests := TMsXmlParser.Parse('C:\work\fhirserver\tests\xml-patch-tests.xml');
-  test := TMsXmlParser.FirstChild(tests.documentElement);
-  i := 0;
-  while test <> nil do
-  begin
-    if test.nodeName = 'case' then
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\tests\xml-patch-tests.xml', [xpResolveNamespaces]);
+  try
+    test := tests.document.first;
+    i := 0;
+    while test <> nil do
     begin
-      s := test.getAttribute('name');
-      SetLength(result, i+1);
-      result[i].Name := s;
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := s;
-      inc(i);
+      if test.Name = 'case' then
+      begin
+        s := test.attribute['name'];
+        SetLength(result, i+1);
+        result[i].Name := s;
+        SetLength(result[i].Values, 1);
+        result[i].Values[0] := s;
+        inc(i);
+      end;
+      test := test.Next;
     end;
-    test := TMsXmlParser.NextSibling(test);
+  finally
+    tests.Free;
   end;
 end;
 
@@ -345,21 +379,19 @@ end;
 
 procedure TXmlPatchTests.PatchTest(Name: String);
 var
-  test, target, patch, error, patched, outcome : IXMLDOMElement;
+  test, target, patch, error, patched, outcome : TMXmlElement;
   s : String;
   ok : boolean;
 begin
-  test := TMsXmlParser.FirstChild(tests.documentElement);
+  test := tests.document.first;
   while test <> nil do
   begin
-    if (test.nodeName = 'case') and (name = test.getAttribute('name')) then
+    if (test.Name = 'case') and (name = test.attribute['name']) then
     begin
-      target := TMsXmlParser.NamedChild(test, 'target');
-      patch := TMsXmlParser.NamedChild(test, 'patch');
-      error := TMsXmlParser.NamedChild(test, 'error');
-      patched := TMsXmlParser.NamedChild(test, 'patched');
-      if patched <> nil then
-        patched := TMsXmlParser.FirstChild(patched);
+      target := test.element('target');
+      patch := test.element('patch');
+      error := test.element('error');
+      patched := test.element('patched');
 
       if (error <> nil) then
         Assert.WillRaiseWithMessage(
@@ -369,28 +401,71 @@ begin
       else
       begin
         engine.execute(tests, target, patch);
-        StringToFile(TMsXmlParser.FirstChild(target).xml, 'c:\temp\outcome.xml', TEncoding.UTF8);
-        StringToFile(patched.xml, 'c:\temp\patched.xml', TEncoding.UTF8);
+        StringToFile(target.first.ToXml(true), 'c:\temp\outcome.xml', TEncoding.UTF8);
+        StringToFile(patched.first.ToXml(true), 'c:\temp\patched.xml', TEncoding.UTF8);
         ok := CheckXMLIsSame('c:\temp\patched.xml', 'c:\temp\outcome.xml', s);
         Assert.IsTrue(ok, s);
       end;
     end;
-    test := TMsXmlParser.NextSibling(test);
+    test := test.Next;
   end;
 end;
 
 procedure TXmlPatchTests.setup;
 begin
-  tests := TMsXmlParser.Parse('C:\work\fhirserver\tests\xml-patch-tests.xml');
+  tests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\build\tests\patch\xml-patch-tests.xml', [xpResolveNamespaces, xpDropWhitespace]);
   engine := TXmlPatchEngine.Create;
 end;
 
 procedure TXmlPatchTests.teardown;
 begin
   engine.Free;
+  tests.Free;
+end;
+
+{ TXmlParserTests }
+
+procedure TXmlParserTests.ParserTest(Name: String);
+var
+  xml : TMXmlElement;
+begin
+  xml := TMXmlParser.parseFile(name, []);
+  try
+    Assert.Pass();
+  finally
+    xml.Free;
+  end;
+end;
+
+{ XmlParserTestCaseAttribute }
+
+function XmlParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+var
+  sl : TStringlist;
+  sr : TSearchRec;
+  s : String;
+  i : integer;
+begin
+  sl := TStringList.create;
+  try
+    if FindFirst('C:\work\fhirserver\reference-platform\support\Tests\*.xml', faAnyFile, SR) = 0 then
+    repeat
+      s := sr.Name;
+      sl.Add(sr.Name);
+    until FindNext(SR) <> 0;
+    setLength(result, sl.Count);
+    for i := 0 to sl.Count - 1 do
+    begin
+      result[i].Name := sl[i];
+      SetLength(result[i].Values, 1);
+      result[i].Values[0] := 'C:\work\fhirserver\reference-platform\support\Tests\' + sl[i];
+    end;
+  finally
+    sl.Free;
+  end;
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TXmlTests);
+  TDUnitX.RegisterTestFixture(TXmlParserTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);
 end.

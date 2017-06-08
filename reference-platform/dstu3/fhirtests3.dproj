@@ -188,7 +188,7 @@
         <DCCReference Include="..\support\AdvZipDeclarations.pas"/>
         <DCCReference Include="..\support\MsXmlParser.pas"/>
         <DCCReference Include="..\support\XMLBuilder.pas"/>
-        <DCCReference Include="..\support\MsXmlBuilder.pas"/>
+        <DCCReference Include="..\support\MXmlBuilder.pas"/>
         <DCCReference Include="..\support\XmlPatch.pas"/>
         <DCCReference Include="..\support\RDFUtilities.pas"/>
         <DCCReference Include="..\support\TextUtilities.pas"/>
@@ -208,20 +208,22 @@
         <DCCReference Include="..\support\HMAC.pas"/>
         <DCCReference Include="..\support\libeay32.pas"/>
         <DCCReference Include="..\support\FHIRBase.pas"/>
-        <DCCReference Include="FHIRXhtml.pas"/>
+        <DCCReference Include="..\support\FHIRXhtml.pas"/>
         <DCCReference Include="FHIRResources.pas"/>
-        <DCCReference Include="FHIRParserBase.pas"/>
+        <DCCReference Include="..\support\FHIRParserBase.pas"/>
         <DCCReference Include="FHIRSupport.pas"/>
-        <DCCReference Include="FHIRLang.pas"/>
+        <DCCReference Include="..\support\FHIRLang.pas"/>
         <DCCReference Include="FHIRUtilities.pas"/>
         <DCCReference Include="FHIRPath.pas"/>
         <DCCReference Include="tests\FHIRTestWorker.pas"/>
         <DCCReference Include="..\support\ShellSupport.pas"/>
-        <DCCReference Include="DifferenceEngine.pas"/>
-        <DCCReference Include="DifferenceEngineTests.pas"/>
+        <DCCReference Include="..\support\DifferenceEngine.pas"/>
+        <DCCReference Include="..\support\tests\DifferenceEngineTests.pas"/>
         <DCCReference Include="tests\FHIRPathTests.pas"/>
         <DCCReference Include="..\support\GraphQL.pas"/>
         <DCCReference Include="..\support\AdvZipWriters.pas"/>
+        <DCCReference Include="..\support\ParserSupport.pas"/>
+        <DCCReference Include="..\support\MicroXml.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

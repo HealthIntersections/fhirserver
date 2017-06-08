@@ -188,7 +188,7 @@ begin
         end;
       else
         begin
-        if CharInSet(AStr[i], [' '..'~']) then
+        if CharInSet(AStr[i], [' '..'~', #10]) then
           Result := Result + AStr[i]
         else
           Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
@@ -471,3 +471,4 @@ begin
 end;
 
 end.
+

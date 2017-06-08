@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-05-10T01:10:01+10:00
+// FHIR v3.1.0 generated 2017-06-07T06:11:11+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase;
@@ -145,7 +145,7 @@ Type
     AllTypesAuditEvent, {@enum.value AllTypesAuditEvent  }
     AllTypesBasic, {@enum.value AllTypesBasic  }
     AllTypesBinary, {@enum.value AllTypesBinary  }
-    AllTypesBodySite, {@enum.value AllTypesBodySite  }
+    AllTypesBodyStructure, {@enum.value AllTypesBodyStructure  }
     AllTypesBundle, {@enum.value AllTypesBundle  }
     AllTypesCapabilityStatement, {@enum.value AllTypesCapabilityStatement  }
     AllTypesCarePlan, {@enum.value AllTypesCarePlan  }
@@ -164,7 +164,6 @@ Type
     AllTypesConsent, {@enum.value AllTypesConsent  }
     AllTypesContract, {@enum.value AllTypesContract  }
     AllTypesCoverage, {@enum.value AllTypesCoverage  }
-    AllTypesDataElement, {@enum.value AllTypesDataElement  }
     AllTypesDetectedIssue, {@enum.value AllTypesDetectedIssue  }
     AllTypesDevice, {@enum.value AllTypesDevice  }
     AllTypesDeviceComponent, {@enum.value AllTypesDeviceComponent  }
@@ -231,7 +230,6 @@ Type
     AllTypesProvenance, {@enum.value AllTypesProvenance  }
     AllTypesQuestionnaire, {@enum.value AllTypesQuestionnaire  }
     AllTypesQuestionnaireResponse, {@enum.value AllTypesQuestionnaireResponse  }
-    AllTypesReferralRequest, {@enum.value AllTypesReferralRequest  }
     AllTypesRelatedPerson, {@enum.value AllTypesRelatedPerson  }
     AllTypesRequestGroup, {@enum.value AllTypesRequestGroup  }
     AllTypesResearchStudy, {@enum.value AllTypesResearchStudy  }
@@ -532,7 +530,7 @@ Type
     ResourceTypesAuditEvent, {@enum.value ResourceTypesAuditEvent  }
     ResourceTypesBasic, {@enum.value ResourceTypesBasic  }
     ResourceTypesBinary, {@enum.value ResourceTypesBinary  }
-    ResourceTypesBodySite, {@enum.value ResourceTypesBodySite  }
+    ResourceTypesBodyStructure, {@enum.value ResourceTypesBodyStructure  }
     ResourceTypesBundle, {@enum.value ResourceTypesBundle  }
     ResourceTypesCapabilityStatement, {@enum.value ResourceTypesCapabilityStatement  }
     ResourceTypesCarePlan, {@enum.value ResourceTypesCarePlan  }
@@ -551,7 +549,6 @@ Type
     ResourceTypesConsent, {@enum.value ResourceTypesConsent  }
     ResourceTypesContract, {@enum.value ResourceTypesContract  }
     ResourceTypesCoverage, {@enum.value ResourceTypesCoverage  }
-    ResourceTypesDataElement, {@enum.value ResourceTypesDataElement  }
     ResourceTypesDetectedIssue, {@enum.value ResourceTypesDetectedIssue  }
     ResourceTypesDevice, {@enum.value ResourceTypesDevice  }
     ResourceTypesDeviceComponent, {@enum.value ResourceTypesDeviceComponent  }
@@ -618,7 +615,6 @@ Type
     ResourceTypesProvenance, {@enum.value ResourceTypesProvenance  }
     ResourceTypesQuestionnaire, {@enum.value ResourceTypesQuestionnaire  }
     ResourceTypesQuestionnaireResponse, {@enum.value ResourceTypesQuestionnaireResponse  }
-    ResourceTypesReferralRequest, {@enum.value ResourceTypesReferralRequest  }
     ResourceTypesRelatedPerson, {@enum.value ResourceTypesRelatedPerson  }
     ResourceTypesRequestGroup, {@enum.value ResourceTypesRequestGroup  }
     ResourceTypesResearchStudy, {@enum.value ResourceTypesResearchStudy  }
@@ -1158,6 +1154,17 @@ Type
     EventStatusUnknown); {@enum.value EventStatusUnknown  }
   TFhirEventStatusEnumList = set of TFhirEventStatusEnum;
 
+  {@Enum TFhirRequestPriorityEnum
+    Codes indicating the relative importance of a communication. from http://hl7.org/fhir/ValueSet/request-priority
+  }
+  TFhirRequestPriorityEnum = (
+    RequestPriorityNull,  {@enum.value RequestPriorityNull Value is missing from Instance }
+    RequestPriorityRoutine, {@enum.value RequestPriorityRoutine  }
+    RequestPriorityUrgent, {@enum.value RequestPriorityUrgent  }
+    RequestPriorityAsap, {@enum.value RequestPriorityAsap  }
+    RequestPriorityStat); {@enum.value RequestPriorityStat  }
+  TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
+
   {@Enum TFhirRequestStatusEnum
     The status of the communication request. from http://hl7.org/fhir/ValueSet/request-status
   }
@@ -1171,17 +1178,6 @@ Type
     RequestStatusEnteredInError, {@enum.value RequestStatusEnteredInError  }
     RequestStatusUnknown); {@enum.value RequestStatusUnknown  }
   TFhirRequestStatusEnumList = set of TFhirRequestStatusEnum;
-
-  {@Enum TFhirRequestPriorityEnum
-    Codes indicating the relative importance of a communication request. from http://hl7.org/fhir/ValueSet/request-priority
-  }
-  TFhirRequestPriorityEnum = (
-    RequestPriorityNull,  {@enum.value RequestPriorityNull Value is missing from Instance }
-    RequestPriorityRoutine, {@enum.value RequestPriorityRoutine  }
-    RequestPriorityUrgent, {@enum.value RequestPriorityUrgent  }
-    RequestPriorityAsap, {@enum.value RequestPriorityAsap  }
-    RequestPriorityStat); {@enum.value RequestPriorityStat  }
-  TFhirRequestPriorityEnumList = set of TFhirRequestPriorityEnum;
 
   {@Enum TFhirCompartmentTypeEnum
     Which compartment a compartment definition describes from http://hl7.org/fhir/ValueSet/compartment-type
@@ -1361,18 +1357,16 @@ Type
     ContractStatusTerminated); {@enum.value ContractStatusTerminated  }
   TFhirContractStatusEnumList = set of TFhirContractStatusEnum;
 
-  {@Enum TFhirDataelementStringencyEnum
-    Indicates the degree of precision of the data element definition. from http://hl7.org/fhir/ValueSet/dataelement-stringency
+  {@Enum TFhirContractDataMeaningEnum
+    How a resource reference is interpreted when evaluating contract offers from http://hl7.org/fhir/ValueSet/contract-data-meaning
   }
-  TFhirDataelementStringencyEnum = (
-    DataelementStringencyNull,  {@enum.value DataelementStringencyNull Value is missing from Instance }
-    DataelementStringencyComparable, {@enum.value DataelementStringencyComparable  }
-    DataelementStringencyFullySpecified, {@enum.value DataelementStringencyFullySpecified  }
-    DataelementStringencyEquivalent, {@enum.value DataelementStringencyEquivalent  }
-    DataelementStringencyConvertable, {@enum.value DataelementStringencyConvertable  }
-    DataelementStringencyScaleable, {@enum.value DataelementStringencyScaleable  }
-    DataelementStringencyFlexible); {@enum.value DataelementStringencyFlexible  }
-  TFhirDataelementStringencyEnumList = set of TFhirDataelementStringencyEnum;
+  TFhirContractDataMeaningEnum = (
+    ContractDataMeaningNull,  {@enum.value ContractDataMeaningNull Value is missing from Instance }
+    ContractDataMeaningInstance, {@enum.value ContractDataMeaningInstance  }
+    ContractDataMeaningRelated, {@enum.value ContractDataMeaningRelated  }
+    ContractDataMeaningDependents, {@enum.value ContractDataMeaningDependents  }
+    ContractDataMeaningAuthoredby); {@enum.value ContractDataMeaningAuthoredby  }
+  TFhirContractDataMeaningEnumList = set of TFhirContractDataMeaningEnum;
 
   {@Enum TFhirObservationStatusEnum
     Indicates the status of the identified issue from http://hl7.org/fhir/ValueSet/observation-status
@@ -1900,7 +1894,8 @@ Type
     MedicationStatementStatusEnteredInError, {@enum.value MedicationStatementStatusEnteredInError  }
     MedicationStatementStatusIntended, {@enum.value MedicationStatementStatusIntended  }
     MedicationStatementStatusStopped, {@enum.value MedicationStatementStatusStopped  }
-    MedicationStatementStatusOnHold); {@enum.value MedicationStatementStatusOnHold  }
+    MedicationStatementStatusOnHold, {@enum.value MedicationStatementStatusOnHold  }
+    MedicationStatementStatusUnknown); {@enum.value MedicationStatementStatusUnknown  }
   TFhirMedicationStatementStatusEnumList = set of TFhirMedicationStatementStatusEnum;
 
   {@Enum TFhirMedicationStatementTakenEnum
@@ -13667,16 +13662,16 @@ Const
   SYSTEMS_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status', 'http://hl7.org/fhir/narrative-status');
   CODES_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'author', 'editor', 'reviewer', 'endorser');
   SYSTEMS_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type');
-  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 
-    'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 
-    'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
+  CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 
+    'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 
+    'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
   SYSTEMS_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
     'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
   CODES_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'usual', 'official', 'temp', 'secondary');
   SYSTEMS_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use');
   CODES_TFhirTriggerTypeEnum : Array[TFhirTriggerTypeEnum] of String = ('', 'named-event', 'periodic', 'data-added', 'data-modified', 'data-removed', 'data-accessed', 'data-access-ended');
@@ -13719,14 +13714,14 @@ Const
   SYSTEMS_TFhirEventTimingEnum : Array[TFhirEventTimingEnum] of String = ('', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent');
   CODES_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'active', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status');
-  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 
-    'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 
-    'TestScript', 'ValueSet', 'VisionPrescription');
+  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 
+    'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 
+    'VisionPrescription');
   SYSTEMS_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
   SYSTEMS_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type');
   CODES_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'AE', 'PAE');
@@ -13815,10 +13810,10 @@ Const
   SYSTEMS_TFhirConceptPropertyTypeEnum : Array[TFhirConceptPropertyTypeEnum] of String = ('', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type', 'http://hl7.org/fhir/concept-property-type');
   CODES_TFhirEventStatusEnum : Array[TFhirEventStatusEnum] of String = ('', 'preparation', 'in-progress', 'suspended', 'aborted', 'completed', 'entered-in-error', 'unknown');
   SYSTEMS_TFhirEventStatusEnum : Array[TFhirEventStatusEnum] of String = ('', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status', 'http://hl7.org/fhir/event-status');
-  CODES_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'draft', 'active', 'suspended', 'cancelled', 'completed', 'entered-in-error', 'unknown');
-  SYSTEMS_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status');
   CODES_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'routine', 'urgent', 'asap', 'stat');
   SYSTEMS_TFhirRequestPriorityEnum : Array[TFhirRequestPriorityEnum] of String = ('', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority', 'http://hl7.org/fhir/request-priority');
+  CODES_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'draft', 'active', 'suspended', 'cancelled', 'completed', 'entered-in-error', 'unknown');
+  SYSTEMS_TFhirRequestStatusEnum : Array[TFhirRequestStatusEnum] of String = ('', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status', 'http://hl7.org/fhir/request-status');
   CODES_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'Patient', 'Encounter', 'RelatedPerson', 'Practitioner', 'Device');
   SYSTEMS_TFhirCompartmentTypeEnum : Array[TFhirCompartmentTypeEnum] of String = ('', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type', 'http://hl7.org/fhir/compartment-type');
   CODES_TFhirCompositionStatusEnum : Array[TFhirCompositionStatusEnum] of String = ('', 'preliminary', 'final', 'amended', 'entered-in-error');
@@ -13847,8 +13842,8 @@ Const
   SYSTEMS_TFhirConsentExceptTypeEnum : Array[TFhirConsentExceptTypeEnum] of String = ('', 'http://hl7.org/fhir/consent-except-type', 'http://hl7.org/fhir/consent-except-type');
   CODES_TFhirContractStatusEnum : Array[TFhirContractStatusEnum] of String = ('', 'amended', 'appended', 'cancelled', 'disputed', 'entered-in-error', 'executable', 'executed', 'negotiable', 'offered', 'policy', 'rejected', 'renewed', 'revoked', 'resolved', 'terminated');
   SYSTEMS_TFhirContractStatusEnum : Array[TFhirContractStatusEnum] of String = ('', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status');
-  CODES_TFhirDataelementStringencyEnum : Array[TFhirDataelementStringencyEnum] of String = ('', 'comparable', 'fully-specified', 'equivalent', 'convertable', 'scaleable', 'flexible');
-  SYSTEMS_TFhirDataelementStringencyEnum : Array[TFhirDataelementStringencyEnum] of String = ('', 'http://hl7.org/fhir/dataelement-stringency', 'http://hl7.org/fhir/dataelement-stringency', 'http://hl7.org/fhir/dataelement-stringency', 'http://hl7.org/fhir/dataelement-stringency', 'http://hl7.org/fhir/dataelement-stringency', 'http://hl7.org/fhir/dataelement-stringency');
+  CODES_TFhirContractDataMeaningEnum : Array[TFhirContractDataMeaningEnum] of String = ('', 'instance', 'related', 'dependents', 'authoredby');
+  SYSTEMS_TFhirContractDataMeaningEnum : Array[TFhirContractDataMeaningEnum] of String = ('', 'http://hl7.org/fhir/contract-data-meaning', 'http://hl7.org/fhir/contract-data-meaning', 'http://hl7.org/fhir/contract-data-meaning', 'http://hl7.org/fhir/contract-data-meaning');
   CODES_TFhirObservationStatusEnum : Array[TFhirObservationStatusEnum] of String = ('', 'registered', 'preliminary', 'final', 'amended', 'corrected', 'cancelled', 'entered-in-error', 'unknown');
   SYSTEMS_TFhirObservationStatusEnum : Array[TFhirObservationStatusEnum] of String = ('', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status', 'http://hl7.org/fhir/observation-status');
   CODES_TFhirDetectedissueSeverityEnum : Array[TFhirDetectedissueSeverityEnum] of String = ('', 'high', 'moderate', 'low');
@@ -13935,8 +13930,8 @@ Const
   SYSTEMS_TFhirMedicationRequestIntentEnum : Array[TFhirMedicationRequestIntentEnum] of String = ('', 'http://hl7.org/fhir/medication-request-intent', 'http://hl7.org/fhir/medication-request-intent', 'http://hl7.org/fhir/medication-request-intent', 'http://hl7.org/fhir/medication-request-intent');
   CODES_TFhirMedicationRequestPriorityEnum : Array[TFhirMedicationRequestPriorityEnum] of String = ('', 'routine', 'urgent', 'stat', 'asap');
   SYSTEMS_TFhirMedicationRequestPriorityEnum : Array[TFhirMedicationRequestPriorityEnum] of String = ('', 'http://hl7.org/fhir/medication-request-priority', 'http://hl7.org/fhir/medication-request-priority', 'http://hl7.org/fhir/medication-request-priority', 'http://hl7.org/fhir/medication-request-priority');
-  CODES_TFhirMedicationStatementStatusEnum : Array[TFhirMedicationStatementStatusEnum] of String = ('', 'active', 'completed', 'entered-in-error', 'intended', 'stopped', 'on-hold');
-  SYSTEMS_TFhirMedicationStatementStatusEnum : Array[TFhirMedicationStatementStatusEnum] of String = ('', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status');
+  CODES_TFhirMedicationStatementStatusEnum : Array[TFhirMedicationStatementStatusEnum] of String = ('', 'active', 'completed', 'entered-in-error', 'intended', 'stopped', 'on-hold', 'unknown');
+  SYSTEMS_TFhirMedicationStatementStatusEnum : Array[TFhirMedicationStatementStatusEnum] of String = ('', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status', 'http://hl7.org/fhir/medication-statement-status');
   CODES_TFhirMedicationStatementTakenEnum : Array[TFhirMedicationStatementTakenEnum] of String = ('', 'y', 'n', 'unk', 'na');
   SYSTEMS_TFhirMedicationStatementTakenEnum : Array[TFhirMedicationStatementTakenEnum] of String = ('', 'http://hl7.org/fhir/medication-statement-taken', 'http://hl7.org/fhir/medication-statement-taken', 'http://hl7.org/fhir/medication-statement-taken', 'http://hl7.org/fhir/medication-statement-taken');
   CODES_TFhirResponseCodeEnum : Array[TFhirResponseCodeEnum] of String = ('', 'ok', 'transient-error', 'fatal-error');
@@ -14197,10 +14192,10 @@ Function TFhirConceptPropertyTypeEnumListAsInteger(aSet : TFhirConceptPropertyTy
 Function IntegerAsTFhirConceptPropertyTypeEnumList(i : integer) : TFhirConceptPropertyTypeEnumList; overload;
 Function TFhirEventStatusEnumListAsInteger(aSet : TFhirEventStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirEventStatusEnumList(i : integer) : TFhirEventStatusEnumList; overload;
-Function TFhirRequestStatusEnumListAsInteger(aSet : TFhirRequestStatusEnumList) : Integer; overload;
-Function IntegerAsTFhirRequestStatusEnumList(i : integer) : TFhirRequestStatusEnumList; overload;
 Function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer; overload;
 Function IntegerAsTFhirRequestPriorityEnumList(i : integer) : TFhirRequestPriorityEnumList; overload;
+Function TFhirRequestStatusEnumListAsInteger(aSet : TFhirRequestStatusEnumList) : Integer; overload;
+Function IntegerAsTFhirRequestStatusEnumList(i : integer) : TFhirRequestStatusEnumList; overload;
 Function TFhirCompartmentTypeEnumListAsInteger(aSet : TFhirCompartmentTypeEnumList) : Integer; overload;
 Function IntegerAsTFhirCompartmentTypeEnumList(i : integer) : TFhirCompartmentTypeEnumList; overload;
 Function TFhirCompositionStatusEnumListAsInteger(aSet : TFhirCompositionStatusEnumList) : Integer; overload;
@@ -14229,8 +14224,8 @@ Function TFhirConsentExceptTypeEnumListAsInteger(aSet : TFhirConsentExceptTypeEn
 Function IntegerAsTFhirConsentExceptTypeEnumList(i : integer) : TFhirConsentExceptTypeEnumList; overload;
 Function TFhirContractStatusEnumListAsInteger(aSet : TFhirContractStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirContractStatusEnumList(i : integer) : TFhirContractStatusEnumList; overload;
-Function TFhirDataelementStringencyEnumListAsInteger(aSet : TFhirDataelementStringencyEnumList) : Integer; overload;
-Function IntegerAsTFhirDataelementStringencyEnumList(i : integer) : TFhirDataelementStringencyEnumList; overload;
+Function TFhirContractDataMeaningEnumListAsInteger(aSet : TFhirContractDataMeaningEnumList) : Integer; overload;
+Function IntegerAsTFhirContractDataMeaningEnumList(i : integer) : TFhirContractDataMeaningEnumList; overload;
 Function TFhirObservationStatusEnumListAsInteger(aSet : TFhirObservationStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirObservationStatusEnumList(i : integer) : TFhirObservationStatusEnumList; overload;
 Function TFhirDetectedissueSeverityEnumListAsInteger(aSet : TFhirDetectedissueSeverityEnumList) : Integer; overload;
@@ -19306,7 +19301,7 @@ end;
 procedure TFhirNarrative.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, propValue)
-  else if (propName = 'div') then Div_ := propValue as TFhirXHtmlNode{4b}
+  else if (propName = 'div') then Div_ := asXhtml(propValue){4b}
   else inherited;
 end;
 
@@ -19332,7 +19327,7 @@ end;
 procedure TFhirNarrative.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, new){4}
-  else if (propName = 'div') then Div_Element := asXhtml(new)
+  else if (propName = 'div') then Div_Element := asXhtml(new){4}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -37506,33 +37501,6 @@ begin
  end;
 
 
-function TFhirRequestStatusEnumListAsInteger(aSet : TFhirRequestStatusEnumList) : Integer;
-var
-  a : TFhirRequestStatusEnum;
-begin
-  result := 0;
-  for a := low(TFhirRequestStatusEnum) to high(TFhirRequestStatusEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirRequestStatusEnumList(i : Integer) : TFhirRequestStatusEnumList;
-var
-  aLoop : TFhirRequestStatusEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirRequestStatusEnum) to high(TFhirRequestStatusEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
 function TFhirRequestPriorityEnumListAsInteger(aSet : TFhirRequestPriorityEnumList) : Integer;
 var
   a : TFhirRequestPriorityEnum;
@@ -37552,6 +37520,33 @@ var
 begin
   result := [];
   for aLoop := low(TFhirRequestPriorityEnum) to high(TFhirRequestPriorityEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
+function TFhirRequestStatusEnumListAsInteger(aSet : TFhirRequestStatusEnumList) : Integer;
+var
+  a : TFhirRequestStatusEnum;
+begin
+  result := 0;
+  for a := low(TFhirRequestStatusEnum) to high(TFhirRequestStatusEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirRequestStatusEnumList(i : Integer) : TFhirRequestStatusEnumList;
+var
+  aLoop : TFhirRequestStatusEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirRequestStatusEnum) to high(TFhirRequestStatusEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then
@@ -37938,12 +37933,12 @@ begin
  end;
 
 
-function TFhirDataelementStringencyEnumListAsInteger(aSet : TFhirDataelementStringencyEnumList) : Integer;
+function TFhirContractDataMeaningEnumListAsInteger(aSet : TFhirContractDataMeaningEnumList) : Integer;
 var
-  a : TFhirDataelementStringencyEnum;
+  a : TFhirContractDataMeaningEnum;
 begin
   result := 0;
-  for a := low(TFhirDataelementStringencyEnum) to high(TFhirDataelementStringencyEnum) do
+  for a := low(TFhirContractDataMeaningEnum) to high(TFhirContractDataMeaningEnum) do
   begin
     assert(ord(a) < 32);
     if a in aSet then
@@ -37951,12 +37946,12 @@ begin
   end;
 end;
 
-function IntegerAsTFhirDataelementStringencyEnumList(i : Integer) : TFhirDataelementStringencyEnumList;
+function IntegerAsTFhirContractDataMeaningEnumList(i : Integer) : TFhirContractDataMeaningEnumList;
 var
-  aLoop : TFhirDataelementStringencyEnum;
+  aLoop : TFhirContractDataMeaningEnum;
 begin
   result := [];
-  for aLoop := low(TFhirDataelementStringencyEnum) to high(TFhirDataelementStringencyEnum) Do
+  for aLoop := low(TFhirContractDataMeaningEnum) to high(TFhirContractDataMeaningEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

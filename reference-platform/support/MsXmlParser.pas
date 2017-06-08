@@ -33,19 +33,13 @@ Interface
 Uses
   Windows, SysUtils, Classes, ComObj, Generics.Collections,
   AdvObjects, Advmemories, AdvBuffers, AdvStreams, AdvStringLists, AdvGenerics,
-  XmlBuilder, MsXml;
+  XmlBuilder, MsXml, ParserSupport;
 
 const
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 
 Type
   TTextAction = (ttAsIs, ttTrim, ttTrimPad);
-
-  TSourceLocationObject = class (TAdvObject)
-  public
-    locationStart : TSourceLocation;
-    locationEnd : TSourceLocation;
-  end;
 
   TMsXmlSaxHandler = class (TinterfacedObject, IVBSAXContentHandler, IVBSAXErrorHandler)
   private
@@ -150,7 +144,7 @@ Implementation
 Uses
   ActiveX,
   AdvWinInetClients,
-  MsXmlBuilder,
+  MXmlBuilder,
   StringSupport,
   AdvVclStreams;
 

@@ -46,7 +46,7 @@ uses
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
-  MimeMessage, DateAndTime, JWT, SCIMObjects, MsXml, GraphQL,
+  MimeMessage, DateAndTime, JWT, SCIMObjects, MXML, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
@@ -310,7 +310,7 @@ Type
     FOrigin : TFHIRRequestOrigin;
     FSecure : Boolean;
     FPatchJson: TJsonArray;
-    FPatchXml: IXMLDOMElement;
+    FPatchXml: TMXmlElement;
     FrequestId: String;
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
@@ -329,6 +329,7 @@ Type
     procedure SetAdaptor(const Value: TFHIRFormatAdaptor);
     procedure SetGraphQL(const Value: TGraphQLPackage);
     procedure SetParams(const Value: TParseMap);
+    procedure SetPatchXml(const Value: TMXmlElement);
   Public
     Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
@@ -434,7 +435,7 @@ Type
     Property Resource : TFhirResource read FResource write SetResource;
 
     Property patchJson : TJsonArray read FPatchJson write SetPatchJson;
-    Property patchXml : IXMLDOMElement read FPatchXml write FPatchXml;
+    Property patchXml : TMXmlElement read FPatchXml write SetPatchXml;
     property GraphQL : TGraphQLPackage read FGraphQL write SetGraphQL;
 
     {@member Tags
@@ -1249,6 +1250,7 @@ begin
   FForm.Free;
   FParams.Free;
   FGraphQL.Free;
+  FPatchXml.Free;
   inherited;
 end;
 
@@ -1386,6 +1388,12 @@ procedure TFHIRRequest.SetPatchJson(const Value: TJsonArray);
 begin
   FPatchJson.Free;
   FPatchJson := Value;
+end;
+
+procedure TFHIRRequest.SetPatchXml(const Value: TMXmlElement);
+begin
+  FPatchXml.Free;
+  FPatchXml := Value;
 end;
 
 procedure TFHIRRequest.SetProvenance(const Value: TFhirProvenance);

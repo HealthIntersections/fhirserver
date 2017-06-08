@@ -47,9 +47,9 @@ developed and tested using XE5
 About XML:
 
 The hardest part of digital signatures is actually XML canonicalization.
-You can't use MSXML for this - it's too loose with the XML data. Instead,
+You can't use MS-XML for this - it's too loose with the XML data. Instead,
 this source uses the openXML provider. You can't change this here; You
-can use msxml elsewhere, but not in here. This is why the interface
+can use ms-xml elsewhere, but not in here. This is why the interface
 is entirely binary, and not based on a DOM.
 
 OpenSSL
@@ -278,7 +278,7 @@ begin
   try
     xb.Canonicalise := method;
     xb.Start;
-    xb.WriteXmlDocument(dom);
+//    xb.WriteXmlDocument(dom);
     xb.Finish;
     result := TEncoding.UTF8.GetBytes(xb.Build);
   finally
@@ -294,7 +294,7 @@ begin
   try
     xb.Canonicalise := method;
     xb.Start;
-    xb.WriteXml(dom, true);
+//    xb.WriteXml(dom, true);
     xb.Finish;
     result := TEncoding.UTF8.GetBytes(xb.Build);
   finally
@@ -310,7 +310,7 @@ begin
   try
     xb.Canonicalise := method;
     xb.Start;
-    xb.WriteXmlDocument(dom);
+//    xb.WriteXmlDocument(dom);
     xb.Finish;
     result := TEncoding.UTF8.GetBytes(xb.Build);
   finally

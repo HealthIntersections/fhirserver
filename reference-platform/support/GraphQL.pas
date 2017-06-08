@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvTextExtractors, AdvStringStreams, AdvVclStreams,
-  XmlBuilder, AdvJson;
+  ParserSupport, AdvJson;
 
 Type
   EGraphQLException = class (Exception);
