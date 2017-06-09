@@ -1260,10 +1260,11 @@ begin
     if ok and not check(response, opAllowed(request.ResourceName, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
       ok := false;
 
-    if ok and not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
+    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired)
+         or not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid)) then
       ok := false;
 
-    ok := checkOkToStore(request, response, needSecure);
+    ok := ok and checkOkToStore(request, response, needSecure);
 
     if ok and ServerContext.Validate and not context.upload and (request.Session <> nil) and (request.adaptor = nil) then
     begin
@@ -1273,7 +1274,7 @@ begin
         response.Resource := nil;
     end;
 
-    if request.IfNoneExist <> '' then
+    if ok and (request.IfNoneExist <> '') then
     begin
       s := request.IfNoneExist;
       if (s.Contains('?')) then
@@ -1294,114 +1295,117 @@ begin
       end;
     end;
 
-    if request.resource.meta = nil then
-      request.resource.meta := TFhirMeta.Create;
-    request.Resource.meta.lastUpdated := NowUTC;
-    request.Resource.meta.versionId := '1';
-    updateProvenance(request.Provenance, request.ResourceName, sid, '1');
-    tnow := request.Resource.meta.lastUpdated.AsUTC;
-    try
-      checkNotRedacted(request.Resource.meta, 'Creating resource');
-      tags := TFHIRTagList.create;
+    if ok then
+    begin
+      if request.resource.meta = nil then
+        request.resource.meta := TFhirMeta.Create;
+      request.Resource.meta.lastUpdated := NowUTC;
+      request.Resource.meta.versionId := '1';
+      updateProvenance(request.Provenance, request.ResourceName, sid, '1');
+      tnow := request.Resource.meta.lastUpdated.AsUTC;
       try
-        tags.readTags(request.resource.meta);
-        if (request.hasTestingTag) then
-          tags.forceTestingTag;
-        if not ok then
-          // nothing
-        else if (idState = idCheckNew) then
-        begin
-          sId := request.Id;
-          if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
-            not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+        checkNotRedacted(request.Resource.meta, 'Creating resource');
+        tags := TFHIRTagList.create;
+        try
+          tags.readTags(request.resource.meta);
+          if (request.hasTestingTag) then
+            tags.forceTestingTag;
+          if not ok then
+            // nothing
+          else if (idState = idCheckNew) then
+          begin
+            sId := request.Id;
+            if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
+              not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+                ok := false;
+          end
+          else if (idState = idMaybeNew) and (request.Id <> '') then
+          begin
+            sId := request.Id;
+            if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
               ok := false;
-        end
-        else if (idState = idMaybeNew) and (request.Id <> '') then
-        begin
-          sId := request.Id;
-          if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
-            ok := false;
-        end
-        else if (idState = idIsNew) then
-        begin
-          sid := request.id;
-          resourceKey := iAssignedKey;
-        end
-        else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
-           ok := false
+          end
+          else if (idState = idIsNew) then
+          begin
+            sid := request.id;
+            resourceKey := iAssignedKey;
+          end
+          else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
+             ok := false
 
-        else
-          request.resource.id := sId;
+          else
+            request.resource.id := sId;
 
-        if ok then
-          if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
-            ok := false;
+          if ok then
+            if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
+              ok := false;
 
-        if ok then
-        begin
+          if ok then
+          begin
 
 
-          checkProposedContent(request, request.Resource, tags);
-          result := sId;
-          request.id := sId;
-          key := FRepository.NextVersionKey;
-          for i := 0 to tags.count - 1 do
-            FRepository.RegisterTag(tags[i], FConnection);
+            checkProposedContent(request, request.Resource, tags);
+            result := sId;
+            request.id := sId;
+            key := FRepository.NextVersionKey;
+            for i := 0 to tags.count - 1 do
+              FRepository.RegisterTag(tags[i], FConnection);
 
-          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
-                  'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
-          FConnection.prepare;
-          try
-            FConnection.BindInteger('k', key);
-            FConnection.BindInteger('rk', resourceKey);
-            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow.GetDateTime));
-            FConnection.BindTimeStamp('td', DateTimeToTS(tnow.GetDateTime));
-            request.SubId := '1';
-            FConnection.BindString('v', '1');
-            FConnection.BindIntegerFromBoolean('sec', needSecure);
-            if request.Session <> nil then
-              FConnection.BindInteger('s', request.Session.Key)
-            else
-              FConnection.BindInteger('s', 0);
-            FConnection.BindInteger('f', 2);
-            FConnection.BindBlobFromBytes('tb', tags.json);
-            FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
-            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
-            markRedacted(request.Resource.meta);
-            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
-            unmarkRedacted(request.Resource.meta);
-            FConnection.Execute;
-            CommitTags(tags, key);
-          finally
-            FConnection.Terminate;
+            FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
+                    'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
+            FConnection.prepare;
+            try
+              FConnection.BindInteger('k', key);
+              FConnection.BindInteger('rk', resourceKey);
+              FConnection.BindTimeStamp('sd', DateTimeToTS(tnow.GetDateTime));
+              FConnection.BindTimeStamp('td', DateTimeToTS(tnow.GetDateTime));
+              request.SubId := '1';
+              FConnection.BindString('v', '1');
+              FConnection.BindIntegerFromBoolean('sec', needSecure);
+              if request.Session <> nil then
+                FConnection.BindInteger('s', request.Session.Key)
+              else
+                FConnection.BindInteger('s', 0);
+              FConnection.BindInteger('f', 2);
+              FConnection.BindBlobFromBytes('tb', tags.json);
+              FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
+              FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
+              FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+              markRedacted(request.Resource.meta);
+              FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
+              FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+              unmarkRedacted(request.Resource.meta);
+              FConnection.Execute;
+              CommitTags(tags, key);
+            finally
+              FConnection.Terminate;
+            end;
+            FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
+            if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
+              FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
+
+            CreateIndexer;
+            CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
+            FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
+            if request.resourceEnum = frtPatient then
+              FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
+            response.HTTPCode := 201;
+            response.Message := 'Created';
+            response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
+            response.Resource := request.Resource.Link;
+            response.LastModifiedDate := now;
+
+            response.id := sId;
+            response.versionId := '1';
+            if request.Provenance <> nil then
+              SaveProvenance(request.Session, request.Provenance);
           end;
-          FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
-          if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
-            FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
-
-          CreateIndexer;
-          CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
-          FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
-          if request.resourceEnum = frtPatient then
-            FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
-          response.HTTPCode := 201;
-          response.Message := 'Created';
-          response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
-          response.Resource := request.Resource.Link;
-          response.LastModifiedDate := now;
-
-          response.id := sId;
-          response.versionId := '1';
-          if request.Provenance <> nil then
-            SaveProvenance(request.Session, request.Provenance);
+        finally
+          tags.free;
         end;
       finally
-        tags.free;
+        tnow.Free;
       end;
-    finally
-      tnow.Free;
     end;
     if request.ResourceEnum <> frtAuditEvent then // else you never stop
       AuditRest(request.session, request.requestId, request.ip, request.ResourceName, sid, '1', key, request.CommandType, request.Provenance, response.httpCode, '', response.message);

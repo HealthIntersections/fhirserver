@@ -12,6 +12,7 @@
   <hierarchyMeaning value="classified-with"/>
   <content value="complete"/>
   <concept>
+    <code value="base-1"/>
     <display value="Behavioral Health &amp; Social Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -271,6 +272,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-2"/>
     <display value="Chiropractic Providers"/>
     <concept>
       <code value="111N00000X"/>
@@ -364,6 +366,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-3"/>
     <display value="Dental Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -513,6 +516,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-4"/>
     <display value="Dietary &amp; Nutritional Service Providers"/>
     <concept>
       <code value="132700000X"/>
@@ -565,6 +569,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-5"/>
     <display value="Emergency Medical Service Providers"/>
     <concept>
       <code value="146D00000X"/>
@@ -597,6 +602,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-6"/>
     <display value="Eye and Vision Services Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -712,6 +718,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-7"/>
     <display value="Nursing Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -1022,6 +1029,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-8"/>
     <display value="Other Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -1280,6 +1288,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-9"/>
     <display value="Pharmacy Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -1386,6 +1395,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-10"/>
     <display value="Group"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -1405,6 +1415,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-11"/>
     <display value="Allopathic &amp; Osteopathic Physicians"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -3124,6 +3135,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-12"/>
     <display value="Podiatric Medicine &amp; Surgery Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -3177,6 +3189,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-13"/>
     <display value="Respiratory, Developmental, Rehabilitative and Restorative Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -3689,6 +3702,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-14"/>
     <display value="Speech, Language and Hearing Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -3746,6 +3760,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-15"/>
     <display value="Technologists, Technicians &amp; Other Technical Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4104,6 +4119,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-16"/>
     <display value="Agencies"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4212,6 +4228,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-17"/>
     <display value="Ambulatory Health Care Facilities"/>
     <concept>
       <code value="261Q00000X"/>
@@ -4590,6 +4607,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-18"/>
     <display value="Hospital Units"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4633,6 +4651,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-19"/>
     <display value="Hospitals"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4758,6 +4777,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-20"/>
     <display value="Laboratories"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4793,6 +4813,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-21"/>
     <display value="Managed Care Organizations"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4828,6 +4849,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-22"/>
     <display value="Nursing &amp; Custodial Care Facilities"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4932,6 +4954,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-23"/>
     <display value="Residential Treatment Facilities"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -4999,6 +5022,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-24"/>
     <display value="Suppliers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -5220,6 +5244,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-25"/>
     <display value="Transportation Services"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -5330,6 +5355,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-26"/>
     <display value="Physician Assistants &amp; Advanced Practice Nursing Providers"/>
     <concept>
       <code value="363A00000X"/>
@@ -5635,6 +5661,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-27"/>
     <display value="Nursing Service Related Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -5739,6 +5766,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-28"/>
     <display value="Respite Care Facility"/>
     <concept>
       <code value="385H00000X"/>
@@ -5779,6 +5807,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-29"/>
     <display value="Student, Health Care"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">
@@ -5790,6 +5819,7 @@
     </concept>
   </concept>
   <concept>
+    <code value="base-30"/>
     <display value="Other Service Providers"/>
     <concept>
       <extension url="http://hl7.org/fhir/StructureDefinition/codesystem-comments">

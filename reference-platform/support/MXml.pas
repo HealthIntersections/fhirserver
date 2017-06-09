@@ -1,7 +1,10 @@
 unit MXML;
 
 {
-Based on MXML with the addition of comments and Namespace resolution
+Originally Based on MicroXML, but grew somewhat to handle minimal necessities.
+
+work remains necessary on XPath.
+
 }
 interface
 

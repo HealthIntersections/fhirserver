@@ -131,7 +131,7 @@ begin
     c.system := system;
     c.code := code;
     c.version := version;
-    p := FTerminologyServer.validate(vs, c, nil, false);
+    p := FTerminologyServer.validate(vs, c, FProfile, false);
     try
       result := TValidationResult.Create;
       try

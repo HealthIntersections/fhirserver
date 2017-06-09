@@ -98,6 +98,7 @@ var
   {$ENDIF}
 begin
   FProfile := profile.Link;
+
   vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
   vs.checkNoModifiers('ValueSetChecker.prepare', 'ValueSet');
   if (vs = nil) then

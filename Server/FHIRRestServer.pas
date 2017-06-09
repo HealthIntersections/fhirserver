@@ -752,7 +752,12 @@ begin
     req := TFHIRRequest.Create(FServerContext.ValidatorContext.Link, roUpload, FServerContext.Indexes.Compartments.Link);
     try
       req.CommandType := fcmdTransaction;
-      req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
+      if ExtractFileExt(name) = '.xml'  then
+        req.resource := TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name)
+      else if ExtractFileExt(name) = '.json'  then
+        req.resource := TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name)
+      else
+        req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
       req.resource.tags['duplicates'] := 'ignore';
       req.session := FServerContext.SessionManager.CreateImplicitSession('service', true);
       req.session.allowAll;
