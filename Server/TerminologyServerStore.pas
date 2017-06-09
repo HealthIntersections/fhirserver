@@ -2330,6 +2330,7 @@ var
   ex: TFhirExtension;
   ctxt : TCodeSystemProviderContext;
 begin
+  base.checkNoModifiers('CodeSystemProvider.iterateCodes', 'code', ['http://hl7.org/fhir/StructureDefinition/codesystem-subsumes']);
   list.Add(base.Link, 0);
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list);
@@ -2338,7 +2339,7 @@ begin
     begin
      ctxt := doLocate(TFHIRCode(ex.value).value);
      try
-       list.Add(TFhirCodeSystemProviderContext(ctxt).context.Link, 0);
+       iterateCodes(TFhirCodeSystemProviderContext(ctxt).context, list);
      finally
        Close(ctxt);
      end;

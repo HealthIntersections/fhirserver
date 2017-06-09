@@ -191,7 +191,8 @@ type
 
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
   public
-    procedure checkNoModifiers(place, role : String);
+    procedure checkNoModifiers(place, role : String); overload;
+    procedure checkNoModifiers(place, role : String; exempt : Array of String); overload;
   end;
 
   TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
@@ -368,6 +369,7 @@ type
     property Links[s : string] : String read GetLinks;
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
+    class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -512,6 +514,7 @@ type
     property fixedVersionList : TAdvList<TFhirExpansionProfileFixedVersion> read FcodeSystemList;
     function codeSystem : TFhirExpansionProfile;
     function include : TFhirExpansionProfile;
+    class function defaultProfile : TFhirExpansionProfile;
   end;
 
   TFHIRCodeSystem = TFhirValueSet;
@@ -2424,6 +2427,13 @@ begin
     end;
 end;
 
+class function TFHIRBundleHelper.wrap(aType: TFhirBundleTypeEnum; resource: TFhirResource): TFhirBundle;
+begin
+  result := Create(atype);
+  result.entryList.Append.resource := resource;
+  result.id := NewGuidId;
+end;
+
 { TFHIRCodingListHelper }
 
 function TFHIRCodingListHelper.AddCoding(system, code, display: String) : TFHIRCoding;
@@ -3881,6 +3891,20 @@ end;
 
 { TFHIRBackboneElementHelper }
 
+procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exempt : Array of String);
+var
+  ext : TFHIRExtension;
+begin
+  if length(exempt) > 0 then
+  begin
+    for ext in modifierExtensionList do
+      if not StringArrayExistsInsensitive(exempt, ext.url) then
+        raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+  end
+  else if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+end;
+
 procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
   if modifierExtensionList.Count > 0 then
@@ -4028,6 +4052,11 @@ constructor TFhirExpansionProfile.Create;
 begin
   inherited;
   FcodeSystemList := TAdvList<TFhirExpansionProfileFixedVersion>.create;
+end;
+
+class function TFhirExpansionProfile.defaultProfile: TFhirExpansionProfile;
+begin
+  result := TFhirExpansionProfile.create;
 end;
 
 destructor TFhirExpansionProfile.Destroy;

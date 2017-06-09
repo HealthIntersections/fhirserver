@@ -753,9 +753,9 @@ begin
     try
       req.CommandType := fcmdTransaction;
       if ExtractFileExt(name) = '.xml'  then
-        req.resource := TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name)
+        req.resource := TFHIRBundle.wrap(BundleTypeTransaction, TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name))
       else if ExtractFileExt(name) = '.json'  then
-        req.resource := TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name)
+        req.resource := TFHIRBundle.wrap(BundleTypeTransaction, TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.Link, 'en', name))
       else
         req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
       req.resource.tags['duplicates'] := 'ignore';

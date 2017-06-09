@@ -213,7 +213,8 @@ type
 
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
   public
-    procedure checkNoModifiers(place, role : String);
+    procedure checkNoModifiers(place, role : String); overload;
+    procedure checkNoModifiers(place, role : String; exempt : Array of String); overload;
   end;
 
   TFhirElementDefinitionHelper = class helper for TFhirElementDefinition
@@ -352,6 +353,7 @@ type
     property Links[s : string] : String read GetLinks;
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
+    class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -466,6 +468,7 @@ type
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
   public
     function hash : String;
+    class function defaultProfile : TFhirExpansionProfile;
   end;
 
   TFhirValueSetCodeSystem = TFhirCodeSystem;
@@ -2400,6 +2403,13 @@ begin
     end;
 end;
 
+class function TFHIRBundleHelper.wrap(aType: TFhirBundleTypeEnum; resource: TFhirResource): TFhirBundle;
+begin
+  result := Create(atype);
+  result.entryList.Append.resource := resource;
+  result.id := NewGuidId;
+end;
+
 { TFHIRCodingListHelper }
 
 function TFHIRCodingListHelper.AddCoding(system, code, display: String) : TFHIRCoding;
@@ -3881,6 +3891,20 @@ end;
 
 { TFHIRBackboneElementHelper }
 
+procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String; exempt : Array of String);
+var
+  ext : TFHIRExtension;
+begin
+  if length(exempt) > 0 then
+  begin
+    for ext in modifierExtensionList do
+      if not StringArrayExistsInsensitive(exempt, ext.url) then
+        raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+  end
+  else if modifierExtensionList.Count > 0 then
+    raise EUnsafeOperation.Create('The element '+role+' has modifier exceptions that are unknown at '+place);
+end;
+
 procedure TFHIRBackboneElementHelper.checkNoModifiers(place, role: String);
 begin
   if modifierExtensionList.Count > 0 then
@@ -4048,6 +4072,11 @@ end;
 {$IFDEF FHIR3}
 
 { TFhirExpansionProfileHelper }
+
+class function TFhirExpansionProfileHelper.defaultProfile: TFhirExpansionProfile;
+begin
+  result := TFhirExpansionProfile.Create;
+end;
 
 function TFhirExpansionProfileHelper.hash: String;
 begin
@@ -4498,8 +4527,8 @@ begin
     end
     else
     begin
-    result.Size := Length(data);
-    if length(data) > 0 then
+      result.Size := Length(data);
+      if length(data) > 0 then
         move(data[0], result.Data^, length(data));
     end;
     result.Name := title;

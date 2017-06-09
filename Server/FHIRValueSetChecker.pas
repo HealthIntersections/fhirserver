@@ -115,7 +115,7 @@ begin
     {$ENDIF}
     if (fvs.compose <> nil) then
     begin
-      fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose');
+      fvs.compose.checkNoModifiers('ValueSetChecker.prepare', 'compose', []);
     {$IFDEF FHIR2}
       for i := 0 to fvs.compose.importList.Count - 1 do
       begin
@@ -152,7 +152,7 @@ var
   checker: TValueSetChecker;
   ccf: TFhirValueSetComposeIncludeFilter;
 begin
-  cc.checkNoModifiers('ValueSetChecker.prepare', desc);
+  cc.checkNoModifiers('ValueSetChecker.prepare', desc, []);
   {$IFNDEF FHIR2}
   for ivs in cc.valueSetList do
   begin
@@ -177,7 +177,7 @@ begin
   cs := TCodeSystemProvider(FOthers.matches[cc.system]);
   for ccf in cc.filterList do
   begin
-    ccf.checkNoModifiers('ValueSetChecker.prepare', desc + '.filter');
+    ccf.checkNoModifiers('ValueSetChecker.prepare', desc + '.filter', []);
     if not (('concept' = ccf.property_) and (ccf.Op = FilterOperatorIsA)) then
       if not cs.doesFilter(ccf.property_, ccf.Op, ccf.value) then
         raise ETerminologyError.create('The filter "' + ccf.property_ + ' ' + CODES_TFhirFilterOperatorEnum[ccf.Op] + ' ' + ccf.value + '" was not understood in the context of ' + cs.system(nil));

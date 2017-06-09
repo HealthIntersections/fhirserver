@@ -1221,35 +1221,41 @@ var
   vs : TFhirValueSet;
   val : TValuesetChecker;
   system, version, code : String;
+  profile : TFhirExpansionProfile;
 begin
   vs := getValueSetByURL(URL);
   if vs = nil then
     conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+inttostr(valuesetKey))
   else
     try
+      profile := TFhirExpansionProfile.defaultProfile;
       try
-        val := TValueSetChecker.create(self.Link, vs.url);
         try
-          val.prepare(vs, nil);
-          conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
-          conn2.Prepare;
-          conn2.Execute;
-          while conn2.FetchNext do
-          begin
-            system := conn2.ColStringByName['URL'];
-            code := conn2.ColStringByName['Code'];
-            if not val.check(system, version, code, true) then
-              conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
-            else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
-              conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');
+          val := TValueSetChecker.create(self.Link, vs.url);
+          try
+            val.prepare(vs, profile);
+            conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
+            conn2.Prepare;
+            conn2.Execute;
+            while conn2.FetchNext do
+            begin
+              system := conn2.ColStringByName['URL'];
+              code := conn2.ColStringByName['Code'];
+              if not val.check(system, version, code, true) then
+                conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey'])
+              else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+inttostr(ValueSetKey)+' and ConceptKey = '+conn2.ColStringByName['ConceptKey']) = 0 then
+                conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+inttostr(ValueSetKey)+', '+conn2.ColStringByName['ConceptKey']+')');
+            end;
+            Conn2.Terminate;
+            conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = null where ValueSetKey = '+inttostr(valuesetKey));
+          finally
+            val.Free;
           end;
-          Conn2.Terminate;
-          conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = null where ValueSetKey = '+inttostr(valuesetKey));
         finally
-          val.Free;
+          vs.Free;
         end;
       finally
-        vs.Free;
+        profile.Free;
       end;
     except
       on e : Exception do
