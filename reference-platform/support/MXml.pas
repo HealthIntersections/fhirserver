@@ -28,28 +28,36 @@ type
     property Parent : TMXmlElement read FParent write FParent;
   end;
 
-  TXPathExpressionOperation = (xeoNull, xeoEquals);
+  TXPathExpressionOperation = (xeoNull, xeoEquals, xeoPlus, xeoAnd, xeoOr, xeoGreaterThan, xeoGreaterEquals, xeoNotEquals, xeoUnion, xeoLessThan, xeoLessEquals);
 
-  TXPathExpressionNodeType = (xentName, xentFunction, xentConstant);
+  TXPathExpressionNodeType = (xentName, xentFunction, xentConstant, xentGroup, xentRoot);
 
   TXPathExpressionNode = class (TAdvObject)
   private
     FNodeType : TXPathExpressionNodeType;
     FValue : String;
-    FFilter: TXPathExpressionNode;
+    FFilters: TAdvList<TXPathExpressionNode>;
     FNext: TXPathExpressionNode;
     FOp : TXPathExpressionOperation;
     FNextOp : TXPathExpressionNode;
-    procedure SetFilter(const Value: TXPathExpressionNode);
+    FGroup : TXPathExpressionNode;
+    FParams : TAdvList<TXPathExpressionNode>;
     procedure SetNext(const Value: TXPathExpressionNode);
     procedure SetNextOp(const Value: TXPathExpressionNode);
+    procedure SetGroup(const Value: TXPathExpressionNode);
+    function GetParams: TAdvList<TXPathExpressionNode>;
+    function GetFilters: TAdvList<TXPathExpressionNode>;
   public
     Destructor Destroy; override;
+    Function Link : TXPathExpressionNode; overload;
     property NodeType : TXPathExpressionNodeType read FNodeType write FNodeType;
-    property filter : TXPathExpressionNode read FFilter write SetFilter;
+    property filters : TAdvList<TXPathExpressionNode> read GetFilters;
+    function hasFilters : Boolean;
     property next : TXPathExpressionNode read FNext write SetNext;
     property op : TXPathExpressionOperation read FOp write FOp;
     property NextOp : TXPathExpressionNode read FNextOp write SetNextOp;
+    property Group : TXPathExpressionNode read FGroup write SetGroup;
+    property Params : TAdvList<TXPathExpressionNode> read GetParams;
     property value : String read FValue write FValue;
   end;
 
@@ -160,7 +168,6 @@ type
 
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments);
   TMXmlParserOptions = set of TMXmlParserOption;
-  TXPathExpressionParsingMode = (xpemNode, xpemFilter);
 
   EMXmlParser = class (Exception);
 
@@ -177,7 +184,8 @@ type
     Function xmlToText(s: String): String;
     function peek : char;
     function read : char;
-    Function ReadToken(skipWhitespace : Boolean): String;
+    Function ReadToken(skipWhitespace : Boolean; allowEmpty : boolean = false): String;
+    Function ReadXPathToken(skipWhitespace : Boolean; allowEmpty : boolean = false): String;
     Function ReadToNextChar(ch : Char): String;
     function ReadAttribute : TMXmlAttribute;
     procedure ReadElement(parent : TMXmlElement);
@@ -186,7 +194,7 @@ type
     function parse : TMXmlDocument; overload;
     function resolveNamespace(element : TMXmlElement; abbrev : String) : String;
     procedure resolveNamespaces(element : TMXmlElement; defNs : String);
-    procedure readXpathExpression(node : TXPathExpressionNode; mode : TXPathExpressionParsingMode);
+    function readXpathExpression(node : TXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : string;
     function parseXPath : TXPathExpressionNode; overload;
   public
     class function parse(content : String; options : TMXmlParserOptions) : TMXmlDocument; overload;
@@ -198,6 +206,7 @@ type
     class function isXmlNameChar(const ch: Char): Boolean;
     class function isXmlWhiteSpace(const ch: Char): Boolean;
     class function isXmlName(name : String) : boolean;
+    class function isXPathName(name : String) : boolean;
 
     class function parseXPath(content : String) : TXPathExpressionNode; overload;
   end;
@@ -712,7 +721,7 @@ begin
   try
     result := TXPathExpressionNode.Create;
     try
-      readXpathExpression(result, xpemNode);
+      readXpathExpression(result, []);
       result.Link;
     finally
       result.Free;
@@ -765,6 +774,16 @@ end;
 class Function TMXmlParser.IsXmlWhiteSpace(Const ch : Char): Boolean;
 begin
   Result := CharInSet(ch, [#9,#10,#13,' ']);
+end;
+
+class function TMXmlParser.isXPathName(name: String): boolean;
+var
+  ch : char;
+begin
+  result := name.Length > 0;
+  for ch in name do
+    if not isXmlNameChar(ch) and (ch <> '*') then
+      exit(false);
 end;
 
 class function TMXmlParser.isXmlName(name : String) : boolean;
@@ -989,7 +1008,7 @@ begin
   end;
 end;
 
-function TMXmlParser.ReadToken(skipWhitespace: Boolean): String;
+function TMXmlParser.ReadToken(skipWhitespace: Boolean; allowEmpty : boolean = false): String;
 Var
   ch : Char;
   LStart : Integer;
@@ -998,7 +1017,11 @@ begin
     while IsXmlWhiteSpace(peek) Do
       Read;
   FStartLocation := FLocation;
-  rule(reader.Peek <> -1, 'Read off end of stream');
+  if (reader.Peek = -1) then
+    if allowEmpty then
+      exit('')
+    else
+      rule(false, 'Read off end of stream');
   ch := read;
   b.Clear;
   b.Append(ch);
@@ -1040,64 +1063,161 @@ begin
     raise EMXmlParser.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
 end;
 
-procedure TMXmlParser.readXpathExpression(node: TXPathExpressionNode; mode : TXPathExpressionParsingMode);
+function describeTokens(tokens : Array of String) : String;
 var
   s : String;
 begin
-  s := ReadToken(false);
+  if length(tokens) = 0 then
+    result := ''''''
+  else if length(tokens) = 1 then
+    result := ''''+tokens[0]+''''
+  else
+  begin
+    result := '[';
+    for s in tokens do
+      result := result + ''''+tokens[0]+'''';
+    result := result + ']';
+  end;
+
+end;
+function TMXmlParser.readXpathExpression(node: TXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : String;
+var
+  p, f : TXPathExpressionNode;
+  done, readNext : boolean;
+  s : String;
+begin
+  readNext := true;
+  if alreadyRead = '' then
+    s := readXPathToken(true)
+  else
+    s := alreadyRead;
   node.NodeType := xentName;
-  if isXmlName(s) or StringArrayExistsSensitive(['*', '**'], s) then
+  if isXPathName(s) or StringArrayExistsSensitive(['*', '**'], s) then
     node.Value := s
   else if (s = '@') then
-    node.Value := '@'+readToken(false)
+    node.Value := '@'+readXPathToken(false)
   else if (s = '''') then
   begin
     node.NodeType := xentConstant;
     node.value := ReadToNextChar('''');
-    s := ReadToken(false);
+    s := readXPathToken(false);
+  end
+  else if (s = '(') then
+  begin
+    node.nodeType := xentGroup;
+    node.group := TXPathExpressionNode.Create;
+    s := readXpathExpression(node.Group, [')']);
+    rule(s = ')', 'Expected ''('' at this point but found '+s);
+  end
+  else if (s = '/') then
+  begin
+    // starting at the root...
+    readNext := false;
+    node.NodeType := xentRoot; // no value in this case
   end
   else
     rule(false, 'Unknown XPath name '+s);
-  if reader.Peek = -1 then
-    exit;
-  s := ReadToken(false);
+  if readNext then
+    s := readXPathToken(true, true);
   if (s = '(') then
   begin
-    s := ReadToken(false);
-    rule(s = ')', 'Unknown XPath name '+s);
+    s := readXPathToken(true);
+    done := s = ')';
+    while not done do
+    begin
+      p := TXPathExpressionNode.Create;
+      try
+        s := readXpathExpression(p, [',', ')'], s);
+        node.Params.Add(p.Link);
+      finally
+        p.Free;
+      end;
+      if (s = ',') then
+        s := readXPathToken(true)
+      else if (s = ')') then
+        done := true
+      else
+        rule(false, 'expected '','' at this point but found '+s);
+    end;
     node.NodeType := xentFunction;
-    if reader.Peek = -1 then
-      exit;
-    s := ReadToken(false);
+    s := readXPathToken(true, true);
   end;
-  if (s = ']') and (mode = xpemFilter) then
+  while (s = '[') do
   begin
-    exit;
-  end;
-  if (s = '[') then
-  begin
-    node.Filter := TXPathExpressionNode.Create;
-    readXpathExpression(node.filter, xpemFilter);
-    if reader.Peek = -1 then
-      exit;
-    s := ReadToken(false);
+    f := TXPathExpressionNode.Create;
+    try
+      readXpathExpression(f, [']']);
+      s := readXPathToken(true, true);
+      node.Filters.Add(f.Link);
+    finally
+      f.Free;
+    end;
   end;
   if (s = '/') then
   begin
     node.Next := TXPathExpressionNode.Create;
-    readXpathExpression(node.next, mode);
-    if reader.Peek = -1 then
-      exit;
-    s := ReadToken(false);
+    s := readXpathExpression(node.next, endTokens);
   end;
-  if StringArrayExistsSensitive(['='], s) then
+  if StringArrayExistsSensitive(['=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s) then
   begin
-    node.Op := TXPathExpressionOperation(StringArrayIndexOfSensitive(['', '='], s));
-    node.NextOp := TXPathExpressionNode.Create;;
-    readXpathExpression(node.NextOp, mode);
+    node.Op := TXPathExpressionOperation(StringArrayIndexOfSensitive(['', '=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s));
+    node.NextOp := TXPathExpressionNode.Create;
+    s := readXpathExpression(node.NextOp, endTokens);
+  end;
+  if s = '' then
+    rule(length(endTokens) = 0, 'Unexpected end of expression expecting '+describeTokens(endTokens))
+  else
+    rule(StringArrayExistsSensitive(endTokens, s), 'Found '+s+' expecting '+describeTokens(endTokens));
+  result := s;
+end;
+
+function TMXmlParser.ReadXPathToken(skipWhitespace, allowEmpty: boolean): String;
+Var
+  ch : Char;
+  LStart : Integer;
+begin
+  If skipWhitespace Then
+    while IsXmlWhiteSpace(peek) Do
+      Read;
+  FStartLocation := FLocation;
+  if (reader.Peek = -1) then
+    if allowEmpty then
+      exit('')
+    else
+      rule(false, 'Read off end of stream');
+  ch := read;
+  b.Clear;
+  b.Append(ch);
+  If (ch <> '-') and (isXmlNameChar(ch) or (ch = '*')) Then
+  begin
+    while isXmlNameChar(peek) or (peek = '*') Do
+      b.Append(read);
   end
   else
-    rule(false, 'Unknown XPath syntax at '+s);
+  begin
+    Case ch Of
+      '<': if CharInSet(peek, ['=']) then
+             b.Append(read);
+      '>': if CharInSet(peek, ['=']) then
+             b.Append(read);
+      '/': if CharInSet(peek, ['>']) then
+             b.Append(read);
+      '!': if CharInSet(peek, ['=']) then
+             b.Append(read);
+      '-': if CharInSet(peek, ['-']) then
+             b.Append(read)
+           else if CharInSet(peek, ['0'..'9']) then
+           begin
+            while CharInSet(peek, ['0'..'9']) or (peek = '.') Do
+              b.Append(read);
+           end;
+      '?': if CharInSet(peek, ['/']) then
+             b.Append(read);
+    else
+      // don't care
+    end;
+  end;
+  result := b.ToString;
 end;
 
 function TMXmlParser.resolveNamespace(element: TMXmlElement; abbrev: String): String;
@@ -1156,16 +1276,42 @@ end;
 
 destructor TXPathExpressionNode.Destroy;
 begin
-  FFilter.Free;
+  FFilters.Free;
   FNext.Free;
   FNextOp.Free;
+  FGroup.Free;
+  FParams.Free;
   inherited;
 end;
 
-procedure TXPathExpressionNode.SetFilter(const Value: TXPathExpressionNode);
+function TXPathExpressionNode.GetFilters: TAdvList<TXPathExpressionNode>;
 begin
-  FFilter.Free;
-  FFilter := Value;
+  if FFilters = nil then
+    FFilters := TAdvList<TXPathExpressionNode>.create;
+  result := FFilters;
+end;
+
+function TXPathExpressionNode.GetParams: TAdvList<TXPathExpressionNode>;
+begin
+  if FParams = nil then
+    FParams := TAdvList<TXPathExpressionNode>.create;
+  result := FParams;
+end;
+
+function TXPathExpressionNode.hasFilters: Boolean;
+begin
+  result := (FFilters <> nil) and (FFilters.Count > 0);
+end;
+
+function TXPathExpressionNode.Link: TXPathExpressionNode;
+begin
+  result := TXPathExpressionNode(inherited Link);
+end;
+
+procedure TXPathExpressionNode.SetGroup(const Value: TXPathExpressionNode);
+begin
+  FGroup.Free;
+  FGroup := Value;
 end;
 
 procedure TXPathExpressionNode.SetNext(const Value: TXPathExpressionNode);
@@ -1294,6 +1440,7 @@ var
   s : String;
   filterList : TAdvList<TMXmlNode>;
   i : integer;
+  f : TXPathExpressionNode;
 begin
   if item is TMXmlElement then
   begin
@@ -1316,17 +1463,20 @@ begin
   end
   else
     raise Exception.Create('Not done yet');
-  if expr.filter <> nil then
+  if expr.hasFilters then
   begin
-    filterList := TAdvList<TMXmlNode>.create;
-    try
-      for i := 0 to focus.Count - 1 do
-        if passesFilter(i, focus[i], expr.filter) then
-          filterList.add(focus[i].link);
-      focus.clear;
-      focus.addAll(filterList);
-    finally
-      filterList.free;
+    for f in expr.filters do
+    begin
+      filterList := TAdvList<TMXmlNode>.create;
+      try
+        for i := 0 to focus.Count - 1 do
+          if passesFilter(i, focus[i], f) then
+            filterList.add(focus[i].link);
+        focus.clear;
+        focus.addAll(filterList);
+      finally
+        filterList.free;
+      end;
     end;
   end;
 end;

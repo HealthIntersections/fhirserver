@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Upgrade Server to support new R4 branch"
+        as.returnvalue = "fix bugs in terminology service initialization & expansion"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -735,7 +735,7 @@ begin
                                "-w-UNSAFE_CODE\=0" +
                                "-w-UNSAFE_CAST\=0" +
                                ""
-            conditionals = FHIR3
+            conditionals = FHIR4
             consoleapp = false
             debuginfo = false
             definitionsonly = true

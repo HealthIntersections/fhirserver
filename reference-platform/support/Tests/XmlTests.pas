@@ -52,6 +52,23 @@ Type
     procedure ParserTest(Name : String);
   End;
 
+  XmlPathTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  protected
+    function GetCaseInfoArray : TestCaseInfoArray; override;
+  end;
+
+  [TextFixture]
+  TXmlPathTests = Class (TObject)
+  Private
+    tests : TMXmlDocument;
+  Published
+    [SetupFixture] procedure setup;
+    [TearDownFixture] procedure teardown;
+
+    [XmlPathTestCase]
+    procedure PathTest(Name : String);
+  End;
+
   XmlPatchTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
@@ -465,7 +482,56 @@ begin
   end;
 end;
 
+{ XmlPathTestCaseAttribute }
+
+function XmlPathTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+var
+  tests : TMXmlDocument;
+  test : TMXmlElement;
+  i : integer;
+  s : String;
+begin
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpDropWhitespace, xpDropComments]);
+  try
+    test := tests.document.first;
+    i := 0;
+    while test <> nil do
+    begin
+      SetLength(result, i+1);
+      result[i].Name := inttostr(i);
+      SetLength(result[i].Values, 1);
+      result[i].Values[0] := inttostr(i);
+      inc(i);
+      test := test.Next;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+
+{ TXmlPathTests }
+
+procedure TXmlPathTests.PathTest(Name: String);
+var
+  test : TMXmlElement;
+begin
+  test := tests.document.Children[StrToInt(name)];
+  TMXmlParser.parseXPath(test.attribute['value']).free;
+  Assert.Pass();
+end;
+
+procedure TXmlPathTests.setup;
+begin
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpDropWhitespace, xpDropComments]);
+end;
+
+procedure TXmlPathTests.teardown;
+begin
+  tests.Free;
+end;
+
 initialization
   TDUnitX.RegisterTestFixture(TXmlParserTests);
+  TDUnitX.RegisterTestFixture(TXmlPathTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);
 end.
