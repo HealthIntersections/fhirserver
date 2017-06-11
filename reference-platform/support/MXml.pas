@@ -28,9 +28,9 @@ type
     property Parent : TMXmlElement read FParent write FParent;
   end;
 
-  TXPathExpressionOperation = (xeoNull, xeoEquals, xeoPlus, xeoAnd, xeoOr, xeoGreaterThan, xeoGreaterEquals, xeoNotEquals, xeoUnion, xeoLessThan, xeoLessEquals);
+  TXPathExpressionOperation = (xeoNull, xeoEquals, xeoPlus, xeoAnd, xeoOr, xeoGreaterThan, xeoGreaterEquals, xeoNotEquals, xeoUnion, xeoLessThan, xeoLessEquals, xeoSequence);
 
-  TXPathExpressionNodeType = (xentName, xentFunction, xentConstant, xentGroup, xentRoot);
+  TXPathExpressionNodeType = (xentName, xentFunction, xentConstant, xentGroup, xentRoot, xeoIterator, xentVariable);
 
   TXPathExpressionNode = class (TAdvObject)
   private
@@ -50,6 +50,8 @@ type
   public
     Destructor Destroy; override;
     Function Link : TXPathExpressionNode; overload;
+    function addParam : TXPathExpressionNode;
+
     property NodeType : TXPathExpressionNodeType read FNodeType write FNodeType;
     property filters : TAdvList<TXPathExpressionNode> read GetFilters;
     function hasFilters : Boolean;
@@ -59,7 +61,7 @@ type
     property Group : TXPathExpressionNode read FGroup write SetGroup;
     property Params : TAdvList<TXPathExpressionNode> read GetParams;
     property value : String read FValue write FValue;
-  end;
+ end;
 
   TMXmlElementType = (ntElement, ntText, ntComment, ntDocument, ntAttribute, ntProcessingInstruction, ntDocumentDeclaration, ntCData);
 
@@ -1078,14 +1080,19 @@ begin
       result := result + ''''+tokens[0]+'''';
     result := result + ']';
   end;
-
 end;
+
+type
+  TExpressionSyntaxMode = (esmNormal, esmForLoop, esmIfStmt);
+
 function TMXmlParser.readXpathExpression(node: TXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : String;
 var
   p, f : TXPathExpressionNode;
   done, readNext : boolean;
   s : String;
+  mode : TExpressionSyntaxMode;
 begin
+  mode := esmNormal;
   readNext := true;
   if alreadyRead = '' then
     s := readXPathToken(true)
@@ -1096,6 +1103,11 @@ begin
     node.Value := s
   else if (s = '@') then
     node.Value := '@'+readXPathToken(false)
+  else if (s = '$') then
+  begin
+    node.NodeType := xentVariable;
+    node.Value := readXPathToken(false)
+  end
   else if (s = '''') then
   begin
     node.NodeType := xentConstant;
@@ -1105,8 +1117,12 @@ begin
   else if (s = '(') then
   begin
     node.nodeType := xentGroup;
-    node.group := TXPathExpressionNode.Create;
-    s := readXpathExpression(node.Group, [')']);
+    s := readXPathToken(true, true);
+    if s <> ')' then
+    begin
+      node.group := TXPathExpressionNode.Create;
+      s := readXpathExpression(node.Group, [')'], s);
+    end;
     rule(s = ')', 'Expected ''('' at this point but found '+s);
   end
   else if (s = '/') then
@@ -1118,56 +1134,76 @@ begin
   else
     rule(false, 'Unknown XPath name '+s);
   if readNext then
-    s := readXPathToken(true, true);
-  if (s = '(') then
   begin
+    if isXmlWhiteSpace(peek) then
+      if (node.value = 'if') then
+        mode := esmIfStmt
+      else if (node.value = 'for') then
+        mode := esmForLoop;
+    s := readXPathToken(true, true);
+  end;
+  if mode = esmIfStmt then
+  begin
+    readXpathExpression(node.addParam, ['then'], s);
+    readXpathExpression(node.addParam, ['else']);
+    s := readXpathExpression(node.addParam, endTokens);
+  end
+  else if mode = esmForLoop then
+  begin
+    rule(s = '$', 'expected a variablt ($xxx) parsing a for loop');
+    node.nodeType := xeoIterator;
+    node.value := readXPathToken(false);
     s := readXPathToken(true);
-    done := s = ')';
-    while not done do
+    rule(s = 'in', 'Unexpected token '''+s+''' reading or iterator');
+    s := readXpathExpression(node.addParam, ['return']);
+    s := readXpathExpression(node.addParam, endTokens);
+  end
+  else // mode = esmNormal
+  begin
+    if (s = '(') then
     begin
-      p := TXPathExpressionNode.Create;
-      try
-        s := readXpathExpression(p, [',', ')'], s);
-        node.Params.Add(p.Link);
-      finally
-        p.Free;
+      s := readXPathToken(true);
+      done := s = ')';
+      while not done do
+      begin
+        s := readXpathExpression(node.addParam, [',', ')'], s);
+        if (s = ',') then
+          s := readXPathToken(true)
+        else if (s = ')') then
+          done := true
+        else
+          rule(false, 'expected '','' at this point but found '+s);
       end;
-      if (s = ',') then
-        s := readXPathToken(true)
-      else if (s = ')') then
-        done := true
-      else
-        rule(false, 'expected '','' at this point but found '+s);
-    end;
-    node.NodeType := xentFunction;
-    s := readXPathToken(true, true);
-  end;
-  while (s = '[') do
-  begin
-    f := TXPathExpressionNode.Create;
-    try
-      readXpathExpression(f, [']']);
+      node.NodeType := xentFunction;
       s := readXPathToken(true, true);
-      node.Filters.Add(f.Link);
-    finally
-      f.Free;
     end;
+    while (s = '[') do
+    begin
+      f := TXPathExpressionNode.Create;
+      try
+        readXpathExpression(f, [']']);
+        s := readXPathToken(true, true);
+        node.Filters.Add(f.Link);
+      finally
+        f.Free;
+      end;
+    end;
+    if (s = '/') then
+    begin
+      node.Next := TXPathExpressionNode.Create;
+      s := readXpathExpression(node.next, endTokens);
+    end;
+    if StringArrayExistsSensitive(['=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s) or ((s = ',') and not StringArrayExistsSensitive(endTokens, ',')) then
+    begin
+      node.Op := TXPathExpressionOperation(StringArrayIndexOfSensitive(['', '=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<=', ','], s));
+      node.NextOp := TXPathExpressionNode.Create;
+      s := readXpathExpression(node.NextOp, endTokens);
+    end;
+    if s = '' then
+      rule(length(endTokens) = 0, 'Unexpected end of expression expecting '+describeTokens(endTokens))
+    else
+      rule(StringArrayExistsSensitive(endTokens, s), 'Found '+s+' expecting '+describeTokens(endTokens));
   end;
-  if (s = '/') then
-  begin
-    node.Next := TXPathExpressionNode.Create;
-    s := readXpathExpression(node.next, endTokens);
-  end;
-  if StringArrayExistsSensitive(['=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s) then
-  begin
-    node.Op := TXPathExpressionOperation(StringArrayIndexOfSensitive(['', '=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s));
-    node.NextOp := TXPathExpressionNode.Create;
-    s := readXpathExpression(node.NextOp, endTokens);
-  end;
-  if s = '' then
-    rule(length(endTokens) = 0, 'Unexpected end of expression expecting '+describeTokens(endTokens))
-  else
-    rule(StringArrayExistsSensitive(endTokens, s), 'Found '+s+' expecting '+describeTokens(endTokens));
   result := s;
 end;
 
@@ -1273,6 +1309,12 @@ begin
 end;
 
 { TXPathExpressionNode }
+
+function TXPathExpressionNode.addParam: TXPathExpressionNode;
+begin
+  result := TXPathExpressionNode.Create;
+  Params.Add(result);
+end;
 
 destructor TXPathExpressionNode.Destroy;
 begin
