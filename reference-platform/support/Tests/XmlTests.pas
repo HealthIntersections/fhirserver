@@ -37,7 +37,7 @@ Uses
   Windows, SysUtils, Classes, Soap.EncdDecd, ShellApi,
   StringSupport, GuidSupport, BytesSupport, EncodeSupport, TextUtilities, FileSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVExtractors, AdvFiles,
-  MXML, XmlPatch, DUnitX.TestFramework;
+  MXML, XmlPatch, MsXml, MSXmlParser, DUnitX.TestFramework;
 
 Type
   XmlParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
@@ -52,20 +52,46 @@ Type
     procedure ParserTest(Name : String);
   End;
 
-  XmlPathTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  XPathParserTestCaseAttribute = class (CustomTestCaseSourceAttribute)
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   end;
 
   [TextFixture]
-  TXmlPathTests = Class (TObject)
+  TXPathParserTests = Class (TObject)
   Private
     tests : TMXmlDocument;
+    functionNames : TStringList;
+    procedure collectFunctionNames(xp : TMXPathExpressionNode);
   Published
     [SetupFixture] procedure setup;
     [TearDownFixture] procedure teardown;
 
-    [XmlPathTestCase]
+    [XPathParserTestCase]
+    procedure PathTest(Name : String);
+  End;
+
+  XPathEngineTestCaseAttribute = class (CustomTestCaseSourceAttribute)
+  protected
+    function GetCaseInfoArray : TestCaseInfoArray; override;
+  end;
+
+  [TextFixture]
+  TXPathEngineTests = Class (TObject)
+  Private
+    tests : TMXmlDocument;
+    mstests : IXMLDOMDocument2;
+    resources : TAdvMap<TMXmlDocument>;
+    function findTestCase(name : String) : TMXmlElement;
+    function findSample(id : String) : TMXmlElement;
+    function findSampleMs(id : String) : IXMLDOMElement;
+    procedure runTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+    procedure runMsTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+  Published
+    [SetupFixture] procedure setup;
+    [TearDownFixture] procedure teardown;
+
+    [XPathEngineTestCase]
     procedure PathTest(Name : String);
   End;
 
@@ -482,56 +508,438 @@ begin
   end;
 end;
 
-{ XmlPathTestCaseAttribute }
+{ XPathParserTestCaseAttribute }
 
-function XmlPathTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+function XPathParserTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
 var
   tests : TMXmlDocument;
-  test : TMXmlElement;
+  path : TMXmlElement;
   i : integer;
-  s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpDropWhitespace, xpDropComments]);
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
   try
-    test := tests.document.first;
     i := 0;
-    while test <> nil do
+    path := tests.document.first;
+    while path <> nil do
     begin
       SetLength(result, i+1);
       result[i].Name := inttostr(i);
       SetLength(result[i].Values, 1);
       result[i].Values[0] := inttostr(i);
       inc(i);
-      test := test.Next;
+      path := path.next;
     end;
   finally
     tests.Free;
   end;
 end;
 
-{ TXmlPathTests }
+{ TXPathTests }
 
-procedure TXmlPathTests.PathTest(Name: String);
+{
+function TXPathTests.findTest(name: String): TMXmlElement;
 var
-  test : TMXmlElement;
+  res, path : TMXmlElement;
 begin
-  test := tests.document.Children[StrToInt(name)];
-  TMXmlParser.parseXPath(test.attribute['value']).free;
-  Assert.Pass();
+  result := nil;
+  res := tests.document.first;
+  while res <> nil do
+  begin
+    path := res.first;
+    while path <> nil do
+    begin
+      if (path.attribute['path'] = name) then
+        exit(path);
+      path := path.Next;
+    end;
+    res := res.Next;
+  end;
 end;
 
-procedure TXmlPathTests.setup;
+function XpathForPath(path : string):string;
+var
+  p : TArray<String>;
+  b : TStringBuilder;
+  s : String;
 begin
-  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpDropWhitespace, xpDropComments]);
+  p := path.Split(['.']);
+  b := TStringBuilder.Create;
+  try
+    for s in p do
+    begin
+      if b.Length > 0 then
+        b.Append('/');
+      b.Append('f:');
+      b.Append(s);
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+}
+
+procedure TXPathParserTests.collectFunctionNames(xp: TMXPathExpressionNode);
+var
+  node : TMXPathExpressionNode;
+begin
+  if xp = nil then
+    exit;
+  if xp.NodeType = xentFunction then
+  begin
+    if functionNames.IndexOf(xp.value) = -1 then
+      functionNames.Add(xp.value);
+  end;
+  for node in xp.filters do
+    collectFunctionNames(node);
+  for node in xp.Params do
+    collectFunctionNames(node);
+  collectFunctionNames(xp.next);
+  collectFunctionNames(xp.Group);
+  collectFunctionNames(xp.NextOp);
 end;
 
-procedure TXmlPathTests.teardown;
+procedure TXPathParserTests.PathTest(Name: String);
+var
+  rn : String;
+  test, item, n : TMXmlElement;
+  doc : TMXmlDocument;
+  xp : TMXPathExpressionNode;
+  nodes : TAdvList<TMXmlNode>;
+  elements : TAdvList<TMXmlElement>;
+  ok : boolean;
+begin
+  test := tests.document.children[StrToInt(name)];
+  xp := TMXmlParser.parseXPath(test.attribute['value']);
+  try
+    collectFunctionNames(xp);
+    Assert.Pass();
+  finally
+    xp.Free
+  end;
+{  item := test.first;
+  if name.Contains('.') then
+    rn := Name.Substring(0, name.IndexOf('.'))
+  else
+    rn := name;
+
+  if not resources.TryGetValue(rn, doc) then
+    if FileExists('C:\work\org.hl7.fhir\build\publish\'+rn+'-example.xml') then
+    begin
+      doc := TMXmlParser.parseFile('C:\work\org.hl7.fhir\build\publish\'+rn+'-example.xml', [xpResolveNamespaces]);
+      resources.Add(rn, doc);
+      doc.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
+    end
+    else
+      doc := nil;
+
+  while (item <> nil) do
+  begin
+    xp := TMXmlParser.parseXPath(item.attribute['value']);
+    try
+      if doc <> nil then
+      begin
+        ok := false;
+        elements := doc.selectElements(XpathForPath(Name), doc);
+        try
+          for n in elements do
+          begin
+            nodes := doc.select(xp, n);
+            try
+              ok := doc.evaluateBoolean(nodes) or ok;
+            finally
+              nodes.Free;
+            end;
+          end;
+          Assert.IsTrue(ok or (elements.Count = 0), 'xpath "'+item.attribute['value']+'" does not run to true');
+        finally
+          elements.Free;
+        end;
+      end
+      else
+      begin
+        nodes := tests.select(xp, tests);
+        try
+          Assert.Pass;
+        finally
+          nodes.Free;
+        end;
+      end;
+    finally
+      xp.Free;
+    end;
+    item := item.Next;
+  end;
+}end;
+
+procedure TXPathParserTests.setup;
+begin
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-parser-tests.xml', [xpDropWhitespace, xpDropComments]);
+  functionNames := TStringList.Create;
+end;
+
+procedure TXPathParserTests.teardown;
+begin
+  functionNames.Free;
+  tests.Free;
+end;
+
+{ XPathEngineTestCaseAttribute }
+
+function XPathEngineTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
+var
+  tests : TMXmlDocument;
+  tcase : TMXmlElement;
+  i : integer;
+begin
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpResolveNamespaces]);
+  try
+    i := 0;
+    tcase := tests.document.firstElement;
+    while tcase <> nil do
+    begin
+      if tcase.Name = 'case' then
+      begin
+        SetLength(result, i+1);
+        result[i].Name := tcase.attribute['name'];
+        SetLength(result[i].Values, 1);
+        result[i].Values[0] := inttostr(i);
+        inc(i);
+      end;
+      tcase := tcase.nextElement;
+    end;
+  finally
+    tests.Free;
+  end;
+end;
+
+{ TXPathEngineTests }
+
+function TXPathEngineTests.findSample(id: String): TMXmlElement;
+var
+  sample : TMXmlElement;
+begin
+  sample := tests.document.firstElement;
+  while sample <> nil do
+  begin
+    if sample.Name = 'sample' then
+    begin
+      if (sample.attribute['id'] = id) then
+        exit(sample);
+    end;
+    sample := sample.next;
+  end;
+  result := nil;
+end;
+
+function TXPathEngineTests.findSampleMs(id: String): IXMLDOMElement;
+var
+  sample : IXMLDOMElement;
+begin
+  sample := TMsXmlParser.FirstChild(mstests.documentElement);
+  while sample <> nil do
+  begin
+    if sample.nodeName = 'sample' then
+    begin
+      if (sample.getAttribute('id') = id) then
+        exit(sample);
+    end;
+    sample := TMsXmlParser.NextSibling(sample);
+  end;
+  result := nil;
+end;
+
+function TXPathEngineTests.findTestCase(name: String): TMXmlElement;
+var
+  tcase : TMXmlElement;
+  i : integer;
+begin
+  i := 0;
+  tcase := tests.document.firstElement;
+  while tcase <> nil do
+  begin
+    if tcase.Name = 'case' then
+    begin
+      if (inttostr(i) = Name) then
+        exit(tcase);
+      inc(i);
+    end;
+    tcase := tcase.next;
+  end;
+end;
+
+procedure TXPathEngineTests.runTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+var
+  focus, outcome : TMXmlElement;
+  nodes : TAdvList<TMXmlNode>;
+  node : TMXmlNode;
+  i : integer;
+begin
+  focus := findSample(test.attribute['id']).firstElement;
+  nodes := tests.select(test.element('xpath').attribute['value'], focus);
+  try
+  if test.element('outcomes').Attributes.ContainsKey('count') then
+    Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.Count, 'Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.Count))
+  else
+  begin
+    Assert.IsTrue(outcomes.Count = nodes.Count, 'Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.Count));
+    for i := 0 to outcomes.Count - 1 do
+    begin
+      node := nodes[i];
+      outcome := outcomes[i];
+      if outcome.attribute['type'] = 'string' then
+      begin
+        Assert.IsTrue(node is TMXmlString, 'Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
+        Assert.IsTrue(TMXmlString(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
+      end
+      else if outcome.attribute['type'] = 'number' then
+      begin
+        Assert.IsTrue(node is TMXmlNumber, 'Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
+        Assert.IsTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
+      end
+      else if outcome.attribute['type'] = 'boolean' then
+      begin
+        Assert.IsTrue(node is TMXmlBoolean, 'Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
+        Assert.IsTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
+      end
+      else if outcome.attribute['type'] = 'attribute' then
+      begin
+        Assert.IsTrue(node is TMXmlAttribute, 'Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+node.ClassName.substring(5));
+        Assert.IsTrue(TMXmlAttribute(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlAttribute(node).LocalName);
+        Assert.IsTrue(TMXmlAttribute(node).value = outcome.attribute['value'], 'Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlAttribute(node).value);
+      end
+      else if outcome.attribute['type'] = 'element' then
+      begin
+        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntElement), 'Node '+inttostr(i)+' has the wrong type (expected element, found '+node.ClassName.substring(5));
+        Assert.IsTrue(TMXmlElement(node).LocalName = outcome.attribute['name'], 'Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+TMXmlElement(node).LocalName);
+        Assert.IsTrue(TMXmlElement(node).NamespaceURI = outcome.attribute['namespace'], 'Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+TMXmlElement(node).NamespaceURI);
+      end
+      else if outcome.attribute['type'] = 'text' then
+      begin
+        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntText), 'Node '+inttostr(i)+' has the wrong type (expected text, found '+node.ClassName.substring(5));
+
+      end
+      else if outcome.attribute['type'] = 'comment' then
+      begin
+        Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
+
+      end
+      else
+        raise Exception.Create('Error Message');
+    end;
+  end;
+  finally
+    nodes.Free;
+  end;
+end;
+
+procedure TXPathEngineTests.runMsTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
+var
+  focus : IXMLDOMElement;
+  outcome: TMXmlElement;
+  nodes : IXMLDOMNodeList;
+  node : IXMLDOMNode;
+  i : integer;
+begin
+  if (test.attribute['ms'] = 'no') then
+    exit;
+  for outcome in outcomes do
+    if not StringArrayExistsSensitive(['text', 'attribute', 'element', 'comment'], outcome.attribute['type']) then
+      exit;
+
+  focus := TMsXmlParser.FirstChild(findSampleMs(test.attribute['id']));
+  nodes := focus.selectNodes(test.element('xpath').attribute['value']);
+  if test.element('outcomes').Attributes.ContainsKey('count') then
+    Assert.IsTrue(StrToInt(test.element('outcomes').attribute['count']) = nodes.length, 'MS: Wrong number of nodes returned - expected '+test.element('outcomes').attribute['count']+', found '+inttostr(nodes.length))
+  else
+  begin
+    Assert.IsTrue(outcomes.Count = nodes.length, 'MS: Wrong number of nodes returned - expected '+inttostr(outcomes.Count)+', found '+inttostr(nodes.length));
+    for i := 0 to outcomes.Count - 1 do
+    begin
+      node := nodes.item[i];
+      outcome := outcomes[i];
+      if outcome.attribute['type'] = 'string' then
+      begin
+        raise Exception.create('not done yet');
+  //      Assert.IsTrue(node is TMXmlString, 'MS: Node '+inttostr(i)+' has the wrong type (expected string, found '+node.ClassName.substring(5));
+  //      Assert.IsTrue(TMXmlString(node).value = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+TMXmlString(node).value);
+      end
+      else if outcome.attribute['type'] = 'number' then
+      begin
+        raise Exception.create('not done yet');
+  //      Assert.IsTrue(node is TMXmlNumber, 'MS: Node '+inttostr(i)+' has the wrong type (expected number, found '+node.ClassName.substring(5));
+  //      Assert.IsTrue(TMXmlNumber(node).value = StrToInt(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+inttostr(TMXmlNumber(node).value));
+      end
+      else if outcome.attribute['type'] = 'boolean' then
+      begin
+        raise Exception.create('not done yet');
+  //      Assert.IsTrue(node is TMXmlBoolean, 'MS: Node '+inttostr(i)+' has the wrong type (expected boolean, found '+node.ClassName.substring(5));
+  //      Assert.IsTrue(TMXmlBoolean(node).value = StringToBoolean(outcome.attribute['value']), 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+BooleanToString(TMXmlBoolean(node).value));
+      end
+      else if outcome.attribute['type'] = 'attribute' then
+      begin
+        Assert.IsTrue(node.nodeType = NODE_ATTRIBUTE, 'MS: Node '+inttostr(i)+' has the wrong type (expected Attribute, found '+inttostr(node.nodeType));
+        Assert.IsTrue(node.text = outcome.attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong value (expected '+outcome.attribute['value']+', found '+node.text);
+      end
+      else if outcome.attribute['type'] = 'element' then
+      begin
+        Assert.IsTrue(node.nodeType = NODE_ELEMENT, 'MS: Node '+inttostr(i)+' has the wrong type (expected element, found '+inttostr(node.nodeType));
+        Assert.IsTrue(node.baseName = outcome.attribute['name'], 'MS: Node '+inttostr(i)+' has the wrong name (expected '+outcome.attribute['name']+', found '+node.baseName);
+        Assert.IsTrue(node.namespaceURI = outcome.attribute['namespace'], 'MS: Node '+inttostr(i)+' has the wrong namespace (expected '+outcome.attribute['namespace']+', found '+node.NamespaceURI);
+      end
+      else if outcome.attribute['type'] = 'text' then
+      begin
+        Assert.IsTrue(node.nodeType = NODE_TEXT, 'MS: Node '+inttostr(i)+' has the wrong type (expected text, found '+inttostr(node.nodeType));
+        if outcome.Attributes.ContainsKey('value') then
+          Assert.IsTrue(node.text = outcome.Attribute['value'], 'MS: Node '+inttostr(i)+' has the wrong type (expected text "'+outcome.Attribute['value']+'", found '+node.text);
+      end
+      else if outcome.attribute['type'] = 'comment' then
+      begin
+        raise Exception.create('not done yet');
+  //      Assert.IsTrue((node is TMXmlElement) and (TMXmlElement(node).nodeType = ntComment), 'Node '+inttostr(i)+' has the wrong type (expected comment, found '+node.ClassName.substring(5));
+  //
+      end
+      else
+        raise Exception.Create('Error Message');
+    end;
+  end;
+end;
+
+procedure TXPathEngineTests.PathTest(Name: String);
+var
+  test, focus, outcome : TMXmlElement;
+  nodes : TAdvList<TMXmlNode>;
+  node : TMXmlNode;
+  outcomes : TAdvList<TMXmlElement>;
+  i : integer;
+begin
+  test := findTestCase(name);
+  outcomes := tests.selectElements('node', test.element('outcomes'));
+  try
+    runMsTest(test, outcomes);
+    runTest(test, outcomes);
+  finally
+    outcomes.Free;
+  end;
+end;
+
+procedure TXPathEngineTests.setup;
+begin
+  tests := TMXmlParser.ParseFile('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml', [xpResolveNamespaces]);
+  tests.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
+  tests.NamespaceAbbreviations.AddOrSetValue('h', 'http://www.w3.org/1999/xhtml');
+  mstests := TMsXmlParser.Parse('C:\work\fhirserver\reference-platform\r4\tests\xpath-tests.xml');
+  mstests.setProperty('SelectionNamespaces','xmlns:f=''http://hl7.org/fhir'' xmlns:h=''http://www.w3.org/1999/xhtml''');
+end;
+
+procedure TXPathEngineTests.teardown;
 begin
   tests.Free;
 end;
 
 initialization
   TDUnitX.RegisterTestFixture(TXmlParserTests);
-  TDUnitX.RegisterTestFixture(TXmlPathTests);
+  TDUnitX.RegisterTestFixture(TXPathParserTests);
+  TDUnitX.RegisterTestFixture(TXPathEngineTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);
 end.

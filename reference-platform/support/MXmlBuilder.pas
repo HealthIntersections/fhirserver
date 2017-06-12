@@ -198,7 +198,7 @@ end;
 
 procedure TMXmlBuilder.AddAttribute(const sName, sValue: String);
 begin
-  FAttributes.AddOrSetValue(sName, TMXmlAttribute.Create(sValue));
+  FAttributes.AddOrSetValue(sName, TMXmlAttribute.Create(sName, sValue));
   ReadTextLengthWithEscapes(sName+'="', sValue, '"');
 end;
 
@@ -330,7 +330,7 @@ procedure TMXmlBuilder.AddAttributeNS(const sNamespace, sName, sValue: String);
 var
   attr : TMXmlAttribute;
 begin
-  attr := TMXmlAttribute.Create(sValue);
+  attr := TMXmlAttribute.Create(sName, sValue);
   try
     attr.NamespaceURI := sNamespace;
     attr.LocalName := sName;

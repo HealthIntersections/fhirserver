@@ -2042,16 +2042,21 @@ end;
 function TFHIRExpressionEngine.opAnd(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
-  if (left.Empty) and (right.empty) then
-    // nothing
-  else if (isBoolean(left, false)) or (isBoolean(right, false)) then
-    result.Add(TFhirBoolean.Create(false))
-  else if (left.Empty) or (right.Empty) then
-    // noothing
-  else if (convertToBoolean(left)) and (convertToBoolean(right)) then
-    result.Add(TFhirBoolean.Create(true))
-  else
-    result.Add(TFhirBoolean.Create(false));
+  try
+    if (left.Empty) and (right.empty) then
+      // nothing
+    else if (isBoolean(left, false)) or (isBoolean(right, false)) then
+      result.Add(TFhirBoolean.Create(false))
+    else if (left.Empty) or (right.Empty) then
+      // noothing
+    else if (convertToBoolean(left)) and (convertToBoolean(right)) then
+      result.Add(TFhirBoolean.Create(true))
+    else
+      result.Add(TFhirBoolean.Create(false));
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 function TFHIRExpressionEngine.opAs(left, right: TFHIRSelectionList): TFHIRSelectionList;

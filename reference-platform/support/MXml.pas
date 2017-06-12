@@ -9,8 +9,8 @@ work remains necessary on XPath.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  StringSupport, TextUtilities,
+  SysUtils, Classes, Generics.Collections, Character,
+  StringSupport, TextUtilities, RegExpr,
   AdvObjects, AdvGenerics, AdvStreams, AdvStreamReaders, AdvFiles, AdvVclStreams,
   ParserSupport;
 
@@ -18,6 +18,16 @@ const
   DEF_BUF_SIZE = 128;
 
 type
+  TMXPathExpressionOperation = (xeoNull, xeoEquals, xeoPlus, xeoAnd, xeoOr, xeoGreaterThan, xeoGreaterEquals, xeoNotEquals, xeoUnion, xeoLessThan, xeoLessEquals, xeoSequence);
+  TMXPathExpressionNodeType = (xentName, xentFunction, xentConstant, xentGroup, xentRoot, xentIterator, xentVariable);
+  TMXPathExpressionAxis = (axisSelf, axisChild, axisDescendants, axisDescendantsAndSelf, axisAttribute, axisNamespace, axisParent, axisAncestor, axisAncestorOrSelf, axisFollowing, axisFollowingSibling, axisPreceding, axisPrecedingSibling);
+
+const
+  AXIS_NAMES : array[TMXPathExpressionAxis] of String = ('self', 'child', 'descendant', 'descendant-or-self',
+    'attribute', 'namespace', 'parent', 'ancestor', 'ancestor-or-self', 'following', 'following-sibling', 'preceding',
+    'preceding-sibling');
+
+Type
   TMXmlElement = class;
 
   TMXmlNode = class (TAdvObject)
@@ -26,59 +36,60 @@ type
   public
     function Link : TMXmlNode; overload;
     property Parent : TMXmlElement read FParent write FParent;
+    function equals(other : TMXmlNode) : boolean; virtual;
   end;
 
-  TXPathExpressionOperation = (xeoNull, xeoEquals, xeoPlus, xeoAnd, xeoOr, xeoGreaterThan, xeoGreaterEquals, xeoNotEquals, xeoUnion, xeoLessThan, xeoLessEquals, xeoSequence);
-
-  TXPathExpressionNodeType = (xentName, xentFunction, xentConstant, xentGroup, xentRoot, xeoIterator, xentVariable);
-
-  TXPathExpressionNode = class (TAdvObject)
-  private
-    FNodeType : TXPathExpressionNodeType;
-    FValue : String;
-    FFilters: TAdvList<TXPathExpressionNode>;
-    FNext: TXPathExpressionNode;
-    FOp : TXPathExpressionOperation;
-    FNextOp : TXPathExpressionNode;
-    FGroup : TXPathExpressionNode;
-    FParams : TAdvList<TXPathExpressionNode>;
-    procedure SetNext(const Value: TXPathExpressionNode);
-    procedure SetNextOp(const Value: TXPathExpressionNode);
-    procedure SetGroup(const Value: TXPathExpressionNode);
-    function GetParams: TAdvList<TXPathExpressionNode>;
-    function GetFilters: TAdvList<TXPathExpressionNode>;
+  TMXmlPrimitive = class (TMXmlNode)
   public
-    Destructor Destroy; override;
-    Function Link : TXPathExpressionNode; overload;
-    function addParam : TXPathExpressionNode;
+    function equals(other : TMXmlNode) : boolean; override;
+  end;
 
-    property NodeType : TXPathExpressionNodeType read FNodeType write FNodeType;
-    property filters : TAdvList<TXPathExpressionNode> read GetFilters;
-    function hasFilters : Boolean;
-    property next : TXPathExpressionNode read FNext write SetNext;
-    property op : TXPathExpressionOperation read FOp write FOp;
-    property NextOp : TXPathExpressionNode read FNextOp write SetNextOp;
-    property Group : TXPathExpressionNode read FGroup write SetGroup;
-    property Params : TAdvList<TXPathExpressionNode> read GetParams;
+  TMXmlBoolean = class (TMXmlPrimitive)
+  private
+    FValue: boolean;
+  public
+    Constructor Create(value : boolean);
+    property value : boolean read FValue write FValue;
+    function ToString : String; override;
+  end;
+
+  TMXmlNumber = class (TMXmlPrimitive)
+  private
+    FValue: integer;
+  public
+    Constructor Create(value : integer);
+    property value : integer read FValue write FValue;
+    function ToString : String; override;
+  end;
+
+  TMXmlString = class (TMXmlPrimitive)
+  private
+    FValue: String;
+  public
+    Constructor Create(value : String);
     property value : String read FValue write FValue;
- end;
+    function ToString : String; override;
+  end;
 
   TMXmlElementType = (ntElement, ntText, ntComment, ntDocument, ntAttribute, ntProcessingInstruction, ntDocumentDeclaration, ntCData);
 
   TMXmlNamedNode = class (TMXmlNode)
   private
     FNodeType : TMXmlElementType;
+    FName : String;
     FNamespaceURI : String;
     FLocalName : String;
     FStart : TSourceLocation;
     FStop : TSourceLocation;
   public
     Constructor Create(nodeType : TMXmlElementType); overload;
+    Property Name : String read FName write FName;
     property NodeType : TMXmlElementType read FNodeType write FNodeType;
     property NamespaceURI : String read FNamespaceURI write FNamespaceURI;
     property LocalName : String read FLocalName write FLocalName;
     property Start : TSourceLocation read FStart write FStart;
     property Stop : TSourceLocation read FStop write FStop;
+    function equals(other : TMXmlNode) : boolean; override;
   end;
 
   TMXmlAttribute = class (TMXmlNamedNode)
@@ -86,16 +97,17 @@ type
     FValue : String;
   public
     Constructor Create(); overload;
-    Constructor Create(value : String); overload;
+    Constructor Create(name, value : String); overload;
 
     Function Link : TMXmlAttribute; overload;
     property Value : String read FValue write FValue;
+    function equals(other : TMXmlNode) : boolean; override;
+    function ToString : String; override;
   end;
 
 
   TMXmlElement = class (TMXmlNamedNode)
   private
-    FName : String;
     FAttributes : TAdvMap<TMXmlAttribute>;
     FChildren : TAdvList<TMXmlElement>;
     FText : string;
@@ -123,7 +135,6 @@ type
     Destructor Destroy; override;
     Function Link : TMXmlElement; overload;
 
-    Property Name : String read FName write FName;
     property Attributes : TAdvMap<TMXmlAttribute> read GetAttributes;
     property HasAttributes  : boolean read GetHasAttributes;
     property Children : TAdvList<TMXmlElement> read GetChildren;
@@ -149,29 +160,117 @@ type
     procedure listElements(name : String; list : TAdvList<TMXmlElement>);
     procedure addC(node : TMXmlElement);
     function ToXml(pretty : boolean = false) : String;
+    function equals(other : TMXmlNode) : boolean; override;
+    function ToString : String; override;
   end;
+
+  TMXPathExpressionNode = class (TAdvObject)
+  private
+    FNodeType : TMXPathExpressionNodeType;
+    FAxis : TMXPathExpressionAxis;
+    FValue : String;
+    FFilters: TAdvList<TMXPathExpressionNode>;
+    FNext: TMXPathExpressionNode;
+    FOp : TMXPathExpressionOperation;
+    FNextOp : TMXPathExpressionNode;
+    FGroup : TMXPathExpressionNode;
+    FParams : TAdvList<TMXPathExpressionNode>;
+    procedure SetNext(const Value: TMXPathExpressionNode);
+    procedure SetNextOp(const Value: TMXPathExpressionNode);
+    procedure SetGroup(const Value: TMXPathExpressionNode);
+    function GetParams: TAdvList<TMXPathExpressionNode>;
+    function GetFilters: TAdvList<TMXPathExpressionNode>;
+    function buildConstant : TMXmlNode;
+  public
+    Destructor Destroy; override;
+    Function Link : TMXPathExpressionNode; overload;
+    function addParam : TMXPathExpressionNode;
+
+    property NodeType : TMXPathExpressionNodeType read FNodeType write FNodeType;
+    property axis : TMXPathExpressionAxis read FAxis write FAxis;
+    property filters : TAdvList<TMXPathExpressionNode> read GetFilters;
+    function hasFilters : Boolean;
+    property next : TMXPathExpressionNode read FNext write SetNext;
+    property op : TMXPathExpressionOperation read FOp write FOp;
+    property NextOp : TMXPathExpressionNode read FNextOp write SetNextOp;
+    property Group : TMXPathExpressionNode read FGroup write SetGroup;
+    property Params : TAdvList<TMXPathExpressionNode> read GetParams;
+    property value : String read FValue write FValue;
+
+    Function ToString : String; override;
+  end;
+
+  TXPathVariables = class (TAdvObject)
+  private
+    FMap : TAdvMap<TMXmlNode>;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link: TXPathVariables;
+    function add(name : String; value : TMXmlNode) : TXPathVariables;
+    function get(name : string) : TMXmlNode;
+  end;
+
+  {private} TMXMLIterationEvent = function (Context : TObject; node : TMXmlNamedNode) : boolean of Object;
 
   TMXmlDocument = class(TMXmlElement)
   private
     FNamespaceAbbreviations : TDictionary<String, String>;
-    function funcEquals(a : TMXmlAttribute; op : TXPathExpressionNode) : boolean;
-    function matchesXPathNode(element : TMXmlElement; expr : TXPathExpressionNode) : boolean;
-    function matchesXPathName(name, namespace, localName : string; pattern : String) : boolean;
-    function passesFilter(i : integer; item : TMXmlNode; filter : TXPathExpressionNode) : boolean;
-    procedure evaluate(expr: TXPathExpressionNode; item : TMXmlNode; focus: TAdvList<TMXmlNode>); overload;
-    function evaluate(expr : TXPathExpressionNode; focus : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
+    function list(value : boolean) : TAdvList<TMXmlNode>;
+    function contains(list : TAdvList<TMXmlNode>; item : TMXmlNode) : boolean;
+
+    function funcExists(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcCount(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcNot(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcContains(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcTranslate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcTextTest(Context : TObject; node : TMXmlNamedNode) : boolean;
+    procedure funcText(expr: TMXPathExpressionNode; focus, work: TAdvList<TMXmlNode>);
+    procedure funcComment(focus, work: TAdvList<TMXmlNode>);
+    procedure funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+    procedure funcPosition(variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+    procedure funcLocalName(focus, work: TAdvList<TMXmlNode>);
+    procedure funcName(focus, work: TAdvList<TMXmlNode>);
+    procedure funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+    procedure funcMatches(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+    procedure funcSubStringAfter(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+    function funcNormalizeSpace(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcConcat(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcString(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+    function funcNumber(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+
+    function opEquals(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    function opAnd(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    function opOr(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    function opUnion(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+
+    function passesFilter(index : integer; atEntry : boolean; variables : TXPathVariables; item : TMXmlNode; filter : TMXPathExpressionNode) : boolean;
+    function evaluateNameForNode(Context : TObject; node : TMXmlNamedNode) : boolean;
+    procedure evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
+    procedure iterate(node: TMXMLNode; axis: TMXPathExpressionAxis; list : TAdvList<TMXmlNode>; context: TObject; event: TMXMLIterationEvent);
+    function evaluateFunction(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
+    function preOperate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation) : TAdvList<TMXmlNode>;
+    function operate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation; right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    procedure evaluateIterator(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work : TAdvList<TMXmlNode>);
+    function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
   public
     Constructor Create; overload;
     Destructor Destroy; override;
-    function select(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlNode>;
-    function selectElements(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlElement>;
+
+
+    function select(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
+    function selectElements(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlElement>; overload;
+    function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
+    function selectElements(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TAdvList<TMXmlElement>; overload;
+    function evaluateBoolean(nodes : TAdvList<TMXmlNode>): boolean;
     property NamespaceAbbreviations : TDictionary<String, String> read FNamespaceAbbreviations;
   end;
 
   TMXmlParserOption = (xpResolveNamespaces, xpDropWhitespace, xpDropComments);
   TMXmlParserOptions = set of TMXmlParserOption;
 
-  EMXmlParser = class (Exception);
+  EMXmlDocument = class (Exception);
+  EMXPathEngine = class (Exception);
 
   TMXmlParser = class (TAdvObject)
   private
@@ -189,15 +288,15 @@ type
     Function ReadToken(skipWhitespace : Boolean; allowEmpty : boolean = false): String;
     Function ReadXPathToken(skipWhitespace : Boolean; allowEmpty : boolean = false): String;
     Function ReadToNextChar(ch : Char): String;
-    function ReadAttribute : TMXmlAttribute;
+    function ReadAttribute(name : String) : TMXmlAttribute;
     procedure ReadElement(parent : TMXmlElement);
     procedure ReadText(parent : TMXmlElement; text : String);
     procedure ReadComment(parent : TMXmlElement);
     function parse : TMXmlDocument; overload;
     function resolveNamespace(element : TMXmlElement; abbrev : String) : String;
     procedure resolveNamespaces(element : TMXmlElement; defNs : String);
-    function readXpathExpression(node : TXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : string;
-    function parseXPath : TXPathExpressionNode; overload;
+    function readXpathExpression(node : TMXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : string;
+    function parseXPath : TMXPathExpressionNode; overload;
   public
     class function parse(content : String; options : TMXmlParserOptions) : TMXmlDocument; overload;
     class function parse(content : TStream; options : TMXmlParserOptions) :  TMXmlDocument; overload;
@@ -210,7 +309,7 @@ type
     class function isXmlName(name : String) : boolean;
     class function isXPathName(name : String) : boolean;
 
-    class function parseXPath(content : String) : TXPathExpressionNode; overload;
+    class function parseXPath(content : String) : TMXPathExpressionNode; overload;
   end;
 
 
@@ -221,10 +320,21 @@ implementation
 
 { TMXmlAttribute }
 
-constructor TMXmlAttribute.Create(value: String);
+constructor TMXmlAttribute.Create(name, value: String);
 begin
   Create;
+  FName := name;
   FValue := value;
+end;
+
+function TMXmlAttribute.equals(other: TMXmlNode): boolean;
+begin
+  if (other is TMXmlAttribute) then
+    result := inherited equals(other) and (TMXmlAttribute(other).FValue = FValue)
+  else if (other is TMXmlPrimitive) then
+    result := other.ToString = ToString
+  else
+    result := false;
 end;
 
 constructor TMXmlAttribute.Create;
@@ -237,12 +347,22 @@ begin
   result := TMXmlAttribute(inherited Link);
 end;
 
+function TMXmlAttribute.ToString: String;
+begin
+  result := FValue;
+end;
+
 { TMXmlNamedNode }
 
 constructor TMXmlNamedNode.Create(nodeType: TMXmlElementType);
 begin
   inherited Create;
   FNodeType := nodeType;
+end;
+
+function TMXmlNamedNode.equals(other: TMXmlNode): boolean;
+begin
+  result := ((other is TMXmlNamedNode) and (FNamespaceURI = TMXmlNamedNode(other).FNamespaceURI) and (FLocalName = TMXmlNamedNode(other).FLocalName));
 end;
 
 { TMXmlElement }
@@ -297,7 +417,12 @@ begin
       if result = nil then
         result := t
       else
-        raise Exception.Create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+        raise EMXmlDocument.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+end;
+
+function TMXmlElement.equals(other: TMXmlNode): boolean;
+begin
+  result := other = self;
 end;
 
 function TMXmlElement.first: TMXmlElement;
@@ -508,7 +633,7 @@ var
 begin
   if not Attributes.TryGetValue(name, attr) then
   begin
-    attr := TMXmlAttribute.Create(Value);
+    attr := TMXmlAttribute.Create(name, Value);
     Attributes.Add(name, attr);
   end;
   attr.Value := Value;
@@ -537,14 +662,19 @@ begin
       attr.LocalName := name;
       attr.Value := Value;
       if s = '' then
+      begin
+        attr.Name := name;
         Attributes.Add(name, attr.Link)
+      end
       else
+      begin
+        attr.Name := s+':'+name;
         Attributes.Add(s+':'+name, attr.Link);
+      end;
     finally
       attr.Free;
     end;
   end;
-
 end;
 
 procedure TMXmlElement.SetNext(const Value: TMXmlElement);
@@ -558,7 +688,19 @@ begin
   if NodeType in [ntText, ntComment] then
     FText := Value
   else
-    raise Exception.Create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+    raise EMXmlDocument.create('Unable to set text at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+end;
+
+function TMXmlElement.ToString: String;
+begin
+  case NodeType of
+    ntElement: result := FName;
+    ntText: result := FText;
+    ntComment: result := FText;
+    ntDocument: result := '[document]';
+  else
+    result := 'other';
+  end;
 end;
 
 function TMXmlElement.ToXml(pretty : boolean = false): String;
@@ -593,7 +735,7 @@ begin
             Name := s+':'+LocalName
         end
         else
-          raise Exception.Create('no Name or QName provided');
+          raise EMXmlDocument.create('no Name or QName provided');
       end;
       b.Append('<');
       b.Append(Name);
@@ -621,7 +763,7 @@ begin
         b.append('/>');
       end;
     ntText:
-      b.Append(FormatXMLForTextArea(Text));
+      b.Append(FormaTXmlForTextArea(Text));
     ntComment:
       begin
       b.Append('<!-- ');
@@ -711,7 +853,7 @@ begin
   end;
 end;
 
-function TMXmlParser.parseXPath: TXPathExpressionNode;
+function TMXmlParser.parseXPath: TMXPathExpressionNode;
 var
   s : String;
 begin
@@ -721,7 +863,7 @@ begin
 
   b := TStringBuilder.Create;
   try
-    result := TXPathExpressionNode.Create;
+    result := TMXPathExpressionNode.Create;
     try
       readXpathExpression(result, []);
       result.Link;
@@ -734,7 +876,7 @@ begin
 
 end;
 
-class function TMXmlParser.parseXPath(content: String): TXPathExpressionNode;
+class function TMXmlParser.parseXPath(content: String): TMXPathExpressionNode;
 var
   this : TMXmlParser;
 begin
@@ -904,7 +1046,7 @@ begin
     while (s <> '/>') And (s <> '>') Do
       begin
       rule(isXmlName(s), 'The attribute name '+s+' is illegal');
-      e.Attributes.Add(s, ReadAttribute);
+      e.Attributes.Add(s, ReadAttribute(s));
       s := ReadToken(true);
       end;
     If s = '>' Then
@@ -941,14 +1083,15 @@ Var
 begin
   result := TMXmlAttribute.Create;
   try
+    result.Name := name;
     result.Start := FStartLocation;
     s := ReadToken(True);
-    rule(s = '=', 'Found "'+s+'" looking for "=" in attribute');
+    rule(s = '=', 'Found "'+s+'" looking for "=" in attribute '+name);
     s := ReadToken(xpDropWhitespace in options);
-    rule((s = '"') Or (s = ''''), 'Found "'+s+'" looking for " or '' at start of attribute');
+    rule((s = '"') Or (s = ''''), 'Found "'+s+'" looking for " or '' at start of attribute '+name);
     result.Value := XmlToText(ReadToNextChar(s[1]));
     s := ReadToken(False);
-    rule((s = '"') Or (s = ''''), 'Found "'+s+'" looking for " or '' at end of attribute');
+    rule((s = '"') Or (s = ''''), 'Found "'+s+'" looking for " or '' at end of attribute '+name);
     result.Stop := FLocation;
     result.Link;
   finally
@@ -1062,7 +1205,7 @@ end;
 procedure TMXmlParser.rule(test: boolean; message: String);
 begin
   if not test then
-    raise EMXmlParser.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
+    raise EMXmlDocument.Create(message + ' at Row '+inttostr(FLocation.line)+' column '+inttostr(FLocation.col));
 end;
 
 function describeTokens(tokens : Array of String) : String;
@@ -1085,9 +1228,9 @@ end;
 type
   TExpressionSyntaxMode = (esmNormal, esmForLoop, esmIfStmt);
 
-function TMXmlParser.readXpathExpression(node: TXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : String;
+function TMXmlParser.readXpathExpression(node: TMXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : String;
 var
-  p, f : TXPathExpressionNode;
+  p, f : TMXPathExpressionNode;
   done, readNext : boolean;
   s : String;
   mode : TExpressionSyntaxMode;
@@ -1099,10 +1242,28 @@ begin
   else
     s := alreadyRead;
   node.NodeType := xentName;
-  if isXPathName(s) or StringArrayExistsSensitive(['*', '**'], s) then
-    node.Value := s
+  if s.Contains('::') then
+  begin
+    if StringArrayExistsSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))) then
+      node.axis := TMXPathExpressionAxis(StringArrayIndexOfSensitive(AXIS_NAMES, s.Substring(0, s.IndexOf('::'))))
+    else
+      raise EMXmlDocument.Create('Unknown XPath axis '+s.Substring(0, s.IndexOf('::')));
+    s := s.Substring(s.IndexOf('::')+2);
+  end
+  else
+    node.axis := axisChild;
+
+  if isXPathName(s) or (s = '*') then
+  begin
+    node.Value := s;
+    if StringIsInteger32(s) then
+      node.NodeType := xentConstant
+  end
   else if (s = '@') then
-    node.Value := '@'+readXPathToken(false)
+  begin
+    node.Value := readXPathToken(false);
+    node.axis := axisAttribute
+  end
   else if (s = '$') then
   begin
     node.NodeType := xentVariable;
@@ -1120,7 +1281,7 @@ begin
     s := readXPathToken(true, true);
     if s <> ')' then
     begin
-      node.group := TXPathExpressionNode.Create;
+      node.group := TMXPathExpressionNode.Create;
       s := readXpathExpression(node.Group, [')'], s);
     end;
     rule(s = ')', 'Expected ''('' at this point but found '+s);
@@ -1128,11 +1289,14 @@ begin
   else if (s = '/') then
   begin
     // starting at the root...
+    if not readNext then
+      raise EMXmlDocument.Create('Syntax error..');
     readNext := false;
     node.NodeType := xentRoot; // no value in this case
   end
   else
     rule(false, 'Unknown XPath name '+s);
+
   if readNext then
   begin
     if isXmlWhiteSpace(peek) then
@@ -1142,8 +1306,10 @@ begin
         mode := esmForLoop;
     s := readXPathToken(true, true);
   end;
+
   if mode = esmIfStmt then
   begin
+    node.nodeType := xentFunction;
     readXpathExpression(node.addParam, ['then'], s);
     readXpathExpression(node.addParam, ['else']);
     s := readXpathExpression(node.addParam, endTokens);
@@ -1151,7 +1317,7 @@ begin
   else if mode = esmForLoop then
   begin
     rule(s = '$', 'expected a variablt ($xxx) parsing a for loop');
-    node.nodeType := xeoIterator;
+    node.nodeType := xentIterator;
     node.value := readXPathToken(false);
     s := readXPathToken(true);
     rule(s = 'in', 'Unexpected token '''+s+''' reading or iterator');
@@ -1179,7 +1345,7 @@ begin
     end;
     while (s = '[') do
     begin
-      f := TXPathExpressionNode.Create;
+      f := TMXPathExpressionNode.Create;
       try
         readXpathExpression(f, [']']);
         s := readXPathToken(true, true);
@@ -1190,13 +1356,13 @@ begin
     end;
     if (s = '/') then
     begin
-      node.Next := TXPathExpressionNode.Create;
+      node.Next := TMXPathExpressionNode.Create;
       s := readXpathExpression(node.next, endTokens);
     end;
     if StringArrayExistsSensitive(['=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<='], s) or ((s = ',') and not StringArrayExistsSensitive(endTokens, ',')) then
     begin
-      node.Op := TXPathExpressionOperation(StringArrayIndexOfSensitive(['', '=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<=', ','], s));
-      node.NextOp := TXPathExpressionNode.Create;
+      node.Op := TMXPathExpressionOperation(StringArrayIndexOfSensitive(['', '=', '+', 'and', 'or', '>', '>=', '!=', '|', '<', '<=', ','], s));
+      node.NextOp := TMXPathExpressionNode.Create;
       s := readXpathExpression(node.NextOp, endTokens);
     end;
     if s = '' then
@@ -1267,7 +1433,7 @@ begin
   if element.Parent <> nil then
     result := resolveNamespace(element.Parent, abbrev)
   else
-    raise Exception.Create('Unable to resolve namespace abbreviation "'+abbrev+'"');
+    raise EMXmlDocument.create('Unable to resolve namespace abbreviation "'+abbrev+'"');
 end;
 
 procedure TMXmlParser.resolveNamespaces(element: TMXmlElement; defNs : String);
@@ -1308,15 +1474,25 @@ begin
   end;
 end;
 
-{ TXPathExpressionNode }
+{ TMXPathExpressionNode }
 
-function TXPathExpressionNode.addParam: TXPathExpressionNode;
+function TMXPathExpressionNode.addParam: TMXPathExpressionNode;
 begin
-  result := TXPathExpressionNode.Create;
+  result := TMXPathExpressionNode.Create;
   Params.Add(result);
 end;
 
-destructor TXPathExpressionNode.Destroy;
+function TMXPathExpressionNode.buildConstant: TMXmlNode;
+begin
+  if (value = 'true') or (value = 'false') then
+    result := TMXmlBoolean.Create(value = 'true')
+  else if StringIsInteger32(value) then
+    result := TMXmlNumber.Create(StrToInt(value))
+  else
+    result := TMXmlString.Create(value);
+end;
+
+destructor TMXPathExpressionNode.Destroy;
 begin
   FFilters.Free;
   FNext.Free;
@@ -1326,49 +1502,124 @@ begin
   inherited;
 end;
 
-function TXPathExpressionNode.GetFilters: TAdvList<TXPathExpressionNode>;
+function TMXPathExpressionNode.GetFilters: TAdvList<TMXPathExpressionNode>;
 begin
   if FFilters = nil then
-    FFilters := TAdvList<TXPathExpressionNode>.create;
+    FFilters := TAdvList<TMXPathExpressionNode>.create;
   result := FFilters;
 end;
 
-function TXPathExpressionNode.GetParams: TAdvList<TXPathExpressionNode>;
+function TMXPathExpressionNode.GetParams: TAdvList<TMXPathExpressionNode>;
 begin
   if FParams = nil then
-    FParams := TAdvList<TXPathExpressionNode>.create;
+    FParams := TAdvList<TMXPathExpressionNode>.create;
   result := FParams;
 end;
 
-function TXPathExpressionNode.hasFilters: Boolean;
+function TMXPathExpressionNode.hasFilters: Boolean;
 begin
   result := (FFilters <> nil) and (FFilters.Count > 0);
 end;
 
-function TXPathExpressionNode.Link: TXPathExpressionNode;
+function TMXPathExpressionNode.Link: TMXPathExpressionNode;
 begin
-  result := TXPathExpressionNode(inherited Link);
+  result := TMXPathExpressionNode(inherited Link);
 end;
 
-procedure TXPathExpressionNode.SetGroup(const Value: TXPathExpressionNode);
+procedure TMXPathExpressionNode.SetGroup(const Value: TMXPathExpressionNode);
 begin
   FGroup.Free;
   FGroup := Value;
 end;
 
-procedure TXPathExpressionNode.SetNext(const Value: TXPathExpressionNode);
+procedure TMXPathExpressionNode.SetNext(const Value: TMXPathExpressionNode);
 begin
   FNext.Free;
   FNext := Value;
 end;
 
-procedure TXPathExpressionNode.SetNextOp(const Value: TXPathExpressionNode);
+procedure TMXPathExpressionNode.SetNextOp(const Value: TMXPathExpressionNode);
 begin
   FNextOp.Free;
   FNextOp := Value;
 end;
 
+function TMXPathExpressionNode.ToString: String;
+var
+  b : TStringBuilder;
+  first : boolean;
+  p : TMXPathExpressionNode;
+begin
+  b := TStringBuilder.create;
+  try
+    if FAxis <> axisChild then
+    begin
+      b.Append(AXIS_NAMES[FAxis]);
+      b.Append('::');
+    end;
+    case FNodeType of
+      xentName: b.Append(value);
+      xentFunction:
+        begin
+        b.Append(value);
+        b.Append('(');
+        first := true;
+        for p in Params do
+        begin
+          if first then first := false else b.Append(', ');
+          b.Append(p.ToString);
+        end;
+        b.Append(')');
+        end;
+      xentConstant:
+        if (value = 'true') then
+          b.Append('true()')
+        else if (value = 'false') then
+          b.Append('false()')
+        else if StringIsInteger32(value) then
+          b.Append(value)
+        else
+        begin
+          b.Append('''');
+          b.Append(value);
+          b.Append('''');
+        end;
+      xentGroup:
+        begin
+        b.Append('(');
+        b.Append(Group.ToString);
+        b.Append(')');
+        end;
+      xentRoot: b.Append('/');
+      xentIterator: b.Append('..todo..');
+      xentVariable:
+        begin
+        b.Append('$');
+        b.Append(value);
+        end;
+    end;
+    for p in filters do
+    begin
+      b.Append('[');
+      b.Append(p.ToString);
+      b.Append(']');
+    end;
+  finally
+    b.Free;
+  end;
+end;
+
 { TMXmlDocument }
+
+function TMXmlDocument.contains(list: TAdvList<TMXmlNode>; item: TMXmlNode): boolean;
+var
+  n : TMXmlNode;
+begin
+  result := false;
+  for n in list do
+    if n.equals(item) then
+      exit(true);
+end;
 
 constructor TMXmlDocument.Create;
 begin
@@ -1382,161 +1633,868 @@ begin
   inherited;
 end;
 
-function TMXmlDocument.evaluate(expr: TXPathExpressionNode; focus: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
 var
-  work : TAdvList<TMXmlNode>;
+  work, work2 : TAdvList<TMXmlNode>;
   item : TMXmlNode;
+  list : TAdvList<TMXmlNode>;
+  next, last : TMXPathExpressionNode;
+  i : integer;
+  f : TMXPathExpressionNode;
+//    function matchesXPathName(name, namespace, localName : string; pattern : String; wildcards : boolean) : boolean;
 begin
   work := TAdvList<TMXmlNode>.create;
   try
-    for item in focus do
-      evaluate(expr, item, work);
-    if expr.next = nil then
-      result := work.link
+    case expr.NodeType of
+      xentName :
+        for item in focus do
+          evaluateName(expr, atEntry, item, work);
+      xentFunction : evaluateFunction(expr, atEntry, variables, focus, work);
+      xentConstant : work.add(expr.buildConstant);
+      xentGroup :
+        begin
+          list := evaluate(expr.Group, atEntry, variables, focus);
+          try
+            work.AddAll(list);
+          finally
+            list.Free;
+          end;
+        end;
+      xentRoot : work.add(self.link);
+      xentIterator : evaluateIterator(expr, atEntry, variables, focus, work);
+      xentVariable : raise EMXPathEngine.create('not done yet');
     else
-      result := evaluate(expr.next, work);
+      raise EMXPathEngine.Create('Unsupported Expression Type');
+    end;
+    if expr.hasFilters then
+    begin
+      for f in expr.filters do
+      begin
+        list := TAdvList<TMXmlNode>.create;
+        try
+          for i := 0 to work.Count - 1 do
+            if passesFilter(i, atEntry, variables, work[i], f) then
+              list.add(work[i].link);
+          work.clear;
+          work.addAll(list);
+        finally
+          list.free;
+        end;
+      end;
+    end;
+
+    if expr.next <> nil then
+    begin
+      result := evaluate(expr.next, false, variables, work);
+      work.free;
+      work := result;
+    end;
+
+    if (expr.Op <> xeoNull) then
+    begin
+      next := expr.NextOp;
+      last := expr;
+      while (next <> nil) do
+      begin
+        // and and or - may be able to avoid executing the right side
+        work2 := preOperate(work, last.Op);
+        if work2 <> nil then
+        begin
+          work.Free;
+          work := work2;
+        end
+        else
+        begin
+          work2 := evaluate(next, atEntry, variables, focus);
+          try
+            result := operate(work, last.Op, work2);
+            work.Free;
+            work := result;
+          finally
+            work2.Free;
+          end;
+        end;
+        last := next;
+        next := next.NextOp;
+      end;
+    end;
+    result := work.link;
   finally
     work.Free;
   end;
 end;
 
-function TMXmlDocument.funcEquals(a: TMXmlAttribute; op: TXPathExpressionNode): boolean;
+function TMXmlDocument.evaluateBoolean(nodes: TAdvList<TMXmlNode>): boolean;
 begin
-  if op.value <> '' then
-    result := a.Value = op.value
-  else
-    result := false;
-end;
-
-function TMXmlDocument.matchesXPathName(name, namespace, localName, pattern: String): boolean;
-var
-  p : TArray<String>;
-begin
-  if name = pattern then
-    result := true
-  else if pattern.Contains(':') and (name <> '') then
+  if (nodes = nil) or (nodes.Empty) then
+    result := false
+  else if (nodes.Count = 1) then
   begin
-    p := pattern.Split([':']);
-    if NamespaceAbbreviations.ContainsKey(p[0]) then
-      result := (Namespace = FNamespaceAbbreviations[p[0]]) and (localName = p[1])
+    if nodes[0] is TMXmlBoolean then
+      result := TMXmlBoolean(nodes[0]).value
+    else if nodes[0] is TMXmlNumber then
+      result := TMXmlNumber(nodes[0]).value > 0
     else
-      result := false;
+      result := true;
   end
   else
-    result := false;
+    result := true;
 end;
 
-function TMXmlDocument.matchesXPathNode(element : TMXmlElement; expr: TXPathExpressionNode): boolean;
+function TMXmlDocument.evaluateFunction(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
 begin
-  case expr.NodeType of
-    xentName: result := matchesXPathName(element.Name, element.NamespaceURI, element.LocalName, expr.value);
-    xentFunction :
-      case StringArrayIndexOfSensitive(['text', 'comment'], expr.value) of
-        0 : result := element.NodeType = ntText;
-        1 : result := element.NodeType = ntComment;
-      else
-        raise Exception.Create('Unknown function "'+expr.value+'"');
-      end;
-    xentConstant :
-      raise Exception.Create('Not supported yet');
+  case StringArrayIndexOfSensitive(['exists', 'count', 'not', 'text', 'comment', 'distinct-values', 'position',
+      'starts-with', 'local-name', 'true', 'false', 'contains', 'concat', 'string', 'number', 'name', 'matches',
+      'substring-after', 'normalize-space', 'translate'], expr.value) of
+    0: work.Add(funcExists(expr, atEntry, variables, focus));
+    1: work.Add(funcCount(expr, atEntry, variables, focus));
+    2: work.Add(funcNot(expr, atEntry, variables, focus));
+    3: funcText(expr, focus, work);
+    4: funcComment(focus, work);
+    5: funcDistinctValues(expr, atEntry, variables, focus, work);
+    6: funcPosition(variables, focus, work);
+    7: funcStartsWith(expr, atEntry, variables, focus, work);
+    8: funcLocalName(focus, work);
+    9: work.Add(TMXmlBoolean.Create(true));
+    10: work.Add(TMXmlBoolean.Create(false));
+    11: work.Add(funcContains(expr, atEntry, variables, focus));
+    12: work.Add(funcConcat(expr, atEntry, variables, focus));
+    13: work.Add(funcString(expr, atEntry, variables, focus));
+    14: work.Add(funcNumber(expr, atEntry, variables, focus));
+    15: funcName(focus, work);
+    16: funcMatches(expr, atEntry, variables, focus, work);
+    17: funcSubStringAfter(expr, atEntry, variables, focus, work);
+    18: work.Add(funcNormalizeSpace(expr, atEntry, variables, focus));
+    19: work.Add(funcTranslate(expr, atEntry, variables, focus));
   else
-      raise Exception.Create('Not supported yet');
+    raise EMXPathEngine.create('The function "'+expr.FValue+'" is not supported');
   end;
 end;
 
-function TMXmlDocument.passesFilter(i: integer; item: TMXmlNode; filter: TXPathExpressionNode): boolean;
+procedure TMXmlDocument.evaluateIterator(expr: TMXPathExpressionNode; atEntry: boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
 var
-  a : TMXmlAttribute;
+  list, res : TAdvList<TMXmlNode>;
+  vars : TXPathVariables;
+  n : TMXmlNode;
 begin
-  case filter.FNodeType of
-    xentName :
-      if IsNumericString(filter.Value) then
-        result := i + 1 = StrToInt(filter.Value)
-      else if filter.value.startsWith('@') then
+  vars := TXPathVariables.create;
+  try
+    list := evaluate(expr.Params[0], atEntry, variables, focus);
+    try
+      for n in list do
       begin
-        a := (item as TMXmlElement).attributes[filter.value.Substring(1)];
-        if filter.NextOp <> nil then
-        begin
-          case filter.op of
-            xeoEquals : result := funcEquals(a, filter.NextOp);
-          else
-            raise EMXmlParser.Create('Unsupported operation');
+        vars := variables.add(expr.value, n);
+        try
+          res := evaluate(expr.Params[1], atEntry, vars, focus);
+          try
+            work.AddAll(res);
+          finally
+            res.Free;
           end;
-        end
-        else
-          result := a <> nil;
-      end;
-    xentFunction :
-      raise Exception.Create('Not supported yet');
-    xentConstant :
-      raise Exception.Create('Not supported yet');
-  else
-      raise Exception.Create('Not supported yet');
-  end;
-end;
-
-procedure TMXmlDocument.evaluate(expr: TXPathExpressionNode; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
-var
-  c : TMXmlElement;
-  a : TMXmlAttribute;
-  s : String;
-  filterList : TAdvList<TMXmlNode>;
-  i : integer;
-  f : TXPathExpressionNode;
-begin
-  if item is TMXmlElement then
-  begin
-    if (expr.value[1] = '@') then
-    begin
-      if TMXmlElement(item).HasAttributes then
-        for s in TMXmlElement(item).Attributes.Keys do
-        begin
-          a := TMXmlElement(item).Attributes[s];
-          if matchesXPathName(s, a.NamespaceURI, a.LocalName, expr.value.Substring(1)) then
-            focus.Add(a.Link);
+        finally
+          vars.Free;
         end;
-    end
-    else if TMXmlElement(item).HasChildren then
-    begin
-      for c in TMXmlElement(item).Children do
-        if matchesXPathNode(c, expr) then
-          focus.Add(c.Link);
-    end;
-  end
-  else
-    raise Exception.Create('Not done yet');
-  if expr.hasFilters then
-  begin
-    for f in expr.filters do
-    begin
-      filterList := TAdvList<TMXmlNode>.create;
-      try
-        for i := 0 to focus.Count - 1 do
-          if passesFilter(i, focus[i], f) then
-            filterList.add(focus[i].link);
-        focus.clear;
-        focus.addAll(filterList);
-      finally
-        filterList.free;
       end;
+    finally
+      list.Free;
     end;
+  finally
+    vars.Free;
   end;
 end;
 
-function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TAdvList<TMXmlNode>;
+function TMXmlDocument.funcCount(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
 var
-  expr : TXPathExpressionNode;
   work : TAdvList<TMXmlNode>;
 begin
-  expr := TMXmlParser.parseXPath(xpath);
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for count: expected 1 but found '+inttostr(expr.Params.Count));
+  work := evaluate(expr.Params[0], atEntry, variables, focus);
   try
-    work := TAdvList<TMXmlNode>.create;
+    result := TMXmlNumber.create(work.Count);
+  finally
+    work.Free;
+  end;
+end;
+
+procedure TMXmlDocument.funcDistinctValues(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+var
+  i, j : integer;
+  matched : boolean;
+  list : TAdvList<TMXmlNode>;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for distinct-values: expected 1 but found '+inttostr(expr.Params.Count));
+  list := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    for i := 0 to list.Count - 1 do
+    begin
+      matched := false;
+      for j := 0 to i - 1 do
+        if list[i].equals(list[j]) then
+        begin
+          matched := true;
+          break;
+        end;
+      if not matched then
+        work.Add(list[i].Link);
+    end;
+  finally
+    list.Free;
+  end;
+end;
+
+function TMXmlDocument.opEquals(left, right : TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+var
+  i : integer;
+begin
+  if left.Count <> right.Count then
+    exit(list(false));
+  for i := 0 to left.Count - 1 do
+    if not left[i].equals(right[i]) then
+      exit(list(false));
+  result := list(true);
+end;
+
+function TMXmlDocument.funcExists(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  work : TAdvList<TMXmlNode>;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for exists: expected 1 but found '+inttostr(expr.Params.Count));
+  work := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    result := TMXmlBoolean.create(not work.Empty);
+  finally
+    work.Free;
+  end;
+end;
+
+procedure TMXmlDocument.funcLocalName(focus, work: TAdvList<TMXmlNode>);
+var
+  item : TMXmlNode;
+begin
+  for item in focus do
+    if item is TMXmlNamedNode then
+      work.Add(TMXmlString.Create(TMXmlNamedNode(item).LocalName))
+    else
+      work.Add(TMXmlString.Create(''))
+end;
+
+procedure TMXmlDocument.funcMatches(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+var
+  p1, p2 : TAdvList<TMXmlNode>;
+  reg : TRegExpr;
+begin
+  if expr.Params.Count <> 2 then
+    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+  p1 := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    p2 := evaluate(expr.Params[1], atEntry, variables, focus);
     try
-      work.Add(focus.Link);
-      result := evaluate(expr, work);
+      if (p1.Count <> 1) or (p2.Count <> 1) then
+        work.Add(TMXmlBoolean.Create(false))
+      else
+      begin
+        reg := TRegExpr.create;
+        try
+          reg.Expression := p2[0].ToString;
+          work.Add(TMXmlBoolean.Create(reg.exec(p1[0].ToString)));
+        finally
+          reg.free;
+        end;
+      end;
+    finally
+      p2.free;
+    end;
+  finally
+    p1.Free;
+  end;
+
+end;
+
+procedure TMXmlDocument.funcName(focus, work: TAdvList<TMXmlNode>);
+var
+  item : TMXmlNode;
+begin
+  for item in focus do
+    if item is TMXmlNamedNode then
+      work.Add(TMXmlString.Create(TMXmlNamedNode(item).Name))
+    else
+      work.Add(TMXmlString.Create(''))
+end;
+
+
+function TMXmlDocument.funcNormalizeSpace(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+var
+  b : TStringBuilder;
+  n : TMXmlNode;
+  ch : char;
+  ws : boolean;
+  work: TAdvList<TMXmlNode>;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for normalize-space: expected at least 1 but found '+inttostr(expr.Params.Count));
+  b := TStringBuilder.Create;
+  try
+    work := evaluate(expr.Params[0], atEntry, variables, focus);
+    try
+      ws := false;
+      for n in work do
+      begin
+        for ch in n.ToString do
+        begin
+          if TCharacter.IsWhiteSpace(ch) then
+          begin
+            if not ws then
+            begin
+              ws := true;
+              b.Append(' ');
+            end;
+          end
+          else
+          begin
+            b.Append(ch);
+            ws := false;
+          end;
+        end;
+      end;
     finally
       work.Free;
     end;
+    result := TMXmlString.Create(b.ToString.Trim);
+  finally
+    b.Free;
+  end;
+end;
+
+function TMXmlDocument.funcNot(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  work : TAdvList<TMXmlNode>;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for not: expected 1 but found '+inttostr(expr.Params.Count));
+  work := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    result := TMXmlBoolean.create(not evaluateBoolean(work));
+  finally
+    work.Free;
+  end;
+end;
+
+
+function TMXmlDocument.funcNumber(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  b : TStringBuilder;
+  work: TAdvList<TMXmlNode>;
+  n : TMXmlNode;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for number: expected 1 but found 0');
+  b := TStringBuilder.Create;
+  try
+    work := evaluate(expr.Params[0], atEntry, variables, focus);
+    try
+      for n in work do
+        b.Append(n.ToString);
+    finally
+      work.Free;
+    end;
+    if not StringIsInteger32(b.ToString) then
+      raise EMXPathEngine.Create('The string "'+b.toString+'" is not a valid number');
+    result := TMXmlNumber.Create(StringToInteger32(b.ToString));
+  finally
+    b.Free;
+  end;
+
+end;
+
+procedure TMXmlDocument.funcPosition(variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+var
+  item : TMXmlNode;
+begin
+  for item in focus do
+    work.Add(variables.get('%position').link);
+end;
+
+procedure TMXmlDocument.funcStartsWith(expr : TMXPathExpressionNode; atEntry : boolean; variables: TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+var
+  p1, p2 : TAdvList<TMXmlNode>;
+begin
+  if expr.Params.Count <> 2 then
+    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+  p1 := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    p2 := evaluate(expr.Params[1], atEntry, variables, focus);
+    try
+      if (p1.Count <> 1) or (p2.Count <> 1) then
+        work.Add(TMXmlBoolean.Create(false))
+      else
+        work.Add(TMXmlBoolean.Create(p1[0].ToString.StartsWith(p2[0].ToString)));
+    finally
+      p2.free;
+    end;
+  finally
+    p1.Free;
+  end;
+end;
+
+function TMXmlDocument.funcString(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  b : TStringBuilder;
+  work: TAdvList<TMXmlNode>;
+  n : TMXmlNode;
+begin
+  if expr.Params.Count <> 1 then
+    raise EMXPathEngine.Create('Wrong number of parameters for string: expected 1 but found 0');
+  b := TStringBuilder.Create;
+  try
+    work := evaluate(expr.Params[0], atEntry, variables, focus);
+    try
+      for n in work do
+        b.Append(n.ToString);
+    finally
+      work.Free;
+    end;
+    result := TMXmlString.Create(b.ToString);
+  finally
+    b.Free;
+  end;
+end;
+
+procedure TMXmlDocument.funcSubStringAfter(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus, work: TAdvList<TMXmlNode>);
+var
+  p1, p2 : TAdvList<TMXmlNode>;
+  s1, s2 : String;
+begin
+  if expr.Params.Count <> 2 then
+    raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
+  p1 := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    p2 := evaluate(expr.Params[1], atEntry, variables, focus);
+    try
+      if (p1.Count <> 1) or (p2.Count <> 1) then
+        work.Add(TMXmlBoolean.Create(false))
+      else
+      begin
+        s1 := p1[0].ToString;
+        s2 := p2[0].ToString;
+        if (s1.Contains(s2)) then
+          work.Add(TMXmlString.Create(s1.Substring(s1.IndexOf(s2)+length(s2))))
+        else
+          work.Add(TMXmlString.Create(s1))
+      end;
+    finally
+      p2.free;
+    end;
+  finally
+    p1.Free;
+  end;
+end;
+
+procedure TMXmlDocument.funcText(expr: TMXPathExpressionNode; focus, work: TAdvList<TMXmlNode>);
+var
+  item : TMXmlNode;
+begin
+  for item in focus do
+    iterate(item, expr.axis, work, nil, funcTextTest);
+end;
+
+function TMXmlDocument.funcTextTest(Context: TObject; node: TMXmlNamedNode): boolean;
+begin
+  result := node.NodeType = ntText;
+end;
+
+function StringTranslate(s1,s2,s3 : string) : String;
+var
+  b : TStringBuilder;
+  ch : char;
+begin
+  b := TStringBuilder.Create;
+  try
+    if (s3.Length > 1) then
+      raise EMXPathEngine.Create('3rd parameter to translate has more than a single character');
+    for ch in s1 do
+      if s2.Contains(ch) then
+        b.Append(s3[1])
+      else
+        b.Append(ch);
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TMXmlDocument.funcTranslate(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  p1, p2, p3 : TAdvList<TMXmlNode>;
+  n : TMXmlNode;
+begin
+  result := nil;
+  if expr.Params.Count <> 3 then
+    raise EMXPathEngine.Create('Wrong number of parameters for translate: expected 3 but found '+inttostr(expr.Params.Count));
+  p1 := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    p2 := evaluate(expr.Params[1], atEntry, variables, focus);
+    try
+      p3 := evaluate(expr.Params[2], atEntry, variables, focus);
+      try
+        if (p2.Count = 1) and (p1.Count = 1) and (p3.Count = 1) then
+          result := TMXmlString.Create(StringTranslate(p1[0].toString, p2[0].toString, p3[0].toString));
+      finally
+        p3.Free;
+      end;
+    finally
+      p2.free;
+    end;
+  finally
+    p1.Free;
+  end;
+end;
+
+procedure TMXmlDocument.funcComment(focus, work: TAdvList<TMXmlNode>);
+var
+  item : TMXmlNode;
+  child : TMXmlElement;
+begin
+  for item in focus do
+    if (item is TMXmlElement) and (TMXmlElement(item).NodeType = ntElement) then
+      for child in TMXmlElement(item).Children do
+        if child.NodeType = ntComment then
+          work.Add(child.Link);
+end;
+
+function TMXmlDocument.funcConcat(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
+var
+  b : TStringBuilder;
+  p : TMXPathExpressionNode;
+  work: TAdvList<TMXmlNode>;
+  n : TMXmlNode;
+begin
+  if expr.Params.Count = 0 then
+    raise EMXPathEngine.Create('Wrong number of parameters for concat: expected at least 1 but found 0');
+  b := TStringBuilder.Create;
+  try
+    for p in expr.Params do
+    begin
+      work := evaluate(p, atEntry, variables, focus);
+      try
+        for n in work do
+          b.Append(n.ToString);
+      finally
+        work.Free;
+      end;
+    end;
+    result := TMXmlString.Create(b.ToString);
+  finally
+    b.Free;
+  end;
+end;
+
+function TMXmlDocument.funcContains(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
+var
+  p1, p2 : TAdvList<TMXmlNode>;
+  n : TMXmlNode;
+begin
+  if expr.Params.Count <> 2 then
+    raise EMXPathEngine.Create('Wrong number of parameters for contains: expected 2 but found '+inttostr(expr.Params.Count));
+  p1 := evaluate(expr.Params[0], atEntry, variables, focus);
+  try
+    p2 := evaluate(expr.Params[1], atEntry, variables, focus);
+    try
+      if (p2.Count <> 1) then
+        result := TMXmlBoolean.Create(false)
+      else
+      begin
+        for n in p1 do
+          if n.equals(p2[0]) then
+            exit(TMXmlBoolean.Create(true));
+        result := TMXmlBoolean.Create(false)
+      end;
+    finally
+      p2.free;
+    end;
+  finally
+    p1.Free;
+  end;
+end;
+
+function TMXmlDocument.list(value: boolean): TAdvList<TMXmlNode>;
+begin
+  result := TAdvList<TMXmlNode>.create;
+  result.Add(TMXmlBoolean.Create(value));
+end;
+
+
+function TMXmlDocument.passesFilter(index: integer; atEntry : boolean; variables : TXPathVariables; item: TMXmlNode; filter: TMXPathExpressionNode): boolean;
+var
+  focus, list : TAdvList<TMXmlNode>;
+  n : TMXmlNumber;
+  vars : TXPathVariables;
+begin
+  if (filter.NodeType = xentConstant) and StringIsInteger32(filter.value) and (filter.FOp = xeoNull) then
+    result := StringToInteger32(filter.value) = index + 1
+  else
+  begin
+    focus := TAdvList<TMXmlNode>.create;
+    try
+      focus.Add(item.Link);
+      n := TMXmlNumber.Create(index+1);
+      try
+        vars := variables.add('%position', n);
+        try
+          list := evaluate(filter, atEntry, vars, focus);
+          try
+            result := evaluateBoolean(list);
+          finally
+            list.Free;
+          end;
+        finally
+          vars.Free;
+        end;
+      finally
+        n.Free;
+      end;
+    finally
+      focus.Free;
+    end;
+  end;
+end;
+
+function isBoolean(list : TAdvList<TMXmlNode>; b : boolean) : boolean;
+begin
+  result := (list.count = 1) and (list[0] is TMXmlBoolean) and (TMXmlBoolean(list[0]).value = b);
+end;
+
+
+function TMXmlDocument.preOperate(left: TAdvList<TMXmlNode>; op: TMXPathExpressionOperation): TAdvList<TMXmlNode>;
+begin
+  result := nil;
+  case op of
+    xeoAnd: if isBoolean(left, false) then
+        result := list(false);
+    xeoOr: if isBoolean(left, true) then
+        result := list(true);
+  end;
+end;
+
+function TMXmlDocument.opAnd(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+begin
+  result := TAdvList<TMXmlNode>.Create;
+  try
+    if (left.Empty) and (right.empty) then
+      // nothing
+    else if (isBoolean(left, false)) or (isBoolean(right, false)) then
+      result.Add(TMXmlBoolean.Create(false))
+    else if (left.Empty) or (right.Empty) then
+      // nothing
+    else if (evaluateBoolean(left)) and (evaluateBoolean(right)) then
+      result.Add(TMXmlBoolean.Create(true))
+    else
+      result.Add(TMXmlBoolean.Create(false));
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TMXmlDocument.operate(left: TAdvList<TMXmlNode>; op: TMXPathExpressionOperation; right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+begin
+  case op of
+    xeoEquals: result := opEquals(left, right);
+    xeoPlus: raise EMXPathEngine.create('Operation + not done yet');
+    xeoAnd: result := opAnd(left, right);
+    xeoOr: result := opOr(left, right);
+    xeoGreaterThan: raise EMXPathEngine.create('Operation > not done yet');
+    xeoGreaterEquals: raise EMXPathEngine.create('Operation >= not done yet');
+    xeoNotEquals: raise EMXPathEngine.create('Operation != not done yet');
+    xeoUnion: result := opUnion(left, right);
+    xeoLessThan: raise EMXPathEngine.create('Operation < not done yet');
+    xeoLessEquals: raise EMXPathEngine.create('Operation <= not done yet');
+    xeoSequence: raise EMXPathEngine.create('Operation , not done yet');
+  else
+    raise EMXPathEngine.create('Unknown operation (internal error');
+  end;
+end;
+
+function TMXmlDocument.opOr(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+begin
+  result := TAdvList<TMXmlNode>.Create;
+  try
+    if (left.Empty) and (right.Empty) then
+      // nothing
+    else if (evaluateBoolean(left)) or (evaluateBoolean(right)) then
+      result.Add(TMxmlBoolean.Create(true))
+    else if (left.Empty) or (right.Empty) then
+      // nothing
+    else
+      result.Add(TMXmlBoolean.Create(false));
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TMXmlDocument.opUnion(left, right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+var
+  item : TMXmlNode;
+begin
+  result := TAdvList<TMXmlNode>.create;
+  try
+    for item in left do
+      if not contains(result, item) then
+        result.Add(item.link);
+    for item in right do
+      if not contains(result, item) then
+        result.Add(item.link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TMXmlDocument.iterate(node : TMXMLNode; axis : TMXPathExpressionAxis; list : TAdvList<TMXmlNode>; context : TObject; event : TMXMLIterationEvent);
+  procedure iterateChildren(children : TAdvList<TMXmlElement>; recurse : boolean);
+  var
+    e : TMXmlElement;
+  begin
+    for e in children do
+    begin
+      if event(context, e) then
+        list.Add(e.Link);
+      if recurse and e.HasChildren then
+        iterateChildren(e.Children, true);
+    end;
+end;
+var
+  a : TMXmlAttribute;
+begin
+  case axis of
+    axisSelf: raise EMXPathEngine.Create('not done yet');
+    axisChild:
+      if node is TMXmlElement then
+        iterateChildren(TMXmlElement(node).Children, false);
+    axisDescendants:
+      if node is TMXmlElement then
+        iterateChildren(TMXmlElement(node).Children, true);
+    axisDescendantsAndSelf:
+      if node is TMXmlElement then
+      begin
+        if event(context, TMXmlElement(node)) then
+          list.Add(node.Link);
+        iterateChildren(TMXmlElement(node).Children, true);
+      end;
+    axisAttribute:
+      if node is TMXmlElement then
+        for a in TMXmlElement(node).Attributes.Values do
+          if event(context, a) then
+            list.Add(a.Link);
+
+    axisNamespace: raise EMXPathEngine.Create('not done yet');
+    axisParent: raise EMXPathEngine.Create('not done yet');
+    axisAncestor: raise EMXPathEngine.Create('not done yet');
+    axisAncestorOrSelf: raise EMXPathEngine.Create('not done yet');
+    axisFollowing: raise EMXPathEngine.Create('not done yet');
+    axisFollowingSibling: raise EMXPathEngine.Create('not done yet');
+    axisPreceding: raise EMXPathEngine.Create('not done yet');
+    axisPrecedingSibling: raise EMXPathEngine.Create('not done yet');
+  else
+    raise EMXPathEngine.Create('unknown xpath axis')
+  end;
+end;
+
+function TMXmlDocument.evaluateNameForNode(Context : TObject; node : TMXmlNamedNode) : boolean;
+var
+  expr : TMXPathExpressionNode;
+  p : TArray<String>;
+  ns : String;
+begin
+  expr := Context as TMXPathExpressionNode;
+  result := false;
+  if (node.name <> '') then
+  begin
+    if (expr.value = '*') then
+      result := true
+    else if (node.name = expr.value) and (node.NamespaceURI = '') then
+      result := true
+    else if (node.name <> '') and expr.value.Contains(':') then
+    begin
+      p := expr.value.Split([':']);
+      if NamespaceAbbreviations.TryGetValue(p[0], ns) then
+        result := (node.NamespaceURI = ns) and ((node.localName = p[1]) or (p[1]= '*'))
+      else
+        result := false;
+    end;
+  end;
+end;
+
+procedure TMXmlDocument.evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
+begin
+  iterate(item, expr.FAxis, focus, expr, evaluateNameForNode);
+end;
+//    procedure (expr: TMXPathExpressionNode; atEntry : boolean; item : TMXmlNode; focus: TAdvList<TMXmlNode>); overload;
+{function TMXmlDocument.matchesXPathName(name, namespace, localName, pattern: String; wildcards : boolean): boolean;
+var
+begin
+end;
+}
+//  procedure checkChildren(children : TAdvList<TMXmlElement>; recurse : boolean);
+//  var
+//    c : TMXmlElement;
+//  begin
+//    for c in Children do
+//      if c.NodeType = ntElement then
+//      begin
+//        if matchesXPathName(c.Name, c.NamespaceURI, c.LocalName, expr.value, true) then
+//          focus.Add(c.Link);
+//        if (recurse and c.HasChildren) then
+//          checkChildren(c.Children, true);
+//      end;
+//  end;
+//var
+//  e : TMXmlElement;
+//  a : TMXmlAttribute;
+//  s : String;
+//  if item is TMXmlElement then
+//  begin
+//
+//    end;
+//    if expr.value = '.' then
+//      focus.Add(item.Link)
+//    else if (expr.value[1] = '@') then
+//    begin
+//      if TMXmlElement(item).HasAttributes then
+//        for s in TMXmlElement(item).Attributes.Keys do
+//        begin
+//          a := TMXmlElement(item).Attributes[s];
+//          if matchesXPathName(s, a.NamespaceURI, a.LocalName, expr.value.Substring(1), true) then
+//            focus.Add(a.Link);
+//        end;
+//    end
+//    else if expr.value.Contains('**') then
+//    begin
+//      if TMXmlElement(item).HasChildren then
+//        checkChildren(TMXmlElement(item).Children, true);
+//    end
+//    else
+//    begin
+//      e := TMXmlElement(item);
+//      if atEntry and matchesXPathName(e.Name, e.NamespaceURI, e.LocalName, expr.value, false) then
+//        focus.Add(item.Link);
+//      if not (atEntry and matchesXPathName(e.Name, e.NamespaceURI, e.LocalName, expr.value, false)) and e.HasChildren then
+//        checkChildren(e.Children, false);
+//    end;
+//  end
+//  else
+//    raise EMXPathEngine.create('Not done yet');
+
+function TMXmlDocument.select(xpath: String; focus: TMXmlElement): TAdvList<TMXmlNode>;
+var
+  expr : TMXPathExpressionNode;
+begin
+  expr := TMXmlParser.parseXPath(xpath);
+  try
+    result := select(expr, focus);
   finally
     expr.Free;
   end;
@@ -1555,7 +2513,49 @@ begin
         if item is TMXmlElement then
           result.Add(TMXmlElement(item).Link)
         else
-          raise Exception.Create('Error Message');
+          raise EMXPathEngine.create('Error Message');
+    finally
+      list.Free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TMXmlDocument.select(xpath: TMXPathExpressionNode; focus: TMXmlElement): TAdvList<TMXmlNode>;
+var
+  work : TAdvList<TMXmlNode>;
+  variables : TXPathVariables;
+begin
+  variables := TXPathVariables.Create;
+  try
+    work := TAdvList<TMXmlNode>.create;
+    try
+      work.Add(focus.Link);
+      result := evaluate(xpath, true, variables, work);
+    finally
+      work.Free;
+    end;
+  finally
+    variables.Free;
+  end;
+end;
+
+function TMXmlDocument.selectElements(xpath: TMXPathExpressionNode; focus: TMXmlElement): TAdvList<TMXmlElement>;
+var
+  list : TAdvList<TMXmlNode>;
+  item : TMXmlNode;
+begin
+  result := TAdvList<TMXmlElement>.create;
+  try
+    list := select(xpath, focus);
+    try
+      for item in list do
+        if item is TMXmlElement then
+          result.Add(TMXmlElement(item).Link)
+        else
+          raise EMXPathEngine.create('Error Message');
     finally
       list.Free;
     end;
@@ -1567,9 +2567,99 @@ end;
 
 { TMXmlNode }
 
+function TMXmlNode.equals(other: TMXmlNode): boolean;
+begin
+  result := other = self;
+end;
+
 function TMXmlNode.link: TMXmlNode;
 begin
   result := TMXmlNode(inherited Link);
+end;
+
+{ TMXmlBoolean }
+
+constructor TMXmlBoolean.Create(value: boolean);
+begin
+  inherited Create;
+  FValue := value;
+end;
+
+function TMXmlBoolean.ToString: String;
+begin
+  result := BooleanToString(value);
+end;
+
+{ TMXmlNumber }
+
+constructor TMXmlNumber.Create(value: integer);
+begin
+  inherited Create;
+  FValue := value;
+end;
+
+function TMXmlNumber.ToString: String;
+begin
+  result := IntToStr(value);
+end;
+
+{ TXPathVariables }
+
+constructor TXPathVariables.Create;
+begin
+  inherited;
+  FMap := TAdvMap<TMXmlNode>.create;
+end;
+
+destructor TXPathVariables.Destroy;
+begin
+  FMap.Free;
+  inherited;
+end;
+
+function TXPathVariables.get(name: string): TMXmlNode;
+begin
+  if not FMap.TryGetValue(name, result) then
+    result := nil;
+end;
+
+function TXPathVariables.link: TXPathVariables;
+begin
+  result := TXPathVariables(inherited link);
+end;
+
+function TXPathVariables.add(name: String; value: TMXmlNode): TXPathVariables;
+begin
+  if FMap.ContainsKey(name) and not name.StartsWith('%') then
+    raise EMXPathEngine.create('Nested re-use of variable name '+name);
+  result := TXPathVariables.Create;
+  try
+    result.FMap.addAll(FMap);
+    result.FMap.AddOrSetValue(name, value.Link);
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+{ TMXmlString }
+
+constructor TMXmlString.Create(value: String);
+begin
+  inherited Create;
+  FValue := value;
+end;
+
+function TMXmlString.ToString: String;
+begin
+  result := FValue;
+end;
+
+{ TMXmlPrimitive }
+
+function TMXmlPrimitive.equals(other: TMXmlNode): boolean;
+begin
+  result := other.ToString = toString;
 end;
 
 end.
