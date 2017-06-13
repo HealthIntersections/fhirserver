@@ -386,7 +386,7 @@ begin
   else if json is TJsonBoolean then
     values.Add(TGraphQLNameValue.Create(BooleanToString(TJsonBoolean(json).value).ToLower))
   else if json is TJsonObject then
-    values.Add(TGraphQLObjectValue.Create(TJsonObject(v)))
+    values.Add(TGraphQLObjectValue.Create(TJsonObject(json)))
   else if json is TJsonArray then
   begin
     for v in TJsonArray(json) do
@@ -1027,7 +1027,6 @@ var
   n : String;
   this : TGraphQLParser;
   stream : TAdvStringStream;
-  v : TJsonNode;
 begin
   json := TJSONParser.Parse(source);
   try

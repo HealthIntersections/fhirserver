@@ -137,7 +137,6 @@ end;
 procedure TMapTransformTests.loadMaps(folder: String);
 var
   sr : TSearchRec;
-  s : String;
 begin
   if FindFirst(Folder+'\*.map', faAnyFile, SR) = 0 then
     repeat
@@ -161,7 +160,6 @@ end;
 
 procedure TMapTransformTests.testCD;
 var
-  res : TFhirResource;
   x : TFHIRXmlParser;
   s : TStringStream;
   cd : TFhirCodeableConcept;

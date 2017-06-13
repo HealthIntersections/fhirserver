@@ -2559,7 +2559,6 @@ end;
 
 procedure TFHIRXmlParserBase.checkOtherAttributes(value: TMXmlElement; path : String);
 var
-  i : integer;
   name : String;
 begin
   if not AllowUnknownContent then

@@ -120,6 +120,7 @@ begin
     end;
     test := test.nextElement;
   end;
+  result := nil;
 end;
 
 procedure TDifferenceEngineTest.DifferenceEngineTest(Name: String);

@@ -59,6 +59,7 @@ Type
     function ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer; override;
     function ReadLine: string; override;
     function ReadToEnd: string; override;
+    procedure Close; override;
   end;
 
   TAdvStreamReader = class(TAdvTextReader)
@@ -335,9 +336,9 @@ begin
 end;
 
 function TAdvStreamReader.ReadLine: string;
-var
+{var
   NewLineIndex: Integer;
-  PostNewLineIndex: Integer;
+  PostNewLineIndex: Integer;}
 begin
   raise Exception.Create('This needs debugging for buffer changes');
 {  Result := '';
@@ -446,6 +447,11 @@ begin
 end;
 
 { TAdvStringReader }
+
+procedure TAdvStringReader.Close;
+begin
+ // nothing
+end;
 
 constructor TAdvStringReader.Create(content: String);
 begin

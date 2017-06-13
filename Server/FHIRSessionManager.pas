@@ -89,8 +89,6 @@ begin
 end;
 
 procedure TFHIRSessionManager.CloseAll;
-var
-  i: integer;
 begin
   FLock.Lock('close all');
   try
@@ -193,7 +191,6 @@ end;
 
 procedure TFHIRSessionManager.EndSession(sCookie, ip: String);
 var
-  i: integer;
   session: TFhirSession;
   se: TFhirAuditEvent;
   C: TFHIRCoding;
@@ -261,7 +258,7 @@ end;
 
 function TFHIRSessionManager.GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
 var
-  key, i: integer;
+  key: integer;
 begin
   key := 0;
   FLock.Lock('GetSession');
@@ -374,7 +371,7 @@ end;
 function TFHIRSessionManager.isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean;
 var
   id, hash, username, password: String;
-  i, key: integer;
+  key: integer;
   se: TFhirAuditEvent;
   C: TFHIRCoding;
   p: TFhirAuditEventParticipant;
@@ -476,7 +473,6 @@ end;
 
 procedure TFHIRSessionManager.MarkSessionChecked(sCookie, sName: String);
 var
-  i: integer;
   session: TFhirSession;
 begin
   FLock.Lock('MarkSessionChecked');
@@ -543,7 +539,7 @@ end;
 
 procedure TFHIRSessionManager.Sweep;
 var
-  i, key : integer;
+  key : integer;
   session : TFhirSession;
   d: TDateTime;
 begin
@@ -573,7 +569,6 @@ end;
 
 function TFHIRSessionManager.DumpSessions: String;
 var
-  i: integer;
   session: TFhirSession;
   b : TStringBuilder;
 begin

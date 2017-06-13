@@ -1057,9 +1057,6 @@ begin
 end;
 
 function TFHIRExpressionEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
-var
-  res : TFHIRSelectionList;
-  sw : String;
 begin
   result := TFHIRSelectionList.Create;
   try

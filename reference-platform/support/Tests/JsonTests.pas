@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, Soap.EncdDecd,
+  SysUtils, Classes, Soap.EncdDecd, System.NetEncoding,
   StringSupport, GuidSupport, BytesSupport,
   AdvObjects, AdvJson,
   DUnitX.TestFramework;
@@ -247,7 +247,7 @@ end;
 function CompareObjects(path : String; o1, o2 : TJsonObject) : String;
 var
   n : String;
-  n1, n2 : TJsonNode;
+  n1: TJsonNode;
   s : string;
 begin
   for n in o1.properties.Keys do

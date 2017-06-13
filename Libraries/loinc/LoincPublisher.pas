@@ -295,7 +295,7 @@ begin
         html.StartList;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(arr[i], 0, sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      FLoinc.CodeList.GetInformation(arr[i], nil, sCode1, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.StartListItem;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription, lang));
@@ -704,7 +704,7 @@ begin
         html.StartTableCell;
         b := true;
       End;
-      FLoinc.CodeList.GetInformation(aCodes[i], 0, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      FLoinc.CodeList.GetInformation(aCodes[i], nil, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.StartParagraph;
       html.URL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTextPlain(': '+FLoinc.Desc.GetEntry(iDescription, lang));
@@ -920,7 +920,7 @@ begin
     html.StartTableRow;
     if a[i].iscode then
     begin
-      FLoinc.CodeList.GetInformation(a[i].index, 0, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+      FLoinc.CodeList.GetInformation(a[i].index, nil, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
       html.AddTableCell(FLoinc.Desc.GetEntry(iDescription, ilang));
       html.AddTableCell(GetConceptDesc(iComponent));

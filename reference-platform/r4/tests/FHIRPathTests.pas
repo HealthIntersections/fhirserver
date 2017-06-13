@@ -74,7 +74,6 @@ var
   group, test : TMXmlElement;
   i, g, t : integer;
   gn, s : String;
-  v : OleVariant;
 begin
   tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
   try

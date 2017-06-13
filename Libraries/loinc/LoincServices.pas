@@ -872,7 +872,7 @@ var
   iCodes : Cardinal;
   lang : byte;
 begin
-  Concepts.GetConcept(iConcept, 0, iName, iChildren, iCodes);
+  Concepts.GetConcept(iConcept, nil, iName, iChildren, iCodes);
   result := Desc.GetEntry(iName, lang);
 end;
 
@@ -935,7 +935,7 @@ var
   iChildren : Cardinal;
   iCodes : Cardinal;
 begin
-  Concepts.GetConcept(iProp, 0, iName, iChildren, iCodes);
+  Concepts.GetConcept(iProp, nil, iName, iChildren, iCodes);
   result := Refs.GetCardinals(iCodes);
 end;
 
@@ -997,10 +997,13 @@ var
   llang, country : string;
 begin
   if lang = '' then
-    result := [0]
+  begin
+    SetLength(result, 1);
+    result[0] := 0;
+  end
   else
   begin
-    result := [];
+    SetLength(result, 0);
 
     // first pass, exact matches
     for i := 0 to FLang.count - 1 do
@@ -1298,7 +1301,7 @@ function TLOINCServices.Search(sText: String; all: boolean): TMatchArray;
     ok : boolean;
     lang : byte;
   Begin
-    CodeList.GetInformation(iCodeIndex, 0, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(iCodeIndex, nil, sCode1, iDescription, iOtherNames, iEntry, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     r1 := 0;
     matches := 0;
     Desc := Refs.GetCardinals(iStems);
@@ -1857,7 +1860,7 @@ begin
     result := Desc.GetEntry(iCode, lang);
   end
   else
-    CodeList.GetInformation(integer(context)-1, 0, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+    CodeList.GetInformation(integer(context)-1, nil, result, iDescription, iOtherNames, iStems, iEntry, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
 end;
 
 function TLoincServices.Display(context: TCodeSystemProviderContext; lang : String): string;
@@ -1891,7 +1894,7 @@ var
   iFlags : Byte;
   s : String;
   langs : TLangArray;
-  ilang, ll : byte;
+  ll : byte;
   {$IFNDEF FHIR2}
   iRefs : TCardinalArray;
   i : integer;

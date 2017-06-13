@@ -127,7 +127,6 @@ end;
 
 procedure TMXmlBuilder.Build(oStream: TStream);
 Var
-  vAdapter : Variant;
   b : TBytes;
 begin
   assert(FAttributes = nil);

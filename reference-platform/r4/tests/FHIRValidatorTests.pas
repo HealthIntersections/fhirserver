@@ -527,5 +527,6 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
+  if not FindCmdLineSwitch('build') then
+    TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
 end.

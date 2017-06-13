@@ -1097,7 +1097,6 @@ var
   pm : TParseMap;
   json : TJsonObject;
   userkey : integer;
-  token : String;
   session : TFHIRSession;
 begin
   response.ResponseNo := 400;

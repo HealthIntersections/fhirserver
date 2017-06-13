@@ -135,7 +135,6 @@ var
   matches : TAdvList<TMXmlNode>;
   n, ce : TMXmlElement;
   sel : String;
-  i : integer;
 begin
   sel := op.attribute['sel'];
 
@@ -202,7 +201,6 @@ class procedure TXmlPatchEngine.addChildNodes(doc : TMXmlDocument; source, targe
 var
   n, c : TMXmlElement;
   ce, elem : TMXmlElement;
-  i : integer;
 begin
   n := source.first;
   while n <> nil do

@@ -1455,7 +1455,6 @@ end;
 
 function TFHIRMMXmlParser.empty(element : TMXmlElement) : boolean ;
 var
-  i : integer;
   n : String;
   node : TMXmlElement;
 begin
@@ -1508,38 +1507,11 @@ begin
     result := result.substring(result.indexOf(';')+1);
 end;
 
-procedure MyStringToFile(content, filename : String; encoding : TEncoding);
-var
-  LFileStream: TFilestream;
-  bytes : TBytes;
-begin
-//  LFileStream := TFileStream.Create(filename, fmCreate);
-//  try
-    bytes := encoding.GetBytes(content);
-//    LFileStream.write(bytes[0], length(bytes));
-//  finally
-//    LFileStream.Free;
-//  end;
-end;
-
-
-//var
-//  b : TStringBuilder;
-procedure filelog(msg : String);
-begin
-//  if b = nil then
-//    b := TStringBuilder.Create;
-//  b.Append(msg+#13#10);
-//  MyStringToFile(b.ToString, 'c:\temp\log.txt', TEncoding.UTF8);
-  TEncoding.UTF8.GetBytes(msg);
-end;
-
 procedure TFHIRMMXmlParser.parseChildren(path : String; node : TMXmlElement; context : TFHIRMMElement);
 var
   properties : TAdvList<TFHIRMMProperty>;
   prop : TFHIRMMProperty;
   s, text : String;
-  i : integer;
   attr : TMXmlAttribute;
   child : TMXmlElement;
   e : TMXmlElement;
@@ -1638,10 +1610,7 @@ begin
               if (prop.isResource()) then
                 parseResource(npath, e, n, prop)
               else
-              begin
-                filelog(npath);
                 parseChildren(npath, e, n);
-              end;
             end;
           end;
         end

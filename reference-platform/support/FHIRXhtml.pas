@@ -85,7 +85,6 @@ end;
 
 class function TFHIRXhtmlParser.doParse(lang: String; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 var
-  i : integer;
   attr : TMXmlAttribute;
   n : String;
   child : TMXmlElement;

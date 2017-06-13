@@ -5026,7 +5026,6 @@ var
   sql : String;
   rk : integer;
   sp : TSearchProcessor;
-  pm : TParseMap;
   url : String;
   b : TStringBuilder;
   json : TFHIRJsonParser;

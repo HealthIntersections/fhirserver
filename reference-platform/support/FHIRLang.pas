@@ -84,7 +84,6 @@ procedure LoadMessages;
 var
   source : TMXmlDocument;
   child, lang : TMXmlElement;
-  stream : TStream;
   msg : TFHIRMessage;
 begin
   if FHIRExeModuleName = '##' then

@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes,
   StringSupport, EncodeSupport,
   AdvStreams, AdvVCLStreams,  AdvBuffers, AdvObjects, AdvXmlFormatters, AdvMemories, AdvStringMatches, AdvGenerics,
-  XmlBuilder, ParserSupport;
+  XmlBuilder, ParserSupport, MXML;
 
 Type
 
@@ -72,6 +72,8 @@ Type
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
     procedure CData(text : String);
+
+    Procedure WriteXml(iElement : TMXMLElement); Override;
 
     procedure inject(const bytes : TBytes); override;
   End;
@@ -345,6 +347,11 @@ begin
     xml.ProduceText(sValue);
   result.line := 0; //xml.line;
   result.col := 0; //xml.col;
+end;
+
+procedure TAdvXmlBuilder.WriteXml(iElement: TMXMLElement);
+begin
+  raise Exception.Create('Not done yet');
 end;
 
 function TAdvXmlBuilder.Entity(Const sValue : String) : TSourceLocation;

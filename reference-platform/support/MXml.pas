@@ -36,12 +36,12 @@ Type
   public
     function Link : TMXmlNode; overload;
     property Parent : TMXmlElement read FParent write FParent;
-    function equals(other : TMXmlNode) : boolean; virtual;
+    function equal(other : TMXmlNode) : boolean; virtual;
   end;
 
   TMXmlPrimitive = class (TMXmlNode)
   public
-    function equals(other : TMXmlNode) : boolean; override;
+    function equal(other : TMXmlNode) : boolean; override;
   end;
 
   TMXmlBoolean = class (TMXmlPrimitive)
@@ -89,19 +89,19 @@ Type
     property LocalName : String read FLocalName write FLocalName;
     property Start : TSourceLocation read FStart write FStart;
     property Stop : TSourceLocation read FStop write FStop;
-    function equals(other : TMXmlNode) : boolean; override;
+    function equal(other : TMXmlNode) : boolean; override;
   end;
 
   TMXmlAttribute = class (TMXmlNamedNode)
   private
     FValue : String;
   public
-    Constructor Create(); overload;
+    Constructor Create(); override;
     Constructor Create(name, value : String); overload;
 
     Function Link : TMXmlAttribute; overload;
     property Value : String read FValue write FValue;
-    function equals(other : TMXmlNode) : boolean; override;
+    function equal(other : TMXmlNode) : boolean; override;
     function ToString : String; override;
   end;
 
@@ -160,7 +160,7 @@ Type
     procedure listElements(name : String; list : TAdvList<TMXmlElement>);
     procedure addC(node : TMXmlElement);
     function ToXml(pretty : boolean = false) : String;
-    function equals(other : TMXmlNode) : boolean; override;
+    function equal(other : TMXmlNode) : boolean; override;
     function ToString : String; override;
   end;
 
@@ -239,7 +239,7 @@ Type
     function funcString(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
     function funcNumber(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TMXmlNode;
 
-    function opEquals(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
+    function opequal(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
     function opAnd(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
     function opOr(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
     function opUnion(left, right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
@@ -248,13 +248,13 @@ Type
     function evaluateNameForNode(Context : TObject; node : TMXmlNamedNode) : boolean;
     procedure evaluateName(expr: TMXPathExpressionNode; atEntry : boolean; item: TMXmlNode; focus: TAdvList<TMXmlNode>);
     procedure iterate(node: TMXMLNode; axis: TMXPathExpressionAxis; list : TAdvList<TMXmlNode>; context: TObject; event: TMXMLIterationEvent);
-    function evaluateFunction(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
+    procedure evaluateFunction(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work : TAdvList<TMXmlNode>); overload;
     function preOperate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation) : TAdvList<TMXmlNode>;
     function operate(left : TAdvList<TMXmlNode>; op : TMXPathExpressionOperation; right : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>;
     procedure evaluateIterator(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work : TAdvList<TMXmlNode>);
     function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
   public
-    Constructor Create; overload;
+    Constructor Create; override;
     Destructor Destroy; override;
 
 
@@ -327,10 +327,10 @@ begin
   FValue := value;
 end;
 
-function TMXmlAttribute.equals(other: TMXmlNode): boolean;
+function TMXmlAttribute.equal(other: TMXmlNode): boolean;
 begin
   if (other is TMXmlAttribute) then
-    result := inherited equals(other) and (TMXmlAttribute(other).FValue = FValue)
+    result := inherited equal(other) and (TMXmlAttribute(other).FValue = FValue)
   else if (other is TMXmlPrimitive) then
     result := other.ToString = ToString
   else
@@ -360,7 +360,7 @@ begin
   FNodeType := nodeType;
 end;
 
-function TMXmlNamedNode.equals(other: TMXmlNode): boolean;
+function TMXmlNamedNode.equal(other: TMXmlNode): boolean;
 begin
   result := ((other is TMXmlNamedNode) and (FNamespaceURI = TMXmlNamedNode(other).FNamespaceURI) and (FLocalName = TMXmlNamedNode(other).FLocalName));
 end;
@@ -420,7 +420,7 @@ begin
         raise EMXmlDocument.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
 end;
 
-function TMXmlElement.equals(other: TMXmlNode): boolean;
+function TMXmlElement.equal(other: TMXmlNode): boolean;
 begin
   result := other = self;
 end;
@@ -620,7 +620,7 @@ var
 begin
   if parent = nil then
     exit(nil);
-  parent.Children.IndexOf(self);
+  i := parent.Children.IndexOf(self);
   if i = 0 then
     result := nil
   else
@@ -854,8 +854,6 @@ begin
 end;
 
 function TMXmlParser.parseXPath: TMXPathExpressionNode;
-var
-  s : String;
 begin
   FLocation.line := 1;
   FLocation.col := 1;
@@ -1034,9 +1032,7 @@ end;
 procedure TMXmlParser.ReadElement(parent: TMXmlElement);
 Var
   s : String;
-  e, c : TMXmlElement;
-  a : TMXmlAttribute;
-  i : integer;
+  e : TMXmlElement;
 begin
   e := TMXmlElement.Create(ntElement);
   try
@@ -1156,7 +1152,6 @@ end;
 function TMXmlParser.ReadToken(skipWhitespace: Boolean; allowEmpty : boolean = false): String;
 Var
   ch : Char;
-  LStart : Integer;
 begin
   If skipWhitespace Then
     while IsXmlWhiteSpace(peek) Do
@@ -1230,7 +1225,7 @@ type
 
 function TMXmlParser.readXpathExpression(node: TMXPathExpressionNode; endTokens : Array of String; alreadyRead : String = '') : String;
 var
-  p, f : TMXPathExpressionNode;
+  f : TMXPathExpressionNode;
   done, readNext : boolean;
   s : String;
   mode : TExpressionSyntaxMode;
@@ -1376,7 +1371,6 @@ end;
 function TMXmlParser.ReadXPathToken(skipWhitespace, allowEmpty: boolean): String;
 Var
   ch : Char;
-  LStart : Integer;
 begin
   If skipWhitespace Then
     while IsXmlWhiteSpace(peek) Do
@@ -1617,7 +1611,7 @@ var
 begin
   result := false;
   for n in list do
-    if n.equals(item) then
+    if n.equal(item) then
       exit(true);
 end;
 
@@ -1741,7 +1735,7 @@ begin
     result := true;
 end;
 
-function TMXmlDocument.evaluateFunction(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+procedure TMXmlDocument.evaluateFunction(expr: TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; focus, work: TAdvList<TMXmlNode>);
 begin
   case StringArrayIndexOfSensitive(['exists', 'count', 'not', 'text', 'comment', 'distinct-values', 'position',
       'starts-with', 'local-name', 'true', 'false', 'contains', 'concat', 'string', 'number', 'name', 'matches',
@@ -1831,7 +1825,7 @@ begin
     begin
       matched := false;
       for j := 0 to i - 1 do
-        if list[i].equals(list[j]) then
+        if list[i].equal(list[j]) then
         begin
           matched := true;
           break;
@@ -1844,14 +1838,14 @@ begin
   end;
 end;
 
-function TMXmlDocument.opEquals(left, right : TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
+function TMXmlDocument.opequal(left, right : TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
 var
   i : integer;
 begin
   if left.Count <> right.Count then
     exit(list(false));
   for i := 0 to left.Count - 1 do
-    if not left[i].equals(right[i]) then
+    if not left[i].equal(right[i]) then
       exit(list(false));
   result := list(true);
 end;
@@ -1944,7 +1938,7 @@ begin
       begin
         for ch in n.ToString do
         begin
-          if TCharacter.IsWhiteSpace(ch) then
+          if ch.IsWhiteSpace then
           begin
             if not ws then
             begin
@@ -2128,7 +2122,6 @@ end;
 function TMXmlDocument.funcTranslate(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus: TAdvList<TMXmlNode>): TMXmlNode;
 var
   p1, p2, p3 : TAdvList<TMXmlNode>;
-  n : TMXmlNode;
 begin
   result := nil;
   if expr.Params.Count <> 3 then
@@ -2207,7 +2200,7 @@ begin
       else
       begin
         for n in p1 do
-          if n.equals(p2[0]) then
+          if n.equal(p2[0]) then
             exit(TMXmlBoolean.Create(true));
         result := TMXmlBoolean.Create(false)
       end;
@@ -2301,7 +2294,7 @@ end;
 function TMXmlDocument.operate(left: TAdvList<TMXmlNode>; op: TMXPathExpressionOperation; right: TAdvList<TMXmlNode>): TAdvList<TMXmlNode>;
 begin
   case op of
-    xeoEquals: result := opEquals(left, right);
+    xeoEquals: result := opequal(left, right);
     xeoPlus: raise EMXPathEngine.create('Operation + not done yet');
     xeoAnd: result := opAnd(left, right);
     xeoOr: result := opOr(left, right);
@@ -2530,6 +2523,7 @@ var
 begin
   variables := TXPathVariables.Create;
   try
+    variables.add('%current', focus.Link);
     work := TAdvList<TMXmlNode>.create;
     try
       work.Add(focus.Link);
@@ -2567,7 +2561,7 @@ end;
 
 { TMXmlNode }
 
-function TMXmlNode.equals(other: TMXmlNode): boolean;
+function TMXmlNode.equal(other: TMXmlNode): boolean;
 begin
   result := other = self;
 end;
@@ -2657,7 +2651,7 @@ end;
 
 { TMXmlPrimitive }
 
-function TMXmlPrimitive.equals(other: TMXmlNode): boolean;
+function TMXmlPrimitive.equal(other: TMXmlNode): boolean;
 begin
   result := other.ToString = toString;
 end;

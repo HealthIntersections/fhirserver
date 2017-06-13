@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, ShellApi,
+  Windows, SysUtils, Classes, Soap.EncdDecd, ShellApi, System.NetEncoding,
   StringSupport, GuidSupport, BytesSupport, EncodeSupport, TextUtilities, FileSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVExtractors, AdvFiles,
   MXML, XmlPatch, MsXml, MSXmlParser, DUnitX.TestFramework;
@@ -81,7 +81,6 @@ Type
   Private
     tests : TMXmlDocument;
     mstests : IXMLDOMDocument2;
-    resources : TAdvMap<TMXmlDocument>;
     function findTestCase(name : String) : TMXmlElement;
     function findSample(id : String) : TMXmlElement;
     function findSampleMs(id : String) : IXMLDOMElement;
@@ -422,7 +421,7 @@ end;
 
 procedure TXmlPatchTests.PatchTest(Name: String);
 var
-  test, target, patch, error, patched, outcome : TMXmlElement;
+  test, target, patch, error, patched : TMXmlElement;
   s : String;
   ok : boolean;
 begin
@@ -601,13 +600,8 @@ end;
 
 procedure TXPathParserTests.PathTest(Name: String);
 var
-  rn : String;
-  test, item, n : TMXmlElement;
-  doc : TMXmlDocument;
+  test : TMXmlElement;
   xp : TMXPathExpressionNode;
-  nodes : TAdvList<TMXmlNode>;
-  elements : TAdvList<TMXmlElement>;
-  ok : boolean;
 begin
   test := tests.document.children[StrToInt(name)];
   xp := TMXmlParser.parseXPath(test.attribute['value']);
@@ -617,60 +611,7 @@ begin
   finally
     xp.Free
   end;
-{  item := test.first;
-  if name.Contains('.') then
-    rn := Name.Substring(0, name.IndexOf('.'))
-  else
-    rn := name;
-
-  if not resources.TryGetValue(rn, doc) then
-    if FileExists('C:\work\org.hl7.fhir\build\publish\'+rn+'-example.xml') then
-    begin
-      doc := TMXmlParser.parseFile('C:\work\org.hl7.fhir\build\publish\'+rn+'-example.xml', [xpResolveNamespaces]);
-      resources.Add(rn, doc);
-      doc.NamespaceAbbreviations.AddOrSetValue('f', 'http://hl7.org/fhir');
-    end
-    else
-      doc := nil;
-
-  while (item <> nil) do
-  begin
-    xp := TMXmlParser.parseXPath(item.attribute['value']);
-    try
-      if doc <> nil then
-      begin
-        ok := false;
-        elements := doc.selectElements(XpathForPath(Name), doc);
-        try
-          for n in elements do
-          begin
-            nodes := doc.select(xp, n);
-            try
-              ok := doc.evaluateBoolean(nodes) or ok;
-            finally
-              nodes.Free;
-            end;
-          end;
-          Assert.IsTrue(ok or (elements.Count = 0), 'xpath "'+item.attribute['value']+'" does not run to true');
-        finally
-          elements.Free;
-        end;
-      end
-      else
-      begin
-        nodes := tests.select(xp, tests);
-        try
-          Assert.Pass;
-        finally
-          nodes.Free;
-        end;
-      end;
-    finally
-      xp.Free;
-    end;
-    item := item.Next;
-  end;
-}end;
+end;
 
 procedure TXPathParserTests.setup;
 begin
@@ -766,6 +707,7 @@ begin
     end;
     tcase := tcase.next;
   end;
+  result := nil;
 end;
 
 procedure TXPathEngineTests.runTest(test : TMXmlElement; outcomes : TAdvList<TMXmlElement>);
@@ -907,11 +849,8 @@ end;
 
 procedure TXPathEngineTests.PathTest(Name: String);
 var
-  test, focus, outcome : TMXmlElement;
-  nodes : TAdvList<TMXmlNode>;
-  node : TMXmlNode;
+  test : TMXmlElement;
   outcomes : TAdvList<TMXmlElement>;
-  i : integer;
 begin
   test := findTestCase(name);
   outcomes := tests.selectElements('node', test.element('outcomes'));
@@ -940,6 +879,7 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TXmlParserTests);
   TDUnitX.RegisterTestFixture(TXPathParserTests);
-  TDUnitX.RegisterTestFixture(TXPathEngineTests);
+  if not FindCmdLineSwitch('build') then
+    TDUnitX.RegisterTestFixture(TXPathEngineTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);
 end.

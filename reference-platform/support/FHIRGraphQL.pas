@@ -66,7 +66,6 @@ type
     function checkBooleanDirective(dir : TGraphQLDirective) : Boolean;
     function checkDirectives(directives : TAdvList<TGraphQLDirective>) : boolean;
     procedure checkNoDirectives(directives : TAdvList<TGraphQLDirective>);
-    function readInteger(value, name : String): integer;
     function hasArgument(arguments : TAdvList<TGraphQLArgument>; name, value : String) : boolean;
     function targetTypeOk(arguments : TAdvList<TGraphQLArgument>; dest : TFHIRResource) : boolean;
 
@@ -386,7 +385,6 @@ end;
 
 function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; bnd : TFHIRBundle): TAdvList<TFHIRResource>;
 var
-  p : TFHIRProperty;
   be : TFhirBundleEntry;
   fpe : TFHIRExpressionEngine;
   node : TFHIRExpressionNode;
@@ -423,7 +421,6 @@ end;
 
 function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; list : TAdvList<TFhirResource>): TAdvList<TFHIRResource>;
 var
-  p : TFHIRProperty;
   v : TFHIRResource;
   fpe : TFHIRExpressionEngine;
   node : TFHIRExpressionNode;
@@ -518,13 +515,6 @@ begin
     else
       raise EGraphQLException.Create('No value found for variable ');
   end;
-end;
-
-function TFHIRGraphQLEngine.readInteger(value, name: String): integer;
-begin
-  result := StrToIntDef(value, -1);
-  if result = -1 then
-    raise EGraphQLException.Create('Illegal value for '+name+': '+value);
 end;
 
 function IsPrimitive(typename : String) : boolean;
@@ -676,7 +666,6 @@ var
   params : TAdvList<TGraphQLArgument>;
   a, arg, parg : TGraphQLArgument;
   new : TGraphQLObjectValue;
-  link : TFhirBundleLink;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
@@ -832,7 +821,6 @@ var
   v : TFhirResource;
   arg : TGraphQLArgument;
   new : TGraphQLObjectValue;
-  link : TFhirBundleLink;
 begin
   if not assigned(FOnListResources) then
     raise EGraphQLException.Create('Resource Referencing services not provided');
@@ -972,7 +960,6 @@ end;
 
 function TFHIRGraphQLSearchWrapper.getPropertyValue(propName: string): TFHIRProperty;
 var
-  prop : TFHIRProperty;
   list : TAdvList<TFHIRGraphQLSearchEdge>;
   be : TFHIRBundleEntry;
 begin
