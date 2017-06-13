@@ -443,7 +443,7 @@ Type
 
 function ascopy(s : TBytes; start, len : integer) : String;
 function utfcopy(s : TBytes; start, length : integer) : String;
-
+function nolang : TLangArray;
 
 Implementation
 
@@ -997,10 +997,7 @@ var
   llang, country : string;
 begin
   if lang = '' then
-  begin
-    SetLength(result, 1);
-    result[0] := 0;
-  end
+    result := noLang
   else
   begin
     SetLength(result, 0);
@@ -2138,10 +2135,10 @@ begin
 
   result := THolder.create;
   try
-    id := GetPropertyId(prop, [0], value);
+    id := GetPropertyId(prop, noLang, value);
     if (id <> 0) then
     begin
-      Concepts.GetConcept(id, [0], iName, iChildren, iCodes);
+      Concepts.GetConcept(id, noLang, iName, iChildren, iCodes);
       aChildren := Refs.GetCardinals(iCodes);
       THolder(result).Children := aChildren;
     end;
@@ -2564,6 +2561,12 @@ end;
 procedure TLoincLanguages.StartBuild;
 begin
   FBuilder := TAdvBytesBuilder.Create;
+end;
+
+function nolang : TLangArray;
+begin
+  SetLength(result, 1);
+  result[0] := 0;
 end;
 
 End.
