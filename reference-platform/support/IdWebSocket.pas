@@ -136,9 +136,9 @@ begin
     msk := (l and $80) > 0;
     len := l and $7F;
     if len = 126 then
-      len := FConnection.IOHandler.ReadUInt16
+      len := FConnection.IOHandler.ReadWord
     else if len = 127 then
-      len := FConnection.IOHandler.ReadUInt32;
+      len := FConnection.IOHandler.ReadLongWord;
     FConnection.IOHandler.ReadBytes(mk, 4);
     FConnection.IOHandler.ReadBytes(result.bytes, len);
     for i := 0 to length(result.bytes) - 1 do
