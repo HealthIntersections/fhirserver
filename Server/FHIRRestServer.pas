@@ -837,7 +837,7 @@ End;
 
 procedure TFhirWebServer.ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: Boolean);
 begin
-  VHandled := AAuthType = 'Bearer';
+  VHandled := SameText(AAuthType, 'Bearer');
   VUserName := INTERNAL_SECRET;
   VPassword := AAuthData;
 end;
