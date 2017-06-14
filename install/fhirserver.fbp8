@@ -254,7 +254,6 @@ begin
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = -build
           programname = C:\\work\\fhirserver\\Exec\\FhirServerTests.exe
           redirectstderr = true
           returncodecomparator = rcEqualTo

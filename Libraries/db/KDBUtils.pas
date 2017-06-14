@@ -289,7 +289,7 @@ const
     );
   {$ENDIF}
 
- {$IFDEF VER310}
+ {$IFDEF VER320}
   ColTypeMap: array[TFieldType] of TKDBColumnType =
     ( {ftUnknown}     ctUnknown,    {ftString}      ctChar,
     {ftSmallint}    ctInteger,    {ftInteger}      ctInteger,

@@ -879,7 +879,7 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TXmlParserTests);
   TDUnitX.RegisterTestFixture(TXPathParserTests);
-  if not FindCmdLineSwitch('build') then
+  if FindCmdLineSwitch('dev') then
     TDUnitX.RegisterTestFixture(TXPathEngineTests);
   TDUnitX.RegisterTestFixture(TXmlPatchTests);
 end.

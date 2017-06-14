@@ -79,3 +79,7 @@ Server/FHIRServer4.cfg
 bridge/ExampleBridgeServer.stat
 
 reference-platform/support/__recovery/
+
+Exec/dunitx-results\.xml
+
+*.stat
