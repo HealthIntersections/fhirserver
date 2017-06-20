@@ -225,6 +225,7 @@ type
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLSystem(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
+    procedure processGraphQL(context: TOperationContext; graphql: String; request : TFHIRRequest; response : TFHIRResponse);
 
     function GraphLookup(appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean;
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
@@ -2247,6 +2248,53 @@ begin
   end;
 end;
 
+
+procedure TFHIRNativeOperationEngine.processGraphQL(context: TOperationContext; graphql: String; request : TFHIRRequest; response : TFHIRResponse);
+var
+  gql : TFHIRGraphQLEngine;
+  str : TStringBuilder;
+begin
+  try
+    gql := TFHIRGraphQLEngine.Create;
+    try
+      gql.appInfo := request.Link;
+      gql.OnFollowReference := GraphFollowReference;
+      gql.OnSearch := GraphSearch;
+      gql.OnLookup := GraphLookup;
+      gql.OnListResources := GraphListResources;
+      gql.GraphQL := TGraphQLParser.parse(graphql);
+      gql.focus := response.resource.Link;
+      gql.execute;
+      str := TStringBuilder.Create;
+      try
+        str.Append('{'+#13#10);
+        str.Append('  "data" : '+#13#10);
+        gql.output.write(str, 1);
+        str.Append('}'+#13#10);
+        response.resource := nil;
+        response.Body := str.ToString;
+      finally
+        str.Free;
+      end;
+      response.ContentType := 'application/json';
+    finally
+      gql.Free;
+    end;
+  except
+    on e : EGraphQLException do
+    begin
+      response.HTTPCode := 400;
+      response.Message := 'Error in GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeInvalid);
+    end;
+    on e : Exception do
+    begin
+      response.HTTPCode := 500;
+      response.Message := 'Error processing GraphQL';
+      response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeException);
+    end;
+  end;
+end;
 
 procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundle; keys : TKeyList; field: String; comp: TFHIRParserClass);
 var
@@ -4495,6 +4543,8 @@ begin
       if (op.HandlesRequest(request)) then
       begin
         op.Execute(context, self, request, response);
+        if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.ResourceType <> frtOperationOutcome)) then
+          processGraphQL(context, request.Parameters.GetVar('_graphql'), request, response);
         exit;
       end;
     end;
@@ -6682,6 +6732,7 @@ procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; ma
 var
   req : TFHIRLookupOpRequest;
   resp : TFHIRLookupOpResponse;
+  lang : String;
 begin
   try
     manager.NotFound(request, response);
@@ -6705,12 +6756,16 @@ begin
         end;
         if req.coding = nil then
           raise Exception.Create('Unable to find a code to lookup (need coding or system/code)');
+        lang := request.lang;
+        if req.displayLanguage <> '' then
+          lang := req.displayLanguage;
+
         response.Body := '';
         response.LastModifiedDate := now;
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.ServerContext.TerminologyServer.lookupCode(req.coding, request.Lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            manager.ServerContext.TerminologyServer.lookupCode(req.coding, lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
