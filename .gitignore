@@ -95,3 +95,5 @@ Server/info\.plist\.TemplateOSX\.xml
 reference-platform/support/backup/
 
 Server/Entitlement\.TemplateOSX32\.xml
+
+reference-platform/support/Tests/backup/

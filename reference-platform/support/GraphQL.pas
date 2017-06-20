@@ -784,7 +784,7 @@ begin
         EGraphQLException.Create('premature termination of GraphQL during a string constant');
     end
     else
-      raise EGraphQLException.Create('Not done yet: '+ch); // syntax error?
+      raise EGraphQLException.Create('Unexpected character "'+ch+'"');
   end;
 end;
 

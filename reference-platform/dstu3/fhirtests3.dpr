@@ -124,7 +124,10 @@ uses
   GraphQL in '..\support\GraphQL.pas',
   AdvZipWriters in '..\support\AdvZipWriters.pas',
   ParserSupport in '..\support\ParserSupport.pas',
-  MXML in '..\support\MXML.pas';
+  MXML in '..\support\MXML.pas',
+  FHIRParserTests in 'tests\FHIRParserTests.pas',
+  XmlTests in '..\support\Tests\XmlTests.pas',
+  JsonTests in '..\support\Tests\JsonTests.pas';
 
 var
   s: String;
@@ -133,7 +136,7 @@ begin
   CoInitialize(nil);
   s := ExtractFilePath(Paramstr(0));
   IdOpenSSLSetLibPath(s);
-  GBasePath := 'C:\work\org.hl7.fhir';
+  GBasePath := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3';
   RunRegisteredTests;
   TTestingWorkerContext.closeUp;
 

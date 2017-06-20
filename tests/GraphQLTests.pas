@@ -49,8 +49,7 @@ type
   TFHIRGraphQLParserTests = class (TObject)
   public
     [GraphQLParserTestCase]
-    procedure TestCase(body
-    : String);
+    procedure TestCase(body : String);
   end;
 
 

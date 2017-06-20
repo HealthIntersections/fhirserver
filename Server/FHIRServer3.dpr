@@ -317,7 +317,8 @@ uses
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
-  MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas';
+  MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

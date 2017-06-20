@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, ShellApi, System.NetEncoding,
+  Windows, SysUtils, Classes, ShellApi, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF}
   StringSupport, GuidSupport, BytesSupport, EncodeSupport, TextUtilities, FileSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVExtractors, AdvFiles,
   MXML, XmlPatch, MsXml, MSXmlParser, DUnitX.TestFramework;

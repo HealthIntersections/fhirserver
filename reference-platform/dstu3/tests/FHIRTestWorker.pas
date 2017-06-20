@@ -42,8 +42,7 @@ uses
   StringSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRContext,
   FHIRSupport, FHIRProfileUtilities, FHIRPath,
-  MsXml, MsXmlParser, AdvJson,
-  DUnitX.TestFramework;
+  AdvJson, DUnitX.TestFramework;
 
 var
   GBasePath : String;
@@ -53,10 +52,11 @@ Type
   private
     FFolder : String;
     FFilter : String;
+    FCount : integer;
   protected
     function GetCaseInfoArray : TestCaseInfoArray; override;
   public
-    Constructor Create(folder, filter : String);
+    Constructor Create(folder, filter : String; count : integer);
   end;
 
   TTestingWorkerContext = class (TBaseWorkerContext)
@@ -87,6 +87,7 @@ var
 class procedure TTestingWorkerContext.closeUp;
 begin
   GWorkerContext.Free;
+  GWorkerContext := nil;
 end;
 
 function TTestingWorkerContext.expand(vs: TFhirValueSet): TFHIRValueSet;
@@ -134,11 +135,12 @@ end;
 
 { FHIRFolderBasedTestCaseAttribute }
 
-constructor FHIRFolderBasedTestCaseAttribute.Create(folder, filter: String);
+constructor FHIRFolderBasedTestCaseAttribute.Create(folder, filter: String; count : integer);
 begin
   inherited Create;
   FFolder := folder;
   FFilter := filter;
+  FCount := count;
 end;
 
 function FHIRFolderBasedTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
@@ -153,7 +155,7 @@ begin
     if FindFirst(FFolder+'\*.*', faAnyFile, SR) = 0 then
     repeat
       s := sr.Name;
-      if (FFilter = '') or (s.endsWith(FFilter)) then
+      if ((FFilter = '') or s.endsWith(FFilter)) and ((FCount = 0) or (sl.count < FCount)) then
         sl.Add(sr.Name);
     until FindNext(SR) <> 0;
     setLength(result, sl.Count);
@@ -168,5 +170,8 @@ begin
   end;
 end;
 
+initialization
+finalization
+  TTestingWorkerContext.closeUp;
 end.
 

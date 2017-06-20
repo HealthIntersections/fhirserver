@@ -983,7 +983,7 @@ begin
     try
       for be in FBundle.entryList do
         list.Add(TFHIRGraphQLSearchEdge.create(be.Link));
-      result := TFHIRProperty.Create(self, propname, 'integer', true, TFhirInteger, TAdvList<TFHIRObject>(list));
+      result := TFHIRProperty.Create(self, propname, 'edge', true, TFhirInteger, TAdvList<TFHIRObject>(list));
     finally
       list.Free;
     end;

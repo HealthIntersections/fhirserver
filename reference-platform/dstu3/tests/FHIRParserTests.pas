@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel,
-  FHIRContext, FHIRTestWorker, XmlTests, JsonTests;
+  FHIRContext, FHIRTestWorker, XmlTests, JsonTests, dialogs;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)
@@ -46,9 +46,14 @@ type
 
   [TextFixture]
   TFHIRParserTests = class (TObject)
+  private
+    procedure RoundTripTestJson(Filename: String);
   public
     [FHIRParserTestCase]
     procedure RoundTripTest(Filename: String);
+
+    [TestCase]
+    procedure TestClaimExample;
   end;
 
 implementation
@@ -157,11 +162,115 @@ begin
   assert.IsTrue(b, msg);
 end;
 
+procedure TFHIRParserTests.RoundTripTestJson(Filename: String);
+var
+  r : TFHIRResource;
+  fn, j1, j2, x1, x2 : String;
+  b : boolean;
+  msg : String;
+  re : TFHIRMMElement;
+  ctxt : TWorkerContext;
+begin
+  r := TFHIRJsonParser.parseFile(nil, 'en', filename);
+  try
+    Assert.IsNotNull(r, 'Resource could not be loaded');
+    fn := MakeTempFilename();
+    try
+      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
+      b := CheckJsonIsSame(filename, fn, msg);
+      assert.IsTrue(b, msg);
+    finally
+      DeleteFile(fn);
+    end;
+    j1 := MakeTempFilename();
+    TFHIRXmlComposer.composeFile(nil, r, 'en', j1, true);
+  finally
+    r.Free;
+  end;
+
+  ctxt := TTestingWorkerContext.Use;
+  try
+    re := TFHIRMMManager.parseFile(ctxt, filename, ffJson);
+    try
+      Assert.IsNotNull(re, 'Resource could not be loaded');
+      fn := MakeTempFilename();
+      try
+        TFHIRMMManager.composeFile(ctxt, re, fn, ffJson, true);
+        b := CheckJsonIsSame(filename, fn, msg);
+        assert.IsTrue(b, msg);
+      finally
+        DeleteFile(fn);
+      end;
+      j2 := MakeTempFilename();
+      TFHIRMMManager.composeFile(ctxt, re, j2, ffXml, true);
+    finally
+      re.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
+
+  b := CheckXmlIsSame(j1, j2, msg);
+  assert.IsTrue(b, msg);
+
+  // ok, we've produced equivalent JSON by both methods.
+  // now, we're going to reverse the process
+  r := TFHIRXmlParser.parseFile(nil, 'en', j2); // crossover too
+  try
+    Assert.IsNotNull(r, 'Resource could not be loaded');
+    fn := MakeTempFilename();
+    try
+      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
+      b := CheckXmlIsSame(j2, fn, msg);
+      assert.IsTrue(b, msg);
+    finally
+      DeleteFile(fn);
+    end;
+    x1 := MakeTempFilename();
+    TFHIRJsonComposer.composeFile(nil, r, 'en', x1);
+  finally
+    r.Free;
+  end;
+
+  ctxt := TTestingWorkerContext.Use;
+  try
+    re := TFHIRMMManager.parseFile(ctxt, j1, ffXml);
+    try
+      Assert.IsNotNull(re, 'Resource could not be loaded');
+      fn := MakeTempFilename();
+      try
+        TFHIRMMManager.composeFile(ctxt, re, fn, ffXml, true);
+        b := CheckXmlIsSame(j1, fn, msg);
+        assert.IsTrue(b, msg);
+      finally
+        DeleteFile(fn);
+      end;
+      x2 := MakeTempFilename();
+      TFHIRMMManager.composeFile(ctxt, re, x2, ffJson, true);
+    finally
+      re.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
+
+  b := CheckJsonIsSame(x1, x2, msg);
+  assert.IsTrue(b, msg);
+
+  b := CheckJsonIsSame(filename, x1, msg);
+  assert.IsTrue(b, msg);
+end;
+
+procedure TFHIRParserTests.TestClaimExample;
+begin
+  RoundTripTestJson('C:\temp\claim.json');
+end;
+
 { FHIRParserTestCaseAttribute }
 
 constructor FHIRParserTestCaseAttribute.Create;
 begin
-  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples', '.xml');
+  inherited Create(IncludeTrailingPathDelimiter(GBasePath) + 'build\publish\examples', '.xml', 20);
 end;
 
 initialization
