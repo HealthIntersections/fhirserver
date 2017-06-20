@@ -134,8 +134,10 @@ Function HasExceptObject : Boolean;
 Implementation
 
 
+{$IFNDEF OSX}
 Uses
   AdvFactories;
+{$ENDIF}
 
 
 Function ExceptObject : Exception;
@@ -170,10 +172,12 @@ Var
 Begin
   If Assigned(oSender) Then
   Begin
+{$IFNDEF OSX}
 {$IFOPT C+}
     If Not Factory.Valid(oSender) Then
       sSender := '<Invalid>'
     Else
+{$ENDIF}
 {$ENDIF}
       sSender := oSender.ClassName;
   End

@@ -97,8 +97,6 @@ type
     function IteratorClass: TAdvObjectListIteratorClass; virtual;
     function CapacityLimit: integer; override;
 
-    procedure FreezeChildren; override;
-
     function Insertable(const sMethod: string; oObject: TAdvObject): boolean;
       overload;
     function Replaceable(const sMethod: string; oOld, oNew: TAdvObject): boolean;
@@ -129,8 +127,6 @@ type
     function Add(oValue: TAdvObject): integer; overload; virtual;
     procedure Insert(iIndex: integer; oValue: TAdvObject); overload;
     procedure Move(iSource, iTarget: integer); overload;
-
-    procedure FreezeObjects; virtual;
 
     function IndexBy(oValue: TAdvObject; aCompare: TAdvItemsCompare): integer;
     function ExistsBy(oValue: TAdvObject; aCompare: TAdvItemsCompare): boolean;
@@ -911,29 +907,6 @@ end;
 function TAdvObjectList.New: TAdvObject;
 begin
   Result := ItemNew;
-end;
-
-
-procedure TAdvObjectList.FreezeChildren;
-begin
-  inherited;
-
-  FreezeObjects;
-end;
-
-
-procedure TAdvObjectList.FreezeObjects;
-var
-  iLoop: integer;
-  oObject: TAdvObject;
-begin
-  for iLoop := 0 to Count - 1 do
-  begin
-    oObject := ObjectByIndex[iLoop];
-
-    if Assigned(oObject) then
-      oObject.Freeze;
-  end;
 end;
 
 

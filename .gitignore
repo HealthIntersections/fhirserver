@@ -83,3 +83,15 @@ reference-platform/support/__recovery/
 Exec/dunitx-results\.xml
 
 *.stat
+
+Server/OSX32/Debug/fhirserverOSX4\.info\.plist
+
+Server/OSX32/Debug/fhirserverOSX4\.entitlements
+
+Server/OSX32/Debug/
+
+Server/info\.plist\.TemplateOSX\.xml
+
+reference-platform/support/backup/
+
+Server/Entitlement\.TemplateOSX32\.xml

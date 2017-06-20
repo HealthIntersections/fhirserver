@@ -4,27 +4,27 @@ Unit AdvObjects;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  Windows,     // Interlocked* API and HResult
+  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF}    // Interlocked* API and HResult
   AdvExceptions;
 
 
@@ -71,7 +71,6 @@ Type
       // Override to introduce additional or alternate behaviour.
       Function Assignable(Const sLocation : String; oObject : TAdvObject; Const sObject : String) : Boolean; Overload; Virtual;
       Function Alterable(Const sMethod : String) : Boolean; Overload; Virtual;
-      Function Destructable(Const sMethod : String) : Boolean; Overload; Virtual;
       Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Virtual;
       Procedure RaiseError(Const sMethod, sMessage : String); Overload; Virtual;
 
@@ -93,20 +92,10 @@ Type
       Function Clone : TAdvObject; Overload;
       Function ClassType : TAdvObjectClass; Overload;
 
-      // Destruction.
-      Function Indestructable : Boolean; Overload; Virtual;
-      Function AllowDestruction : Boolean; Overload;
-      Function PreventDestruction : Boolean; Overload;
-
       // Assignment.
       Function Assignable : Boolean; Overload; Virtual;
       Function Duplicate : TAdvObject; Overload; Virtual;
       Procedure Assign(oObject : TAdvObject); Overload; Virtual;
-
-      // Freezing - object can no longer be changed at all. (Cannot unfreeze because not expected to be any state where this would be safe)
-      Function Freezable : Boolean; Overload; Virtual;
-      Function Freeze : Boolean; Overload; Virtual;
-      Function IsFrozen : Boolean; Overload; Virtual;
 
       // Determine if self is a valid reference of the specified class.
       Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
@@ -128,22 +117,26 @@ Type
 Implementation
 
 
+{$IFNDEF OSX}
 Uses
   AdvFactories;
-
+{$ENDIF}
 
 Constructor TAdvObject.Create;
 Begin 
   Inherited;
 
+{$IFNDEF OSX}
   Assert(Factory.Construct(Self));
-End;  
+{$ENDIF}
+End;
 
 
 Destructor TAdvObject.Destroy;
-Begin 
+Begin
+{$IFNDEF OSX}
   Assert(Factory.Destruct(Self));
-
+{$ENDIF}
   Inherited;
 End;  
 
@@ -152,18 +145,19 @@ Procedure TAdvObject.AfterConstruction;
 Begin 
   Inherited;
 
+{$IFNDEF OSX}
   Assert(CheckCondition(Factory.Valid(Self), 'AfterConstruction', 'Invalid object after construction (possibly missing call to inherited in Create).'));
+{$ENDIF}
 End;  
 
 
 Procedure TAdvObject.BeforeDestruction;
 Begin 
+{$IFNDEF OSX}
   Assert(CheckCondition(Factory.Valid(Self), 'BeforeDestruction', 'Invalid object before destruction (possibly too many calls to Free or not enough to Link).'));
-
+{$ENDIF}
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
-
-  Assert(Destructable('BeforeDestruction'));
 
   Inherited;
 End;  
@@ -182,7 +176,6 @@ End;
 Procedure TAdvObject.FreezeChildren;
 Begin
 End;
-
 
 Procedure TAdvObject.FreeReference;
 Begin
@@ -375,13 +368,14 @@ Begin
   If Not Assigned(oObject) Then
     Invariant(sLocation, sObject + ' was not assigned and was expected to have been of class ' + aClass.ClassName);
 
+{$IFNDEF OSX}
   // Ensure object was found in the factory.
   If Not Factory.Valid(oObject) Then
     Invariant(sLocation, sObject + ' was an invalid reference and was expected to have been of class ' + aClass.ClassName);
-
   // Ensure object is of the expected class.
   If Factory.Active And Not oObject.InheritsFrom(aClass) Then
     Invariant(sLocation, sObject + ' was of class ' + oObject.ClassName + ' and should have been of class ' + aClass.ClassName);
+{$ENDIF}
 
   Result := True;
 End;
@@ -437,94 +431,9 @@ End;
 
 
 Function TAdvObject.Alterable(Const sMethod: String): Boolean;
-Begin 
-  If Freezable And IsFrozen Then
-    Invariant(sMethod, 'Object cannot be altered as it has been frozen.');
-
+Begin
   Result := True;
 End;  
-
-
-Function TAdvObject.Freezable : Boolean;
-Begin
-  Result := True;
-End;
-
-
-Function TAdvObject.Freeze : Boolean;
-Begin
-  If Not Freezable Then
-    Invariant('Freeze', 'Object is not marked as freezable.');
-
-  If Not Factory.IsFrozen(Self) Then
-  Begin
-    Factory.Freeze(Self);
-
-    FreezeChildren;
-  End;
-
-  Result := True;
-End;
-
-
-Function TAdvObject.IsFrozen : Boolean;
-Begin
-  Assert(CheckCondition(Freezable, 'IsFrozen', 'Object is not marked as freezable.'));
-
-{$IFOPT C+}
-  Result := Factory.IsFrozen(Self);
-{$ELSE}
-  Result := False;
-{$ENDIF}
-End;
-
-
-Function TAdvObject.AllowDestruction : Boolean;
-Begin
-  If Not Indestructable Then
-    Invariant('AllowDestruction', 'Object is not marked as allowing indestruction.');
-
-  If Factory.IsIndestructable(Self) Then
-  Begin
-    Factory.MarkDestructable(Self);
-
-    AllowDestructionChildren;
-  End;
-
-  Result := True;
-End;
-
-
-Function TAdvObject.PreventDestruction : Boolean;
-Begin
-  If Not Indestructable Then
-    Invariant('AllowDestruction', 'Object is not marked as allowing indestruction.');
-
-  If Not Factory.IsIndestructable(Self) Then
-  Begin
-    Factory.MarkIndestructable(Self);
-
-    PreventDestructionChildren;
-  End;
-
-  Result := True;
-End;
-
-
-Function TAdvObject.Destructable(Const sMethod: String): Boolean;
-Begin
-  If Indestructable And Factory.IsIndestructable(Self) Then
-    Invariant(sMethod, 'Attempting to destroy a permanent object.');
-
-  Result := True;
-End;
-
-
-Function TAdvObject.Indestructable : Boolean;
-Begin
-  Result := True;
-End;
-
 
 Class Procedure TAdvObject.ClassError(Const sMethod, sMessage: String);
 Begin

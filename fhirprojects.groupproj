@@ -36,6 +36,9 @@
         <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Server\fhirserverOSX4.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -143,14 +146,23 @@
     <Target Name="fhirnpp:Make">
         <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
     </Target>
+    <Target Name="fhirserverOSX4">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj"/>
+    </Target>
+    <Target Name="fhirserverOSX4:Clean">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirserverOSX4:Make">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirnpp"/>
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirnpp;fhirserverOSX4"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirnpp:Clean"/>
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirnpp:Clean;fhirserverOSX4:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirnpp:Make"/>
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirnpp:Make;fhirserverOSX4:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
