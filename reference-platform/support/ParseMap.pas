@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, Classes,
+  Classes,
   EncodeSupport, StringSupport,
   AdvObjects;
 

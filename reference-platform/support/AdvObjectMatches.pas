@@ -150,9 +150,6 @@ Type
 Implementation
 
 
-Uses
-  AdvFactories;
-
 
 Constructor TAdvObjectMatch.Create;
 Begin
@@ -613,6 +610,4 @@ Begin
 End;
 
 
-Initialization
-  Factory.RegisterClass(TAdvObjectMatch);
 End. // AdvObjectMatches //

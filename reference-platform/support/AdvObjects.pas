@@ -117,26 +117,14 @@ Type
 Implementation
 
 
-{$IFNDEF OSX}
-Uses
-  AdvFactories;
-{$ENDIF}
-
 Constructor TAdvObject.Create;
 Begin 
   Inherited;
-
-{$IFNDEF OSX}
-  Assert(Factory.Construct(Self));
-{$ENDIF}
 End;
 
 
 Destructor TAdvObject.Destroy;
 Begin
-{$IFNDEF OSX}
-  Assert(Factory.Destruct(Self));
-{$ENDIF}
   Inherited;
 End;  
 
@@ -145,17 +133,11 @@ Procedure TAdvObject.AfterConstruction;
 Begin 
   Inherited;
 
-{$IFNDEF OSX}
-  Assert(CheckCondition(Factory.Valid(Self), 'AfterConstruction', 'Invalid object after construction (possibly missing call to inherited in Create).'));
-{$ENDIF}
 End;  
 
 
 Procedure TAdvObject.BeforeDestruction;
 Begin 
-{$IFNDEF OSX}
-  Assert(CheckCondition(Factory.Valid(Self), 'BeforeDestruction', 'Invalid object before destruction (possibly too many calls to Free or not enough to Link).'));
-{$ENDIF}
   // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FAdvObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
 
@@ -367,15 +349,6 @@ Begin
   // Ensure object is assigned.
   If Not Assigned(oObject) Then
     Invariant(sLocation, sObject + ' was not assigned and was expected to have been of class ' + aClass.ClassName);
-
-{$IFNDEF OSX}
-  // Ensure object was found in the factory.
-  If Not Factory.Valid(oObject) Then
-    Invariant(sLocation, sObject + ' was an invalid reference and was expected to have been of class ' + aClass.ClassName);
-  // Ensure object is of the expected class.
-  If Factory.Active And Not oObject.InheritsFrom(aClass) Then
-    Invariant(sLocation, sObject + ' was of class ' + oObject.ClassName + ' and should have been of class ' + aClass.ClassName);
-{$ENDIF}
 
   Result := True;
 End;

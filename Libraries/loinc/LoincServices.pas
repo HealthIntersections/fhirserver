@@ -34,7 +34,7 @@ Uses
   SysUtils, Classes, Generics.Collections,
   StringSupport, FileSupport, BytesSupport,
   AdvObjects, AdvObjectLists,
-  regexpr, YuStemmer,
+  RegularExpressions, YuStemmer,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
   TerminologyServices, DateAndTime;
 
@@ -1107,7 +1107,7 @@ var
 begin
   if FileExists(sFilename) Then
   begin
-    FileSetReadOnlyAttribute(sFilename, False);
+    FileSetReadOnly(sFilename, False);
     DeleteFile(sFilename);
   End;
   oFile := TFileStream.Create(sFilename, fmCreate);

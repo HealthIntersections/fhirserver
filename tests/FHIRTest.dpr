@@ -84,7 +84,6 @@ uses
   AfsVolumes in '..\reference-platform\support\AfsVolumes.pas',
   AfsStreamManagers in '..\reference-platform\support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\reference-platform\support\AdvObjectMatches.pas',
-  RegExpr in '..\reference-platform\support\RegExpr.pas',
   AdvStringObjectMatches in '..\reference-platform\support\AdvStringObjectMatches.pas',
   JWT in '..\reference-platform\support\JWT.pas',
   HMAC in '..\reference-platform\support\HMAC.pas',

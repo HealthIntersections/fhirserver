@@ -10,7 +10,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Character,
-  StringSupport, TextUtilities, RegExpr,
+  StringSupport, TextUtilities, RegularExpressions,
   AdvObjects, AdvGenerics, AdvStreams, AdvStreamReaders, AdvFiles, AdvVclStreams,
   ParserSupport;
 
@@ -1878,7 +1878,7 @@ end;
 procedure TMXmlDocument.funcMatches(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; focus, work: TAdvList<TMXmlNode>);
 var
   p1, p2 : TAdvList<TMXmlNode>;
-  reg : TRegExpr;
+  reg : TRegEx;
 begin
   if expr.Params.Count <> 2 then
     raise EMXPathEngine.Create('Wrong number of parameters for starts-with: expected 2 but found '+inttostr(expr.Params.Count));
@@ -1890,13 +1890,8 @@ begin
         work.Add(TMXmlBoolean.Create(false))
       else
       begin
-        reg := TRegExpr.create;
-        try
-          reg.Expression := p2[0].ToString;
-          work.Add(TMXmlBoolean.Create(reg.exec(p1[0].ToString)));
-        finally
-          reg.free;
-        end;
+        reg := TRegEx.create(p2[0].ToString, [roCompiled]);
+        work.Add(TMXmlBoolean.Create(reg.IsMatch(p1[0].ToString)));
       end;
     finally
       p2.free;

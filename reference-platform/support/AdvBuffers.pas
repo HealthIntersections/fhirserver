@@ -327,7 +327,6 @@ Begin
   oFile := TAdvFile.Create;
   Try
     oFile.Name := sFilename;
-    oFile.Attributes := [FileAttributeNormal];
 
     oFile.OpenCreate;
     Try

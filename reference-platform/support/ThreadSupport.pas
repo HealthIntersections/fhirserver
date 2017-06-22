@@ -33,7 +33,7 @@ Interface
 
 
 Uses
-  Windows;
+  {$IFDEF OSX} OSXUtils {$ELSE} Windows {$ENDIF};
 
 
 Type
@@ -44,7 +44,9 @@ Type
 
 Procedure ThreadSleep(iTime : Cardinal); Overload;
 Function ThreadID : TThreadID; Overload;
+{$IFNDEF OSX}
 Function ThreadHandle : TThreadHandle; Overload;
+{$ENDIF}
 Procedure ThreadYield; Overload;
 Procedure ThreadBreakpoint; Overload;
 
@@ -55,19 +57,21 @@ Implementation
 
 Procedure ThreadSleep(iTime : Cardinal);
 Begin
-  Windows.Sleep(iTime);
+  Sleep(iTime);
 End;
 
 Function ThreadID : TThreadID;
 Begin
-  Result := Windows.GetCurrentThreadID;
+  Result := GetCurrentThreadID;
 End;
 
 
+{$IFNDEF OSX}
 Function ThreadHandle : TThreadHandle;
 Begin
-  Result := Windows.GetCurrentThread;
+  Result := GetCurrentThread;
 End;
+{$ENDIF}
 
 
 

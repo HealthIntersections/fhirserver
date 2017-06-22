@@ -36,7 +36,7 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Math, RegExpr, Generics.Collections, Character,
+  SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
   StringSupport, TextUtilities, SystemSupport, MathSupport,
   AdvObjects, AdvGenerics, DecimalSupport, DateAndTime,
   ParserSupport,
@@ -1196,7 +1196,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
   s, p : String;
-  reg : TRegExpr;
+  reg : TRegEx;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -1206,17 +1206,12 @@ begin
     finally
       res.free;
     end;
-    reg := TRegExpr.Create;
-    try
-      reg.Expression := p;
-      for item in focus do
-      begin
-        s := convertToString(item.value);
-        if (reg.Exec(s)) then
-          result.Add(item.Link);
-      end;
-    finally
-      reg.Free;
+    reg := TRegEx.Create(p, [roCompiled]);
+    for item in focus do
+    begin
+      s := convertToString(item.value);
+      if (reg.isMatch(s)) then
+        result.Add(item.Link);
     end;
     result.Link;
   finally

@@ -34,7 +34,7 @@ Interface
 Uses
   StringSupport,
   AdvObjects,
-  AdvFactories, AdvBuffers;
+  AdvBuffers;
 
 
 Type
@@ -180,6 +180,6 @@ Begin
 End;
 
 
-Initialization
-  Factory.RegisterClassArray([TAdvNameBuffer, TAdvNameBufferList]);
+//Initialization
+//  Factory.RegisterClassArray([TAdvNameBuffer, TAdvNameBufferList]);
 End. // AdvNameBuffers //

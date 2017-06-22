@@ -1383,7 +1383,7 @@ var
 begin
   if FileExists(sFilename) Then
   begin
-    FileSetReadOnlyAttribute(sFilename, False);
+    FileSetReadOnly(sFilename, False);
     DeleteFile(sFilename);
   End;
 

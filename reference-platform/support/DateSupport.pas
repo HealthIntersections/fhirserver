@@ -4,34 +4,34 @@ Unit DateSupport;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
 Interface
 
 Uses
-  SysUtils, Windows, Registry,
+  SysUtils, {$IFDEF OSX} OSXUtils, {$ELSE} Windows, Registry, {$ENDIF}
   StringSupport, MathSupport, MemorySupport, ErrorSupport;
 
 Type
@@ -547,7 +547,7 @@ Begin
     Result := aIndices[TDateToken(iLoop)] >= 0;
     Inc(iLoop);
   End;  
-End;  
+End;
 
 Function ToDateTimeElement(Var pData : PChar) : TDateNumber;
 Const
@@ -875,6 +875,11 @@ End;
 
 
 Function TimeZone : TTimeZone;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Var
   iRet : DWord;
   aInfo : TIME_ZONE_INFORMATION;
@@ -925,6 +930,7 @@ Begin
       Result := TimeZoneUnknown;
   End;
 End;
+{$ENDIF}
 
 Function CloneTimeZoneYearInfo(Const aTimeZoneYearInfo : TTimeZoneYearInfo) : TTimeZoneYearInfo;
 Begin
@@ -941,6 +947,11 @@ Const
   KEY_ROOT = 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\';
 
 Function CreateTimeZoneInformation(Const aTimeZone : TTimeZone) : TTimeZoneInformation;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Type
   REG_TZI_FORMAT = Packed Record
     Bias: LongInt; { Current Bias of the Time Zone. }
@@ -1045,6 +1056,7 @@ Begin
     Raise;
   End;
 End;
+{$ENDIF}
 
 Procedure DestroyTimeZoneInformation(Var aTimeZoneInformation : TTimeZoneInformation);
 Var
@@ -1083,6 +1095,11 @@ End;
 
 
 Function IsAfterDaylightTime(Const aInstant : TDateTime; Const aTime : TSystemTime) : Boolean;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Var
   iYear, iMonth, iDay, iMin, iHour, iSec, iMSec : Word;
   iTarget : Integer;
@@ -1115,9 +1132,14 @@ Begin
     End;
   End;
 End;
-
+{$ENDIF}
 
 Function isDayLightSaving(Const aRules : TTimeZoneYearInfo; Const aInstant: TDateTime; Const bInstantIsUTC : Boolean) : Boolean;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Begin
   If Not aRules.HasDaylightSaving Then
   Begin
@@ -1162,8 +1184,14 @@ Begin
     End;
   End;
 End;
+{$ENDIF}
 
 Function isDayLightSavings(Const aTimeZone : TTimeZoneInformation; Const aInstant : TDateTime; Const bInstantIsUTC : Boolean) : Boolean; Overload;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Var
   bFound : Boolean;
   iLoop : Integer;
@@ -1199,6 +1227,7 @@ Begin
   If Not bFound Then
     Result := isDayLightSaving(aTimeZone.BaseRules, aInstant, bInstantIsUTC)
 End;
+{$ENDIF}
 
 
 Function TimeZoneNameShort(Const aTimeZoneInformation : TTimeZoneInformation; Const aInstant : TDateTime; Const bInstantIsUTC : Boolean) : String;
@@ -1242,6 +1271,11 @@ End;
 
 
 Function TimeZoneBias : TDateTime;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Var
   aTimeZone : TIME_ZONE_INFORMATION;
 Begin
@@ -1259,7 +1293,7 @@ Begin
 
   Result := Result / -1440;
 End;
-
+{$ENDIF}
 
 Function TimeZoneBias(Const aTimeZoneInformation : TTimeZoneInformation) : TDateTime;
 Begin
@@ -1304,6 +1338,11 @@ End;
 
 
 Function UniversalDateTime : TDateTime;
+{$IFDEF OSX}
+begin
+ raise Exception.Create('Not done for OSX yet');
+end;
+{$ELSE}
 Var
   LrSystemTime : TSystemTime;
 Begin
@@ -1311,7 +1350,7 @@ Begin
 
   Result := SystemTimeToDateTime(LrSystemTime);
 End;
-
+{$ENDIF}
 
 Function LocalDate : TDateTime;
 Begin

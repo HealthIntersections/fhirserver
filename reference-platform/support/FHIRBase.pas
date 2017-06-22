@@ -38,7 +38,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvStringMatches, AdvStringLists, AdvGenerics,
+  AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvGenerics, AdvStringLists,
   DateAndTime, DateSupport, EncodeSupport, EncdDecd, DecimalSupport, ParserSupport;
 
 Const
@@ -352,8 +352,6 @@ type
     function equalsDeep(other : TFHIRObject) : boolean; override;
     function equalsShallow(other : TFHIRObject) : boolean; override;
   end;
-
-  TFHIRSearchParameters = class (TAdvStringMatch);
 
   TFHIRAttributeList = class;
   TFHIRAttribute = class (TFHIRObject)

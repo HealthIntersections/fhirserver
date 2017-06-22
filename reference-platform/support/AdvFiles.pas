@@ -19,8 +19,8 @@ are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  Windows,
+  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes,
   FileSupport, StringSupport, MathSupport, ErrorSupport,
   AdvStreams, AdvObjects, AdvExceptions;
 
@@ -42,10 +42,19 @@ Type
 
   TAdvFileMode = (AdvFileModeRead, AdvFileModeWrite, AdvFileModeReadWrite, AdvFileModeCreate, AdvFileModeNew, AdvFileModeTruncate, AdvFileModeAppend);
 
+Type
+//  TFileAttribute =
+//    (FileAttributeArchive, FileAttributeHidden, FileAttributeNormal, FileAttributeOffline, FileAttributeCompressed, FileAttributeReadOnly,
+//     FileAttributeSystem, FileAttributeTemporary, FileAttributeFolder, FileAttributeWriteThrough);
+//
+//  TFileAttributes = Set Of TFileAttribute;
+
+  TAdvFileAttributes = Cardinal;
   TAdvFileHandle = TFileHandle;
-  TAdvFileAttributes = TFileAttributes;
-  TAdvFileAttribute = TFileAttribute;
-  TAdvFileTime = TFileTime;
+//  TAdvFileAttributes = TFileAttributes;
+//  TAdvFileAttribute = TFileAttribute;
+
+  TAdvFileTime = Int64;
 
   TAdvFile = Class(TAdvAccessStream)
     Private
@@ -57,23 +66,23 @@ Type
 
       Procedure SetName(Const Value : String);
 
-      Function GetCreated : TAdvFileTime;
-      Procedure SetCreated(Const aValue : TAdvFileTime);
-
-      Function GetAccessed : TAdvFileTime;
-      Procedure SetAccessed(Const aValue : TAdvFileTime);
-
-      Function GetModified : TAdvFileTime;
-      Procedure SetModified(Const aValue : TAdvFileTime);
-
-      Function GetAttributes : TAdvFileAttributes;
-      Procedure SetAttributes(Const Value : TAdvFileAttributes);
-
-      Function GetAttributeWriteThrough: Boolean;
-      Procedure SetAttributeWriteThrough(Const Value: Boolean);
-
-      Function GetAttributeReadOnly: Boolean;
-      Procedure SetAttributeReadOnly(Const Value: Boolean);
+//      Function GetCreated : TAdvFileTime;
+//      Procedure SetCreated(Const aValue : TAdvFileTime);
+//
+//      Function GetAccessed : TAdvFileTime;
+//      Procedure SetAccessed(Const aValue : TAdvFileTime);
+//
+//      Function GetModified : TAdvFileTime;
+//      Procedure SetModified(Const aValue : TAdvFileTime);
+//
+//      Function GetAttributes : TAdvFileAttributes;
+//      Procedure SetAttributes(Const Value : TAdvFileAttributes);
+//
+//      Function GetAttributeWriteThrough: Boolean;
+//      Procedure SetAttributeWriteThrough(Const Value: Boolean);
+//
+//      Function GetAttributeReadOnly: Boolean;
+//      Procedure SetAttributeReadOnly(Const Value: Boolean);
 
     Protected
       Function GetPosition : Int64; Override;
@@ -82,10 +91,10 @@ Type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const iValue : Int64); Override;
 
-      Procedure AttributeToggle(Const aAttribute : TAdvFileAttribute; Const bValue : Boolean); 
-      Procedure AttributeInclude(Const aAttribute : TAdvFileAttribute); 
-      Procedure AttributeExclude(Const aAttribute : TAdvFileAttribute); 
-      Function HasAttribute(Const aAttribute : TAdvFileAttribute) : Boolean;
+//      Procedure AttributeToggle(Const aAttribute : TAdvFileAttribute; Const bValue : Boolean);
+//      Procedure AttributeInclude(Const aAttribute : TAdvFileAttribute);
+//      Procedure AttributeExclude(Const aAttribute : TAdvFileAttribute);
+//      Function HasAttribute(Const aAttribute : TAdvFileAttribute) : Boolean;
 
       Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
 
@@ -93,6 +102,15 @@ Type
 
       Function TryOpenHandle(Const sName : String; aMode : TAdvFileMode; aShare : TAdvFileShare; aAttributes : TAdvFileAttributes) : Boolean;
       Procedure OpenHandle(Const sName : String; aMode : TAdvFileMode; aShare : TAdvFileShare; aAttributes : TAdvFileAttributes);
+//      Property Created : TAdvFileTime Read GetCreated Write SetCreated;
+//      Property Accessed : TAdvFileTime Read GetAccessed Write SetAccessed;
+//      Property Attributes : TAdvFileAttributes Read GetAttributes Write SetAttributes;
+//      Property AttributeWriteThrough : Boolean Read GetAttributeWriteThrough Write SetAttributeWriteThrough;
+//      Property AttributeReadOnly : Boolean Read GetAttributeReadOnly Write SetAttributeReadOnly;
+//      Property DefaultMode : TAdvFileMode Read FDefaultMode Write FDefaultMode;
+//      Property DefaultShare : TAdvFileShare Read FDefaultShare Write FDefaultShare;
+//      Property Modified : TAdvFileTime Read GetModified Write SetModified;
+//      Property DefaultAttributes : TAdvFileAttributes Read FDefaultAttributes Write FDefaultAttributes;
 
     Public
       Constructor Create; Override;
@@ -137,21 +155,38 @@ Type
       Property Name : String Read FName Write SetName;
       Property Position : Int64 Read GetPosition Write SetPosition;
       Property Size : Int64 Read GetSize Write SetSize;
-      Property Modified : TAdvFileTime Read GetModified Write SetModified;
-      Property Created : TAdvFileTime Read GetCreated Write SetCreated;
-      Property Accessed : TAdvFileTime Read GetAccessed Write SetAccessed;
-      Property Attributes : TAdvFileAttributes Read GetAttributes Write SetAttributes;
-      Property AttributeWriteThrough : Boolean Read GetAttributeWriteThrough Write SetAttributeWriteThrough;
-      Property AttributeReadOnly : Boolean Read GetAttributeReadOnly Write SetAttributeReadOnly;
-      Property DefaultMode : TAdvFileMode Read FDefaultMode Write FDefaultMode;
-      Property DefaultShare : TAdvFileShare Read FDefaultShare Write FDefaultShare;
-      Property DefaultAttributes : TAdvFileAttributes Read FDefaultAttributes Write FDefaultAttributes;
   End;
 
   EAdvFile = Class(EAdvStream);
 
 
 Implementation
+
+{$IFNDEF OSX}
+Function FileTimeZero : TAdvFileTime;
+Begin
+  Result := 0;
+End;
+
+Function WindowsFileTimeToFileTime(Const aFileTime : Windows.FileTime) : TAdvFileTime;
+Begin
+  Result := Int64(aFileTime);
+End;
+
+Function FileGetModified(Const sFileName : String) : TAdvFileTime;
+Var
+  aHandle : TFileHandle;
+Begin
+  aHandle := FileHandleOpen(CreateFile(PChar(sFileName), GENERIC_READ, FILE_SHARE_READ, Nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL Or FILE_FLAG_BACKUP_SEMANTICS, 0));
+  Try
+    If FileHandleIsValid(aHandle) Then
+      GetFileTime(aHandle.Value, Nil, Nil, @Result)
+    Else
+      Result := FileTimeZero;
+  Finally
+    FileHandleClose(aHandle);
+  End;
+End;
 
 
 Type
@@ -162,30 +197,80 @@ Type
 
   PLargeInteger = ^TLargeInteger;
 
+//Const
+//  FILEATTRIBUTE_CARDINALS : Array[TFileAttribute] Of Cardinal =
+//    (FILE_ATTRIBUTE_ARCHIVE, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_NORMAL, FILE_ATTRIBUTE_OFFLINE, FILE_ATTRIBUTE_COMPRESSED,
+//     FILE_ATTRIBUTE_READONLY, FILE_ATTRIBUTE_SYSTEM, FILE_ATTRIBUTE_TEMPORARY, SysUtils.faDirectory, FILE_FLAG_WRITE_THROUGH);
+//
+//Function FileAttributesToCardinal(Const aAttributes : TFileAttributes) : Cardinal;
+//Var
+//  aAttributeIndex : TFileAttribute;
+//Begin
+//  Result := 0;
+//
+//  For aAttributeIndex := Low(aAttributeIndex) To High(aAttributeIndex) Do
+//  Begin
+//    If aAttributeIndex In aAttributes Then
+//      Result := Result Or FILEATTRIBUTE_CARDINALS[aAttributeIndex];
+//  End;
+//End;
+//
+//Function CardinalToFileAttributes(Const iValue : Cardinal) : TFileAttributes;
+//Var
+//  aAttributeIndex : TFileAttribute;
+//Begin
+//  Result := [];
+//
+//  For aAttributeIndex := Low(aAttributeIndex) To High(aAttributeIndex) Do
+//  Begin
+//    If (FILEATTRIBUTE_CARDINALS[aAttributeIndex] And iValue) > 0 Then
+//      Result := Result + [aAttributeIndex];
+//  End;
+//End;
+//
+//Function FileGetAttributes(Const sFilename : String) : TFileAttributes;
+//Var
+//  iValue : Cardinal;
+//Begin
+//  iValue := GetFileAttributes(PChar(sFilename));
+//
+//  If iValue = FileHandleInvalid.Value Then
+//    Result := []
+//  Else
+//    Result := CardinalToFileAttributes(iValue);
+//End;
+//
+//
+//Function FileSetAttributes(Const sFilename : String; iAttributes : TFileAttributes) : Boolean;
+//Begin
+//  Result := SetFileAttributes(PChar(sFilename), FileAttributesToCardinal(iAttributes));
+//End;
+
+{$ENDIF}
 
 Constructor TAdvFile.Create;
 Begin
   Inherited;
 
   FHandle := FileHandleInvalid;
-  FDefaultAttributes := [FileAttributeNormal];
+  FDefaultAttributes := FILE_ATTRIBUTE_NORMAL;
   FDefaultMode := AdvFileModeRead;
   FDefaultShare := AdvFileShareNone;
 End;
 
 
 Procedure TAdvFile.BeforeDestruction;
-Begin 
+Begin
   Close;
 
   Inherited;
-End;  
+End;
 
 
 Procedure TAdvFile.RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String);
 Begin
   Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FName]));
-End;  
+End;
 
 
 Function TAdvFile.ErrorClass : EAdvExceptionClass;
@@ -235,8 +320,15 @@ Begin
 End;
 
 
+
+
 {$R-}
 Function TAdvFile.TryOpen : Boolean;
+{$IFDEF OSX}
+begin
+  result := false;
+end;
+{$ELSE}
 Const
   FILE_MODE : Array[TAdvFileMode] Of Cardinal =
     (GENERIC_READ, GENERIC_WRITE, GENERIC_READ Or GENERIC_WRITE, GENERIC_READ Or GENERIC_WRITE, GENERIC_READ Or GENERIC_WRITE, GENERIC_WRITE, GENERIC_READ Or GENERIC_WRITE);
@@ -249,54 +341,55 @@ Const
 Begin
   Close;
 
-  FHandle := FileHandleOpen(CreateFile(PChar(FName), FILE_MODE[FDefaultMode], FILE_SHARE[FDefaultShare], Nil, FILE_OPEN[FDefaultMode], FileAttributesToCardinal(FDefaultAttributes), 0));
+  FHandle := FileHandleOpen(CreateFile(PChar(FName), FILE_MODE[FDefaultMode], FILE_SHARE[FDefaultShare], Nil, FILE_OPEN[FDefaultMode], FDefaultAttributes, 0));
 
   Result := FileHandleIsValid(FHandle);
 
   If Result And (FDefaultMode = AdvFileModeAppend) Then
     Append;
 End;
+{$ENDIF}
 
 
 Function TAdvFile.TryOpenCreate : Boolean;
 Begin
-  Result := TryOpenHandle(Name, AdvFileModeCreate, AdvFileShareAll, [FileAttributeNormal]);
+  Result := TryOpenHandle(Name, AdvFileModeCreate, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenCreate;
 Begin
-  OpenHandle(Name, AdvFileModeCreate, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeCreate, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenRead;
 Begin
-  OpenHandle(Name, AdvFileModeRead, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeRead, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenTruncate;
 Begin
-  OpenHandle(Name, AdvFileModeTruncate, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeTruncate, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenWrite;
 Begin
-  OpenHandle(Name, AdvFileModeWrite, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeWrite, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenReadWrite;
 Begin
-  OpenHandle(Name, AdvFileModeReadWrite, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeReadWrite, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
 Procedure TAdvFile.OpenNew;
 Begin
-  OpenHandle(Name, AdvFileModeNew, AdvFileShareAll, [FileAttributeNormal]);
+  OpenHandle(Name, AdvFileModeNew, AdvFileShareAll, FILE_ATTRIBUTE_NORMAL);
 End;
 
 
@@ -310,34 +403,40 @@ End;
 
 
 Procedure TAdvFile.Append;
-Begin 
+Begin
+  {$IFDEF OSX}
+  {$ELSE}
   SetFilePointer(FHandle.Value, 0, Nil, FILE_END);
-End;  
+  {$ENDIF}
+End;
 
 
 Procedure TAdvFile.Delete;
-Begin 
+Begin
   Close;
 
   FileDelete(FName);
-End;  
+End;
 
 
 Procedure TAdvFile.Flush;
-Begin 
+Begin
+  {$IFDEF OSX}
+  {$ELSE}
   FlushFileBuffers(FHandle.Value);
-End;  
+  {$ENDIF}
+End;
 
 
 Procedure TAdvFile.Read(Var aBuffer; iCount : Cardinal);
 Var
   iActual : Cardinal;
-Begin 
+Begin
   Receive(aBuffer, iCount, iActual);
 
   If (iActual < iCount) Then
     RaiseError('Read', 'Unable to read past end of file');
-End;  
+End;
 
 
 Procedure TAdvFile.Write(Const aBuffer; iCount : Cardinal);
@@ -352,101 +451,137 @@ End;
 
 
 Procedure TAdvFile.Receive(Var aBuffer; iCount : Cardinal; Var iActual : Cardinal);
-Begin 
+Begin
+  {$IFDEF OSX}
+  {$ELSE}
   If Not ReadFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
     RaiseError('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
+  {$ENDIF}
 End;  
 
 
 Procedure TAdvFile.Send(Const aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin 
+  {$IFDEF OSX}
+  {$ELSE}
   If Not WriteFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
     RaiseError('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
-End;  
+  {$ENDIF}
+End;
 
 
 Procedure TAdvFile.Lock(Const iStart, iFinish: Int64);
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pStart  : PLargeInteger;
   pFinish : PLargeInteger;
-Begin 
+Begin
   pStart := PLargeInteger(@iStart);
   pFinish := PLargeInteger(@iFinish);
 
   If Not LockFile(FHandle.Value, pStart^.Low, pStart^.High, pFinish^.Low, pFinish^.High) Then
     RaiseError('Lock', StringFormat('Unable to lock the specified region [%s]', [ErrorAsString]));
-End;  
-
+End;
+{$ENDIF}
 
 Procedure TAdvFile.Unlock(Const iStart, iFinish: Int64);
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pStart  : PLargeInteger;
   pFinish : PLargeInteger;
-Begin 
+Begin
   pStart := PLargeInteger(@iStart);
   pFinish :=PLargeInteger(@iFinish);
 
   If Not UnlockFile(FHandle.Value, pStart^.Low, pStart^.High, pFinish^.Low, pFinish^.High) Then
     RaiseError('Unlock', StringFormat('Unable to unlock the specified region [%s]', [ErrorAsString]));
-End;  
-
+End;
+{$ENDIF}
 
 Procedure TAdvFile.Seek(iIndex : Int64);
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pValue : PLargeInteger;
-Begin 
+Begin
   pValue := PLargeInteger(@iIndex);
 
   SetFilePointer(FHandle.Value, pValue^.Low, @pValue^.High, FILE_CURRENT);
-End;  
-
-
-Function TAdvFile.GetCreated : TAdvFileTime;
-Begin 
-  If Not GetFileTime(FHandle.Value, @Result, Nil, Nil) Then
-    RaiseError('GetCreated', ErrorAsString);
 End;
+{$ENDIF}
 
-
-Procedure TAdvFile.SetCreated(Const aValue : TAdvFileTime);
-Begin
-  If Not SetFileTime(FHandle.Value, @aValue, Nil, Nil) Then
-    RaiseError('SetCreated', ErrorAsString);
-End;
-
-
-Function TAdvFile.GetModified : TAdvFileTime;
-Begin
-  If Not GetFileTime(FHandle.Value, Nil, Nil, @Result) Then
-    RaiseError('GetModified', ErrorAsString);
-End;
-
-
-Procedure TAdvFile.SetModified(Const aValue : TAdvFileTime);
-Begin
-  If Not SetFileTime(FHandle.Value, Nil, Nil, @aValue) Then
-    RaiseError('SetModified', ErrorAsString);
-End;
-
-
-Function TAdvFile.GetAccessed : TAdvFileTime;
-Begin
-  If Not GetFileTime(FHandle.Value, Nil, @Result, Nil) Then
-    RaiseError('GetAccessed', ErrorAsString);
-End;
-
-
-Procedure TAdvFile.SetAccessed(Const aValue : TAdvFileTime);
-Begin
-  If Not SetFileTime(FHandle.Value, Nil, @aValue, Nil) Then
-    RaiseError('SetAccessed', ErrorAsString);
-End;  
+//Function TAdvFile.GetCreated : TAdvFileTime;
+//Begin
+//  {$IFDEF OSX}
+//  result := 0;
+//  {$ELSE}
+//  If Not GetFileTime(FHandle.Value, @Result, Nil, Nil) Then
+//    RaiseError('GetCreated', ErrorAsString);
+//  {$ENDIF}
+//End;
+//
+//Procedure TAdvFile.SetCreated(Const aValue : TAdvFileTime);
+//Begin
+//  {$IFDEF OSX}
+//  {$ELSE}
+//  If Not SetFileTime(FHandle.Value, @aValue, Nil, Nil) Then
+//    RaiseError('SetCreated', ErrorAsString);
+//  {$ENDIF}
+//End;
+//
+//
+//Function TAdvFile.GetModified : TAdvFileTime;
+//Begin
+//  {$IFDEF OSX}
+//  {$ELSE}
+//  If Not GetFileTime(FHandle.Value, Nil, Nil, @Result) Then
+//    RaiseError('GetModified', ErrorAsString);
+//  {$ENDIF}
+//End;
+//
+//
+//Procedure TAdvFile.SetModified(Const aValue : TAdvFileTime);
+//Begin
+//  {$IFDEF OSX}
+//  {$ELSE}
+//  If Not SetFileTime(FHandle.Value, Nil, Nil, @aValue) Then
+//    RaiseError('SetModified', ErrorAsString);
+//  {$ENDIF}
+//End;
+//
+//
+//Function TAdvFile.GetAccessed : TAdvFileTime;
+//Begin
+//  {$IFDEF OSX}
+//  {$ELSE}
+//  If Not GetFileTime(FHandle.Value, Nil, @Result, Nil) Then
+//    RaiseError('GetAccessed', ErrorAsString);
+//  {$ENDIF}
+//End;
+//
+//
+//Procedure TAdvFile.SetAccessed(Const aValue : TAdvFileTime);
+//Begin
+//  {$IFDEF OSX}
+//  {$ELSE}
+//  If Not SetFileTime(FHandle.Value, Nil, @aValue, Nil) Then
+//    RaiseError('SetAccessed', ErrorAsString);
+//  {$ENDIF}
+//End;
 
 
 Procedure TAdvFile.SetName(Const Value : String);
-Begin 
+Begin
   If Value <> FName Then
-  Begin 
+  Begin
     Assert(CheckCondition(Not Active, 'SetName', 'Cannot set the name when the file is open.'));
 
     FName := Value;
@@ -455,6 +590,10 @@ End;
 
 
 Function TAdvFile.GetSize : Int64;
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pResult : PLargeInteger;
 Begin
@@ -463,13 +602,18 @@ Begin
 
   If pResult^.Low = FileHandleInvalid.Value Then
     RaiseError('GetSize', StringFormat('Unable to get the size of the file [%s]', [ErrorAsString]));
-End;  
+End;
+  {$ENDIF}
 
 
 Procedure TAdvFile.SetSize(Const iValue : Int64);
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   iLast : Int64;
-Begin 
+Begin
   iLast := Position;
   Position := iValue;
 
@@ -477,13 +621,18 @@ Begin
     RaiseError('SetSize', StringFormat('Unable to set the size of the file [%s]', [ErrorAsString]));
 
   Position := IntegerMin(iValue, iLast);
-End;  
+End;
+  {$ENDIF}
 
 
 Function TAdvFile.GetPosition : Int64;
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pResult : PLargeInteger;
-Begin 
+Begin
   // 9x does not support SetFilePointerEx
 
   pResult := PLargeInteger(@Result);
@@ -492,106 +641,41 @@ Begin
 
   If pResult^.Low = FileHandleInvalid.Value Then
     RaiseError('GetPosition', StringFormat('Unable to get the file position [%s]', [ErrorAsString]));
-End;  
-
+End;
+{$ENDIF}
 
 Procedure TAdvFile.SetPosition(Const Value : Int64);
+  {$IFDEF OSX}
+begin
+end;
+  {$ELSE}
 Var
   pValue : PLargeInteger;
-Begin 
+Begin
   pValue := PLargeInteger(@Value);
 
   // 9x does not support SetFilePointerEx
-  
+
   If SetFilePointer(FHandle.Value, pValue^.Low, @pValue^.High, FILE_BEGIN) = FileHandleInvalid.Value Then
     RaiseError('SetPosition', StringFormat('Unable to set the file position [%s]', [ErrorAsString]));
-End;  
-
-
-Function TAdvFile.GetAttributes : TAdvFileAttributes;
-Begin 
-  Result := FileGetAttributes(FName);
-
-  If Result = [] Then
-    Result := FDefaultAttributes;
-End;  
-
-
-Procedure TAdvFile.SetAttributes(Const Value : TAdvFileAttributes);
-Begin 
-  FileSetAttributes(FName, Value);
-
-  FDefaultAttributes := Value;
 End;
-
+{$ENDIF}
 
 Function TAdvFile.Readable : Int64;
-Begin 
+Begin
   Result := Size - Position;
-End;  
+End;
 
 
 Function TAdvFile.Writeable : Int64;
-Begin 
+Begin
   Result := MaxInt;
-End;  
-
-
-Procedure TAdvFile.AttributeToggle(Const aAttribute: TAdvFileAttribute; Const bValue: Boolean);
-Begin
-  If bValue Then
-    AttributeInclude(aAttribute)
-  Else
-    AttributeExclude(aAttribute);
-End;
-
-
-Procedure TAdvFile.AttributeExclude(Const aAttribute: TAdvFileAttribute);
-Begin
-  Attributes := Attributes - [aAttribute];
-End;
-
-
-Procedure TAdvFile.AttributeInclude(Const aAttribute: TAdvFileAttribute);
-Begin
-  Attributes := Attributes + [aAttribute];
-End;
-
-
-Function TAdvFile.HasAttribute(Const aAttribute: TAdvFileAttribute): Boolean;
-Begin
-  Result := aAttribute In Attributes;
 End;
 
 
 Function TAdvFile.IsReadOnly : Boolean;
-Begin 
-  Result := HasAttribute(FileAttributeReadOnly);
-End;
-
-
-Function TAdvFile.GetAttributeWriteThrough: Boolean;
 Begin
-  Result := HasAttribute(FileAttributeWriteThrough);
+//  Result := HasAttribute(FileAttributeReadOnly);
 End;
-
-
-Procedure TAdvFile.SetAttributeWriteThrough(Const Value: Boolean);
-Begin
-  AttributeToggle(FileAttributeWriteThrough, Value);
-End;
-
-
-Function TAdvFile.GetAttributeReadOnly: Boolean;
-Begin
-  Result := HasAttribute(FileAttributeReadOnly);
-End;
-
-
-Procedure TAdvFile.SetAttributeReadOnly(Const Value: Boolean);
-Begin
-  AttributeToggle(FileAttributeReadOnly, Value);
-End;
-
 
 End. // AdvFiles //

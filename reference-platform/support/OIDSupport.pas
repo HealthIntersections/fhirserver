@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  RegExpr;
+  RegularExpressions;
 
 Const
   OID_LOINC = '2.16.840.1.113883.6.1';
@@ -52,20 +52,14 @@ Uses
 
 Function isOid(oid : String) : Boolean;
 var
-  regex : TRegExpr;
+  regex : TRegEx;
 Begin
   if (pos('.', oid) = 0) or (length(oid) > 64) then
     result := false
   else
   begin
-    regex := TRegExpr.Create;
-    try
-      regex.Expression := OID_REGEX;
-      regex.Compile;
-      result := regex.Exec(oid);
-    finally
-      regex.Free;
-    end;
+    regex := TRegEx.Create(OID_REGEX, [roCompiled]);
+    result := regex.IsMatch(oid);
   end;
 End;
 

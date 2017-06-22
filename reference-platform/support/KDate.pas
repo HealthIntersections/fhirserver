@@ -194,9 +194,6 @@ function ReadPeriod(AStr : String):TDateTime;
 *)
 implementation
 
-uses
-  Windows;
-
 {--- various string utilities. Of course, these should be from other units, but there is distribution issues ---}
 (*
 function Substring(AStr: String; ABeginPos, AEndPos: Integer): String;

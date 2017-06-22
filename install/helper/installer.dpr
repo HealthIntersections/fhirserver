@@ -4,13 +4,13 @@ uses
   FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   WIndows,
   SysUtils,
+  RegularExpressions,
   OdbcCore in '..\..\Libraries\db\OdbcCore.pas',
   OdbcExtras in '..\..\Libraries\db\OdbcExtras.pas',
   OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas',
   IdSoapDebug in '..\..\Libraries\indysoap\IdSoapDebug.pas',
   IdSoapResourceStrings in '..\..\Libraries\indysoap\IdSoapResourceStrings.pas',
   OdbcImplementation in '..\..\Libraries\db\OdbcImplementation.pas',
-  RegExpr in '..\..\reference-platform\support\RegExpr.pas',
   EncodeSupport in '..\..\reference-platform\Support\EncodeSupport.pas',
   StringSupport in '..\..\reference-platform\Support\StringSupport.pas',
   MathSupport in '..\..\reference-platform\Support\MathSupport.pas',
@@ -111,7 +111,7 @@ end;
 function GetString(name : AnsiString):AnsiString;
 var
   odbc: TOEAdministrator;
-  rex : TRegExpr;
+  rex : TRegex;
   i : integer;
 Begin
   if name = 'dbcfg-drivers' then
@@ -120,15 +120,10 @@ Begin
     odbc := TOEAdministrator.create(THenv.create);
     try
       odbc.DataSourceType := dsSystem;
-      rex := TRegExpr.create;
-      try
-        rex.Expression := '^.*sql.*$';
-        for i := 0 to odbc.Drivers.count -1  do
-          if rex.exec(lowercase(odbc.Drivers[i])) then
-            CommaAdd(result, ansiString(odbc.Drivers[i]));
-      finally
-        rex.Free;
-      end;
+      rex := TRegEx.create('^.*sql.*$', [roCompiled]);
+      for i := 0 to odbc.Drivers.count -1  do
+        if rex.isMatch(lowercase(odbc.Drivers[i])) then
+          CommaAdd(result, ansiString(odbc.Drivers[i]));
 //      showmessage('drivers = '+result);
     finally
       odbc.free;

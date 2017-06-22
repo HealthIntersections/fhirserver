@@ -31,8 +31,6 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,
-  ActiveX,
   GuidSupport,
   StringSupport,
   MathSupport,

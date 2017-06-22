@@ -97,7 +97,37 @@
         <DCCReference Include="..\reference-platform\support\AdvExceptions.pas"/>
         <DCCReference Include="..\reference-platform\support\StringSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MathSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\BytesSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\OSXUtils.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStreams.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvObjectLists.pas"/>
+        <DCCReference Include="..\reference-platform\support\MemorySupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvItems.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvFilers.pas"/>
+        <DCCReference Include="..\reference-platform\support\DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ErrorSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\SystemSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ThreadSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ColourSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\CurrencySupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\DecimalSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvCollections.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvPersistents.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvIterators.pas"/>
+        <DCCReference Include="..\reference-platform\support\HL7V2DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\TextUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvGenerics.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvFiles.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\KDate.pas"/>
+        <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FileSupport.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

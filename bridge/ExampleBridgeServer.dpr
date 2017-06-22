@@ -108,7 +108,6 @@ uses
   OIDSupport in '..\reference-platform\support\OIDSupport.pas',
   ParseMap in '..\reference-platform\support\ParseMap.pas',
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
-  RegExpr in '..\reference-platform\support\RegExpr.pas',
   ServiceController in '..\reference-platform\support\ServiceController.pas',
   ShellSupport in '..\reference-platform\support\ShellSupport.pas',
   StringSupport in '..\reference-platform\support\StringSupport.pas',
@@ -214,7 +213,8 @@ uses
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
-  MXML in '..\reference-platform\support\MXML.pas';
+  MXML in '..\reference-platform\support\MXML.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 var
   gsrv : TExampleFhirServer;

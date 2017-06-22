@@ -34,20 +34,19 @@ Uses
   StringSupport,
   AdvPersistentLists,
   Advobjects,
-  regexpr,
+  RegularExpressions,
   UCum;
 
 Type
   TUcumSearch = class (TAdvObject)
   Private
-    FRegex : TRegExpr;
+    FRegex : TRegEx;
     Procedure searchUnits(model : TUcumModel; concepts : TUcumConceptList; units : TAdvPersistentList; text : String; isRegex : boolean);
     function matchesUnit(model : TUcumModel; oUnit : TUcumUnit; text : String; isRegex : boolean) : boolean;
     Procedure searchPrefixes(concepts : TUcumConceptList; prefixes : TUcumPrefixList; text : String; isRegex : boolean);
     function matchesConcept(concept : TUcumConcept; text : String; isRegex : boolean) : boolean;
     function matches(value : String; text : String; isRegex : boolean) : boolean;
   Public
-    Destructor Destroy; Override;
     Function doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TUcumConceptList;
   End;
 
@@ -59,9 +58,7 @@ Function TUcumSearch.doSearch(model : TUcumModel; aKind : TConceptKind; text : S
 begin
   if isRegex Then
   begin
-    FRegex := TRegExpr.Create;
-    FRegex.Expression := text;
-    FRegex.compile;
+    FRegex := TRegEx.Create(text, [roCompiled]);
   End;
 
 
@@ -120,15 +117,9 @@ end;
 function TUcumSearch.matches(value : String; text : String; isRegex : boolean) : boolean;
 begin
   if isRegex then
-    result := FRegex.Exec(text)
+    result := FRegex.IsMatch(text)
   else
     result := StringExistsInsensitive(value, text);
 End;
-
-destructor TUcumSearch.Destroy;
-begin
-  FRegex.Free;
-  inherited;
-end;
 
 End.

@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  AdvObjects, AdvStringMatches, AdvExceptions, StringSupport, AdvPersistents, AdvPersistentLists, MathSupport, AdvFactories,
+  AdvObjects, AdvStringMatches, AdvExceptions, StringSupport, AdvPersistents, AdvPersistentLists, MathSupport,
   AdvStringLists, AdvObjectLists;
 
 

@@ -91,7 +91,6 @@ uses
   AfsVolumes in '..\reference-platform\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\reference-platform\Support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\reference-platform\Support\AdvObjectMatches.pas',
-  RegExpr in '..\reference-platform\Support\RegExpr.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
   AdvIntegerObjectMatches in '..\reference-platform\Support\AdvIntegerObjectMatches.pas',
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
@@ -257,7 +256,8 @@ uses
   StructureMapTests in '..\reference-platform\r4\tests\StructureMapTests.pas',
   FHIRUtilitiesTests in '..\reference-platform\r4\tests\FHIRUtilitiesTests.pas',
   MXML in '..\reference-platform\support\MXML.pas',
-  ParserSupport in '..\reference-platform\support\ParserSupport.pas';
+  ParserSupport in '..\reference-platform\support\ParserSupport.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 var
   runner : ITestRunner;

@@ -108,7 +108,6 @@ uses
   AdvNames in '..\reference-platform\Support\AdvNames.pas',
   AdvStringMatches in '..\reference-platform\Support\AdvStringMatches.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
-  RegExpr in '..\reference-platform\Support\RegExpr.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
   ParseMap in '..\reference-platform\Support\ParseMap.pas',
   JWT in '..\reference-platform\Support\JWT.pas',

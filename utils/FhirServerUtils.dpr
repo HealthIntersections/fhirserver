@@ -89,7 +89,6 @@ uses
   AfsVolumes in '..\reference-platform\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\reference-platform\Support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\reference-platform\Support\AdvObjectMatches.pas',
-  RegExpr in '..\reference-platform\Support\RegExpr.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
   AdvIntegerObjectMatches in '..\reference-platform\Support\AdvIntegerObjectMatches.pas',
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
@@ -237,7 +236,8 @@ uses
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
-  MXML in '..\reference-platform\support\MXML.pas';
+  MXML in '..\reference-platform\support\MXML.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 {$R *.res}
 

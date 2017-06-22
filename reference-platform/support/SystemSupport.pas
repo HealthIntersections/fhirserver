@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  SysUtils, Windows, ShellApi, ShlObj,
+  SysUtils, {$IFDEF OSX} OSXUtils, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
   DateSupport, StringSupport, ThreadSupport;
 
 Function SystemTemp : String;
@@ -42,11 +42,17 @@ Function ProgData : String;
 Implementation
 
 Var
+{$IFNDEF OSX}
   gOSInfo : TOSVersionInfo;
   gSystemInfo : TSystemInfo;
+{$ENDIF}
   gNTDLLDebugBreakPointIssuePatched : Boolean = False;
 
 Function SystemTemp : String;
+  {$IFDEF OSX}
+Begin
+  result := '/tmp'; {todo-osx}
+  {$ELSE}
 Var
   iLength : Integer;
 Begin
@@ -61,18 +67,34 @@ Begin
   End;
 
   SetLength(Result, iLength);
+  {$ENDIF}
 End;
 
 Function SystemIsWindowsNT : Boolean;
 Begin
+  {$IFDEF OSX}
+  Result := false;
+  {$ELSE}
   Result := gOSInfo.dwPlatformId >= VER_PLATFORM_WIN32_NT;
+  {$ENDIF}
 End;
 
 Function SystemIsWindows7 : Boolean;
 Begin
+  {$IFDEF OSX}
+  Result := false;
+  {$ELSE}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6) And (gOSInfo.dwMinorVersion >= 1);
+  {$ENDIF}
 End;
 
+{$IFDEF OSX}
+Function ProgData : String;
+Begin
+  Result := '/Applications';
+End;
+
+{$ELSE}
 Function ShellFolder(iID : Integer) : String;
 Var
   sPath : Array[0..2048] Of Char;
@@ -93,10 +115,12 @@ Function ProgData : String;
 Begin
   Result := ShellFolder(CSIDL_COMMON_APPDATA);
 End;
+{$ENDIF}
 
 
 
 Initialization
+  {$IFNDEF OSX}
   FillChar(gSystemInfo, SizeOf(gSystemInfo), 0);
   FillChar(gOSInfo, SizeOf(gOSInfo), 0);
 
@@ -113,4 +137,5 @@ Initialization
     SetThreadLocale(GetUserDefaultLCID);
     SysUtils.GetFormatSettings;
   End;
+  {$ENDIF}
 End. // SystemSupport //

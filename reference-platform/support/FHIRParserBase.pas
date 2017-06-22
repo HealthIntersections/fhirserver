@@ -368,7 +368,7 @@ Type
 Implementation
 
 uses
-  RegExpr,
+  RegularExpressions,
   FHIRParser,
   FHIRUtilities,
   FHIRProfileUtilities,

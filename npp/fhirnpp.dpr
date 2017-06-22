@@ -19,7 +19,6 @@ uses
   FHIRToolboxForm in 'FHIRToolboxForm.pas' {FHIRToolbox},
   FHIRPluginSettings in 'FHIRPluginSettings.pas',
   FHIRValidator in '..\reference-platform\dstu3\FHIRValidator.pas',
-  RegExpr in '..\reference-platform\Support\RegExpr.pas',
   StringSupport in '..\reference-platform\Support\StringSupport.pas',
   MathSupport in '..\reference-platform\Support\MathSupport.pas',
   AdvObjects in '..\reference-platform\Support\AdvObjects.pas',
@@ -158,7 +157,8 @@ uses
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   MXML in '..\reference-platform\support\MXML.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
-  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas';
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 {$R *.res}
 

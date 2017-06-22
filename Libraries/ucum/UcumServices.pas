@@ -281,7 +281,7 @@ Type
 Implementation
 
 Uses
- UcumSearch;
+  UcumSearch;
 
 { TUcumServices }
 
@@ -539,7 +539,7 @@ var
 begin
   if FileExists(sFilename) Then
   begin
-    FileSetReadOnlyAttribute(sFilename, False);
+    FileSetReadOnly(sFilename, False);
     DeleteFile(sFilename);
   End;
   oFile := TAdvFile.Create;

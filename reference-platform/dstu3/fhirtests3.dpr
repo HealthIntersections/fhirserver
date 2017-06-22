@@ -98,7 +98,6 @@ uses
   AfsResourceVolumes in '..\support\AfsResourceVolumes.pas',
   AfsVolumes in '..\support\AfsVolumes.pas',
   AfsStreamManagers in '..\support\AfsStreamManagers.pas',
-  RegExpr in '..\support\RegExpr.pas',
   OIDSupport in '..\support\OIDSupport.pas',
   MimeMessage in '..\support\MimeMessage.pas',
   kCritSct in '..\support\kCritSct.pas',

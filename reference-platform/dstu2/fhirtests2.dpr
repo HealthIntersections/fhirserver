@@ -99,7 +99,6 @@ uses
   AfsVolumes in '..\support\AfsVolumes.pas',
   AfsStreamManagers in '..\support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\support\AdvObjectMatches.pas',
-  RegExpr in '..\support\RegExpr.pas',
   FHIRUtilities in 'FHIRUtilities.pas',
   AdvStringObjectMatches in '..\support\AdvStringObjectMatches.pas',
   JWT in '..\support\JWT.pas',

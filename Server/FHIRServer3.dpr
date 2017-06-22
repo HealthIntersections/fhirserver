@@ -171,7 +171,6 @@ uses
   AfsVolumes in '..\reference-platform\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\reference-platform\Support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\reference-platform\Support\AdvObjectMatches.pas',
-  RegExpr in '..\reference-platform\Support\RegExpr.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
   AdvIntegerObjectMatches in '..\reference-platform\Support\AdvIntegerObjectMatches.pas',
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',

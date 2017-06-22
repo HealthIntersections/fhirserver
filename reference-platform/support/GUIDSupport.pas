@@ -49,27 +49,31 @@ Implementation
 
 
 Uses
+  {$IFDEF OSX}
+  OSXUtils,
+  {$ELSE}
   ActiveX,
   ComObj,
+  {$ENDIF}
   SysUtils,
   DecimalSupport;
 
 
 Function CreateGUID : TGUID;
 Begin
-  CoCreateGuid(Result);
+  SysUtils.CreateGuid(Result);
 End;
 
 
 Function GUIDToString(Const aGUID : TGUID) : String;
 Begin
-  Result := ComObj.GUIDToString(aGUID);
+  Result := SysUtils.GUIDToString(aGuid);
 End;
 
 
 Function StringToGUID(Const sGUID: String) : TGUID;
 Begin
-  Result := ComObj.StringToGUID(sGUID);
+  Result := SysUtils.StringToGUID(sGUID);
 End;
 
 

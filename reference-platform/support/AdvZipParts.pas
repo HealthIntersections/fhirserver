@@ -32,7 +32,7 @@ Interface
 
 Uses
   AdvNameBuffers,
-  AdvFactories, AdvBuffers;
+  AdvBuffers;
 
 
 Type
@@ -130,7 +130,5 @@ Begin
   Result := TAdvZipPart(Inherited GetByName(sName));
 End;
 
-Initialization
-  Factory.RegisterClassArray([TAdvZipPart, TAdvZipPartList]);
 End. // AdvZipParts //
 

@@ -6757,8 +6757,10 @@ begin
         if req.coding = nil then
           raise Exception.Create('Unable to find a code to lookup (need coding or system/code)');
         lang := request.lang;
+        {$IFNDEF FHIR2}
         if req.displayLanguage <> '' then
           lang := req.displayLanguage;
+        {$ENDIF}
 
         response.Body := '';
         response.LastModifiedDate := now;
