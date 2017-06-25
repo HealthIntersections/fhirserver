@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, Contnrs, IniFiles,
   AdvObjects, StringSupport, AdvExceptions, AdvGenerics,
-  KDate, KDBDialects, KDBManager, KSettings,
+  DateSupport, KDBDialects, KDBManager, KSettings,
   OdbcExtras, OdbcHeaders, OdbcCore;
 
 type
@@ -237,7 +237,7 @@ begin
   Result := FStmt.ColNull[ACol];
 end;
 
-function TOdbcConnection.GetColTimestampV(ACol: Word): KDate.TTimestamp;
+function TOdbcConnection.GetColTimestampV(ACol: Word): DateSupport.TTimestamp;
 begin
   Result := FStmt.ColTimestamp[ACol];
 end;
@@ -493,7 +493,7 @@ type
 
   TOdbcBoundDate = class (TOdbcBoundParam)
   private
-    FDate: KDate.TTimeStamp
+    FDate: DateSupport.TTimeStamp
   end;
 
   TOdbcBoundDouble = class (TOdbcBoundParam)
@@ -546,7 +546,7 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: KDate.TTimeStamp);
+procedure TOdbcConnection.BindTimeStampV(AParamName: String; AParamValue: DateSupport.TTimeStamp);
 var
   LBind: TOdbcBoundDate;
 begin

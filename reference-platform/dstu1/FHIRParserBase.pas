@@ -39,7 +39,7 @@ uses
   SysUtils, Classes, ActiveX, MsXml, FHIRBase, FHIRResources, FHIRTypes, Math,
   BytesSupport, FHIRConstants, EncdDecd,
   FHIRSupport,
-  MsXmlParser, AdvBuffers, AdvStringLists, StringSupport, DecimalSupport, EncodeSupport, DateAndTime,
+  MsXmlParser, AdvBuffers, AdvStringLists, StringSupport, DecimalSupport, EncodeSupport, 
   XmlBuilder, AdvXmlBuilders, TextUtilities, FHIRTags,
   DateSupport, MXmlBuilder, AdvJSON, AdvVCLStreams, FHIRAtomFeed, AdvStringStreams, AdvStringBuilders, FHIRLang;
 
@@ -79,7 +79,7 @@ Type
     procedure SeTFhirResource(const Value: TFhirResource);
   protected
     procedure checkDateFormat(s : string);
-    Function toTDateAndTime(s : String) : TDateAndTime;
+    Function toTDateTimeEx(s : String) : TDateTimeEx;
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
   public
     Constructor Create(lang : String); Virtual;
@@ -187,7 +187,7 @@ Type
     procedure ComposeXHtmlNode(s : TAdvStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer); overload;
     function ResourceMediaType: String; virtual;
 
-    function asString(value : TDateAndTime):String;
+    function asString(value : TDateTimeEx):String;
   public
     Constructor Create(lang : String); Virtual;
     Procedure Compose(stream : TStream; statedType, id, ver : String; oResource : TFhirResource; isPretty : Boolean; links : TFHIRAtomLinkList); Overload; Virtual; Abstract;
@@ -554,9 +554,9 @@ begin
   if jsn.has('title') then
     base.title:= jsn['title'];
   if jsn.has('updated') then
-    base.updated := TDateAndTime.CreateXml(jsn['updated']);
+    base.updated := TDateTimeEx.fromXml(jsn['updated']);
   if jsn.has('published') then
-    base.published_ := TDateAndTime.CreateXml(jsn['published']);
+    base.published_ := TDateTimeEx.fromXml(jsn['published']);
   if jsn.has('id') then
     base.id:= jsn['id'];
   if jsn.has('link') then
@@ -586,7 +586,7 @@ begin
     parseAtomBase(e, jsn);
     if jsn.has('deleted') then
     begin
-      e.updated := TDateAndTime.CreateXml(jsn['deleted']);
+      e.updated := TDateTimeEx.fromXml(jsn['deleted']);
       e.deleted := true;
     end;
     if jsn.has('content') then
@@ -1352,9 +1352,9 @@ begin
   else if (child.baseName = 'id') then
     base.id := child.text
   else if (child.baseName = 'updated') then
-    base.updated := TDateAndTime.createXml(child.text)
+    base.updated := TDateTimeEx.fromXml(child.text)
   else if (child.baseName = 'published') then
-    base.published_ := TDateAndTime.createXml(child.text)
+    base.published_ := TDateTimeEx.fromXml(child.text)
   else if (child.baseName = 'category') then
   begin
     cat := TFHIRAtomCategory.create;
@@ -1403,7 +1403,7 @@ begin
     TakeCommentsStart(result);
     result.deleted := true;
     result.id := TMsXmlParser.GetAttribute(element, 'ref');
-    result.updated := TDateAndTime.createXml(TMsXmlParser.GetAttribute(element, 'when'));
+    result.updated := TDateTimeEx.fromXml(TMsXmlParser.GetAttribute(element, 'when'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -2546,15 +2546,15 @@ begin
   end;
 end;
 
-function TFHIRParser.toTDateAndTime(s: String): TDateAndTime;
+function TFHIRParser.toTDateTimeEx(s: String): TDateTimeEx;
 begin
   if s = '' then
     result := nil
   else
-    result := TDateAndTime.createXml(s);
+    result := TDateTimeEx.fromXml(s);
 end;
 
-function TFHIRComposer.asString(value: TDateAndTime): String;
+function TFHIRComposer.asString(value: TDateTimeEx): String;
 begin
   if value = nil then
     result := ''

@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TIETFLanguageCodeConcept = class (TCodeSystemProviderContext)

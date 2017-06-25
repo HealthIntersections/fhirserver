@@ -43,7 +43,7 @@ Interface
 
 Uses
   Classes,
-  DateAndTime,
+  
   SysUtils,
   AdvExceptions,
   AdvObjects,
@@ -234,7 +234,7 @@ type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
   public
     constructor create(value : String); Overload;
-    constructor create(value : TDateAndTime); Overload;
+    constructor create(value : TDateTimeEx); Overload;
     constructor create(value : boolean); Overload;
     property value : string read FValue write FValue;
   end;
@@ -1077,7 +1077,7 @@ begin
   self.value := lowercase(BooleanToString(value));
 end;
 
-constructor TFHIRObjectText.create(value: TDateAndTime);
+constructor TFHIRObjectText.create(value: TDateTimeEx);
 begin
   Create;
   self.value := value.AsXML;

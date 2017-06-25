@@ -34,7 +34,6 @@ Uses
   Sysutils,
   DecimalSupport,
   AdvObjects,
-  AdvFactories,
   AdvNames,
   AdvStringLists,
   AdvPersistentLists;
@@ -565,7 +564,4 @@ begin
   result := TUcumProperty(Inherited Link);
 end;
 
-Initialization
-  Factory.RegisterClassArray([TUcumConcept,TUcumPrefix,TUcumPrefixList,TUcumUnit,TUcumBaseUnit,TUcumBaseUnitList,
-      TUcumValue,TUcumDefinedUnit,TUcumDefinedUnitList,TUcumModel, TUcumProperty, TUcumPropertyList]);
 End.

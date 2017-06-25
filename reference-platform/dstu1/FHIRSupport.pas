@@ -44,7 +44,7 @@ uses
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport,
   AdvObjects, AdvBuffers, AdvStringLists,
-  DateAndTime, JWT, SCIMObjects,
+   JWT, SCIMObjects,
   FHirBase, FHirResources, FHIRConstants, FHIRComponents, FHIRTypes, FHIRAtomFeed;
 
 Const
@@ -1088,9 +1088,9 @@ begin
   result := TFhirPeriod.create;
   try
     if low <> '' then
-      result.start := TDateAndTime.createXml(low);
+      result.start := TDateTimeEx.fromXml(low);
     if high <> '' then
-      result.end_ := TDateAndTime.createXml(high);
+      result.end_ := TDateTimeEx.fromXml(high);
     result.link;
   finally
     result.free;

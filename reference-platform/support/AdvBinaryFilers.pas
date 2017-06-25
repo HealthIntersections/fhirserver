@@ -129,9 +129,6 @@ Type
 Implementation
 
 
-Uses
-  AdvFactories;
-
 
 Constructor TAdvBinaryFiler.Create;
 Begin
@@ -401,8 +398,6 @@ Begin
   If Assigned(TClass(Value)) Then
   Begin
     Assert(Not Assigned(aClass) Or Invariants('DefineClass', TClass(Value), aClass, 'Value'));
-
-    Assert(CheckCondition(Factory.IsRegisteredClass(TClass(Value)), 'DefineClass', 'Only class types that are registered with the factory can be defined.'));
 
     DefineValue(atClass);
 

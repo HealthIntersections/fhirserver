@@ -43,7 +43,7 @@ todo:
 uses
   SysUtils, Classes, StringSupport, GuidSupport,
   AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, DateAndTime,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, DateSupport,
   TerminologyServices, LoincServices, SnomedServices, UcumServices,
   TerminologyServer, TerminologyServerStore;
 
@@ -181,7 +181,7 @@ begin
     FOffset := offset;
 
     result.expansion := TFhirValueSetExpansion.create;
-    result.expansion.timestamp := NowUTC;
+    result.expansion.timestamp := TDateTimeEx.makeUTC;
     result.expansion.identifier := NewGuidURN;
 
     if source.id <> '' then

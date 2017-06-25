@@ -293,7 +293,7 @@ public class DelphiGenerator {
           pt = "TFhirResource";
         if (pt.equals("TFhir*"))
           pt = "TFhirType";
-        boolean obj = !Utilities.existsInList(pt, "String", "Boolean", "Integer");
+        boolean obj = !Utilities.existsInList(pt, "String", "Boolean", "Integer", "TDateTimeEx");
         boolean list = (p.getMax().equals("*") || Integer.parseInt(p.getMax()) > 1);
         names.append(", '"+p.getName()+"'");
 
@@ -353,6 +353,8 @@ public class DelphiGenerator {
           if (!pt.equals("Boolean")) {
             if (pt.equals("String"))
               params.append("    if (F"+Utilities.capitalize(pn)+" <> '') then\r\n");
+            else if (pt.equals("TDateTimeEx"))
+              params.append("    if (F"+Utilities.capitalize(pn)+".notNull) then\r\n");
             else
               params.append("    if (F"+Utilities.capitalize(pn)+" <> nil) then\r\n");
           }
@@ -378,6 +380,9 @@ public class DelphiGenerator {
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
               screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params.getVar('"+p.getName()+"'), false);\r\n");
+            } else if (pt.equals("TDateTimeEx")) {
+              create.append("  F"+Utilities.capitalize(pn)+" := TDateTimeEx.fromXml(params.str['"+p.getName()+"']);\r\n");
+              screate.append("  F"+Utilities.capitalize(pn)+" := TDateTimeEx.fromXml(params.getVar('"+p.getName()+"'));\r\n");
             } else {
               create.append("  F"+Utilities.capitalize(pn)+" := params.str['"+p.getName()+"'];\r\n");
               screate.append("  F"+Utilities.capitalize(pn)+" := params.getVar('"+p.getName()+"');\r\n");
@@ -523,7 +528,7 @@ public class DelphiGenerator {
     defCodeRes.start();
     defCodeRes.name = "FHIRResources";
     defCodeRes.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
-    defCodeRes.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateAndTime, DateAndTime_Wrapper");
+    defCodeRes.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateSupport, DateSupport_Wrapper");
     defCodeRes.uses.add("SysUtils");
     defCodeRes.uses.add("Classes");
     defCodeRes.uses.add("StringSupport");
@@ -531,7 +536,7 @@ public class DelphiGenerator {
     defCodeRes.uses.add("AdvBuffers");
     if (generics)
       defCodeRes.uses.add("AdvGenerics");
-    defCodeRes.uses.add("DateAndTime");
+    defCodeRes.uses.add("DateSupport");
     defCodeRes.uses.add("FHIRBase");
     defCodeRes.uses.add("FHIRTypes");
     defCodeRes.usesImpl.add("FHIRUtilities");
@@ -549,7 +554,7 @@ public class DelphiGenerator {
     defCodeConstGen.uses.add("AdvBuffers");
     if (generics)
       defCodeConstGen.uses.add("AdvGenerics");
-    defCodeConstGen.uses.add("DateAndTime");
+    defCodeConstGen.uses.add("DateSupport");
     defCodeConstGen.uses.add("FHIRBase");
     defCodeConstGen.uses.add("FHIRTypes");
     defCodeConstGen.uses.add("FHIRResources");
@@ -563,7 +568,7 @@ public class DelphiGenerator {
     defIndexer.uses.add("StringSupport");
     defIndexer.uses.add("DecimalSupport");
     defIndexer.uses.add("AdvBuffers");
-    defIndexer.uses.add("DateAndTime");
+    defIndexer.uses.add("DateSupport");
     defIndexer.uses.add("FHIRIndexManagers");
     defIndexer.uses.add("FHIRResources");
     defIndexer.uses.add("FHIRTypes");
@@ -589,7 +594,7 @@ public class DelphiGenerator {
     if (generics)
       defCodeType.uses.add("AdvGenerics");
     defCodeType.uses.add("EncdDecd");
-    defCodeType.uses.add("DateAndTime");
+    defCodeType.uses.add("DateSupport");
     defCodeType.uses.add("FHIRBase");
     defCodeType.usesImpl.add("FHIRUtilities");
 
@@ -606,7 +611,7 @@ public class DelphiGenerator {
     defCodeOp.start();
     defCodeOp.name = "FHIROperations";
     defCodeOp.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
-    defCodeOp.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateAndTime, DateAndTime_Wrapper");
+    defCodeOp.precomments.add("!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateSupport, DateSupport_Wrapper");
     defCodeOp.uses.add("SysUtils");
     defCodeOp.uses.add("Classes");
     defCodeOp.uses.add("Generics.Collections");
@@ -615,7 +620,7 @@ public class DelphiGenerator {
     defCodeOp.uses.add("AdvBuffers");
     defCodeOp.uses.add("AdvGenerics");
     defCodeOp.uses.add("ParseMap");
-    defCodeOp.uses.add("DateAndTime");
+    defCodeOp.uses.add("DateSupport");
     defCodeOp.uses.add("FHIRBase");
     defCodeOp.uses.add("FHIRTypes");
     defCodeOp.uses.add("FHIRResources");
@@ -1925,7 +1930,10 @@ public class DelphiGenerator {
     b.append("  else\r\n");
     b.append("  begin\r\n");
     b.append("    o := "+tn+"(other);\r\n");
-    b.append("    result := o.value = value;\r\n");
+    if (Utilities.existsInList(t.getCode(), "date", "dateTime", "instant"))
+      b.append("    result := o.value.equal(value);\r\n");
+    else
+      b.append("    result := o.value = value;\r\n");
     b.append("  end;\r\n");
     b.append("end;\r\n\r\n");
   }
@@ -2335,9 +2343,9 @@ public class DelphiGenerator {
       } else if (tn.equals("Boolean")) {
         parse = "StringToBoolean(child.text)";
         propV = "LCBooleanToString("+propV+ ")";
-      } else if (tn.equals("TDateAndTime")) {
-        parse = "TDateAndTime.createXml(child.text)";
-        propV = propV+".AsXML";
+      } else if (tn.equals("TDateTimeEx")) {
+        parse = "TDateTimeEx.fromXml(child.text)";
+        propV = propV+".toXML";
       } else if (tn.equals("TFhirXHtmlNode"))
         parse = "ParseXhtml(child)";
       else
@@ -2351,7 +2359,7 @@ public class DelphiGenerator {
       parseJ1 = "ParseIntegerValue(path+'."+e.getName()+"')";
     } else if (tn.equals("Boolean") || tn.equals("TFhirBoolean")) {
       parseJ1 = "ParseBooleanValue(path+'."+e.getName()+"')";
-    } else if (tn.equals("TDateAndTime") || tn.equals("TFhirDateTime") || tn.equals("TFhirDate") || tn.equals("TFhirInstant")) {
+    } else if (tn.equals("TDateTimeEx") || tn.equals("TFhirDateTime") || tn.equals("TFhirDate") || tn.equals("TFhirInstant")) {
       parseJ1 = "ParseDateAndTimeValue(path+'."+e.getName()+"')";
     } else if (tn.equals("TFhirXHtmlNode")) {
       parseJ1 = "ParseXhtml(path+'."+e.getName()+"')";
@@ -2369,8 +2377,8 @@ public class DelphiGenerator {
         srls = "IntegerToString(#)";
       } else if (tn.equals("Boolean")) {
         srls = "LCBooleanToString(#)";
-      } else if (tn.equals("TDateAndTime")) {
-        srls = "#.AsXml";
+      } else if (tn.equals("TDateTimeEx")) {
+        srls = "#.ToXml";
       };
     }
 
@@ -2554,9 +2562,9 @@ public class DelphiGenerator {
             insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, as"+tn.substring(5)+"(propValue)){2}\r\n");
             reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2}\r\n");
           } else {
-            setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(propValue as "+tn+"){2}\r\n");
-            insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, propValue as "+tn+"){2}\r\n");
-            reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2}\r\n");
+            setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".add(propValue as "+tn+"){2a}\r\n");
+            insprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".insertItem(index, propValue as "+tn+"){2a}\r\n");
+            reorderprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+".move(source, destination){2a}\r\n");
           }
           if (!e.typeCode().equals("Resource")) 
             makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+getTitle(s)+".new(){2}\r\n");
@@ -2727,6 +2735,9 @@ public class DelphiGenerator {
             } else if (sn.equals("Boolean")) {
               impl.append("Function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := false\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
               impl.append("Procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    F"+getTitle(s)+" := "+tn+".create;\r\n  F"+getTitle(s)+".value := value\r\nend;\r\n\r\n");
+            } else if (sn.equals("TDateTimeEx")) {
+              impl.append("Function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := TDateTimeEx.makeNull\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
+              impl.append("Procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    F"+getTitle(s)+" := "+tn+".create;\r\n  F"+getTitle(s)+".value := value\r\nend;\r\n\r\n");
             } else {
               impl.append("Function "+cn+".Get"+getTitle(s)+"ST : "+sn+";\r\nbegin\r\n  if F"+getTitle(s)+" = nil then\r\n    result := nil\r\n  else\r\n    result := F"+getTitle(s)+".value;\r\nend;\r\n\r\n");
               impl.append("Procedure "+cn+".Set"+getTitle(s)+"ST(value : "+sn+");\r\nbegin\r\n  if value <> nil then\r\n  begin\r\n    if F"+getTitle(s)+" = nil then\r\n      F"+getTitle(s)+" := "+tn+".create;\r\n    F"+getTitle(s)+".value := value\r\n  end\r\n  else if F"+getTitle(s)+" <> nil then\r\n    F"+getTitle(s)+".value := nil;\r\nend;\r\n\r\n");
@@ -2747,7 +2758,7 @@ public class DelphiGenerator {
               setprops.append("  else if (propName.startsWith('"+e.getName().substring(0, e.getName().length()-3)+"')) then "+propV.substring(1)+" := propValue as "+tn+"{5}\r\n");
           } else {
             delprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := nil\r\n");
-            if (!typeIsPrimitive(e.typeCode())) {
+            if (!typeIsPrimitive(e.typeCode()) && !e.typeCode().equals("xhtml")) {
               replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{4}\r\n");          
               if (simpleTypes.containsKey(tn))
                 setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := propValue as "+tn+"{4a}\r\n");
@@ -2760,7 +2771,7 @@ public class DelphiGenerator {
                 }
               }
             } else {
-              if (!simpleTypes.containsKey(tn)) {
+              if (!simpleTypes.containsKey(tn) && !tn.equals("TFhirXHtmlNode")) {
                 setprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+" := propValue as "+tn+"{5b}\r\n");          
                 replprops.append("  else if (propName = '"+e.getName()+"') then "+propV.substring(1)+"Element := new as "+tn+"{5b}\r\n");          
                 makeprops.append("  else if (propName = '"+e.getName()+"') then result := "+tn+".create() {5b}\r\n");
@@ -3263,7 +3274,7 @@ public class DelphiGenerator {
   private boolean typeIsSimple(String tn) {
     if (tn == null)
       return false;
-    return tn.equals("String") || tn.equals("Integer")  || tn.equals("unsignedInt")  || tn.equals("positiveInt") || tn.equals("Boolean") || tn.equals("TDateAndTime") || tn.equals("TFhirXHtmlNode")  || enumNames.contains(tn);
+    return tn.equals("String") || tn.equals("Integer")  || tn.equals("unsignedInt")  || tn.equals("positiveInt") || tn.equals("Boolean") || tn.equals("TDateTimeEx") || tn.equals("TFhirXHtmlNode")  || enumNames.contains(tn);
   }
 
   private String getTitle(String name) {
@@ -3336,7 +3347,7 @@ public class DelphiGenerator {
     String tn = Utilities.capitalize(t.getCode());
     String pn = "String";
     if (tn.equals("Date") || tn.equals("DateTime") || tn.equals("Instant"))
-      pn = "TDateAndTime";
+      pn = "TDateTimeEx";
     if (tn.equals("Boolean"))
       pn = "Boolean";
     if (tn.equals("Base64Binary"))
@@ -3419,16 +3430,17 @@ public class DelphiGenerator {
       impl2.append("Constructor TFhir"+tn+".Create(value : "+pn+");\r\n");
       impl2.append("begin\r\n");
       impl2.append("  Create;\r\n");
-      impl2.append("  FValue := value;\r\n");
       if (tn.equals("Date"))
-        impl2.append("  value.Precision := dtpDay;\r\n");
+        impl2.append("  FValue := value.fixPrecision(dtpDay);\r\n");
+      else
+        impl2.append("  FValue := value;\r\n");
       impl2.append("end;\r\n\r\n");
     }
 
     impl2.append("Destructor TFhir"+tn+".Destroy;\r\n");
     impl2.append("begin\r\n");
     if (!derived) {
-      if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes"))
+      if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes") && !pn.equals("TDateTimeEx"))
         impl2.append("  FValue.free;\r\n");
     }
     impl2.append("  inherited;\r\n");
@@ -3451,6 +3463,8 @@ public class DelphiGenerator {
       impl2.append("  if (bPrimitiveValues) then\r\n");
       if (pn.equals("Boolean"))
         impl2.append("    oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, LCBooleanToString(FValue)));\r\n");
+      else if (pn.equals("TDateTimeEx"))
+        impl2.append("    if (FValue.notNull) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.toString));\r\n");
       else if (!pn.equals("String") && !pn.equals("TBytes"))
         impl2.append("    if (FValue <> nil) then\r\n      oList.add(TFHIRProperty.create(self, 'value', '"+breakConstant(t.getCode())+"', false, nil, FValue.toString));\r\n");
       else 
@@ -3461,7 +3475,7 @@ public class DelphiGenerator {
       impl2.append("procedure TFhir"+tn+".Assign(oSource : TAdvObject);\r\n");
       impl2.append("begin\r\n");
       impl2.append("  inherited;\r\n");
-      if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes")) 
+      if (!Utilities.existsInList(pn, "String", "Boolean", "TBytes", "TDateTimeEx")) 
         impl2.append("  FValue := TFhir"+tn+"(oSource).Value.Link;\r\n");
       else 
         impl2.append("  FValue := TFhir"+tn+"(oSource).Value;\r\n");
@@ -3474,10 +3488,10 @@ public class DelphiGenerator {
       else if (pn.equals("TBytes"))
         impl2.append("  if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(@FValue[0], length(FValue)));\r\n");
       else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") ) {
-        impl2.append("  if (FValue = nil) then\r\n");
+        impl2.append("  if (FValue.null) then\r\n");
         impl2.append("    result := ''\r\n");
         impl2.append("  else\r\n");
-        impl2.append("    result := FValue.asXml;\r\n");
+        impl2.append("    result := FValue.toXml;\r\n");
       } else if (!pn.equals("String")) {
         impl2.append("  if (FValue = nil) then\r\n");
         impl2.append("    result := ''\r\n");
@@ -3494,7 +3508,7 @@ public class DelphiGenerator {
       else if (pn.equals("TBytes"))
         impl2.append("  result := inherited isEmpty and (length(FValue) = 0);\r\n");
       else if (tn.equals("DateTime") || tn.equals("Date") || tn.equals("Instant") ) 
-        impl2.append("  result := inherited isEmpty and (FValue <> nil);\r\n");
+        impl2.append("  result := inherited isEmpty and (FValue.null);\r\n");
       else
         impl2.append("  result := inherited isEmpty and (FValue = '');\r\n");
       impl2.append("end;\r\n\r\n");
@@ -3511,7 +3525,7 @@ public class DelphiGenerator {
     if (!derived) {
       impl2.append("procedure TFhir"+tn+".setValue(value : "+pn+");\r\n");
       impl2.append("begin\r\n");
-      if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes")) 
+      if (!pn.equals("String") && !pn.equals("Boolean") && !pn.equals("TBytes") && !pn.equals("TDateTimeEx")) 
         impl2.append("  FValue.free;\r\n");
       impl2.append("  FValue := value;\r\n");
       impl2.append("end;\r\n\r\n");
@@ -3702,6 +3716,8 @@ public class DelphiGenerator {
       prsrImpl.append("begin\r\n");
       if (pn.equals("Boolean"))
         prsrImpl.append("  if (value = nil) then\r\n");
+      else if (pn.equals("TDateTimeEx"))
+        prsrImpl.append("  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then\r\n");
       else if (!pn.equals("String"))
         prsrImpl.append("  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then\r\n");
       else 
@@ -3710,6 +3726,9 @@ public class DelphiGenerator {
       prsrImpl.append("  composeElementAttributes(xml, value);\r\n");
       if (pn.equals("Boolean")) {
         prsrImpl.append("  attribute(xml, 'value', LCBooleanToString(value.value));\r\n");
+      } else if (pn.equals("TDateTimeEx")) {
+        prsrImpl.append("  if (value.value.notNull) then\r\n");
+        prsrImpl.append("    attribute(xml, 'value', asString(value.value));\r\n");
       } else if (!pn.equals("String")) {
         prsrImpl.append("  if (value.value <> nil) then\r\n");
         prsrImpl.append("    attribute(xml, 'value', asString(value.value));\r\n");
@@ -3726,6 +3745,8 @@ public class DelphiGenerator {
       prsrImpl.append("begin\r\n");
       if (pn.equals("Boolean"))
         prsrImpl.append("  if (value = nil) then\r\n");
+      else if (pn.equals("TDateTimeEx"))
+        prsrImpl.append("  if (value = nil) or (value.value.null) then\r\n");
       else if (!pn.equals("String"))
         prsrImpl.append("  if (value = nil) or (value.value = nil) then\r\n");
       else 
@@ -4275,9 +4296,8 @@ public class DelphiGenerator {
     prsrCode.uses.add("ActiveX");
     prsrCode.uses.add("StringSupport");
     prsrCode.uses.add("DateSupport");
-    prsrCode.uses.add("MicroXml");
+    prsrCode.uses.add("MXml");
     prsrCode.uses.add("FHIRParserBase");
-    prsrCode.uses.add("DateAndTime");
     prsrCode.uses.add("RDFUtilities");
     prsrCode.uses.add("FHIRBase");
     prsrCode.uses.add("FHIRResources");

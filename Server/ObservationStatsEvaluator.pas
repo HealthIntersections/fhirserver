@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Generics.Defaults, Generics.Collections,
   AdvObjects, AdvGenerics, StringSupport,
-  KDBManager, KDate, DateAndTime,
+  KDBManager, DateSupport,
   FHIRTypes, FHIRResources, FHIROperations;
 
 type
@@ -215,8 +215,8 @@ begin
     obs.subject := TFhirReference.Create;
     obs.subject.reference := subject;
     obs.effective := TFhirPeriod.Create;
-    TFhirPeriod(obs.effective).start := TDateAndTime.CreateUTC(start);
-    TFhirPeriod(obs.effective).end_ := TDateAndTime.CreateUTC(finish);
+    TFhirPeriod(obs.effective).start := TDateTimeEx.makeUTC(start);
+    TFhirPeriod(obs.effective).end_ := TDateTimeEx.makeUTC(finish);
     FAllData := TAdvList<TObservation>.create;
     FValidData := TAdvList<TObservation>.create;
     try

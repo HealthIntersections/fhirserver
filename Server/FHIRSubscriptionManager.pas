@@ -45,7 +45,7 @@ interface
 
 uses
   SysUtils, Classes, DateSupport, StringSupport, GuidSupport, BytesSupport,
-  kCritSct, KDBManager, KDBDialects, KDate, ParseMap, DateAndTime,
+  kCritSct, KDBManager, KDBDialects,  ParseMap, 
   AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
@@ -1142,7 +1142,7 @@ begin
                 entry.response.status := inttostr(response.HTTPCode);
                 entry.response.location := response.Location;
                 entry.response.etag := 'W/'+response.versionId;
-                entry.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+                entry.response.lastModified := TDateTimeEx.makeUTC(response.lastModifiedDate);
                 entry.resource := response.resource.link;
               end;
             except

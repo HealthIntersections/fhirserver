@@ -36,7 +36,7 @@ Uses
   AdvObjects, AdvObjectLists,
   RegularExpressions, YuStemmer,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
-  TerminologyServices, DateAndTime;
+  TerminologyServices, DateSupport;
 
 {axes
 
@@ -1757,7 +1757,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Value Set - all LOINC codes';
       result.description := 'All LOINC codes';
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://loinc.org';
@@ -1777,7 +1777,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text, lang);
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://loinc.org';
@@ -1800,7 +1800,7 @@ begin
       result.version := Version(nil);
       result.name := 'LOINC Answer List '+id.Substring(20);
       result.description := 'LOINC Answer list for '+Desc.GetEntry(text, lang);
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://loinc.org';

@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, Generics.Collections, System.Character,
   ParseMap,
   StringSupport, EncodeSupport,
-  AdvObjects, DateAndTime, DecimalSupport, AdvGenerics,
+  AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   KDBManager,
   FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
@@ -102,7 +102,7 @@ type
     procedure processNumberValue(value : TSmartDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TArray<String>): TArray<String>;
-    procedure ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+    procedure ProcessDateParam(date: TDateTimeEx; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessStringParam(var Result: string; name, modifier, value: string; key: Integer; var pfx: string; var sfx: string; types : TArray<String>);
     procedure ProcessUriParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
@@ -505,7 +505,7 @@ begin
   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(v) + sfx + ')';
 end;
 
-procedure TSearchProcessor.ProcessDateParam(date: TDateAndTime; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
+procedure TSearchProcessor.ProcessDateParam(date: TDateTimeEx; var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
 var
   qop: TQuantityOperation;
 begin
@@ -522,22 +522,17 @@ begin
   else if findPrefix(value, 'eb') then qop := qopEndsBefore
   else if findPrefix(value, 'ap') then qop := qopApproximate;
   CheckDateFormat(value);
-  date := TDateAndTime.CreateXML(value);
-  try
-    case qop of
-      qopEqual:        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value >= ''' + date.AsUTCDateTimeMinHL7 + ''' and Value2 <= ''' + date.AsUTCDateTimeMaxHL7 + ''')';
-      qopNotEqual:     result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (Value < ''' + date.AsUTCDateTimeMinHL7 + ''' or Value2 > ''' + date.AsUTCDateTimeMaxHL7 + '''))';
-      qopLess:         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-      qopLessEqual:    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.AsUTCDateTimeMaxHL7 + ''')';
-      qopGreater:      result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMaxHL7 + ''')';
-      qopGreaterEqual: result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-      qopStartsAfter:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-      qopEndsBefore:   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-      qopApproximate:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.AsUTCDateTimeMaxHL7 + ''' and Value2 >= ''' + date.AsUTCDateTimeMinHL7 + ''')';
-    end;
-  finally
-    date.free;
-    date := nil;
+  date := TDateTimeEx.fromXml(value);
+  case qop of
+    qopEqual:        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value >= ''' + date.Min.UTC.toHL7 + ''' and Value2 <= ''' + date.Max.UTC.toHL7 + ''')';
+    qopNotEqual:     result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (Value < ''' + date.Min.UTC.toHL7 + ''' or Value2 > ''' + date.Max.UTC.toHL7 + '''))';
+    qopLess:         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.Min.UTC.toHL7 + ''')';
+    qopLessEqual:    result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.Max.UTC.toHL7 + ''')';
+    qopGreater:      result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.Max.UTC.toHL7 + ''')';
+    qopGreaterEqual: result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.Min.UTC.toHL7 + ''')';
+    qopStartsAfter:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.Min.UTC.toHL7 + ''')';
+    qopEndsBefore:   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value2 >= ''' + date.Min.UTC.toHL7 + ''')';
+    qopApproximate:  result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value <= ''' + date.Max.UTC.toHL7 + ''' and Value2 >= ''' + date.Min.UTC.toHL7 + ''')';
   end;
 end;
 
@@ -671,32 +666,28 @@ end;
 
 function TSearchProcessor.buildParameterDate(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
 var
-  date: TDateAndTime;
+  date: TDateTimeEx;
 begin
   begin
-    date := TDateAndTime.CreateXML(value);
-    try
-      case op of
-        fscoEQ:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + date.AsUTCDateTimeMinHL7 + ''' and ' + n + '.Value2 = ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
-        fscoNE:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value <> ''' + date.AsUTCDateTimeMinHL7 + ''' or ' + n + '.Value2 <> ''' + date.AsUTCDateTimeMaxHL7 + ''')' + j + ')';
-        fscoGT:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
-        fscoLT:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.AsUTCDateTimeMinHL7 + '''' + j + ')';
-        fscoGE:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.AsUTCDateTimeMinHL7 + '''' + j + ')';
-        fscoLE:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.AsUTCDateTimeMaxHL7 + '''' + j + ')';
-        fscoPO:
-          result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value >= ''' + date.AsUTCDateTimeMaxHL7 + ''' or ' + n + '.Value2 <= ''' + date.AsUTCDateTimeMinHL7 + ''')' + j + ')';
-      else
-        // fscoSS, fscoSB, fscoIN, fscoRE, fscoCO, fscoSW, fscoEW
-        raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of date');
-      end;
-    finally
-      date.free;
+    date := TDateTimeEx.fromXml(value);
+    case op of
+      fscoEQ:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value = ''' + date.Min.UTC.toHL7 + ''' and ' + n + '.Value2 = ''' + date.Max.UTC.toHL7 + '''' + j + ')';
+      fscoNE:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value <> ''' + date.Min.UTC.toHL7 + ''' or ' + n + '.Value2 <> ''' + date.Max.UTC.toHL7 + ''')' + j + ')';
+      fscoGT:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.Max.UTC.toHL7 + '''' + j + ')';
+      fscoLT:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.Min.UTC.toHL7 + '''' + j + ')';
+      fscoGE:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 >= ''' + date.Min.UTC.toHL7 + '''' + j + ')';
+      fscoLE:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + date.Max.UTC.toHL7 + '''' + j + ')';
+      fscoPO:
+        result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value >= ''' + date.Max.UTC.toHL7 + ''' or ' + n + '.Value2 <= ''' + date.Min.UTC.toHL7 + ''')' + j + ')';
+    else
+      // fscoSS, fscoSB, fscoIN, fscoRE, fscoCO, fscoSW, fscoEW
+      raise Exception.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of date');
     end;
   end;
 end;
@@ -941,12 +932,11 @@ var
   f : Boolean;
   ts : TStringList;
   pfx, sfx : String;
-  date : TDateAndTime;
+  date : TDateTimeEx;
   a : String;
   type_ : TFhirSearchParamTypeEnum;
 begin
   a := '';
-  date := nil;
   result := '';
   op := '';
   bHandled := false;

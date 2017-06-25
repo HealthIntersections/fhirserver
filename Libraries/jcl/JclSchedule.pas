@@ -51,7 +51,7 @@ uses
 
 type
   TScheduleRecurringKind = (srkOneShot, srkDaily, srkWeekly, srkMonthly, srkYearly);
-  TScheduleEndKind = (sekNone, sekDate, sekTriggerCount, sekDayCount);
+  TScheduleEndKind = (sekNone, se sekTriggerCount, sekDayCount);
   TScheduleWeekDay = (swdMonday, swdTuesday, swdWednesday, swdThursday, swdFriday, swdSaturday,
     swdSunday);
   TScheduleWeekDays = set of TScheduleWeekDay;

@@ -45,7 +45,7 @@ uses
   FHIRBase,
   FHIRTypes,
   FHIRResources,
-  DateAndTime,
+  
   AdvMemories,
   AdvStringBuilders,
   AdvObjects,
@@ -282,10 +282,10 @@ type
     FauthorName: String;
     FLinks : TFHIRAtomLinkList;
     FCategories : TFHIRAtomCategoryList;
-    Fpublished_: TDateAndTime;
-    Fupdated: TDateAndTime;
-    procedure Setpublished_(const Value: TDateAndTime);
-    procedure Setupdated(const Value: TDateAndTime);
+    Fpublished_: TDateTimeEx;
+    Fupdated: TDateTimeEx;
+    procedure Setpublished_(const Value: TDateTimeEx);
+    procedure Setupdated(const Value: TDateTimeEx);
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -318,12 +318,12 @@ type
     {@member updated
       Last Updated for resource
     }
-    property updated : TDateAndTime read Fupdated write Setupdated;
+    property updated : TDateTimeEx read Fupdated write Setupdated;
 
     {@member published_
       Time resource sourced for aggregation (optional)
     }
-    property published_ : TDateAndTime read Fpublished_ write Setpublished_;
+    property published_ : TDateTimeEx read Fpublished_ write Setpublished_;
 
     {@member authorName
       Name of Human or Device that authored the resource
@@ -483,7 +483,7 @@ type
       a resource is required.
     }
     {!script nolink}
-    Function addEntry(title: String; updated : TDateAndTime; id, link : String; resource : TFhirResource) : TFHIRAtomEntry;
+    Function addEntry(title: String; updated : TDateTimeEx; id, link : String; resource : TFhirResource) : TFHIRAtomEntry;
   published
     {@member entries
       actual content of the atom feed
@@ -530,13 +530,13 @@ begin
   Fupdated := TFHIRAtomBase(oSource).Fupdated.Clone;
 end;
 
-procedure TFHIRAtomBase.Setpublished_(const Value: TDateAndTime);
+procedure TFHIRAtomBase.Setpublished_(const Value: TDateTimeEx);
 begin
   Fpublished_.free;
   Fpublished_ := Value;
 end;
 
-procedure TFHIRAtomBase.Setupdated(const Value: TDateAndTime);
+procedure TFHIRAtomBase.Setupdated(const Value: TDateTimeEx);
 begin
   Fupdated.free;
   Fupdated := Value;
@@ -611,7 +611,7 @@ end;
 
 { TFHIRAtomFeed }
 
-Function TFHIRAtomFeed.addEntry(title : String; updated : TDateAndTime; id, link : String; resource : TFhirResource) : TFHIRAtomEntry;
+Function TFHIRAtomFeed.addEntry(title : String; updated : TDateTimeEx; id, link : String; resource : TFhirResource) : TFHIRAtomEntry;
 begin
   result := TFHIRAtomEntry.create;
   try

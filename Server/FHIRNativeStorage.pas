@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport, kDate, DateAndTime, StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
+  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
@@ -688,7 +688,7 @@ type
     Destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
     procedure Initialise(ini: TFHIRServerIniFile);
-    procedure SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
+    procedure SaveResource(res: TFhirResource; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     function ProfilesAsOptionList: String; override;
@@ -715,7 +715,7 @@ type
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(r: TFhirResource); overload; override;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload; override;
+    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; override;
     procedure RunValidation; override;
 
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state : String); override;
@@ -803,6 +803,21 @@ begin
   {$ENDIF}
 end;
 
+type
+  TDateTimeExWrapper = class (TAdvObject)
+  private
+    FValue : TDateTimeEx;
+  public
+    Constructor Create(value : TDateTimeEx);
+    property Value : TDateTimeEx read FValue;
+  end;
+
+
+Constructor TDateTimeExWrapper.Create(value : TDateTimeEx);
+begin
+  inherited Create;
+  FValue := value;
+end;
 
 procedure TFHIRNativeOperationEngine.DefineConformanceResources(base: String);
 
@@ -818,7 +833,7 @@ begin
       op := TFhirOperation(FOperations[i]).CreateDefinition(base);
       if (op <> nil) then
       begin
-        op.tag := NowLocal;
+        op.tag := TDateTimeExWrapper.create(TDateTimeEx.makeLocal);
         list.Add(op);
       end;
     end;
@@ -864,9 +879,9 @@ begin
       result.request.url := result.fullUrl;
       result.request.method := HttpVerbDELETE;
       result.response := TFhirBundleEntryResponse.Create;
-      result.response.lastModified := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
+      result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
       result.response.etag := FConnection.ColStringByName['VersionId'];
-      result.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.AsString+ '(UTC)';
+      result.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.toString+ '(UTC)';
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
         result.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
@@ -942,7 +957,7 @@ begin
     if (makeRequest) then
     begin
       result.response := TFhirBundleEntryResponse.Create;
-      result.response.lastModified := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
+      result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
       result.response.etag := FConnection.ColStringByName['VersionId'];
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
@@ -953,13 +968,13 @@ begin
       begin
         result.request.url := AppendForwardSlash(base)+type_+'/'+sId;
         result.request.method := HttpVerbPUT;
-        result.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.AsString+ '(UTC)';
+        result.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.ToString+ '(UTC)';
       end
       else
       begin
         result.request.method := HttpVerbPOST;
         result.request.url := AppendForwardSlash(base)+type_;
-        result.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.AsString+ '(UTC)';
+        result.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.ToString+ '(UTC)';
       end;
     end;
   end;
@@ -1056,11 +1071,11 @@ begin
     oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
     oConf.status := PublicationStatusActive;
     oConf.experimental := false;
-    oConf.date := TDateAndTime.CreateUTC(UniversalDateTime);
+    oConf.date := TDateTimeEx.makeUTC;
     oConf.software := TFhirCapabilityStatementSoftware.Create;
     oConf.software.name := 'Reference Server';
     oConf.software.version := SERVER_VERSION;
-    oConf.software.releaseDate := TDateAndTime.createXML(SERVER_RELEASE_DATE);
+    oConf.software.releaseDate := TDateTimeEx.fromXml(SERVER_RELEASE_DATE);
     if ServerContext.FormalURLPlainOpen <> '' then
     begin
       oConf.implementation_ := TFhirCapabilityStatementImplementation.Create;
@@ -1248,7 +1263,6 @@ var
   key : Integer;
   tags : TFHIRTagList;
   ok : boolean;
-  tnow : TDateAndTime;
   needSecure : boolean;
   list : TMatchingResourceList;
 begin
@@ -1300,112 +1314,107 @@ begin
     begin
       if request.resource.meta = nil then
         request.resource.meta := TFhirMeta.Create;
-      request.Resource.meta.lastUpdated := NowUTC;
+      request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
       request.Resource.meta.versionId := '1';
       updateProvenance(request.Provenance, request.ResourceName, sid, '1');
-      tnow := request.Resource.meta.lastUpdated.AsUTC;
+      checkNotRedacted(request.Resource.meta, 'Creating resource');
+      tags := TFHIRTagList.create;
       try
-        checkNotRedacted(request.Resource.meta, 'Creating resource');
-        tags := TFHIRTagList.create;
-        try
-          tags.readTags(request.resource.meta);
-          if (request.hasTestingTag) then
-            tags.forceTestingTag;
-          if not ok then
-            // nothing
-          else if (idState = idCheckNew) then
-          begin
-            sId := request.Id;
-            if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
-              not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
-                ok := false;
-          end
-          else if (idState = idMaybeNew) and (request.Id <> '') then
-          begin
-            sId := request.Id;
-            if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+        tags.readTags(request.resource.meta);
+        if (request.hasTestingTag) then
+          tags.forceTestingTag;
+        if not ok then
+          // nothing
+        else if (idState = idCheckNew) then
+        begin
+          sId := request.Id;
+          if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
+            not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
               ok := false;
-          end
-          else if (idState = idIsNew) then
-          begin
-            sid := request.id;
-            resourceKey := iAssignedKey;
-          end
-          else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
-             ok := false
+        end
+        else if (idState = idMaybeNew) and (request.Id <> '') then
+        begin
+          sId := request.Id;
+          if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+            ok := false;
+        end
+        else if (idState = idIsNew) then
+        begin
+          sid := request.id;
+          resourceKey := iAssignedKey;
+        end
+        else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
+           ok := false
 
-          else
-            request.resource.id := sId;
+        else
+          request.resource.id := sId;
 
-          if ok then
-            if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
-              ok := false;
+        if ok then
+          if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
+            ok := false;
 
-          if ok then
-          begin
+        if ok then
+        begin
 
 
-            checkProposedContent(request, request.Resource, tags);
-            result := sId;
-            request.id := sId;
-            key := FRepository.NextVersionKey;
-            for i := 0 to tags.count - 1 do
-              FRepository.RegisterTag(tags[i], FConnection);
+          checkProposedContent(request, request.Resource, tags);
+          result := sId;
+          request.id := sId;
+          key := FRepository.NextVersionKey;
+          for i := 0 to tags.count - 1 do
+            FRepository.RegisterTag(tags[i], FConnection);
 
-            FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
-                    'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
-            FConnection.prepare;
-            try
-              FConnection.BindInteger('k', key);
-              FConnection.BindInteger('rk', resourceKey);
-              FConnection.BindTimeStamp('sd', DateTimeToTS(tnow.GetDateTime));
-              FConnection.BindTimeStamp('td', DateTimeToTS(tnow.GetDateTime));
-              request.SubId := '1';
-              FConnection.BindString('v', '1');
-              FConnection.BindIntegerFromBoolean('sec', needSecure);
-              if request.Session <> nil then
-                FConnection.BindInteger('s', request.Session.Key)
-              else
-                FConnection.BindInteger('s', 0);
-              FConnection.BindInteger('f', 2);
-              FConnection.BindBlobFromBytes('tb', tags.json);
-              FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
-              FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-              FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
-              markRedacted(request.Resource.meta);
-              FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-              FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
-              unmarkRedacted(request.Resource.meta);
-              FConnection.Execute;
-              CommitTags(tags, key);
-            finally
-              FConnection.Terminate;
-            end;
-            FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
-            if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
-              FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
-
-            CreateIndexer;
-            CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
-            FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
-            if request.resourceEnum = frtPatient then
-              FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
-            response.HTTPCode := 201;
-            response.Message := 'Created';
-            response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
-            response.Resource := request.Resource.Link;
-            response.LastModifiedDate := now;
-
-            response.id := sId;
-            response.versionId := '1';
-            if request.Provenance <> nil then
-              SaveProvenance(request.Session, request.Provenance);
+          FConnection.sql := 'insert into Versions (ResourceVersionKey, ResourceKey, StatedDate, TransactionDate, VersionId, Format, Status, SessionKey, ForTesting, Secure, '+
+                  'Tags, XmlContent, XmlSummary, JsonContent, JsonSummary) values (:k, :rk, :sd, :td, :v, :f, 0, :s, :ft, :sec, :tb, :xc, :xs, :jc, :js)';
+          FConnection.prepare;
+          try
+            FConnection.BindInteger('k', key);
+            FConnection.BindInteger('rk', resourceKey);
+            FConnection.BindTimeStamp('sd', request.Resource.meta.lastUpdated.TimeStamp);
+            FConnection.BindTimeStamp('td', request.Resource.meta.lastUpdated.TimeStamp);
+            request.SubId := '1';
+            FConnection.BindString('v', '1');
+            FConnection.BindIntegerFromBoolean('sec', needSecure);
+            if request.Session <> nil then
+              FConnection.BindInteger('s', request.Session.Key)
+            else
+              FConnection.BindInteger('s', 0);
+            FConnection.BindInteger('f', 2);
+            FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
+            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
+            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+            markRedacted(request.Resource.meta);
+            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
+            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+            unmarkRedacted(request.Resource.meta);
+            FConnection.Execute;
+            CommitTags(tags, key);
+          finally
+            FConnection.Terminate;
           end;
-        finally
-          tags.free;
+          FConnection.ExecSQL('update Ids set MostRecent = '+inttostr(key)+', Deleted = 0 where ResourceKey = '+inttostr(resourceKey));
+          if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
+            FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
+
+          CreateIndexer;
+          CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.compartments);
+          FRepository.SeeResource(resourceKey, key, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
+          if request.resourceEnum = frtPatient then
+            FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
+          response.HTTPCode := 201;
+          response.Message := 'Created';
+          response.Location := request.baseUrl+request.ResourceName+'/'+sId+'/_history/1';
+          response.Resource := request.Resource.Link;
+          response.LastModifiedDate := now;
+
+          response.id := sId;
+          response.versionId := '1';
+          if request.Provenance <> nil then
+            SaveProvenance(request.Session, request.Provenance);
         end;
       finally
-        tnow.Free;
+        tags.free;
       end;
     end;
     if request.ResourceEnum <> frtAuditEvent then // else you never stop
@@ -1425,7 +1434,7 @@ procedure TFHIRNativeOperationEngine.ExecuteDelete(request: TFHIRRequest; respon
 var
   resourceKey : Integer;
   key, nvid, i : Integer;
-  tnow : TDateTime;
+  tnow : TDateTimeEx;
   tags : TFHIRTagList;
   list : TMatchingResourceList;
   ok : boolean;
@@ -1482,7 +1491,7 @@ begin
 
     if ok then
     begin
-      tnow := UniversalDateTime;
+      tnow := TDateTimeEx.makeUTC;
       key := FRepository.NextVersionKey;
       nvid := FConnection.CountSQL('Select Max(Cast(VersionId as '+DBIntType(FConnection.Owner.Platform)+')) from Versions where ResourceKey = '+IntToStr(resourceKey)) + 1;
 
@@ -1519,8 +1528,8 @@ begin
         try
           FConnection.BindInteger('k', key);
           FConnection.BindInteger('rk', resourceKey);
-          FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
-          FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
+          FConnection.BindTimeStamp('sd', tnow.TimeStamp);
+          FConnection.BindTimeStamp('td', tnow.TimeStamp);
           FConnection.BindString('v', inttostr(nvid));
           Request.SubId := inttostr(nvid);
           if request.Session = nil then
@@ -1766,18 +1775,18 @@ begin
     for i := 0 to request.Parameters.getItemCount - 1 do
       if request.Parameters.VarName(i) = '_since' then
       begin
-        since := DTReadDateTZ('yyyy-mm-ddThh:nn:ss.zzzzzz', request.Parameters.Value[request.Parameters.VarName(i)], false);
+        since := TDateTimeEx.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
         FConnection.SQL := FConnection.SQL + ' and StatedDate >= :since ';
         base := base +'_since='+request.Parameters.Value[request.Parameters.VarName(i)];
       end
       else if request.Parameters.VarName(i) = '_prior' then
       begin
-        prior := DTReadDateTZ('yyyy-mm-ddThh:nn:ss.zzzzzz', request.Parameters.Value[request.Parameters.VarName(i)], false);
+        prior := TDateTimeEx.fromXML(request.Parameters.Value[request.Parameters.VarName(i)]).DateTime;
         FConnection.SQL := FConnection.SQL + ' and StatedDate <= :prior ';
         base := base +'&_prior='+request.Parameters.Value[request.Parameters.VarName(i)];
       end;
     if (prior = MIN_DATE) then
-      base := base +'&_prior='+FormatDateTime('yyyy-mm-dd''T''hh:nn:ss''Z''', UniversalDateTime, FormatSettings);
+      base := base +'&_prior='+TDateTimeEx.makeUTC.toXML;
 
     FConnection.SQL := FConnection.SQL+' order by ResourceVersionKey DESC';
     sql := FConnection.SQL;
@@ -1877,7 +1886,7 @@ begin
         bundle.total := inttostr(total);
         bundle.Tags['sql'] := sql;
         bundle.meta := TFHIRMeta.create;
-        bundle.meta.lastUpdated := NowUTC;
+        bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
         bundle.link_List.AddRelRef('self', base+link);
 
         bundle.link_List.AddRelRef('self', base+link);
@@ -2413,7 +2422,7 @@ begin
         try
 //          bundle.base := request.baseUrl;
           bundle.meta := TFhirMeta.Create;
-          bundle.meta.lastUpdated := NowUTC;
+          bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
 
           summaryStatus := request.Summary;
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
@@ -2535,7 +2544,6 @@ var
   tags : TFHIRTagList;
   ok : boolean;
   needSecure : boolean;
-  tnow : TDateTime;
   list : TMatchingResourceList;
 begin
   CheckCreateNarrative(request);
@@ -2636,11 +2644,10 @@ begin
         tags.writeTags(request.resource.meta);
         if checkOkToStore(request, response, needSecure) then
         begin
-          request.Resource.meta.lastUpdated := NowUTC;
+          request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
           request.Resource.meta.versionId := inttostr(nvid);
           CheckNotRedacted(request.Resource.meta, 'Updating Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
-          tnow := request.Resource.meta.lastUpdated.AsUTCDateTime;
 
 
           checkProposedContent(request, request.Resource, tags);
@@ -2659,8 +2666,8 @@ begin
           try
             FConnection.BindInteger('k', key);
             FConnection.BindInteger('rk', resourceKey);
-            FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
-            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
+            FConnection.BindTimeStamp('td', request.Resource.meta.lastUpdated.TimeStamp);
+            FConnection.BindTimeStamp('sd', request.Resource.meta.lastUpdated.TimeStamp);
             FConnection.BindString('v', inttostr(nvid));
             FConnection.BindIntegerFromBoolean('sec', needSecure);
             request.SubId := inttostr(nvid);
@@ -2694,7 +2701,7 @@ begin
           response.versionId := inttostr(nvid);
           response.HTTPCode := 200;
           response.Message := 'OK';
-          response.lastModifiedDate := tnow;
+          response.lastModifiedDate := request.Resource.meta.lastUpdated.DateTime;
           response.Location := request.baseUrl+request.ResourceName+'/'+request.Id+'/_history/'+inttostr(nvid);
           if request.Provenance <> nil then
             SaveProvenance(request.Session, request.Provenance);
@@ -2722,7 +2729,6 @@ var
   tags : TFHIRTagList;
   ok : boolean;
   needSecure : boolean;
-  tnow : TDateTime;
   list : TMatchingResourceList;
   parser : TFHIRParser;
   json, json2 : TJsonObject;
@@ -2731,6 +2737,7 @@ var
 begin
   result := false;
   json := nil;
+  xml := nil;
   nvid := 0;
   key := 0;
   try
@@ -2869,12 +2876,10 @@ begin
           LoadTags(tags, ResourceKey);
           tags.writeTags(request.resource.meta);
           // don't need to recheck the approval on the tags, they must already have been loaded before the earlier check
-          request.resource.meta.lastUpdated := NowUTC;
+          request.resource.meta.lastUpdated := TDateTimeEx.makeUTC;
           request.resource.meta.versionId := inttostr(nvid);
           CheckNotRedacted(request.resource.meta, 'Patching Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
-          tnow := request.resource.meta.lastUpdated.AsUTCDateTime;
-
           checkProposedContent(request, request.resource, tags);
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
@@ -2886,8 +2891,8 @@ begin
           try
             FConnection.BindInteger('k', key);
             FConnection.BindInteger('rk', resourceKey);
-            FConnection.BindTimeStamp('td', DateTimeToTS(tnow));
-            FConnection.BindTimeStamp('sd', DateTimeToTS(tnow));
+            FConnection.BindTimeStamp('td', request.Resource.meta.lastUpdated.TimeStamp);
+            FConnection.BindTimeStamp('sd', request.Resource.meta.lastUpdated.TimeStamp);
             FConnection.BindString('v', inttostr(nvid));
             FConnection.BindIntegerFromBoolean('sec', needSecure);
             request.SubId := inttostr(nvid);
@@ -2924,7 +2929,7 @@ begin
         end;
         response.HTTPCode := 200;
         response.Message := 'OK';
-        response.lastModifiedDate := tnow;
+        response.lastModifiedDate := request.Resource.meta.lastUpdated.DateTime;
         response.Location := request.baseUrl+request.ResourceName+'/'+request.Id+'/_history/'+inttostr(nvid);
         if request.Provenance <> nil then
           SaveProvenance(request.Session, request.Provenance);
@@ -4293,7 +4298,7 @@ begin
     ne.response.status := inttostr(response.HTTPCode);
     ne.response.location := response.Location;
     ne.response.etag := 'W/'+response.versionId;
-    ne.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+    ne.response.lastModified := TDateTimeEx.makeUTC(response.lastModifiedDate);
   finally
     context.Free;
   end;
@@ -4465,8 +4470,8 @@ begin
           url := request.preAnalyse(src.request.url);
           request.analyse(CODES_TFhirHttpVerbEnum[src.request.method], url, dummy, nil);
           request.IfNoneMatch := src.request.ifNoneMatch;
-          if src.request.ifModifiedSince <> nil then
-            request.IfModifiedSince := src.request.ifModifiedSince.AsUTCDateTime;
+          if src.request.ifModifiedSince.notNull then
+            request.IfModifiedSince := src.request.ifModifiedSince.UTC.DateTime;
           request.IfMatch := src.request.ifMatch;
           request.IfNoneExist := src.request.ifNoneExist;
           request.resource := src.resource.link;
@@ -4492,7 +4497,7 @@ begin
           dest.response.status := inttostr(response.HTTPCode);
           dest.response.location := response.Location;
           dest.response.etag := 'W/'+response.versionId;
-          dest.response.lastModified := TDateAndTime.CreateUTC(response.lastModifiedDate);
+          dest.response.lastModified := TDateTimeEx.makeUTC(response.lastModifiedDate);
           dest.resource := response.resource.link;
         except
           on e : ERestfulException do
@@ -5501,8 +5506,8 @@ begin
       se.event.outcome := AuditEventOutcome4
     else
       se.event.outcome := AuditEventOutcome8; // no way we are going down...
-    se.event.dateTime := NowUTC;
-    se.Tag := se.event.dateTime.Link;
+    se.event.dateTime := TDateTimeEx.makeUTC;
+    se.Tag := TDateTimeExWrapper.Create(se.event.dateTime);
 
     se.source := TFhirAuditEventSource.create;
     se.source.site := ServerContext.OwnerName;
@@ -5601,7 +5606,7 @@ begin
           end;
 
           if TFhirResource(list[i]).Tag <> nil then
-            request.lastModifiedDate := TDateAndTime(TFhirResource(list[i]).Tag).GetDateTime;
+            request.lastModifiedDate := TDateTimeExWrapper(TFhirResource(list[i]).Tag).Value.DateTime;
           request.Session := nil;
           Execute(context, request, response);
         end;
@@ -5839,7 +5844,7 @@ end;
 //  result := TFhirMessageHeader.create;
 //  try
 //    result.id := GUIDToString(CreateGUID);
-//    result.timestamp := NowUTC;
+//    result.timestamp := TDateTimeEx.makeUTC;
 //    result.event := incoming.event.Clone;
 //    result.response := TFhirMessageHeaderResponse.create;
 //    result.response.identifier := NewGuidId;
@@ -5914,7 +5919,7 @@ var
   i : integer;
   svc : TFhirRemittanceService;
   entry : TFHIRBundleEntry;
-  utc : TDateAndTime;
+  utc : TDateTimeEx;
   context : TFHIRValidatorContext;
 begin
   context := ServerContext.Validator.AcquireContext;
@@ -5933,7 +5938,7 @@ begin
       end;
       id := baseURL+'/remittance/'+MessageCreateResource(context, request, rem);
       outgoing.dataList.add(FFactory.makeReference(id));
-      utc := NowUTC;
+      utc := TDateTimeEx.makeUTC;
       try
         entry := outbundle.addEntry('remittance', utc, id, id, rem);
       finally
@@ -5982,9 +5987,9 @@ begin
 //    entry.title := GetFhirMessage('NAME_RESOURCE', lang)+' '+sId+' '+GetFhirMessage('NAME_VERSION', lang)+' '+FConnection.ColStringByName['VersionId']+' ('+GetFhirMessage('NAME_DELETED', lang)+')';
 //    entry.deleted := true;
 //    entry.link_List['self'] := base+lowercase(sType)+'/'+sId+'/_history/'+FConnection.ColStringByName['VersionId'];
-//    entry.updated := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
+//    entry.updated := TDateTimeEx.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
 //    entry.resource.id := base+sId;
-//    entry.published_ := NowUTC;
+//    entry.published_ := TDateTimeEx.makeUTC;
 //    entry.authorName := FConnection.ColStringByName['Name'];
 //    entry.categories.decodeJson(FConnection.ColBlobByName['Tags']);
 //    bundle.entryList.add(entry.Link);
@@ -6000,7 +6005,7 @@ begin
     entry.deleted.type_ := sType;
     entry.deleted.resourceId := sId;
     entry.deleted.versionId := FConnection.ColStringByName['VersionId'];
-    entry.deleted.instant := TDateAndTime.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
+    entry.deleted.instant := TDateTimeEx.CreateUTC(TSToDateTime(FConnection.ColTimeStampByName['StatedDate']));
     bundle.entryList.add(entry.Link);
     result := entry;
   finally
@@ -6235,7 +6240,7 @@ begin
   try
     result.id := 'fso-'+name;
     result.meta := TFhirMeta.Create;
-    result.meta.lastUpdated := TDateAndTime.CreateXML(FHIR_GENERATED_DATE);
+    result.meta.lastUpdated := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
     result.meta.versionId := SERVER_VERSION;
     result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
     result.version := FHIR_GENERATED_VERSION;
@@ -6250,7 +6255,7 @@ begin
     result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
     result.status := PublicationStatusDraft;
     result.experimental := false;
-    result.date := TDateAndTime.CreateXML(FHIR_GENERATED_DATE);
+    result.date := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
     result.kind := OperationKindOperation;
     result.code := name;
     result.base := TFhirReference.Create;
@@ -7088,17 +7093,17 @@ begin
           raise Exception.Create('no code or coding found');
         if (req.duration <> '') then
         begin
-          ose.start := UniversalDateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
-          ose.finish := UniversalDateTime;
+          ose.start := TDateTimeEx.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
+          ose.finish := TDateTimeEx.makeUTC.DateTime;
         end
         else if (req.period <> nil) then
         begin
-          if (req.period.start = nil) then
+          if (req.period.start.null) then
             raise Exception.Create('Period.start is required');
-          ose.start := req.period.start.AsUTCDateTime;
-          if (req.period.end_ = nil) then
+          ose.start := req.period.start.UTC.DateTime;
+          if (req.period.end_.null) then
             raise Exception.Create('Period.end is required');
-          ose.finish := req.period.end_.AsUTCDateTime;
+          ose.finish := req.period.end_.UTC.DateTime;
         end
         else
           raise Exception.Create('duration or period is required');
@@ -7599,7 +7604,7 @@ begin
           bundle.entryList[0].fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
 
           bundle.meta := TFhirMeta.Create;
-          bundle.meta.lastUpdated := NowUTC;
+          bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
           bundle.id := NewGuidURN;
           response.HTTPCode := 200;
           response.Message := 'OK';
@@ -7741,7 +7746,7 @@ begin
           try
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
             bundle.meta := TFhirMeta.Create;
-            bundle.meta.lastUpdated := NowUTC;
+            bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
 //            bundle.base := manager.ServerContext.FormalURLPlain;
             {$IFNDEF FHIR2}
             bundle.identifier := TFhirIdentifier.Create;
@@ -8703,7 +8708,7 @@ begin
             map.version := v;
             map.status := PublicationStatusActive;
             map.experimental := true; // for now
-            map.date := NowUTC;
+            map.date := TDateTimeEx.makeUTC;
             map.name := 'Closure Table '+n+' initialized';
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -8728,7 +8733,7 @@ begin
               map.version := inttostr(cm.version);
               map.status := PublicationStatusActive;
               map.experimental := true; // for now
-              map.date := NowUTC;
+              map.date := TDateTimeEx.makeUTC;
               map.name := 'Updates for Closure Table '+n;
               if (v <> '') then
               begin
@@ -9397,7 +9402,7 @@ begin
     request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.Name;
     request.Session.TestScript.status := PublicationStatusActive;
     request.Session.TestScript.publisher := manager.ServerContext.OwnerName;
-    request.Session.TestScript.date := NowLocal;
+    request.Session.TestScript.date := TDateTimeEx.makeLocal;
     response.HTTPCode := 200;
     response.Resource := request.Session.TestScript.Link;
   end;
@@ -10120,7 +10125,7 @@ begin
     conn.SQL := 'Update Sessions set closed = :d where SessionKey = ' +
       inttostr(key);
     conn.Prepare;
-    conn.BindTimeStamp('d', DateTimeToTS(UniversalDateTime));
+    conn.BindTimeStamp('d', DateTimeToTS(TDateTimeEx.makeUTC.DateTime));
     conn.Execute;
     conn.terminate;
     conn.Release;
@@ -10206,7 +10211,7 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.RegisterConsentRecord(session: TFhirSession);
-{$IFNDEF FHIR2}
+{$IFDEF FHIR4}
 var
   pc: TFhirConsent;
 begin
@@ -10220,10 +10225,48 @@ begin
         system := 'http://hl7.org/fhir/consentcategorycodes';
         code := 'smart-on-fhir';
       end;
-      pc.dateTime := NowUTC;
+      pc.dateTime := TDateTimeEx.makeUTC;
+//      pc.period := TFHIRPeriod.Create;
+//      pc.period.start := pc.dateTime.Link;
+//      pc.period.end_ := TDateTimeEx.CreateUTC(session.expires);
+      pc.patient := TFHIRReference.Create;
+      pc.patient.reference := 'Patient/'+session.PatientList[0];
+      // todo: do we have a reference for the consentor?
+      // todo: do we have an identity for the organization?
+  //    for
+  //
+  //    with pc.except_List.Append do
+  //    begin
+  //      type_ := ConsentExceptTypePermit;
+  //      action := TFHIRCodeableConcept.Create;
+  //      action.codingList.add(TFHIRCoding.Create('http://hl7.org/fhir/consentaction', 'read')));
+  //    end;
+  //  finally
+  //
+  //  end;
+    finally
+      pc.Free;
+    end;
+  end;
+{$ELSE}
+{$IFDEF FHIR3}
+var
+  pc: TFhirConsent;
+begin
+  if session.PatientList.Count = 1 then
+  begin
+    pc := TFhirConsent.Create;
+    try
+      pc.status := ConsentStateCodesActive;
+      with pc.categoryList.Append.codingList.append do
+      begin
+        system := 'http://hl7.org/fhir/consentcategorycodes';
+        code := 'smart-on-fhir';
+      end;
+      pc.dateTime := TDateTimeEx.makeUTC;
       pc.period := TFHIRPeriod.Create;
-      pc.period.start := pc.dateTime.Link;
-      pc.period.end_ := TDateAndTime.CreateUTC(session.expires);
+      pc.period.start := pc.dateTime;
+      pc.period.end_ := TDateTimeEx.makeUTC(session.expires);
       pc.patient := TFHIRReference.Create;
       pc.patient.reference := 'Patient/'+session.PatientList[0];
       // todo: do we have a reference for the consentor?
@@ -10250,10 +10293,10 @@ var
 begin
   ct := TFhirContract.Create;
   try
-    ct.issued := NowUTC;
+    ct.issued := TDateTimeEx.makeUTC;
     ct.applies := TFHIRPeriod.Create;
-    ct.applies.start := ct.issued.Link;
-    ct.applies.end_ := TDateAndTime.CreateUTC(session.expires);
+    ct.applies.start := ct.issued;
+    ct.applies.end_ := TDateTimeEx.makeUTC(session.expires);
     // need to figure out who this is...   ct.subjectList.Append.reference := '
     ct.type_ := TFhirCodeableConcept.Create;
     with ct.type_.codingList.append do
@@ -10271,10 +10314,8 @@ begin
     with ct.actorList.append do
     begin
       roleList.append.text := 'Server Host';
-      {$IFNDEF FHIR2}
       entity := TFhirReference.Create;
       entity.reference := 'Device/this-server';
-      {$ENDIF}
     end;
     for s in session.scopes.Split([' ']) do
       with ct.actionList.append.codingList.append do
@@ -10286,6 +10327,7 @@ begin
   finally
     ct.free;
   end;
+{$ENDIF}
 {$ENDIF}
 end;
 
@@ -10309,7 +10351,7 @@ begin
     C.Display := 'Login';
     se.event.action := AuditEventActionE;
     se.event.outcome := AuditEventOutcome0;
-    se.event.dateTime := NowUTC;
+    se.event.dateTime := TDateTimeEx.makeUTC;
     se.source := TFhirAuditEventSource.Create;
     se.source.site := ServerContext.OwnerName;
     se.source.identifier := TFhirIdentifier.Create;
@@ -10621,7 +10663,7 @@ begin
   key := 0;
   list := nil;
   claim := nil;
-  d := UniversalDateTime;
+  d := TDateTimeEx.makeUTC.DateTime;
   ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
   ServerContext.SessionManager.Sweep;
   FLock.Lock('sweep2');
@@ -10666,7 +10708,7 @@ begin
         raise;
       end;
     end;
-    FNextSearchSweep := d + 10 * MINUTE_LENGTH;
+    FNextSearchSweep := d + 10 * DATETIME_MINUTE_ONE;
   end;
 
   ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping - Closing';
@@ -10798,7 +10840,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.SaveResource(res: TFhirResource; dateTime: TDateAndTime; origin : TFHIRRequestOrigin);
+procedure TFHIRNativeStorageService.SaveResource(res: TFhirResource; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -10808,7 +10850,7 @@ begin
     request.ResourceName := res.fhirType;
     request.CommandType := fcmdCreate;
     request.resource := res.Link;
-    request.lastModifiedDate := dateTime.AsUTCDateTime;
+    request.lastModifiedDate := dateTime.UTC.DateTime;
     request.session := nil;
     response := TFHIRResponse.Create;
     try
@@ -10856,21 +10898,21 @@ begin
             begin
               if obs.effective is TFHIRDateTime then
               begin
-                dt := (obs.effective as TFHIRDateTime).value.AsUTCDateTime;
-                dtMin := (obs.effective as TFHIRDateTime).value.AsUTCDateTimeMin;
-                dtMax := (obs.effective as TFHIRDateTime).value.AsUTCDateTimeMax;
+                dt := (obs.effective as TFHIRDateTime).value.UTC.DateTime;
+                dtMin := (obs.effective as TFHIRDateTime).value.Min.UTC.DateTime;
+                dtMax := (obs.effective as TFHIRDateTime).value.Max.UTC.DateTime;
               end
               else
               begin
                 dt := 0;
-                if (obs.effective as TFHIRPeriod).start = nil then
+                if (obs.effective as TFHIRPeriod).start.null then
                   dtMin := 0
                 else
-                  dtMin := (obs.effective as TFHIRPeriod).start.AsUTCDateTimeMin;
-                if (obs.effective as TFHIRPeriod).end_ = nil then
+                  dtMin := (obs.effective as TFHIRPeriod).start.Min.UTC.DateTime;
+                if (obs.effective as TFHIRPeriod).end_.null then
                   dtMax := MAXSQLDATE
                 else
-                  dtMax := (obs.effective as TFHIRPeriod).end_.AsUTCDateTimeMax;
+                  dtMax := (obs.effective as TFHIRPeriod).end_.Max.UTC.DateTime;
               end;
               if (obs.value <> nil) then
                 ProcessObservationValue(conn, rk, subj, concept, 0, dt, dtMin, dtMax, obs.value)
@@ -11081,7 +11123,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeStorageService.QueueResource(r: TFhirResource; dateTime: TDateAndTime);
+procedure TFHIRNativeStorageService.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
 begin
   QueueResource(r);
 end;
@@ -11180,7 +11222,7 @@ var
 begin
   resp := TFhirClaimResponse.Create;
   try
-    resp.created := NowUTC;
+    resp.created := TDateTimeEx.makeUTC;
     with resp.identifierList.append do
     begin
       system := ServerContext.Bases[0] + '/claimresponses';

@@ -1,7 +1,7 @@
   {@Class TFhirResourceFactory : TFHIRBaseFactory
      FHIR factory: class constructors and general useful builders
   }
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper, DateAndTime, DateAndTime_Wrapper}
+{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRComponents, FHIRComponents_Wrapper,  DateAndTime_Wrapper}
 
 unit FHIRResources;
 
@@ -43,7 +43,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents;
+  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers,  FHIRBase, FHIRTypes, FHIRComponents;
 
 Type
   {@Enum TFhirResourceType
@@ -1053,8 +1053,8 @@ Type
     FsymptomList : TFhirAdverseReactionSymptomList;
     FexposureList : TFhirAdverseReactionExposureList;
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
     Procedure SetDidNotOccurFlag(value : TFhirBoolean);
     Function GetDidNotOccurFlagST : Boolean;
@@ -1087,7 +1087,7 @@ Type
     {@member date
       Typed access to The date (and possibly time) when the reaction began.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member subject
@@ -1225,8 +1225,8 @@ Type
     Function GetSensitivityTypeST : TFhirSensitivitytype;
     Procedure SetSensitivityTypeST(value : TFhirSensitivitytype);
     Procedure SetRecordedDate(value : TFhirDateTime);
-    Function GetRecordedDateST : TDateAndTime;
-    Procedure SetRecordedDateST(value : TDateAndTime);
+    Function GetRecordedDateST : TDateTimeEx;
+    Procedure SetRecordedDateST(value : TDateTimeEx);
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirSensitivitystatus;
     Procedure SetStatusST(value : TFhirSensitivitystatus);
@@ -1272,7 +1272,7 @@ Type
     {@member recordedDate
       Typed access to Date when the sensitivity was recorded.
     }
-    property recordedDate : TDateAndTime read GetRecordedDateST write SetRecordedDateST;
+    property recordedDate : TDateTimeEx read GetRecordedDateST write SetRecordedDateST;
     property recordedDateObject : TFhirDateTime read FRecordedDate write SetRecordedDate;
 
     {@member status
@@ -1334,8 +1334,8 @@ Type
     Procedure SetStatusST(value : TFhirCarePlanStatus);
     Procedure SetPeriod(value : TFhirPeriod);
     Procedure SetModified(value : TFhirDateTime);
-    Function GetModifiedST : TDateAndTime;
-    Procedure SetModifiedST(value : TDateAndTime);
+    Function GetModifiedST : TDateTimeEx;
+    Procedure SetModifiedST(value : TDateTimeEx);
     Procedure SetNotes(value : TFhirString);
     Function GetNotesST : String;
     Procedure SetNotesST(value : String);
@@ -1384,7 +1384,7 @@ Type
     {@member modified
       Typed access to Identifies the most recent date on which the plan has been revised.
     }
-    property modified : TDateAndTime read GetModifiedST write SetModifiedST;
+    property modified : TDateTimeEx read GetModifiedST write SetModifiedST;
     property modifiedObject : TFhirDateTime read FModified write SetModified;
 
     {@member concernList
@@ -1441,8 +1441,8 @@ Type
     FsectionList : TFhirCompositionSectionList;
     Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetType_(value : TFhirCodeableConcept);
     Procedure SetClass_(value : TFhirCodeableConcept);
     Procedure SetTitle(value : TFhirString);
@@ -1484,7 +1484,7 @@ Type
     {@member date
       Typed access to The composition editing time, when the composition was last logically changed by the author.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member type_
@@ -1606,8 +1606,8 @@ Type
     Function GetExperimentalST : Boolean;
     Procedure SetExperimentalST(value : Boolean);
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetSource(value : TFhirResourceReference{TFhirValueSet});
     Procedure SetTarget(value : TFhirResourceReference{TFhirValueSet});
   protected
@@ -1706,7 +1706,7 @@ Type
     {@member date
       Typed access to The date that the concept map status was last changed.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member source
@@ -1756,8 +1756,8 @@ Type
     Procedure SetEncounter(value : TFhirResourceReference{TFhirEncounter});
     Procedure SetAsserter(value : TFhirResourceReference{Resource});
     Procedure SetDateAsserted(value : TFhirDate);
-    Function GetDateAssertedST : TDateAndTime;
-    Procedure SetDateAssertedST(value : TDateAndTime);
+    Function GetDateAssertedST : TDateTimeEx;
+    Procedure SetDateAssertedST(value : TDateTimeEx);
     Procedure SetCode(value : TFhirCodeableConcept);
     Procedure SetCategory(value : TFhirCodeableConcept);
     Procedure SetStatus(value : TFhirEnum);
@@ -1816,7 +1816,7 @@ Type
     {@member dateAsserted
       Typed access to Estimated or actual date the condition/problem/diagnosis was first detected/suspected.
     }
-    property dateAsserted : TDateAndTime read GetDateAssertedST write SetDateAssertedST;
+    property dateAsserted : TDateTimeEx read GetDateAssertedST write SetDateAssertedST;
     property dateAssertedObject : TFhirDate read FDateAsserted write SetDateAsserted;
 
     {@member code
@@ -1940,8 +1940,8 @@ Type
     Function GetExperimentalST : Boolean;
     Procedure SetExperimentalST(value : Boolean);
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetSoftware(value : TFhirConformanceSoftware);
     Procedure SetImplementation_(value : TFhirConformanceImplementation);
     Procedure SetFhirVersion(value : TFhirId);
@@ -2037,7 +2037,7 @@ Type
     {@member date
       Typed access to The date when the conformance statement was published.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member software
@@ -2128,8 +2128,8 @@ Type
     Function GetVersionST : String;
     Procedure SetVersionST(value : String);
     Procedure SetExpiry(value : TFhirDate);
-    Function GetExpiryST : TDateAndTime;
-    Procedure SetExpiryST(value : TDateAndTime);
+    Function GetExpiryST : TDateTimeEx;
+    Procedure SetExpiryST(value : TDateTimeEx);
     Procedure SetUdi(value : TFhirString);
     Function GetUdiST : String;
     Procedure SetUdiST(value : String);
@@ -2202,7 +2202,7 @@ Type
     {@member expiry
       Typed access to Date of expiry of this device (if applicable).
     }
-    property expiry : TDateAndTime read GetExpiryST write SetExpiryST;
+    property expiry : TDateTimeEx read GetExpiryST write SetExpiryST;
     property expiryObject : TFhirDate read FExpiry write SetExpiry;
 
     {@member udi
@@ -2270,8 +2270,8 @@ Type
     FSubject : TFhirResourceReference{Resource};
     FvirtualDeviceList : TFhirDeviceObservationReportVirtualDeviceList;
     Procedure SetInstant(value : TFhirInstant);
-    Function GetInstantST : TDateAndTime;
-    Procedure SetInstantST(value : TDateAndTime);
+    Function GetInstantST : TDateTimeEx;
+    Procedure SetInstantST(value : TDateTimeEx);
     Procedure SetIdentifier(value : TFhirIdentifier);
     Procedure SetSource(value : TFhirResourceReference{TFhirDevice});
     Procedure SetSubject(value : TFhirResourceReference{Resource});
@@ -2297,7 +2297,7 @@ Type
     {@member instant
       Typed access to The point in time that the values are reported.
     }
-    property instant : TDateAndTime read GetInstantST write SetInstantST;
+    property instant : TDateTimeEx read GetInstantST write SetInstantST;
     property instantObject : TFhirInstant read FInstant write SetInstant;
 
     {@member identifier
@@ -2459,8 +2459,8 @@ Type
     Function GetStatusST : TFhirDiagnosticReportStatus;
     Procedure SetStatusST(value : TFhirDiagnosticReportStatus);
     Procedure SetIssued(value : TFhirDateTime);
-    Function GetIssuedST : TDateAndTime;
-    Procedure SetIssuedST(value : TDateAndTime);
+    Function GetIssuedST : TDateTimeEx;
+    Procedure SetIssuedST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetPerformer(value : TFhirResourceReference{Resource});
     Procedure SetIdentifier(value : TFhirIdentifier);
@@ -2503,7 +2503,7 @@ Type
     {@member issued
       Typed access to The date and/or time that this version of the report was released from the source diagnostic service.
     }
-    property issued : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issued : TDateTimeEx read GetIssuedST write SetIssuedST;
     property issuedObject : TFhirDateTime read FIssued write SetIssued;
 
     {@member subject
@@ -2605,8 +2605,8 @@ Type
     Procedure SetMasterIdentifier(value : TFhirIdentifier);
     Procedure SetType_(value : TFhirCodeableConcept);
     Procedure SetCreated(value : TFhirDateTime);
-    Function GetCreatedST : TDateAndTime;
-    Procedure SetCreatedST(value : TDateAndTime);
+    Function GetCreatedST : TDateTimeEx;
+    Procedure SetCreatedST(value : TDateTimeEx);
     Procedure SetSource(value : TFhirUri);
     Function GetSourceST : String;
     Procedure SetSourceST(value : String);
@@ -2672,7 +2672,7 @@ Type
     {@member created
       Typed access to When the document manifest was created for submission to the server (not necessarily the same thing as the actual resource last modified time, since it may be modified, replicated etc).
     }
-    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateTimeEx read GetCreatedST write SetCreatedST;
     property createdObject : TFhirDateTime read FCreated write SetCreated;
 
     {@member source
@@ -2759,11 +2759,11 @@ Type
     Procedure SetPolicyManagerST(value : String);
     Procedure SetAuthenticator(value : TFhirResourceReference{Resource});
     Procedure SetCreated(value : TFhirDateTime);
-    Function GetCreatedST : TDateAndTime;
-    Procedure SetCreatedST(value : TDateAndTime);
+    Function GetCreatedST : TDateTimeEx;
+    Procedure SetCreatedST(value : TDateTimeEx);
     Procedure SetIndexed(value : TFhirInstant);
-    Function GetIndexedST : TDateAndTime;
-    Procedure SetIndexedST(value : TDateAndTime);
+    Function GetIndexedST : TDateTimeEx;
+    Procedure SetIndexedST(value : TDateTimeEx);
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirDocumentReferenceStatus;
     Procedure SetStatusST(value : TFhirDocumentReferenceStatus);
@@ -2865,7 +2865,7 @@ Type
     {@member created
       Typed access to When the document was created.
     }
-    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateTimeEx read GetCreatedST write SetCreatedST;
     property createdObject : TFhirDateTime read FCreated write SetCreated;
 
     {@member indexed
@@ -2874,7 +2874,7 @@ Type
     {@member indexed
       Typed access to When the document reference was created.
     }
-    property indexed : TDateAndTime read GetIndexedST write SetIndexedST;
+    property indexed : TDateTimeEx read GetIndexedST write SetIndexedST;
     property indexedObject : TFhirInstant read FIndexed write SetIndexed;
 
     {@member status
@@ -3298,8 +3298,8 @@ Type
     FDescription : TFhirString;
     FseriesList : TFhirImagingStudySeriesList;
     Procedure SetDateTime(value : TFhirDateTime);
-    Function GetDateTimeST : TDateAndTime;
-    Procedure SetDateTimeST(value : TDateAndTime);
+    Function GetDateTimeST : TDateTimeEx;
+    Procedure SetDateTimeST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
     Procedure SetUid(value : TFhirOid);
     Function GetUidST : String;
@@ -3347,7 +3347,7 @@ Type
     {@member dateTime
       Typed access to Date and Time the study took place.
     }
-    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateTimeEx read GetDateTimeST write SetDateTimeST;
     property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member subject
@@ -3483,8 +3483,8 @@ Type
     FreactionList : TFhirImmunizationReactionList;
     FvaccinationProtocolList : TFhirImmunizationVaccinationProtocolList;
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetVaccineType(value : TFhirCodeableConcept);
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
     Procedure SetRefusedIndicator(value : TFhirBoolean);
@@ -3501,8 +3501,8 @@ Type
     Function GetLotNumberST : String;
     Procedure SetLotNumberST(value : String);
     Procedure SetExpirationDate(value : TFhirDate);
-    Function GetExpirationDateST : TDateAndTime;
-    Procedure SetExpirationDateST(value : TDateAndTime);
+    Function GetExpirationDateST : TDateTimeEx;
+    Procedure SetExpirationDateST(value : TDateTimeEx);
     Procedure SetSite(value : TFhirCodeableConcept);
     Procedure SetRoute(value : TFhirCodeableConcept);
     Procedure SetDoseQuantity(value : TFhirQuantity);
@@ -3534,7 +3534,7 @@ Type
     {@member date
       Typed access to Date vaccine administered or was to be administered.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member vaccineType
@@ -3606,7 +3606,7 @@ Type
     {@member expirationDate
       Typed access to Date vaccine batch expires.
     }
-    property expirationDate : TDateAndTime read GetExpirationDateST write SetExpirationDateST;
+    property expirationDate : TDateTimeEx read GetExpirationDateST write SetExpirationDateST;
     property expirationDateObject : TFhirDate read FExpirationDate write SetExpirationDate;
 
     {@member site
@@ -3710,8 +3710,8 @@ Type
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetSource(value : TFhirResourceReference{Resource});
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetOrdered(value : TFhirBoolean);
     Function GetOrderedST : Boolean;
     Procedure SetOrderedST(value : Boolean);
@@ -3764,7 +3764,7 @@ Type
     {@member date
       Typed access to The date that the list was prepared.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member ordered
@@ -3953,8 +3953,8 @@ Type
     Procedure SetType_ST(value : TFhirMediaType);
     Procedure SetSubtype(value : TFhirCodeableConcept);
     Procedure SetDateTime(value : TFhirDateTime);
-    Function GetDateTimeST : TDateAndTime;
-    Procedure SetDateTimeST(value : TDateAndTime);
+    Function GetDateTimeST : TDateTimeEx;
+    Procedure SetDateTimeST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetOperator(value : TFhirResourceReference{TFhirPractitioner});
     Procedure SetView(value : TFhirCodeableConcept);
@@ -4013,7 +4013,7 @@ Type
     {@member dateTime
       Typed access to When the media was originally recorded. For video and audio, if the length of the recording is not insignificant, this is the end of the recording.
     }
-    property dateTime : TDateAndTime read GetDateTimeST write SetDateTimeST;
+    property dateTime : TDateTimeEx read GetDateTimeST write SetDateTimeST;
     property dateTimeObject : TFhirDateTime read FDateTime write SetDateTime;
 
     {@member subject
@@ -4400,8 +4400,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     FDispense : TFhirMedicationPrescriptionDispense;
     FSubstitution : TFhirMedicationPrescriptionSubstitution;
     Procedure SetDateWritten(value : TFhirDateTime);
-    Function GetDateWrittenST : TDateAndTime;
-    Procedure SetDateWrittenST(value : TDateAndTime);
+    Function GetDateWrittenST : TDateTimeEx;
+    Procedure SetDateWrittenST(value : TDateTimeEx);
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirMedicationPrescriptionStatus;
     Procedure SetStatusST(value : TFhirMedicationPrescriptionStatus);
@@ -4439,7 +4439,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member dateWritten
       Typed access to The date (and perhaps time) when the prescription was written.
     }
-    property dateWritten : TDateAndTime read GetDateWrittenST write SetDateWrittenST;
+    property dateWritten : TDateTimeEx read GetDateWrittenST write SetDateWrittenST;
     property dateWrittenObject : TFhirDateTime read FDateWritten write SetDateWritten;
 
     {@member status
@@ -4606,8 +4606,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Function GetIdentifierST : String;
     Procedure SetIdentifierST(value : String);
     Procedure SetTimestamp(value : TFhirInstant);
-    Function GetTimestampST : TDateAndTime;
-    Procedure SetTimestampST(value : TDateAndTime);
+    Function GetTimestampST : TDateTimeEx;
+    Procedure SetTimestampST(value : TDateTimeEx);
     Procedure SetEvent(value : TFhirCoding);
     Procedure SetResponse(value : TFhirMessageHeaderResponse);
     Procedure SetSource(value : TFhirMessageHeaderSource);
@@ -4647,7 +4647,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member timestamp
       Typed access to The time that the message was sent.
     }
-    property timestamp : TDateAndTime read GetTimestampST write SetTimestampST;
+    property timestamp : TDateTimeEx read GetTimestampST write SetTimestampST;
     property timestampObject : TFhirInstant read FTimestamp write SetTimestamp;
 
     {@member event
@@ -4741,8 +4741,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Procedure SetCommentsST(value : String);
     Procedure SetApplies(value : TFhirType);
     Procedure SetIssued(value : TFhirInstant);
-    Function GetIssuedST : TDateAndTime;
-    Procedure SetIssuedST(value : TDateAndTime);
+    Function GetIssuedST : TDateTimeEx;
+    Procedure SetIssuedST(value : TDateTimeEx);
     Procedure SetStatus(value : TFhirEnum);
     Function GetStatusST : TFhirObservationStatus;
     Procedure SetStatusST(value : TFhirObservationStatus);
@@ -4809,7 +4809,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member issued
       Typed access to Date/Time this was made available.
     }
-    property issued : TDateAndTime read GetIssuedST write SetIssuedST;
+    property issued : TDateTimeEx read GetIssuedST write SetIssuedST;
     property issuedObject : TFhirInstant read FIssued write SetIssued;
 
     {@member status
@@ -4919,8 +4919,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     FWhen : TFhirOrderWhen;
     FdetailList : TFhirResourceReferenceList{Resource};
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{TFhirPatient});
     Procedure SetSource(value : TFhirResourceReference{TFhirPractitioner});
     Procedure SetTarget(value : TFhirResourceReference{Resource});
@@ -4954,7 +4954,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       Typed access to When the order was made.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member subject
@@ -5017,8 +5017,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     FfulfillmentList : TFhirResourceReferenceList{Resource};
     Procedure SetRequest(value : TFhirResourceReference{TFhirOrder});
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetWho(value : TFhirResourceReference{Resource});
     Procedure SetAuthority(value : TFhirType);
     Procedure SetCode(value : TFhirEnum);
@@ -5060,7 +5060,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       Typed access to The date and time at which this order response was made (created/posted).
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member who
@@ -5210,8 +5210,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetAuthor(value : TFhirResourceReference{Resource});
     Procedure SetCreated(value : TFhirDate);
-    Function GetCreatedST : TDateAndTime;
-    Procedure SetCreatedST(value : TDateAndTime);
+    Function GetCreatedST : TDateTimeEx;
+    Procedure SetCreatedST(value : TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -5257,7 +5257,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member created
       Typed access to Identifies when the resource was first created.
     }
-    property created : TDateAndTime read GetCreatedST write SetCreatedST;
+    property created : TDateTimeEx read GetCreatedST write SetCreatedST;
     property createdObject : TFhirDate read FCreated write SetCreated;
 
   end;
@@ -5288,8 +5288,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     FActive : TFhirBoolean;
     Procedure SetGender(value : TFhirCodeableConcept);
     Procedure SetBirthDate(value : TFhirDateTime);
-    Function GetBirthDateST : TDateAndTime;
-    Procedure SetBirthDateST(value : TDateAndTime);
+    Function GetBirthDateST : TDateTimeEx;
+    Procedure SetBirthDateST(value : TDateTimeEx);
     Procedure SetDeceased(value : TFhirType);
     Procedure SetMaritalStatus(value : TFhirCodeableConcept);
     Procedure SetMultipleBirth(value : TFhirType);
@@ -5341,7 +5341,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member birthDate
       Typed access to The date and time of birth for the individual.
     }
-    property birthDate : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDate : TDateTimeEx read GetBirthDateST write SetBirthDateST;
     property birthDateObject : TFhirDateTime read FBirthDate write SetBirthDate;
 
     {@member deceased
@@ -5440,8 +5440,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Procedure SetAddress(value : TFhirAddress);
     Procedure SetGender(value : TFhirCodeableConcept);
     Procedure SetBirthDate(value : TFhirDateTime);
-    Function GetBirthDateST : TDateAndTime;
-    Procedure SetBirthDateST(value : TDateAndTime);
+    Function GetBirthDateST : TDateTimeEx;
+    Procedure SetBirthDateST(value : TDateTimeEx);
     Procedure SetOrganization(value : TFhirResourceReference{TFhirOrganization});
     Procedure SetPeriod(value : TFhirPeriod);
   protected
@@ -5494,7 +5494,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member birthDate
       Typed access to The date and time of birth for the practitioner.
     }
-    property birthDate : TDateAndTime read GetBirthDateST write SetBirthDateST;
+    property birthDate : TDateTimeEx read GetBirthDateST write SetBirthDateST;
     property birthDateObject : TFhirDateTime read FBirthDate write SetBirthDate;
 
     {@member photoList
@@ -5724,8 +5724,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Function GetExperimentalST : Boolean;
     Procedure SetExperimentalST(value : Boolean);
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetRequirements(value : TFhirString);
     Function GetRequirementsST : String;
     Procedure SetRequirementsST(value : String);
@@ -5824,7 +5824,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       Typed access to The date that this version of the profile was published.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member requirements
@@ -5885,8 +5885,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     FIntegritySignature : TFhirString;
     Procedure SetPeriod(value : TFhirPeriod);
     Procedure SetRecorded(value : TFhirInstant);
-    Function GetRecordedST : TDateAndTime;
-    Procedure SetRecordedST(value : TDateAndTime);
+    Function GetRecordedST : TDateTimeEx;
+    Procedure SetRecordedST(value : TDateTimeEx);
     Procedure SetReason(value : TFhirCodeableConcept);
     Procedure SetLocation(value : TFhirResourceReference{TFhirLocation});
     Procedure SetIntegritySignature(value : TFhirString);
@@ -5925,7 +5925,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member recorded
       Typed access to The instant of time at which the activity was recorded.
     }
-    property recorded : TDateAndTime read GetRecordedST write SetRecordedST;
+    property recorded : TDateTimeEx read GetRecordedST write SetRecordedST;
     property recordedObject : TFhirInstant read FRecorded write SetRecorded;
 
     {@member reason
@@ -6038,8 +6038,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Function GetStatusST : TFhirQuestionnaireStatus;
     Procedure SetStatusST(value : TFhirQuestionnaireStatus);
     Procedure SetAuthored(value : TFhirDateTime);
-    Function GetAuthoredST : TDateAndTime;
-    Procedure SetAuthoredST(value : TDateAndTime);
+    Function GetAuthoredST : TDateTimeEx;
+    Procedure SetAuthoredST(value : TDateTimeEx);
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetAuthor(value : TFhirResourceReference{Resource});
     Procedure SetSource(value : TFhirResourceReference{Resource});
@@ -6074,7 +6074,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member authored
       Typed access to The date and/or time that this version of the questionnaire was authored.
     }
-    property authored : TDateAndTime read GetAuthoredST write SetAuthoredST;
+    property authored : TDateTimeEx read GetAuthoredST write SetAuthoredST;
     property authoredObject : TFhirDateTime read FAuthored write SetAuthored;
 
     {@member subject
@@ -6276,8 +6276,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Procedure SetSubject(value : TFhirResourceReference{Resource});
     Procedure SetAccessionIdentifier(value : TFhirIdentifier);
     Procedure SetReceivedTime(value : TFhirDateTime);
-    Function GetReceivedTimeST : TDateAndTime;
-    Procedure SetReceivedTimeST(value : TDateAndTime);
+    Function GetReceivedTimeST : TDateTimeEx;
+    Procedure SetReceivedTimeST(value : TDateTimeEx);
     Procedure SetCollection(value : TFhirSpecimenCollection);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
@@ -6329,7 +6329,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member receivedTime
       Typed access to Time when specimen was received for processing or testing.
     }
-    property receivedTime : TDateAndTime read GetReceivedTimeST write SetReceivedTimeST;
+    property receivedTime : TDateTimeEx read GetReceivedTimeST write SetReceivedTimeST;
     property receivedTimeObject : TFhirDateTime read FReceivedTime write SetReceivedTime;
 
     {@member collection
@@ -6532,8 +6532,8 @@ Related resources tie this event to the authorizing prescription, and the specif
     Function GetExtensibleST : Boolean;
     Procedure SetExtensibleST(value : Boolean);
     Procedure SetDate(value : TFhirDateTime);
-    Function GetDateST : TDateAndTime;
-    Procedure SetDateST(value : TDateAndTime);
+    Function GetDateST : TDateTimeEx;
+    Procedure SetDateST(value : TDateTimeEx);
     Procedure SetDefine(value : TFhirValueSetDefine);
     Procedure SetCompose(value : TFhirValueSetCompose);
     Procedure SetExpansion(value : TFhirValueSetExpansion);
@@ -6642,7 +6642,7 @@ Related resources tie this event to the authorizing prescription, and the specif
     {@member date
       Typed access to The date that the value set status was last changed.
     }
-    property date : TDateAndTime read GetDateST write SetDateST;
+    property date : TDateTimeEx read GetDateST write SetDateST;
     property dateObject : TFhirDateTime read FDate write SetDate;
 
     {@member define
@@ -6697,7 +6697,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       create a new dateTime with the given value
     }
     {!script nolink}
-    function makeDateTime(value : TDateAndTime) : TFhirDateTime;
+    function makeDateTime(value : TDateTimeEx) : TFhirDateTime;
     {@member newDate
       create a new date
     }
@@ -6707,7 +6707,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       create a new date with the given value
     }
     {!script nolink}
-    function makeDate(value : TDateAndTime) : TFhirDate;
+    function makeDate(value : TDateTimeEx) : TFhirDate;
     {@member newDecimal
       create a new decimal
     }
@@ -6767,7 +6767,7 @@ Related resources tie this event to the authorizing prescription, and the specif
       create a new instant with the given value
     }
     {!script nolink}
-    function makeInstant(value : TDateAndTime) : TFhirInstant;
+    function makeInstant(value : TDateTimeEx) : TFhirInstant;
     {@member newCode
       create a new code
     }
@@ -8027,7 +8027,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirAdverseReaction.GetDateST : TDateAndTime;
+Function TFhirAdverseReaction.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -8035,7 +8035,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirAdverseReaction.SetDateST(value : TDateAndTime);
+Procedure TFhirAdverseReaction.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -8416,7 +8416,7 @@ begin
   FRecordedDate := value;
 end;
 
-Function TFhirAllergyIntolerance.GetRecordedDateST : TDateAndTime;
+Function TFhirAllergyIntolerance.GetRecordedDateST : TDateTimeEx;
 begin
   if FRecordedDate = nil then
     result := nil
@@ -8424,7 +8424,7 @@ begin
     result := FRecordedDate.value;
 end;
 
-Procedure TFhirAllergyIntolerance.SetRecordedDateST(value : TDateAndTime);
+Procedure TFhirAllergyIntolerance.SetRecordedDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -8641,7 +8641,7 @@ begin
   FModified := value;
 end;
 
-Function TFhirCarePlan.GetModifiedST : TDateAndTime;
+Function TFhirCarePlan.GetModifiedST : TDateTimeEx;
 begin
   if FModified = nil then
     result := nil
@@ -8649,7 +8649,7 @@ begin
     result := FModified.value;
 end;
 
-Procedure TFhirCarePlan.SetModifiedST(value : TDateAndTime);
+Procedure TFhirCarePlan.SetModifiedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -8846,7 +8846,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirComposition.GetDateST : TDateAndTime;
+Function TFhirComposition.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -8854,7 +8854,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirComposition.SetDateST(value : TDateAndTime);
+Procedure TFhirComposition.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -9301,7 +9301,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirConceptMap.GetDateST : TDateAndTime;
+Function TFhirConceptMap.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -9309,7 +9309,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirConceptMap.SetDateST(value : TDateAndTime);
+Procedure TFhirConceptMap.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -9523,7 +9523,7 @@ begin
   FDateAsserted := value;
 end;
 
-Function TFhirCondition.GetDateAssertedST : TDateAndTime;
+Function TFhirCondition.GetDateAssertedST : TDateTimeEx;
 begin
   if FDateAsserted = nil then
     result := nil
@@ -9531,7 +9531,7 @@ begin
     result := FDateAsserted.value;
 end;
 
-Procedure TFhirCondition.SetDateAssertedST(value : TDateAndTime);
+Procedure TFhirCondition.SetDateAssertedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -9986,7 +9986,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirConformance.GetDateST : TDateAndTime;
+Function TFhirConformance.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -9994,7 +9994,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirConformance.SetDateST(value : TDateAndTime);
+Procedure TFhirConformance.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -10295,7 +10295,7 @@ begin
   FExpiry := value;
 end;
 
-Function TFhirDevice.GetExpiryST : TDateAndTime;
+Function TFhirDevice.GetExpiryST : TDateTimeEx;
 begin
   if FExpiry = nil then
     result := nil
@@ -10303,7 +10303,7 @@ begin
     result := FExpiry.value;
 end;
 
-Procedure TFhirDevice.SetExpiryST(value : TDateAndTime);
+Procedure TFhirDevice.SetExpiryST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -10508,7 +10508,7 @@ begin
   FInstant := value;
 end;
 
-Function TFhirDeviceObservationReport.GetInstantST : TDateAndTime;
+Function TFhirDeviceObservationReport.GetInstantST : TDateTimeEx;
 begin
   if FInstant = nil then
     result := nil
@@ -10516,7 +10516,7 @@ begin
     result := FInstant.value;
 end;
 
-Procedure TFhirDeviceObservationReport.SetInstantST(value : TDateAndTime);
+Procedure TFhirDeviceObservationReport.SetInstantST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -10955,7 +10955,7 @@ begin
   FIssued := value;
 end;
 
-Function TFhirDiagnosticReport.GetIssuedST : TDateAndTime;
+Function TFhirDiagnosticReport.GetIssuedST : TDateTimeEx;
 begin
   if FIssued = nil then
     result := nil
@@ -10963,7 +10963,7 @@ begin
     result := FIssued.value;
 end;
 
-Procedure TFhirDiagnosticReport.SetIssuedST(value : TDateAndTime);
+Procedure TFhirDiagnosticReport.SetIssuedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -11192,7 +11192,7 @@ begin
   FCreated := value;
 end;
 
-Function TFhirDocumentManifest.GetCreatedST : TDateAndTime;
+Function TFhirDocumentManifest.GetCreatedST : TDateTimeEx;
 begin
   if FCreated = nil then
     result := nil
@@ -11200,7 +11200,7 @@ begin
     result := FCreated.value;
 end;
 
-Procedure TFhirDocumentManifest.SetCreatedST(value : TDateAndTime);
+Procedure TFhirDocumentManifest.SetCreatedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -11587,7 +11587,7 @@ begin
   FCreated := value;
 end;
 
-Function TFhirDocumentReference.GetCreatedST : TDateAndTime;
+Function TFhirDocumentReference.GetCreatedST : TDateTimeEx;
 begin
   if FCreated = nil then
     result := nil
@@ -11595,7 +11595,7 @@ begin
     result := FCreated.value;
 end;
 
-Procedure TFhirDocumentReference.SetCreatedST(value : TDateAndTime);
+Procedure TFhirDocumentReference.SetCreatedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -11613,7 +11613,7 @@ begin
   FIndexed := value;
 end;
 
-Function TFhirDocumentReference.GetIndexedST : TDateAndTime;
+Function TFhirDocumentReference.GetIndexedST : TDateTimeEx;
 begin
   if FIndexed = nil then
     result := nil
@@ -11621,7 +11621,7 @@ begin
     result := FIndexed.value;
 end;
 
-Procedure TFhirDocumentReference.SetIndexedST(value : TDateAndTime);
+Procedure TFhirDocumentReference.SetIndexedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -12589,7 +12589,7 @@ begin
   FDateTime := value;
 end;
 
-Function TFhirImagingStudy.GetDateTimeST : TDateAndTime;
+Function TFhirImagingStudy.GetDateTimeST : TDateTimeEx;
 begin
   if FDateTime = nil then
     result := nil
@@ -12597,7 +12597,7 @@ begin
     result := FDateTime.value;
 end;
 
-Procedure TFhirImagingStudy.SetDateTimeST(value : TDateAndTime);
+Procedure TFhirImagingStudy.SetDateTimeST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -12988,7 +12988,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirImmunization.GetDateST : TDateAndTime;
+Function TFhirImmunization.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -12996,7 +12996,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirImmunization.SetDateST(value : TDateAndTime);
+Procedure TFhirImmunization.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -13118,7 +13118,7 @@ begin
   FExpirationDate := value;
 end;
 
-Function TFhirImmunization.GetExpirationDateST : TDateAndTime;
+Function TFhirImmunization.GetExpirationDateST : TDateTimeEx;
 begin
   if FExpirationDate = nil then
     result := nil
@@ -13126,7 +13126,7 @@ begin
     result := FExpirationDate.value;
 end;
 
-Procedure TFhirImmunization.SetExpirationDateST(value : TDateAndTime);
+Procedure TFhirImmunization.SetExpirationDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -13388,7 +13388,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirList.GetDateST : TDateAndTime;
+Function TFhirList.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -13396,7 +13396,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirList.SetDateST(value : TDateAndTime);
+Procedure TFhirList.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -13901,7 +13901,7 @@ begin
   FDateTime := value;
 end;
 
-Function TFhirMedia.GetDateTimeST : TDateAndTime;
+Function TFhirMedia.GetDateTimeST : TDateTimeEx;
 begin
   if FDateTime = nil then
     result := nil
@@ -13909,7 +13909,7 @@ begin
     result := FDateTime.value;
 end;
 
-Procedure TFhirMedia.SetDateTimeST(value : TDateAndTime);
+Procedure TFhirMedia.SetDateTimeST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -14769,7 +14769,7 @@ begin
   FDateWritten := value;
 end;
 
-Function TFhirMedicationPrescription.GetDateWrittenST : TDateAndTime;
+Function TFhirMedicationPrescription.GetDateWrittenST : TDateTimeEx;
 begin
   if FDateWritten = nil then
     result := nil
@@ -14777,7 +14777,7 @@ begin
     result := FDateWritten.value;
 end;
 
-Procedure TFhirMedicationPrescription.SetDateWrittenST(value : TDateAndTime);
+Procedure TFhirMedicationPrescription.SetDateWrittenST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -15170,7 +15170,7 @@ begin
   FTimestamp := value;
 end;
 
-Function TFhirMessageHeader.GetTimestampST : TDateAndTime;
+Function TFhirMessageHeader.GetTimestampST : TDateTimeEx;
 begin
   if FTimestamp = nil then
     result := nil
@@ -15178,7 +15178,7 @@ begin
     result := FTimestamp.value;
 end;
 
-Procedure TFhirMessageHeader.SetTimestampST(value : TDateAndTime);
+Procedure TFhirMessageHeader.SetTimestampST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -15453,7 +15453,7 @@ begin
   FIssued := value;
 end;
 
-Function TFhirObservation.GetIssuedST : TDateAndTime;
+Function TFhirObservation.GetIssuedST : TDateTimeEx;
 begin
   if FIssued = nil then
     result := nil
@@ -15461,7 +15461,7 @@ begin
     result := FIssued.value;
 end;
 
-Procedure TFhirObservation.SetIssuedST(value : TDateAndTime);
+Procedure TFhirObservation.SetIssuedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -15736,7 +15736,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirOrder.GetDateST : TDateAndTime;
+Function TFhirOrder.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -15744,7 +15744,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirOrder.SetDateST(value : TDateAndTime);
+Procedure TFhirOrder.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -15914,7 +15914,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirOrderResponse.GetDateST : TDateAndTime;
+Function TFhirOrderResponse.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -15922,7 +15922,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirOrderResponse.SetDateST(value : TDateAndTime);
+Procedure TFhirOrderResponse.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -16287,7 +16287,7 @@ begin
   FCreated := value;
 end;
 
-Function TFhirOther.GetCreatedST : TDateAndTime;
+Function TFhirOther.GetCreatedST : TDateTimeEx;
 begin
   if FCreated = nil then
     result := nil
@@ -16295,7 +16295,7 @@ begin
     result := FCreated.value;
 end;
 
-Procedure TFhirOther.SetCreatedST(value : TDateAndTime);
+Procedure TFhirOther.SetCreatedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -16490,7 +16490,7 @@ begin
   FBirthDate := value;
 end;
 
-Function TFhirPatient.GetBirthDateST : TDateAndTime;
+Function TFhirPatient.GetBirthDateST : TDateTimeEx;
 begin
   if FBirthDate = nil then
     result := nil
@@ -16498,7 +16498,7 @@ begin
     result := FBirthDate.value;
 end;
 
-Procedure TFhirPatient.SetBirthDateST(value : TDateAndTime);
+Procedure TFhirPatient.SetBirthDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -16737,7 +16737,7 @@ begin
   FBirthDate := value;
 end;
 
-Function TFhirPractitioner.GetBirthDateST : TDateAndTime;
+Function TFhirPractitioner.GetBirthDateST : TDateTimeEx;
 begin
   if FBirthDate = nil then
     result := nil
@@ -16745,7 +16745,7 @@ begin
     result := FBirthDate.value;
 end;
 
-Procedure TFhirPractitioner.SetBirthDateST(value : TDateAndTime);
+Procedure TFhirPractitioner.SetBirthDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -17363,7 +17363,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirProfile.GetDateST : TDateAndTime;
+Function TFhirProfile.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -17371,7 +17371,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirProfile.SetDateST(value : TDateAndTime);
+Procedure TFhirProfile.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -17565,7 +17565,7 @@ begin
   FRecorded := value;
 end;
 
-Function TFhirProvenance.GetRecordedST : TDateAndTime;
+Function TFhirProvenance.GetRecordedST : TDateTimeEx;
 begin
   if FRecorded = nil then
     result := nil
@@ -17573,7 +17573,7 @@ begin
     result := FRecorded.value;
 end;
 
-Procedure TFhirProvenance.SetRecordedST(value : TDateAndTime);
+Procedure TFhirProvenance.SetRecordedST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -17877,7 +17877,7 @@ begin
   FAuthored := value;
 end;
 
-Function TFhirQuestionnaire.GetAuthoredST : TDateAndTime;
+Function TFhirQuestionnaire.GetAuthoredST : TDateTimeEx;
 begin
   if FAuthored = nil then
     result := nil
@@ -17885,7 +17885,7 @@ begin
     result := FAuthored.value;
 end;
 
-Procedure TFhirQuestionnaire.SetAuthoredST(value : TDateAndTime);
+Procedure TFhirQuestionnaire.SetAuthoredST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -18314,7 +18314,7 @@ begin
   FReceivedTime := value;
 end;
 
-Function TFhirSpecimen.GetReceivedTimeST : TDateAndTime;
+Function TFhirSpecimen.GetReceivedTimeST : TDateTimeEx;
 begin
   if FReceivedTime = nil then
     result := nil
@@ -18322,7 +18322,7 @@ begin
     result := FReceivedTime.value;
 end;
 
-Procedure TFhirSpecimen.SetReceivedTimeST(value : TDateAndTime);
+Procedure TFhirSpecimen.SetReceivedTimeST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -18977,7 +18977,7 @@ begin
   FDate := value;
 end;
 
-Function TFhirValueSet.GetDateST : TDateAndTime;
+Function TFhirValueSet.GetDateST : TDateTimeEx;
 begin
   if FDate = nil then
     result := nil
@@ -18985,7 +18985,7 @@ begin
     result := FDate.value;
 end;
 
-Procedure TFhirValueSet.SetDateST(value : TDateAndTime);
+Procedure TFhirValueSet.SetDateST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -19043,7 +19043,7 @@ begin
   result := TFhirDateTime.create;
 end;
 
-function TFhirResourceFactory.makeDateTime(value : TDateAndTime) : TFhirDateTime;
+function TFhirResourceFactory.makeDateTime(value : TDateTimeEx) : TFhirDateTime;
 begin
   result := TFhirDateTime.create;
   result.value := value;
@@ -19054,7 +19054,7 @@ begin
   result := TFhirDate.create;
 end;
 
-function TFhirResourceFactory.makeDate(value : TDateAndTime) : TFhirDate;
+function TFhirResourceFactory.makeDate(value : TDateTimeEx) : TFhirDate;
 begin
   result := TFhirDate.create;
   result.value := value;
@@ -19120,7 +19120,7 @@ begin
   result := TFhirInstant.create;
 end;
 
-function TFhirResourceFactory.makeInstant(value : TDateAndTime) : TFhirInstant;
+function TFhirResourceFactory.makeInstant(value : TDateTimeEx) : TFhirInstant;
 begin
   result := TFhirInstant.create;
   result.value := value;

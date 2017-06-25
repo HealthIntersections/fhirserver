@@ -440,11 +440,11 @@ begin
   else if (e is TFhirExtension) then
     x.addText('Todo')
   else if (e is TFHIRInstant) then
-    x.addText(TFHIRInstant(e).Value.AsXML)
+    x.addText(TFHIRInstant(e).Value.toXML)
   else if (e is TFHIRDateTime) then
-    x.addText(TFHIRDateTime(e).Value.AsXML)
+    x.addText(TFHIRDateTime(e).Value.toXML)
   else if (e is TFHIRDate) then
-    x.addText(TFHIRDate(e).Value.AsXML)
+    x.addText(TFHIRDate(e).Value.toXML)
   else if (e is TFhirEnum) then
     x.addText(TFhirEnum(e).value) // todo: look up a display name if there is one
   else if (e is TFhirBoolean) then
@@ -480,15 +480,15 @@ begin
   else if (e is TFHIRPeriod) then
   begin
     p := TFHIRPeriod(e);
-    if p.Start = nil then
+    if p.Start.null then
       x.addText('??')
     else
-      x.addText(p.Start.AsXML);
+      x.addText(p.Start.toXML);
     x.addText(' --> ');
-    if p.end_ = nil then
+    if p.end_.null then
       x.addText('??')
     else
-    x.addText(p.End_.AsXML);
+    x.addText(p.End_.toXML);
   end
   else if (e is TFhirReference) then
   begin
@@ -565,12 +565,12 @@ begin
     end
     else if (e is TFHIRDateTime) then
     begin
-      x.addText(name+': '+TFHIRDateTime(e).Value.AsXML);
+      x.addText(name+': '+TFHIRDateTime(e).Value.toXML);
       result := true;
     end
     else if (e is TFHIRInstant) then
     begin
-      x.addText(name+': '+TFHIRInstant(e).Value.AsXML);
+      x.addText(name+': '+TFHIRInstant(e).Value.toXML);
       result := true;
     end
     else if (e is TFHIRExtension) then
@@ -580,7 +580,7 @@ begin
     end
     else if (e is TFHIRDate) then
     begin
-      x.addText(name+': '+TFHIRDate(e).Value.AsXML);
+      x.addText(name+': '+TFHIRDate(e).Value.toXML);
       result := true;
     end
     else if (e is TFhirEnum) then
@@ -656,15 +656,15 @@ begin
     else if (e is TFHIRPeriod) then
     begin
       p := TFHIRPeriod(e);
-      if p.Start = nil then
+      if p.Start.null then
         x.addText('??')
       else
-        x.addText(p.Start.AsXML);
+        x.addText(p.Start.toXML);
       x.addText(' --> ');
-      if p.end_ = nil then
+      if p.end_.null then
         x.addText('??')
       else
-      x.addText(p.End_.AsXML);
+      x.addText(p.End_.toXML);
     end
     else if (e is TFhirReference) then
     begin

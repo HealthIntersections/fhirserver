@@ -76,9 +76,6 @@ Type
 Implementation
 
 
-Uses
-  AdvSynchronizationRegistries;
-
 
 Constructor TAdvExclusiveCriticalSection.Create;
 Begin

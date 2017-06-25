@@ -39,7 +39,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase, DateAndTime, FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, FHIRAtomFeed;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MsXml, FHIRParserBase,  FHIRBase, FHIRResources, FHIRConstants, FHIRComponents, FHIRTypes, MsXmlParser, XmlBuilder, AdvJSON, FHIRAtomFeed;
 
 Type
 
@@ -1407,7 +1407,7 @@ begin
   result := TFhirDateTime.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -1432,7 +1432,7 @@ function TFHIRJsonParser.ParseDateTime(value : string; jsn : TJsonObject) : TFHI
 begin
   result := TFhirDateTime.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -1491,7 +1491,7 @@ begin
   result := TFhirDate.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -1516,7 +1516,7 @@ function TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject) : TFHIRDat
 begin
   result := TFhirDate.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -1995,7 +1995,7 @@ begin
   result := TFhirInstant.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -2020,7 +2020,7 @@ function TFHIRJsonParser.ParseInstant(value : string; jsn : TJsonObject) : TFHIR
 begin
   result := TFhirInstant.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;

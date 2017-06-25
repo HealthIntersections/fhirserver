@@ -35,7 +35,7 @@ Interface
 uses
   Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
-  AdvBuffers, AdvStringLists, DateAndTime, AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
+  AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,
   FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
 
@@ -84,7 +84,7 @@ Type
     procedure checkTimeOut;
   protected
     procedure checkDateFormat(s : string);
-    Function toTDateAndTime(s : String) : TDateAndTime;
+    Function toTDateTimeEx(s : String) : TDateTimeEx;
     function toTBytes(s : String) : TBytes;
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
@@ -203,7 +203,7 @@ Type
 
     function ResourceMediaType: String; virtual;
 
-    function asString(value : TDateAndTime):String; overload;
+    function asString(value : TDateTimeEx):String; overload;
     function asString(value : TBytes):String; overload;
     function asString(value : string):String; overload;
     function asString(value : boolean):String; overload;
@@ -2607,20 +2607,20 @@ begin
   result := DecodeBase64(AnsiString(s));
 end;
 
-function TFHIRParser.toTDateAndTime(s: String): TDateAndTime;
+function TFHIRParser.toTDateTimeEx(s: String): TDateTimeEx;
 begin
   if s = '' then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
-    result := TDateAndTime.createXml(s);
+    result := TDateTimeEx.fromXml(s);
 end;
 
-function TFHIRComposer.asString(value: TDateAndTime): String;
+function TFHIRComposer.asString(value: TDateTimeEx): String;
 begin
-  if value = nil then
+  if value.null then
     result := ''
   else
-    result := value.AsXML;
+    result := value.ToXML;
 end;
 
 constructor TFHIRComposer.Create(worker: TWorkerContext; lang: String);

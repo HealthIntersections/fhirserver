@@ -48,7 +48,7 @@ combinations to enable:
 uses
   SysUtils, Classes, Generics.Collections,
   AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
-  EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport,
+  EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport, DateSupport,
   KDBManager,
   FHIRBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
   TerminologyServer, ServerUtilities,
@@ -867,7 +867,7 @@ end;
 
 procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirInstant; name: String);
 begin
-  if (value <> nil) and (value.value <> nil) then
+  if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
@@ -1366,7 +1366,7 @@ end;
 
 procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirDateTime; name: String);
 begin
-  if (value <> nil) and (value.value <> nil) then
+  if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 
@@ -1381,7 +1381,7 @@ begin
     raise Exception.create('Attempt to index a simple type in an index that is a resource join');
   if not (ndx.SearchType = SearchParamTypeDate) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing date');
-  FEntries.add(key, parent, ndx, 0, HL7DateToString(min, 'yyyymmddhhnnss', false), HL7DateToString(max, 'yyyymmddhhnnss', false), 0, frtNull, ndx.SearchType);
+  FEntries.add(key, parent, ndx, 0, TDateTimeEx.make(min, dttzUnknown).toHL7, TDateTimeEx.make(max, dttzUnknown).toHL7, 0, frtNull, ndx.SearchType);
 end;
 
 procedure TFhirIndexManager.index(aType : String; key, parent : integer; value: TFhirIdentifier; name: String);
@@ -1707,7 +1707,7 @@ end;
 
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirDate; name: String);
 begin
-  if (value <> nil) and (value.value <> nil) then
+  if (value <> nil) and (value.value.notNull) then
     index(aType, key, parent, asUTCMin(value), asUTCMax(value), name);
 end;
 

@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvExceptions,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TAreaCodeConcept = class (TCodeSystemProviderContext)

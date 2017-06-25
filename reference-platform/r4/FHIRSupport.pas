@@ -44,9 +44,9 @@ uses
   SysUtils,
   IdGlobal,
   Parsemap, TextUtilities,
-  StringSupport, DecimalSupport, GuidSupport,
+  StringSupport, DecimalSupport, GuidSupport, DateSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
-  MimeMessage, DateAndTime, JWT, SCIMObjects, MXML, GraphQL,
+  MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
@@ -1687,9 +1687,9 @@ begin
   result := TFhirPeriod.create;
   try
     if low <> '' then
-      result.start := TDateAndTime.createXml(low);
+      result.start := TDateTimeEx.fromXml(low);
     if high <> '' then
-      result.end_ := TDateAndTime.createXml(high);
+      result.end_ := TDateTimeEx.fromXml(high);
     result.link;
   finally
     result.free;

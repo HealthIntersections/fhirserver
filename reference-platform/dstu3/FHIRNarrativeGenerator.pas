@@ -942,13 +942,13 @@ begin
   else if (e is TFHIRExtension) then
     x.addText('Extensions: Todo')
   else if (e is TFHIRInstant) then
-    x.addText(TFHIRInstant(e).value.AsString)
+    x.addText(TFHIRInstant(e).value.ToString)
   else if (e is TFHIRDateTime) then
-    x.addText(TFHIRDateTime(e).value.AsString)
+    x.addText(TFHIRDateTime(e).value.ToString)
     // else if (e is TFHIRBase64Binary) then
     // x.addText(EncodeBase64(TFHIRBase64Binary(e).value))
   else if (e is TFHIRDate) then
-    x.addText(TFHIRDate(e).value.AsString)
+    x.addText(TFHIRDate(e).value.ToString)
   else if (e is TFHIRENum) then
     x.addText(TFHIRENum(e).value) // todo: look up a display name if there is one the
   else if (e is TFHIRBoolean) then
@@ -990,12 +990,12 @@ begin
   else if (e is TFHIRPeriod) then
   begin
     p := TFHIRPeriod(e);
-    if (p.start <> nil) then
+    if (p.start.notNull) then
       x.addText(p.start.toString)
     else
       x.addText('??');
     x.addText(' --> ');
-    if (p.end_ <> nil) then
+    if (p.end_.notNull) then
       x.addText(p.end_.toString)
     else
       x.addText('??');
@@ -1118,12 +1118,12 @@ begin
     else if (e is TFHIRPeriod) then
     begin
       p := TFHIRPeriod(e);
-      if (p.start <> nil) then
+      if (p.start.notNull) then
         x.addText(p.start.toString)
       else
         x.addText('??');
       x.addText(' --> ');
-      if (p.end_ <> nil) then
+      if (p.end_.notNull) then
         x.addText(p.end_.toString)
       else
         x.addText('??');
@@ -1410,12 +1410,12 @@ begin
         s.append(TFHIRString(o.author).value);
     end;
 
-    if (o.time <> nil) then
+    if (o.time.notNull) then
     begin
       if (s.length > 0) then
         s.append('; ');
 
-      s.append('Made: ').append(o.time.AsString);
+      s.append('Made: ').append(o.time.ToString);
     end;
 
     if (o.Text <> '') then
@@ -1681,7 +1681,7 @@ begin
   if (t.repeat_ <> nil) then
   begin
     rep := t.repeat_;
-    if (rep.bounds <> nil) and (rep.bounds is TFHIRPeriod) and (TFHIRPeriod(rep.bounds).start <> nil) then
+    if (rep.bounds <> nil) and (rep.bounds is TFHIRPeriod) and (TFHIRPeriod(rep.bounds).start.notNull) then
       CommaAdd(s, 'Starting ' + TFHIRPeriod(rep.bounds).start.toString());
     if (rep.Count <> '') then
       CommaAdd(s, 'Count ' + rep.Count + ' times');
@@ -1722,7 +1722,7 @@ begin
       end;
       CommaAdd(s, 'Do ' + st);
     end;
-    if (rep.bounds <> nil) and (rep.bounds is TFHIRPeriod) and (TFHIRPeriod(rep.bounds).end_ <> nil) then
+    if (rep.bounds <> nil) and (rep.bounds is TFHIRPeriod) and (TFHIRPeriod(rep.bounds).end_.notNull) then
       CommaAdd(s, 'Until ' + TFHIRPeriod(rep.bounds).end_.toString);
   end;
   result := sc;

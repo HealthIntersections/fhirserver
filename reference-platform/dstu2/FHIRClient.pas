@@ -40,7 +40,7 @@ uses
   StringSupport, EncodeSupport, GuidSupport,
   IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
-  FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, DateAndTime,
+  FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
 
 Type
@@ -72,7 +72,7 @@ Type
     FUseIndy: boolean;
     FWorker : TWorkerContext;
 
-//    FLastUpdated : TDateAndTime;
+//    FLastUpdated : TDateTimeEx;
     procedure status(msg : String);
     function serialise(resource : TFhirResource):TStream; overload;
     function makeUrl(tail : String; params : TAdvStringMatch = nil) : String;

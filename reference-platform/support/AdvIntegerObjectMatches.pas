@@ -136,9 +136,6 @@ Type
 Implementation
 
 
-Uses
-  AdvFactories;
-
 
 Constructor TAdvIntegerObjectMatch.Create;
 Begin
@@ -553,7 +550,4 @@ Begin
   Result := FItemArray^[iIndex];
 End;
 
-
-Initialization
-  Factory.RegisterClass(TAdvIntegerObjectMatch);
 End. // AdvIntegerObjectMatches //

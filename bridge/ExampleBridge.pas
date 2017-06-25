@@ -68,7 +68,7 @@ interface
 Uses
   SysUtils, Classes, IniFiles,
 
-  kCritSct, DateAndTime,
+  kCritSct, DateSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVFormatters, AdvCSVExtractors, AdvFiles, AdvJson, HashSupport,
 
   FHIRTypes, FHIRResources, FHIRConstants, FHIRSupport, FHIRUtilities, SCIMObjects,
@@ -142,7 +142,7 @@ Type
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     procedure QueueResource(r: TFhirResource); overload; override;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload; override;
+    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
 
     function ProfilesAsOptionList : String; override;
@@ -430,7 +430,7 @@ begin
   try
     result.meta := TFHIRMeta.Create;
     result.meta.versionId := data[0];
-    result.meta.lastUpdated := TDateAndTime.CreateHL7(data[1]);
+    result.meta.lastUpdated := TDateTimeEx.fromHL7(data[1]);
     with result.identifierList.Append do
     begin
       system := SYSTEM_ID;
@@ -445,7 +445,7 @@ begin
     end;
     result.gender := TFhirAdministrativeGenderEnum(StrToIntDef(data[6], 0));
     if (data[7] <> '') then
-      result.birthDate := TDateAndTime.CreateHL7(data[7]);
+      result.birthDate := TDateTimeEx.fromHL7(data[7]);
     result.active := data[8] = '1';
     result.Link;
   finally
@@ -460,7 +460,7 @@ begin
   result := TAdvStringList.Create;
   try
     result.add(pat.meta.versionId);
-    result.add(pat.meta.lastUpdated.AsHL7);
+    result.add(pat.meta.lastUpdated.ToHL7);
 
     id := pat.identifierList.BySystem(SYSTEM_ID);
     if (id = nil) then
@@ -478,8 +478,8 @@ begin
     if (pat.nameList[0].givenList.Count > 1) then
       result.Add(pat.nameList[0].givenList[1].value);
     result.add(inttostr(ord(pat.gender)));
-    if pat.birthDate <> nil then
-      result.add(pat.birthDate.AsHL7);
+    if pat.birthDate.notNull then
+      result.add(pat.birthDate.ToHL7);
     if (pat.activeElement = nil) or pat.active then
       result.add('1')
     else
@@ -498,7 +498,7 @@ begin
   if request.Resource.meta = nil then
     request.Resource.meta := TFHIRMeta.Create;
   request.Resource.meta.versionId := '1';
-  request.Resource.meta.lastUpdated := NowUTC;
+  request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
 
   data := dataFromPatient(request.Resource as TFHIRPatient);
   try
@@ -510,7 +510,7 @@ begin
     response.HTTPCode := 201;
     response.Message := 'Created';
     response.Location := request.baseUrl+request.ResourceName+'/'+result+'/_history/1';
-    response.LastModifiedDate := response.Resource.meta.lastUpdated.AsUTCDateTime;
+    response.LastModifiedDate := response.Resource.meta.lastUpdated.DateTime;
   finally
     data.Free;
   end;
@@ -527,7 +527,7 @@ begin
     if request.Resource.meta = nil then
       request.Resource.meta := TFHIRMeta.Create;
     request.Resource.meta.versionId := inttostr(StrToInt(odata[0])+1);
-    request.Resource.meta.lastUpdated := NowUTC;
+    request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
 
     ndata := dataFromPatient(request.Resource as TFHIRPatient);
     try
@@ -541,7 +541,7 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Location := request.baseUrl+request.ResourceName+'/'+request.id+'/_history/'+response.versionId;
-      response.LastModifiedDate := response.Resource.meta.lastUpdated.AsUTCDateTime;
+      response.LastModifiedDate := response.Resource.meta.lastUpdated.DateTime;
     finally
       ndata.Free;
     end;
@@ -640,7 +640,7 @@ begin
   // nothing in this server
 end;
 
-procedure TExampleFhirServerStorage.QueueResource(r: TFhirResource; dateTime: TDateAndTime);
+procedure TExampleFhirServerStorage.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
 begin
   // nothing in this server
 end;

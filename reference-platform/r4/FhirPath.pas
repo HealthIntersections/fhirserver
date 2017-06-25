@@ -38,7 +38,7 @@ interface
 uses
   SysUtils, Classes, Math, RegularExpressions, Generics.Collections, Character,
   StringSupport, TextUtilities, SystemSupport, MathSupport,
-  AdvObjects, AdvGenerics, DecimalSupport, DateAndTime,
+  AdvObjects, AdvGenerics, DecimalSupport, DateSupport,
   ParserSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRConstants,
   FHIRParser;
@@ -1231,7 +1231,7 @@ end;
 
 function TFHIRExpressionEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDateTime.Create(NowLocal));
+  result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal));
 end;
 
 function TFHIRExpressionEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
@@ -1613,7 +1613,7 @@ end;
 
 function TFHIRExpressionEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.Create(TFhirDate.Create(Today));
+  result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday));
 end;
 
 function StringIsDecimal(s : String) : boolean;
@@ -3535,9 +3535,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TDateAndTime.CreateXML(s))
+    result := TFHIRDateTime.create(TDateTimeEx.fromXML(s))
   else
-    result := TFHIRDate.create(TDateAndTime.CreateXML(s));
+    result := TFHIRDate.create(TDateTimeEx.fromXML(s));
 end;
 
 function TFHIRExpressionEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;

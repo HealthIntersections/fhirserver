@@ -52,8 +52,6 @@ uses
   AdvExclusiveCriticalSections in '..\support\AdvExclusiveCriticalSections.pas',
   AdvThreads in '..\support\AdvThreads.pas',
   AdvSignals in '..\support\AdvSignals.pas',
-  AdvSynchronizationRegistries in '..\support\AdvSynchronizationRegistries.pas',
-  AdvTimeControllers in '..\support\AdvTimeControllers.pas',
   AdvIntegerMatches in '..\support\AdvIntegerMatches.pas',
   AdvBuffers in '..\support\AdvBuffers.pas',
   BytesSupport in '..\support\BytesSupport.pas',
@@ -72,8 +70,6 @@ uses
   AdvOrdinalSets in '..\support\AdvOrdinalSets.pas',
   AdvStreamReaders in '..\support\AdvStreamReaders.pas',
   AdvStringStreams in '..\support\AdvStringStreams.pas',
-  DateAndTime in '..\support\DateAndTime.pas',
-  KDate in '..\support\KDate.pas',
   HL7V2DateSupport in '..\support\HL7V2DateSupport.pas',
   FHIRBase in '..\support\FHIRBase.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
@@ -121,7 +117,9 @@ uses
   FHIRContext in 'FHIRContext.pas',
   GraphQL in '..\support\GraphQL.pas',
   ParserSupport in '..\support\ParserSupport.pas',
-  MXML in '..\support\MXML.pas';
+  MXML in '..\support\MXML.pas',
+  AdvZipWriters in '..\support\AdvZipWriters.pas',
+  SCIMObjects in '..\support\SCIMObjects.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

@@ -125,9 +125,9 @@
         <DCCReference Include="..\reference-platform\support\AdvFiles.pas"/>
         <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\KDate.pas"/>
         <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FileSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, kCritSct,
   DateSupport, GuidSupport, StringSupport,
   AdvObjects, AdvGenerics,
-  SCIMServer, DateAndTime,
+  SCIMServer, 
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSecurity,
   FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
 
@@ -121,7 +121,7 @@ begin
         session.key := FLastSessionKey;
         session.id := '';
         session.name := clientInfo;
-        session.expires := UniversalDateTime + DATETIME_SECOND_ONE * 60 * 60;
+        session.expires := TDateTimeEx.makeUTC.DateTime + DATETIME_SECOND_ONE * 60 * 60;
         // 1 hour
         session.Cookie := NewGuidId;
         session.provider := apNone;
@@ -163,7 +163,7 @@ begin
       C.Display := 'Login';
       se.event.action := AuditEventActionE;
       se.event.outcome := AuditEventOutcome0;
-      se.event.dateTime := NowUTC;
+      se.event.dateTime := TDateTimeEx.makeUTC;
       se.source := TFhirAuditEventSource.Create;
       se.source.site := TFHIRServerContext(serverContext).OwnerName;
       se.source.identifier := TFhirIdentifier.Create;
@@ -216,7 +216,7 @@ begin
         C.Display := 'Logout';
         se.event.action := AuditEventActionE;
         se.event.outcome := AuditEventOutcome0;
-        se.event.dateTime := NowUTC;
+        se.event.dateTime := TDateTimeEx.makeUTC;
         se.source := TFhirAuditEventSource.Create;
         se.source.site := TFHIRServerContext(serverContext).OwnerName;
         se.source.identifier := TFhirIdentifier.Create;
@@ -267,11 +267,11 @@ begin
     if result then
     begin
       session.useCount := session.useCount + 1;
-      if session.expires > UniversalDateTime then
+      if session.expires > TDateTimeEx.makeUTC.DateTime then
       begin
         session.Link;
         check := (session.provider in [apFacebook, apGoogle]) and
-          (session.NextTokenCheck < UniversalDateTime);
+          (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime);
       end
       else
       begin
@@ -305,7 +305,7 @@ begin
       begin
         session.useCount := session.useCount + 1;
         c := session.Key;
-        if (session.expires > UniversalDateTime) and not ((session.provider in [apFacebook, apGoogle]) and (session.NextTokenCheck < UniversalDateTime)) then
+        if (session.expires > TDateTimeEx.makeUTC.DateTime) and not ((session.provider in [apFacebook, apGoogle]) and (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime)) then
           result := session.Link
         else
           FSessions.Remove(session.Cookie);
@@ -325,10 +325,10 @@ begin
       result.UserKey := userkey;
       result.User := TFHIRServerContext(serverContext).UserProvider.loadUser(userkey);
       result.name := result.User.formattedName;
-      result.expires := LocalDateTime + DATETIME_SECOND_ONE * 500;
+      result.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 500;
       result.Cookie := NewGuidId;
       result.provider := apInternal;
-      result.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
+      result.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
       result.scopes := TFHIRSecurityRights.allScopes;
       FLock.Lock('RegisterSession2');
       try
@@ -408,9 +408,9 @@ begin
         session.User := TFHIRServerContext(ServerContext).UserProvider.loadUser(username, key);
         session.UserKey := key;
         session.name := session.User.bestName;
-        session.expires := LocalDateTime + DATETIME_SECOND_ONE * 0.25;
+        session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 0.25;
         session.provider := apInternal;
-        session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
+        session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
         session.scopes := TFHIRSecurityRights.allScopes;
         if (session.User.emails.Count > 0) then
           session.email := session.User.emails[0].value;
@@ -442,7 +442,7 @@ begin
         C.Display := 'Login';
         se.event.action := AuditEventActionE;
         se.event.outcome := AuditEventOutcome0;
-        se.event.dateTime := NowUTC;
+        se.event.dateTime := TDateTimeEx.makeUTC;
         se.source := TFhirAuditEventSource.Create;
         se.source.site := TFHIRServerContext(serverContext).OwnerName;
         se.source.identifier := TFhirIdentifier.Create;
@@ -479,7 +479,7 @@ begin
   try
     if FSessions.TryGetValue(sCookie, session) then
     begin
-      session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
+      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
       session.name := sName;
     end;
   finally
@@ -499,13 +499,13 @@ begin
     session.outerToken := outerToken;
     session.id := id;
     session.name := name;
-    session.expires := LocalDateTime + DATETIME_SECOND_ONE * StrToInt(expires);
+    session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * StrToInt(expires);
     session.Cookie := OAUTH_SESSION_PREFIX +
       copy(GUIDToString(CreateGuid), 2, 36);
     session.provider := provider;
     session.originalUrl := original;
     session.email := email;
-    session.NextTokenCheck := UniversalDateTime + 5 * DATETIME_MINUTE_ONE;
+    session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
     if provider = apInternal then
       session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(id, key)
     else
@@ -544,7 +544,7 @@ var
   d: TDateTime;
 begin
   key := 0;
-  d := UniversalDateTime;
+  d := TDateTimeEx.makeUTC.DateTime;
   FLock.Lock('sweep2');
   try
     for session in FSessions.Values do

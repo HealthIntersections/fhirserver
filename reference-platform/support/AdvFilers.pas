@@ -111,7 +111,6 @@ Type
   TLongString = StringSupport.TLongString;
   TShortString = StringSupport.TShortString;
   TColour = ColourSupport.TColour;
-  TDateTime = DateSupport.TDateTime;
   TDuration = DateSupport.TDuration;
   TCurrency = CurrencySupport.TCurrency;
 

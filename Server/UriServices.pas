@@ -36,7 +36,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,
   KDBManager,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TUriHolder = class (TCodeSystemProviderContext)

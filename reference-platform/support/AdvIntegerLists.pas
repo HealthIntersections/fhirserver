@@ -122,8 +122,7 @@ Implementation
 
 
 Uses
-  MemorySupport, StringSupport,
-  AdvFactories;
+  MemorySupport, StringSupport;
 
 
 Procedure TAdvIntegerList.SaveItem(oFiler : TAdvFiler; iIndex : Integer);
@@ -479,7 +478,4 @@ Begin
   End;
 End;
 
-
-Initialization
-  Factory.RegisterClass(TAdvIntegerList);
 End. // AdvIntegerLists //

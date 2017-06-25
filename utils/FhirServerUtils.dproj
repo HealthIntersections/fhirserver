@@ -175,8 +175,6 @@
         <DCCReference Include="..\reference-platform\Support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvThreads.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvSignals.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvInt64Matches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvLargeIntegerMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvStringLargeIntegerMatches.pas"/>
@@ -204,8 +202,6 @@
         <DCCReference Include="..\reference-platform\Support\AdvZipWorkers.pas"/>
         <DCCReference Include="..\reference-platform\Support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\DecimalSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\DateAndTime.pas"/>
-        <DCCReference Include="..\reference-platform\Support\KDate.pas"/>
         <DCCReference Include="..\reference-platform\Support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\MsXmlParser.pas"/>
         <DCCReference Include="..\reference-platform\Support\XMLBuilder.pas"/>
@@ -217,13 +213,11 @@
         <DCCReference Include="..\reference-platform\Support\AfsVolumes.pas"/>
         <DCCReference Include="..\reference-platform\Support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvObjectMatches.pas"/>
-        <DCCReference Include="..\reference-platform\Support\RegExpr.pas"/>
         <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvIntegerObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvNames.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumServices.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvBinaryFilers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvClassLists.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvPointers.pas"/>
         <DCCReference Include="..\Libraries\ucum\UcumHandlers.pas"/>
@@ -303,7 +297,7 @@
         <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
         <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
         <DCCReference Include="..\reference-platform\r4\QuestionnaireBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\r4\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\r4\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRNarrativeGenerator.pas"/>

@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, Variants, Math,
   AdvObjects, AdvGenerics, AdvStreams, AdvBuffers, AdvVclStreams,  AdvMemories,
-  ParserSupport, MXML, XmlBuilder, AdvXmlBuilders, AdvJson, DateAndTime,
+  ParserSupport, MXML, XmlBuilder, AdvXmlBuilders, AdvJson, DateSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRUtilities, FHIRSupport, FHIRXHtml;
 
 
@@ -1280,16 +1280,12 @@ end;
 
 function TFHIRMMXmlParser.convertForDateFormat(fmt, av : String) : String;
 var
-  d : TDateAndTime;
+  d : TDateTimeEx;
 begin
   if ('v3' = fmt) then
   begin
-    d := TDateAndTime.CreateHL7(av);
-    try
-      result := d.AsXML;
-  finally
-      d.Free;
-  end;
+    d := TDateTimeEx.fromHL7(av);
+    result := d.ToXML;
   end
   else
     raise Exception.create('Unknown Data format "'+fmt+'"');

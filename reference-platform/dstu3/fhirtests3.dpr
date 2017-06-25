@@ -47,8 +47,6 @@ uses
   AdvExclusiveCriticalSections in '..\support\AdvExclusiveCriticalSections.pas',
   AdvThreads in '..\support\AdvThreads.pas',
   AdvSignals in '..\support\AdvSignals.pas',
-  AdvSynchronizationRegistries in '..\support\AdvSynchronizationRegistries.pas',
-  AdvTimeControllers in '..\support\AdvTimeControllers.pas',
   AdvIntegerMatches in '..\support\AdvIntegerMatches.pas',
   AdvBuffers in '..\support\AdvBuffers.pas',
   BytesSupport in '..\support\BytesSupport.pas',
@@ -91,8 +89,6 @@ uses
   XmlPatch in '..\support\XmlPatch.pas',
   RDFUtilities in '..\support\RDFUtilities.pas',
   TextUtilities in '..\support\TextUtilities.pas',
-  DateAndTime in '..\support\DateAndTime.pas',
-  KDate in '..\support\KDate.pas',
   HL7V2DateSupport in '..\support\HL7V2DateSupport.pas',
   ParseMap in '..\support\ParseMap.pas',
   AfsResourceVolumes in '..\support\AfsResourceVolumes.pas',
@@ -126,7 +122,8 @@ uses
   MXML in '..\support\MXML.pas',
   FHIRParserTests in 'tests\FHIRParserTests.pas',
   XmlTests in '..\support\Tests\XmlTests.pas',
-  JsonTests in '..\support\Tests\JsonTests.pas';
+  JsonTests in '..\support\Tests\JsonTests.pas',
+  SCIMObjects in '..\support\SCIMObjects.pas';
 
 var
   s: String;

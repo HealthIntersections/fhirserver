@@ -20,7 +20,7 @@ Uses
   Windows,
   Classes,
   SysUtils,
-  KDate,
+  
   DB;
 
 Const

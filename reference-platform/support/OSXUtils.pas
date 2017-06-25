@@ -2,18 +2,17 @@ unit OSXUtils;
 
 interface
 
-uses
-  Posix.Unistd, Posix.Pthread, Posix.Wctype,
-  SysUtils;
-
 {
 other code to fix:
  - timezone stuff in DateSupport
- - SystemSupport
  - FileSupport
  - AdvFiles
 }
 {$IFDEF OSX}
+
+uses
+  Posix.Unistd, Posix.Pthread, Posix.Wctype,
+  SysUtils;
 
 const
   ERROR_SUCCESS = 0;

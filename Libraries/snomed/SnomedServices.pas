@@ -56,7 +56,7 @@ Uses
   Windows, SysUtils, Classes, Generics.Collections, Character,
   StringSupport, FileSupport, BytesSupport, MathSupport,
   AdvStringLists, AdvObjectLists, AdvObjects, AdvGenerics,
-  YuStemmer, DateAndTime,
+  YuStemmer, DateSupport,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   SnomedExpressions, TerminologyServices;
 
@@ -2942,7 +2942,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set List';
       result.description := 'Reference Sets defined in this SNOMED-CT version';
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://snomed.info/sct';
@@ -2967,7 +2967,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://snomed.info/sct';
@@ -2985,7 +2985,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Reference Set '+id.Substring(16);
       result.description := GetDisplayName(id.Substring(16), '');
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://snomed.info/sct';
@@ -3007,7 +3007,7 @@ begin
       result.version := VersionDate;
       result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
-      result.date := NowUTC;
+      result.date := TDateTimeEx.makeUTC;
       result.compose := TFhirValueSetCompose.Create;
       inc := result.compose.includeList.Append;
       inc.system := 'http://snomed.info/sct';

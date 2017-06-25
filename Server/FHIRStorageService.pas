@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   KCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
-  KDBDialects, DateAndTime,
+  KDBDialects, DateSupport,
 
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
@@ -123,7 +123,7 @@ Type
     procedure RecordFhirSession(session: TFhirSession); virtual;
     procedure CloseFhirSession(key: integer); virtual;
     procedure QueueResource(r: TFhirResource); overload; virtual;
-    procedure QueueResource(r: TFhirResource; dateTime: TDateAndTime); overload; virtual;
+    procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; virtual;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual;
 
     function ProfilesAsOptionList : String; virtual;
@@ -224,9 +224,9 @@ begin
   raise Exception.Create('The function "QueueResource(r: TFhirResource)" must be overridden in '+className);
 end;
 
-procedure TFHIRStorageService.QueueResource(r: TFhirResource; dateTime: TDateAndTime);
+procedure TFHIRStorageService.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
 begin
-  raise Exception.Create('The function "QueueResource(r: TFhirResource; dateTime: TDateAndTime)" must be overridden in '+className);
+  raise Exception.Create('The function "QueueResource(r: TFhirResource; dateTime: TDateTimeEx)" must be overridden in '+className);
 end;
 
 procedure TFHIRStorageService.RecordFhirSession(session: TFhirSession);

@@ -39,7 +39,7 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MXML, FHIRParserBase, DateAndTime, RDFUtilities, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, XmlBuilder, AdvJSON, AdvStringMatches;
+  SysUtils, Classes, ActiveX, StringSupport, DateSupport, MXml, FHIRParserBase, RDFUtilities, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, XmlBuilder, AdvJSON, AdvStringMatches;
 
 Type
 
@@ -3705,7 +3705,7 @@ begin
   result := TFhirDateTime.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -3730,7 +3730,7 @@ function TFHIRJsonParser.ParseDateTime(value : string; jsn : TJsonObject) : TFHI
 begin
   result := TFhirDateTime.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -3741,10 +3741,10 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeDateTime(xml : TXmlBuilder; name : String; value : TFhirDateTime);
 begin
-  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then
+  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
-  if (value.value <> nil) then
+  if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
   xml.open(name);
   composeElementChildren(xml, value);
@@ -3754,7 +3754,7 @@ end;
 
 Procedure TFHIRJsonComposer.ComposeDateTimeValue(json : TJSONWriter; name : String; value : TFhirDateTime; inArray : boolean);
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
   begin
     if inArray then
       propNull(json, name);
@@ -3802,7 +3802,7 @@ begin
   result := TFhirDate.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -3827,7 +3827,7 @@ function TFHIRJsonParser.ParseDate(value : string; jsn : TJsonObject) : TFHIRDat
 begin
   result := TFhirDate.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -3838,10 +3838,10 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeDate(xml : TXmlBuilder; name : String; value : TFhirDate);
 begin
-  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then
+  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
-  if (value.value <> nil) then
+  if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
   xml.open(name);
   composeElementChildren(xml, value);
@@ -3851,7 +3851,7 @@ end;
 
 Procedure TFHIRJsonComposer.ComposeDateValue(json : TJSONWriter; name : String; value : TFhirDate; inArray : boolean);
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
   begin
     if inArray then
       propNull(json, name);
@@ -4187,7 +4187,7 @@ begin
   result := TFhirInstant.create;
   try
     ParseElementAttributes(result, path, element);
-    result.value := toTDateAndTime(GetAttribute(element, 'value'));
+    result.value := toTDateTimeEx(GetAttribute(element, 'value'));
     child := FirstChild(element);
     while (child <> nil) do
     begin
@@ -4212,7 +4212,7 @@ function TFHIRJsonParser.ParseInstant(value : string; jsn : TJsonObject) : TFHIR
 begin
   result := TFhirInstant.Create;
   try
-     result.value := toTDateAndTime(value);
+     result.value := toTDateTimeEx(value);
     if (jsn <> nil) then
       parseElementProperties(jsn, result);
     result.Link;
@@ -4223,10 +4223,10 @@ end;
 
 Procedure TFHIRXmlComposer.ComposeInstant(xml : TXmlBuilder; name : String; value : TFhirInstant);
 begin
-  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then
+  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then
     exit;
   composeElementAttributes(xml, value);
-  if (value.value <> nil) then
+  if (value.value.notNull) then
     attribute(xml, 'value', asString(value.value));
   xml.open(name);
   composeElementChildren(xml, value);
@@ -4236,7 +4236,7 @@ end;
 
 Procedure TFHIRJsonComposer.ComposeInstantValue(json : TJSONWriter; name : String; value : TFhirInstant; inArray : boolean);
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
   begin
     if inArray then
       propNull(json, name);
@@ -5536,8 +5536,8 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(xml, 'name', elem.nameElement){x.2b}
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
     ComposeCode(xml, 'valueCode', TFhirCode(elem.value))
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(xml, 'valueOid', TFhirOid(elem.value))
@@ -5720,10 +5720,10 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false)
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false)
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) then
   begin
     ComposeCodeValue(json, 'valueCode', TFhirCode(elem.value), false);
     ComposeCodeProps(json, 'valueCode', TFhirCode(elem.value), false)
@@ -5872,8 +5872,8 @@ begin
   end;
   composeBackboneElement(this, 'ParametersParameter', name, elem, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeString(this, 'ParametersParameter', 'name', elem.nameElement, -1){x.2c}
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
+    ComposeString(this, 'ParametersParameter', 'name', elem.nameElement, -1);{x.2c}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirCode) {1} then
     ComposeCode(this, 'ParametersParameter', 'valueCode', TFhirCode(elem.value), -1)
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.value is TFhirOid) {1} then
     ComposeOid(this, 'ParametersParameter', 'valueOid', TFhirOid(elem.value), -1)

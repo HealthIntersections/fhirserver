@@ -145,10 +145,6 @@ Type
 Implementation
 
 
-Uses
-  AdvFactories;
-
-
 Procedure TAdvStreamFilerReferenceHashEntry.Assign(oSource: TAdvObject);
 Begin
   Inherited;

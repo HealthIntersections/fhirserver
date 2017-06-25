@@ -33,7 +33,7 @@ interface
 
 uses
   Classes, DB, Contnrs,
-  KDate, KDBManager, AdvExceptions;
+   KDBManager, AdvExceptions;
 
 const
   {$IFDEF VER170}

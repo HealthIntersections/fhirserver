@@ -120,7 +120,6 @@
         </DCCReference>
         <DCCReference Include="FHIRPluginSettings.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRValidator.pas"/>
-        <DCCReference Include="..\reference-platform\Support\RegExpr.pas"/>
         <DCCReference Include="..\reference-platform\Support\StringSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\MathSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvObjects.pas"/>
@@ -154,8 +153,6 @@
         <DCCReference Include="..\reference-platform\Support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvThreads.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvSignals.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\reference-platform\Support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvIntegerMatches.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvBuffers.pas"/>
         <DCCReference Include="..\reference-platform\Support\BytesSupport.pas"/>
@@ -181,10 +178,8 @@
         <DCCReference Include="..\reference-platform\Support\AdvNameBuffers.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvMemories.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
-        <DCCReference Include="..\reference-platform\Support\DateAndTime.pas"/>
         <DCCReference Include="..\reference-platform\Support\DecimalSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\GUIDSupport.pas"/>
-        <DCCReference Include="..\reference-platform\Support\KDate.pas"/>
         <DCCReference Include="..\reference-platform\Support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvNames.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvStringMatches.pas"/>
@@ -195,7 +190,7 @@
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRConstants.pas"/>

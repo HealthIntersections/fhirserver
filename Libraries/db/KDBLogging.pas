@@ -82,7 +82,7 @@ type
 implementation
 
 uses
-  KDate,
+  DateSupport,
   Math,
   IdGlobal,
   StringSupport;
@@ -90,7 +90,7 @@ uses
 const
   ASSERT_UNIT = 'KDBLogger';
   MAX_EXCEPTION_LIST = 20;
-  MILLI_SECOND_LENGTH = SECOND_LENGTH / 1000;
+  MILLI_SECOND_LENGTH = DATETIME_SECOND_ONE / 1000;
   EOL_WINDOWS = CR + LF;
   EOL_PLATFORM = EOL_WINDOWS;
 

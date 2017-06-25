@@ -148,8 +148,6 @@
         <DCCReference Include="..\support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\support\AdvThreads.pas"/>
         <DCCReference Include="..\support\AdvSignals.pas"/>
-        <DCCReference Include="..\support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\support\AdvIntegerMatches.pas"/>
         <DCCReference Include="..\support\AdvBuffers.pas"/>
         <DCCReference Include="..\support\BytesSupport.pas"/>
@@ -192,14 +190,11 @@
         <DCCReference Include="..\support\XmlPatch.pas"/>
         <DCCReference Include="..\support\RDFUtilities.pas"/>
         <DCCReference Include="..\support\TextUtilities.pas"/>
-        <DCCReference Include="..\support\DateAndTime.pas"/>
-        <DCCReference Include="..\support\KDate.pas"/>
         <DCCReference Include="..\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\support\ParseMap.pas"/>
         <DCCReference Include="..\support\AfsResourceVolumes.pas"/>
         <DCCReference Include="..\support\AfsVolumes.pas"/>
         <DCCReference Include="..\support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\support\RegExpr.pas"/>
         <DCCReference Include="..\support\OIDSupport.pas"/>
         <DCCReference Include="..\support\MimeMessage.pas"/>
         <DCCReference Include="..\support\kCritSct.pas"/>
@@ -227,6 +222,7 @@
         <DCCReference Include="tests\FHIRParserTests.pas"/>
         <DCCReference Include="..\support\Tests\XmlTests.pas"/>
         <DCCReference Include="..\support\Tests\JsonTests.pas"/>
+        <DCCReference Include="..\support\SCIMObjects.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

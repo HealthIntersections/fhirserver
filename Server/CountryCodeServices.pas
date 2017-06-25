@@ -36,7 +36,7 @@ uses
   StringSupport,
   AdvObjects, AdvObjectLists, AdvFiles, AdvTextExtractors, AdvStringMatches,
   KDBManager,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TCountryCodeConcept = class (TCodeSystemProviderContext);

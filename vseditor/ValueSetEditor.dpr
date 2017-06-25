@@ -46,7 +46,7 @@ uses
   FHIRUtilities in '..\reference-platform\dstu2\FHIRUtilities.pas',
   FHIRWorkerContext in '..\reference-platform\dstu2\FHIRWorkerContext.pas',
   NarrativeGenerator in '..\reference-platform\dstu2\NarrativeGenerator.pas',
-  SCIMObjects in '..\reference-platform\dstu2\SCIMObjects.pas',
+  SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   DecimalSupport in '..\reference-platform\Support\DecimalSupport.pas',
   GUIDSupport in '..\reference-platform\Support\GUIDSupport.pas',
   StringSupport in '..\reference-platform\Support\StringSupport.pas',

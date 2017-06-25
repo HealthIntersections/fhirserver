@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvGenerics,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TACIRConcept = class (TCodeSystemProviderContext)

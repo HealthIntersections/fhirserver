@@ -58,7 +58,6 @@ uses
   BytesSupport in '..\support\BytesSupport.pas',
   ColourSupport in '..\support\ColourSupport.pas',
   CurrencySupport in '..\support\CurrencySupport.pas',
-  DateAndTime in '..\support\DateAndTime.pas',
   DateSupport in '..\support\DateSupport.pas',
   DecimalSupport in '..\support\DecimalSupport.pas',
   DecimalTests in '..\support\Tests\DecimalTests.pas',
@@ -91,7 +90,6 @@ uses
   JWTTests in '..\support\Tests\JWTTests.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
   kCritSct in '..\support\kCritSct.pas',
-  KDate in '..\support\KDate.pas',
   libeay32 in '..\support\libeay32.pas',
   MXML in '..\support\MXML.pas',
   MXmlBuilder in '..\support\MXmlBuilder.pas',
@@ -103,7 +101,6 @@ uses
   ParseMap in '..\support\ParseMap.pas',
   ParserSupport in '..\support\ParserSupport.pas',
   RDFUtilities in '..\support\RDFUtilities.pas',
-  RegExpr in '..\support\RegExpr.pas',
   ShellSupport in '..\support\ShellSupport.pas',
   StringSupport in '..\support\StringSupport.pas',
   SysUtils,
@@ -113,7 +110,8 @@ uses
   ThreadSupport in '..\support\ThreadSupport.pas',
   XMLBuilder in '..\support\XMLBuilder.pas',
   XmlTests in '..\support\Tests\XmlTests.pas',
-  XmlPatch in '..\support\XmlPatch.pas';
+  XmlPatch in '..\support\XmlPatch.pas',
+  SCIMObjects in '..\support\SCIMObjects.pas';
 
 var
   s: String;

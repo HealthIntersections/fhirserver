@@ -39,7 +39,7 @@ Interface
 Uses
   SysUtils, Classes, Generics.Collections, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   AdvNames, AdvExceptions, AdvObjects, AdvObjectLists, AdvBuffers, AdvGenerics, AdvStringLists,
-  DateAndTime, DateSupport, EncodeSupport, EncdDecd, DecimalSupport, ParserSupport;
+   DateSupport, EncodeSupport, EncdDecd, DecimalSupport, ParserSupport;
 
 Const
   ID_LENGTH = 64;
@@ -343,7 +343,7 @@ type
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
   public
     constructor create(value : String); Overload;
-    constructor create(value : TDateAndTime); Overload;
+    constructor create(value : TDateTimeEx); Overload;
     constructor create(value : boolean); Overload;
     constructor create(value : TBytes); Overload;
     property value : string read FValue write FValue;
@@ -1557,10 +1557,10 @@ begin
   self.value := lowercase(BooleanToString(value));
 end;
 
-constructor TFHIRObjectText.create(value: TDateAndTime);
+constructor TFHIRObjectText.create(value: TDateTimeEx);
 begin
   Create;
-  self.value := value.AsXML;
+  self.value := value.toXML;
 end;
 
 constructor TFHIRObjectText.create(value: TBytes);

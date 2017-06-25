@@ -1,4 +1,4 @@
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateAndTime, DateAndTime_Wrapper}
+{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, DateSupport, DateSupport_Wrapper}
 
 unit FHIROperations;
 
@@ -41,7 +41,7 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateAndTime, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
+  SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateSupport, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
 
 Type
 
@@ -53,11 +53,10 @@ Type
     FContext : String;
     FFilter : String;
     FProfile : String;
-    FDate : TDateAndTime;
+    FDate : TDateTimeEx;
     FOffset : String;
     FCount : String;
     procedure SetValueSet(value : TFhirValueSet);
-    procedure SetDate(value : TDateAndTime);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -71,7 +70,7 @@ Type
     property context : String read FContext write FContext;
     property filter : String read FFilter write FFilter;
     property profile : String read FProfile write FProfile;
-    property date : TDateAndTime read FDate write SetDate;
+    property date : TDateTimeEx read FDate write FDate;
     property offset : String read FOffset write FOffset;
     property count : String read FCount write FCount;
   end;
@@ -98,9 +97,8 @@ Type
     FSystem : String;
     FVersion : String;
     FCoding : TFhirCoding;
-    FDate : TDateAndTime;
+    FDate : TDateTimeEx;
     procedure SetCoding(value : TFhirCoding);
-    procedure SetDate(value : TDateAndTime);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -113,7 +111,7 @@ Type
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property coding : TFhirCoding read FCoding write SetCoding;
-    property date : TDateAndTime read FDate write SetDate;
+    property date : TDateTimeEx read FDate write FDate;
   end;
 
   TFHIRLookupOpRespDesignation = class (TFHIROperationObject)
@@ -168,12 +166,11 @@ Type
     FDisplay : String;
     FCoding : TFhirCoding;
     FCodeableConcept : TFhirCodeableConcept;
-    FDate : TDateAndTime;
+    FDate : TDateTimeEx;
     FAbstract : Boolean;
     procedure SetValueSet(value : TFhirValueSet);
     procedure SetCoding(value : TFhirCoding);
     procedure SetCodeableConcept(value : TFhirCodeableConcept);
-    procedure SetDate(value : TDateAndTime);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -191,7 +188,7 @@ Type
     property display : String read FDisplay write FDisplay;
     property coding : TFhirCoding read FCoding write SetCoding;
     property codeableConcept : TFhirCodeableConcept read FCodeableConcept write SetCodeableConcept;
-    property date : TDateAndTime read FDate write SetDate;
+    property date : TDateTimeEx read FDate write FDate;
     property abstract : Boolean read FAbstract write FAbstract;
   end;
 
@@ -680,12 +677,6 @@ begin
   FValueSet := value;
 end;
 
-procedure TFHIRExpandOpRequest.SetDate(value : TDateAndTime);
-begin
-  FDate.free;
-  FDate := value;
-end;
-
 constructor TFHIRExpandOpRequest.create;
 begin
   inherited create();
@@ -698,7 +689,7 @@ begin
   FContext := params.str['context'];
   FFilter := params.str['filter'];
   FProfile := params.str['profile'];
-  FDate := (params.param['date'].value as TFHIRDateTime).value;
+  FDate := TDateTimeEx.fromXml(params.str['date']);
   FOffset := params.str['offset'];
   FCount := params.str['count'];
   loadExtensions(params);
@@ -710,6 +701,7 @@ begin
   FContext := params.getVar('context');
   FFilter := params.getVar('filter');
   FProfile := params.getVar('profile');
+  FDate := TDateTimeEx.fromXml(params.getVar('date'));
   FOffset := params.getVar('offset');
   FCount := params.getVar('count');
   loadExtensions(params);
@@ -718,7 +710,6 @@ end;
 destructor TFHIRExpandOpRequest.Destroy;
 begin
   FValueSet.free;
-  FDate.free;
   inherited;
 end;
 
@@ -736,8 +727,8 @@ begin
       result.addParameter('filter', TFHIRString.create(FFilter));{oz.5f}
     if (FProfile <> '') then
       result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
-    if (FDate <> nil) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
+    if (FDate.notNull) then
+      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5f}
     if (FOffset <> '') then
       result.addParameter('offset', TFHIRInteger.create(FOffset));{oz.5f}
     if (FCount <> '') then
@@ -806,12 +797,6 @@ begin
   FCoding := value;
 end;
 
-procedure TFHIRLookupOpRequest.SetDate(value : TDateAndTime);
-begin
-  FDate.free;
-  FDate := value;
-end;
-
 constructor TFHIRLookupOpRequest.create;
 begin
   inherited create();
@@ -823,7 +808,7 @@ begin
   FSystem := params.str['system'];
   FVersion := params.str['version'];
   FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
-  FDate := (params.param['date'].value as TFHIRDateTime).value;
+  FDate := TDateTimeEx.fromXml(params.str['date']);
   loadExtensions(params);
 end;
 
@@ -832,13 +817,13 @@ begin
   FCode := params.getVar('code');
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
+  FDate := TDateTimeEx.fromXml(params.getVar('date'));
   loadExtensions(params);
 end;
 
 destructor TFHIRLookupOpRequest.Destroy;
 begin
   FCoding.free;
-  FDate.free;
   inherited;
 end;
 
@@ -854,8 +839,8 @@ begin
       result.addParameter('version', TFHIRString.create(FVersion));{oz.5f}
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);{oz.5d}
-    if (FDate <> nil) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
+    if (FDate.notNull) then
+      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5f}
     writeExtensions(result);
     result.link;
   finally
@@ -997,12 +982,6 @@ begin
   FCodeableConcept := value;
 end;
 
-procedure TFHIRValidateCodeOpRequest.SetDate(value : TDateAndTime);
-begin
-  FDate.free;
-  FDate := value;
-end;
-
 constructor TFHIRValidateCodeOpRequest.create;
 begin
   inherited create();
@@ -1019,7 +998,7 @@ begin
   FDisplay := params.str['display'];
   FCoding := (params.param['coding'].value as TFhirCoding).Link; {ob.5d}
   FCodeableConcept := (params.param['codeableConcept'].value as TFhirCodeableConcept).Link; {ob.5d}
-  FDate := (params.param['date'].value as TFHIRDateTime).value;
+  FDate := TDateTimeEx.fromXml(params.str['date']);
   FAbstract := params.bool['abstract'];
   loadExtensions(params);
 end;
@@ -1032,6 +1011,7 @@ begin
   FSystem := params.getVar('system');
   FVersion := params.getVar('version');
   FDisplay := params.getVar('display');
+  FDate := TDateTimeEx.fromXml(params.getVar('date'));
   FAbstract := StrToBoolDef(params.getVar('abstract'), false);
   loadExtensions(params);
 end;
@@ -1041,7 +1021,6 @@ begin
   FValueSet.free;
   FCoding.free;
   FCodeableConcept.free;
-  FDate.free;
   inherited;
 end;
 
@@ -1067,8 +1046,8 @@ begin
       result.addParameter('coding', FCoding.Link);{oz.5d}
     if (FCodeableConcept <> nil) then
       result.addParameter('codeableConcept', FCodeableConcept.Link);{oz.5d}
-    if (FDate <> nil) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5e}
+    if (FDate.notNull) then
+      result.addParameter('date', TFHIRDateTime.create(FDate));{oz.5f}
       result.addParameter('abstract', TFHIRBoolean.create(FAbstract));{oz.5f}
     writeExtensions(result);
     result.link;
@@ -2388,7 +2367,7 @@ begin
     if (FIdentifier <> '') then
       result.addParameter('identifier', TFHIRUri.create(FIdentifier));{oz.5f}
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRUri.create(FProfile));{oz.5f}
+      result.addParameter('profile', TFHIRString.create(FProfile));{oz.5f}
     if (FUrl <> '') then
       result.addParameter('url', TFHIRUri.create(FUrl));{oz.5f}
       result.addParameter('supportedOnly', TFHIRBoolean.create(FSupportedOnly));{oz.5f}

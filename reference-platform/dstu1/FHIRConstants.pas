@@ -41,7 +41,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateAndTime, FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
+  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers,  FHIRBase, FHIRTypes, FHIRComponents, FHIRResources;
 
 Const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'AdverseReaction', 'Alert', 'AllergyIntolerance', 'CarePlan', 'Composition', 'ConceptMap', 'Condition', 'Conformance', 'Device', 'DeviceObservationReport', 'DiagnosticOrder', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'Encounter', 'FamilyHistory', 'Group', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'List', 'Location', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationPrescription', 'MedicationStatement', 'MessageHeader', 'Observation', 'OperationOutcome', 'Order', 'OrderResponse', 'Organization', 'Other', 'Patient', 'Practitioner', 'Procedure', 'Profile', 'Provenance', 'Query', 'Questionnaire', 'RelatedPerson', 'SecurityEvent', 'Specimen', 'Substance', 'Supply', 'ValueSet', 'Binary');

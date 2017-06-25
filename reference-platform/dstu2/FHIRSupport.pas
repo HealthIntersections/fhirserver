@@ -44,9 +44,9 @@ uses
   SysUtils,
   IdGlobal,
   Parsemap, TextUtilities,
-  StringSupport, DecimalSupport, GuidSupport,
+  StringSupport, DecimalSupport, GuidSupport, DateSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
-  MimeMessage, DateAndTime, JWT, SCIMObjects, MXML, GraphQL,
+  MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
@@ -115,6 +115,7 @@ Type
     function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
     procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String);
   end;
+
 
 
   {@Class TFhirSession
@@ -349,10 +350,10 @@ Type
     function canRead(resourceName : String):boolean;
     function canWrite(resourceName : String):boolean;
     function canGetUser : boolean;
+    function NewIdStatus : TCreateIdState;
     procedure reset;
     property Context : TWorkerContext read FWorker;
     property Adaptor : TFHIRFormatAdaptor read FAdaptor write SetAdaptor;
-    function NewIdStatus : TCreateIdState;
 
     // main rest function. Set the following things before calling this:
     // form
@@ -531,6 +532,7 @@ Type
     FId: String;
     FOutcome: TFHIROperationOutcome;
     FCacheControl : TFHIRCacheControl;
+
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
@@ -538,6 +540,7 @@ Type
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
+
     {!Script Hide}
     Function Link : TFHIRResponse; Overload;
     {!Script Show}
@@ -1669,9 +1672,9 @@ begin
   result := TFhirPeriod.create;
   try
     if low <> '' then
-      result.start := TDateAndTime.createXml(low);
+      result.start := TDateTimeEx.fromXml(low);
     if high <> '' then
-      result.end_ := TDateAndTime.createXml(high);
+      result.end_ := TDateTimeEx.fromXml(high);
     result.link;
   finally
     result.free;

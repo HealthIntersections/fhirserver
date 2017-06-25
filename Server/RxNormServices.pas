@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   StringSupport, ThreadSupport,
   AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  YuStemmer, DateAndTime,
+  YuStemmer, 
   KDBManager,
   FHIRTypes, FHIRResources, FHIROperations, FHIRUtilities, CDSHooksUtilities,
   TerminologyServices;

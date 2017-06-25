@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes,
+  {$IFNDEF OSX} Windows, {$ENDIF}Classes,
   EncodeSupport, StringSupport,
   AdvObjects;
 

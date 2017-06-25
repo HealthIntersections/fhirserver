@@ -259,7 +259,7 @@ end;
 
 function CalculateTransitionDate(TransitionInfo: TSystemTime; CalculateForYear: Integer= -1): TDateTime;
 var
-  CheckDate, FirstOfMonth: TDateTime;
+  Chec FirstOfMonth: TDateTime;
   MonthStartDOW: Integer;
   TransitionDOW: Word;
   TransitionDay: Word;

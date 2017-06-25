@@ -37,7 +37,7 @@ uses
   StringSupport,
   AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,  AdvExceptions,
   KDBManager,
-  FHIRTypes, FHIRResources, TerminologyServices, DateAndTime;
+  FHIRTypes, FHIRResources, TerminologyServices;
 
 type
   TCvxConcept = class (TCodeSystemProviderContext)

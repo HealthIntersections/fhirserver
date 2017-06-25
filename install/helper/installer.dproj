@@ -82,7 +82,6 @@
         <DCCReference Include="..\..\Libraries\db\OdbcCore.pas"/>
         <DCCReference Include="..\..\Libraries\db\OdbcExtras.pas"/>
         <DCCReference Include="..\..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\..\Libraries\indysoap\IdSoapDebug.pas"/>
         <DCCReference Include="..\..\Libraries\indysoap\IdSoapResourceStrings.pas"/>
         <DCCReference Include="..\..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\EncodeSupport.pas"/>
@@ -97,7 +96,6 @@
         <DCCReference Include="..\..\reference-platform\Support\AdvStringBuilders.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvObjects.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvExceptions.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\AdvFactories.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\FileSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvControllers.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvPersistents.pas"/>
@@ -122,8 +120,6 @@
         <DCCReference Include="..\..\reference-platform\Support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvThreads.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvSignals.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\..\reference-platform\Support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvInt64Matches.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvLargeIntegerMatches.pas"/>
         <DCCReference Include="..\..\reference-platform\Support\AdvStringLargeIntegerMatches.pas"/>
@@ -148,13 +144,11 @@
         <DCCReference Include="..\..\reference-platform\support\AdvEvents.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AdvMethods.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AdvIntegerLists.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\KDate.pas"/>
         <DCCReference Include="..\..\Libraries\db\KDBManager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\kCritSct.pas"/>
         <DCCReference Include="..\..\Libraries\db\KSettings.pas"/>
         <DCCReference Include="..\..\Libraries\db\KDBLogging.pas"/>
         <DCCReference Include="..\..\reference-platform\support\KDBDialects.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\DateAndTime.pas"/>
         <DCCReference Include="..\..\reference-platform\support\DecimalSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\GUIDSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\HL7V2DateSupport.pas"/>

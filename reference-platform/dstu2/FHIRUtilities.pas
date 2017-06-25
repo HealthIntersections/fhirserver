@@ -36,9 +36,11 @@ This is the dstu2 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
-  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport,
-  AdvObjects, AdvStringBuilders, AdvGenerics, DateAndTime,  AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
+  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
+
+  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
+  AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
+  AdvZipWriters, AdvZipParts,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
@@ -53,7 +55,7 @@ Type
 const
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
-  ANY_CODE_VS = 'http://www.healthintersections.com.au/fhir/ValueSet/anything';
+  ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
 
 
 function HumanNamesAsText(names : TFhirHumanNameList):String;
@@ -80,11 +82,10 @@ procedure RemoveBOM(var s : String);
 function isAbsoluteUrl(s: String): boolean;
 function languageMatches(spec, possible : String) : boolean;
 
-
-
 procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
-function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource;
+function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource; overload;
+function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource; overload;
 function LoadFromFormParam(worker : TWorkerContext; part : TMimePart; lang : String) : TFhirResource;
 function LoadDTFromFormParam(worker : TWorkerContext; part : TMimePart; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
 function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : String; type_ : TFHIRTypeClass) : TFhirType;
@@ -92,7 +93,7 @@ function LoadDTFromParam(worker : TWorkerContext; value : String; lang, name : S
 function BuildOperationOutcome(lang : String; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 Function BuildOperationOutcome(lang, message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
-function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList;
+function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList; overload;
 function CreateResourceByName(name : String) : TFhirResource;
 function CreateTypeByName(name : String) : TFhirElement;
 function CreateBasicChildren(element : TFhirElement; exCoding : TFHIRCoding) : TFhirElement;
@@ -126,6 +127,8 @@ function asInteger(obj : TFHIRObject) : TFHIRInteger;
 function asResource(obj : TFHIRObject) : TFHIRResource;
 function asExtension(obj : TFHIRObject) : TFHIRExtension;
 function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
+function asXhtml(obj : TFHIRObject) : TFhirXHtmlNode;
+function asXhtmlNode(obj : TFHIRObject) : TFhirXHtmlNode;
 
 function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
 
@@ -820,66 +823,66 @@ end;
 
 function asUTCMin(value : TFhirInstant) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MIN_DATE
   else
-    result := value.value.AsUTCDateTimeMin;
+    result := value.value.Min.UTC.DateTime;
 end;
 
 function asUTCMax(value : TFhirInstant) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MAX_DATE
   else
-    result := value.value.AsUTCDateTimeMax;
+    result := value.value.Max.UTC.DateTime;
 end;
 
 function asUTCMin(value : TFhirDateTime) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MIN_DATE
   else
-    result := value.value.AsUTCDateTimeMin;
+    result := value.value.Min.UTC.DateTime;
 end;
 
 function asUTCMax(value : TFhirDateTime) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MAX_DATE
   else
-    result := value.value.AsUTCDateTimeMax;
+    result := value.value.Max.UTC.DateTime;
 end;
 
 function asUTCMin(value : TFhirDate) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MIN_DATE
   else
-    result := value.value.AsUTCDateTimeMin;
+    result := value.value.Min.UTC.DateTime;
 end;
 
 function asUTCMax(value : TFhirDate) : TDateTime;
 begin
-  if (value = nil) or (value.value = nil) then
+  if (value = nil) or (value.value.null) then
     result := MAX_DATE
   else
-    result := value.value.AsUTCDateTimeMax;
+    result := value.value.Max.UTC.DateTime;
 end;
 
 function asUTCMin(value : TFhirPeriod) : TDateTime;
 begin
-  if (value = nil) or (value.start = nil) then
+  if (value = nil) or (value.start.null) then
     result := MIN_DATE
   else
-    result := value.start.AsUTCDateTimeMin;
+    result := value.start.Max.UTC.DateTime;
 end;
 
 function asUTCMax(value : TFhirPeriod) : TDateTime;
 begin
-  if (value = nil) or (value.end_ = nil) then
+  if (value = nil) or (value.end_.null) then
     result := MAX_DATE
   else
-    result := value.end_.AsUTCDateTimeMax;
+    result := value.end_.Max.UTC.DateTime;
 end;
 
 function asUTCMin(value : TFhirTiming) : TDateTime;
@@ -912,7 +915,7 @@ begin
       for i := 0 to value.eventList.count - 1 do
         result := DateTimeMax(result, AsUTCMax(value.eventList[i]));
   end
-  else if (value.repeat_.bounds <> nil) and (value.repeat_.bounds is TFhirPeriod) and (TFhirPeriod(value.repeat_.bounds).end_ <> nil) then
+  else if (value.repeat_.bounds <> nil) and (value.repeat_.bounds is TFhirPeriod) and (TFhirPeriod(value.repeat_.bounds).end_.notNull) then
     result := asUTCMax(TFhirPeriod(value.repeat_.bounds).end_Element)
   else if (value.repeat_.count <> '') and (value.eventList.Count > 0) and
     (value.repeat_.frequency <> '') and (value.repeat_.period <> '') and (value.repeat_.periodunits <> UnitsOfTimeNull) then
@@ -966,6 +969,19 @@ begin
   result := nil;
   for i := 0 to resource.containedList.Count - 1 do
     if ('#'+resource.containedList[i].Id = ref.reference) then
+    begin
+      result := resource.containedList[i];
+      exit;
+    end;
+end;
+
+function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to resource.containedList.Count - 1 do
+    if ('#'+resource.containedList[i].Id = ref) then
     begin
       result := resource.containedList[i];
       exit;
@@ -1136,12 +1152,12 @@ begin
     result := gen(obj.low) + ' -> '+gen(obj.high);
 end;
 
-function gen(obj : TDateAndTime) : String; overload;
+function gen(obj : TDateTimeEx) : String; overload;
 begin
-  if (obj = nil) then
+  if (obj.null) then
     result := ''
   else
-    result := obj.AsString;
+    result := obj.ToString;
 end;
 
 function gen(obj : TFhirPeriod) : String;
@@ -3289,15 +3305,15 @@ begin
   else if name = 'base64Binary' then
     result := TFHIRbase64Binary.create(AnsiStringAsBytes('%test content%'))
   else if name = 'instant' then
-    result := TFHIRinstant.create(NowUTC)
+    result := TFHIRinstant.create(TDateTimeEx.makeLocal)
   else if name = 'string' then
     result := TFHIRstring.create('%string%')
   else if name = 'uri' then
     result := TFHIRuri.create('http://uri...')
   else if name = 'date' then
-    result := TFHIRdate.create(today)
+    result := TFHIRdate.create(TDateTimeEx.makeToday)
   else if name = 'dateTime' then
-    result := TFHIRdateTime.create(NowLocal)
+    result := TFHIRdateTime.create(TDateTimeEx.makeLocal)
   else if name = 'time' then
     result := TFHIRtime.create('00:10:00')
   else if name = 'code' then
@@ -3360,7 +3376,7 @@ begin
   if element.FhirType = 'Annotation' then
   begin
     TFHIRAnnotation(element).author := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
-    TFHIRAnnotation(element).time := NowLocal;
+    TFHIRAnnotation(element).time := TDateTimeEx.makeLocal;
     TFHIRAnnotation(element).text := 'annotation text';
   end
   else if element.FhirType = 'Attachment' then
@@ -3422,8 +3438,8 @@ begin
   end
   else if element.FhirType = 'Period' then
   begin
-    TFHIRPeriod(element).start := NowLocal;
-    TFHIRPeriod(element).end_ := NowLocal;
+    TFHIRPeriod(element).start := TDateTimeEx.makeLocal;
+    TFHIRPeriod(element).end_ := TDateTimeEx.makeLocal;
   end
   else if element.FhirType = 'Ratio' then
   begin
@@ -3445,7 +3461,7 @@ begin
       TFHIRSignature(element).type_List[0].code := '1.2.840.10065.1.12.1.1';
       TFHIRSignature(element).type_List[0].display := 'AuthorID';
     end;
-    TFHIRSignature(element).when := NowUTC;
+    TFHIRSignature(element).when := TDateTimeEx.makeUTC;
     TFHIRSignature(element).who := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
     TFHIRSignature(element).contentType := 'application/signature+xml';
     TFHIRSignature(element).blob := AnsiStringAsBytes('signature content');
@@ -3475,7 +3491,7 @@ begin
   end
   else if element.FhirType = 'Timing' then
   begin
-    TFHIRTiming(element).eventList.Append.value := NowLocal;
+    TFHIRTiming(element).eventList.Append.value := TDateTimeEx.makeLocal;
     TFHIRTiming(element).repeat_ := TFhirTimingRepeat.create;
     TFHIRTiming(element).repeat_.duration := '1';
     TFHIRTiming(element).repeat_.durationUnits := UnitsOfTimeH;
@@ -3495,7 +3511,7 @@ begin
   end
   else if element.FhirType = 'Meta' then
   begin
-    TFHIRMeta(element).lastUpdated := NowUTC;
+    TFHIRMeta(element).lastUpdated := TDateTimeEx.makeUTC;
   end
   else if (exCoding <> nil) and (element is TFHIRCode) then
     TFHIRCode(element).value := exCoding.code
@@ -3543,6 +3559,27 @@ begin
     obj.Free;
     raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
+end;
+
+function asXhtml(obj : TFHIRObject) : TFhirXHtmlNode;
+begin
+  if obj is TFhirXHtmlNode then
+    result := obj as TFhirXHtmlNode
+  else if obj.isPrimitive then
+  begin
+    result := TFHIRXhtmlParser.parse('en', xppDrop, [], obj.primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
+  end;
+end;
+
+function asXhtmlNode(obj : TFHIRObject) : TFhirXHtmlNode;
+begin
+  result := asXhtml(obj);
 end;
 
 function asString(obj : TFHIRObject) : TFHIRString;
@@ -3609,7 +3646,7 @@ begin
     result := obj as TFHIRDateTime
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDateTime.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -3657,7 +3694,7 @@ begin
     result := obj as TFHIRInstant
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRInstant.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -3705,7 +3742,7 @@ begin
     result := obj as TFHIRDate
   else if obj is TFHIRMMElement then
   begin
-    result := TFHIRDate.create(TDateAndTime.createXml(TFHIRMMElement(obj).value));
+    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
     obj.Free;
   end
   else
@@ -4085,7 +4122,7 @@ end;
 {$IFDEF DSTU21}
 { TFhirAuditEventHelper }
 
-function TFhirAuditEventHelper.GetdateTime: TDateAndTime;
+function TFhirAuditEventHelper.GetdateTime: TDateTimeEx;
 begin
   result := recorded;
 end;
@@ -4105,7 +4142,7 @@ begin
   result := agentList;
 end;
 
-procedure TFhirAuditEventHelper.SetDateTime(const Value: TDateAndTime);
+procedure TFhirAuditEventHelper.SetDateTime(const Value: TDateTimeEx);
 begin
   recorded := value;
 end;

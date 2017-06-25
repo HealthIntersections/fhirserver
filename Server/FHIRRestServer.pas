@@ -1123,7 +1123,7 @@ begin
             json := TJsonObject.Create;
             try
               json.str['access_token'] := session.Cookie;
-              json.num['expires_in'] := inttostr(trunc((session.Expires - UniversalDateTime) / DATETIME_SECOND_ONE));
+              json.num['expires_in'] := inttostr(trunc((session.Expires - TDateTimeEx.makeUTC.DateTime) / DATETIME_SECOND_ONE));
               json.str['token_type'] := 'bearer';
               response.ResponseNo := 200;
               response.ResponseText := 'OK';

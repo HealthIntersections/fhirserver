@@ -149,8 +149,6 @@
         <DCCReference Include="..\support\AdvExclusiveCriticalSections.pas"/>
         <DCCReference Include="..\support\AdvThreads.pas"/>
         <DCCReference Include="..\support\AdvSignals.pas"/>
-        <DCCReference Include="..\support\AdvSynchronizationRegistries.pas"/>
-        <DCCReference Include="..\support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\support\AdvIntegerMatches.pas"/>
         <DCCReference Include="..\support\AdvBuffers.pas"/>
         <DCCReference Include="..\support\BytesSupport.pas"/>
@@ -169,8 +167,6 @@
         <DCCReference Include="..\support\AdvOrdinalSets.pas"/>
         <DCCReference Include="..\support\AdvStreamReaders.pas"/>
         <DCCReference Include="..\support\AdvStringStreams.pas"/>
-        <DCCReference Include="..\support\DateAndTime.pas"/>
-        <DCCReference Include="..\support\KDate.pas"/>
         <DCCReference Include="..\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\support\FHIRBase.pas"/>
         <DCCReference Include="..\support\AdvStringMatches.pas"/>
@@ -196,7 +192,6 @@
         <DCCReference Include="..\support\AfsVolumes.pas"/>
         <DCCReference Include="..\support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\support\AdvObjectMatches.pas"/>
-        <DCCReference Include="..\support\RegExpr.pas"/>
         <DCCReference Include="FHIRUtilities.pas"/>
         <DCCReference Include="..\support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\support\JWT.pas"/>
@@ -219,7 +214,9 @@
         <DCCReference Include="FHIRContext.pas"/>
         <DCCReference Include="..\support\GraphQL.pas"/>
         <DCCReference Include="..\support\ParserSupport.pas"/>
-        <DCCReference Include="..\support\MicroXml.pas"/>
+        <DCCReference Include="..\support\MXML.pas"/>
+        <DCCReference Include="..\support\AdvZipWriters.pas"/>
+        <DCCReference Include="..\support\SCIMObjects.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

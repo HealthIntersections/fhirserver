@@ -33,7 +33,6 @@ Interface
 Uses
   SysUtils;
 
-Function HL7DateToString(aValue : TDateTime; Const sFormat : String; bTimezone : Boolean) : String;
 
 Implementation
 

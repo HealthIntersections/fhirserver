@@ -39,7 +39,7 @@ interface
 // FHIR v0.0.82 generated Tue, Sep 30, 2014 18:08+1000
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, DateAndTime, FHIRBase;
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers,  FHIRBase;
 
 Type
   {@Enum TFhirNarrativeStatus
@@ -1583,13 +1583,13 @@ Type
   {!.Net HL7Connect.Fhir.DateTime}
   TFhirDateTime = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
   Public
-    Constructor Create(value : TDateAndTime); overload;
+    Constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -1602,7 +1602,7 @@ Type
     {@member value
       The actual value of the dateTime
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -1650,7 +1650,7 @@ Type
     {@member AddItem
       Add an already existing FhirDateTime to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -1714,13 +1714,13 @@ Type
   {!.Net HL7Connect.Fhir.Date}
   TFhirDate = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
   Public
-    Constructor Create(value : TDateAndTime); overload;
+    Constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -1733,7 +1733,7 @@ Type
     {@member value
       The actual value of the date
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -1781,7 +1781,7 @@ Type
     {@member AddItem
       Add an already existing FhirDate to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -2500,13 +2500,13 @@ Type
   {!.Net HL7Connect.Fhir.Instant}
   TFhirInstant = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
   Public
-    Constructor Create(value : TDateAndTime); overload;
+    Constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -2519,7 +2519,7 @@ Type
     {@member value
       The actual value of the instant
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -2567,7 +2567,7 @@ Type
     {@member AddItem
       Add an already existing FhirInstant to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -3385,11 +3385,11 @@ Type
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
     Procedure SetStart(value : TFhirDateTime);
-    Function GetStartST : TDateAndTime;
-    Procedure SetStartST(value : TDateAndTime);
+    Function GetStartST : TDateTimeEx;
+    Procedure SetStartST(value : TDateTimeEx);
     Procedure SetEnd_(value : TFhirDateTime);
-    Function GetEnd_ST : TDateAndTime;
-    Procedure SetEnd_ST(value : TDateAndTime);
+    Function GetEnd_ST : TDateTimeEx;
+    Procedure SetEnd_ST(value : TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -3410,7 +3410,7 @@ Type
     {@member start
       Typed access to The start of the period. The boundary is inclusive.
     }
-    property start : TDateAndTime read GetStartST write SetStartST;
+    property start : TDateTimeEx read GetStartST write SetStartST;
     property startObject : TFhirDateTime read FStart write SetStart;
 
     {@member end_
@@ -3419,7 +3419,7 @@ Type
     {@member end_
       Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing.
     }
-    property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
+    property end_ : TDateTimeEx read GetEnd_ST write SetEnd_ST;
     property end_Object : TFhirDateTime read FEnd_ write SetEnd_;
 
   end;
@@ -5054,8 +5054,8 @@ Type
     Function GetCountST : String;
     Procedure SetCountST(value : String);
     Procedure SetEnd_(value : TFhirDateTime);
-    Function GetEnd_ST : TDateAndTime;
-    Procedure SetEnd_ST(value : TDateAndTime);
+    Function GetEnd_ST : TDateTimeEx;
+    Procedure SetEnd_ST(value : TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRObjectList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties : Boolean); Override;
@@ -5115,7 +5115,7 @@ Type
     {@member end_
       Typed access to When to stop repeating the schedule.
     }
-    property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
+    property end_ : TDateTimeEx read GetEnd_ST write SetEnd_ST;
     property end_Object : TFhirDateTime read FEnd_ write SetEnd_;
 
   end;
@@ -6749,7 +6749,7 @@ end;
 
 { TFhirDateTime }
 
-Constructor TFhirDateTime.Create(value : TDateAndTime);
+Constructor TFhirDateTime.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
@@ -6795,7 +6795,7 @@ begin
   result := TFhirDateTime(inherited Clone);
 end;
 
-procedure TFhirDateTime.setValue(value : TDateAndTime);
+procedure TFhirDateTime.setValue(value : TDateTimeEx);
 begin
   FValue.free;
   FValue := value;
@@ -6838,7 +6838,7 @@ begin
 end;
 
 
-procedure TFhirDateTimeList.AddItem(value: TDateAndTime);
+procedure TFhirDateTimeList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirDateTime.create(value));
 end;
@@ -6932,7 +6932,7 @@ end;
 
 { TFhirDate }
 
-Constructor TFhirDate.Create(value : TDateAndTime);
+Constructor TFhirDate.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
@@ -6978,7 +6978,7 @@ begin
   result := TFhirDate(inherited Clone);
 end;
 
-procedure TFhirDate.setValue(value : TDateAndTime);
+procedure TFhirDate.setValue(value : TDateTimeEx);
 begin
   FValue.free;
   FValue := value;
@@ -7021,7 +7021,7 @@ begin
 end;
 
 
-procedure TFhirDateList.AddItem(value: TDateAndTime);
+procedure TFhirDateList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirDate.create(value));
 end;
@@ -8020,7 +8020,7 @@ end;
 
 { TFhirInstant }
 
-Constructor TFhirInstant.Create(value : TDateAndTime);
+Constructor TFhirInstant.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
@@ -8066,7 +8066,7 @@ begin
   result := TFhirInstant(inherited Clone);
 end;
 
-procedure TFhirInstant.setValue(value : TDateAndTime);
+procedure TFhirInstant.setValue(value : TDateTimeEx);
 begin
   FValue.free;
   FValue := value;
@@ -8109,7 +8109,7 @@ begin
 end;
 
 
-procedure TFhirInstantList.AddItem(value: TDateAndTime);
+procedure TFhirInstantList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirInstant.create(value));
 end;
@@ -9351,7 +9351,7 @@ begin
   FStart := value;
 end;
 
-Function TFhirPeriod.GetStartST : TDateAndTime;
+Function TFhirPeriod.GetStartST : TDateTimeEx;
 begin
   if FStart = nil then
     result := nil
@@ -9359,7 +9359,7 @@ begin
     result := FStart.value;
 end;
 
-Procedure TFhirPeriod.SetStartST(value : TDateAndTime);
+Procedure TFhirPeriod.SetStartST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -9377,7 +9377,7 @@ begin
   FEnd_ := value;
 end;
 
-Function TFhirPeriod.GetEnd_ST : TDateAndTime;
+Function TFhirPeriod.GetEnd_ST : TDateTimeEx;
 begin
   if FEnd_ = nil then
     result := nil
@@ -9385,7 +9385,7 @@ begin
     result := FEnd_.value;
 end;
 
-Procedure TFhirPeriod.SetEnd_ST(value : TDateAndTime);
+Procedure TFhirPeriod.SetEnd_ST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin
@@ -12463,7 +12463,7 @@ begin
   FEnd_ := value;
 end;
 
-Function TFhirScheduleRepeat.GetEnd_ST : TDateAndTime;
+Function TFhirScheduleRepeat.GetEnd_ST : TDateTimeEx;
 begin
   if FEnd_ = nil then
     result := nil
@@ -12471,7 +12471,7 @@ begin
     result := FEnd_.value;
 end;
 
-Procedure TFhirScheduleRepeat.SetEnd_ST(value : TDateAndTime);
+Procedure TFhirScheduleRepeat.SetEnd_ST(value : TDateTimeEx);
 begin
   if value <> nil then
   begin

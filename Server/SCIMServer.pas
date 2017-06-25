@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
   DCPsha256, ParseMap, TextUtilities,
-  KDBManager, AdvJSON, KCritSct, DateAndTime,
+  KDBManager, AdvJSON, KCritSct, DateSupport,
   StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists, AdvExceptions,
   ServerUtilities,
@@ -211,13 +211,13 @@ end;
 
 procedure TSCIMServer.DefineAdminUser(conn : TKDBConnection; un, pw, em: String);
 var
-  now : TDateAndTime;
+  now : TDateTimeEx;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := NowUTC;
+  now := TDateTimeEx.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := un;
@@ -227,8 +227,8 @@ begin
 
     key := GetNextUserKey;
     user.id := inttostr(key);
-    user.created := now.Link;
-    user.lastModified := now.Link;
+    user.created := now;
+    user.lastModified := now;
     user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
     user.version := '1';
     user.resourceType := 'User';
@@ -258,19 +258,18 @@ begin
 
   finally
     user.Free;
-    now.Free;
   end;
 end;
 
 procedure TSCIMServer.DefineSystem(conn : TKDBConnection);
 var
-  now : TDateAndTime;
+  now : TDateTimeEx;
   user : TSCIMUser;
   key : integer;
   list : TStringList;
   s : String;
 begin
-  now := NowUTC;
+  now := TDateTimeEx.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_SYSTEM_USER;
@@ -279,8 +278,8 @@ begin
     key := GetNextUserKey;
     assert(key = 1);
     user.id := inttostr(key);
-    user.created := now.Link;
-    user.lastModified := now.Link;
+    user.created := now;
+    user.lastModified := now;
     user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
     user.version := '1';
     user.resourceType := 'User';
@@ -306,18 +305,17 @@ begin
     IndexUser(conn, user, key);
   finally
     user.Free;
-    now.Free;
   end;
 end;
 
 procedure TSCIMServer.DefineAnonymousUser(conn : TKDBConnection);
 var
-  now : TDateAndTime;
+  now : TDateTimeEx;
   user : TSCIMUser;
   key : integer;
   s : String;
 begin
-  now := NowUTC;
+  now := TDateTimeEx.makeUTC;
   user := TSCIMUser.Create(TJsonObject.create);
   try
     user.username := SCIM_ANONYMOUS_USER;
@@ -325,8 +323,8 @@ begin
 
     key := GetNextUserKey;
     user.id := inttostr(key);
-    user.created := now.Link;
-    user.lastModified := now.Link;
+    user.created := now;
+    user.lastModified := now;
     user.location := 'https://'+host+'/scim/Users/'+inttostr(key);
     user.version := '1';
     user.resourceType := 'User';
@@ -347,7 +345,6 @@ begin
     IndexUser(conn, user, key);
   finally
     user.Free;
-    now.Free;
   end;
 end;
 
@@ -434,7 +431,7 @@ function TSCIMServer.loadOrCreateUser(id, name, email: String; var key : integer
 var
   conn : TKDBConnection;
   new, upd : boolean;
-  now : TDateAndTime;
+  now : TDateTimeEx;
   s : String;
 begin
   upd := false;
@@ -488,51 +485,47 @@ begin
 
       if new or upd then
       begin
-        now := NowUTC;
+        now := TDateTimeEx.makeUTC;
+        if new then
+        begin
+          key := GetNextUserKey;
+          result.id := inttostr(key);
+          result.created := now;
+          result.location := 'https://'+Host+'/scim/Users/'+inttostr(key);
+          result.version := '1';
+          result.resourceType := 'User';
+          for s in AnonymousRights do
+            result.addEntitlement(s);
+        end
+        else
+          result.Version := inttostr(StrToInT(result.version)+1);
+        result.lastModified := now;
+
+        conn.StartTransact;
         try
           if new then
-          begin
-            key := GetNextUserKey;
-            result.id := inttostr(key);
-            result.created := now.Link;
-            result.location := 'https://'+Host+'/scim/Users/'+inttostr(key);
-            result.version := '1';
-            result.resourceType := 'User';
-            for s in AnonymousRights do
-              result.addEntitlement(s);
-          end
+            conn.SQL := 'Insert into Users (UserKey, UserName, Status, Content) values (:uk, :un, 1, :cnt)'
           else
-            result.Version := inttostr(StrToInT(result.version)+1);
-          result.lastModified := now.Link;
-
-          conn.StartTransact;
+            conn.SQL := 'Update Users set Content = :cnt where UserKey = :uk';
+          conn.Prepare;
           try
+            conn.BindInteger('uk', key);
             if new then
-              conn.SQL := 'Insert into Users (UserKey, UserName, Status, Content) values (:uk, :un, 1, :cnt)'
-            else
-              conn.SQL := 'Update Users set Content = :cnt where UserKey = :uk';
-            conn.Prepare;
-            try
-              conn.BindInteger('uk', key);
-              if new then
-                conn.BindString('un', id);
-              conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(result.json, false));
-              conn.Execute;
-            finally
-              conn.Terminate;
-            end;
-            IndexUser(conn, result, key);
-            conn.Commit;
-          except
-            on e:exception do
-            begin
-              conn.Rollback;
-              recordStack(e);
-              raise;
-            end;
+              conn.BindString('un', id);
+            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(result.json, false));
+            conn.Execute;
+          finally
+            conn.Terminate;
           end;
-        finally
-          now.Free;
+          IndexUser(conn, result, key);
+          conn.Commit;
+        except
+          on e:exception do
+          begin
+            conn.Rollback;
+            recordStack(e);
+            raise;
+          end;
         end;
       end;
 
@@ -705,83 +698,79 @@ var
   username : String;
   conn : TKDBConnection;
   key : integer;
-  now : TDateAndTime;
+  now : TDateTimeEx;
 begin
   if (request.Document <> '/scim/Users') then
     raise ESCIMException.Create(404, 'NOT FOUND', '', 'Path Error - must be /scim/Users');
 
-  now := NowUTC;
+  now := TDateTimeEx.makeUTC;
+  user := TSCIMUser.Create(LoadIncoming(request));
   try
-    user := TSCIMUser.Create(LoadIncoming(request));
+    user.check;
+    if user.id <> '' then
+      raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Cannot include an id in a resource submitted to the server');
+
+    password := user.password;
+    username := user.username;
+    if Username = '' then
+      raise ESCIMException.Create(400, 'BAD REQUEST', 'invalidValue', 'Missing User name');
+
+    user.password := '';
+
+    key := GetNextUserKey;
+    user.id := inttostr(key);
+    user.created := now;
+    user.lastModified := now;
+    user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(key);
+    user.version := '1';
+    user.resourceType := 'User';
+
+    conn := db.GetConnection('scim.user.create');
     try
-      user.check;
-      if user.id <> '' then
-        raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Cannot include an id in a resource submitted to the server');
-
-      password := user.password;
-      username := user.username;
-      if Username = '' then
-        raise ESCIMException.Create(400, 'BAD REQUEST', 'invalidValue', 'Missing User name');
-
-      user.password := '';
-
-      key := GetNextUserKey;
-      user.id := inttostr(key);
-      user.created := now.Link;
-      user.lastModified := now.Link;
-      user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(key);
-      user.version := '1';
-      user.resourceType := 'User';
-
-      conn := db.GetConnection('scim.user.create');
+      conn.StartTransact;
       try
-        conn.StartTransact;
+        if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(username)+'''') > 0 then
+          raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
+        conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
+        conn.Prepare;
         try
-          if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(username)+'''') > 0 then
-            raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'Duplicate User name');
-          conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
-          conn.Prepare;
-          try
-            conn.BindInteger('uk', key);
-            conn.BindString('un', username);
-            if (password <> '') then
-              conn.BindString('pw', HashPassword(key, password))
-            else
-              conn.BindNull('pw');
-            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
-            conn.Execute;
-          finally
-            conn.Terminate;
-          end;
-          IndexUser(conn, user, key);
-          conn.Commit;
-        except
-          on e:exception do
-          begin
-            conn.Rollback;
-            recordStack(e);
-            raise;
-          end;
+          conn.BindInteger('uk', key);
+          conn.BindString('un', username);
+          if (password <> '') then
+            conn.BindString('pw', HashPassword(key, password))
+          else
+            conn.BindNull('pw');
+          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+          conn.Execute;
+        finally
+          conn.Terminate;
         end;
-
-        response.CustomHeaders.Add('Location: '+user.location);
-        WriteOutgoing(response, user.json);
-        response.ResponseNo := 201;
-        response.ResponseText := 'Created';
-        conn.Release;
+        IndexUser(conn, user, key);
+        conn.Commit;
       except
-        on e:Exception do
+        on e:exception do
         begin
-          conn.Error(e);
+          conn.Rollback;
           recordStack(e);
           raise;
         end;
       end;
-    finally
-      user.Free;
+
+      response.CustomHeaders.Add('Location: '+user.location);
+      WriteOutgoing(response, user.json);
+      response.ResponseNo := 201;
+      response.ResponseText := 'Created';
+      conn.Release;
+    except
+      on e:Exception do
+      begin
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
     end;
   finally
-    now.Free;
+    user.Free;
   end;
 end;
 
@@ -791,7 +780,7 @@ var
   nUser, eUser : TSCIMUser;
   password : String;
   conn : TKDBConnection;
-  now : TDateAndTime;
+  now : TDateTimeEx;
   id : String;
   b : TBytes;
 begin
@@ -799,87 +788,83 @@ begin
   if (id = '1') or (id = '2') then
     raise ESCIMException.Create(409, 'Forbidden', '', 'Server does not allow update to system defined users');
 
-  now := NowUTC;
+  now := TDateTimeEx.makeUTC;
+  nUser := TSCIMUser.Create(LoadIncoming(request));
   try
-    nUser := TSCIMUser.Create(LoadIncoming(request));
-    try
-      nUser.id := id;
-      nUser.check;
-      password := nUser.password;
-      nUser.password := '';
+    nUser.id := id;
+    nUser.check;
+    password := nUser.password;
+    nUser.password := '';
 
-      // now, get the existing user
-      conn := db.GetConnection('scim.user.create');
+    // now, get the existing user
+    conn := db.GetConnection('scim.user.create');
+    try
+      conn.StartTransact;
       try
-        conn.StartTransact;
+        conn.SQL := 'Select Content from Users where Status = 1 and UserKey = '''+SQLWrapString(id)+'''';
+        conn.Prepare;
         try
-          conn.SQL := 'Select Content from Users where Status = 1 and UserKey = '''+SQLWrapString(id)+'''';
+          conn.Execute;
+          if not conn.FetchNext then
+            raise ESCIMException.Create(404, 'Not Found', '', 'User not found');
+          b := conn.ColBlobByName['Content']
+        finally
+          conn.Terminate;
+        end;
+
+        eUser := TSCIMUser.Create(TJSONParser.Parse(b));
+        try
+          if eUser.username <> nUser.username then
+            raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'UserName is an immutable field - was '+eUser.username+', set to '+nUser.username);
+          nUser.copyFrom(eUser);
+          nUser.resourceType := eUser.resourceType;
+          nUser.created := eUser.created;
+          nUser.location := eUser.location;
+          nUser.lastModified := now;
+          nUser.Version := inttostr(StrToInT(eUser.version)+1);
+
+
+          conn.SQL := 'Update Users set Password = :pw, Content = :cnt where UserKey = :uk';
           conn.Prepare;
           try
+            conn.BindString('uk', id);
+            if (password <> '') then
+              conn.BindString('pw', HashPassword(StrToInt(id), password))
+            else
+              conn.BindNull('pw');
+            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(nUser.json, false));
             conn.Execute;
-            if not conn.FetchNext then
-              raise ESCIMException.Create(404, 'Not Found', '', 'User not found');
-            b := conn.ColBlobByName['Content']
           finally
             conn.Terminate;
           end;
-
-          eUser := TSCIMUser.Create(TJSONParser.Parse(b));
-          try
-            if eUser.username <> nUser.username then
-              raise ESCIMException.Create(400, 'BAD REQUEST', 'mutability', 'UserName is an immutable field - was '+eUser.username+', set to '+nUser.username);
-            nUser.copyFrom(eUser);
-            nUser.resourceType := eUser.resourceType;
-            nUser.created := eUser.created.Link;
-            nUser.location := eUser.location;
-            nUser.lastModified := now.Link;
-            nUser.Version := inttostr(StrToInT(eUser.version)+1);
-
-
-            conn.SQL := 'Update Users set Password = :pw, Content = :cnt where UserKey = :uk';
-            conn.Prepare;
-            try
-              conn.BindString('uk', id);
-              if (password <> '') then
-                conn.BindString('pw', HashPassword(StrToInt(id), password))
-              else
-                conn.BindNull('pw');
-              conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(nUser.json, false));
-              conn.Execute;
-            finally
-              conn.Terminate;
-            end;
-            IndexUser(conn, nUser, StrToInt(id));
-            WriteOutgoing(response, nUser.json);
-            response.CustomHeaders.Add('Location: '+nUser.location);
-            response.ResponseNo := 200;
-            response.ResponseText := 'OK';
-          finally
-            eUser.Free;
-          end;
-          conn.Commit;
-        except
-          on e:exception do
-          begin
-            conn.Rollback;
-            recordStack(e);
-            raise;
-          end;
+          IndexUser(conn, nUser, StrToInt(id));
+          WriteOutgoing(response, nUser.json);
+          response.CustomHeaders.Add('Location: '+nUser.location);
+          response.ResponseNo := 200;
+          response.ResponseText := 'OK';
+        finally
+          eUser.Free;
         end;
-        conn.Release;
+        conn.Commit;
       except
-        on e:Exception do
+        on e:exception do
         begin
-          conn.Error(e);
+          conn.Rollback;
           recordStack(e);
           raise;
         end;
       end;
-    finally
-      nUser.Free;
+      conn.Release;
+    except
+      on e:Exception do
+      begin
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
     end;
   finally
-    now.Free;
+    nUser.Free;
   end;
 end;
 
@@ -1074,8 +1059,8 @@ begin
             try
               if bNew then
               begin
-                user.created := nowUTC;
-                user.lastModified := user.created.Link;
+                user.created := TDateTimeEx.makeUTC;
+                user.lastModified := user.created;
                 user.location := 'https://'+request.Host+'/scim/Users/'+inttostr(uk);
                 user.version := '1';
                 user.resourceType := 'User';
@@ -1288,10 +1273,10 @@ begin
     ndx(0, 'id', user.id, true);
     ndx(0, 'externalId', user.externalId, true);
     ndx(0, 'resourceType', user.resourceType, true);
-    if (user.createdUTC <> nil) then
-      ndx(0, 'created', user.createdUTC.AsXML, true);
-    if (user.lastModifiedUTC <> nil) then
-      ndx(0, 'lastModified', user.lastModifiedUTC.AsXML, true);
+    if (user.createdUTC.notNull) then
+      ndx(0, 'created', user.createdUTC.toXML, true);
+    if (user.lastModifiedUTC.notNull) then
+      ndx(0, 'lastModified', user.lastModifiedUTC.toXML, true);
     ndx(0, 'location', user.location, true);
     ndx(0, 'version', user.version, true);
     ndx(0, 'formattedName', user.formattedName, true);

@@ -91,7 +91,6 @@
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
         <DCCReference Include="ExampleBridge.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvBinaryFilers.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvBuffers.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvCSVExtractors.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvCSVFormatters.pas"/>
@@ -143,11 +142,9 @@
         <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringStreams.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvSynchronizationRegistries.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvTextExtractors.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvTextFormatters.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvThreads.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvTimeControllers.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvVCLStreams.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvXMLEntities.pas"/>
@@ -165,7 +162,6 @@
         <DCCReference Include="..\reference-platform\support\BytesSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ColourSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\CurrencySupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\DateAndTime.pas"/>
         <DCCReference Include="..\reference-platform\support\DateSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\DecimalSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
@@ -182,7 +178,6 @@
         <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
         <DCCReference Include="..\reference-platform\support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\support\KDBDialects.pas"/>
-        <DCCReference Include="..\reference-platform\support\KDate.pas"/>
         <DCCReference Include="..\reference-platform\support\MathSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MemorySupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MimeMessage.pas"/>
@@ -191,7 +186,6 @@
         <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\RegExpr.pas"/>
         <DCCReference Include="..\reference-platform\support\ServiceController.pas"/>
         <DCCReference Include="..\reference-platform\support\ShellSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\StringSupport.pas"/>
@@ -228,7 +222,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\QuestionnaireBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>

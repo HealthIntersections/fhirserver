@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  SysUtils, {$IFDEF OSX} OSXUtils, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
+  SysUtils, {$IFDEF OSX} OSXUtils, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
   DateSupport, StringSupport, ThreadSupport;
 
 Function SystemTemp : String;
@@ -51,7 +51,7 @@ Var
 Function SystemTemp : String;
   {$IFDEF OSX}
 Begin
-  result := '/tmp'; {todo-osx}
+  result := UTF8ToString(TNSString.Wrap(NSString(NSTemporaryDirectory)).UTF8String); {todo-osx}
   {$ELSE}
 Var
   iLength : Integer;

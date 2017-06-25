@@ -50,7 +50,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // This section used by scripting system
 
-{!Wrapper uses KClasses,Classes,KProcs,KDate,AdvFilers,AdvObjects,AdvIterators, MSSEWrap, MSSEWrap_Wrapper}
+{!Wrapper uses KClasses,Classes,KProcs,AdvFilers,AdvObjects,AdvIterators, MSSEWrap, MSSEWrap_Wrapper}
 
 // script access at this level is strictly controlled.
 // until further notice, connection managers cannot be created directly in scripts.
@@ -73,7 +73,7 @@ uses
 
   StringSupport, GuidSupport,
   AdvExceptions, AdvObjects, AdvGenerics,
-  KDBLogging, KDBDialects, DateAndTime, KDate;
+  KDBLogging, KDBDialects, DateSupport;
 
 {!Script Hide}
 const
@@ -258,7 +258,7 @@ type
     procedure BindKeyV(AParamName: String; AParamValue: Integer); virtual; abstract;
     procedure BindDoubleV(AParamName: String; AParamValue: Double); virtual; abstract;
     procedure BindStringV(AParamName: String; AParamValue: String); virtual; abstract;
-    procedure BindTimeStampV(AParamName: String; AParamValue: KDate.TTimeStamp); virtual; abstract;
+    procedure BindTimeStampV(AParamName: String; AParamValue: DateSupport.TTimeStamp); virtual; abstract;
     procedure BindBlobV(AParamName: String; AParamValue: TMemoryStream); virtual; abstract;
     procedure BindNullV(AParamName: String); virtual; abstract;
     function GetColCountV: Integer; Virtual; Abstract;
@@ -269,7 +269,7 @@ type
     function GetColMemoryV(ACol: Word): TMemoryStream; Virtual; Abstract;
     function GetColBlobV(ACol: Word): TBytes; Virtual; Abstract;
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
-    function GetColTimestampV(ACol: Word): KDate.TTimestamp; Virtual; Abstract;
+    function GetColTimestampV(ACol: Word): DateSupport.TTimestamp; Virtual; Abstract;
     function GetColTypeV(ACol: Word): TKDBColumnType; Virtual; Abstract;
     function GetColKeyV(ACol: Word): Integer; Virtual; Abstract;
     function GetRowsAffectedV: Integer; Virtual; Abstract;
@@ -337,8 +337,8 @@ type
     function GetColMemory(ACol: Integer): TMemoryStream;
     function GetColBlob(ACol: Integer): TBytes;
     function GetColNull(ACol: Integer): Boolean;
-    function GetColTimestamp(ACol: Integer): KDate.TTimestamp;
-    function GetColDateAndTime(ACol: Integer): TDateAndTime;
+    function GetColTimestamp(ACol: Integer): DateSupport.TTimestamp;
+    function GetColDateAndTime(ACol: Integer): TDateTimeEx;
     function GetColType(ACol: Integer): TKDBColumnType;
     function GetRowsAffected: Integer;
 
@@ -348,8 +348,8 @@ type
     function GetColIntegerByName(AName: String): Integer;
     function GetColInt64ByName(AName: String): Int64;
     function GetColDoubleByName(AName: String): Double;
-    function GetColTimeStampByName(AName: String): KDate.TTimestamp;
-    function GetColDateAndTimeByName(AName: String): TDateAndTime;
+    function GetColTimeStampByName(AName: String): DateSupport.TTimestamp;
+    function GetColDateAndTimeByName(AName: String): TDateTimeEx;
     function GetColTypeByName(AName: String): TKDBColumnType;
     function GetColNullByName(AName: String): Boolean;
 
@@ -539,14 +539,14 @@ type
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
-    procedure BindTimeStamp(AParamName: String; AParamValue: KDate.TTimeStamp);
+    procedure BindTimeStamp(AParamName: String; AParamValue: DateSupport.TTimeStamp);
 
     {@member BindDateAndTime
       Bind a DateTime value to a named parameter. You can call this
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
-    procedure BindDateAndTime(AParamName: String; AParamValue: TDateAndTime);
+    procedure BindDateAndTime(AParamName: String; AParamValue: TDateTimeEx);
 
     {!Script Hide}
     {@member BindBlob
@@ -630,12 +630,12 @@ type
     {@member ColTimestamp
     Get Column ACol(index) as a TTimestamp
     }
-    property ColTimestamp [ACol: Integer]: KDate.TTimestamp Read GetColTimestamp;
+    property ColTimestamp [ACol: Integer]: DateSupport.TTimestamp Read GetColTimestamp;
 
     {@member ColDateAndTime
     Get Column ACol(index) as a DateAndTime
     }
-    property ColDateAndTime [ACol: Integer]: TDateAndTime Read GetColDateAndTime;
+    property ColDateAndTime [ACol: Integer]: TDateTimeEx Read GetColDateAndTime;
 
     {!Script Hide}
     property ColKeyByName       [AName: String]: Integer Read GetColKeyByName;
@@ -667,10 +667,10 @@ type
     property ColBlobByName    [AName: String]: TBytes Read GetColBlobByName;
     {@member ColTimeStampByName
       Get Column "AName" as a TTimeStamp}
-    property ColTimeStampByName [AName: String]: KDate.TTimeStamp Read GetColTimeStampByName;
+    property ColTimeStampByName [AName: String]: DateSupport.TTimeStamp Read GetColTimeStampByName;
     {@member ColDateAndTimeByName
-      Get Column "AName" as a TDateAndTime}
-    property ColDateAndTimeByName [AName: String]: TDateAndTime Read GetColDateAndTimeByName;
+      Get Column "AName" as a TDateTimeEx}
+    property ColDateAndTimeByName [AName: String]: TDateTimeEx Read GetColDateAndTimeByName;
     {@member ColCount
       Number of columns in current result set
     }
@@ -797,7 +797,6 @@ function KDBManagers : TKDBManagerList;
 implementation
 
 uses
-  AdvFactories,
   Windows,
   ThreadSupport,
   ErrorSupport;
@@ -1053,17 +1052,16 @@ begin
   result := GetColString(ColByName(AName));
 end;
 
-function TKDBConnection.GetColTimeStampByName(AName: String): KDate.TTimestamp;
+function TKDBConnection.GetColTimeStampByName(AName: String): DateSupport.TTimestamp;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColTimeStampByName';
 begin
   result := GetColTimestamp(ColByName(AName));
 end;
 
-function TKDBConnection.GetColDateAndTimeByName(AName: String): TDateAndTime;
+function TKDBConnection.GetColDateAndTimeByName(AName: String): TDateTimeEx;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBConnection.GetColTimeStampByName';
 begin
-  result := TDateAndTime.Create;
-  Result.Timestamp := GetColTimestamp(ColByName(AName));
+  result := TDateTimeEx.fromTS(GetColTimestamp(ColByName(AName)));
 end;
 
 function TKDBConnection.GetColTypeByName(AName: String): TKDBColumnType;
@@ -1363,10 +1361,9 @@ begin
   result := GetColTimestampV(ACol);
 end;
 
-function TKDBConnection.GetColDateAndTime(ACol: Integer): TDateAndTime;
+function TKDBConnection.GetColDateAndTime(ACol: Integer): TDateTimeEx;
 begin
-  result := TDateAndTime.Create;
-  result.TimeStamp := GetColTimestampV(ACol);
+  result := TDateTimeEx.fromTS(GetColTimestampV(ACol));
 end;
 
 function TKDBConnection.GetColType(ACol: Integer): TKDBColumnType;
@@ -1400,7 +1397,7 @@ begin
 
 end;
 
-procedure TKDBConnection.BindDateAndTime(AParamName: String; AParamValue: TDateAndTime);
+procedure TKDBConnection.BindDateAndTime(AParamName: String; AParamValue: TDateTimeEx);
 begin
   BindTimeStampV(aParamName, AParamValue.TimeStamp);
 end;

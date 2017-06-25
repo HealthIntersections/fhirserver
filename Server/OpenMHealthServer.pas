@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdCustomHTTPServer,
-  AdvObjects, AdvJson, DateAndTime,
+  AdvObjects, AdvJson, DateSupport,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities;
 
 type
@@ -237,7 +237,7 @@ begin
   // creation_date_time --> extension on metadata. What is the significance of this value? why does it matter? or is it actually last_updated?
   ext := obs.meta.extensionList.Append;
   ext.url := 'http://healthintersections.com.au/fhir/StructureDefinition/first-created';
-  ext.value := TFhirDateTime.Create(TDateAndTime.CreateXML(hdr['creation_date_time']));
+  ext.value := TFhirDateTime.Create(TDateTimeEx.fromXml(hdr['creation_date_time']));
 
   // schema_id --> this maps to a profile on observation. todo: what is the correct URL?
   obj := hdr.obj['schema_id'];
@@ -256,7 +256,7 @@ begin
     // acquisition_provenance.source_creation_date_time --> observation.
     if obj.has('source_creation_date_time') then
     begin
-      obs.issued := TDateAndTime.CreateXml(obj['source_creation_date_time']);
+      obs.issued := TDateTimeEx.fromXml(obj['source_creation_date_time']);
     end;
     // acquisition_provenance.modality --> observation.method
     if obj.has('modality') then
@@ -295,7 +295,7 @@ begin
     if (obj.has('time_interval')) then
       obs.effective := readTimeInterval(obj.obj['time_interval'])
     else if (obj.has('date_time')) then
-      obs.effective := TFhirDateTime.Create(TDateAndTime.CreateXML(obj['date_time']));
+      obs.effective := TFhirDateTime.Create(TDateTimeEx.fromXml(obj['date_time']));
   end;
 
   // distance --> Observation.value
@@ -330,7 +330,7 @@ function TOpenMHealthAdaptor.readTimeInterval(obj: TJsonObject): TFHIRPeriod;
 var
   qty : TFHIRQuantity;
   ext : TFHIRExtension;
-  day : TDateAndTime;
+  day : TDateTimeEx;
   s : String;
 begin
   result := TFHIRPeriod.create;
@@ -341,14 +341,14 @@ begin
     if obj.has('start_date_time') and obj.has('end_date_time') then
     begin
       // The interval is defined by a precise start and end time
-      result.start := TDateAndTime.CreateXML(obj['start_date_time']);
-      result.end_ := TDateAndTime.CreateXML(obj['end_date_time']);
+      result.start := TDateTimeEx.fromXml(obj['start_date_time']);
+      result.end_ := TDateTimeEx.fromXml(obj['end_date_time']);
       ext.value := TFhirCode.Create('normal');
     end
     else if obj.has('start_date_time') and obj.has('duration') then
     begin
       // The interval is defined by a precise start time and a duration
-      result.start := TDateAndTime.CreateXML(obj['start_date_time']);
+      result.start := TDateTimeEx.fromXml(obj['start_date_time']);
       qty := readQuantity(obj.obj['duration']);
       try
         result.end_ := result.start.add(qty.asDuration);
@@ -360,7 +360,7 @@ begin
     else if obj.has('end_date_time') and obj.has('duration') then
     begin
       // The interval is defined by a duration and a precise end time
-      result.end_ := TDateAndTime.CreateXML(obj['end_date_time']);
+      result.end_ := TDateTimeEx.fromXml(obj['end_date_time']);
       qty := readQuantity(obj.obj['duration']);
       try
         result.start := result.start.subtract(qty.asDuration);
@@ -372,35 +372,31 @@ begin
     else
     begin
       // the interval is defined by a date and a part of the day (morning, afternoon, evening, night)
-      day := TDateAndTime.CreateXML(obj['date']);
-      try
-        s := obj['part_of_day'];
-        if (s = 'morning') then
-        begin
-          ext.value := TFhirCode.Create('day.morning');
-          result.start := day.add(0.25); // 6am --> 12noon
-          result.end_ := day.add(0.5);
-        end
-        else if (s = 'afternoon') then
-        begin
-          ext.value := TFhirCode.Create('day.afternoon');
-          result.start := day.add(0.5); // 12noon --> 6pm
-          result.end_ := day.add(0.75);
-        end
-        else if (s = 'evening') then
-        begin
-          ext.value := TFhirCode.Create('day.evening');
-          result.start := day.add(0.75); // 6pm --> midnight
-          result.end_ := day.add(1);
-        end
-        else if (s = 'night') then
-        begin
-          ext.value := TFhirCode.Create('day.night');
-          result.start := day.add(0); // midnight --> 6am - but is it the next day?
-          result.end_ := day.add(0.25);
-        end;
-      finally
-        day.Free;
+      day := TDateTimeEx.fromXml(obj['date']);
+      s := obj['part_of_day'];
+      if (s = 'morning') then
+      begin
+        ext.value := TFhirCode.Create('day.morning');
+        result.start := day.add(0.25); // 6am --> 12noon
+        result.end_ := day.add(0.5);
+      end
+      else if (s = 'afternoon') then
+      begin
+        ext.value := TFhirCode.Create('day.afternoon');
+        result.start := day.add(0.5); // 12noon --> 6pm
+        result.end_ := day.add(0.75);
+      end
+      else if (s = 'evening') then
+      begin
+        ext.value := TFhirCode.Create('day.evening');
+        result.start := day.add(0.75); // 6pm --> midnight
+        result.end_ := day.add(1);
+      end
+      else if (s = 'night') then
+      begin
+        ext.value := TFhirCode.Create('day.night');
+        result.start := day.add(0); // midnight --> 6am - but is it the next day?
+        result.end_ := day.add(0.25);
       end;
     end;
     result.link;
@@ -492,9 +488,9 @@ var
   form : String;
   qty : TFhirQuantity;
 begin
-  if (period.start = nil) then
+  if (period.start.null) then
     raise Exception.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
-  if (period.end_ = nil) then
+  if (period.end_.null) then
     raise Exception.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
 
   result := TJsonObject.Create;
@@ -502,8 +498,8 @@ begin
     form := period.getExtensionString('http://healthintersections.com.au/fhir/StructureDefinition/period-form');
     if (form = 'start.duration') then
     begin
-      result['start_date_time'] := period.start.AsXML;
-      qty := TFHIRQuantity.fromDuration(period.end_.AsUTCDateTime - period.start.AsUTCDateTime);
+      result['start_date_time'] := period.start.toXml;
+      qty := TFHIRQuantity.fromDuration(period.end_.UTC.dateTime - period.start.UTC.dateTime);
       try
         result.obj['duration'] := writeQuantity(qty);
       finally
@@ -512,8 +508,8 @@ begin
     end
     else if (form = 'end.duration') then
     begin
-      result['end_date_time'] := period.end_.AsXML;
-      qty := TFHIRQuantity.fromDuration(period.start.AsUTCDateTime - period.end_.AsUTCDateTime);
+      result['end_date_time'] := period.end_.toXml;
+      qty := TFHIRQuantity.fromDuration(period.start.UTC.dateTime - period.end_.UTC.dateTime);
       try
         result.obj['duration'] := writeQuantity(qty);
       finally
@@ -522,28 +518,28 @@ begin
     end
     else if (form = 'day.morning') then
     begin
-      result['date'] := period.start.AsXML.Substring(0, 10);
+      result['date'] := period.start.toXml.Substring(0, 10);
       result.str['part_of_day'] := 'morning';
     end
     else if (form = 'day.afternoon') then
     begin
-      result['date'] := period.start.AsXML.Substring(0, 10);
+      result['date'] := period.start.toXml.Substring(0, 10);
       result.str['part_of_day'] := 'afternoon';
     end
     else if (form = 'day.evening') then
     begin
-      result['date'] := period.start.AsXML.Substring(0, 10);
+      result['date'] := period.start.toXml.Substring(0, 10);
       result.str['part_of_day'] := 'evening';
     end
     else if (form = 'day.night') then
     begin
-      result['date'] := period.start.AsXML.Substring(0, 10);
+      result['date'] := period.start.toXml.Substring(0, 10);
       result.str['part_of_day'] := 'night';
     end
     else
     begin
-      result['start_date_time'] := period.start.AsXML;
-      result['end_date_time'] := period.end_.AsXML;
+      result['start_date_time'] := period.start.toXml;
+      result['end_date_time'] := period.end_.toXml;
     end;
     result.Link;
   finally
@@ -562,7 +558,7 @@ begin
     if (obs.effective is TFhirPeriod) then
       body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(TFhirPeriod(obs.effective))
     else if (obs.effective is TFhirDateTime) then
-      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.AsXML;
+      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.toXml;
   end;
 
   if obs.value is TFHIRQuantity then
@@ -615,13 +611,13 @@ begin
   obj['name'] := p[7];
   result := p[7];
 
-  if (obs.device <> nil) or (obs.issued <> nil) or (obs.method <> nil) then
+  if (obs.device <> nil) or (obs.issued.notNull) or (obs.method <> nil) then
   begin
     obj := hdr.forceobj['acquisition_provenance'];
     if (obs.device <> nil) then
       obj['source_name'] := obs.device.display;
-    if (obs.issued <> nil) then
-      obj['source_creation_date_time'] := obs.issued.AsXML;
+    if (obs.issued.notNull) then
+      obj['source_creation_date_time'] := obs.issued.toXml;
     if (obs.method <> nil) then
       obj['modality'] := obs.method.text;
   end;
@@ -679,7 +675,7 @@ begin
     if (obj.has('time_interval')) then
       obs.effective := readTimeInterval(obj.obj['time_interval'])
     else if (obj.has('date_time')) then
-      obs.effective := TFhirDateTime.Create(TDateAndTime.CreateXML(obj['date_time']));
+      obs.effective := TFhirDateTime.Create(TDateTimeEx.fromXml(obj['date_time']));
   end;
 
   // temporal_relationship_to_meal/sleep --> component.value
@@ -722,7 +718,7 @@ begin
     if (obs.effective is TFhirPeriod) then
       body.forceObj['effective_time_frame'].obj['time_interval'] := writePeriod(TFhirPeriod(obs.effective))
     else if (obs.effective is TFhirDateTime) then
-      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.AsXML;
+      body.forceObj['effective_time_frame']['date_time'] := TFhirDateTime(obs.effective).value.toXml;
   end;
 
   if obs.getComponent('http://snomed.info/sct', '309602000', comp) then

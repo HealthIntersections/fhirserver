@@ -38,10 +38,10 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-06-07T06:11:11+10:00
+// FHIR v3.1.0 generated 2017-06-23T08:55:29+10:00
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateAndTime, FHIRBase {$IFNDEF VER260}, System.NetEncoding{$ENDIF};
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
 
 Type
   {@Enum TFhirPublicationStatusEnum
@@ -655,8 +655,8 @@ Type
   }
   TFhirAdverseEventActualityEnum = (
     AdverseEventActualityNull,  {@enum.value AdverseEventActualityNull Value is missing from Instance }
-    AdverseEventActualityAE, {@enum.value AdverseEventActualityAE  }
-    AdverseEventActualityPAE); {@enum.value AdverseEventActualityPAE  }
+    AdverseEventActualityActual, {@enum.value AdverseEventActualityActual  }
+    AdverseEventActualityPotential); {@enum.value AdverseEventActualityPotential  }
   TFhirAdverseEventActualityEnumList = set of TFhirAdverseEventActualityEnum;
 
   {@Enum TFhirAdverseEventCategoryEnum
@@ -1315,6 +1315,15 @@ Type
     ConsentStateCodesEnteredInError); {@enum.value ConsentStateCodesEnteredInError  }
   TFhirConsentStateCodesEnumList = set of TFhirConsentStateCodesEnum;
 
+  {@Enum TFhirConsentProvisionTypeEnum
+    How a rule statement is applied, such as adding additional consent or removing consent from http://hl7.org/fhir/ValueSet/consent-provision-type
+  }
+  TFhirConsentProvisionTypeEnum = (
+    ConsentProvisionTypeNull,  {@enum.value ConsentProvisionTypeNull Value is missing from Instance }
+    ConsentProvisionTypeDeny, {@enum.value ConsentProvisionTypeDeny  }
+    ConsentProvisionTypePermit); {@enum.value ConsentProvisionTypePermit  }
+  TFhirConsentProvisionTypeEnumList = set of TFhirConsentProvisionTypeEnum;
+
   {@Enum TFhirConsentDataMeaningEnum
     How a resource reference is interpreted when testing consent restrictions from http://hl7.org/fhir/ValueSet/consent-data-meaning
   }
@@ -1325,15 +1334,6 @@ Type
     ConsentDataMeaningDependents, {@enum.value ConsentDataMeaningDependents  }
     ConsentDataMeaningAuthoredby); {@enum.value ConsentDataMeaningAuthoredby  }
   TFhirConsentDataMeaningEnumList = set of TFhirConsentDataMeaningEnum;
-
-  {@Enum TFhirConsentExceptTypeEnum
-    How an exception statement is applied, such as adding additional consent or removing consent from http://hl7.org/fhir/ValueSet/consent-except-type
-  }
-  TFhirConsentExceptTypeEnum = (
-    ConsentExceptTypeNull,  {@enum.value ConsentExceptTypeNull Value is missing from Instance }
-    ConsentExceptTypeDeny, {@enum.value ConsentExceptTypeDeny  }
-    ConsentExceptTypePermit); {@enum.value ConsentExceptTypePermit  }
-  TFhirConsentExceptTypeEnumList = set of TFhirConsentExceptTypeEnum;
 
   {@Enum TFhirContractStatusEnum
     A code specifying the state of the resource instance. from http://hl7.org/fhir/ValueSet/contract-status
@@ -3242,14 +3242,14 @@ Type
   }
   TFhirDate = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
-    constructor Create(value : TDateAndTime); overload;
+    constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -3265,7 +3265,7 @@ Type
     {@member value
       The actual value of the date
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -3316,7 +3316,7 @@ Type
     {@member AddItem
       Add an already existing FhirDate to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -3379,14 +3379,14 @@ Type
   }
   TFhirDateTime = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
-    constructor Create(value : TDateAndTime); overload;
+    constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -3402,7 +3402,7 @@ Type
     {@member value
       The actual value of the dateTime
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -3453,7 +3453,7 @@ Type
     {@member AddItem
       Add an already existing FhirDateTime to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -3927,14 +3927,14 @@ Type
   }
   TFhirInstant = class (TFhirPrimitiveType)
   Private
-    FValue: TDateAndTime;
-    procedure setValue(value: TDateAndTime);
+    FValue: TDateTimeEx;
+    procedure setValue(value: TDateTimeEx);
   protected
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
   Public
-    constructor Create(value : TDateAndTime); overload;
+    constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
     
     {!script hide}
@@ -3950,7 +3950,7 @@ Type
     {@member value
       The actual value of the instant
     }
-    property value : TDateAndTime read FValue write SetValue;
+    property value : TDateTimeEx read FValue write SetValue;
   End;    
 
 
@@ -4001,7 +4001,7 @@ Type
     {@member AddItem
       Add an already existing FhirInstant to the end of the list.
     }
-    procedure AddItem(value : TDateAndTime); overload;
+    procedure AddItem(value : TDateTimeEx); overload;
 
     
     {@member IndexOf
@@ -6089,8 +6089,8 @@ Type
     Function GetTitleST : String;
     Procedure SetTitleST(value : String);
     Procedure SetCreation(value : TFhirDateTime);
-    Function GetCreationST : TDateAndTime;
-    Procedure SetCreationST(value : TDateAndTime);
+    Function GetCreationST : TDateTimeEx;
+    Procedure SetCreationST(value : TDateTimeEx);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -6179,7 +6179,7 @@ Type
     {@member creation
       Typed access to The date that the attachment was first created.
     }
-    property creation : TDateAndTime read GetCreationST write SetCreationST;
+    property creation : TDateTimeEx read GetCreationST write SetCreationST;
     {@member creationElement
       The date that the attachment was first created.
     }
@@ -8169,11 +8169,11 @@ Type
     FStart : TFhirDateTime;
     FEnd_ : TFhirDateTime;
     Procedure SetStart(value : TFhirDateTime);
-    Function GetStartST : TDateAndTime;
-    Procedure SetStartST(value : TDateAndTime);
+    Function GetStartST : TDateTimeEx;
+    Procedure SetStartST(value : TDateTimeEx);
     Procedure SetEnd_(value : TFhirDateTime);
-    Function GetEnd_ST : TDateAndTime;
-    Procedure SetEnd_ST(value : TDateAndTime);
+    Function GetEnd_ST : TDateTimeEx;
+    Procedure SetEnd_ST(value : TDateTimeEx);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -8199,7 +8199,7 @@ Type
     {@member start
       Typed access to The start of the period. The boundary is inclusive.
     }
-    property start : TDateAndTime read GetStartST write SetStartST;
+    property start : TDateTimeEx read GetStartST write SetStartST;
     {@member startElement
       The start of the period. The boundary is inclusive.
     }
@@ -8208,7 +8208,7 @@ Type
     {@member end_
       Typed access to The end of the period. If the end of the period is missing, it means that the period is ongoing. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     }
-    property end_ : TDateAndTime read GetEnd_ST write SetEnd_ST;
+    property end_ : TDateTimeEx read GetEnd_ST write SetEnd_ST;
     {@member end_Element
       The end of the period. If the end of the period is missing, it means that the period is ongoing. The start may be in the past, and the end date in the future, which means that period is expected/planned to end at that time.
     }
@@ -8860,8 +8860,8 @@ Type
     FText : TFhirString;
     Procedure SetAuthor(value : TFhirType);
     Procedure SetTime(value : TFhirDateTime);
-    Function GetTimeST : TDateAndTime;
-    Procedure SetTimeST(value : TDateAndTime);
+    Function GetTimeST : TDateTimeEx;
+    Procedure SetTimeST(value : TDateTimeEx);
     Procedure SetText(value : TFhirString);
     Function GetTextST : String;
     Procedure SetTextST(value : String);
@@ -8899,7 +8899,7 @@ Type
     {@member time
       Typed access to Indicates when this particular annotation was made.
     }
-    property time : TDateAndTime read GetTimeST write SetTimeST;
+    property time : TDateTimeEx read GetTimeST write SetTimeST;
     {@member timeElement
       Indicates when this particular annotation was made.
     }
@@ -9326,8 +9326,8 @@ Type
     function GetType_List : TFhirCodingList;
     function GetHasType_List : Boolean;
     Procedure SetWhen(value : TFhirInstant);
-    Function GetWhenST : TDateAndTime;
-    Procedure SetWhenST(value : TDateAndTime);
+    Function GetWhenST : TDateTimeEx;
+    Procedure SetWhenST(value : TDateTimeEx);
     Procedure SetWho(value : TFhirType);
     Procedure SetOnBehalfOf(value : TFhirType);
     Procedure SetContentType(value : TFhirCode);
@@ -9367,7 +9367,7 @@ Type
     {@member when
       Typed access to When the digital signature was signed.
     }
-    property when : TDateAndTime read GetWhenST write SetWhenST;
+    property when : TDateTimeEx read GetWhenST write SetWhenST;
     {@member whenElement
       When the digital signature was signed.
     }
@@ -10267,8 +10267,8 @@ Type
     Function GetVersionIdST : String;
     Procedure SetVersionIdST(value : String);
     Procedure SetLastUpdated(value : TFhirInstant);
-    Function GetLastUpdatedST : TDateAndTime;
-    Procedure SetLastUpdatedST(value : TDateAndTime);
+    Function GetLastUpdatedST : TDateTimeEx;
+    Procedure SetLastUpdatedST(value : TDateTimeEx);
     function GetProfileList : TFhirUriList;
     function GetHasProfileList : Boolean;
     function GetSecurityList : TFhirCodingList;
@@ -10309,7 +10309,7 @@ Type
     {@member lastUpdated
       Typed access to When the resource last changed - e.g. when the version changed.
     }
-    property lastUpdated : TDateAndTime read GetLastUpdatedST write SetLastUpdatedST;
+    property lastUpdated : TDateTimeEx read GetLastUpdatedST write SetLastUpdatedST;
     {@member lastUpdatedElement
       When the resource last changed - e.g. when the version changed.
     }
@@ -13724,7 +13724,7 @@ Const
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
   SYSTEMS_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type');
-  CODES_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'AE', 'PAE');
+  CODES_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'actual', 'potential');
   SYSTEMS_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'http://hl7.org/fhir/adverse-event-actuality', 'http://hl7.org/fhir/adverse-event-actuality');
   CODES_TFhirAdverseEventCategoryEnum : Array[TFhirAdverseEventCategoryEnum] of String = ('', 'ProductProblem', 'ProductQuality', 'ProductUseError', 'WrongDose', 'IncorrectPrescribingInformation', 'WrongTechnique', 'WrongRouteOfAdministration', 'WrongRate', 'WrongDuration', 'WrongTime', 'ExpiredDrug', 'MedicalDeviceUseError', 'ProblemDifferentManufacturer', 'UnsafePhysicalEnvironment');
   SYSTEMS_TFhirAdverseEventCategoryEnum : Array[TFhirAdverseEventCategoryEnum] of String = ('', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category', 'http://hl7.org/fhir/adverse-event-category');
@@ -13836,10 +13836,10 @@ Const
   SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
   CODES_TFhirConsentStateCodesEnum : Array[TFhirConsentStateCodesEnum] of String = ('', 'draft', 'proposed', 'active', 'rejected', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirConsentStateCodesEnum : Array[TFhirConsentStateCodesEnum] of String = ('', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes');
+  CODES_TFhirConsentProvisionTypeEnum : Array[TFhirConsentProvisionTypeEnum] of String = ('', 'deny', 'permit');
+  SYSTEMS_TFhirConsentProvisionTypeEnum : Array[TFhirConsentProvisionTypeEnum] of String = ('', 'http://hl7.org/fhir/consent-provision-type', 'http://hl7.org/fhir/consent-provision-type');
   CODES_TFhirConsentDataMeaningEnum : Array[TFhirConsentDataMeaningEnum] of String = ('', 'instance', 'related', 'dependents', 'authoredby');
   SYSTEMS_TFhirConsentDataMeaningEnum : Array[TFhirConsentDataMeaningEnum] of String = ('', 'http://hl7.org/fhir/consent-data-meaning', 'http://hl7.org/fhir/consent-data-meaning', 'http://hl7.org/fhir/consent-data-meaning', 'http://hl7.org/fhir/consent-data-meaning');
-  CODES_TFhirConsentExceptTypeEnum : Array[TFhirConsentExceptTypeEnum] of String = ('', 'deny', 'permit');
-  SYSTEMS_TFhirConsentExceptTypeEnum : Array[TFhirConsentExceptTypeEnum] of String = ('', 'http://hl7.org/fhir/consent-except-type', 'http://hl7.org/fhir/consent-except-type');
   CODES_TFhirContractStatusEnum : Array[TFhirContractStatusEnum] of String = ('', 'amended', 'appended', 'cancelled', 'disputed', 'entered-in-error', 'executable', 'executed', 'negotiable', 'offered', 'policy', 'rejected', 'renewed', 'revoked', 'resolved', 'terminated');
   SYSTEMS_TFhirContractStatusEnum : Array[TFhirContractStatusEnum] of String = ('', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status', 'http://hl7.org/fhir/contract-status');
   CODES_TFhirContractDataMeaningEnum : Array[TFhirContractDataMeaningEnum] of String = ('', 'instance', 'related', 'dependents', 'authoredby');
@@ -14218,10 +14218,10 @@ Function TFhirConditionVerStatusEnumListAsInteger(aSet : TFhirConditionVerStatus
 Function IntegerAsTFhirConditionVerStatusEnumList(i : integer) : TFhirConditionVerStatusEnumList; overload;
 Function TFhirConsentStateCodesEnumListAsInteger(aSet : TFhirConsentStateCodesEnumList) : Integer; overload;
 Function IntegerAsTFhirConsentStateCodesEnumList(i : integer) : TFhirConsentStateCodesEnumList; overload;
+Function TFhirConsentProvisionTypeEnumListAsInteger(aSet : TFhirConsentProvisionTypeEnumList) : Integer; overload;
+Function IntegerAsTFhirConsentProvisionTypeEnumList(i : integer) : TFhirConsentProvisionTypeEnumList; overload;
 Function TFhirConsentDataMeaningEnumListAsInteger(aSet : TFhirConsentDataMeaningEnumList) : Integer; overload;
 Function IntegerAsTFhirConsentDataMeaningEnumList(i : integer) : TFhirConsentDataMeaningEnumList; overload;
-Function TFhirConsentExceptTypeEnumListAsInteger(aSet : TFhirConsentExceptTypeEnumList) : Integer; overload;
-Function IntegerAsTFhirConsentExceptTypeEnumList(i : integer) : TFhirConsentExceptTypeEnumList; overload;
 Function TFhirContractStatusEnumListAsInteger(aSet : TFhirContractStatusEnumList) : Integer; overload;
 Function IntegerAsTFhirContractStatusEnumList(i : integer) : TFhirContractStatusEnumList; overload;
 Function TFhirContractDataMeaningEnumListAsInteger(aSet : TFhirContractDataMeaningEnumList) : Integer; overload;
@@ -14492,13 +14492,13 @@ end;
 procedure TFhirElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'id') then IdElement := asId(propValue){5a}
-  else if (propName = 'extension') then ExtensionList.add(propValue as TFhirExtension){2}
+  else if (propName = 'extension') then ExtensionList.add(propValue as TFhirExtension){2a}
   else inherited;
 end;
 
 procedure TFhirElement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'extension') then ExtensionList.insertItem(index, propValue as TFhirExtension){2}
+  if (propName = 'extension') then ExtensionList.insertItem(index, propValue as TFhirExtension){2a}
   else inherited;
 end;
 
@@ -14526,7 +14526,7 @@ end;
 
 procedure TFhirElement.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'extension') then ExtensionList.move(source, destination){2}
+  if (propName = 'extension') then ExtensionList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -14790,13 +14790,13 @@ end;
 
 procedure TFhirBackboneElement.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'modifierExtension') then ModifierExtensionList.add(propValue as TFhirExtension){2}
+  if (propName = 'modifierExtension') then ModifierExtensionList.add(propValue as TFhirExtension){2a}
   else inherited;
 end;
 
 procedure TFhirBackboneElement.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension){2}
+  if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension){2a}
   else inherited;
 end;
 
@@ -14822,7 +14822,7 @@ end;
 
 procedure TFhirBackboneElement.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination){2}
+  if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -15312,16 +15312,14 @@ end;
 
 { TFhirDate }
 
-Constructor TFhirDate.Create(value : TDateAndTime);
+Constructor TFhirDate.Create(value : TDateTimeEx);
 begin
   Create;
-  FValue := value;
-  value.Precision := dtpDay;
+  FValue := value.fixPrecision(dtpDay);
 end;
 
 Destructor TFhirDate.Destroy;
 begin
-  FValue.free;
   inherited;
 end;
 
@@ -15341,22 +15339,22 @@ procedure TFhirDate.ListProperties(oList: TFHIRPropertyList; bInheritedPropertie
 begin
   inherited;
   if (bPrimitiveValues) then
-    if (FValue <> nil) then
+    if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'date', false, nil, FValue.toString));
 end;
 
 procedure TFhirDate.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDate(oSource).Value.Link;
+  FValue := TFhirDate(oSource).Value;
 end;
 
 function TFhirDate.AsStringValue : string;
 begin
-  if (FValue = nil) then
+  if (FValue.null) then
     result := ''
   else
-    result := FValue.asXml;
+    result := FValue.toXml;
 end;
 
 function TFhirDate.equalsDeep(other : TFHIRObject) : boolean; 
@@ -15385,13 +15383,13 @@ begin
   else
   begin
     o := TFhirDate(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
 function TFhirDate.isEmpty : boolean;
 begin
-  result := inherited isEmpty and (FValue <> nil);
+  result := inherited isEmpty and (FValue.null);
 end;
 
 function TFhirDate.Link : TFhirDate;
@@ -15404,9 +15402,8 @@ begin
   result := TFhirDate(inherited Clone);
 end;
 
-procedure TFhirDate.setValue(value : TDateAndTime);
+procedure TFhirDate.setValue(value : TDateTimeEx);
 begin
-  FValue.free;
   FValue := value;
 end;
 
@@ -15446,7 +15443,7 @@ begin
 end;
 
 
-procedure TFhirDateList.AddItem(value: TDateAndTime);
+procedure TFhirDateList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirDate.create(value));
 end;
@@ -15544,7 +15541,7 @@ end;
 
 { TFhirDateTime }
 
-Constructor TFhirDateTime.Create(value : TDateAndTime);
+Constructor TFhirDateTime.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
@@ -15552,7 +15549,6 @@ end;
 
 Destructor TFhirDateTime.Destroy;
 begin
-  FValue.free;
   inherited;
 end;
 
@@ -15572,22 +15568,22 @@ procedure TFhirDateTime.ListProperties(oList: TFHIRPropertyList; bInheritedPrope
 begin
   inherited;
   if (bPrimitiveValues) then
-    if (FValue <> nil) then
+    if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, nil, FValue.toString));
 end;
 
 procedure TFhirDateTime.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirDateTime(oSource).Value.Link;
+  FValue := TFhirDateTime(oSource).Value;
 end;
 
 function TFhirDateTime.AsStringValue : string;
 begin
-  if (FValue = nil) then
+  if (FValue.null) then
     result := ''
   else
-    result := FValue.asXml;
+    result := FValue.toXml;
 end;
 
 function TFhirDateTime.equalsDeep(other : TFHIRObject) : boolean; 
@@ -15616,13 +15612,13 @@ begin
   else
   begin
     o := TFhirDateTime(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
 function TFhirDateTime.isEmpty : boolean;
 begin
-  result := inherited isEmpty and (FValue <> nil);
+  result := inherited isEmpty and (FValue.null);
 end;
 
 function TFhirDateTime.Link : TFhirDateTime;
@@ -15635,9 +15631,8 @@ begin
   result := TFhirDateTime(inherited Clone);
 end;
 
-procedure TFhirDateTime.setValue(value : TDateAndTime);
+procedure TFhirDateTime.setValue(value : TDateTimeEx);
 begin
-  FValue.free;
   FValue := value;
 end;
 
@@ -15677,7 +15672,7 @@ begin
 end;
 
 
-procedure TFhirDateTimeList.AddItem(value: TDateAndTime);
+procedure TFhirDateTimeList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirDateTime.create(value));
 end;
@@ -16450,7 +16445,7 @@ end;
 
 { TFhirInstant }
 
-Constructor TFhirInstant.Create(value : TDateAndTime);
+Constructor TFhirInstant.Create(value : TDateTimeEx);
 begin
   Create;
   FValue := value;
@@ -16458,7 +16453,6 @@ end;
 
 Destructor TFhirInstant.Destroy;
 begin
-  FValue.free;
   inherited;
 end;
 
@@ -16478,22 +16472,22 @@ procedure TFhirInstant.ListProperties(oList: TFHIRPropertyList; bInheritedProper
 begin
   inherited;
   if (bPrimitiveValues) then
-    if (FValue <> nil) then
+    if (FValue.notNull) then
       oList.add(TFHIRProperty.create(self, 'value', 'instant', false, nil, FValue.toString));
 end;
 
 procedure TFhirInstant.Assign(oSource : TAdvObject);
 begin
   inherited;
-  FValue := TFhirInstant(oSource).Value.Link;
+  FValue := TFhirInstant(oSource).Value;
 end;
 
 function TFhirInstant.AsStringValue : string;
 begin
-  if (FValue = nil) then
+  if (FValue.null) then
     result := ''
   else
-    result := FValue.asXml;
+    result := FValue.toXml;
 end;
 
 function TFhirInstant.equalsDeep(other : TFHIRObject) : boolean; 
@@ -16522,13 +16516,13 @@ begin
   else
   begin
     o := TFhirInstant(other);
-    result := o.value = value;
+    result := o.value.equal(value);
   end;
 end;
 
 function TFhirInstant.isEmpty : boolean;
 begin
-  result := inherited isEmpty and (FValue <> nil);
+  result := inherited isEmpty and (FValue.null);
 end;
 
 function TFhirInstant.Link : TFhirInstant;
@@ -16541,9 +16535,8 @@ begin
   result := TFhirInstant(inherited Clone);
 end;
 
-procedure TFhirInstant.setValue(value : TDateAndTime);
+procedure TFhirInstant.setValue(value : TDateTimeEx);
 begin
-  FValue.free;
   FValue := value;
 end;
 
@@ -16583,7 +16576,7 @@ begin
 end;
 
 
-procedure TFhirInstantList.AddItem(value: TDateAndTime);
+procedure TFhirInstantList.AddItem(value: TDateTimeEx);
 begin
   add(TFhirInstant.create(value));
 end;
@@ -19301,7 +19294,7 @@ end;
 procedure TFhirNarrative.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, propValue)
-  else if (propName = 'div') then Div_ := asXhtml(propValue){4b}
+  else if (propName = 'div') then Div_Element := asXHtml(propValue){5a}
   else inherited;
 end;
 
@@ -19312,8 +19305,7 @@ end;
 
 function TFhirNarrative.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'div') then result := TFhirXHtmlNode.create(){4b}
-  else result := inherited createPropertyValue(propName);
+  result := inherited createPropertyValue(propName);
 end;
 
 procedure TFhirNarrative.deleteProperty(propName : string; value : TFHIRObject);
@@ -19327,7 +19319,7 @@ end;
 procedure TFhirNarrative.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, new){4}
-  else if (propName = 'div') then Div_Element := asXhtml(new){4}
+  else if (propName = 'div') then Div_Element := asXHtmlNode(new){5b}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -19625,13 +19617,13 @@ procedure TFhirContributor.setProperty(propName: string; propValue: TFHIRObject)
 begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirContributorTypeEnum, CODES_TFhirContributorTypeEnum, propValue)
   else if (propName = 'name') then NameElement := asString(propValue){5a}
-  else if (propName = 'contact') then ContactList.add(propValue as TFhirContactDetail){2}
+  else if (propName = 'contact') then ContactList.add(propValue as TFhirContactDetail){2a}
   else inherited;
 end;
 
 procedure TFhirContributor.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail){2}
+  if (propName = 'contact') then ContactList.insertItem(index, propValue as TFhirContactDetail){2a}
   else inherited;
 end;
 
@@ -19661,7 +19653,7 @@ end;
 
 procedure TFhirContributor.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'contact') then ContactList.move(source, destination){2}
+  if (propName = 'contact') then ContactList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -20274,24 +20266,19 @@ begin
   FCreation := value;
 end;
 
-Function TFhirAttachment.GetCreationST : TDateAndTime;
+Function TFhirAttachment.GetCreationST : TDateTimeEx;
 begin
   if FCreation = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FCreation.value;
 end;
 
-Procedure TFhirAttachment.SetCreationST(value : TDateAndTime);
+Procedure TFhirAttachment.SetCreationST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FCreation = nil then
-      FCreation := TFhirDateTime.create;
-    FCreation.value := value
-  end
-  else if FCreation <> nil then
-    FCreation.value := nil;
+  if FCreation = nil then
+    FCreation := TFhirDateTime.create;
+  FCreation.value := value
 end;
 
 
@@ -20531,16 +20518,16 @@ begin
   if (propName = 'path') then PathElement := asString(propValue){5a}
   else if (propName.startsWith('valueSet')) then ValueSet := propValue as TFhirType{4}
   else if (propName = 'valueCode') then ValueCodeList.add(asCode(propValue)){2}
-  else if (propName = 'valueCoding') then ValueCodingList.add(propValue as TFhirCoding){2}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.add(propValue as TFhirCodeableConcept){2}
+  else if (propName = 'valueCoding') then ValueCodingList.add(propValue as TFhirCoding){2a}
+  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.add(propValue as TFhirCodeableConcept){2a}
   else inherited;
 end;
 
 procedure TFhirDataRequirementCodeFilter.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
   if (propName = 'valueCode') then ValueCodeList.insertItem(index, asCode(propValue)){2}
-  else if (propName = 'valueCoding') then ValueCodingList.insertItem(index, propValue as TFhirCoding){2}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.insertItem(index, propValue as TFhirCodeableConcept){2}
+  else if (propName = 'valueCoding') then ValueCodingList.insertItem(index, propValue as TFhirCoding){2a}
+  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.insertItem(index, propValue as TFhirCodeableConcept){2a}
   else inherited;
 end;
 
@@ -20575,8 +20562,8 @@ end;
 procedure TFhirDataRequirementCodeFilter.reorderProperty(propName : string; source, destination : integer);
 begin
   if (propName = 'valueCode') then ValueCodeList.move(source, destination){2}
-  else if (propName = 'valueCoding') then ValueCodingList.move(source, destination){2}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.move(source, destination){2}
+  else if (propName = 'valueCoding') then ValueCodingList.move(source, destination){2a}
+  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -21205,8 +21192,8 @@ begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirAllTypesEnum, CODES_TFhirAllTypesEnum, propValue)
   else if (propName = 'profile') then ProfileList.add(asUri(propValue)){2}
   else if (propName = 'mustSupport') then MustSupportList.add(asString(propValue)){2}
-  else if (propName = 'codeFilter') then CodeFilterList.add(propValue as TFhirDataRequirementCodeFilter){2}
-  else if (propName = 'dateFilter') then DateFilterList.add(propValue as TFhirDataRequirementDateFilter){2}
+  else if (propName = 'codeFilter') then CodeFilterList.add(propValue as TFhirDataRequirementCodeFilter){2a}
+  else if (propName = 'dateFilter') then DateFilterList.add(propValue as TFhirDataRequirementDateFilter){2a}
   else inherited;
 end;
 
@@ -21214,8 +21201,8 @@ procedure TFhirDataRequirement.insertProperty(propName: string; propValue: TFHIR
 begin
   if (propName = 'profile') then ProfileList.insertItem(index, asUri(propValue)){2}
   else if (propName = 'mustSupport') then MustSupportList.insertItem(index, asString(propValue)){2}
-  else if (propName = 'codeFilter') then CodeFilterList.insertItem(index, propValue as TFhirDataRequirementCodeFilter){2}
-  else if (propName = 'dateFilter') then DateFilterList.insertItem(index, propValue as TFhirDataRequirementDateFilter){2}
+  else if (propName = 'codeFilter') then CodeFilterList.insertItem(index, propValue as TFhirDataRequirementCodeFilter){2a}
+  else if (propName = 'dateFilter') then DateFilterList.insertItem(index, propValue as TFhirDataRequirementDateFilter){2a}
   else inherited;
 end;
 
@@ -21254,8 +21241,8 @@ procedure TFhirDataRequirement.reorderProperty(propName : string; source, destin
 begin
   if (propName = 'profile') then ProfileList.move(source, destination){2}
   else if (propName = 'mustSupport') then MustSupportList.move(source, destination){2}
-  else if (propName = 'codeFilter') then CodeFilterList.move(source, destination){2}
-  else if (propName = 'dateFilter') then DateFilterList.move(source, destination){2}
+  else if (propName = 'codeFilter') then CodeFilterList.move(source, destination){2a}
+  else if (propName = 'dateFilter') then DateFilterList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -21621,7 +21608,7 @@ procedure TFhirDosage.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'sequence') then SequenceElement := asInteger(propValue){5a}
   else if (propName = 'text') then TextElement := asString(propValue){5a}
-  else if (propName = 'additionalInstruction') then AdditionalInstructionList.add(propValue as TFhirCodeableConcept){2}
+  else if (propName = 'additionalInstruction') then AdditionalInstructionList.add(propValue as TFhirCodeableConcept){2a}
   else if (propName = 'patientInstruction') then PatientInstructionElement := asString(propValue){5a}
   else if (propName = 'timing') then Timing := propValue as TFhirTiming{4b}
   else if (propName.startsWith('asNeeded')) then AsNeeded := propValue as TFhirType{4}
@@ -21638,7 +21625,7 @@ end;
 
 procedure TFhirDosage.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'additionalInstruction') then AdditionalInstructionList.insertItem(index, propValue as TFhirCodeableConcept){2}
+  if (propName = 'additionalInstruction') then AdditionalInstructionList.insertItem(index, propValue as TFhirCodeableConcept){2a}
   else inherited;
 end;
 
@@ -21691,7 +21678,7 @@ end;
 
 procedure TFhirDosage.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'additionalInstruction') then AdditionalInstructionList.move(source, destination){2}
+  if (propName = 'additionalInstruction') then AdditionalInstructionList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -24387,24 +24374,19 @@ begin
   FStart := value;
 end;
 
-Function TFhirPeriod.GetStartST : TDateAndTime;
+Function TFhirPeriod.GetStartST : TDateTimeEx;
 begin
   if FStart = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FStart.value;
 end;
 
-Procedure TFhirPeriod.SetStartST(value : TDateAndTime);
+Procedure TFhirPeriod.SetStartST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FStart = nil then
-      FStart := TFhirDateTime.create;
-    FStart.value := value
-  end
-  else if FStart <> nil then
-    FStart.value := nil;
+  if FStart = nil then
+    FStart := TFhirDateTime.create;
+  FStart.value := value
 end;
 
 Procedure TFhirPeriod.SetEnd_(value : TFhirDateTime);
@@ -24413,24 +24395,19 @@ begin
   FEnd_ := value;
 end;
 
-Function TFhirPeriod.GetEnd_ST : TDateAndTime;
+Function TFhirPeriod.GetEnd_ST : TDateTimeEx;
 begin
   if FEnd_ = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FEnd_.value;
 end;
 
-Procedure TFhirPeriod.SetEnd_ST(value : TDateAndTime);
+Procedure TFhirPeriod.SetEnd_ST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FEnd_ = nil then
-      FEnd_ := TFhirDateTime.create;
-    FEnd_.value := value
-  end
-  else if FEnd_ <> nil then
-    FEnd_.value := nil;
+  if FEnd_ = nil then
+    FEnd_ := TFhirDateTime.create;
+  FEnd_.value := value
 end;
 
 
@@ -25835,24 +25812,19 @@ begin
   FTime := value;
 end;
 
-Function TFhirAnnotation.GetTimeST : TDateAndTime;
+Function TFhirAnnotation.GetTimeST : TDateTimeEx;
 begin
   if FTime = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FTime.value;
 end;
 
-Procedure TFhirAnnotation.SetTimeST(value : TDateAndTime);
+Procedure TFhirAnnotation.SetTimeST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FTime = nil then
-      FTime := TFhirDateTime.create;
-    FTime.value := value
-  end
-  else if FTime <> nil then
-    FTime.value := nil;
+  if FTime = nil then
+    FTime := TFhirDateTime.create;
+  FTime.value := value
 end;
 
 Procedure TFhirAnnotation.SetText(value : TFhirString);
@@ -26056,13 +26028,13 @@ end;
 procedure TFhirContactDetail.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'name') then NameElement := asString(propValue){5a}
-  else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContactPoint){2}
+  else if (propName = 'telecom') then TelecomList.add(propValue as TFhirContactPoint){2a}
   else inherited;
 end;
 
 procedure TFhirContactDetail.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint){2}
+  if (propName = 'telecom') then TelecomList.insertItem(index, propValue as TFhirContactPoint){2a}
   else inherited;
 end;
 
@@ -26090,7 +26062,7 @@ end;
 
 procedure TFhirContactDetail.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'telecom') then TelecomList.move(source, destination){2}
+  if (propName = 'telecom') then TelecomList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -26643,7 +26615,7 @@ end;
 
 procedure TFhirSignature.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'type') then Type_List.add(propValue as TFhirCoding){2}
+  if (propName = 'type') then Type_List.add(propValue as TFhirCoding){2a}
   else if (propName = 'when') then WhenElement := asInstant(propValue){5a}
   else if (propName.startsWith('who')) then Who := propValue as TFhirType{4}
   else if (propName.startsWith('onBehalfOf')) then OnBehalfOf := propValue as TFhirType{4}
@@ -26654,7 +26626,7 @@ end;
 
 procedure TFhirSignature.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCoding){2}
+  if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirCoding){2a}
   else inherited;
 end;
 
@@ -26686,7 +26658,7 @@ end;
 
 procedure TFhirSignature.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'type') then Type_List.move(source, destination){2}
+  if (propName = 'type') then Type_List.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -26764,24 +26736,19 @@ begin
   FWhen := value;
 end;
 
-Function TFhirSignature.GetWhenST : TDateAndTime;
+Function TFhirSignature.GetWhenST : TDateTimeEx;
 begin
   if FWhen = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FWhen.value;
 end;
 
-Procedure TFhirSignature.SetWhenST(value : TDateAndTime);
+Procedure TFhirSignature.SetWhenST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FWhen = nil then
-      FWhen := TFhirInstant.create;
-    FWhen.value := value
-  end
-  else if FWhen <> nil then
-    FWhen.value := nil;
+  if FWhen = nil then
+    FWhen := TFhirInstant.create;
+  FWhen.value := value
 end;
 
 Procedure TFhirSignature.SetWho(value : TFhirType);
@@ -27022,14 +26989,14 @@ end;
 
 procedure TFhirCodeableConcept.setProperty(propName: string; propValue: TFHIRObject);
 begin
-  if (propName = 'coding') then CodingList.add(propValue as TFhirCoding){2}
+  if (propName = 'coding') then CodingList.add(propValue as TFhirCoding){2a}
   else if (propName = 'text') then TextElement := asString(propValue){5a}
   else inherited;
 end;
 
 procedure TFhirCodeableConcept.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'coding') then CodingList.insertItem(index, propValue as TFhirCoding){2}
+  if (propName = 'coding') then CodingList.insertItem(index, propValue as TFhirCoding){2a}
   else inherited;
 end;
 
@@ -27057,7 +27024,7 @@ end;
 
 procedure TFhirCodeableConcept.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'coding') then CodingList.move(source, destination){2}
+  if (propName = 'coding') then CodingList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -28758,16 +28725,16 @@ begin
   if (propName = 'versionId') then VersionIdElement := asId(propValue){5a}
   else if (propName = 'lastUpdated') then LastUpdatedElement := asInstant(propValue){5a}
   else if (propName = 'profile') then ProfileList.add(asUri(propValue)){2}
-  else if (propName = 'security') then SecurityList.add(propValue as TFhirCoding){2}
-  else if (propName = 'tag') then TagList.add(propValue as TFhirCoding){2}
+  else if (propName = 'security') then SecurityList.add(propValue as TFhirCoding){2a}
+  else if (propName = 'tag') then TagList.add(propValue as TFhirCoding){2a}
   else inherited;
 end;
 
 procedure TFhirMeta.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
   if (propName = 'profile') then ProfileList.insertItem(index, asUri(propValue)){2}
-  else if (propName = 'security') then SecurityList.insertItem(index, propValue as TFhirCoding){2}
-  else if (propName = 'tag') then TagList.insertItem(index, propValue as TFhirCoding){2}
+  else if (propName = 'security') then SecurityList.insertItem(index, propValue as TFhirCoding){2a}
+  else if (propName = 'tag') then TagList.insertItem(index, propValue as TFhirCoding){2a}
   else inherited;
 end;
 
@@ -28804,8 +28771,8 @@ end;
 procedure TFhirMeta.reorderProperty(propName : string; source, destination : integer);
 begin
   if (propName = 'profile') then ProfileList.move(source, destination){2}
-  else if (propName = 'security') then SecurityList.move(source, destination){2}
-  else if (propName = 'tag') then TagList.move(source, destination){2}
+  else if (propName = 'security') then SecurityList.move(source, destination){2a}
+  else if (propName = 'tag') then TagList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -28897,24 +28864,19 @@ begin
   FLastUpdated := value;
 end;
 
-Function TFhirMeta.GetLastUpdatedST : TDateAndTime;
+Function TFhirMeta.GetLastUpdatedST : TDateTimeEx;
 begin
   if FLastUpdated = nil then
-    result := nil
+    result := TDateTimeEx.makeNull
   else
     result := FLastUpdated.value;
 end;
 
-Procedure TFhirMeta.SetLastUpdatedST(value : TDateAndTime);
+Procedure TFhirMeta.SetLastUpdatedST(value : TDateTimeEx);
 begin
-  if value <> nil then
-  begin
-    if FLastUpdated = nil then
-      FLastUpdated := TFhirInstant.create;
-    FLastUpdated.value := value
-  end
-  else if FLastUpdated <> nil then
-    FLastUpdated.value := nil;
+  if FLastUpdated = nil then
+    FLastUpdated := TFhirInstant.create;
+  FLastUpdated.value := value
 end;
 
 Function TFhirMeta.GetProfileList : TFhirUriList;
@@ -29937,7 +29899,7 @@ end;
 
 procedure TFhirElementDefinitionSlicing.setProperty(propName : string; propValue: TFHIRObject);
 begin
-  if (propName = 'discriminator') then DiscriminatorList.add(propValue as TFhirElementDefinitionSlicingDiscriminator){2}
+  if (propName = 'discriminator') then DiscriminatorList.add(propValue as TFhirElementDefinitionSlicingDiscriminator){2a}
   else if (propName = 'description') then DescriptionElement := asString(propValue){5a}
   else if (propName = 'ordered') then OrderedElement := asBoolean(propValue){5a}
   else if (propName = 'rules') then RulesElement := asEnum(SYSTEMS_TFhirResourceSlicingRulesEnum, CODES_TFhirResourceSlicingRulesEnum, propValue)
@@ -29946,7 +29908,7 @@ end;
 
 procedure TFhirElementDefinitionSlicing.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'discriminator') then DiscriminatorList.insertItem(index, propValue as TFhirElementDefinitionSlicingDiscriminator){2}
+  if (propName = 'discriminator') then DiscriminatorList.insertItem(index, propValue as TFhirElementDefinitionSlicingDiscriminator){2a}
   else inherited;
 end;
 
@@ -29978,7 +29940,7 @@ end;
 
 procedure TFhirElementDefinitionSlicing.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'discriminator') then DiscriminatorList.move(source, destination){2}
+  if (propName = 'discriminator') then DiscriminatorList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -33027,7 +32989,7 @@ begin
   else if (propName = 'representation') then FRepresentation.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
   else if (propName = 'sliceName') then SliceNameElement := asString(propValue){5a}
   else if (propName = 'label') then Label_Element := asString(propValue){5a}
-  else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2}
+  else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2a}
   else if (propName = 'slicing') then Slicing := propValue as TFhirElementDefinitionSlicing{4b}
   else if (propName = 'short') then ShortElement := asString(propValue){5a}
   else if (propName = 'definition') then DefinitionElement := asMarkdown(propValue){5a}
@@ -33038,36 +33000,36 @@ begin
   else if (propName = 'max') then MaxElement := asString(propValue){5a}
   else if (propName = 'base') then Base := propValue as TFhirElementDefinitionBase{4b}
   else if (propName = 'contentReference') then ContentReferenceElement := asUri(propValue){5a}
-  else if (propName = 'type') then Type_List.add(propValue as TFhirElementDefinitionType){2}
+  else if (propName = 'type') then Type_List.add(propValue as TFhirElementDefinitionType){2a}
   else if (propName.startsWith('defaultValue')) then DefaultValue := propValue as TFhirType{4}
   else if (propName = 'meaningWhenMissing') then MeaningWhenMissingElement := asMarkdown(propValue){5a}
   else if (propName = 'orderMeaning') then OrderMeaningElement := asString(propValue){5a}
   else if (propName.startsWith('fixed')) then Fixed := propValue as TFhirType{4}
   else if (propName.startsWith('pattern')) then Pattern := propValue as TFhirType{4}
-  else if (propName = 'example') then ExampleList.add(propValue as TFhirElementDefinitionExample){2}
+  else if (propName = 'example') then ExampleList.add(propValue as TFhirElementDefinitionExample){2a}
   else if (propName.startsWith('minValue')) then MinValue := propValue as TFhirType{4}
   else if (propName.startsWith('maxValue')) then MaxValue := propValue as TFhirType{4}
   else if (propName = 'maxLength') then MaxLengthElement := asInteger(propValue){5a}
   else if (propName = 'condition') then ConditionList.add(asId(propValue)){2}
-  else if (propName = 'constraint') then ConstraintList.add(propValue as TFhirElementDefinitionConstraint){2}
+  else if (propName = 'constraint') then ConstraintList.add(propValue as TFhirElementDefinitionConstraint){2a}
   else if (propName = 'mustSupport') then MustSupportElement := asBoolean(propValue){5a}
   else if (propName = 'isModifier') then IsModifierElement := asBoolean(propValue){5a}
   else if (propName = 'isSummary') then IsSummaryElement := asBoolean(propValue){5a}
   else if (propName = 'binding') then Binding := propValue as TFhirElementDefinitionBinding{4b}
-  else if (propName = 'mapping') then MappingList.add(propValue as TFhirElementDefinitionMapping){2}
+  else if (propName = 'mapping') then MappingList.add(propValue as TFhirElementDefinitionMapping){2a}
   else inherited;
 end;
 
 procedure TFhirElementDefinition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
   if (propName = 'representation') then FRepresentation.insertItem(index, asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
-  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCoding){2}
+  else if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCoding){2a}
   else if (propName = 'alias') then AliasList.insertItem(index, asString(propValue)){2}
-  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirElementDefinitionType){2}
-  else if (propName = 'example') then ExampleList.insertItem(index, propValue as TFhirElementDefinitionExample){2}
+  else if (propName = 'type') then Type_List.insertItem(index, propValue as TFhirElementDefinitionType){2a}
+  else if (propName = 'example') then ExampleList.insertItem(index, propValue as TFhirElementDefinitionExample){2a}
   else if (propName = 'condition') then ConditionList.insertItem(index, asId(propValue)){2}
-  else if (propName = 'constraint') then ConstraintList.insertItem(index, propValue as TFhirElementDefinitionConstraint){2}
-  else if (propName = 'mapping') then MappingList.insertItem(index, propValue as TFhirElementDefinitionMapping){2}
+  else if (propName = 'constraint') then ConstraintList.insertItem(index, propValue as TFhirElementDefinitionConstraint){2a}
+  else if (propName = 'mapping') then MappingList.insertItem(index, propValue as TFhirElementDefinitionMapping){2a}
   else inherited;
 end;
 
@@ -33153,13 +33115,13 @@ end;
 procedure TFhirElementDefinition.reorderProperty(propName : string; source, destination : integer);
 begin
   if (propName = 'representation') then FRepresentation.move(source, destination) {1}
-  else if (propName = 'code') then CodeList.move(source, destination){2}
+  else if (propName = 'code') then CodeList.move(source, destination){2a}
   else if (propName = 'alias') then AliasList.move(source, destination){2}
-  else if (propName = 'type') then Type_List.move(source, destination){2}
-  else if (propName = 'example') then ExampleList.move(source, destination){2}
+  else if (propName = 'type') then Type_List.move(source, destination){2a}
+  else if (propName = 'example') then ExampleList.move(source, destination){2a}
   else if (propName = 'condition') then ConditionList.move(source, destination){2}
-  else if (propName = 'constraint') then ConstraintList.move(source, destination){2}
-  else if (propName = 'mapping') then MappingList.move(source, destination){2}
+  else if (propName = 'constraint') then ConstraintList.move(source, destination){2a}
+  else if (propName = 'mapping') then MappingList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -37852,6 +37814,33 @@ begin
  end;
 
 
+function TFhirConsentProvisionTypeEnumListAsInteger(aSet : TFhirConsentProvisionTypeEnumList) : Integer;
+var
+  a : TFhirConsentProvisionTypeEnum;
+begin
+  result := 0;
+  for a := low(TFhirConsentProvisionTypeEnum) to high(TFhirConsentProvisionTypeEnum) do
+  begin
+    assert(ord(a) < 32);
+    if a in aSet then
+      result := result + 1 shl (ord(a));
+  end;
+end;
+
+function IntegerAsTFhirConsentProvisionTypeEnumList(i : Integer) : TFhirConsentProvisionTypeEnumList;
+var
+  aLoop : TFhirConsentProvisionTypeEnum;
+begin
+  result := [];
+  for aLoop := low(TFhirConsentProvisionTypeEnum) to high(TFhirConsentProvisionTypeEnum) Do
+  begin
+    assert(ord(aLoop) < 32);
+    if i and (1 shl (ord(aLoop))) > 0 Then
+      result := result + [aLoop];
+  end;
+ end;
+
+
 function TFhirConsentDataMeaningEnumListAsInteger(aSet : TFhirConsentDataMeaningEnumList) : Integer;
 var
   a : TFhirConsentDataMeaningEnum;
@@ -37871,33 +37860,6 @@ var
 begin
   result := [];
   for aLoop := low(TFhirConsentDataMeaningEnum) to high(TFhirConsentDataMeaningEnum) Do
-  begin
-    assert(ord(aLoop) < 32);
-    if i and (1 shl (ord(aLoop))) > 0 Then
-      result := result + [aLoop];
-  end;
- end;
-
-
-function TFhirConsentExceptTypeEnumListAsInteger(aSet : TFhirConsentExceptTypeEnumList) : Integer;
-var
-  a : TFhirConsentExceptTypeEnum;
-begin
-  result := 0;
-  for a := low(TFhirConsentExceptTypeEnum) to high(TFhirConsentExceptTypeEnum) do
-  begin
-    assert(ord(a) < 32);
-    if a in aSet then
-      result := result + 1 shl (ord(a));
-  end;
-end;
-
-function IntegerAsTFhirConsentExceptTypeEnumList(i : Integer) : TFhirConsentExceptTypeEnumList;
-var
-  aLoop : TFhirConsentExceptTypeEnum;
-begin
-  result := [];
-  for aLoop := low(TFhirConsentExceptTypeEnum) to high(TFhirConsentExceptTypeEnum) Do
   begin
     assert(ord(aLoop) < 32);
     if i and (1 shl (ord(aLoop))) > 0 Then

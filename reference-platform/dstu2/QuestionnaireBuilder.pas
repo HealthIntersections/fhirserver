@@ -38,7 +38,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  GUIDSupport, DateAndTime, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
+  GUIDSupport, DateSupport, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRBase, FHIRParser,
   FHIRUtilities, FHIRSupport, FHIRProfileUtilities;
 
@@ -314,7 +314,7 @@ begin
     id.Value := FQuestionnaireId;
     FQuestionnaire.Version := profile.Version;
     FQuestionnaire.Status := convertStatus(profile.Status);
-    FQuestionnaire.Date := profile.Date.link;
+    FQuestionnaire.Date := profile.Date;
     FQuestionnaire.publisher := profile.Publisher;
     FQuestionnaire.Group := TFHIRQuestionnaireItem.Create;
     FQuestionnaire.group.conceptList.AddAll(profile.codeList);
@@ -537,7 +537,7 @@ begin
   else if ((s = 'Coding') and (t = 'code')) then
     result := TFhirEnum.Create('', TFHIRCoding(v).code)
   else if ((s = 'dateTime') and (t = 'date')) then
-    result := TFhirDate.Create(TFhirDateTime(v).value.Link)
+    result := TFhirDate.Create(TFhirDateTime(v).value)
   else
     raise Exception.Create('Unable to convert from '+s+' to '+t+' at path = '+path);
 end;
@@ -944,7 +944,7 @@ begin
     vs.description := vs.name;
     vs.status := ConformanceResourceStatusActive;
     vs.expansion := TFhirValueSetExpansion.Create;
-    vs.expansion.timestamp := NowUTC;
+    vs.expansion.timestamp := TDateTimeEx.makeUTC;
     for t in types do
     begin
       cc := vs.expansion.containsList.Append;

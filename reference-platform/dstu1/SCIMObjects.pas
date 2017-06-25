@@ -58,27 +58,27 @@ Type
 
   TSCIMObject = class (TAdvObject)
   private
-    FCreated : TDateAndTime;
-    FLastModified : TDateAndTime;
-    FCreatedUTC : TDateAndTime;
-    FLastModifiedUTC : TDateAndTime;
+    FCreated : TDateTimeEx;
+    FLastModified : TDateTimeEx;
+    FCreatedUTC : TDateTimeEx;
+    FLastModifiedUTC : TDateTimeEx;
     FJson : TJsonObject;
-    function GetCreated: TDateAndTime;
+    function GetCreated: TDateTimeEx;
     function GetId: String;
-    function GetLastModified: TDateAndTime;
+    function GetLastModified: TDateTimeEx;
     function GetLocation: String;
     function GetResourceType: String;
     function GetVersion: String;
-    procedure SetCreated(const Value: TDateAndTime);
+    procedure SetCreated(const Value: TDateTimeEx);
     procedure SetId(const Value: String);
-    procedure SetLastModified(const Value: TDateAndTime);
+    procedure SetLastModified(const Value: TDateTimeEx);
     procedure SetLocation(const Value: String);
     procedure SetResourceType(const Value: String);
     procedure SetVersion(const Value: String);
     function GetExternalId: String;
     procedure SetExternalId(const Value: String);
-    function GetCreatedUTC: TDateAndTime;
-    function GetLastModifiedUTC: TDateAndTime;
+    function GetCreatedUTC: TDateTimeEx;
+    function GetLastModifiedUTC: TDateTimeEx;
   protected
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
@@ -89,10 +89,10 @@ Type
     property id : String read GetId write SetId;
     property ExternalId : String read GetExternalId write SetExternalId;
     property resourceType : String read GetResourceType write SetResourceType;
-    property created : TDateAndTime read GetCreated write SetCreated;
-    property lastModified : TDateAndTime read GetLastModified write SetLastModified;
-    property createdUTC : TDateAndTime read GetCreatedUTC;
-    property lastModifiedUTC : TDateAndTime read GetLastModifiedUTC;
+    property created : TDateTimeEx read GetCreated write SetCreated;
+    property lastModified : TDateTimeEx read GetLastModified write SetLastModified;
+    property createdUTC : TDateTimeEx read GetCreatedUTC;
+    property lastModifiedUTC : TDateTimeEx read GetLastModifiedUTC;
     property location : String read GetLocation write SetLocation;
     property version : String read GetVersion write SetVersion;
     property json : TJsonObject read FJson;
@@ -276,12 +276,12 @@ begin
   inherited;
 end;
 
-function TSCIMObject.GetCreated: TDateAndTime;
+function TSCIMObject.GetCreated: TDateTimeEx;
 begin
   if FJson.has('meta') and FJson.obj['meta'].has('created') then
   begin
     if FCreated = nil then
-      FCreated := TDateAndTime.create;
+      FCreated := TDateTimeEx.create;
     FCreated.AsXML := FJson.obj['meta']['created'];
   end
   else if FCreated <> nil then
@@ -292,7 +292,7 @@ begin
   result := FCreated;
 end;
 
-function TSCIMObject.GetCreatedUTC: TDateAndTime;
+function TSCIMObject.GetCreatedUTC: TDateTimeEx;
 begin
   FCreatedUTC.free;
   FCreatedUTC := FCreated.AsUTC;
@@ -309,12 +309,12 @@ begin
   result := FJson['id'];
 end;
 
-function TSCIMObject.GetLastModified: TDateAndTime;
+function TSCIMObject.GetLastModified: TDateTimeEx;
 begin
   if FJson.has('meta') and FJson.obj['meta'].has('created') then
   begin
     if FLastModified = nil then
-      FLastModified := TDateAndTime.create;
+      FLastModified := TDateTimeEx.create;
     FLastModified.AsXML := FJson.obj['meta']['created'];
   end
   else if FLastModified <> nil then
@@ -325,7 +325,7 @@ begin
   result := FLastModified;
 end;
 
-function TSCIMObject.GetLastModifiedUTC: TDateAndTime;
+function TSCIMObject.GetLastModifiedUTC: TDateTimeEx;
 begin
   FLastModifiedUTC.free;
   FLastModifiedUTC := FLastModified.AsUTC;
@@ -347,7 +347,7 @@ begin
   result := FJson.obj['meta']['version'];
 end;
 
-procedure TSCIMObject.SetCreated(const Value: TDateAndTime);
+procedure TSCIMObject.SetCreated(const Value: TDateTimeEx);
 begin
   FCreated.Free;
   FCreated := Value;
@@ -382,7 +382,7 @@ begin
   end;
 end;
 
-procedure TSCIMObject.SetLastModified(const Value: TDateAndTime);
+procedure TSCIMObject.SetLastModified(const Value: TDateTimeEx);
 begin
   FLastModified.Free;
   FLastModified := Value;

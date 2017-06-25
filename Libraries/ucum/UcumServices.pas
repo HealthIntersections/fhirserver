@@ -34,7 +34,7 @@ Interface
 Uses
   SysUtils, Classes,
   MathSupport, FileSupport,
-  AdvBinaryFilers, AdvFiles, AdvFactories, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
+  AdvFiles, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, ParserSupport, MXML,
   UcumHandlers, UcumValidators, UcumExpressions, Ucum,
   FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser, CDSHooksUtilities,
@@ -224,8 +224,6 @@ Type
 
     // load from ucum-essence.xml
     Procedure Import(Const sFilename : String);
-    Procedure Load(Const sFilename : String);
-    Procedure Save(Const sFilename : String);
 
     Property Loaded : Boolean read FLoaded write FLoaded;
 
@@ -491,28 +489,6 @@ begin
     oList.Add(Model.Properties[i].Name);
 end;
 
-procedure TUcumServices.Load(const sFilename: String);
-var
-  oFile : TAdvFile;
-  oFiler : TAdvBinaryReader;
-begin
-  oFile := TAdvFile.Create;
-  Try
-    oFile.Name := sFilename;
-    oFile.OpenRead;
-    oFiler := TAdvBinaryReader.Create;
-    Try
-      oFiler.Stream := oFile.Link;
-      oFiler['Mode'].DefineObject(FModel);
-    Finally
-      oFiler.Free;
-    End;
-  Finally
-    oFile.Free;
-  End;
-  Loaded := true;
-end;
-
 function TUcumServices.multiply(o1, o2: TUcumPair): TUcumPair;
 var
   res : TUcumPair;
@@ -530,32 +506,6 @@ end;
 function TUcumServices.name(context: TCodeSystemProviderContext): String;
 begin
   result := 'UCUM';
-end;
-
-procedure TUcumServices.Save(const sFilename: String);
-var
-  oFile : TAdvFile;
-  oFiler : TAdvBinaryWriter;
-begin
-  if FileExists(sFilename) Then
-  begin
-    FileSetReadOnly(sFilename, False);
-    DeleteFile(sFilename);
-  End;
-  oFile := TAdvFile.Create;
-  Try
-    oFile.Name := sFilename;
-    oFile.OpenCreate;
-    oFiler := TAdvBinaryWriter.Create;
-    Try
-      oFiler.Stream := oFile.Link;
-      oFiler['Mode'].DefineObject(FModel);
-    Finally
-      oFiler.Free;
-    End;
-  Finally
-    oFile.Free;
-  End;
 end;
 
 function TUcumServices.search(kind: TConceptKind; text: String; isRegex: Boolean): TUcumConceptList;
