@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  Windows, SysUtils, Classes,
+  SysUtils, Classes,
   BytesSupport, StringSupport,
   AdvObjects, AdvGenerics, AdvStreams, AdvVCLStreams, AdvTextFormatters, AdvTextExtractors, AdvObjectLists, AdvStringBuilders,
   TextUtilities, ParserSupport;

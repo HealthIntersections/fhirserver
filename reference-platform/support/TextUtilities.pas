@@ -49,6 +49,7 @@ procedure StringToFile(content, filename : String; encoding : TEncoding);
 procedure StringToStream(content: String; stream : TStream; encoding : TEncoding);
 
 procedure BytesToFile(bytes : TBytes; filename : String);
+function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
 
 procedure StreamToFile(stream : TStream; filename : String);
 
@@ -468,6 +469,25 @@ begin
   finally
     f.Free;
   end;
+end;
+
+function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
+var
+  LFileStream: TFilestream;
+begin
+  if FileExists(filename) then
+    begin
+    LFileStream := TFileStream.Create(filename, aShareMode);
+    try
+      SetLength(result, LFileStream.Size);
+      if LFileStream.Size > 0 then
+        LFileStream.Read(result[0], LFileStream.size);
+    finally
+      LFileStream.Free;
+    end;
+    end
+  else
+    raise Exception.Create('File "' + filename + '" not found');
 end;
 
 end.

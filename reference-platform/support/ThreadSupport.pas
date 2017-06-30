@@ -33,7 +33,7 @@ Interface
 
 
 Uses
-  {$IFDEF OSX} OSXUtils {$ELSE} Windows {$ENDIF};
+  {$IFDEF MACOS} OSXUtils {$ELSE} Windows {$ENDIF};
 
 
 Type
@@ -44,7 +44,7 @@ Type
 
 Procedure ThreadSleep(iTime : Cardinal); Overload;
 Function ThreadID : TThreadID; Overload;
-{$IFNDEF OSX}
+{$IFNDEF MACOS}
 Function ThreadHandle : TThreadHandle; Overload;
 {$ENDIF}
 Procedure ThreadYield; Overload;
@@ -66,7 +66,7 @@ Begin
 End;
 
 
-{$IFNDEF OSX}
+{$IFNDEF MACOS}
 Function ThreadHandle : TThreadHandle;
 Begin
   Result := GetCurrentThread;

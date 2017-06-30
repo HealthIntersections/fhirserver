@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
-  TextUtilities,
+  FileSupport, TextUtilities,
   AdvObjects, AdvGenerics,
   FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRMetaModel,
   FHIRContext, FHIRTestWorker, FHIRStructureMapUtilities, FHIRProfileUtilities;
@@ -147,9 +147,9 @@ end;
 procedure TMapTransformTests.setup;
 begin
   ctxt := TTestingWorkerContext.Use;
-  (ctxt as TBaseWorkerContext).LoadFromDefinitions(IncludeTrailingBackslash(GBasePath)+'build\guides\ccda\cda\cda.zip');
+  (ctxt as TBaseWorkerContext).LoadFromDefinitions(Path([GBasePath, 'build', 'guides', 'ccda', 'cda', 'cda.zip']));
   utils := TFHIRStructureMapUtilities.Create(ctxt.link, TAdvMap<TFHIRStructureMap>.create, TTestTransformerServices.Create);
-  loadMaps(IncludeTrailingBackslash(GBasePath)+'build\guides\ccda\maps');
+  loadMaps(Path([GBasePath, 'build', 'guides', 'ccda', 'maps']));
 end;
 
 procedure TMapTransformTests.teardown;

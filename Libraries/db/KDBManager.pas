@@ -68,7 +68,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Contnrs, IniFiles, Generics.Collections,
+  SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
   kCritSct, KSettings,
 
   StringSupport, GuidSupport,
@@ -688,12 +688,11 @@ type
       The SQL string to execute
     }
     property SQL: String Read FSQl Write FSql;
-
   end;
 
   TKDBManager = class(TAdvObject)
   Private
-    FSemaphore: TSemaphore;
+    FSemaphore : TKSemaphore;
     FWaitCreate : boolean;
     FConnections : TAdvList<TKDBConnection>;
     FAvail: TAdvList<TKDBConnection>;
@@ -1429,7 +1428,7 @@ begin
 
   FLock := TCriticalSection.create;
   FDBLogger := TKDBLogger.create;
-  FSemaphore := TSemaphore.Create(0);
+  FSemaphore := TKSemaphore.Create(0);
   FWaitCreate := false;
 
   FConnections := TAdvList<TKDBConnection>.create;
@@ -1479,7 +1478,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TKDBManager.GetConnection';
 var
   LCreateNew: Boolean;
 begin
-  if FWaitCreate and (FSemaphore.Wait(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError) then
+  if FWaitCreate and (FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError) then
     begin
     raise EKDBException.Create('['+Name+'] KDBManager Wait Failed - ' + ErrorAsString(GetLastError));
     end;

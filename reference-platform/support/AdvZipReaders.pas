@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,  // for LongWord
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} // for LongWord
   SysUtils, // For Exception
 
   StringSupport,

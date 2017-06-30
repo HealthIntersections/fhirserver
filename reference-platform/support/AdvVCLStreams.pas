@@ -32,8 +32,9 @@ Interface
 
 
 Uses
-  AdvObjects, Windows,
-  Classes, ActiveX,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, ActiveX, {$ENDIF}
+  AdvObjects,
+  Classes,
   AdvStreams;
 
 
@@ -89,6 +90,7 @@ Type
   TStreamLargeUInt = LargeUInt; // or largeint
   {$ENDIF}
 
+  {$IFNDEF MACOS}
   TAdvStreamAdapter = Class(TStreamAdapter)
     Public
       Function Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; Override; Stdcall;
@@ -119,6 +121,7 @@ Type
 
       Property Stream: TAdvAccessStream Read GetStream Write SetStream;
   End;
+  {$ENDIF}
 
   TStream = Classes.TStream;
 
@@ -246,6 +249,7 @@ Begin
   Result := iCount;
 End;
 
+{$IFNDEF MACOS}
 Function TAdvStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
 Begin
   // TStreamAdapter.stat does not clear the STATSTG structure.
@@ -493,6 +497,7 @@ Begin
   Result := FStream;
 End;
 
+{$ENDIF}
 
 
 End. // AdvVCLStreams //

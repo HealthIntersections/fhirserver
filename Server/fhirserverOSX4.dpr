@@ -6,9 +6,6 @@ program fhirserverOSX4;
 
 uses
   System.SysUtils,
-  {$IFDEF TESTINSIGHT}
-  TestInsight.DUnitX,
-  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -46,21 +43,64 @@ uses
   RDFUtilities in '..\reference-platform\support\RDFUtilities.pas',
   GUIDSupport in '..\reference-platform\support\GUIDSupport.pas',
   FileSupport in '..\reference-platform\support\FileSupport.pas',
-  OSXTests in '..\reference-platform\support\Tests\OSXTests.pas';
-
-{
-  ShellSupport in '..\support\ShellSupport.pas',
-
   kCritSct in '..\reference-platform\support\kCritSct.pas',
   MimeMessage in '..\reference-platform\support\MimeMessage.pas',
+  OSXTests in '..\reference-platform\support\Tests\OSXTests.pas',
+  AdvMemories in '..\reference-platform\support\AdvMemories.pas',
+  AdvBuffers in '..\reference-platform\support\AdvBuffers.pas',
   MXML in '..\reference-platform\support\MXML.pas',
+  AdvJson in '..\reference-platform\support\AdvJson.pas',
+  AdvPersistentLists in '..\reference-platform\support\AdvPersistentLists.pas',
+  AdvStreamReaders in '..\reference-platform\support\AdvStreamReaders.pas',
+  AdvVCLStreams in '..\reference-platform\support\AdvVCLStreams.pas',
+  AdvTextFormatters in '..\reference-platform\support\AdvTextFormatters.pas',
+  AdvFormatters in '..\reference-platform\support\AdvFormatters.pas',
+  AdvTextExtractors in '..\reference-platform\support\AdvTextExtractors.pas',
+  AdvExtractors in '..\reference-platform\support\AdvExtractors.pas',
+  AdvCharacterSets in '..\reference-platform\support\AdvCharacterSets.pas',
+  AdvOrdinalSets in '..\reference-platform\support\AdvOrdinalSets.pas',
+  AdvStringLists in '..\reference-platform\support\AdvStringLists.pas',
+  AdvCSVFormatters in '..\reference-platform\support\AdvCSVFormatters.pas',
+  AdvCSVExtractors in '..\reference-platform\support\AdvCSVExtractors.pas',
+  MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas',
+  AdvStringStreams in '..\reference-platform\support\AdvStringStreams.pas',
+  XMLBuilder in '..\reference-platform\support\XMLBuilder.pas',
+  libeay32 in '..\reference-platform\support\libeay32.pas',
+  HMAC in '..\reference-platform\support\HMAC.pas',
+  JWT in '..\reference-platform\support\JWT.pas',
+  AdvStringMatches in '..\reference-platform\support\AdvStringMatches.pas',
+  FHIRParser in '..\reference-platform\r4\FHIRParser.pas',
+  FHIRResources in '..\reference-platform\r4\FHIRResources.pas',
+  FHIRTypes in '..\reference-platform\r4\FHIRTypes.pas',
+  FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
+  AdvXmlBuilders in '..\reference-platform\support\AdvXmlBuilders.pas',
+  AdvXMLFormatters in '..\reference-platform\support\AdvXMLFormatters.pas',
+  AdvXMLEntities in '..\reference-platform\support\AdvXMLEntities.pas',
+  FHIRBase in '..\reference-platform\support\FHIRBase.pas',
+  AdvNames in '..\reference-platform\support\AdvNames.pas',
+  FHIRUtilities in '..\reference-platform\r4\FHIRUtilities.pas',
+  AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
+  AdvNameBuffers in '..\reference-platform\support\AdvNameBuffers.pas',
+  AdvObjectMatches in '..\reference-platform\support\AdvObjectMatches.pas',
+  AdvZipDeclarations in '..\reference-platform\support\AdvZipDeclarations.pas',
+  AdvZipParts in '..\reference-platform\support\AdvZipParts.pas',
+  AdvZipUtilities in '..\reference-platform\support\AdvZipUtilities.pas',
+  AdvZipWorkers in '..\reference-platform\support\AdvZipWorkers.pas',
+  InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
+  FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
+  FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
+  SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
+  GraphQL in '..\reference-platform\support\GraphQL.pas',
+  FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
+  FHIRSecurity in '..\reference-platform\r4\FHIRSecurity.pas',
+  FHIRTags in '..\reference-platform\r4\FHIRTags.pas',
+  FHIRLang in '..\reference-platform\support\FHIRLang.pas',
+  FHIRXhtml in '..\reference-platform\support\FHIRXhtml.pas',
+  FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
+  FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
+  AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
+  FhirPath in '..\reference-platform\r4\FhirPath.pas';
 
-  HMAC in '..\support\HMAC.pas',
-  JWT in '..\support\JWT.pas',
-  libeay32 in '..\support\libeay32.pas',
-  MXmlBuilder in '..\support\MXmlBuilder.pas',
-
-}
 var
   runner : ITestRunner;
   results : IRunResults;
@@ -72,9 +112,7 @@ begin
 //    GBasePath := 'C:\work\org.hl7.fhir';
 
 {$IFDEF TESTINSIGHT}
-  TestInsight.DUnitX.RunRegisteredTests;
-  !
-  exit;
+TestInsight not for OSX
 {$ENDIF}
   try
     //Check command line options, will exit if invalid

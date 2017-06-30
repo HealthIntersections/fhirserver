@@ -8,13 +8,8 @@ uses
 {
 to test:
 
-TAdvObject
 TAdvFile
-TCriticalSection
-sleep + thread id
 stuff in file support
-stuf in date support
-stuff in system support
 
 
 }
@@ -28,6 +23,7 @@ type
     [TestCase] procedure TestCriticalSectionThreaded;
     [TestCase] procedure TestTemp;
     [TestCase] procedure TestDateTimeEx;
+    [TestCase] procedure TestAdvFile;
   end;
 
 
@@ -35,13 +31,56 @@ implementation
 
 uses
   SysUtils, Classes,
-  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF}
-  SystemSupport, DateSupport,
-  AdvObjects;
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
+  SystemSupport, DateSupport, FileSupport,
+  AdvObjects, AdvFiles;
 
 var
   globalInt : cardinal;
   cs : TRTLCriticalSection;
+
+Const
+  TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
+
+procedure TOSXTests.TestAdvFile;
+var
+  filename : String;
+  f : TAdvFile;
+  s : AnsiString;
+begin
+  filename := Path([SystemTemp, 'delphi.file.test.txt']);
+  if FileExists(filename) then
+    FileDelete(filename);
+  Assert.IsFalse(FileExists(filename));
+  f := TAdvFile.Create;
+  try
+    f.Name := filename;
+    f.OpenCreate;
+    f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
+    f.Close;
+  finally
+    f.Free;
+  end;
+  Assert.IsTrue(FileExists(filename));
+  Assert.IsTrue(FileSize(filename) = 27);
+  f := TAdvFile.Create;
+  try
+    f.Name := filename;
+    f.OpenRead;
+    SetLength(s, f.Size);
+    f.Read(s[1], f.Size);
+    Assert.IsTrue(s = TEST_FILE_CONTENT);
+    f.Close;
+  finally
+    f.Free;
+  end;
+  FileSetReadOnly(filename, true);
+  FileDelete(filename);
+  Assert.IsTrue(FileExists(filename));
+  FileSetReadOnly(filename, false);
+  FileDelete(filename);
+  Assert.IsFalse(FileExists(filename));
+end;
 
 procedure TOSXTests.TestAdvObject;
 var

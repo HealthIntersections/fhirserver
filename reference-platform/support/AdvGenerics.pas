@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Types, RTLConsts, {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Generics.Collections, Generics.Defaults,
+  Types, RTLConsts, {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Generics.Collections, Generics.Defaults,
   AdvObjects;
 
 Type

@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF}    // Interlocked* API and HResult
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}    // Interlocked* API and HResult
   AdvExceptions;
 
 

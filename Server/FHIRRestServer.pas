@@ -112,6 +112,24 @@ Type
     constructor create(server : TFHIRWebServer);
   end;
 
+  TFhirServerSubscriptionThread = class (TThread)
+  private
+    FServer : TFhirWebServer;
+  protected
+    procedure Execute; override;
+  public
+    constructor create(server : TFHIRWebServer);
+  end;
+
+  TFhirServerEmailThread = class (TThread)
+  private
+    FServer : TFhirWebServer;
+  protected
+    procedure Execute; override;
+  public
+    constructor create(server : TFHIRWebServer);
+  end;
+
   TFHIRWebServerClientInfo = class (TAdvObject)
   private
     FContext: TIdContext;
@@ -180,7 +198,9 @@ Type
     FServerContext : TFHIRServerContext;
     FFacebookLike : boolean;
     FTerminologyWebServer : TTerminologyWebServer;
-    FThread : TFhirServerMaintenanceThread;
+    FMaintenanceThread : TFhirServerMaintenanceThread;
+    FSubscriptionThread : TFhirServerSubscriptionThread;
+    FEmailThread : TFhirServerEmailThread;
     FActive : boolean;
     FAuthServer : TAuth2Server;
     FAdaptors : TAdvMap<TFHIRFormatAdaptor>;
@@ -594,7 +614,9 @@ Begin
   StartServer(active);
   if (active) and (ServerContext.SubscriptionManager <> nil) then
   begin
-    FThread := TFhirServerMaintenanceThread.create(self);
+    FMaintenanceThread := TFhirServerMaintenanceThread.create(self);
+    FSubscriptionThread := TFhirServerSubscriptionThread.create(self);
+    FEmailThread := TFhirServerEmailThread.create(self);
     smsStatus('The server '+ServerContext.FormalURLPlain+' for '+ServerContext.OwnerName+' has started');
   end;
 End;
@@ -662,8 +684,12 @@ Procedure TFhirWebServer.Stop;
 Begin
   if ServerContext.SubscriptionManager <> nil then
     smsStatus('The server '+ServerContext.FormalURLPlain+' for '+ServerContext.OwnerName+' is stopping');
-  if FThread <> nil then
-    FThread.Terminate;
+  if FSubscriptionThread <> nil then
+    FSubscriptionThread.Terminate;
+  if FMaintenanceThread <> nil then
+    FMaintenanceThread.Terminate;
+  if FEmailThread <> nil then
+    FEmailThread.Terminate;
   StopServer;
 End;
 
@@ -3219,7 +3245,9 @@ begin
   try
     vars.Add('status.db', FormatTextToHTML(KDBManagers.dump));
     vars.Add('status.locks', FormatTextToHTML(DumpLocks));
-    vars.Add('status.thread', ServerContext.TerminologyServer.BackgroundThreadStatus);
+    vars.Add('status.thread.maintenance', ServerContext.TerminologyServer.MaintenanceThreadStatus);
+    vars.Add('status.thread.subscriptions', ServerContext.TerminologyServer.SubscriptionThreadStatus);
+    vars.Add('status.thread.email', ServerContext.TerminologyServer.EmailThreadStatus);
     vars.Add('status.sessions', ServerContext.SessionManager.DumpSessions);
     vars.Add('status.web', WebDump);
     vars.Add('status.tx', ServerContext.TerminologyServer.Summary);
@@ -3351,67 +3379,6 @@ begin
     result := result+', '''+session.TaggedCompartments[i]+'''';
 end;
 
-{ TFhirServerMaintenanceThread }
-
-constructor TFhirServerMaintenanceThread.create(server: TFHIRWebServer);
-begin
-  FreeOnTerminate := true;
-  FServer := server;
-  FLastSweep := now;
-  inherited Create;
-end;
-
-procedure TFhirServerMaintenanceThread.Execute;
-begin
-  Writeln('Starting TFhirServerMaintenanceThread');
-  try
-    FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'starting';
-    CoInitialize(nil);
-    repeat
-      FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'sleeping';
-      sleep(1000);
-      if FServer.ServerContext.ForLoad then
-      begin
-        if (not terminated) then
-        begin
-          try
-            FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'Building Indexes';
-            FServer.FServerContext.TerminologyServer.BuildIndexes(false);
-          except
-          end;
-          try
-            FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'Processing Observations';
-            FServer.FServerContext.Storage.ProcessObservations;
-          except
-          end;
-        end;
-        if FServer.FActive then
-        begin
-          FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'processing subscriptions';
-          FServer.FServerContext.Storage.ProcessSubscriptions;
-        end;
-        if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
-        begin
-          try
-            FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
-            FServer.FServerContext.Storage.Sweep;
-          except
-          end;
-          FLastSweep := now;
-        end;
-      end;
-    until Terminated;
-    try
-      FServer.ServerContext.TerminologyServer.BackgroundThreadStatus := 'dead';
-    except
-    end;
-    CoUninitialize;
-    Writeln('Ending TFhirServerMaintenanceThread');
-  except
-    Writeln('Failing TFhirServerMaintenanceThread');
-  end;
-end;
-
 function TFhirWebServer.transform1(resource: TFhirResource; lang, xslt: String; saveOnly : boolean): string;
 var
   xml : TFHIRXmlComposer;
@@ -3539,6 +3506,147 @@ begin
   FManager.Free;
   FManager := Value;
 end;
+
+{ TFhirServerMaintenanceThread }
+
+constructor TFhirServerMaintenanceThread.create(server: TFHIRWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  FLastSweep := now;
+  inherited Create;
+end;
+
+procedure TFhirServerMaintenanceThread.Execute;
+begin
+  Writeln('Starting TFhirServerMaintenanceThread');
+  try
+    FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'starting';
+    CoInitialize(nil);
+    repeat
+      FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'sleeping';
+      sleep(1000);
+      if not terminated and (FLastSweep < now - (DATETIME_SECOND_ONE * 5)) then
+      begin
+        try
+          FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping Sessions';
+          FServer.FServerContext.Storage.Sweep;
+        except
+        end;
+        FLastSweep := now;
+      end;
+      if FServer.ServerContext.ForLoad then
+      begin
+        if (not terminated) then
+          try
+            FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Building Indexes';
+            FServer.FServerContext.TerminologyServer.BuildIndexes(false);
+          except
+          end;
+        if (not terminated) then
+          try
+            FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Processing Observations';
+            FServer.FServerContext.Storage.ProcessObservations;
+          except
+          end;
+      end;
+    until Terminated;
+    try
+      FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'dead';
+    except
+    end;
+    try
+      FServer.FMaintenanceThread := nil;
+    except
+    end;
+    CoUninitialize;
+    Writeln('Ending TFhirServerMaintenanceThread');
+  except
+    Writeln('Failing TFhirServerMaintenanceThread');
+  end;
+end;
+
+{ TFhirServerSubscriptionThread }
+
+constructor TFhirServerSubscriptionThread.create(server: TFHIRWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  inherited Create;
+end;
+
+procedure TFhirServerSubscriptionThread.Execute;
+begin
+  Writeln('Starting TFhirServerSubscriptionThread');
+  try
+    FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'starting';
+    repeat
+      FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'sleeping';
+      sleep(1000);
+      if FServer.FActive then
+      begin
+        FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'processing subscriptions';
+        FServer.FServerContext.Storage.ProcessSubscriptions;
+      end;
+    until Terminated;
+    try
+      FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'dead';
+    except
+    end;
+    try
+      FServer.FMaintenanceThread := nil;
+    except
+    end;
+    Writeln('Ending TFhirServerSubscriptionThread');
+  except
+    Writeln('Failing TFhirServerSubscriptionThread');
+  end;
+end;
+
+{ TFhirServerEmailThread }
+
+constructor TFhirServerEmailThread.create(server: TFHIRWebServer);
+begin
+  FreeOnTerminate := true;
+  FServer := server;
+  inherited Create;
+end;
+
+procedure TFhirServerEmailThread.Execute;
+var
+  i : integer;
+begin
+  Writeln('Starting TFhirServerEmailThread');
+  try
+    FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'starting';
+    repeat
+      FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'sleeping';
+      i := 0;
+      while not terminated and (i < 60) do
+      begin
+        sleep(1000);
+        inc(i);
+      end;
+      if FServer.FActive and not terminated then
+      begin
+        FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'processing Emails';
+        FServer.FServerContext.Storage.ProcessEmails;
+      end;
+    until Terminated;
+    try
+      FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'dead';
+    except
+    end;
+    try
+      FServer.FMaintenanceThread := nil;
+    except
+    end;
+    Writeln('Ending TFhirServerEmailThread');
+  except
+    Writeln('Failing TFhirServerEmailThread');
+  end;
+end;
+
 
 Initialization
   IdSSLOpenSSLHeaders.Load;

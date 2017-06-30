@@ -212,7 +212,9 @@ Type
     FConceptMapsByURL : TAdvMap<TLoadedConceptMap>;
 
     FProviderClasses : TAdvMap<TCodeSystemProvider>;
-    FBackgroundThreadStatus : String;
+    FMaintenanceThreadStatus : String;
+    FSubscriptionThreadStatus : String;
+    FEmailThreadStatus : String;
 
     procedure UpdateConceptMaps;
     procedure BuildStems(cs : TFhirValueSetCodeSystem);
@@ -230,8 +232,12 @@ Type
     procedure checkCodeSystem(vs : TFHIRCodeSystem);
 
     function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
-    function GetBackgroundThreadStatus: String;
-    procedure SetBackgroundThreadStatus(const Value: String);
+    function GetMaintenanceThreadStatus: String;
+    procedure SetMaintenanceThreadStatus(const Value: String);
+    function GetSubscriptionThreadStatus: String;
+    procedure SetSubscriptionThreadStatus(const Value: String);
+    function GetEmailThreadStatus: String;
+    procedure SetEmailThreadStatus(const Value: String);
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptList; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionProfile): String;
   protected
@@ -296,7 +302,9 @@ Type
     function NextConceptKey : integer;
     function NextValueSetKey : integer;
     function NextValueSetMemberKey : integer;
-    Property BackgroundThreadStatus : String read GetBackgroundThreadStatus write SetBackgroundThreadStatus;
+    Property MaintenanceThreadStatus : String read GetMaintenanceThreadStatus write SetMaintenanceThreadStatus;
+    Property SubscriptionThreadStatus : String read GetSubscriptionThreadStatus write SetSubscriptionThreadStatus;
+    Property EmailThreadStatus : String read GetEmailThreadStatus write SetEmailThreadStatus;
   end;
 
 implementation
@@ -1099,11 +1107,31 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.SetBackgroundThreadStatus(const Value: String);
+procedure TTerminologyServerStore.SetMaintenanceThreadStatus(const Value: String);
 begin
   FLock.Lock;
   try
-    FBackgroundThreadStatus := Value;
+    FMaintenanceThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TTerminologyServerStore.SetSubscriptionThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FSubscriptionThreadStatus := Value;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+procedure TTerminologyServerStore.SetEmailThreadStatus(const Value: String);
+begin
+  FLock.Lock;
+  try
+    FEmailThreadStatus := Value;
   finally
     FLock.Unlock;
   end;
@@ -1410,11 +1438,31 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.GetBackgroundThreadStatus: String;
+function TTerminologyServerStore.GetMaintenanceThreadStatus: String;
 begin
   FLock.Lock;
   try
-    result := FBackgroundThreadStatus;
+    result := FMaintenanceThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.GetSubscriptionThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FSubscriptionThreadStatus;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.GetEmailThreadStatus: String;
+begin
+  FLock.Lock;
+  try
+    result := FEmailThreadStatus;
   finally
     FLock.Unlock;
   end;

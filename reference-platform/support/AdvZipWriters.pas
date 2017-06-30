@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,
+  MemorySupport,
   Classes,
 
   AdvBuffers,
@@ -197,7 +197,7 @@ Begin
     pData := oCompressedStream.Memory;
     pData := PData + 2;
     oDestination.Capacity := oCompressedStream.Size - 6; // 2 off the front, 4 off the back
-    MoveMemory(oDestination.Data, pData, oDestination.Capacity);
+    MemoryMove(oDestination.Data, pData, oDestination.Capacity);
   Finally
     oCompressedStream.Free;
   End;

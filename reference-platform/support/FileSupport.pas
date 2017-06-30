@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils,
   StringSupport, MathSupport, MemorySupport, DateSupport;
 
 Type
@@ -55,26 +55,15 @@ Function FileHandleIsValid(Const aFileHandle : TFileHandle) : Boolean; Overload;
 Function FileHandleOpen(Const aValue : Cardinal) : TFileHandle; Overload;
 Procedure FileHandleClose(Var aFileHandle : TFileHandle); Overload;
 Function PathFolder(Const sFilename : String) : String; Overload;
-//Function FileCopyAttempt(Const sSource, sDestination : String) : Boolean; Overload;
-//Function FileCopyForce(Const sSource, sDestination : String) : Boolean; Overload;
 Function ForceFolder(dir: String): Boolean;
-//
-//Function PathIncludeExtension(Const sFilename, sExtension : String) : String; Overload;
-//Function PathExcludeExtension(Const sFilename : String) : String; Overload;
+
 Function PathFilename(Const sFilename : String) : String; Overload;
 Function PathTitle(Const sFilename : String) : String; Overload;
 Function PathExtension(Const sFilename : String) : String; Overload;
 Function FolderExists(Const sFolder : String) : Boolean;
-//
-//
+
 Function FileSize(Const sFileName : String) : Int64; Overload;
-//
-//// File versions
-//Function FileVersion(Const sFilename : String) : TFileVersion; Overload;
-//Function ApplicationFileVersion(Const sFilename : String) : TFileVersion; Overload;
-//Function DataFileVersion(Const sFilename : String) : TFileVersion; Overload;
-//Function FileVersionToString(Const aVersion : TFileVersion) : String; Overload;
-//Function FileVersionZero : TFileVersion; Overload;
+function Path(parts : array of String) : String;
 
 Implementation
 
@@ -123,32 +112,6 @@ Begin
   Result := SysUtils.DeleteFile(sFilename);
 End;
 
-(*
-
-Function FileCopyAttempt(Const sSource, sDestination : String) : Boolean;
-Begin
-  Result := Windows.CopyFile(PChar(sSource), PChar(sDestination), True);
-End;
-
-
-Function FileCopyForce(Const sSource, sDestination : String) : Boolean;
-Begin
-  Result := Windows.CopyFile(PChar(sSource), PChar(sDestination), False);
-End;
-
-
-
-Function PathIncludeExtension(Const sFilename, sExtension : String) : String;
-Begin
-  Result := sFilename + sExtension;
-End;
-
-Function PathExcludeExtension(Const sFilename : String) : String;
-Begin
-  Result := StringExcludeAfter(sFilename, PathExtension(sFilename));
-End;
-*)
-
 
 Function PathExtension(Const sFilename : String) : String;
 Begin
@@ -163,19 +126,6 @@ Begin
   Result := Copy(sFileName, LastDelimiter('\/:', sFileName) + 1, MaxInt);
 End;
 
-(*
-Function PathRelative(Const sFolder, sFilename : String) : String;
-Var
-  iPos : Integer;
-Begin
-  Result := sFilename;
-
-  iPos := Pos(StringUpper(sFolder), StringUpper(Result));
-  If iPos > 0 Then
-    Delete(Result, 1, Length(sFolder));
-End;
-
-*)
 Function PathTitle(Const sFilename : String) : String;
 Begin
   // Return the filename without the path or the extension.
@@ -185,84 +135,9 @@ Begin
   Result := Copy(Result, 1, Length(Result) - Length(PathExtension(sFilename)));
 End;
 
-(*
 
-Function FileVersionToString(Const aVersion : TFileVersion) : String;
-Begin
-  Result := StringFormat('%d.%d.%d.%d', [aVersion.Major, aVersion.Minor, aVersion.Release, aVersion.Build]);
-End;
-
-
-
-
-Function FileVersion(Const sFilename: String): TFileVersion;
-var
-  s : string;
-Begin
-  s := PathExtension(sFilename);
-  If (s = '.exe') or (s = '.dll') Then
-    Result := ApplicationFileVersion(sFilename)
-  Else
-    Result := DataFileVersion(sFilename);
-End;
-
-
-Function FileVersionZero : TFileVersion;
-Begin
-  MemoryZero(@Result, SizeOf(Result));
-End;
-
-*)
-(*
-Function DataFileVersion(Const sFilename: String): TFileVersion;
-Var
-  aFileTime : TFileTime;
-  iFileSize : Int64;
-Begin
-  // Compile a version number from the modified time and size of the file.
-
-  aFileTime := DateTimeToFileTime(FileGetModified(sFilename));
-
-  Result.Major := Integer(Windows.FileTime(aFileTime).dwHighDateTime);
-  Result.Minor := Integer(Windows.FileTime(aFileTime).dwLowDateTime);
-
-  iFileSize := FileSize(sFilename);
-
-  Result.Release := Integer(iFileSize);
-  Result.Build := Integer(iFileSize Shr 32);
-End;
-
-
-Function ApplicationFileVersion(Const sFilename : String) : TFileVersion;
-Var
-  pBuffer : Pointer;
-  iSize   : Integer;
-  iTemp   : Cardinal;
-  pInfo   : Pointer;
-Begin
-  FillChar(Result, SizeOf(Result), 0);
-
-  iSize := GetFileVersionInfoSize(PChar(sFilename), iTemp);
-
-  If iSize > 0 Then
-  Begin
-    MemoryCreate(pBuffer, iSize);
-    Try
-      If GetFileVersionInfo(PChar(sFilename), 0, iSize, pBuffer) And VerQueryValue(pBuffer, '\', pInfo, iTemp) Then
-      Begin
-        Result.Major := PVSFixedFileInfo(pInfo)^.dwFileVersionMS Shr 16;
-        Result.Minor := PVSFixedFileInfo(pInfo)^.dwFileVersionMS And $FFFF;
-        Result.Release := PVSFixedFileInfo(pInfo)^.dwFileVersionLS Shr 16;
-        Result.Build := PVSFixedFileInfo(pInfo)^.dwFileVersionLS And $FFFF;
-      End;
-    Finally
-      MemoryDestroy(pBuffer, iSize);
-    End;
-  End;
-End;
-*)
 Function FileSize(Const sFileName : String) : Int64;
-{$IFDEF OSX}
+{$IFDEF MACOS}
 begin
   result := 0;
 end;
@@ -291,7 +166,6 @@ Begin
   End;
 End;
 {$ENDIF}
-
 
 Function FolderExists(Const sFolder : String) : Boolean;
 Begin
@@ -338,7 +212,7 @@ Begin
 End;
 
 Procedure FileHandleClose(Var aFileHandle : TFileHandle);
-{$IFDEF OSX}
+{$IFDEF MACOS}
 begin
 end;
 {$ELSE}
@@ -348,5 +222,16 @@ Begin
 End;
 {$ENDIF}
 
+function Path(parts : array of String) : String;
+var
+  part : String;
+begin
+  result := '';
+  for part in parts do
+    if result = '' then
+      result := part
+    else
+      result := IncludeTrailingPathDelimiter(result)+ part;
+end;
 
 End. // FileSupport //

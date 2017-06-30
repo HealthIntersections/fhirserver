@@ -248,6 +248,7 @@ type
     function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
     function funcHasValue(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+    function funcHtmlChecks(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
 
 
     function equal(left, right : TFHIRObject) : boolean;  overload;
@@ -438,6 +439,7 @@ begin
     pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
     pfConformsTo: checkParamCount(lexer, location, exp, 1);
     pfHasValue: checkParamCount(lexer, location, exp, 0);
+    pfHtmlChecks: checkParamCount(lexer, location, exp, 0);
   end;
 end;
 
@@ -1064,6 +1066,17 @@ begin
       result.add(TFHIRBoolean.create(focus[0].value.hasPrimitiveValue))
     else
       result.add(TFHIRBoolean.create(false));
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRExpressionEngine.funcHtmlChecks(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+begin
+  result := TFHIRSelectionList.Create;
+  try
+    result.add(TFHIRBoolean.create(true));
     result.Link;
   finally
     result.Free;
@@ -2918,6 +2931,7 @@ begin
     pfCheckModifiers: result := funcCheckModifiers(context, focus, exp);
     pfConformsTo: result := funcConformsTo(context, focus, exp);
     pfHasValue : result := funcHasValue(context, focus, exp);
+    pfHtmlChecks : result := funcHtmlChecks(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
   end;
@@ -2928,6 +2942,8 @@ var
   i : integer;
   pt, actual : TFHIRTypeDetails;
   a : String;
+  sd : TFhirStructureDefinition;
+  ok : boolean;
 begin
   try
     i := 0;
@@ -2938,8 +2954,20 @@ begin
       actual := paramTypes[i];
       inc(i);
       for a in actual.types do
+      begin
         if (not pt.hasType(a)) then
-          raise EFHIRPath.create('The parameter type "'+a+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
+        begin
+          ok := false;
+          sd := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+a) as TFhirStructureDefinition;
+          while not ok and (sd <> nil) do
+          begin
+            ok := pt.hasType(sd.type_);
+            sd := context.fetchResource(frtStructureDefinition, sd.baseDefinition) as TFhirStructureDefinition;
+          end;
+          if (not ok) then
+            raise EFHIRPath.create('The parameter type "'+a+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
+        end;
+      end;
     end;
   finally
     for pt in typeSet do
@@ -3216,6 +3244,8 @@ begin
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
         end;
       pfHasValue:
+        result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
+      pfHtmlChecks:
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
     else
       raise EFHIRPath.create('not Implemented yet?');

@@ -49,7 +49,7 @@ Implementation
 
 
 Uses
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   OSXUtils,
   {$ELSE}
   ActiveX,

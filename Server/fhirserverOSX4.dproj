@@ -33,6 +33,12 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Cfg_1)'=='true') or '$(Cfg_1_OSX32)'!=''">
+        <Cfg_1_OSX32>true</Cfg_1_OSX32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
         <Cfg_1_Win32>true</Cfg_1_Win32>
         <CfgParent>Cfg_1</CfgParent>
@@ -79,6 +85,11 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
+        <Manifest_File>(None)</Manifest_File>
+        <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
+        <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
@@ -127,7 +138,63 @@
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
         <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FileSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\kCritSct.pas"/>
+        <DCCReference Include="..\reference-platform\support\MimeMessage.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvMemories.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvBuffers.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXML.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvJson.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvPersistentLists.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStreamReaders.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvVCLStreams.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvTextFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvTextExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvCharacterSets.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvOrdinalSets.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringLists.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvCSVFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvCSVExtractors.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringStreams.pas"/>
+        <DCCReference Include="..\reference-platform\support\XMLBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\libeay32.pas"/>
+        <DCCReference Include="..\reference-platform\support\HMAC.pas"/>
+        <DCCReference Include="..\reference-platform\support\JWT.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRTypes.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXmlBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXMLFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXMLEntities.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvNameBuffers.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvObjectMatches.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipDeclarations.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipParts.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipWorkers.pas"/>
+        <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRContext.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRSecurity.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRMetaModel.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipReaders.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FhirPath.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -148,6 +215,10 @@
                 <Source>
                     <Source Name="MainSource">fhirserverOSX4.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
@@ -183,27 +254,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
@@ -554,12 +610,27 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>

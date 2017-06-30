@@ -39,7 +39,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
-  StringSupport,
+  StringSupport, FileSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRContext,
   FHIRSupport, FHIRProfileUtilities, FHIRPath,
   AdvJson, DUnitX.TestFramework;
@@ -106,9 +106,9 @@ begin
   if GWorkerContext = nil then
   begin
     GWorkerContext := TTestingWorkerContext.create;
-//    GWorkerContext.LoadFromDefinitions(IncludeTrailingBackslash(GBasePath)+'build\\publish\\validation-min.xml.zip');
-    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\publish\profiles-types.xml');
-    GWorkerContext.LoadFromFile(IncludeTrailingBackslash(GBasePath)+'build\publish\profiles-resources.xml');
+//    GWorkerContext.LoadFromDefinitions(path([GBasePath, 'build', 'publish', 'validation-min.xml.zip']));
+    GWorkerContext.LoadFromFile(path([GBasePath, 'build', 'publish', 'profiles-types.xml']));
+    GWorkerContext.LoadFromFile(path([GBasePath, 'build', 'publish', 'profiles-resources.xml']));
   end;
   result := GWorkerContext.link;
 end;

@@ -4,15 +4,15 @@ unit kCritSct;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
+ * Neither the name of HL7 nor the names of its contributors may be used to
    endorse or promote products derived from this software without specific 
    prior written permission.
 
@@ -35,9 +35,15 @@ interface
 // Do not change the uses clause of this unit without consulting NDM
 
 uses
-  Windows;
+  {$IFDEF MACOS}
+  OSXUtils,
+  Macapi.CoreServices,
+  Macapi.Mach,
+  {$ELSE}
+  Windows,
+  {$ENDIF}
+  SyncObjs;
 
-{--- CLR types - dealing with CLR and win32 differences ----}
 const
   NO_THREAD = 0;
 
@@ -101,38 +107,17 @@ type
     property LockThread: Thread Read FLockThread;
   end;
 
-{$IFNDEF CLR}
-  TWaitResult = (wrSignaled, wrTimeout, wrAbandoned, wrError);
-
-  // Event Object: Linux OK
-  TEvent = class(TObject)
+  {$IFNDEF MACOS}
+  TKSemaphore = class(TObject)
   Private
-    FLastError: Integer;
-    Event: THandle;
-  Public
-    constructor Create(AutoReset: Boolean; Name: String);
-    destructor Destroy; Override;
-    function Wait(timeout: Cardinal): Boolean;
-    function WaitRes(timeout: Cardinal): TWaitResult;
-    procedure Signal;
-    procedure UnSignal;
-
-    property LastError: Integer Read FLastError;
-    property Handle: THandle Read event; // exposed for call to WaitForMultipleEvents
-  end;
-
-  TSemaphore = class(TObject)
-  Private
-    FSem: THandle;
+    FSem: {$IFDEF MAXOS} dispatch_semaphore_t {$ELSE} THandle {$ENDIF};
   Public
     constructor Create(CurrCount: Integer);
     destructor Destroy; Override;
-    function Wait(timeout: Cardinal): TWaitResult;
+    function WaitFor(timeout: Cardinal): TWaitResult;
     procedure Release;
     property Handle: THandle Read FSem;
   end;
-
-function WaitForEvents(list: array of TEvent; TimeOut: Cardinal; WaitAll: Boolean): DWord;
   {$ENDIF}
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
@@ -350,106 +335,6 @@ begin
     result := result + '/' + FLockName[i];
 end;
 
-{ TEvent }
-constructor TEvent.Create(AutoReset: Boolean; Name: String);
-begin
-  inherited Create;
-  event := CreateEvent(NIL, not AutoReset, False, NIL {unnamed event});
-end;
-
-destructor TEvent.Destroy;
-begin
-  closehandle(event);
-  inherited Destroy;
-end;
-
-function TEvent.WaitRes(timeout: Cardinal): TWaitResult;
-begin
-  case WaitForSingleObject(Handle, Timeout) of
-    WAIT_ABANDONED:
-      Result := wrAbandoned;
-    WAIT_OBJECT_0:
-      Result := wrSignaled;
-    WAIT_TIMEOUT:
-      Result := wrTimeout;
-    WAIT_FAILED:
-      begin
-      Result := wrError;
-      FLastError := GetLastError;
-      end;
-    else
-      Result := wrError;
-    end;
-end;
-
-function TEvent.Wait(timeout: Cardinal): Boolean;
-begin
-  Result := WaitRes(TimeOut) = wrSignaled;
-end;
-
-procedure TEvent.Signal;
-begin
-  SetEvent(event);
-end;
-
-procedure TEvent.UnSignal;
-begin
-  ResetEvent(event);
-end;
-
-function WaitForEvents(list: array of TEvent; TimeOut: Cardinal; WaitAll: Boolean): DWord;
-var
-  WaitObjectList: array [0..MAXIMUM_WAIT_OBJECTS - 1] of DWord;
-  i, j: Integer;
-begin
-  j := 0;
-  for i := 0 to High(List) do
-    begin
-    if (list[i] <> NIL) then
-      begin
-      WaitObjectList[j] := list[i].event;
-      inc(j);
-      end;
-    end;
-  Result := WaitForMultipleObjects(j, @WaitObjectList, WaitAll, TimeOut);
-end;
-
-{ TSemaphore }
-
-constructor TSemaphore.Create(CurrCount: Integer);
-begin
-  inherited Create;
-  FSem := CreateSemaphore(NIL, CurrCount, $FFFF, NIL); // arbitrarily large number
-end;
-
-destructor TSemaphore.Destroy;
-begin
-  closehandle(FSem);
-  inherited Destroy;
-end;
-
-function TSemaphore.Wait(timeout: Cardinal): TWaitResult;
-var
-  r: Cardinal;
-begin
-  r := WaitForSingleObject(FSem, timeout);
-  case r of
-    WAIT_OBJECT_0:
-      Result := wrSignaled;
-    WAIT_TIMEOUT:
-      Result := wrTimeOut;
-    WAIT_ABANDONED:
-      Result := wrAbandoned;
-    else
-      Result := wrError;
-    end;
-end;
-
-procedure TSemaphore.Release;
-begin
-  releaseSemaphore(FSem, 1, NIL);
-end;
-
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 var
   oCrit : TCriticalSection;
@@ -493,6 +378,50 @@ Begin
     oCrit := oCrit.FNext;
   End;
 End;
+
+{$IFNDEF MACOS}
+{ TKSemaphore }
+
+constructor TKSemaphore.Create(CurrCount: Integer);
+begin
+  inherited Create;
+//  {$IFDEF MACOS}
+//  FSem := dispatch_semaphore_create(CurrCount);
+//  if FSem = nil then
+//    raise ESyncObjectException.CreateRes(@sErrorCreatingSemaphore);
+//  {$ELSE}
+  FSem := CreateSemaphore(NIL, CurrCount, $FFFF, NIL); // arbitrarily large number
+//  {$ENDIF}
+end;
+
+destructor TKSemaphore.Destroy;
+begin
+  closehandle(FSem);
+  inherited Destroy;
+end;
+
+function TKSemaphore.WaitFor(timeout: Cardinal): TWaitResult;
+var
+  r: Cardinal;
+begin
+  r := WaitForSingleObject(FSem, timeout);
+  case r of
+    WAIT_OBJECT_0:
+      Result := wrSignaled;
+    WAIT_TIMEOUT:
+      Result := wrTimeOut;
+    WAIT_ABANDONED:
+      Result := wrAbandoned;
+    else
+      Result := wrError;
+    end;
+end;
+
+procedure TKSemaphore.Release;
+begin
+  releaseSemaphore(FSem, 1, NIL);
+end;
+{$ENDIF}
 
 initialization
   InitUnit;

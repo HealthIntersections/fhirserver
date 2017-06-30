@@ -200,7 +200,7 @@ procedure TForm4.FormCreate(Sender: TObject);
 var
   page : integer;
 begin
-  ini := TIniFile.Create(IncludeTrailingBackslash(SystemTemp)+'FhirServerUtils.ini');
+  ini := TIniFile.Create(Path([SystemTemp, 'FhirServerUtils.ini']));
   edtSource.text := ini.ReadString('snomed-import', 'source', '');
   cbxEdition.ItemIndex := ini.ReadInteger('snomed-import', 'edition', -1);
   edtDate.Date := ini.ReadInteger('snomed-import', 'date', trunc(now));

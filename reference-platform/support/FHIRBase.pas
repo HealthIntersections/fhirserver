@@ -631,7 +631,7 @@ type
     pfRepeat, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfIif, pfToInteger, pfToDecimal, pfToString,
     pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse, pfCombine, pfType, pfOfType,
-    pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue);
+    pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks);
 
   TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup);
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
@@ -646,7 +646,7 @@ const
     'repeat', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'iif', 'toInteger', 'toDecimal', 'toString',
     'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'allFalse', 'anyFalse', 'combine', 'type', 'ofType',
-    'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue');
+    'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks');
 
 type
   TFHIRTypeDetails = class (TAdvObject)

@@ -656,7 +656,7 @@ type
     FServerContext : TFHIRServerContext; // not linked
 
     FClaimQueue: TFHIRClaimList;
-    FAudits: TFhirResourceList;
+    FQueue: TFhirResourceList;
 
     FAppFolder : String;
 
@@ -708,6 +708,7 @@ type
     procedure Sweep; override;
     function ResourceTypeKeyForName(name: String): integer;
     procedure ProcessSubscriptions; override;
+    procedure ProcessEmails; override;
     procedure ProcessObservations; override;
     function GenerateClaimResponse(claim: TFhirClaim): TFhirClaimResponse;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
@@ -734,7 +735,9 @@ type
 implementation
 
 uses
+  IdMessage, IdSMTP, IdSSLOpenSSL, IdExplicitTLSClientServerBase,
   SystemService,
+  MimeMessage,
   FHIRLog,
   TerminologyServerStore,
   SearchProcessor;
@@ -5599,7 +5602,11 @@ begin
           request.CommandType := fcmdCreate;
           request.Resource := list[i].link;
 
-          if (list[i].id <> '') then
+          if (list[i] is TFHIRBundle) and (list[i].Tags['process'] = 'true') then
+          begin
+            request.CommandType := fcmdTransaction;
+          end
+          else if (list[i].id <> '') then
           begin
             request.id := list[i].id;
             request.CommandType := fcmdUpdate;
@@ -7484,6 +7491,7 @@ begin
   result := frtPatient;
 end;
 
+
 function TFhirPatientEverythingOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtPatient];
@@ -7602,6 +7610,10 @@ begin
           bundle.deleteEntry(patient);
           bundle.entryList.Insert(0).resource := patient.Link;
           bundle.entryList[0].fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
+          if (request.Parameters.getVar('email') <> '') then
+            manager.ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('email'), false)
+          else if (request.Parameters.getVar('direct') <> '') then
+            manager.ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('direct'), true);
 
           bundle.meta := TFhirMeta.Create;
           bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
@@ -9696,7 +9708,7 @@ begin
   FAppFolder := AppFolder;
   FDB := DB;
   FLock := TCriticalSection.Create('fhir-store');
-  FAudits := TFhirResourceList.Create;
+  FQueue := TFhirResourceList.Create;
 
   FClaimQueue := TFHIRClaimList.Create;
 End;
@@ -9715,8 +9727,15 @@ begin
   ServerContext.SubscriptionManager.SMTPPort := ini.ReadString(voVersioningNotApplicable, 'email', 'Port', '');
   ServerContext.SubscriptionManager.SMTPUsername := ini.ReadString(voVersioningNotApplicable, 'email', 'Username', '');
   ServerContext.SubscriptionManager.SMTPPassword := ini.ReadString(voVersioningNotApplicable, 'email', 'Password', '');
-  ServerContext.SubscriptionManager.SMTPUseTLS := ini.ReadBool(voVersioningNotApplicable, 'email', 'Secure', false);
   ServerContext.SubscriptionManager.SMTPSender := ini.ReadString(voVersioningNotApplicable, 'email', 'Sender', '');
+  ServerContext.SubscriptionManager.SMTPUseTLS := ini.ReadBool(voVersioningNotApplicable, 'email', 'Secure', false);
+  ServerContext.SubscriptionManager.DirectHost := ini.ReadString(voVersioningNotApplicable, 'direct', 'Host', '');
+  ServerContext.SubscriptionManager.DirectPort := ini.ReadString(voVersioningNotApplicable, 'direct', 'Port', '');
+  ServerContext.SubscriptionManager.DirectPopHost := ini.ReadString(voVersioningNotApplicable, 'direct', 'PopHost', '');
+  ServerContext.SubscriptionManager.DirectPopPort := ini.ReadString(voVersioningNotApplicable, 'direct', 'PopPort', '');
+  ServerContext.SubscriptionManager.DirectUsername := ini.ReadString(voVersioningNotApplicable, 'direct', 'Username', '');
+  ServerContext.SubscriptionManager.DirectPassword := ini.ReadString(voVersioningNotApplicable, 'direct', 'Password', '');
+  ServerContext.SubscriptionManager.DirectSender := ini.ReadString(voVersioningNotApplicable, 'direct', 'Sender', '');
   ServerContext.SubscriptionManager.SMSAccount := ini.ReadString(voVersioningNotApplicable, 'sms', 'account', '');
   ServerContext.SubscriptionManager.SMSToken := ini.ReadString(voVersioningNotApplicable, 'sms', 'token', '');
   ServerContext.SubscriptionManager.SMSFrom := ini.ReadString(voVersioningNotApplicable, 'sms', 'from', '');
@@ -9948,7 +9967,7 @@ end;
 
 destructor TFHIRNativeStorageService.Destroy;
 begin
-  FAudits.free;
+  FQueue.free;
   FClaimQueue.free;
   FLock.free;
   FDB.Free;
@@ -10664,14 +10683,14 @@ begin
   list := nil;
   claim := nil;
   d := TDateTimeEx.makeUTC.DateTime;
-  ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping Sessions';
+  ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping Sessions';
   ServerContext.SessionManager.Sweep;
   FLock.Lock('sweep2');
   try
-    if FAudits.Count > 0 then
+    if FQueue.Count > 0 then
     begin
-      list := FAudits;
-      FAudits := TFhirResourceList.Create;
+      list := FQueue;
+      FQueue := TFhirResourceList.Create;
     end;
     if (list = nil) and (FClaimQueue.Count > 0) then
     begin
@@ -10681,7 +10700,7 @@ begin
   finally
     FLock.Unlock;
   end;
-  ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping Search';
+  ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping Search';
   if FNextSearchSweep < d then
   begin
     conn := FDB.GetConnection('Sweep.search');
@@ -10711,11 +10730,11 @@ begin
     FNextSearchSweep := d + 10 * DATETIME_MINUTE_ONE;
   end;
 
-  ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping - Closing';
+  ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping - Closing';
   try
     if list <> nil then
     begin
-      ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping - audits';
+      ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping - audits';
       storage := TFHIRNativeOperationEngine.Create('en', FServerContext, self.Link);
       try
         storage.Connection := FDB.GetConnection('fhir.sweep');
@@ -10736,7 +10755,7 @@ begin
     end;
     if (claim <> nil) then
     begin
-      ServerContext.TerminologyServer.BackgroundThreadStatus := 'Sweeping - claims';
+      ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping - claims';
       resp := GenerateClaimResponse(claim);
       try
         QueueResource(resp, resp.created);
@@ -10861,6 +10880,11 @@ begin
   finally
     request.free;
   end;
+end;
+
+procedure TFHIRNativeStorageService.ProcessEmails;
+begin
+  FServerContext.SubscriptionManager.ProcessEmails;
 end;
 
 procedure TFHIRNativeStorageService.ProcessObservation(conn: TKDBConnection; key: integer);
@@ -11132,7 +11156,7 @@ procedure TFHIRNativeStorageService.QueueResource(r: TFhirResource);
 begin
   FLock.Lock;
   try
-    FAudits.add(r.Link);
+    FQueue.add(r.Link);
   finally
     FLock.Unlock;
   end;

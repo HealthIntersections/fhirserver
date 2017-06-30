@@ -44,8 +44,9 @@ implementation
 
 uses
   SysUtils, classes, Generics.Collections,
-  StringSupport,
-  AdvObjects, AdvGenerics, AdvExceptions, AfsResourceVolumes, AfsVolumes,
+  StringSupport, TextUtilities,
+  AdvObjects, AdvGenerics, AdvExceptions,
+  {$IFNDEF MACOS}AfsResourceVolumes, AfsVolumes,{$ENDIF}
   MXML;
 
 Type
@@ -59,9 +60,12 @@ Type
 var
   GMessages : TAdvMap<TFHIRMessage>;
 
-
-
 Function LoadSource : TBytes;
+{$IFDEF MACOS}
+begin
+  result := TextUtilities.FileToBytes('some file name');
+end;
+{$ELSE}
 var
   LRes : TAfsResourceVolume;
   LHnd : TAfsHandle;
@@ -79,6 +83,7 @@ begin
     LRes.Free;
   end;
 end;
+{$ENDIF}
 
 procedure LoadMessages;
 var

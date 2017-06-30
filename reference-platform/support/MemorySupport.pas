@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  SysUtils, {$IFDEF OSX} OSXUTils, {$ELSE} Windows, {$ENDIF}
+  SysUtils, {$IFDEF MACOS} OSXUTils, {$ELSE} Windows, {$ENDIF}
   StringSupport;
 
 Type

@@ -257,7 +257,7 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
 
 begin
-  logfile := IncludeTrailingBackslash(SystemTemp)+'fhirserver.log';
+  logfile := Path([SystemTemp, 'fhirserver.log']);
   if ParamCount = 0 then
   begin
     filelog := true;

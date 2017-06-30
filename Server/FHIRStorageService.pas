@@ -129,6 +129,7 @@ Type
     function ProfilesAsOptionList : String; virtual;
 
     procedure ProcessSubscriptions; virtual;
+    procedure ProcessEmails; virtual;
     procedure ProcessObservations; virtual;
     procedure RunValidation; virtual;
 
@@ -202,6 +203,11 @@ end;
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
   raise Exception.Create('Looking up codes is not implemented in this server');
+end;
+
+procedure TFHIRStorageService.ProcessEmails;
+begin
+  raise Exception.Create('The function "ProcessEmails" must be overridden in '+className);
 end;
 
 procedure TFHIRStorageService.ProcessObservations;

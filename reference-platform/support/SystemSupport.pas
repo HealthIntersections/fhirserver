@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  SysUtils, {$IFDEF OSX} OSXUtils, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
+  SysUtils, {$IFDEF MACOS} OSXUtils, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
   DateSupport, StringSupport, ThreadSupport;
 
 Function SystemTemp : String;
@@ -42,14 +42,14 @@ Function ProgData : String;
 Implementation
 
 Var
-{$IFNDEF OSX}
+{$IFNDEF MACOS}
   gOSInfo : TOSVersionInfo;
   gSystemInfo : TSystemInfo;
 {$ENDIF}
   gNTDLLDebugBreakPointIssuePatched : Boolean = False;
 
 Function SystemTemp : String;
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 Begin
   result := UTF8ToString(TNSString.Wrap(NSString(NSTemporaryDirectory)).UTF8String); {todo-osx}
   {$ELSE}
@@ -72,7 +72,7 @@ End;
 
 Function SystemIsWindowsNT : Boolean;
 Begin
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   Result := false;
   {$ELSE}
   Result := gOSInfo.dwPlatformId >= VER_PLATFORM_WIN32_NT;
@@ -81,14 +81,14 @@ End;
 
 Function SystemIsWindows7 : Boolean;
 Begin
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   Result := false;
   {$ELSE}
   Result := SystemIsWindowsNT And (gOSInfo.dwMajorVersion >= 6) And (gOSInfo.dwMinorVersion >= 1);
   {$ENDIF}
 End;
 
-{$IFDEF OSX}
+{$IFDEF MACOS}
 Function ProgData : String;
 Begin
   Result := '/Applications';
@@ -120,7 +120,7 @@ End;
 
 
 Initialization
-  {$IFNDEF OSX}
+  {$IFNDEF MACOS}
   FillChar(gSystemInfo, SizeOf(gSystemInfo), 0);
   FillChar(gOSInfo, SizeOf(gOSInfo), 0);
 

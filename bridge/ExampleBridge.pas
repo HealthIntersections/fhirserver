@@ -68,7 +68,7 @@ interface
 Uses
   SysUtils, Classes, IniFiles,
 
-  kCritSct, DateSupport,
+  kCritSct, DateSupport, FileSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVFormatters, AdvCSVExtractors, AdvFiles, AdvJson, HashSupport,
 
   FHIRTypes, FHIRResources, FHIRConstants, FHIRSupport, FHIRUtilities, SCIMObjects,
@@ -297,14 +297,14 @@ begin
   FPath := path;
   FPatients := TCSVData.Create;
   FObservations := TCSVData.Create;
-  FPatients.load(IncludeTrailingBackslash(path)+'patients.csv', ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
-  FObservations.load(IncludeTrailingBackslash(path)+'observations.csv', ['Version', 'LastModified']);
+  FPatients.load(FileSupport.Path([path, 'patients.csv']), ['Version', 'LastModified', 'MRN', 'Surname', 'First', 'Middle', 'Gender', 'BirthDate', 'Active']);
+  FObservations.load(FileSupport.Path([path, 'observations.csv']), ['Version', 'LastModified']);
 end;
 
 destructor TExampleServerData.Destroy;
 begin
-  FPatients.save(IncludeTrailingBackslash(Fpath)+'patients.csv');
-  FObservations.save(IncludeTrailingBackslash(Fpath)+'observations.csv');
+  FPatients.save(FileSupport.Path([Fpath, 'patients.csv']));
+  FObservations.save(FileSupport.Path([Fpath, 'observations.csv']));
   FPatients.free;
   FObservations.free;
   FLock.Free;

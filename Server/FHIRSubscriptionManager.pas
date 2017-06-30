@@ -45,16 +45,28 @@ interface
 
 uses
   SysUtils, Classes, DateSupport, StringSupport, GuidSupport, BytesSupport,
-  kCritSct, KDBManager, KDBDialects,  ParseMap, 
+  kCritSct, KDBManager, KDBDialects,  ParseMap,
   AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
-  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket,
+  IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
-  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, ServerUtilities;
+  FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
 
 const
   EXTENSION_PREFETCH = 'http://www.healthintersections.com.au/fhir/StructureDefinition/subscription-prefetch';
 
 Type
+  TFHIRIdAttachment = class (TIdAttachment)
+  private
+    FStream : TMemoryStream;
+  public
+    constructor Create(Collection: TCollection); override;
+    Destructor Destroy; override;
+    function OpenLoadStream: TStream; override;
+    procedure CloseLoadStream; override;
+    function  PrepareTempStream: TStream; override;
+    procedure FinishTempStream; override;
+  end;
+
   TSubscriptionTracker = class (TAdvObject)
   private
     FKey: Integer;
@@ -140,6 +152,13 @@ Type
     FSMTPHost: String;
     FSMTPSender: String;
     FSMTPUsername: String;
+    FDirectPort: String;
+    FDirectPassword: String;
+    FDirectHost: String;
+    FDirectSender: String;
+    FDirectUsername: String;
+    FDirectPopHost : String;
+    FDirectPopPort : String;
     FOnExecuteOperation : TExecuteOperationEvent;
     FOnExecuteSearch : TExecuteSearchEvent;
     FSMTPUseTLS: boolean;
@@ -148,6 +167,7 @@ Type
     FSMSAccount: String;
     FBase : String;
     FOnGetSessionEvent: TGetSessionEvent;
+    FLastPopCheck : TDateTime;
 
     FCloseAll : boolean;
     FSemaphores : TAdvMap<TWebSocketQueueInfo>;
@@ -162,6 +182,12 @@ Type
 //    procedure goAll;
 //    procedure done(id : String);
 
+    function chooseSMTPPort(direct : boolean): String;
+    function chooseSMTPPassword(direct : boolean): String;
+    function chooseSMTPHost(direct : boolean): String;
+    function chooseSMTPSender(direct : boolean): String;
+    function chooseSMTPUsername(direct : boolean): String;
+
 //    FMessageQueue : TNotification;
     function determineResourceTypeKey(criteria : String; conn : TKDBConnection) : integer;
     procedure checkAcceptable(subscription : TFhirSubscription; session : TFHIRSession);
@@ -174,8 +200,14 @@ Type
     function LoadResourceFromDBByKey(conn : TKDBConnection; key: integer; var userkey : integer) : TFhirResource;
     function LoadResourceFromDBByVer(conn : TKDBConnection; vkey: integer; var id : String) : TFhirResource;
 
+    procedure doSendEmail(subst : TFhirSubscription; resource : TFHIRResource; dest : String; direct : boolean);  overload;
+    procedure sendDirectResponse(id, address, message: String; ok: boolean);
+    procedure processReportDeliveryMessage(id : string; txt : String; details : TStringList);
+    procedure processDirectMessage(txt, ct : String; res : TBytesStream);
+    procedure processIncomingDirectMessage(msg : TIdMessage);
+
     procedure sendByRest(id : String; subst : TFhirSubscription; package : TFHIRResource);
-    procedure sendByEmail(id : String; subst : TFhirSubscription; package : TFHIRResource);
+    procedure sendByEmail(id : String; subst : TFhirSubscription; package : TFHIRResource);  overload;
     procedure sendBySms(id : String; subst : TFhirSubscription; package : TFHIRResource);
     procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFhirSubscription; package : TFHIRResource);
 
@@ -196,7 +228,10 @@ Type
     procedure SeeResource(key, vkey : Integer; id : String; created : boolean; resource : TFHIRResource; conn : TKDBConnection; reload : boolean; session : TFHIRSession);
     procedure DropResource(key, vkey : Integer);
     procedure Process; // spend up to 30 seconds working on subscriptions
+    procedure ProcessEmails; // on a separate thread to Process
     procedure HandleWebSocket(connection : TIdWebSocket);
+
+    procedure sendByEmail(resource : TFHIRResource; dest : String; direct : boolean); overload;
 
     Property Database : TKDBManager read FDatabase write FDatabase;
 
@@ -207,9 +242,16 @@ Type
     Property SMTPPassword : String read FSMTPPassword write FSMTPPassword;
     Property SMTPSender : String read FSMTPSender write FSMTPSender;
     Property SMTPUseTLS : boolean read FSMTPUseTLS write FSMTPUseTLS;
+    Property DirectHost : String read FDirectHost write FDirectHost;
+    Property DirectPort : String read FDirectPort write FDirectPort;
+    Property DirectUsername : String read FDirectUsername write FDirectUsername;
+    Property DirectPassword : String read FDirectPassword write FDirectPassword;
+    Property DirectSender : String read FDirectSender write FDirectSender;
     Property SMSAccount : String read FSMSAccount write FSMSAccount;
     Property SMSToken : String read FSMSToken write FSMSToken;
     Property SMSFrom : String read FSMSFrom write FSMSFrom;
+    property DirectPopHost : String read FDirectPopHost write FDirectPopHost;
+    property DirectPopPort : String read FDirectPopPort write FDirectPopPort;
     Property OnExecuteOperation : TExecuteOperationEvent read FOnExecuteOperation write FOnExecuteOperation;
     Property OnExecuteSearch : TExecuteSearchEvent read FOnExecuteSearch write FOnExecuteSearch;
     Property OnGetSessionEvent : TGetSessionEvent read FOnGetSessionEvent write FOnGetSessionEvent;
@@ -231,6 +273,7 @@ begin
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
   FCloseAll := false;
+  FLastPopCheck := 0;
 end;
 
 destructor TSubscriptionManager.Destroy;
@@ -295,6 +338,65 @@ begin
     raise Exception.Create('When the channel type is "sms", then the URL must start with "tel:"');
 end;
 
+
+procedure TSubscriptionManager.processEmails;
+var
+  pop : TIdPOP3;
+  msg : TIdMessage;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  c, i : integer;
+begin
+  if FDirectPopHost = '' then
+    exit();
+  if FLastPopCheck > now - DATETIME_MINUTE_ONE then
+    exit();
+  try
+    pop := TIdPop3.Create(Nil);
+    try
+      pop.Host := FDirectPopHost;
+      pop.port := StrToInt(FDirectPopPort);
+      pop.Username := FDirectUsername;
+      pop.Password := FDirectPassword;
+      if SMTPUseTLS then
+      begin
+        ssl := TIdSSLIOHandlerSocketOpenSSL.create;
+        pop.IOHandler := ssl;
+        pop.UseTLS := utUseExplicitTLS;
+        ssl.Destination := FDirectPopHost+':'+FDirectPopPort;
+        ssl.Host := FDirectPopHost;
+        ssl.MaxLineAction := maException;
+        ssl.Port := StrToInt(FDirectPopPort);
+        ssl.SSLOptions.Method := sslvTLSv1;
+        ssl.SSLOptions.Mode := sslmUnassigned;
+        ssl.SSLOptions.VerifyMode := [];
+        ssl.SSLOptions.VerifyDepth := 0;
+      end;
+      pop.Connect();
+      try
+        c := pop.CheckMessages;
+        for i := 0 to c - 1 do
+        begin
+          msg := TIdMessage.Create(nil);
+          try
+            pop.Retrieve(i+1, msg);
+            processIncomingDirectMessage(msg);
+          finally
+            msg.Free;
+          end;
+        end;
+        for i := 0 to c - 1 do
+          pop.Delete(i+1);
+      finally
+        pop.Disconnect;
+      end;
+    finally
+      pop.Free;
+    end;
+  except
+    // todo: log exception
+  end;
+  FLastPopCheck := now;
+end;
 
 procedure TSubscriptionManager.DropResource(key, vkey: Integer);
 begin
@@ -531,30 +633,32 @@ begin
 end;
 
 
-procedure TSubscriptionManager.sendByEmail(id : String; subst: TFhirSubscription; package : TFHIRResource);
+procedure TSubscriptionManager.doSendEmail(subst : TFhirSubscription; resource : TFHIRResource; dest : String; direct : boolean);
 var
   sender : TIdSMTP;
   msg : TIdMessage;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   comp : TFHIRComposer;
-  bs : TBytesStream;
+  part: TIdText;
+  m : TMemoryStream;
+  att : TIdAttachment;
 begin
   sender := TIdSMTP.Create(Nil);
   try
-    sender.Host := SMTPHost;
-    if SMTPPort <> '' then
-      sender.port := StrToInt(SMTPPort);
-    sender.Username := SMTPUsername;
-    sender.Password := SMTPPassword;
+    sender.Host := chooseSMTPHost(direct);
+    if chooseSMTPPort(direct) <> '' then
+      sender.port := StrToInt(chooseSMTPPort(direct));
+    sender.Username := chooseSMTPUsername(direct);
+    sender.Password := chooseSMTPPassword(direct);
     if SMTPUseTLS then
     begin
       ssl := TIdSSLIOHandlerSocketOpenSSL.create;
       sender.IOHandler := ssl;
       sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := SMTPHost+':'+SMTPPort;
-      ssl.Host := SMTPHost;
+      ssl.Destination := chooseSMTPHost(direct)+':'+chooseSMTPPort(direct);
+      ssl.Host := chooseSMTPHost(direct);
       ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(SMTPPort);
+      ssl.Port := StrToInt(chooseSMTPPort(direct));
       ssl.SSLOptions.Method := sslvTLSv1;
       ssl.SSLOptions.Mode := sslmUnassigned;
       ssl.SSLOptions.VerifyMode := [];
@@ -563,29 +667,39 @@ begin
     sender.Connect;
     msg := TIdMessage.Create(Nil);
     try
-      if {$IFNDEF FHIR2} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF} then
+      if (subst <> nil) and ({$IFNDEF FHIR2} subst.channel.headerList.count > 0 {$ELSE} subst.channel.header <> '' {$ENDIF}) then
         msg.Subject := {$IFNDEF FHIR2} subst.channel.headerList[0].value {$ELSE} subst.channel.header {$ENDIF}
       else
-        msg.Subject := 'FHIR Notification';
-      msg.Recipients.EMailAddresses := subst.channel.endpoint.Replace('mailto:', '');
-      msg.From.Text := SMTPSender;
-      if subst.channel.payload = '' then
-        msg.Body.Text := 'An update has occurred'
+        msg.Subject := 'FHIR Message';
+      msg.Recipients.Add.Address := dest;
+      msg.From.Text := chooseSMTPSender(direct);
+      msg.Body.Clear;
+      msg.msgid := '<'+NewGuidId+'>';
+      part := TIdText.Create(msg.MessageParts);
+      part.Body.Text := 'This email contains a FHIR Bundle as an attachment. Open it with your own personal records program';
+      part.ContentType := 'text/plain';
+      part.ContentTransfer := '7bit';
+      if subst <> nil then
+        comp := MakeComposer('en', subst.channel.payload, nil)
       else
-      begin
-        comp := MakeComposer('en', subst.channel.payload, nil);
+        comp := MakeComposer('en', 'application/json', nil);
+      try
+        m := TMemoryStream.Create;
         try
-          bs := TBytesStream.Create;
-          try
-            comp.Compose(bs, package, true, nil);
-            msg.Body.Text := TEncoding.UTF8.GetString(bs.Bytes);
-          finally
-            bs.Free;
-          end;
+          comp.Compose(m, resource, true, nil);
+          m.Position := 0;
+          att := TFHIRIdAttachment.Create(msg.MessageParts);
+          att.LoadFromStream(m);
+          att.ContentDisposition := 'Content-Disposition: attachment; filename="bundle'+comp.extension+'"';
+          att.ContentType := comp.MimeType+'; charset=UTF-8'
         finally
-          comp.Free;
+          m.Free;
         end;
+      finally
+        comp.Free;
       end;
+      logt('Send '+msg.MsgId+' to '+dest);
+      msg.SaveToFile('c:\temp\out.msg');
       sender.Send(msg);
     Finally
       msg.Free;
@@ -597,6 +711,17 @@ begin
   End;
 end;
 
+procedure TSubscriptionManager.sendByEmail(id : String; subst: TFhirSubscription; package : TFHIRResource);
+begin
+  doSendEmail(subst, package, subst.channel.endpoint.Replace('mailto:', ''),
+   subst.channel.endpointElement.hasExtension('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') and
+    (subst.channel.endpointElement.getExtensionString('http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct') = 'true'));
+end;
+
+procedure TSubscriptionManager.sendByEmail(resource : TFHIRResource; dest: String; direct : boolean);
+begin
+  doSendEmail(nil, resource, dest, direct);
+end;
 
 procedure TSubscriptionManager.sendByRest(id : String; subst: TFhirSubscription; package : TFHIRResource);
 var
@@ -716,6 +841,82 @@ begin
   end;
 end;
 
+procedure TSubscriptionManager.sendDirectResponse(id, address, message: String; ok: boolean);
+var
+  sender : TIdSMTP;
+  msg : TIdMessage;
+  ssl : TIdSSLIOHandlerSocketOpenSSL;
+  part: TIdText;
+  m : TMemoryStream;
+  att : TIdAttachment;
+  s : AnsiString;
+begin
+  sender := TIdSMTP.Create(Nil);
+  try
+    sender.Host := FDirectHost;
+    if FDirectPort <> '' then
+      sender.port := StrToInt(FDirectPort);
+    sender.Username := FDirectUsername;
+    sender.Password := FDirectPassword;
+    if SMTPUseTLS then
+    begin
+      ssl := TIdSSLIOHandlerSocketOpenSSL.create;
+      sender.IOHandler := ssl;
+      sender.UseTLS := utUseExplicitTLS;
+      ssl.Destination := FDirectHost+':'+FDirectPort;
+      ssl.Host := FDirectHost;
+      ssl.MaxLineAction := maException;
+      ssl.Port := StrToInt(FDirectPort);
+      ssl.SSLOptions.Method := sslvTLSv1;
+      ssl.SSLOptions.Mode := sslmUnassigned;
+      ssl.SSLOptions.VerifyMode := [];
+      ssl.SSLOptions.VerifyDepth := 0;
+    end;
+    sender.Connect;
+    msg := TIdMessage.Create(Nil);
+    try
+      msg.Subject := 'Direct Response';
+      msg.Recipients.Add.Address := address;
+      msg.From.Text := FDirectSender;
+      msg.Body.Clear;
+      msg.MsgId := NewGuidId;
+      msg.InReplyTo := id;
+      part := TIdText.Create(msg.MessageParts);
+      part.Body.Text := 'This email contains a FHIR Bundle as an attachment. Open it with your own Personal Health Records program';
+      part.ContentType := 'text/plain';
+      part.ContentTransfer := '7bit';
+      m := TMemoryStream.Create;
+      try
+        s := 'Reporting-MTA: dns;'+DirectUsername+#13#10+
+             'X-Original-Message-ID: '+id+#13#10+
+             ''+#13#10+
+             'Final-Recipient: rfc822'+DirectUsername+#13#10;
+        if ok then
+          s := s + 'Action: processed'+#13#10
+        else
+          s := s + 'Action: failed'+#13#10+
+             'Diagnostic-Code: '+message+#13#10;
+        m.write(s[1], length(s));
+        m.position := 0;
+        att := TFHIRIdAttachment.Create(msg.MessageParts);
+        att.LoadFromStream(m);
+        att.ContentType := 'message/delivery-status';
+        att.ContentType := 'Content-Disposition: attachment ';
+      finally
+        m.Free;
+      end;
+      logt('Send response for '+id+' as '+msg.msgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
+      sender.Send(msg);
+    Finally
+      msg.Free;
+    End;
+    sender.Disconnect;
+  Finally
+    sender.IOHandler.free;
+    sender.Free;
+  End;
+end;
+
 procedure TSubscriptionManager.Process;
 var
   finish : TDateTime;
@@ -748,6 +949,108 @@ begin
     on e:exception do
       WriteLn('Error handling subscriptions: '+e.Message);
   end;
+end;
+
+function partByContentType(parts: TIdMessageParts; ct : String) : TIdMessagePart;
+var
+  i : integer;
+  part : TIdMessagePart;
+begin
+  result := nil;
+  for i := 0 to parts.Count - 1 do
+  begin
+    part := parts[i];
+    if part.ContentType = ct then
+      exit(part);
+  end;
+end;
+
+procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);
+var
+  p : TFHIRParser;
+begin
+  p := MakeParser(TFHIRServerContext(ServerContext).ValidatorContext, 'en', ct, res.bytes, xppReject);
+  try
+    p.source := res;
+    p.Parse;
+    p.resource.Tags['process'] := 'true';
+    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource);
+  finally
+    p.Free;
+  end;
+end;
+
+procedure TSubscriptionManager.processIncomingDirectMessage(msg: TIdMessage);
+var
+  id, s : String;
+  ct : TArray<String>;
+  i : integer;
+  part : TIdMessagePart;
+  ss : TStringStream;
+  ts : TStringList;
+  bs : TBytesStream;
+begin
+  msg.SaveToFile('c:\temp\in.msg');
+  ct := msg.ContentType.split([' ']);
+  if (ct[0] = 'multipart/report;') and (ct[1] = 'report-type=delivery-status') then
+  begin
+    id := msg.InReplyTo;
+    part := partByContentType(msg.MessageParts, 'text/plain');
+    if (part <> nil) then
+      s := TIdText(part).Body.Text;
+    part := partByContentType(msg.MessageParts, 'message/delivery-status');
+    if (part <> nil) then
+    begin
+      ts := TStringList.Create;
+      try
+        ts.NameValueSeparator := ':';
+        ss := TStringStream.Create;
+        try
+          TIdAttachment(part).SaveToStream(ss);
+          ts.Text := ss.DataString;
+        finally
+          ss.Free;
+        end;
+        processReportDeliveryMessage(id, s, ts);
+      finally
+        ts.Free;
+      end;
+    end
+    else
+      logt('email from '+msg.Sender.Text+' could not be processed');
+  end
+  else if ct[0] = 'multipart/mixed' then // direct message
+  begin
+    try
+      id := msg.MsgId;
+      part := partByContentType(msg.MessageParts, 'text/plain');
+      if (part <> nil) then
+        s := TIdText(part).Body.Text;
+      part := partByContentType(msg.MessageParts, 'application/octet-stream');
+      if id = '' then
+        raise Exception.Create('No id found');
+      if (part = nil) then
+        raise Exception.Create('Unable to find direct body');
+      bs := TBytesStream.Create;
+      try
+        TIdAttachment(part).SaveToStream(bs);
+        bs.position := 0;
+        processDirectMessage(s, part.ContentType, bs);
+        sendDirectResponse(id, msg.sender.Address, '', true);
+      finally
+        bs.Free;
+      end;
+    except
+      on e : Exception do
+      begin
+        if msg.Sender <> nil then
+          sendDirectResponse(id, msg.sender.Address, e.Message, false);
+        logt('processing incoming direct message from '+msg.sender.Address+' failed: '+e.Message);
+      end;
+    end;
+  end
+  else
+    logt('email from '+msg.Sender.Text+' could not be understood');
 end;
 
 function TSubscriptionManager.ProcessNotification(conn : TKDBConnection): Boolean;
@@ -832,6 +1135,12 @@ begin
   end;
 end;
 
+
+procedure TSubscriptionManager.processReportDeliveryMessage(id, txt: String; details: TStringList);
+begin
+  if details.Values['Action'].Trim = 'failed' then
+    logt('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
+end;
 
 function processUrlTemplate(url : String; resource : TFhirResource) : String;
 var
@@ -1433,6 +1742,47 @@ begin
   until ok;
 end;
 
+function TSubscriptionManager.chooseSMTPPort(direct : boolean): String;
+begin
+  if (direct) then
+    result := DirectPort
+  else
+    result:= SMTPPort;
+end;
+
+function TSubscriptionManager.chooseSMTPPassword(direct : boolean): String;
+begin
+  if (direct) then
+    result := DirectPassword
+  else
+    result:= SMTPPassword;
+end;
+
+function TSubscriptionManager.chooseSMTPHost(direct : boolean): String;
+begin
+  if (direct) then
+    result := DirectHost
+  else
+    result:= SMTPHost;
+end;
+
+function TSubscriptionManager.chooseSMTPSender(direct : boolean): String;
+begin
+  if (direct) then
+    result := DirectSender
+  else
+    result:= SMTPSender;
+end;
+
+function TSubscriptionManager.chooseSMTPUsername(direct : boolean): String;
+begin
+  if (direct) then
+    result := DirectUsername
+  else
+    result:= SMTPUsername;
+end;
+
+
 { TSubscriptionEntry }
 
 constructor TSubscriptionEntry.Create;
@@ -1484,6 +1834,41 @@ end;
 function TWebSocketQueueInfo.link: TWebSocketQueueInfo;
 begin
   result := TWebSocketQueueInfo(inherited link);
+end;
+
+{ TFHIRIdAttachment }
+
+procedure TFHIRIdAttachment.CloseLoadStream;
+begin
+  // nothing
+end;
+
+constructor TFHIRIdAttachment.Create;
+begin
+  inherited;
+  FStream := TMemoryStream.Create;
+end;
+
+destructor TFHIRIdAttachment.Destroy;
+begin
+  FStream.free;
+  inherited;
+end;
+
+procedure TFHIRIdAttachment.FinishTempStream;
+begin
+end;
+
+function TFHIRIdAttachment.OpenLoadStream: TStream;
+begin
+  FStream.position := 0;
+  result := FStream;
+end;
+
+function TFHIRIdAttachment.PrepareTempStream: TStream;
+begin
+  FStream.Clear;
+  result := FStream;
 end;
 
 end.

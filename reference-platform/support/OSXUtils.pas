@@ -4,15 +4,17 @@ interface
 
 {
 other code to fix:
- - timezone stuff in DateSupport
  - FileSupport
  - AdvFiles
+
+ GetExtForMimeType
 }
-{$IFDEF OSX}
+{$IFDEF MACOS}
 
 uses
   Posix.Unistd, Posix.Pthread, Posix.Wctype,
-  SysUtils;
+  MacApi.CoreServices, Macapi.Mach,
+  Math, SysUtils;
 
 const
   ERROR_SUCCESS = 0;
@@ -20,6 +22,7 @@ const
 
 type
   DWord = UInt32;
+  LargeUInt = UInt64;
 
   TRTLCriticalSection = class (TObject);
 
@@ -27,6 +30,7 @@ type
   end;
 
 procedure EnterCriticalSection(var cs : TRTLCriticalSection);
+function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
 procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
 procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
 procedure DeleteCriticalSection(var cs : TRTLCriticalSection);
@@ -37,11 +41,15 @@ function InterlockedIncrement(var i : integer) :integer;
 procedure Sleep(iTime : cardinal);
 function GetCurrentThreadID : Cardinal;
 
+procedure QueryPerformanceFrequency(var freq : Int64);
+procedure QueryPerformanceCounter(var count : Int64);
+function GetTickCount : cardinal;
+
 {$ENDIF}
 
 implementation
 
-{$IFDEF OSX}
+{$IFDEF MACOS}
 
 procedure InitializeCriticalSection(var cs : TRTLCriticalSection);
 begin
@@ -51,6 +59,11 @@ end;
 procedure EnterCriticalSection(var cs : TRTLCriticalSection);
 begin
   TMonitor.Enter(cs);
+end;
+
+function TryEnterCriticalSection(var cs : TRTLCriticalSection) : boolean;
+begin
+  result := TMonitor.TryEnter(cs);
 end;
 
 procedure LeaveCriticalSection(var cs : TRTLCriticalSection);
@@ -85,6 +98,20 @@ begin
   result := Posix.Pthread.GetCurrentThreadID;
 end;
 
+procedure QueryPerformanceFrequency(var freq : Int64);
+begin
+  freq := 1000000000; // nano seconds
+end;
+
+procedure QueryPerformanceCounter(var count : Int64);
+begin
+  count := AbsoluteToNanoseconds(mach_absolute_time);
+end;
+
+function GetTickCount : cardinal;
+begin
+  result := AbsoluteToNanoseconds(mach_absolute_time) div 1000000;
+end;
 
 {$ENDIF}
 

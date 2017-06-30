@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 uses
-  Windows, SysUtils, Classes, ActiveX, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
   AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, RDFUtilities,
@@ -222,6 +222,7 @@ Type
     function Compose(name : String; item : TFHIRObject; isPretty : Boolean = true): String; Overload;
 
     Function MimeType : String; virtual;
+    function Extension : String; virtual;
     Property Lang : String read FLang write FLang;
     Property SummaryOption : TFHIRSummaryOption read FSummaryOption write FSummaryOption;
     property NoHeader : Boolean read FNoHeader write FNoHeader;
@@ -253,6 +254,7 @@ Type
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; oTags : TFHIRCodingList; isPretty : Boolean); Override;
 //    Procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; value : TFhirXHtmlNode); overload;
     Function MimeType : String; Override;
+    function Extension : String; Override;
     Property Comment : String read FComment write FComment;
     class procedure composeFile(worker : TWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
   End;
@@ -288,6 +290,7 @@ Type
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Override;
     class procedure composeFile(worker : TWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
     Function MimeType : String; Override;
+    function Extension : String; Override;
     Property Comments : Boolean read FComments write FComments;
   End;
 
@@ -308,6 +311,7 @@ Type
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Function MimeType : String; Override;
     property URL : String read FURL write FURL;
+    function Extension : String; Override;
     property RDFFormat : TRDFFormat read FFormat write FFormat;
   end;
 
@@ -343,6 +347,7 @@ Type
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Function MimeType : String; Override;
+    function Extension : String; Override;
 
     Property relativeReferenceAdjustment : integer read FrelativeReferenceAdjustment write FrelativeReferenceAdjustment;
     Property OnGetLink : TFHIRXhtmlComposerGetLink read FOnGetLink write FOnGetLink;
@@ -363,6 +368,7 @@ Type
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Function MimeType : String; Override;
+    function Extension : String; Override;
   end;
 
 Implementation
@@ -907,6 +913,11 @@ begin
   json.value(name, TFHIRXhtmlParser.Compose(value));
 end;
 
+
+function TFHIRJsonComposerBase.Extension: String;
+begin
+  result := '.json';
+end;
 
 function TFHIRJsonComposerBase.MimeType: String;
 begin
@@ -1528,6 +1539,11 @@ begin
   finally
     xml.Free;
   end;
+end;
+
+function TFHIRXmlComposerBase.Extension: String;
+begin
+  result := '.xml';
 end;
 
 procedure TFHIRXmlComposerBase.ComposeExpression(stream: TStream; expr : TFHIRExpressionNode; items: TFHIRObjectList; types : TAdvStringSet; isPretty: Boolean);
@@ -2181,6 +2197,11 @@ begin
   inherited;
 end;
 
+function TFHIRXhtmlComposer.Extension: String;
+begin
+  result := '.html';
+end;
+
 class function TFHIRXhtmlComposer.Footer(base, lang : String; tail : boolean = true): string;
 begin
   result :=
@@ -2636,6 +2657,11 @@ begin
   inherited;
 end;
 
+function TFHIRComposer.Extension: String;
+begin
+  result := '??';
+end;
+
 procedure TFHIRXhtmlComposer.SetSession(const Value: TFhirSession);
 begin
   FSession.free;
@@ -2731,6 +2757,11 @@ begin
   // todo
 end;
 
+function TFHIRRDFComposerBase.Extension: String;
+begin
+  result := '.ttl';
+end;
+
 procedure TFHIRRDFComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links: TFhirBundleLinkList);
 begin
   raise Exception.Create('not implemented yet');
@@ -2789,6 +2820,11 @@ end;
 procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links: TFhirBundleLinkList);
 begin
   raise Exception.Create('Not Done Yet');
+end;
+
+function TFHIRTextComposer.Extension: String;
+begin
+  result := '.txt';
 end;
 
 function TFHIRTextComposer.MimeType: String;

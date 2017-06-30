@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  AdvObjects, AdvBuffers,
+  FileSupport, AdvObjects, AdvBuffers,
   FHIRBase, FHIRContext, FHIRSupport, FHIRTestWorker, FHIRValidator, FHIRParser,
   DUnitX.TestFramework;
 
@@ -141,7 +141,7 @@ var
 begin
   src := TAdvBuffer.Create;
   try
-    src.LoadFromFileName(IncludeTrailingBackslash(GBasePath)+path);
+    src.LoadFromFileName(Filesupport.path([GBasePath, path]));
     ctxt := TFHIRValidatorContext.Create;
     try
       ctxt.ResourceIdRule := risOptional;
@@ -188,7 +188,7 @@ begin
   else
     p := TFHIRJsonParser.Create(nil, 'en');
   try
-    f := TFilestream.create(IncludeTrailingBackslash(GBasePath)+path, fmOpenRead + fmShareDenywrite);
+    f := TFilestream.create(FileSupport.path([GBasePath, path]), fmOpenRead + fmShareDenywrite);
     try
       p.source := f;
       p.Parse;
@@ -225,162 +225,162 @@ end;
 
 procedure TFHIRValidatorTests.testXmlListMinimal;
 begin
-  validate('build\tests\validation-examples\list-minimal.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-minimal.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListWrongOrder;
 begin
-  validate('build\tests\validation-examples\list-wrong-order.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-order.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListWrongCode;
 begin
-  validate('build\tests\validation-examples\list-wrong-code.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-code.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListWrongNS;
 begin
-  validate('build\tests\validation-examples\list-wrong-ns.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-ns.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListWrongNS1;
 begin
-  validate('build\tests\validation-examples\list-wrong-ns1.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-ns1.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListWrongNS2;
 begin
-  validate('build\tests\validation-examples\list-wrong-ns2.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-ns2.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.xml', 3, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-empty1.xml']), 3, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListEmpty2;
 begin
-  validate('build\tests\validation-examples\list-empty2.xml', 3, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-empty2.xml']), 3, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListUnknownAttr;
 begin
-  validate('build\tests\validation-examples\list-unknown-attr.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-unknown-attr.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListUnknownElement;
 begin
-  validate('build\tests\validation-examples\list-unknown-element.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-unknown-element.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListText;
 begin
-  validate('build\tests\validation-examples\list-text.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-text.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListExtension;
 begin
-  validate('build\tests\validation-examples\list-extension.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-extension.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtml1;
 begin
-  validate('build\tests\validation-examples\list-xhtml-correct1.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-correct1.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtml2;
 begin
-  validate('build\tests\validation-examples\list-xhtml-correct2.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-correct2.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXXE;
 begin
-  validate('build\tests\validation-examples\list-xhtml-xxe1.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-xxe1.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXXE2;
 begin
-  validate('build\tests\validation-examples\list-xhtml-xxe2.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-xxe2.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlWrongNs1;
 begin
-  validate('build\tests\validation-examples\list-xhtml-wrongns1.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-wrongns1.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlWrongNs2;
 begin
-  validate('build\tests\validation-examples\list-xhtml-wrongns2.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-wrongns2.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlWrongNs3;
 begin
-  validate('build\tests\validation-examples\list-xhtml-wrongns3.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-wrongns3.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlBadElement;
 begin
-  validate('build\tests\validation-examples\list-xhtml-element.xml', 2, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-element.xml']), 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlListXhtmlBadAttribute;
 begin
-  validate('build\tests\validation-examples\list-xhtml-attribute.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-attribute.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlbadSyntax;
 begin
-  validate('build\tests\validation-examples\list-bad-syntax.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-bad-syntax.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlContained;
 begin
-  validate('build\tests\validation-examples\list-contained.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-contained.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlContainedBad;
 begin
-  validate('build\tests\validation-examples\list-contained-bad.xml', 2, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'list-contained-bad.xml']), 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlBundle;
 begin
-  validate('build\tests\validation-examples\bundle-good.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'bundle-good.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupOk;
 begin
-  validate('build\tests\validation-examples\group-minimal.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-minimal.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupGood;
 begin
-  validate('build\tests\validation-examples\group-choice-good.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-good.xml']), 0, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupBad1;
 begin
-  validate('build\tests\validation-examples\group-choice-bad1.xml', 2, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad1.xml']), 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupBad2;
 begin
-  validate('build\tests\validation-examples\group-choice-bad2.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad2.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupBad3;
 begin
-  validate('build\tests\validation-examples\group-choice-bad3.xml', 1, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad3.xml']), 1, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testXmlGroupEmpty;
 begin
-  validate('build\tests\validation-examples\group-choice-empty.xml', 2, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-empty.xml']), 2, ffXml);
 end;
 
 procedure TFHIRValidatorTests.testParametersReference;
 begin
-  validate('build\tests\validation-examples\params-reference.xml', 0, ffXml);
+  validate(path(['build', 'tests', 'validation-examples', 'params-reference.xml']), 0, ffXml);
 end;
 
 
@@ -388,142 +388,142 @@ end;
 
 procedure TFHIRValidatorTests.testJsonListMinimal;
 begin
-  validate('build\tests\validation-examples\list-minimal.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-minimal.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListWrongOrder;
 begin
-  validate('build\tests\validation-examples\list-wrong-order.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-order.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListWrongCode;
 begin
-  validate('build\tests\validation-examples\list-wrong-code.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-wrong-code.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty1;
 begin
-  validate('build\tests\validation-examples\list-empty1.json', 3, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-empty1.json']), 3, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListEmpty2;
 begin
-  validate('build\tests\validation-examples\list-empty2.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-empty2.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListUnknownProp;
 begin
-  validate('build\tests\validation-examples\list-unknown-prop.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-unknown-prop.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListExtension1;
 begin
-  validate('build\tests\validation-examples\list-extension1.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-extension1.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListExtension2;
 begin
-  validate('build\tests\validation-examples\list-extension2.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-extension2.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlCorrect1;
 begin
-  validate('build\tests\validation-examples\list-xhtml-correct1.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-correct1.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlCorrect2;
 begin
-  validate('build\tests\validation-examples\list-xhtml-correct2.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-correct2.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlXXE;
 begin
-  validate('build\tests\validation-examples\list-xhtml-xxe.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-xxe.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlBadSyntax;
 begin
-  validate('build\tests\validation-examples\list-xhtml-syntax.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-syntax.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlWrongNS1;
 begin
-  validate('build\tests\validation-examples\list-xhtml-wrongns1.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-wrongns1.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlWrongNS2;
 begin
-  validate('build\tests\validation-examples\list-xhtml-wrongns2.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-wrongns2.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlBadElement;
 begin
-  validate('build\tests\validation-examples\list-xhtml-element.json', 2, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-element.json']), 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonListXhtmlBadAttribute;
 begin
-  validate('build\tests\validation-examples\list-xhtml-attribute.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-xhtml-attribute.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonbadSyntax;
 begin
-  validate('build\tests\validation-examples\list-bad-syntax.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-bad-syntax.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonContained;
 begin
-  validate('build\tests\validation-examples\list-contained.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-contained.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonContainedBad;
 begin
-  validate('build\tests\validation-examples\list-contained-bad.json', 2, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'list-contained-bad.json']), 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonBundle;
 begin
-  validate('build\tests\validation-examples\bundle-good.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'bundle-good.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupOk;
 begin
-  validate('build\tests\validation-examples\group-minimal.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-minimal.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupTiny;
 begin
-  validate('build\tests\validation-examples\group-minimal-tiny.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-minimal-tiny.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupGood;
 begin
-  validate('build\tests\validation-examples\group-choice-good.json', 0, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-good.json']), 0, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupBad1;
 begin
-  validate('build\tests\validation-examples\group-choice-bad1.json', 2, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad1.json']), 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupBad2;
 begin
-  validate('build\tests\validation-examples\group-choice-bad2.json', 2, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad2.json']), 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupBad3;
 begin
-  validate('build\tests\validation-examples\group-choice-bad3.json', 2, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-bad3.json']), 2, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testJsonGroupEmpty;
 begin
-  validate('build\tests\validation-examples\group-choice-empty.json', 1, ffJson);
+  validate(path(['build', 'tests', 'validation-examples', 'group-choice-empty.json']), 1, ffJson);
 end;
 
 procedure TFHIRValidatorTests.testBuildPatientExampleB;
 begin
-  validate('publish\patient-example-b.xml', 0, ffJson);
+  validate(path(['publish', 'patient-example-b.xml']), 0, ffJson);
 end;
 
 initialization

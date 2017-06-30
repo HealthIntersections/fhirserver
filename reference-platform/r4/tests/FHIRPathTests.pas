@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, classes,
-  ActiveX, ComObj, Variants, StringSupport, AdvGenerics,
+  ActiveX, ComObj, Variants, StringSupport, FileSupport, AdvGenerics,
   FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes,
   MXML, DUnitX.TestFramework;
 
@@ -174,7 +174,7 @@ begin
         begin
           p := TFHIRXmlParser.create(TTestingWorkerContext.Use, 'en');
           try
-            f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead);
+            f := TFileStream.Create(Path([GBasePath, 'build' ,'publish', input]), fmOpenRead);
             try
               p.source := f;
               p.parse;

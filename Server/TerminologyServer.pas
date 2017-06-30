@@ -1093,12 +1093,12 @@ begin
     try
       conn3 := DB.GetConnection('BuildIndexes');
       try
-        BackgroundThreadStatus := 'BI: counting';
+        MaintenanceThreadStatus := 'BI: counting';
         if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
           conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
 
         // first, update value set member information
-        BackgroundThreadStatus := 'BI: Updating ValueSet Members';
+        MaintenanceThreadStatus := 'BI: Updating ValueSet Members';
         if (prog) then logtn('Updating ValueSet Members');
         conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
         conn1.Prepare;
@@ -1108,7 +1108,7 @@ begin
         begin
           inc(i);
           if (prog and (i mod 10 = 0)) then Write('.');
-          BackgroundThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
+          MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
           processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
         end;
         conn1.Terminate;
@@ -1116,7 +1116,7 @@ begin
 
         // second, for each concept that needs indexing, check it's value set information
         if (prog) then logtn('Indexing Concepts');
-        BackgroundThreadStatus := 'BI: Indexing Concepts';
+        MaintenanceThreadStatus := 'BI: Indexing Concepts';
         conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
         conn1.Prepare;
         conn1.Execute;
@@ -1125,7 +1125,7 @@ begin
         begin
           inc(i);
           if (prog and (i mod 10 = 0)) then Write('.');
-          BackgroundThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
+          MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
           processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
         end;
         conn1.Terminate;
@@ -1133,7 +1133,7 @@ begin
 
         // last, for each entry in the closure entry table that needs closureing, do it
         if (prog) then logtn('Generating Closures');
-        BackgroundThreadStatus := 'BI: Generating Closures';
+        MaintenanceThreadStatus := 'BI: Generating Closures';
         conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
            'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
         conn1.Prepare;
@@ -1142,14 +1142,14 @@ begin
         begin
           inc(i);
           if (prog and (i mod 100 = 0)) then Write('.');
-          BackgroundThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
+          MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
           FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
         end;
         conn1.Terminate;
         if (prog) then Writeln;
 
         if (prog) then logt('Done');
-        BackgroundThreadStatus := 'BI: ';
+        MaintenanceThreadStatus := 'BI: ';
         conn3.Release;
       except
         on e : exception do
@@ -1180,6 +1180,7 @@ procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, version, C
 var
   vs : TFhirValueSet;
   val : TValuesetChecker;
+  profile : TFhirExpansionProfile;
 begin
   conn2.SQL := 'select ValueSetKey, URL from ValueSets';
   conn2.Prepare;
@@ -1191,19 +1192,24 @@ begin
       conn3.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+conn2.ColStringByName['ValueSetKey'])
     else
       try
+        profile := TFhirExpansionProfile.Create;
         try
-          val := TValueSetChecker.create(self.Link, vs.url);
           try
-            val.prepare(vs, nil);
-            if not val.check(URL, version, code, true) then
-              conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
-            else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
-              conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
+            val := TValueSetChecker.create(self.Link, vs.url);
+            try
+              val.prepare(vs, profile);
+              if not val.check(URL, version, code, true) then
+                conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
+              else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
+                conn3.ExecSQL('insert into ValueSetMembers (ValueSetMemberKey, ValueSetKey, ConceptKey) values ('+inttostr(NextValueSetMemberKey)+','+conn2.ColStringByName['ValueSetKey']+', '+inttostr(ConceptKey)+')');
+            finally
+              val.Free;
+            end;
           finally
-            val.Free;
+            vs.Free;
           end;
         finally
-          vs.Free;
+          profile.free;
         end;
       except
         on e : Exception do

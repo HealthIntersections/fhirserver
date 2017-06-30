@@ -107,6 +107,7 @@ type
   private
     procedure check;
     procedure RollUp;
+    function privToString: String;
   public
     class function makeNull : TDateTimeEx; static;
     class function makeUTC : TDateTimeEx; overload; static;
@@ -235,7 +236,7 @@ begin
   else if (TimezoneType = dttzSpecified) and not ((TimezoneMins = 0) or (TimezoneMins = 15) or (TimezoneMins = 30) or (TimezoneMins = 45)) then
     err := 'Timezone minutes is not valid';
   if err <> '' then
-    raise EDateFormatError.Create(err+' ('+toString+')');
+    raise EDateFormatError.Create(err+' ('+privToString+')');
 end;
 
 function TDateTimeEx.DateTime: TDateTime;
@@ -852,6 +853,28 @@ begin
   result := Source = '';
 end;
 
+function TDateTimeEx.privToString: String;
+begin
+  Result := 'yyyymmddhhnnss';
+  if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
+    replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
+  if month <> 0 then
+  begin
+    if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month-1)], 1, 4)) then
+      if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month-1)]) then
+        if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
+          ReplaceSubString(Result, 'm', IntToStr(month));
+    if day > 0 then
+    begin
+      if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
+        ReplaceSubString(Result, 'd', IntToStr(day));
+      ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour), '0', 2));
+      ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(minute), '0', 2));
+      ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(second), '0', 2));
+    end;
+  end;
+end;
+
 function TDateTimeEx.AsTz(hr, min: Integer): TDateTimeEx;
 var
   bias : TDateTime;
@@ -891,6 +914,7 @@ function TDateTimeEx.UTC: TDateTimeEx;
 var
   bias : TDateTime;
 begin
+  result := self;
   if Precision >= dtpHour then
     case TimezoneType of
       dttzLocal : result := TDateTimeEx.makeUTC(TTimeZone.Local.ToUniversalTime(self.DateTime));
@@ -903,7 +927,6 @@ begin
         result := TDateTimeEx.makeUTC(self.DateTime+bias);
         end;
     else
-      result := self;
     end;
   result.precision := precision;
   result.FractionPrecision := FractionPrecision;

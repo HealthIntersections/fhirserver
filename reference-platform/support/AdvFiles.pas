@@ -32,7 +32,7 @@ Interface
 
 
 Uses
-  {$IFDEF OSX} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes,
   FileSupport, StringSupport, MathSupport, ErrorSupport,
   AdvStreams, AdvObjects, AdvExceptions;
 
@@ -162,7 +162,7 @@ Type
 
 Implementation
 
-{$IFNDEF OSX}
+{$IFNDEF MACOS}
 Function FileTimeZero : TAdvFileTime;
 Begin
   Result := 0;
@@ -324,7 +324,7 @@ End;
 
 {$R-}
 Function TAdvFile.TryOpen : Boolean;
-{$IFDEF OSX}
+{$IFDEF MACOS}
 begin
   result := false;
 end;
@@ -404,7 +404,7 @@ End;
 
 Procedure TAdvFile.Append;
 Begin
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   {$ELSE}
   SetFilePointer(FHandle.Value, 0, Nil, FILE_END);
   {$ENDIF}
@@ -421,7 +421,7 @@ End;
 
 Procedure TAdvFile.Flush;
 Begin
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   {$ELSE}
   FlushFileBuffers(FHandle.Value);
   {$ENDIF}
@@ -452,7 +452,7 @@ End;
 
 Procedure TAdvFile.Receive(Var aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   {$ELSE}
   If Not ReadFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
     RaiseError('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
@@ -462,7 +462,7 @@ End;
 
 Procedure TAdvFile.Send(Const aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin 
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
   {$ELSE}
   If Not WriteFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
     RaiseError('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
@@ -471,7 +471,7 @@ End;
 
 
 Procedure TAdvFile.Lock(Const iStart, iFinish: Int64);
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -488,7 +488,7 @@ End;
 {$ENDIF}
 
 Procedure TAdvFile.Unlock(Const iStart, iFinish: Int64);
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -505,7 +505,7 @@ End;
 {$ENDIF}
 
 Procedure TAdvFile.Seek(iIndex : Int64);
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -520,7 +520,7 @@ End;
 
 //Function TAdvFile.GetCreated : TAdvFileTime;
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  result := 0;
 //  {$ELSE}
 //  If Not GetFileTime(FHandle.Value, @Result, Nil, Nil) Then
@@ -530,7 +530,7 @@ End;
 //
 //Procedure TAdvFile.SetCreated(Const aValue : TAdvFileTime);
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  {$ELSE}
 //  If Not SetFileTime(FHandle.Value, @aValue, Nil, Nil) Then
 //    RaiseError('SetCreated', ErrorAsString);
@@ -540,7 +540,7 @@ End;
 //
 //Function TAdvFile.GetModified : TAdvFileTime;
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  {$ELSE}
 //  If Not GetFileTime(FHandle.Value, Nil, Nil, @Result) Then
 //    RaiseError('GetModified', ErrorAsString);
@@ -550,7 +550,7 @@ End;
 //
 //Procedure TAdvFile.SetModified(Const aValue : TAdvFileTime);
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  {$ELSE}
 //  If Not SetFileTime(FHandle.Value, Nil, Nil, @aValue) Then
 //    RaiseError('SetModified', ErrorAsString);
@@ -560,7 +560,7 @@ End;
 //
 //Function TAdvFile.GetAccessed : TAdvFileTime;
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  {$ELSE}
 //  If Not GetFileTime(FHandle.Value, Nil, @Result, Nil) Then
 //    RaiseError('GetAccessed', ErrorAsString);
@@ -570,7 +570,7 @@ End;
 //
 //Procedure TAdvFile.SetAccessed(Const aValue : TAdvFileTime);
 //Begin
-//  {$IFDEF OSX}
+//  {$IFDEF MACOS}
 //  {$ELSE}
 //  If Not SetFileTime(FHandle.Value, Nil, @aValue, Nil) Then
 //    RaiseError('SetAccessed', ErrorAsString);
@@ -590,7 +590,7 @@ End;
 
 
 Function TAdvFile.GetSize : Int64;
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -607,7 +607,7 @@ End;
 
 
 Procedure TAdvFile.SetSize(Const iValue : Int64);
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -626,7 +626,7 @@ End;
 
 
 Function TAdvFile.GetPosition : Int64;
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}
@@ -645,7 +645,7 @@ End;
 {$ENDIF}
 
 Procedure TAdvFile.SetPosition(Const Value : Int64);
-  {$IFDEF OSX}
+  {$IFDEF MACOS}
 begin
 end;
   {$ELSE}

@@ -36,7 +36,8 @@ This is the dstu4 version of the FHIR code
 interface
 
 uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
+  {$IFNDEF MACOS} Windows, {$ENDIF}
+  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
@@ -69,6 +70,7 @@ Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhi
 Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
 function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeComposer(lang : string; mimetype : String; worker : TWorkerContext) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
@@ -536,6 +538,9 @@ uses
  {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
+  {$IFNDEF MACOS}
+  Registry,
+  {$ENDIF}
   FHIRMetaModel;
 
 {$IFDEF STACK_DUMPS}
@@ -578,8 +583,20 @@ begin
     result := TFHIRXmlParser
   else
     result := TFHIRJsonParser;
-
 end;
+
+function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
+var
+  s : AnsiString;
+begin
+  setlength(s, length(bytes));
+  move(bytes[0], s[1], length(s));
+  if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
+    result := TFHIRXmlParser
+  else
+    result := TFHIRJsonParser;
+end;
+
 
 function DetectFormat(oContent : TAdvBuffer) : TFHIRParserClass; overload;
 var
@@ -605,6 +622,23 @@ begin
   end;
 end;
 
+function MakeParser(oWorker : TWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+begin
+  if mimeType.Contains('application/json') or mimeType.Contains('application/fhir+json') Then
+    result := TFHIRJsonParser.Create(oWorker.Link, lang)
+  else if mimeType.Contains('text/plain') then
+    result := TFHIRTextParser.create(oWorker.Link, lang)
+  else if mimeType.Contains('application/xml') or mimeType.Contains('application/fhir+xml') or mimeType.Contains('text/xml')  then
+    result := TFHIRXmlParser.Create(oWorker.Link, lang)
+  else
+    result := DetectFormat(content).create(oWorker.Link, lang);
+  try
+    result.ParserPolicy := policy;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
 function MakeParser(oWorker : TWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat = ffJSON Then
@@ -629,7 +663,7 @@ function MakeComposer(lang : string; mimetype : String; worker : TWorkerContext)
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
     result := TFHIRXmlComposer.Create(worker.link, lang)
-  else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'xml') then
+  else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
     result := TFHIRJsonComposer.Create(worker.link, lang)
   else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
     result := TFHIRXhtmlComposer.Create(worker.link, lang)
@@ -1965,6 +1999,8 @@ begin
     result := TFhirCode(self.ExtensionList.Item(ndx).value).value
   else if (self.ExtensionList.Item(ndx).value is TFhirUri) then
     result := TFhirUri(self.ExtensionList.Item(ndx).value).value
+  else if (self.ExtensionList.Item(ndx).value is TFhirBoolean) then
+    result := boolToStr(TFhirBoolean(self.ExtensionList.Item(ndx).value).value)
   else if (self.ExtensionList.Item(ndx).value is TFhirDateTime) then
     result := TFhirDateTime(self.ExtensionList.Item(ndx).value).value.ToXML
   else
@@ -4435,6 +4471,11 @@ Const
     );
 
 Function GetExtForMimeType(mimeType: String): String;
+{$IFDEF MACOS}
+begin
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
 Var
   fReg: TRegistry;
   ts : TStringList;
@@ -4476,6 +4517,7 @@ Begin
   If Result = '' Then
     Result := '.bin';
 End;
+{$ENDIF}
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;

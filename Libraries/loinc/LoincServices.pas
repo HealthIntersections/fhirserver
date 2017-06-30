@@ -72,6 +72,8 @@ Const
   CL_OFFSET_Entry = 41;
 
 Type
+  ELoincServices = class (Exception);
+
   TLangArray = array of byte;
   TLoincPropertyType = (lptComponents, lptProperties, lptTimeAspects, lptSystems, lptScales, lptMethods, lptClasses);
 
@@ -458,7 +460,7 @@ begin
   end;
 
   if (iIndex > FLength) then
-    Raise Exception.Create('Wrong length index getting LOINC name');
+    Raise ELoincServices.Create('Wrong length index getting LOINC name');
   SetLength(Result, Word(FMaster[iIndex]));
   if (iIndex + 3 + length(result) > FLength) then
     Raise Exception.Create('Wrong length index getting LOINC name (2)');
