@@ -551,13 +551,9 @@ begin
     begin
       if session.expires < d then
       begin
-        try
-          key := session.key;
-          FSessions.Remove(Session.Cookie);
-          break;
-        finally
-          session.free;
-        end;
+        key := session.key;
+        FSessions.Remove(Session.Cookie); // which frees the session
+        break;
       end;
     end;
   finally
