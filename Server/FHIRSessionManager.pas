@@ -276,12 +276,8 @@ begin
       else
       begin
         result := false;
-        try
-          key := session.key;
-          FSessions.Remove(sCookie);
-        finally
-          session.free;
-        end;
+        key := session.key;
+        FSessions.Remove(sCookie);
       end;
     end;
   finally
