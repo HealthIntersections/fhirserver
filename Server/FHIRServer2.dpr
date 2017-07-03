@@ -209,7 +209,7 @@ uses
   QuestionnaireBuilder in '..\reference-platform\dstu2\QuestionnaireBuilder.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   NarrativeGenerator in '..\reference-platform\dstu2\NarrativeGenerator.pas',
-  FHIRSecurity in '..\reference-platform\dstu2\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRNarrativeGenerator in '..\reference-platform\dstu2\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu2\SmartOnFhirUtilities.pas',
   FHIRPath in '..\reference-platform\dstu2\FHIRPath.pas',

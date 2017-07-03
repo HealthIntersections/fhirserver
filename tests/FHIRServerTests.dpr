@@ -176,7 +176,7 @@ uses
   QuestionnaireBuilder in '..\reference-platform\r4\QuestionnaireBuilder.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   NarrativeGenerator in '..\reference-platform\r4\NarrativeGenerator.pas',
-  FHIRSecurity in '..\reference-platform\r4\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRNarrativeGenerator in '..\reference-platform\r4\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\r4\SmartOnFhirUtilities.pas',
   FhirPath in '..\reference-platform\r4\FhirPath.pas',

@@ -111,7 +111,8 @@ uses
   XMLBuilder in '..\support\XMLBuilder.pas',
   XmlTests in '..\support\Tests\XmlTests.pas',
   XmlPatch in '..\support\XmlPatch.pas',
-  SCIMObjects in '..\support\SCIMObjects.pas';
+  SCIMObjects in '..\support\SCIMObjects.pas',
+  FHIRSecurity in '..\support\FHIRSecurity.pas';
 
 var
   s: String;

@@ -17,6 +17,8 @@ stuff in file support
 type
   [TextFixture]
   TOSXTests = class (TObject)
+  private
+    procedure test60sec;
   public
     [TestCase] procedure TestAdvObject;
     [TestCase] procedure TestCriticalSectionSimple;
@@ -41,6 +43,11 @@ var
 
 Const
   TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
+
+procedure TOSXTests.test60sec;
+begin
+  TDateTimeEx.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34, 60, 0), dttzUnknown).toHL7
+end;
 
 procedure TOSXTests.TestAdvFile;
 var
@@ -174,6 +181,7 @@ begin
 
   // Date Time conversion
   Assert.IsTrue(TDateTimeEx.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456');
+  Assert.WillRaise(test60Sec);
   Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').DateTime = EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0));
 
   // Timezone Wrangling

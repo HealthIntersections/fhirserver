@@ -258,7 +258,7 @@ uses
   QuestionnaireBuilder in '..\reference-platform\dstu3\QuestionnaireBuilder.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   NarrativeGenerator in '..\reference-platform\dstu3\NarrativeGenerator.pas',
-  FHIRSecurity in '..\reference-platform\dstu3\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRNarrativeGenerator in '..\reference-platform\dstu3\FHIRNarrativeGenerator.pas',
   SmartOnFhirUtilities in '..\reference-platform\dstu3\SmartOnFhirUtilities.pas',
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',

@@ -116,7 +116,7 @@ uses
   AdvStringObjectMatches in '..\reference-platform\Support\AdvStringObjectMatches.pas',
   HMAC in '..\reference-platform\Support\HMAC.pas',
   libeay32 in '..\reference-platform\Support\libeay32.pas',
-  FHIRSecurity in '..\reference-platform\dstu2\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   MsXmlParser in '..\reference-platform\Support\MsXmlParser.pas',
   AdvMemories in '..\reference-platform\Support\AdvMemories.pas',
   XMLBuilder in '..\reference-platform\Support\XMLBuilder.pas',

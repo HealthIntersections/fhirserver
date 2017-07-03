@@ -29,12 +29,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR3}
-This is the dstu3 version of the FHIR code
-{$ENDIF}
-
-
-{cr-todo}
 interface
 
 uses
@@ -56,7 +50,6 @@ type
   TFHIRSecurityRights = class (TAdvObject)
   private
     FSource : String;
-    FId : String;
     FUserInfo : boolean;
     FAdministerUsers : boolean;
     FReadAll : boolean;
@@ -166,12 +159,8 @@ begin
   inherited;
 end;
 
-var
-  GID : integer;
 procedure TFHIRSecurityRights.init(worker : TWorkerContext);
 begin
-  GId := GId + 1;
-  FId := inttostr(GID);
   FWorker := worker;
 
   FReadAllowed := TAdvStringSet.create;

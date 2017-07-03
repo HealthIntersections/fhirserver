@@ -284,6 +284,8 @@ var
 begin
   DecodeTime(value, result.Hour, result.Minute, result.Second, ms);
   result.Fraction := ms * 1000000;
+  if result.second > 59 then
+    raise Exception.Create('Fail!');
   DecodeDate(value, yr, result.Month, result.Day);
   result.Year := yr;
   result.Precision := dtpSec;
@@ -790,7 +792,9 @@ begin
       inc(result.fraction);
       end;
   end;
+  result.RollUp;
   result.Precision := dtpNanoSeconds;
+  result.check;
 end;
 
 function TDateTimeEx.Min: TDateTimeEx;

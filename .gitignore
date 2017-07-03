@@ -97,3 +97,5 @@ reference-platform/support/backup/
 Server/Entitlement\.TemplateOSX32\.xml
 
 reference-platform/support/Tests/backup/
+
+Exec/certificates/

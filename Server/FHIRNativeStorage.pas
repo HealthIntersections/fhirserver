@@ -883,7 +883,7 @@ begin
       result.request.method := HttpVerbDELETE;
       result.response := TFhirBundleEntryResponse.Create;
       result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
-      result.response.etag := FConnection.ColStringByName['VersionId'];
+      result.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
       result.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.toString+ '(UTC)';
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
@@ -961,7 +961,7 @@ begin
     begin
       result.response := TFhirBundleEntryResponse.Create;
       result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
-      result.response.etag := FConnection.ColStringByName['VersionId'];
+      result.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
         result.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);

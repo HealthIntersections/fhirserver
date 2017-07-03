@@ -203,6 +203,7 @@ Type
     procedure doSendEmail(subst : TFhirSubscription; resource : TFHIRResource; dest : String; direct : boolean);  overload;
     procedure sendDirectResponse(id, address, message: String; ok: boolean);
     procedure processReportDeliveryMessage(id : string; txt : String; details : TStringList);
+    procedure processReportDeliveryNotification(id : string; txt : String; details : TStringList);
     procedure processDirectMessage(txt, ct : String; res : TBytesStream);
     procedure processIncomingDirectMessage(msg : TIdMessage);
 
@@ -346,7 +347,7 @@ var
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   c, i : integer;
 begin
-  if FDirectPopHost = '' then
+//  if FDirectPopHost = '' then
     exit();
   if FLastPopCheck > now - DATETIME_MINUTE_ONE then
     exit();
@@ -393,7 +394,8 @@ begin
       pop.Free;
     end;
   except
-    // todo: log exception
+    on e : Exception do
+      logt('Exception checking email: '+e.message);
   end;
   FLastPopCheck := now;
 end;
@@ -674,7 +676,7 @@ begin
       msg.Recipients.Add.Address := dest;
       msg.From.Text := chooseSMTPSender(direct);
       msg.Body.Clear;
-      msg.msgid := '<'+NewGuidId+'>';
+      msg.MsgId := '<'+NewGuidId+'>';
       part := TIdText.Create(msg.MessageParts);
       part.Body.Text := 'This email contains a FHIR Bundle as an attachment. Open it with your own personal records program';
       part.ContentType := 'text/plain';
@@ -851,6 +853,8 @@ var
   att : TIdAttachment;
   s : AnsiString;
 begin
+  if ok then
+    exit; // on advice from Luis Maas
   sender := TIdSMTP.Create(Nil);
   try
     sender.Host := FDirectHost;
@@ -882,30 +886,42 @@ begin
       msg.MsgId := NewGuidId;
       msg.InReplyTo := id;
       part := TIdText.Create(msg.MessageParts);
-      part.Body.Text := 'This email contains a FHIR Bundle as an attachment. Open it with your own Personal Health Records program';
+      att := TFHIRIdAttachment.Create(msg.MessageParts);
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
-      m := TMemoryStream.Create;
-      try
+      att.ContentTransfer := '7bit';
+      att.ContentType := 'Content-Disposition: attachment';
+      if ok then
+      begin
+        part.Body.Text := 'The receiving server has accepted your message and will attempt to process it.';
+        att.ContentType := 'message/disposition-notification';
+        s :=
+          'Reporting-UA: '+FDirectUsername+'; ('+TFHIRServerContext(ServerContext).OwnerName+')'+#13#10+
+          'Final-Recipient: '+FDirectUsername+#13#10+
+          'Original-Message-ID: '+id+#13#10+
+          'Disposition: automatic-action/MDN-sent-automatically;processed'+#13#10;
+      end
+      else
+      begin
+        part.Body.Text := 'Error accepting your message: '+message;
+        att.ContentType := 'message/delivery-status';
+        att.ContentType := 'Content-Disposition: attachment ';
         s := 'Reporting-MTA: dns;'+DirectUsername+#13#10+
              'X-Original-Message-ID: '+id+#13#10+
              ''+#13#10+
-             'Final-Recipient: rfc822'+DirectUsername+#13#10;
-        if ok then
-          s := s + 'Action: processed'+#13#10
-        else
-          s := s + 'Action: failed'+#13#10+
+             'Final-Recipient: rfc822'+DirectUsername+#13#10+
+             'Action: failed'+#13#10+
              'Diagnostic-Code: '+message+#13#10;
+      end;
+      m := TMemoryStream.Create;
+      try
         m.write(s[1], length(s));
         m.position := 0;
-        att := TFHIRIdAttachment.Create(msg.MessageParts);
         att.LoadFromStream(m);
-        att.ContentType := 'message/delivery-status';
-        att.ContentType := 'Content-Disposition: attachment ';
       finally
         m.Free;
       end;
-      logt('Send response for '+id+' as '+msg.msgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
+      logt('Send response for '+id+' as '+msg.MsgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
       sender.Send(msg);
     Finally
       msg.Free;
@@ -1012,6 +1028,33 @@ begin
           ss.Free;
         end;
         processReportDeliveryMessage(id, s, ts);
+      finally
+        ts.Free;
+      end;
+    end
+    else
+      logt('email from '+msg.Sender.Text+' could not be processed');
+  end
+  else if (ct[0] = 'multipart/report;') and (ct[1] = 'report-type=disposition-notification') then
+  begin
+    id := msg.InReplyTo;
+    part := partByContentType(msg.MessageParts, 'text/plain');
+    if (part <> nil) then
+      s := TIdText(part).Body.Text;
+    part := partByContentType(msg.MessageParts, 'message/disposition-notification');
+    if (part <> nil) then
+    begin
+      ts := TStringList.Create;
+      try
+        ts.NameValueSeparator := ':';
+        ss := TStringStream.Create;
+        try
+          TIdAttachment(part).SaveToStream(ss);
+          ts.Text := ss.DataString;
+        finally
+          ss.Free;
+        end;
+        processReportDeliveryNotification(id, s, ts);
       finally
         ts.Free;
       end;
@@ -1140,6 +1183,13 @@ procedure TSubscriptionManager.processReportDeliveryMessage(id, txt: String; det
 begin
   if details.Values['Action'].Trim = 'failed' then
     logt('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
+end;
+
+procedure TSubscriptionManager.processReportDeliveryNotification(id, txt: String; details: TStringList);
+begin
+  if id = '' then
+    id := details.Values['Original-Message-ID'];
+  logt('Direct Message '+id+' notice: '+details.Values['Disposition'].Trim);
 end;
 
 function processUrlTemplate(url : String; resource : TFhirResource) : String;

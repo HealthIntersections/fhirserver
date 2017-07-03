@@ -92,7 +92,7 @@ uses
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
-  FHIRSecurity in '..\reference-platform\r4\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRTags in '..\reference-platform\r4\FHIRTags.pas',
   FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRXhtml in '..\reference-platform\support\FHIRXhtml.pas',

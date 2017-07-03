@@ -93,7 +93,7 @@ uses
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRConstants in '..\reference-platform\dstu3\FHIRConstants.pas',
-  FHIRSecurity in '..\reference-platform\dstu3\FHIRSecurity.pas',
+  FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
   FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   AfsResourceVolumes in '..\reference-platform\Support\AfsResourceVolumes.pas',

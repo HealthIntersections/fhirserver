@@ -727,13 +727,15 @@ Begin
     FIOHandler := TIdServerIOHandlerSSLOpenSSL.Create(Nil);
     FSSLServer.IOHandler := FIOHandler;
     FIOHandler.SSLOptions.Method := sslvSSLv23;
+    FIOHandler.SSLOptions.Mode := sslmServer;
     // SSL v3 / TLS 1 required for older versions of DotNet
     FIOHandler.SSLOptions.SSLVersions := [sslvSSLv3, {$IFNDEF NCTS}sslvTLSv1, {$endif} sslvTLSv1_2];
     FIOHandler.SSLOptions.CipherList := {$IFDEF NCTS}'ALL:!SSLv2:!DES:!RC4:!MD5:!SHA-1'{$ELSE}'ALL:!SSLv2:!DES'{$ENDIF};
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
-    FIOHandler.SSLOptions.VerifyMode := [];
+    FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, {sslvrfFailIfNoPeerCert, }sslvrfClientOnce];
+    FIOHandler.SSLOptions.VerifyDepth := 2;
     FIOHandler.OnVerifyPeer := DoVerifyPeer;
 //    FIOHandler.SSLOptions.
     FIOHandler.OnGetPassword := SSLPassword;
@@ -1005,7 +1007,12 @@ var
   check, handled : boolean;
   c : integer;
   rp : TReverseProxyInfo;
+//  ssl : TIDSSLIOHandlerSocketOpenSSL;
 begin
+//  ssl := TIDSSLIOHandlerSocketOpenSSL(AContext.Connection.IOHandler);
+//  if ssl.SSLSocket.PeerCert <> nil then
+//    writeln(ssl.SSLSocket.PeerCert.Subject.OneLine);
+
   session := nil;
   MarkEntry(AContext, request, response);
   try

@@ -119,7 +119,8 @@ uses
   ParserSupport in '..\support\ParserSupport.pas',
   MXML in '..\support\MXML.pas',
   AdvZipWriters in '..\support\AdvZipWriters.pas',
-  SCIMObjects in '..\support\SCIMObjects.pas';
+  SCIMObjects in '..\support\SCIMObjects.pas',
+  FHIRSecurity in '..\support\FHIRSecurity.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

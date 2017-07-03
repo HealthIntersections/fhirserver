@@ -123,7 +123,8 @@ uses
   FHIRParserTests in 'tests\FHIRParserTests.pas',
   XmlTests in '..\support\Tests\XmlTests.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
-  SCIMObjects in '..\support\SCIMObjects.pas';
+  SCIMObjects in '..\support\SCIMObjects.pas',
+  FHIRSecurity in '..\support\FHIRSecurity.pas';
 
 var
   s: String;
