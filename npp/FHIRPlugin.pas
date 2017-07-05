@@ -75,7 +75,7 @@ uses
   FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
-  FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes,
+  FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
   FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt, DifferenceEngine, ResDisplayForm;
 
 const
@@ -187,6 +187,7 @@ type
     procedure FuncNarrative;
     procedure FuncDisconnect;
     procedure funcDifference;
+    procedure funcGenerateCode;
 
     procedure reset;
     procedure SetSelection(start, stop : integer);
@@ -225,6 +226,7 @@ procedure _FuncNarrative; cdecl;
 procedure _FuncDisconnect; cdecl;
 procedure _FuncDebug; cdecl;
 procedure _FuncDifference; cdecl;
+procedure _FuncGenerateCode; cdecl;
 
 var
   FNpp: TFHIRPlugin;
@@ -271,12 +273,13 @@ begin
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Change &Format (XML <--> JSON)', _FuncFormat);
   self.AddFuncItem('&Validate Resource', _FuncValidate);
-  self.AddFuncItem('&Clear Validation Information', _FuncValidateClear);
+  self.AddFuncItem('Clear Validation Information', _FuncValidateClear);
   self.AddFuncItem('&Make Patch', _FuncDifference);
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('&Jump to Path', _FuncJumpToPath);
   self.AddFuncItem('&Debug Path Expression', _FuncDebugPath);
   self.AddFuncItem('&Extract Path from Cursor', _FuncExtractPath);
+  self.AddFuncItem('Generate &Code', _FuncGenerateCode);
 
   self.AddFuncItem('-', Nil);
   self.AddFuncItem('Connect to &Server', _FuncConnect);
@@ -411,6 +414,11 @@ end;
 procedure _FuncServerValidate; cdecl;
 begin
   FNpp.FuncServerValidate;
+end;
+
+procedure _FuncGenerateCode; cdecl;
+begin
+  FNpp.FuncGenerateCode;
 end;
 
 
@@ -567,8 +575,8 @@ begin
   end;
   if not fileExists(result) then
     case version of
-      defV3 : result := 'C:\work\org.hl7.fhir\build\publish\igpack.zip';
-      defV2 : result := 'C:\work\org.hl7.fhir\build\publish\definitions-r2asr3.xml.zip';
+      defV3 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\igpack.zip';
+      defV2 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions-r2asr3.xml.zip';
     else
       raise Exception.Create('not done yet');
     end;
@@ -677,6 +685,33 @@ begin
     exit;
   end;
   ShowMessage('not done yet');
+end;
+
+procedure TFHIRPlugin.FuncGenerateCode;
+var
+  fmt : TFHIRFormat;
+  s : TStringStream;
+  res : TFHIRResource;
+  comp : TFHIRComposer;
+begin
+  if not init then
+    exit;
+  loadValidator;
+  if (parse(0, fmt, res)) then
+  try
+    CodeGeneratorForm := TCodeGeneratorForm.create(self);
+    try
+      CodeGeneratorForm.Resource := res.Link;
+      CodeGeneratorForm.Context := FValidator.Context.Link;
+      CodeGeneratorForm.showModal;
+    finally
+      CodeGeneratorForm.free;
+    end;
+  finally
+    res.Free;
+  end
+  else
+    ShowMessage('This does not appear to be valid FHIR content');
 end;
 
 procedure TFHIRPlugin.FuncSettings;

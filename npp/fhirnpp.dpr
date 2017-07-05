@@ -154,7 +154,9 @@ uses
   MXML in '..\reference-platform\support\MXML.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
-  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
 
 {$R *.res}
 

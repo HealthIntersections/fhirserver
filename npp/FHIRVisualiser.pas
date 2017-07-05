@@ -283,6 +283,7 @@ begin
   FCDSManager.Free;
   FCDSErrors.Free;
   FCards.Free;
+  FWebServer.Free;
 end;
 
 procedure TFHIRVisualizer.FormDock(Sender: TObject);

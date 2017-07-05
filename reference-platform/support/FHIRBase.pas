@@ -150,6 +150,7 @@ type
     FIsList : boolean;
     FList : TFHIRObjectList;
     FClass : TClass;
+    FEnumName : String;
     function GetHasValue: Boolean;
   Public
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oObject : TFHIRObject); Overload;
@@ -157,6 +158,7 @@ type
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TAdvList<TFHIRObject>); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
+    Constructor CreateEnum(oOwner : TFHIRObject; Const sName : String; bList: boolean; enumName : String; sValue : String); Overload;
     Destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
@@ -167,6 +169,7 @@ type
     Property Class_ : TClass read FClass;
     Property IsList : boolean read FIsList;
     Property Values : TFHIRObjectList read FList;
+    Property EnumName : String read FEnumName;
     procedure forceValues;
   End;
 
@@ -1913,6 +1916,19 @@ begin
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
     FList.Add(TFhirString.Create(String(EncodeBase64(@value[0], length(value)))));
+end;
+
+constructor TFHIRProperty.CreateEnum(oOwner: TFHIRObject; const sName: String; bList: boolean; enumName, sValue: String);
+begin
+  Create;
+  FName := sName;
+  FType := 'code';
+  FClass := TFHIREnum;
+  FEnumName := enumName;
+  FIsList := false;
+  FList := TFHIRObjectList.Create;
+  if (sValue <> '') then
+    FList.Add(TFhirCode.Create(sValue));
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TAdvList<TFHIRObject>);

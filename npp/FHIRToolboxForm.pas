@@ -67,6 +67,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -97,6 +98,7 @@ type
     procedure mPathChange(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
+    procedure ToolButton5Click(Sender: TObject);
   private
     { Private declarations }
     FMessageShort, FMessageLong : String;
@@ -388,6 +390,11 @@ end;
 procedure TFHIRToolbox.ToolButton4Click(Sender: TObject);
 begin
   _FuncDifference;
+end;
+
+procedure TFHIRToolbox.ToolButton5Click(Sender: TObject);
+begin
+  _FuncGenerateCode;
 end;
 
 procedure TFHIRToolbox.tbConnectClick(Sender: TObject);

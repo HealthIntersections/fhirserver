@@ -745,8 +745,8 @@ begin
     dtpYear:
       begin
       inc(result.year);
-      result.Month := 0;
-      result.Day := 0;
+      result.Month := 1;
+      result.Day := 1;
       result.Hour := 0;
       result.minute := 0;
       result.Second := 0;
@@ -755,7 +755,7 @@ begin
     dtpMonth:
       begin
       inc(result.Month);
-      result.Day := 0;
+      result.Day := 1;
       result.Hour := 0;
       result.minute := 0;
       result.Second := 0;
@@ -803,8 +803,8 @@ begin
   case Precision of
     dtpYear:
       begin
-      result.Month := 0;
-      result.Day := 0;
+      result.Month := 1;
+      result.Day := 1;
       result.Hour := 0;
       result.minute := 0;
       result.Second := 0;
@@ -812,7 +812,7 @@ begin
       end;
     dtpMonth:
       begin
-      result.Day := 0;
+      result.Day := 1;
       result.Hour := 0;
       result.minute := 0;
       result.Second := 0;

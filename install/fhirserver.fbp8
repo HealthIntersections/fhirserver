@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = test
+        as.returnvalue = "fix significant stability issue, and add DirectTrust support"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -830,7 +830,7 @@ begin
           compileridl = true
           configname = Release
           debugversionnumbers = false
-          delphiversion = Delphi10Seattle
+          delphiversion = Delphi10Berlin
           description = "Compile the ServerUtils"
           eurekalogverboselogging = false
           frameworktype = VCL
