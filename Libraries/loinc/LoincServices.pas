@@ -2477,7 +2477,7 @@ begin
       if (i * 12) > length(FMaster) - 4 then
         writeln('err');
       Move(FMaster[i*12], d, 4);
-      s := Strings.GetEntry(d.MaxValue, lang);
+      s := Strings.GetEntry(d, lang);
       C := AnsiCompareStr(s, sCode);
       if C < 0 then L := I + 1 else
       begin
