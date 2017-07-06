@@ -23,9 +23,6 @@ object CodeGeneratorForm: TCodeGeneratorForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 312
-    ExplicitTop = 48
-    ExplicitWidth = 185
     DesignSize = (
       861
       41)
@@ -70,9 +67,6 @@ object CodeGeneratorForm: TCodeGeneratorForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 456
-    ExplicitTop = 448
-    ExplicitWidth = 185
     DesignSize = (
       861
       41)
@@ -87,7 +81,15 @@ object CodeGeneratorForm: TCodeGeneratorForm
       Default = True
       ModalResult = 1
       TabOrder = 0
-      ExplicitLeft = 840
+    end
+    object Button2: TButton
+      Left = 6
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = '&Copy'
+      TabOrder = 1
+      OnClick = Button2Click
     end
   end
   object Panel3: TPanel
@@ -100,10 +102,6 @@ object CodeGeneratorForm: TCodeGeneratorForm
     BorderWidth = 6
     Caption = 'Panel3'
     TabOrder = 2
-    ExplicitLeft = 384
-    ExplicitTop = 248
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object Memo1: TMemo
       Left = 6
       Top = 6
@@ -113,10 +111,6 @@ object CodeGeneratorForm: TCodeGeneratorForm
       Lines.Strings = (
         'Memo1')
       TabOrder = 0
-      ExplicitLeft = 296
-      ExplicitTop = 256
-      ExplicitWidth = 185
-      ExplicitHeight = 89
     end
   end
 end

@@ -513,6 +513,9 @@ var
   s : String;
   neg : boolean;
 begin
+  if value = '' then
+    exit(makeNull);
+
   result.Source := Value;
 
   if pos('Z', value) = length(value) then
@@ -585,6 +588,9 @@ var
   s : String;
   neg : boolean;
 begin
+  if value = '' then
+    exit(makeNull);
+
   result.Source := Value;
   if pos('Z', value) = length(value) then
   begin

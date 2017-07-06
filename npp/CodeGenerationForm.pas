@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ClipBrd,
   nppforms,
   FHIRResources, FHIRCodeGenerator, FHIRContext;
 
@@ -18,9 +18,11 @@ type
     Label1: TLabel;
     Label2: TLabel;
     cbxLanguage: TComboBox;
+    Button2: TButton;
     procedure FormShow(Sender: TObject);
     procedure cbxLanguageChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     FResource : TFHIRResource;
     FContext: TWorkerContext;
@@ -39,6 +41,21 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TCodeGeneratorForm.Button2Click(Sender: TObject);
+var
+  clp : TClipboard;
+begin
+  clp := TClipboard.Create;
+  try
+    if memo1.SelText <> '' then
+      clp.AsText := memo1.SelText
+    else
+      clp.AsText := memo1.Text;
+  finally
+    clp.Free;
+  end;
+end;
 
 procedure TCodeGeneratorForm.cbxLanguageChange(Sender: TObject);
 var
