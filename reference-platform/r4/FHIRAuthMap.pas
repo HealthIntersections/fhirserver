@@ -90,6 +90,7 @@ const
     tcFinancial, // frtEnrollmentRequest
     tcFinancial , // frtEnrollmentResponse
     tcSchedule, // frtEpisodeOfCare
+    tcOther, // frtEventDefinition
     tcOther, // frtExpansionProfile
     tcFinancial , // frtExplanationOfBenefit
     tcClinical, // frtFamilyMemberHistory

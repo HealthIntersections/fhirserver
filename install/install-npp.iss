@@ -23,12 +23,12 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=npp-install-1.0.25
+OutputBaseFilename=npp-install-1.0.26
 SetupIconFile=C:\work\fhirserver\Server\fhir.ico
 Compression=lzma
 SolidCompression=yes
 DirExistsWarning=no
-AppVerName=1.0.25 (FHIR Version 1.0.2.7475)
+AppVerName=1.0.26 (FHIR Version 1.0.2.7475)
 
 ; C:\Users\Grahame Grieve\AppData\Roaming\Notepad++\plugins\Config
 

@@ -39,7 +39,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-06-23T08:55:29+10:00
+// FHIR v3.1.0 generated 2017-07-06T22:27:40+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -272,9 +272,9 @@ Type
     spBodyStructure__security, {@enum.value "_security" spBodyStructure__security Security Labels applied to this resource }
     spBodyStructure__tag, {@enum.value "_tag" spBodyStructure__tag Tags applied to this resource }
     spBodyStructure__text, {@enum.value "_text" spBodyStructure__text Search on the narrative of the resource }
-    spBodyStructure_Code, {@enum.value "code" spBodyStructure_Code Morphology }
     spBodyStructure_Identifier, {@enum.value "identifier" spBodyStructure_Identifier Bodystructure identifier }
     spBodyStructure_Location, {@enum.value "location" spBodyStructure_Location Body site }
+    spBodyStructure_Morphology, {@enum.value "morphology" spBodyStructure_Morphology Kind of Structure }
     spBodyStructure_Patient); {@enum.value "patient" spBodyStructure_Patient Who this is about }
 
   {@Enum TSearchParamsBundle
@@ -692,7 +692,7 @@ Type
     spCondition_Severity, {@enum.value "severity" spCondition_Severity The severity of the condition }
     spCondition_Stage, {@enum.value "stage" spCondition_Stage Simple summary (disease specific) }
     spCondition_Subject, {@enum.value "subject" spCondition_Subject Who has the condition? }
-    spCondition_Verificationstatus); {@enum.value "verification-status" spCondition_Verificationstatus provisional | differential | confirmed | refuted | entered-in-error | unknown }
+    spCondition_Verificationstatus); {@enum.value "verification-status" spCondition_Verificationstatus unconfirmed | provisional | differential | confirmed | refuted | entered-in-error | unknown }
 
   {@Enum TSearchParamsConsent
     Search Parameters for Consent
@@ -1142,6 +1142,36 @@ Type
     spEpisodeOfCare_Patient, {@enum.value "patient" spEpisodeOfCare_Patient The patient who is the focus of this episode of care }
     spEpisodeOfCare_Status, {@enum.value "status" spEpisodeOfCare_Status The current status of the Episode of Care as provided (does not check the status history collection) }
     spEpisodeOfCare_Type); {@enum.value "type" spEpisodeOfCare_Type Type/class  - e.g. specialist referral, disease management }
+
+  {@Enum TSearchParamsEventDefinition
+    Search Parameters for EventDefinition
+  }
+  TSearchParamsEventDefinition = (
+    spEventDefinition__content, {@enum.value "_content" spEventDefinition__content Search on the entire content of the resource }
+    spEventDefinition__id, {@enum.value "_id" spEventDefinition__id Logical id of this artifact }
+    spEventDefinition__lastUpdated, {@enum.value "_lastUpdated" spEventDefinition__lastUpdated When the resource version last changed }
+    spEventDefinition__profile, {@enum.value "_profile" spEventDefinition__profile Profiles this resource claims to conform to }
+    spEventDefinition__query, {@enum.value "_query" spEventDefinition__query A custom search profile that describes a specific defined query operation }
+    spEventDefinition__security, {@enum.value "_security" spEventDefinition__security Security Labels applied to this resource }
+    spEventDefinition__tag, {@enum.value "_tag" spEventDefinition__tag Tags applied to this resource }
+    spEventDefinition__text, {@enum.value "_text" spEventDefinition__text Search on the narrative of the resource }
+    spEventDefinition_Composedof, {@enum.value "composed-of" spEventDefinition_Composedof What resource is being referenced }
+    spEventDefinition_Date, {@enum.value "date" spEventDefinition_Date The event definition publication date }
+    spEventDefinition_Dependson, {@enum.value "depends-on" spEventDefinition_Dependson What resource is being referenced }
+    spEventDefinition_Derivedfrom, {@enum.value "derived-from" spEventDefinition_Derivedfrom What resource is being referenced }
+    spEventDefinition_Description, {@enum.value "description" spEventDefinition_Description The description of the event definition }
+    spEventDefinition_Effective, {@enum.value "effective" spEventDefinition_Effective The time during which the event definition is intended to be in use }
+    spEventDefinition_Identifier, {@enum.value "identifier" spEventDefinition_Identifier External identifier for the event definition }
+    spEventDefinition_Jurisdiction, {@enum.value "jurisdiction" spEventDefinition_Jurisdiction Intended jurisdiction for the event definition }
+    spEventDefinition_Name, {@enum.value "name" spEventDefinition_Name Computationally friendly name of the event definition }
+    spEventDefinition_Predecessor, {@enum.value "predecessor" spEventDefinition_Predecessor What resource is being referenced }
+    spEventDefinition_Publisher, {@enum.value "publisher" spEventDefinition_Publisher Name of the publisher of the event definition }
+    spEventDefinition_Status, {@enum.value "status" spEventDefinition_Status The current status of the event definition }
+    spEventDefinition_Successor, {@enum.value "successor" spEventDefinition_Successor What resource is being referenced }
+    spEventDefinition_Title, {@enum.value "title" spEventDefinition_Title The human-friendly name of the event definition }
+    spEventDefinition_Topic, {@enum.value "topic" spEventDefinition_Topic Topics associated with the module }
+    spEventDefinition_Url, {@enum.value "url" spEventDefinition_Url The uri that identifies the event definition }
+    spEventDefinition_Version); {@enum.value "version" spEventDefinition_Version The business version of the event definition }
 
   {@Enum TSearchParamsExpansionProfile
     Search Parameters for ExpansionProfile
@@ -2875,8 +2905,9 @@ Requires the near parameter to also be included }
     spVisionPrescription_Status); {@enum.value "status" spVisionPrescription_Status The status of the vision prescription }
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 
-      'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription',  'Custom');
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 
+      'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 
+       'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
      'activitydefinition',
      'adverseevent',
@@ -2921,6 +2952,7 @@ Const
      'enrollmentrequest',
      'enrollmentresponse',
      'episodeofcare',
+     'eventdefinition',
      'expansionprofile',
      'explanationofbenefit',
      'familymemberhistory',
@@ -3038,6 +3070,7 @@ Const
      TFhirEnrollmentRequest,
      TFhirEnrollmentResponse,
      TFhirEpisodeOfCare,
+     TFhirEventDefinition,
      TFhirExpansionProfile,
      TFhirExplanationOfBenefit,
      TFhirFamilyMemberHistory,
@@ -3155,6 +3188,7 @@ Const
      frtEnrollmentRequest,
      frtEnrollmentResponse,
      frtEpisodeOfCare,
+     frtEventDefinition,
      frtExpansionProfile,
      frtExplanationOfBenefit,
      frtFamilyMemberHistory,
@@ -3272,6 +3306,7 @@ Const
      'EnrollmentRequest',
      'EnrollmentResponse',
      'EpisodeOfCare',
+     'EventDefinition',
      'ExpansionProfile',
      'ExplanationOfBenefit',
      'FamilyMemberHistory',
@@ -3354,7 +3389,7 @@ Const
   CODES_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'address', 'agent', 'agent-name', 'agent-role', 'altid', 'date', 'entity', 'entity-id', 'entity-name', 'entity-role', 'entity-type', 'outcome', 'patient', 'policy', 'site', 'source', 'subtype', 'type', 'user');
   CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
   CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'contenttype');
-  CODES_TSearchParamsBodyStructure : Array[TSearchParamsBodyStructure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'identifier', 'location', 'patient');
+  CODES_TSearchParamsBodyStructure : Array[TSearchParamsBodyStructure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'location', 'morphology', 'patient');
   CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'composition', 'identifier', 'message', 'type');
   CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'event', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
   CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'activity-code', 'activity-date', 'activity-reference', 'based-on', 'care-team', 'category', 'condition', 'context', 'date', 'definition', 'encounter', 'goal', 'identifier', 'intent', 'part-of', 'patient', 'performer', 'replaces', 'status', 'subject');
@@ -3389,6 +3424,7 @@ Const
   CODES_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'patient', 'status', 'subject');
   CODES_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'status');
   CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
+  CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
   CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'payee', 'provider', 'status');
   CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'definition', 'gender', 'identifier', 'patient', 'relationship', 'status');
@@ -3461,7 +3497,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
   FHIR_GENERATED_VERSION = '3.1.0';
 
-  FHIR_GENERATED_DATE = '2017-06-23T08:55:29+10:00';
+  FHIR_GENERATED_DATE = '2017-07-06T22:27:40+10:00';
 
 
 

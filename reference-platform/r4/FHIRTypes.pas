@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-06-23T08:55:29+10:00
+// FHIR v3.1.0 generated 2017-07-06T22:27:40+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
@@ -181,6 +181,7 @@ Type
     AllTypesEnrollmentRequest, {@enum.value AllTypesEnrollmentRequest  }
     AllTypesEnrollmentResponse, {@enum.value AllTypesEnrollmentResponse  }
     AllTypesEpisodeOfCare, {@enum.value AllTypesEpisodeOfCare  }
+    AllTypesEventDefinition, {@enum.value AllTypesEventDefinition  }
     AllTypesExpansionProfile, {@enum.value AllTypesExpansionProfile  }
     AllTypesExplanationOfBenefit, {@enum.value AllTypesExplanationOfBenefit  }
     AllTypesFamilyMemberHistory, {@enum.value AllTypesFamilyMemberHistory  }
@@ -566,6 +567,7 @@ Type
     ResourceTypesEnrollmentRequest, {@enum.value ResourceTypesEnrollmentRequest  }
     ResourceTypesEnrollmentResponse, {@enum.value ResourceTypesEnrollmentResponse  }
     ResourceTypesEpisodeOfCare, {@enum.value ResourceTypesEpisodeOfCare  }
+    ResourceTypesEventDefinition, {@enum.value ResourceTypesEventDefinition  }
     ResourceTypesExpansionProfile, {@enum.value ResourceTypesExpansionProfile  }
     ResourceTypesExplanationOfBenefit, {@enum.value ResourceTypesExplanationOfBenefit  }
     ResourceTypesFamilyMemberHistory, {@enum.value ResourceTypesFamilyMemberHistory  }
@@ -1028,6 +1030,7 @@ Type
     CarePlanActivityStatusOnHold, {@enum.value CarePlanActivityStatusOnHold  }
     CarePlanActivityStatusCompleted, {@enum.value CarePlanActivityStatusCompleted  }
     CarePlanActivityStatusCancelled, {@enum.value CarePlanActivityStatusCancelled  }
+    CarePlanActivityStatusStopped, {@enum.value CarePlanActivityStatusStopped  }
     CarePlanActivityStatusUnknown); {@enum.value CarePlanActivityStatusUnknown  }
   TFhirCarePlanActivityStatusEnumList = set of TFhirCarePlanActivityStatusEnum;
 
@@ -1294,6 +1297,7 @@ Type
   }
   TFhirConditionVerStatusEnum = (
     ConditionVerStatusNull,  {@enum.value ConditionVerStatusNull Value is missing from Instance }
+    ConditionVerStatusUnconfirmed, {@enum.value ConditionVerStatusUnconfirmed  }
     ConditionVerStatusProvisional, {@enum.value ConditionVerStatusProvisional  }
     ConditionVerStatusDifferential, {@enum.value ConditionVerStatusDifferential  }
     ConditionVerStatusConfirmed, {@enum.value ConditionVerStatusConfirmed  }
@@ -2709,6 +2713,8 @@ Type
   TFhirRatioList = class;
   TFhirReference = class;
   TFhirReferenceList = class;
+  TFhirTriggerDefinitionEventCondition = class;
+  TFhirTriggerDefinitionEventConditionList = class;
   TFhirTriggerDefinition = class;
   TFhirTriggerDefinitionList = class;
   TFhirPeriod = class;
@@ -7989,6 +7995,172 @@ Type
   End;
 
 
+  {@Class TFhirTriggerDefinitionEventCondition : TFhirElement
+    A boolean-valued expression that is evaluated in the context of the container of the trigger definition and returns whether or not the trigger fires.
+  }
+  TFhirTriggerDefinitionEventCondition = class (TFhirElement)
+  protected
+    FDescription : TFhirString;
+    FLanguage : TFhirString;
+    FExpression : TFhirString;
+    Procedure SetDescription(value : TFhirString);
+    Function GetDescriptionST : String;
+    Procedure SetDescriptionST(value : String);
+    Procedure SetLanguage(value : TFhirString);
+    Function GetLanguageST : String;
+    Procedure SetLanguageST(value : String);
+    Procedure SetExpression(value : TFhirString);
+    Function GetExpressionST : String;
+    Procedure SetExpressionST(value : String);
+  
+    Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
+    Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
+  public
+    constructor Create; Override;
+    destructor Destroy; override;
+    {!script hide}
+    procedure Assign(oSource : TAdvObject); override;
+    function Link : TFhirTriggerDefinitionEventCondition; overload;
+    function Clone : TFhirTriggerDefinitionEventCondition; overload;
+    procedure setProperty(propName : string; propValue : TFHIRObject); override;
+    procedure insertProperty(propName : string; propValue : TFHIRObject; index : integer); override;
+    function createPropertyValue(propName : string) : TFHIRObject; override;
+    procedure deleteProperty(propName : string; value : TFHIRObject); override;
+    procedure replaceProperty(propName : string; existing, new : TFHIRObject); override;
+    procedure reorderProperty(propName : string; source, destination : integer); override;
+    function fhirType : string; override;
+    function equalsDeep(other : TFHIRObject) : boolean; override;
+    function equalsShallow(other : TFHIRObject) : boolean; override;
+    function isEmpty : boolean; override;
+    {!script show}
+  published
+    {@member description
+      Typed access to A brief, natural language description of the condition that effectively communicates the intended semantics.
+    }
+    property description : String read GetDescriptionST write SetDescriptionST;
+    {@member descriptionElement
+      A brief, natural language description of the condition that effectively communicates the intended semantics.
+    }
+    property descriptionElement : TFhirString read FDescription write SetDescription;
+
+    {@member language
+      Typed access to The media type of the language for the expression.
+    }
+    property language : String read GetLanguageST write SetLanguageST;
+    {@member languageElement
+      The media type of the language for the expression.
+    }
+    property languageElement : TFhirString read FLanguage write SetLanguage;
+
+    {@member expression
+      Typed access to An expression that returns true or false, indicating whether or not the condition is satisfied.
+    }
+    property expression : String read GetExpressionST write SetExpressionST;
+    {@member expressionElement
+      An expression that returns true or false, indicating whether or not the condition is satisfied.
+    }
+    property expressionElement : TFhirString read FExpression write SetExpression;
+
+  end;
+
+
+  TFhirTriggerDefinitionEventConditionListEnumerator = class (TAdvObject)
+  private
+    FIndex : integer;
+    FList : TFhirTriggerDefinitionEventConditionList;
+    function GetCurrent : TFhirTriggerDefinitionEventCondition;
+  public
+    constructor Create(list : TFhirTriggerDefinitionEventConditionList);
+    Destructor Destroy; override;
+    function MoveNext : boolean;
+    property Current : TFhirTriggerDefinitionEventCondition read GetCurrent;
+  end;
+
+
+  {@Class TFhirTriggerDefinitionEventConditionList
+    A list of FhirTriggerDefinitionEventCondition
+  }
+  TFhirTriggerDefinitionEventConditionList = class (TFHIRObjectList)
+  private
+
+    function GetItemN(index : Integer) : TFhirTriggerDefinitionEventCondition;
+    procedure SetItemN(index : Integer; value : TFhirTriggerDefinitionEventCondition);
+  protected
+    function ItemClass : TAdvObjectClass; override;
+  public
+
+    {!script hide}
+    function Link : TFhirTriggerDefinitionEventConditionList; Overload;
+    function Clone : TFhirTriggerDefinitionEventConditionList; Overload;
+    function GetEnumerator : TFhirTriggerDefinitionEventConditionListEnumerator;
+    {!script show}
+    
+
+    {@member Append
+      Add a FhirTriggerDefinitionEventCondition to the end of the list.
+    }
+    function Append : TFhirTriggerDefinitionEventCondition;
+
+    
+    {@member AddItem
+      Add an already existing FhirTriggerDefinitionEventCondition to the end of the list.
+    }
+    procedure AddItem(value : TFhirTriggerDefinitionEventCondition); overload;
+
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    
+    {@member IndexOf
+      See if an item is already in the list. returns -1 if not in the list
+    }
+    function IndexOf(value : TFhirTriggerDefinitionEventCondition) : Integer;
+    
+
+    {@member Insert
+      Insert FhirTriggerDefinitionEventCondition before the designated index (0 = first item)
+    }
+    function Insert(index : Integer) : TFhirTriggerDefinitionEventCondition;
+    
+
+    {@member InsertItem
+       Insert an existing FhirTriggerDefinitionEventCondition before the designated index (0 = first item)
+    }
+    procedure InsertItem(index : Integer; value : TFhirTriggerDefinitionEventCondition);
+    
+    {@member Item
+       Get the iIndexth FhirTriggerDefinitionEventCondition. (0 = first item)
+    }
+    
+    {@member Item
+       Get the iIndexth FhirTriggerDefinitionEventCondition. (0 = first item)
+    }
+    procedure SetItemByIndex(index : Integer; value : TFhirTriggerDefinitionEventCondition);
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Item(index : Integer) : TFhirTriggerDefinitionEventCondition;
+    
+    {@member Count
+      The number of items in the collection
+    }
+    function Count : Integer; Overload;
+    
+    {@member remove
+      Remove the indexth item. The first item is index 0.
+    }
+    procedure Remove(index : Integer);
+    {@member ClearItems
+      Remove All Items from the list
+    }
+    procedure ClearItems;
+    
+    Property FhirTriggerDefinitionEventConditions[index : Integer] : TFhirTriggerDefinitionEventCondition read GetItemN write SetItemN; default;
+  End;
+
+
   {@Class TFhirTriggerDefinition : TFhirType
     A description of a triggering event.
   }
@@ -7998,6 +8170,7 @@ Type
     FEventName : TFhirString;
     FEventTiming : TFhirType;
     FEventData : TFhirDataRequirement;
+    FEventCondition : TFhirTriggerDefinitionEventCondition;
     Procedure SetType_(value : TFhirEnum);
     Function GetType_ST : TFhirTriggerTypeEnum;
     Procedure SetType_ST(value : TFhirTriggerTypeEnum);
@@ -8006,6 +8179,7 @@ Type
     Procedure SetEventNameST(value : String);
     Procedure SetEventTiming(value : TFhirType);
     Procedure SetEventData(value : TFhirDataRequirement);
+    Procedure SetEventCondition(value : TFhirTriggerDefinitionEventCondition);
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -8060,6 +8234,15 @@ Type
       The triggering data of the event (if this is a data trigger).
     }
     property eventDataElement : TFhirDataRequirement read FEventData write SetEventData;
+
+    {@member eventCondition
+      Typed access to A boolean-valued expression that is evaluated in the context of the container of the trigger definition and returns whether or not the trigger fires. (defined for API consistency)
+    }
+    property eventCondition : TFhirTriggerDefinitionEventCondition read FEventCondition write SetEventCondition;
+    {@member eventConditionElement
+      A boolean-valued expression that is evaluated in the context of the container of the trigger definition and returns whether or not the trigger fires.
+    }
+    property eventConditionElement : TFhirTriggerDefinitionEventCondition read FEventCondition write SetEventCondition;
 
   end;
 
@@ -13663,15 +13846,15 @@ Const
   CODES_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'author', 'editor', 'reviewer', 'endorser');
   SYSTEMS_TFhirContributorTypeEnum : Array[TFhirContributorTypeEnum] of String = ('', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type', 'http://hl7.org/fhir/contributor-type');
   CODES_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'Address', 'Age', 'Annotation', 'Attachment', 'BackboneElement', 'CodeableConcept', 'Coding', 'ContactDetail', 'ContactPoint', 'Contributor', 'Count', 'DataRequirement', 'Distance', 'Dosage', 'Duration', 'Element', 'ElementDefinition', 'Extension', 'HumanName', 'Identifier', 'Meta', 'Money', 'Narrative', 'ParameterDefinition', 'Period', 'Quantity', 'Range', 'Ratio', 'Reference', 'RelatedArtifact', 'SampledData', 'Signature', 'SimpleQuantity', 'Timing', 'TriggerDefinition', 'UsageContext', 'base64Binary', 'boolean', 'code', 'date', 'dateTime', 'decimal', 'id', 'instant', 'integer', 'markdown', 'oid', 'positiveInt', 'string', 'time', 'unsignedInt', 'uri', 'uuid', 'xhtml', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 
-    'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 
-    'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
+    'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 
+    'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 'Type', 'Any');
   SYSTEMS_TFhirAllTypesEnum : Array[TFhirAllTypesEnum] of String = ('', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 
     'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/data-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/abstract-types', 'http://hl7.org/fhir/abstract-types');
   CODES_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'usual', 'official', 'temp', 'secondary');
   SYSTEMS_TFhirIdentifierUseEnum : Array[TFhirIdentifierUseEnum] of String = ('', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use', 'http://hl7.org/fhir/identifier-use');
   CODES_TFhirTriggerTypeEnum : Array[TFhirTriggerTypeEnum] of String = ('', 'named-event', 'periodic', 'data-added', 'data-modified', 'data-removed', 'data-accessed', 'data-access-ended');
@@ -13714,14 +13897,14 @@ Const
   SYSTEMS_TFhirEventTimingEnum : Array[TFhirEventTimingEnum] of String = ('', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/event-timing', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent', 'http://hl7.org/fhir/v3/TimingEvent');
   CODES_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'active', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirAccountStatusEnum : Array[TFhirAccountStatusEnum] of String = ('', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status', 'http://hl7.org/fhir/account-status');
-  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 
-    'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 
-    'VisionPrescription');
+  CODES_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodyStructure', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'DomainResource', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'EventDefinition', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 
+    'ImagingManifest', 'ImagingStudy', 'Immunization', 'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'Resource', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 
+    'TestScript', 'ValueSet', 'VisionPrescription');
   SYSTEMS_TFhirResourceTypesEnum : Array[TFhirResourceTypesEnum] of String = ('', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
     'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 
-    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
+    'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types', 'http://hl7.org/fhir/resource-types');
   CODES_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'patient', 'practitioner', 'related-person');
   SYSTEMS_TFhirActionParticipantTypeEnum : Array[TFhirActionParticipantTypeEnum] of String = ('', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type', 'http://hl7.org/fhir/action-participant-type');
   CODES_TFhirAdverseEventActualityEnum : Array[TFhirAdverseEventActualityEnum] of String = ('', 'actual', 'potential');
@@ -13788,8 +13971,8 @@ Const
   SYSTEMS_TFhirCarePlanStatusEnum : Array[TFhirCarePlanStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status', 'http://hl7.org/fhir/care-plan-status');
   CODES_TFhirCarePlanIntentEnum : Array[TFhirCarePlanIntentEnum] of String = ('', 'proposal', 'plan', 'order', 'option');
   SYSTEMS_TFhirCarePlanIntentEnum : Array[TFhirCarePlanIntentEnum] of String = ('', 'http://hl7.org/fhir/care-plan-intent', 'http://hl7.org/fhir/care-plan-intent', 'http://hl7.org/fhir/care-plan-intent', 'http://hl7.org/fhir/care-plan-intent');
-  CODES_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled', 'unknown');
-  SYSTEMS_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status');
+  CODES_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'not-started', 'scheduled', 'in-progress', 'on-hold', 'completed', 'cancelled', 'stopped', 'unknown');
+  SYSTEMS_TFhirCarePlanActivityStatusEnum : Array[TFhirCarePlanActivityStatusEnum] of String = ('', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status', 'http://hl7.org/fhir/care-plan-activity-status');
   CODES_TFhirCareTeamStatusEnum : Array[TFhirCareTeamStatusEnum] of String = ('', 'proposed', 'active', 'suspended', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirCareTeamStatusEnum : Array[TFhirCareTeamStatusEnum] of String = ('', 'http://hl7.org/fhir/care-team-status', 'http://hl7.org/fhir/care-team-status', 'http://hl7.org/fhir/care-team-status', 'http://hl7.org/fhir/care-team-status', 'http://hl7.org/fhir/care-team-status');
   CODES_TFhirChargeitemStatusEnum : Array[TFhirChargeitemStatusEnum] of String = ('', 'planned', 'billable', 'not-billable', 'aborted', 'billed', 'entered-in-error', 'unknown');
@@ -13832,8 +14015,8 @@ Const
   SYSTEMS_TFhirConceptmapUnmappedModeEnum : Array[TFhirConceptmapUnmappedModeEnum] of String = ('', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode', 'http://hl7.org/fhir/conceptmap-unmapped-mode');
   CODES_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'active', 'recurrence', 'relapse', 'well-controlled', 'poorly-controlled', 'inactive', 'remission', 'resolved');
   SYSTEMS_TFhirConditionClinicalEnum : Array[TFhirConditionClinicalEnum] of String = ('', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical', 'http://hl7.org/fhir/condition-clinical');
-  CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
-  SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
+  CODES_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'unconfirmed', 'provisional', 'differential', 'confirmed', 'refuted', 'entered-in-error', 'unknown');
+  SYSTEMS_TFhirConditionVerStatusEnum : Array[TFhirConditionVerStatusEnum] of String = ('', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status', 'http://hl7.org/fhir/condition-ver-status');
   CODES_TFhirConsentStateCodesEnum : Array[TFhirConsentStateCodesEnum] of String = ('', 'draft', 'proposed', 'active', 'rejected', 'inactive', 'entered-in-error');
   SYSTEMS_TFhirConsentStateCodesEnum : Array[TFhirConsentStateCodesEnum] of String = ('', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes', 'http://hl7.org/fhir/consent-state-codes');
   CODES_TFhirConsentProvisionTypeEnum : Array[TFhirConsentProvisionTypeEnum] of String = ('', 'deny', 'permit');
@@ -19294,7 +19477,7 @@ end;
 procedure TFhirNarrative.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'status') then StatusElement := asEnum(SYSTEMS_TFhirNarrativeStatusEnum, CODES_TFhirNarrativeStatusEnum, propValue)
-  else if (propName = 'div') then Div_Element := asXHtml(propValue){5a}
+  else if (propName = 'div') then Div_Element := asXHtmlNode(propValue){5a}
   else inherited;
 end;
 
@@ -23912,6 +24095,347 @@ begin
  end;
 
 
+{ TFhirTriggerDefinitionEventCondition }
+
+constructor TFhirTriggerDefinitionEventCondition.Create;
+begin
+  inherited;
+end;
+
+destructor TFhirTriggerDefinitionEventCondition.Destroy;
+begin
+  FDescription.free;
+  FLanguage.free;
+  FExpression.free;
+  inherited;
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.Assign(oSource : TAdvObject);
+begin
+  inherited;
+  descriptionElement := TFhirTriggerDefinitionEventCondition(oSource).descriptionElement.Clone;
+  languageElement := TFhirTriggerDefinitionEventCondition(oSource).languageElement.Clone;
+  expressionElement := TFhirTriggerDefinitionEventCondition(oSource).expressionElement.Clone;
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
+begin
+  inherited;
+  if (child_name = 'description') Then
+     list.add(self.link, 'description', FDescription.Link);
+  if (child_name = 'language') Then
+     list.add(self.link, 'language', FLanguage.Link);
+  if (child_name = 'expression') Then
+     list.add(self.link, 'expression', FExpression.Link);
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
+begin
+  inherited;
+  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'language', 'string', false, TFhirString, FLanguage.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'expression', 'string', false, TFhirString, FExpression.Link));{2}
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.setProperty(propName : string; propValue: TFHIRObject);
+begin
+  if (propName = 'description') then DescriptionElement := asString(propValue){5a}
+  else if (propName = 'language') then LanguageElement := asString(propValue){5a}
+  else if (propName = 'expression') then ExpressionElement := asString(propValue){5a}
+  else inherited;
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
+begin
+  inherited;
+end;
+
+function TFhirTriggerDefinitionEventCondition.createPropertyValue(propName : string) : TFHIRObject;
+begin
+  result := inherited createPropertyValue(propName);
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.deleteProperty(propName: string; value : TFHIRObject);
+begin
+  if (propName = 'description') then DescriptionElement := nil
+  else if (propName = 'language') then LanguageElement := nil
+  else if (propName = 'expression') then ExpressionElement := nil
+  else
+    inherited deleteProperty(propName, value);
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.replaceProperty(propName : string; existing, new : TFHIRObject);
+begin
+  if (propName = 'description') then DescriptionElement := asString(new){5b}
+  else if (propName = 'language') then LanguageElement := asString(new){5b}
+  else if (propName = 'expression') then ExpressionElement := asString(new){5b}
+  else
+    inherited replaceProperty(propName, existing, new);
+end;
+
+procedure TFhirTriggerDefinitionEventCondition.reorderProperty(propName : string; source, destination : integer);
+begin
+  inherited reorderProperty(propName, source, destination);
+end;
+
+function TFhirTriggerDefinitionEventCondition.fhirType : string;
+begin
+  result := 'eventCondition';
+end;
+
+function TFhirTriggerDefinitionEventCondition.Link : TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition(inherited Link);
+end;
+
+function TFhirTriggerDefinitionEventCondition.Clone : TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition(inherited Clone);
+end;
+
+function TFhirTriggerDefinitionEventCondition.equalsDeep(other : TFHIRObject) : boolean; 
+var
+  o : TFhirTriggerDefinitionEventCondition;
+begin
+  if (not inherited equalsDeep(other)) then
+    result := false
+  else if (not (other is TFhirTriggerDefinitionEventCondition)) then
+    result := false
+  else
+  begin
+    o := TFhirTriggerDefinitionEventCondition(other);
+    result := compareDeep(descriptionElement, o.descriptionElement, true) and compareDeep(languageElement, o.languageElement, true) and 
+      compareDeep(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirTriggerDefinitionEventCondition.equalsShallow(other : TFHIRObject) : boolean; 
+var
+  o : TFhirTriggerDefinitionEventCondition;
+begin
+  if (not inherited equalsShallow(other)) then
+    result := false
+  else if (not (other is TFhirTriggerDefinitionEventCondition)) then
+    result := false
+  else
+  begin
+    o := TFhirTriggerDefinitionEventCondition(other);
+    result := compareValues(descriptionElement, o.descriptionElement, true) and compareValues(languageElement, o.languageElement, true) and 
+      compareValues(expressionElement, o.expressionElement, true);
+  end;
+end;
+
+function TFhirTriggerDefinitionEventCondition.isEmpty : boolean;
+begin
+  result := inherited isEmpty  and isEmptyProp(FDescription) and isEmptyProp(FLanguage) and isEmptyProp(FExpression);
+end;
+
+{ TFhirTriggerDefinitionEventCondition }
+
+Procedure TFhirTriggerDefinitionEventCondition.SetDescription(value : TFhirString);
+begin
+  FDescription.free;
+  FDescription := value;
+end;
+
+Function TFhirTriggerDefinitionEventCondition.GetDescriptionST : String;
+begin
+  if FDescription = nil then
+    result := ''
+  else
+    result := FDescription.value;
+end;
+
+Procedure TFhirTriggerDefinitionEventCondition.SetDescriptionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FDescription = nil then
+      FDescription := TFhirString.create;
+    FDescription.value := value
+  end
+  else if FDescription <> nil then
+    FDescription.value := '';
+end;
+
+Procedure TFhirTriggerDefinitionEventCondition.SetLanguage(value : TFhirString);
+begin
+  FLanguage.free;
+  FLanguage := value;
+end;
+
+Function TFhirTriggerDefinitionEventCondition.GetLanguageST : String;
+begin
+  if FLanguage = nil then
+    result := ''
+  else
+    result := FLanguage.value;
+end;
+
+Procedure TFhirTriggerDefinitionEventCondition.SetLanguageST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FLanguage = nil then
+      FLanguage := TFhirString.create;
+    FLanguage.value := value
+  end
+  else if FLanguage <> nil then
+    FLanguage.value := '';
+end;
+
+Procedure TFhirTriggerDefinitionEventCondition.SetExpression(value : TFhirString);
+begin
+  FExpression.free;
+  FExpression := value;
+end;
+
+Function TFhirTriggerDefinitionEventCondition.GetExpressionST : String;
+begin
+  if FExpression = nil then
+    result := ''
+  else
+    result := FExpression.value;
+end;
+
+Procedure TFhirTriggerDefinitionEventCondition.SetExpressionST(value : String);
+begin
+  if value <> '' then
+  begin
+    if FExpression = nil then
+      FExpression := TFhirString.create;
+    FExpression.value := value
+  end
+  else if FExpression <> nil then
+    FExpression.value := '';
+end;
+
+
+{ TFhirTriggerDefinitionEventConditionListEnumerator }
+
+Constructor TFhirTriggerDefinitionEventConditionListEnumerator.Create(list : TFhirTriggerDefinitionEventConditionList);
+begin
+  inherited Create;
+  FIndex := -1;
+  FList := list;
+end;
+
+Destructor TFhirTriggerDefinitionEventConditionListEnumerator.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TFhirTriggerDefinitionEventConditionListEnumerator.MoveNext : boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < FList.count;
+end;
+
+function TFhirTriggerDefinitionEventConditionListEnumerator.GetCurrent : TFhirTriggerDefinitionEventCondition;
+begin
+  Result := FList[FIndex];
+end;
+
+
+{ TFhirTriggerDefinitionEventConditionList }
+procedure TFhirTriggerDefinitionEventConditionList.AddItem(value: TFhirTriggerDefinitionEventCondition);
+begin
+  assert(value.ClassName = 'TFhirTriggerDefinitionEventCondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTriggerDefinitionEventCondition');
+  add(value);
+end;
+
+
+function TFhirTriggerDefinitionEventConditionList.Append: TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition.create;
+  try
+    add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirTriggerDefinitionEventConditionList.ClearItems;
+begin
+  Clear;
+end;
+
+function TFhirTriggerDefinitionEventConditionList.GetEnumerator : TFhirTriggerDefinitionEventConditionListEnumerator;
+begin
+  result := TFhirTriggerDefinitionEventConditionListEnumerator.Create(self.link);
+end;
+
+function TFhirTriggerDefinitionEventConditionList.Clone: TFhirTriggerDefinitionEventConditionList;
+begin
+  result := TFhirTriggerDefinitionEventConditionList(inherited Clone);
+end;
+
+function TFhirTriggerDefinitionEventConditionList.Count: Integer;
+begin
+  result := Inherited Count;
+end;
+
+function TFhirTriggerDefinitionEventConditionList.GetItemN(index: Integer): TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition(ObjectByIndex[index]);
+end;
+
+function TFhirTriggerDefinitionEventConditionList.ItemClass: TAdvObjectClass;
+begin
+  result := TFhirTriggerDefinitionEventCondition;
+end;
+function TFhirTriggerDefinitionEventConditionList.IndexOf(value: TFhirTriggerDefinitionEventCondition): Integer;
+begin
+  result := IndexByReference(value);
+end;
+
+
+function TFhirTriggerDefinitionEventConditionList.Insert(index: Integer): TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition.create;
+  try
+    inherited insert(index, result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+
+procedure TFhirTriggerDefinitionEventConditionList.InsertItem(index: Integer; value: TFhirTriggerDefinitionEventCondition);
+begin
+  assert(value is TFhirTriggerDefinitionEventCondition);
+  Inherited Insert(index, value);
+end;
+
+function TFhirTriggerDefinitionEventConditionList.Item(index: Integer): TFhirTriggerDefinitionEventCondition;
+begin
+  result := TFhirTriggerDefinitionEventCondition(ObjectByIndex[index]);
+end;
+
+function TFhirTriggerDefinitionEventConditionList.Link: TFhirTriggerDefinitionEventConditionList;
+begin
+  result := TFhirTriggerDefinitionEventConditionList(inherited Link);
+end;
+
+procedure TFhirTriggerDefinitionEventConditionList.Remove(index: Integer);
+begin
+  DeleteByIndex(index);
+end;
+
+procedure TFhirTriggerDefinitionEventConditionList.SetItemByIndex(index: Integer; value: TFhirTriggerDefinitionEventCondition);
+begin
+  assert(value is TFhirTriggerDefinitionEventCondition);
+  FhirTriggerDefinitionEventConditions[index] := value;
+end;
+
+procedure TFhirTriggerDefinitionEventConditionList.SetItemN(index: Integer; value: TFhirTriggerDefinitionEventCondition);
+begin
+  assert(value is TFhirTriggerDefinitionEventCondition);
+  ObjectByIndex[index] := value;
+end;
+
 { TFhirTriggerDefinition }
 
 constructor TFhirTriggerDefinition.Create;
@@ -23925,6 +24449,7 @@ begin
   FEventName.free;
   FEventTiming.free;
   FEventData.free;
+  FEventCondition.free;
   inherited;
 end;
 
@@ -23935,6 +24460,7 @@ begin
   eventNameElement := TFhirTriggerDefinition(oSource).eventNameElement.Clone;
   eventTiming := TFhirTriggerDefinition(oSource).eventTiming.Clone;
   eventData := TFhirTriggerDefinition(oSource).eventData.Clone;
+  eventCondition := TFhirTriggerDefinition(oSource).eventCondition.Clone;
 end;
 
 procedure TFhirTriggerDefinition.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
@@ -23948,6 +24474,8 @@ begin
      list.add(self.link, 'eventTiming[x]', FEventTiming.Link);
   if (child_name = 'eventData') Then
      list.add(self.link, 'eventData', FEventData.Link);
+  if (child_name = 'eventCondition') Then
+     list.add(self.link, 'eventCondition', FEventCondition.Link);
 end;
 
 procedure TFhirTriggerDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
@@ -23957,6 +24485,7 @@ begin
   oList.add(TFHIRProperty.create(self, 'eventName', 'string', false, TFhirString, FEventName.Link));{2}
   oList.add(TFHIRProperty.create(self, 'eventTiming[x]', 'Timing|Reference(Schedule)|date|dateTime', false, TFhirType, FEventTiming.Link));{2}
   oList.add(TFHIRProperty.create(self, 'eventData', 'DataRequirement', false, TFhirDataRequirement, FEventData.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'eventCondition', '', false, TFhirTriggerDefinitionEventCondition, FEventCondition.Link));{2}
 end;
 
 procedure TFhirTriggerDefinition.setProperty(propName: string; propValue: TFHIRObject);
@@ -23965,6 +24494,7 @@ begin
   else if (propName = 'eventName') then EventNameElement := asString(propValue){5a}
   else if (propName.startsWith('eventTiming')) then EventTiming := propValue as TFhirType{4}
   else if (propName = 'eventData') then EventData := propValue as TFhirDataRequirement{4b}
+  else if (propName = 'eventCondition') then EventCondition := propValue as TFhirTriggerDefinitionEventCondition{4b}
   else inherited;
 end;
 
@@ -23976,6 +24506,7 @@ end;
 function TFhirTriggerDefinition.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'eventData') then result := TFhirDataRequirement.create(){4b}
+  else if (propName = 'eventCondition') then result := TFhirTriggerDefinitionEventCondition.create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -23984,6 +24515,7 @@ begin
   if (propName = 'type') then Type_Element := nil
   else if (propName = 'eventName') then EventNameElement := nil
   else if (propName = 'eventData') then EventDataElement := nil
+  else if (propName = 'eventCondition') then EventConditionElement := nil
   else
     inherited deleteProperty(propName, value);
 end;
@@ -23993,6 +24525,7 @@ begin
   if (propName = 'type') then Type_Element := asEnum(SYSTEMS_TFhirTriggerTypeEnum, CODES_TFhirTriggerTypeEnum, new){4}
   else if (propName = 'eventName') then EventNameElement := asString(new){5b}
   else if (propName = 'eventData') then EventDataElement := new as TFhirDataRequirement{4}
+  else if (propName = 'eventCondition') then EventConditionElement := new as TFhirTriggerDefinitionEventCondition{4}
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -24009,7 +24542,7 @@ end;
 
 function TFhirTriggerDefinition.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FEventName) and isEmptyProp(FEventTiming) and isEmptyProp(FEventData);
+  result := inherited isEmpty  and isEmptyProp(FType_) and isEmptyProp(FEventName) and isEmptyProp(FEventTiming) and isEmptyProp(FEventData) and isEmptyProp(FEventCondition);
 end;
 
 function TFhirTriggerDefinition.equalsDeep(other : TFHIRObject) : boolean; 
@@ -24024,7 +24557,8 @@ begin
   begin
     o := TFhirTriggerDefinition(other);
     result := compareDeep(type_Element, o.type_Element, true) and compareDeep(eventNameElement, o.eventNameElement, true) and 
-      compareDeep(eventTimingElement, o.eventTimingElement, true) and compareDeep(eventDataElement, o.eventDataElement, true);
+      compareDeep(eventTimingElement, o.eventTimingElement, true) and compareDeep(eventDataElement, o.eventDataElement, true) and 
+      compareDeep(eventConditionElement, o.eventConditionElement, true);
   end;
 end;
 
@@ -24113,6 +24647,12 @@ Procedure TFhirTriggerDefinition.SetEventData(value : TFhirDataRequirement);
 begin
   FEventData.free;
   FEventData := value;
+end;
+
+Procedure TFhirTriggerDefinition.SetEventCondition(value : TFhirTriggerDefinitionEventCondition);
+begin
+  FEventCondition.free;
+  FEventCondition := value;
 end;
 
 

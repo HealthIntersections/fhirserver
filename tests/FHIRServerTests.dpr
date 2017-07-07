@@ -254,7 +254,8 @@ uses
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   OSXTests in '..\reference-platform\support\Tests\OSXTests.pas',
-  OSXUtils in '..\reference-platform\support\OSXUtils.pas';
+  OSXUtils in '..\reference-platform\support\OSXUtils.pas',
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
 
 var
   runner : ITestRunner;

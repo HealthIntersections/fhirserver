@@ -232,7 +232,8 @@ uses
   XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
-  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
 
 {$R *.res}
 

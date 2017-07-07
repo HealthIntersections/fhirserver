@@ -61,7 +61,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "FHIR Release 3 Updates"
+        as.returnvalue = "Add Code Generation Capability"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -133,7 +133,7 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Seattle
+        delphiversion = Delphi10Berlin
         description = "Compile the Plugin"
         eurekalogverboselogging = false
         frameworktype = VCL
@@ -215,7 +215,7 @@ begin
           mapfile = 0
           maxstacksize = 1048576
           minstacksize = 16384
-          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
           openstrings = true
           optimisation = true
           outputdir = "C:\\Users\\Grahame Grieve\\AppData\\Roaming\\Notepad\+\+\\plugins"

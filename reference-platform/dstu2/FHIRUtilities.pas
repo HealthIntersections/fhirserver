@@ -218,6 +218,7 @@ type
   public
     function baseDefinition : String;
     function baseType : String;
+    function type_ : String;
   end;
 
   TFHIRResourceHelper = class helper for TFHIRResource
@@ -4240,6 +4241,11 @@ begin
 end;
 
 function TFhirStructureDefinitionHelper.baseType: String ;
+begin
+  result := constrainedType;
+end;
+
+function TFhirStructureDefinitionHelper.type_: String;
 begin
   result := constrainedType;
 end;

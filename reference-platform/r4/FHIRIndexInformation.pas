@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-06-23T08:55:29+10:00
+// FHIR v3.1.0 generated 2017-07-06T22:27:40+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -89,6 +89,7 @@ Type
     procedure buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -406,9 +407,9 @@ begin
   indexes.add('BodyStructure', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('BodyStructure', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('BodyStructure', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('BodyStructure', 'code', 'Morphology', SearchParamTypeTOKEN, [], 'BodyStructure.code', SearchXpathUsageNormal);
   indexes.add('BodyStructure', 'identifier', 'Bodystructure identifier', SearchParamTypeTOKEN, [], 'BodyStructure.identifier', SearchXpathUsageNormal);
   indexes.add('BodyStructure', 'location', 'Body site', SearchParamTypeTOKEN, [], 'BodyStructure.location', SearchXpathUsageNormal);
+  indexes.add('BodyStructure', 'morphology', 'Kind of Structure', SearchParamTypeTOKEN, [], 'BodyStructure.morphology', SearchXpathUsageNormal);
   indexes.add('BodyStructure', 'patient', 'Who this is about', SearchParamTypeREFERENCE, ['Patient'], 'BodyStructure.patient', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'BodyStructure', ['patient']);
 end;
@@ -856,7 +857,7 @@ begin
   indexes.add('Condition', 'severity', 'The severity of the condition', SearchParamTypeTOKEN, [], 'Condition.severity', SearchXpathUsageNormal);
   indexes.add('Condition', 'stage', 'Simple summary (disease specific)', SearchParamTypeTOKEN, [], 'Condition.stage.summary', SearchXpathUsageNormal);
   indexes.add('Condition', 'subject', 'Who has the condition?', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'Condition.subject', SearchXpathUsageNormal);
-  indexes.add('Condition', 'verification-status', 'provisional | differential | confirmed | refuted | entered-in-error | unknown', SearchParamTypeTOKEN, [], 'Condition.verificationStatus', SearchXpathUsageNormal);
+  indexes.add('Condition', 'verification-status', 'unconfirmed | provisional | differential | confirmed | refuted | entered-in-error | unknown', SearchParamTypeTOKEN, [], 'Condition.verificationStatus', SearchXpathUsageNormal);
   compartments.register(frtEncounter, 'Condition', ['context']);
   compartments.register(frtPatient, 'Condition', ['patient', 'asserter']);
   compartments.register(frtPractitioner, 'Condition', ['asserter']);
@@ -1346,6 +1347,35 @@ begin
   indexes.add('EpisodeOfCare', 'type', 'Type/class  - e.g. specialist referral, disease management', SearchParamTypeTOKEN, [], 'DocumentManifest.type | DocumentReference.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type | Composition.type | DocumentReference.type | Composition.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'EpisodeOfCare', ['patient']);
   compartments.register(frtPractitioner, 'EpisodeOfCare', ['care-manager']);
+end;
+
+procedure TFHIRIndexBuilder.buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('EventDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'composed-of', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EventDefinition.relatedArtifact.where(type=''composed-of'').resource', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'date', 'The event definition publication date', SearchParamTypeDATE, [], 'EventDefinition.date', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'depends-on', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EventDefinition.relatedArtifact.where(type=''depends-on'').resource', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'derived-from', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EventDefinition.relatedArtifact.where(type=''derived-from'').resource', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'description', 'The description of the event definition', SearchParamTypeSTRING, [], 'EventDefinition.description', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'effective', 'The time during which the event definition is intended to be in use', SearchParamTypeDATE, [], 'EventDefinition.effectivePeriod', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'identifier', 'External identifier for the event definition', SearchParamTypeTOKEN, [], 'EventDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'jurisdiction', 'Intended jurisdiction for the event definition', SearchParamTypeTOKEN, [], 'EventDefinition.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'name', 'Computationally friendly name of the event definition', SearchParamTypeSTRING, [], 'EventDefinition.name', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'predecessor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EventDefinition.relatedArtifact.where(type=''predecessor'').resource', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'publisher', 'Name of the publisher of the event definition', SearchParamTypeSTRING, [], 'EventDefinition.publisher', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'status', 'The current status of the event definition', SearchParamTypeTOKEN, [], 'EventDefinition.status', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'successor', 'What resource is being referenced', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'EventDefinition.relatedArtifact.where(type=''successor'').resource', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'title', 'The human-friendly name of the event definition', SearchParamTypeSTRING, [], 'EventDefinition.title', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'topic', 'Topics associated with the module', SearchParamTypeTOKEN, [], 'EventDefinition.topic', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'url', 'The uri that identifies the event definition', SearchParamTypeURI, [], 'EventDefinition.url', SearchXpathUsageNormal);
+  indexes.add('EventDefinition', 'version', 'The business version of the event definition', SearchParamTypeTOKEN, [], 'EventDefinition.version', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -3187,6 +3217,7 @@ begin
   buildIndexesForEnrollmentRequest(Indexes, compartments);
   buildIndexesForEnrollmentResponse(Indexes, compartments);
   buildIndexesForEpisodeOfCare(Indexes, compartments);
+  buildIndexesForEventDefinition(Indexes, compartments);
   buildIndexesForExpansionProfile(Indexes, compartments);
   buildIndexesForExplanationOfBenefit(Indexes, compartments);
   buildIndexesForFamilyMemberHistory(Indexes, compartments);
