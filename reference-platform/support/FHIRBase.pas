@@ -46,6 +46,8 @@ Const
   SYSTEM_NOT_APPLICABLE = '%%null%%';
 
 Type
+  TFHIRVersion = (fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);
+
   {@Enum TFHIRCommandType
     Possible command types supported by HL7Connect FHIR interfaces
   }

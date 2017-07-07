@@ -312,7 +312,8 @@ uses
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
   MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas',
-  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

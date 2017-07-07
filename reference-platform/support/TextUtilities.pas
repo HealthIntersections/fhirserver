@@ -35,6 +35,7 @@ Uses
 
 function FormatTextToHTML(AStr: String): String; // translate ready for use in HTML
 function FormatTextToXML(AStr: String): String;
+function FormatCodeToXML(AStr: String): String;
 function FormatXMLToHTML(AStr : String):String;
 function FormatXMLToHTMLPlain(AStr : String):String;
 function FormatXMLForTextArea(AStr: String): String;
@@ -114,6 +115,41 @@ begin
   end;
 end;
 
+
+function FormatCodeToXML(AStr: String): String;
+var
+  i: Integer;
+begin
+  Result := '';
+  if Length(AStr) <= 0 then
+    exit;
+  i := 1;
+  while i <= Length(AStr) do
+    begin
+    case AStr[i] of
+      '''':
+        Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
+      '"':
+        Result := Result + '&quot;';
+      '&':
+        Result := Result + '&amp;';
+      '<':
+        Result := Result + '&lt;';
+      '>':
+        Result := Result + '&gt;';
+      #32:
+        Result := Result + ' ';
+      else
+        begin
+        if CharInSet(AStr[i], [#13, #10, ' '..'~']) then
+          Result := Result + AStr[i]
+        else
+          Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
+        end;
+      end;
+    Inc(i);
+    end;
+end;
 
 function FormatTextToXML(AStr: String): String;
 var

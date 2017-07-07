@@ -6,30 +6,51 @@ uses
   SysUtils, Classes, Character,
   StringSupport, DateSupport,
   AdvObjects,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRXhtml;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRXhtml, FHIRUtilities;
 
 type
   TFHIRCodeGenerator = class (TAdvObject)
   private
     FResource: TFHIRResource;
     FContext: TWorkerContext;
+    FVersion: TFHIRVersion;
+
+    lines : TStringList;
+    vars : TStringList;
+
+    procedure line(indent : integer; s : String);
+    function addVar(inScope : TArray<String>; varName : String) : TArray<String>;
+
     procedure SetResource(const Value: TFHIRResource);
     procedure SetContext(const Value: TWorkerContext);
   protected
     function getElementDefinition(sd : TFhirStructureDefinition; path : String) : TFhirElementDefinition;
     function enumify(code : String) : String;
   public
+    Constructor Create; Override;
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
     property Context : TWorkerContext read FContext write SetContext;
+    property Version : TFHIRVersion read FVersion write FVersion;
 
     function generate : String; virtual;
     function languageName : String; virtual;
   end;
 
   TFHIRCodeGeneratorJavaRI = class (TFHIRCodeGenerator)
+  private
+    imports : TStringList;
+    function verPack : String;
+    function varName(fhirType: String; sd : TFhirStructureDefinition; defn : TFhirElementDefinition; inScope: TArray<String>; var vt : String; var def : String): string;
+    procedure processXhtml(indent : integer; variableName: String; value : TFHIRObject);
+    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
+    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+    procedure processResource;
   public
+    Constructor Create; Override;
+    Destructor Destroy; Override;
     function languageName : String; override;
+    function generate : String; override;
   end;
 
   TFHIRCodeGeneratorJavaHapi = class (TFHIRCodeGenerator)
@@ -40,16 +61,12 @@ type
   TFHIRCodeGeneratorPascal = class (TFHIRCodeGenerator)
   private
     units : TStringList;
-    vars : TStringList;
-    lines : TStringList;
 
-    procedure line(indent : integer; s : String);
     function varName(fhirType: String; defn : TFhirElementDefinition; inScope: TArray<String>): string;
-    function addVar(inScope : TArray<String>; varName : String) : TArray<String>;
-    procedure processResource;
-    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
-    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
     procedure processXhtml(indent : integer; variableName: String; value : TFHIRObject);
+    procedure processAssignment(indent : integer; variableName: String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop : TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
+    procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+    procedure processResource;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -65,26 +82,97 @@ type
     function languageName : String; override;
   end;
 
+function makeCodeGenerator(lang : String) : TFHIRCodeGenerator;
 
 implementation
 
-{ TFHIRCodeGenerator }
-
-destructor TFHIRCodeGenerator.Destroy;
+function makeCodeGenerator(lang : String) : TFHIRCodeGenerator;
 begin
-  FResource.free;
-  FContext.Free;
-  inherited;
+  if (StringArrayExistsSensitive(['java', 'java-ri'], lang)) then
+    result := TFHIRCodeGeneratorJavaRI.Create
+  else if (StringArrayExistsSensitive(['pascal', 'delphi'], lang)) then
+    result := TFHIRCodeGeneratorPascal.Create
+  else
+    raise Exception.Create('Unknown code generation language '+lang);
+end;
+
+const
+  typeNames : array of String = ['boolean', 'integer', 'string', 'decimal', 'uri', 'base64Binary', 'instant', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'markdown', 'unsignedInt', 'positiveInt'];
+  varNames :  array of String = ['b', 'i', 's', 'd', 'u', 'b64', 'inst', 'd', 'dt', 't', 'c', 's', 's', 's', 'i', 'i'];
+
+function capitalize(s : String): String;
+begin
+  if s = '' then
+    result := s
+  else
+    result := Uppercase(s[1]) + s.Substring(1);
+end;
+
+function isXhtml(defn : TFhirElementDefinition) : boolean;
+begin
+  result := (defn.type_List.Count = 1) and (defn.type_List[0].code = 'xhtml');
 end;
 
 function delphiIse(s : String) : String;
 begin
   if (StringArrayExistsInsensitive(['and', 'array', 'as', 'asm', 'begin', 'case', 'class', 'const', 'constructor', 'create', 'destructor', 'dispinterface', 'div', 'do', 'downto', 'else', 'end', 'except', 'exports', 'file', 'finalization', 'finally', 'for', 'function', 'goto', 'if', 'implementation', 'in', 'inherited', 'initialization', 'inline', 'interface', 'is', 'label', 'library', 'link', 'mod', 'nil', 'not', 'object', 'of', 'or', 'out',
-    'packed', 'procedure', 'program', 'property', 'raise', 'record', 'repeat', 'resourcestring', 'set', 'shl', 'shr', 'string', 'then', 'threadvar', 'to', 'try', 'type', 'unit', 'until', 'uses', 'var', 'while', 'with', 'xor'
-    ], s)) then
+    'packed', 'procedure', 'program', 'property', 'raise', 'record', 'repeat', 'resourcestring', 'set', 'shl', 'shr', 'string', 'then', 'threadvar', 'to', 'try', 'type', 'unit', 'until', 'uses', 'var', 'while', 'with', 'xor'], s)) then
     result := s + '_'
   else
     result := s;
+end;
+
+function javaise(s : String) : String;
+begin
+  if (StringArrayExistsInsensitive(['abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const', 'continue', 'default', 'double', 'do', 'else', 'enum', 'extends', 'false', 'final', 'finally', 'float', 'for', 'goto', 'if', 'implements', 'import', 'instanceof', 'int', 'interface', 'long', 'native', 'new', 'null', 'package', 'private', 'protected', 'public', 'return', 'short', 'static', 'strictfp', 'super',
+    'switch', 'synchronized', 'this', 'throw', 'throws', 'transient', 'true', 'try', 'void', 'volatile', 'while', 'Exception'], s)) then
+    result := s + '_'
+  else
+    result := s;
+end;
+
+function isAbstractType(code : string) : boolean;
+begin
+  result := StringArrayExistsSensitive(['Element', 'BackboneElement', 'Resource', 'DomainResource'], code);
+end;
+
+
+{ TFHIRCodeGenerator }
+
+constructor TFHIRCodeGenerator.Create;
+begin
+  inherited;
+  lines := TStringList.create;
+  vars := TStringList.Create;
+  vars.NameValueSeparator := ':';
+  {$IFDEF FHIR4}
+  FVersion := fhirVersionRelease1;
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FVersion := fhirVersionRelease3;
+  {$ENDIF}
+  {$IFDEF FHIR2}
+  FVersion := fhirVersionRelease2;
+  {$ENDIF}
+end;
+
+destructor TFHIRCodeGenerator.Destroy;
+begin
+  FResource.free;
+  FContext.Free;
+  lines.Free;
+  vars.Free;
+  inherited;
+end;
+
+function TFHIRCodeGenerator.addVar(inScope: TArray<String>; varName: String): TArray<String>;
+var
+  i : integer;
+begin
+  setLength(result, length(inscope)+1);
+  for I := 0 to length(inScope) - 1 do
+    result[i] := inscope[i];
+  result[length(inscope)] := varName;
 end;
 
 
@@ -158,11 +246,277 @@ begin
   FResource := Value;
 end;
 
+procedure TFHIRCodeGenerator.line(indent : integer; s: String);
+begin
+  lines.Add(StringPadLeft('', ' ', indent)+ s);
+end;
+
 { TFHIRCodeGeneratorJavaRI }
+
+constructor TFHIRCodeGeneratorJavaRI.Create;
+begin
+  inherited;
+  imports := TStringList.create;
+  imports.Duplicates := dupIgnore;
+end;
+
+destructor TFHIRCodeGeneratorJavaRI.Destroy;
+begin
+  imports.free;
+  inherited;
+end;
+
+function TFHIRCodeGeneratorJavaRI.generate: String;
+var
+  b : TStringBuilder;
+  s : String;
+begin
+  processResource;
+  b := TStringBuilder.Create;
+  try
+    imports.Sort;
+    for s in imports do
+    begin
+      b.Append('//import ');
+      b.Append(s);
+      b.Append(';');
+      b.AppendLine;
+    end;
+    b.AppendLine;
+    b.AppendLine;
+    for s in lines do
+    begin
+      b.Append(s);
+      b.AppendLine;
+    end;
+    b.AppendLine;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
 
 function TFHIRCodeGeneratorJavaRI.languageName: String;
 begin
   result := 'Java (for reference implementation)';
+end;
+
+procedure TFHIRCodeGeneratorJavaRI.processResource;
+var
+  sd : TFHIRStructureDefinition;
+begin
+  imports.Add('org.hl7.fhir.'+verPack+'.model.Enumerations.*');
+  imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType);
+  imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType+'.*');
+  vars.Values['res'] := resource.fhirType;
+  line(4, resource.fhirType + ' res = new '+resource.fhirType+'();');
+  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType) as TFhirStructureDefinition;
+  try
+    processObject(4, 'res', resource.fhirType, sd, resource, addVar([], ' res'));
+  finally
+    sd.free;
+  end;
+end;
+
+procedure TFHIRCodeGeneratorJavaRI.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
+var
+  props : TFHIRPropertyList;
+  prop : TFHIRProperty;
+  value : TFHIRObject;
+  vn, vt, vdef : String;
+  defn : TFhirElementDefinition;
+  first : boolean;
+begin
+  props := obj.createPropertyList(true);
+  try
+    for prop in props do
+      if prop.hasValue then
+      begin
+        defn := getElementDefinition(sd, path+'.'+prop.Name);
+        if prop.IsList then
+        begin
+          if (defn <> nil) and (defn.type_List.IsEmpty) then
+            vn := varName(path+'.'+prop.Name, sd, defn, inScope, vt, vdef)
+          else
+            vn := varName(prop.Values[0].fhirType, sd, defn, inScope, vt, vdef);
+          first := true;
+          for value in prop.Values do
+          begin
+            if first then
+              line(indent, vdef+vn +' = '+name+'.add'+capitalize(prop.Name)+'();')
+            else
+              line(indent, vn +' = '+name+'.add'+capitalize(prop.Name)+'();');
+            first := false;
+            processAssignment(indent, vn, true, sd, path, prop, value, addVar(inScope, vn), defn);
+          end;
+        end
+        else if isXhtml(defn) then
+          processXhtml(indent, name, prop.values[0])
+        else
+          processAssignment(indent, name, false, sd, path, prop, prop.Values[0], inScope, defn);
+      end;
+  finally
+    props.Free;
+  end;
+end;
+
+procedure TFHIRCodeGeneratorJavaRI.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
+var
+  t : String;
+  vs : TFhirValueSet;
+  tsd : TFhirStructureDefinition;
+  vn, an, vt, vdef : string;
+begin
+  t := value.fhirType; // prop.Type_;
+  if varIsSelf then
+    an := variableName+'.setValue'
+  else
+    an := variableName+'.set'+capitalize(javaise(prop.Name.Replace('[x]', ''))+'');
+
+  if StringArrayExistsSensitive(['string', 'id', 'markdown', 'uri', 'base64Binary', 'oid', 'id'], t) then
+    line(indent, an+'("'+value.primitiveValue+'");')
+  else if t = 'code' then
+  begin
+    vs := nil;
+    if (defn <> nil) and (defn.binding <> nil) and (defn.binding.strength = BindingStrengthRequired) and (defn.binding.ValueSet <> nil) then
+      if (defn.binding.valueSet is TFhirUri) then
+        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirUri).value) as TFHIRValueSet
+      else
+        vs := FContext.fetchResource(frtValueSet, (defn.binding.valueSet as TFhirReference).reference) as TFHIRValueSet;
+    try
+      if (vs <> nil) then
+        line(indent, an+'('+vs.name+'.'+enumify(value.primitiveValue).ToUpper+');')
+      else
+        line(indent, an+'("'+value.primitiveValue+'");')
+    finally
+      vs.Free;
+    end;
+  end
+  else if StringArrayExistsSensitive(['integer', 'decimal', 'unsignedInt', 'positiveInt', 'boolean'], t) then
+    line(indent, an+'('+value.primitiveValue+');')
+  else if StringArrayExistsSensitive(['date', 'dateTime', 'instant'], t) then
+  begin
+    imports.add('org.hl7.fhir.'+verPack+'.model.DateTimeType');
+    if (prop.Type_.Contains('|')) then
+      line(indent, an+'(new DateTimeType("'+value.primitiveValue+'"));')
+    else
+      line(indent, an+'Element(new DateTimeType("'+value.primitiveValue+'"));')
+  end
+  // we assume this is an object
+  else
+  begin
+    tsd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType) as TFhirStructureDefinition;
+    if (tsd <> nil) then
+    begin
+      try
+        if varIsSelf then
+          processObject(indent+2, variableName, tsd.type_, tsd, value, inScope)
+        else
+        begin
+          vn := varName(value.fhirType, sd, defn, inScope, vt, vdef);
+          line(indent, vdef+vn +' = new '+vt+'();');
+          line(indent, '  '+variableName+'.set'+capitalize(prop.Name.Replace('[x]', ''))+'('+vn+');');
+          processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
+        end;
+      finally
+        tsd.Free;
+      end;
+    end
+    else if varIsSelf then
+      processObject(indent+2, variableName, path+'.'+prop.Name, sd, value, inScope)
+    else
+    begin
+      vn := varName(path+'.'+prop.Name, sd, defn, inScope, vt, vdef);
+      line(indent, vdef+vn +' = new '+vt+'();');
+      line(indent, '  '+variableName+'.set'+capitalize(prop.Name.Replace('[x]', ''))+'('+vn+');');
+      processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
+    end;
+  end;
+end;
+
+procedure TFHIRCodeGeneratorJavaRI.processXhtml(indent: integer; variableName: String; value: TFHIRObject);
+var
+  s : String;
+begin
+  imports.add('org.hl7.fhir.utilities.xhtml.XhtmlParser');
+  s := TFHIRXhtmlParser.compose(value as TFhirXHtmlNode);
+  s := '"'+s.Replace('"', '\"')+'"';
+  line(indent, variableName+'.setDiv(new XhtmlParser().parse('+s+', "div"));');
+end;
+
+function TFHIRCodeGeneratorJavaRI.varName(fhirType: String; sd : TFhirStructureDefinition; defn : TFhirElementDefinition; inScope: TArray<String>; var vt : String; var def : String): string;
+  function isOkTouse(name : string) : boolean;
+  begin
+    if StringArrayIndexOfSensitive(inScope, name) > -1 then
+      result := false
+    else if vars.Values[name] = '' then
+      result := true
+    else
+      result := vars.Values[name] = vt;
+  end;
+var
+  ch : Char;
+  i : integer;
+  last : boolean;
+  s,pfx : String;
+begin
+  // figure out the type
+  pfx := '';
+  if (defn.type_List.IsEmpty) or ((defn.type_List.count = 1) and isAbstractType(defn.type_List[0].code)) then
+  begin
+    pfx := sd.type_+'.';
+    if (defn.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name')) then
+      vt := defn.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-explicit-type-name')
+    else
+      vt := capitalize(defn.path.Substring(defn.path.LastIndexOf('.')+1));
+    vt := vt+'Component';
+  end
+  else if (StringArrayExistsSensitive(['date', 'dateTime', 'instant'], fhirType)) then
+    vt := 'DateTimeType'
+  else
+    vt := capitalize(fhirType);
+
+  i := StringArrayIndexOfSensitive(typenames, fhirType);
+  if (i > -1) then
+    result := varNames[i]
+  else
+  begin
+    result := '';
+    last := true;
+    for ch in fhirType do
+      if ch.IsUpper or last then
+      begin
+        result := result + ch.ToLower;
+        last := ch = '.';
+      end;
+  end;
+  if not isOkToUse(result) then
+  begin
+    i := 1;
+    while not isOkToUse(result+inttostr(i))do
+      inc(i);
+    result := result + inttostr(i);
+  end;
+  imports.Add('org.hl7.fhir.'+verPack+'.model.'+pfx+vt);
+  imports.Add('org.hl7.fhir.'+verPack+'.model.'+pfx+vt+'.*');
+  if vars.Values[result] = '' then
+  begin
+    def := vt+' ';
+    vars.Values[result] := vt;
+  end
+  else
+    def := '';
+end;
+
+
+function TFHIRCodeGeneratorJavaRI.verPack: String;
+begin
+  case FVersion of
+    fhirVersionRelease1: result := 'dstu1';
+    fhirVersionRelease2: result := 'dstu2';
+    fhirVersionRelease3: result := 'dstu3';
+    fhirVersionRelease4: result := 'r4';
+  end;
 end;
 
 { TFHIRCodeGeneratorJavaHapi }
@@ -174,31 +528,16 @@ end;
 
 { TFHIRCodeGeneratorPascal }
 
-function TFHIRCodeGeneratorPascal.addVar(inScope: TArray<String>; varName: String): TArray<String>;
-var
-  i : integer;
-begin
-  setLength(result, length(inscope)+1);
-  for I := 0 to length(inScope) - 1 do
-    result[i] := inscope[i];
-  result[length(inscope)] := varName;
-end;
-
 constructor TFHIRCodeGeneratorPascal.Create;
 begin
   inherited;
   units := TStringList.Create;
   units.duplicates := dupIgnore;
-  vars := TStringList.Create;
-  vars.NameValueSeparator := ':';
-  lines := TStringList.create;
 end;
 
 destructor TFHIRCodeGeneratorPascal.Destroy;
 begin
-  vars.Free;
   units.Free;
-  lines.Free;
   inherited;
 end;
 
@@ -253,19 +592,6 @@ end;
 function TFHIRCodeGeneratorPascal.languageName: String;
 begin
   result := 'Pascal';
-end;
-
-procedure TFHIRCodeGeneratorPascal.line(indent : integer; s: String);
-begin
-  lines.Add(StringPadLeft('', ' ', indent)+ s);
-end;
-
-function capitalize(s : String): String;
-begin
-  if s = '' then
-    result := s
-  else
-    result := Uppercase(s[1]) + s.Substring(1);
 end;
 
 procedure TFHIRCodeGeneratorPascal.processAssignment(indent: integer; variableName : String; varIsSelf : boolean; sd : TFhirStructureDefinition; path : String; prop: TFHIRProperty; value : TFHIRObject; inScope : TArray<String>; defn : TFhirElementDefinition);
@@ -347,11 +673,6 @@ begin
   end;
 end;
 
-function isXhtml(defn : TFhirElementDefinition) : boolean;
-begin
-  result := (defn.type_List.Count = 1) and (defn.type_List[0].code = 'xhtml');
-end;
-
 procedure TFHIRCodeGeneratorPascal.processObject(indent: integer; name, path : String; sd : TFhirStructureDefinition; obj: TFHIRObject; inScope : TArray<String>);
 var
   props : TFHIRPropertyList;
@@ -427,15 +748,6 @@ procedure TFHIRCodeGeneratorPascal.processXhtml(indent: integer; variableName: S
 begin
   units.add('FHIRXhtml');
   line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(''en'', xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
-end;
-
-const
-  typeNames : array of String = ['boolean', 'integer', 'string', 'decimal', 'uri', 'base64Binary', 'instant', 'date', 'dateTime', 'time', 'code', 'oid', 'id', 'markdown', 'unsignedInt', 'positiveInt'];
-  varNames :  array of String = ['b', 'i', 's', 'd', 'u', 'b64', 'inst', 'd', 'dt', 't', 'c', 's', 's', 's', 'i', 'i'];
-
-function isAbstractType(code : string) : boolean;
-begin
-  result := StringArrayExistsSensitive(['Element', 'BackboneElement', 'Resource', 'DomainResource'], code);
 end;
 
 function TFHIRCodeGeneratorPascal.varName(fhirType: String; defn : TFhirElementDefinition; inScope: TArray<String>): string;

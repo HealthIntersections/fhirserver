@@ -43,7 +43,7 @@ uses
   FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager,
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
-  FHIRServerContext, FHIRStorageService, FHIRServerConstants;
+  FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -289,6 +289,18 @@ type
 
 
   TFhirGenerateQAOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function HandlesRequest(request : TFHIRRequest) : boolean; override;
+  end;
+
+  TFhirGenerateCodeOperation = class (TFHIROperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -782,6 +794,7 @@ begin
   FOperations.add(TFhirGenerateDocumentOperation.create);
   FOperations.add(TFhirPatientEverythingOperation.create);
   FOperations.add(TFhirGenerateQAOperation.create);
+  FOperations.add(TFhirGenerateCodeOperation.create);
   FOperations.add(TFhirHandleQAPostOperation.create);
   FOperations.add(TFhirQuestionnaireGenerationOperation.create);
   FOperations.add(TFhirProcessClaimOperation.create);
@@ -6422,6 +6435,106 @@ end;
 
 procedure TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
+end;
+
+{ TFhirGenerateCodeOperation }
+
+function TFhirGenerateCodeOperation.Name: String;
+begin
+  result := 'codegen';
+end;
+
+function TFhirGenerateCodeOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirGenerateCodeOperation.Types: TFhirResourceTypeSet;
+begin
+  result := ALL_RESOURCE_TYPES;
+end;
+
+function TFhirGenerateCodeOperation.HandlesRequest(request: TFHIRRequest): boolean;
+begin
+  result := inherited HandlesRequest(request);
+end;
+
+function TFhirGenerateCodeOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirGenerateCodeOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirGenerateCodeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  res : TFHIRResource;
+  codegen : TFHIRCodeGenerator;
+  code, genlang : String;
+  resourceKey : integer;
+  needSecure : boolean;
+  params : TFhirParameters;
+  oo : TFHIROperationOutcome;
+  issue : TFhirOperationOutcomeIssue;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    begin
+      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments)) then
+      begin
+        params := makeParams(request);
+        try
+          if request.Id <> '' then // and it must exist, because of the check above
+            res := manager.GetResourceById(request, request.ResourceName, request.Id, request.baseUrl, needSecure)
+          else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
+            res := request.Resource.Link
+          else if params.hasParameter('resource') then
+            res := params.res['resource'].Link
+          else
+            raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
+          try
+            genlang := params.str['language'];
+            codegen := makeCodeGenerator(genlang);
+            try
+              codegen.Resource := res.Link;
+              codegen.Context := manager.ServerContext.ValidatorContext.Link;
+              code := codegen.generate;
+            finally
+              codegen.free;
+            end;
+          finally
+            res.Free;
+          end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.Body := '';
+          response.LastModifiedDate := now;
+          oo := TFHIROperationOutcome.create;
+          response.Resource := oo;
+          oo.text := TFhirNarrative.Create;
+          code := '<div><pre>'+FormatCodeToXML(code)+'</pre></div>';
+          oo.text.div_ := TFHIRXhtmlParser.parse('en', xppReject, [], code);
+          issue := oo.issueList.Append;
+          issue.severity := IssueSeverityInformation;
+          issue.code := IssueTypeInformational;
+        finally
+          params.Free;
+        end;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
 end;
 
 { TFhirHandleQAPostOperation }
