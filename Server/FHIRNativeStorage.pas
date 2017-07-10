@@ -8430,19 +8430,19 @@ begin
 
   req := TCDSHookRequest.Create(request.Resource as TFhirParameters);
   try
-    if req.activity = nil then
+    if req.hook = '' then
       raise Exception.Create('No activity found');
 
     resp := TCDSHookResponse.Create;
     try
-      if TCDSHooks.isIdentifierView(req.activity) then
+      if TCDSHooks.isIdentifierView(req.hook) then
         executeIdentifierView(manager, request, req, resp)
-      else if TCDSHooks.isCodeView(req.activity) then
+      else if TCDSHooks.isCodeView(req.hook) then
         executeCodeView(manager, request, req, resp)
-      else if TCDSHooks.isPatientView(req.activity) then
+      else if TCDSHooks.isPatientView(req.hook) then
         executePatientView(manager, request, req, resp)
       else
-        raise Exception.Create('Unsupported activity: '+req.activity.system+'##'+req.activity.code);
+        raise Exception.Create('Unsupported activity: '+req.hook);
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Resource := resp.AsParams;

@@ -156,7 +156,8 @@ uses
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
-  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
+  CDSHooksServer in '..\Server\CDSHooksServer.pas';
 
 {$R *.res}
 

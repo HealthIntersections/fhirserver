@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Types, RTLConsts, {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Generics.Collections, Generics.Defaults,
+  Classes, Types, RTLConsts, {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Generics.Collections, Generics.Defaults,
   AdvObjects;
 
 Type
@@ -213,6 +213,7 @@ Type
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
+    FSortedKeys : TStringList;
 
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
@@ -330,9 +331,11 @@ Type
     FValueCollection: TValueCollection;
     function GetKeys: TKeyCollection;
     function GetValues: TValueCollection;
+    function GetSortedKeys: TStringList;
   public
     function GetEnumerator: TAdvPairEnumerator; reintroduce;
     property Keys: TKeyCollection read GetKeys;
+    property SortedKeys : TStringList read GetSortedKeys;
     property Values: TValueCollection read GetValues;
     property OnKeyNotify: TCollectionNotifyEvent<String> read FOnKeyNotify write FOnKeyNotify;
     property OnValueNotify: TCollectionNotifyEvent<T> read FOnValueNotify write FOnValueNotify;
@@ -1293,6 +1296,7 @@ begin
   FItems[gap].Value := Default(T);
   Dec(FCount);
 
+  FreeAndNil(FSortedKeys);
   KeyNotify(Key, Notification);
   ValueNotify(Result, Notification);
 end;
@@ -1354,6 +1358,7 @@ begin
   FItems[Index].Value := Value;
   Inc(FCount);
 
+  FreeAndNil(FSortedKeys);
   KeyNotify(Key, cnAdded);
   ValueNotify(Value, cnAdded);
 end;
@@ -1436,6 +1441,22 @@ begin
   if FKeyCollection = nil then
     FKeyCollection := TKeyCollection.Create(Self);
   Result := FKeyCollection;
+end;
+
+function TAdvMap<T>.GetSortedKeys: TStringList;
+var
+  list : TStringList;
+  p : TAdvPair<T>;
+  i : integer;
+begin
+  if FSortedKeys = nil then
+  begin
+    list := TStringList.Create;
+    for p in self do
+      list.AddObject(p.Key, p.Value);
+    list.Sort;
+  end;
+  result := FSortedKeys;
 end;
 
 function TAdvMap<T>.GetValues: TValueCollection;

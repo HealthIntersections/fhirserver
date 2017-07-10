@@ -321,7 +321,7 @@
         <DCCReference Include="..\reference-platform\dstu3\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRNarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
@@ -337,7 +337,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireballTests.pas"/>
@@ -375,6 +375,8 @@
         <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRCodeGenerator.pas"/>
+        <DCCReference Include="CDSHooksServer.pas"/>
+        <DCCReference Include="CDSHooksServices.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -466,16 +468,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -817,7 +810,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

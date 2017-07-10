@@ -29,9 +29,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR4}
-This is the dstu3 version of the FHIR code
-{$ENDIF}
 
 
 {
@@ -108,15 +105,14 @@ type
   private
     Fname: String;
     FpreFetch: TStringList;
-    Factivity: TFHIRCoding;
-    procedure Setactivity(const Value: TFHIRCoding);
+    FHook : String;
   public
     constructor Create; override;
     Destructor Destroy; Override;
     Function Link : TRegisteredCDSHook; overload;
 
     property name : String read Fname write Fname;
-    property activity : TFHIRCoding read Factivity write Setactivity;
+    property hook : String read FHook write FHook;
     property preFetch : TStringList read FpreFetch;
   end;
 
@@ -142,9 +138,9 @@ type
     procedure writeToJson(o : TJsonObject);
     procedure readFromJson(o : TJsonObject);
 
-    function addCdsHook(name : String; activity : TFHIRCoding) : TRegisteredCDSHook;
+    function addCdsHook(name : String; hook : String) : TRegisteredCDSHook;
     function cdshookSummary : String;
-    function doesHook(c : TFHIRCoding) : boolean;
+    function doesHook(c : string) : boolean;
 
     // user casual name for the server
     property name : String read Fname write Fname;
@@ -367,12 +363,12 @@ end;
 
 { TRegisteredFHIRServer }
 
-function TRegisteredFHIRServer.addCdsHook(name: String; activity: TFHIRCoding): TRegisteredCDSHook;
+function TRegisteredFHIRServer.addCdsHook(name: String; hook: String): TRegisteredCDSHook;
 begin
   result := TRegisteredCDSHook.Create;
   try
     result.name := name;
-    result.activity := activity;
+    result.hook := hook;
     cdshooks.add(result.link);
   finally
     result.Free;
@@ -414,13 +410,13 @@ begin
   inherited;
 end;
 
-function TRegisteredFHIRServer.doesHook(c: TFHIRCoding): boolean;
+function TRegisteredFHIRServer.doesHook(c: string): boolean;
 var
   h : TRegisteredCDSHook;
 begin
   result := false;
   for h in cdshooks do
-    if (c.system = h.activity.system) and (c.code = h.activity.code) then
+    if (c = h.hook) then
       exit(true);
 end;
 
@@ -464,9 +460,7 @@ begin
       o1 := n as TJsonObject;
       c := TRegisteredCDSHook.Create;
       cdshooks.Add(c);
-      c.activity := TFhirCoding.Create;
-      c.activity.system := o1.vStr['system'];
-      c.activity.code := o1.vStr['code'];
+      c.hook := o1.vStr['hook'];
       c.name := o1.vStr['name'];
       arr := o.arr['prefetch'];
       if arr <> nil then
@@ -506,8 +500,7 @@ begin
     for c in cdshooks do
     begin
       o := arr.addObject;
-      o.vStr['system'] := c.activity.system;
-      o.vStr['code'] := c.activity.code;
+      o.vStr['hook'] := c.hook;
       o.vStr['name'] := c.name;
       if (c.preFetch.Count > 0) then
       begin
@@ -530,19 +523,12 @@ end;
 destructor TRegisteredCDSHook.Destroy;
 begin
   FPrefetch.Free;
-  Factivity.free;
   inherited;
 end;
 
 function TRegisteredCDSHook.Link: TRegisteredCDSHook;
 begin
   result := TRegisteredCDSHook(inherited Link);
-end;
-
-procedure TRegisteredCDSHook.Setactivity(const Value: TFHIRCoding);
-begin
-  Factivity.free;
-  Factivity := Value;
 end;
 
 

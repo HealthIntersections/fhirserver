@@ -74,7 +74,7 @@ Uses
   FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
   FHIRServerConstants, FHIRServerContext, ServerUtilities,
-  SCIMServer;
+  SCIMServer, CDSHooksServices;
 
 Type
   TFHIRServerDataStore = class (TFHIRNativeStorageService)
@@ -583,6 +583,8 @@ begin
       ctxt.userProvider := TSCIMServer.Create(Fdb.link, FWebServer.SourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
+      FWebServer.CDSHooksServer.registerService(TCDAHooksConceptService.create);
+      FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
       FWebServer.Start(not FNotServing);
     finally

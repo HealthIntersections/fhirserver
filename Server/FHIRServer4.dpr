@@ -257,7 +257,7 @@ uses
   NarrativeGenerator in '..\reference-platform\r4\NarrativeGenerator.pas',
   FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRNarrativeGenerator in '..\reference-platform\r4\FHIRNarrativeGenerator.pas',
-  SmartOnFhirUtilities in '..\reference-platform\r4\SmartOnFhirUtilities.pas',
+  SmartOnFhirUtilities in '..\reference-platform\support\SmartOnFhirUtilities.pas',
   FhirPath in '..\reference-platform\r4\FhirPath.pas',
   FHIRTags in '..\reference-platform\r4\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
@@ -273,7 +273,7 @@ uses
   FHIRClient in '..\reference-platform\r4\FHIRClient.pas',
   FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas',
   ClosureManager in 'ClosureManager.pas',
-  CDSHooksUtilities in '..\reference-platform\r4\CDSHooksUtilities.pas',
+  CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   AccessControlEngine in 'AccessControlEngine.pas',
@@ -304,7 +304,9 @@ uses
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
-  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
+  CDSHooksServer in 'CDSHooksServer.pas',
+  CDSHooksServices in 'CDSHooksServices.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

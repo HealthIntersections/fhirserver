@@ -178,7 +178,7 @@ uses
   NarrativeGenerator in '..\reference-platform\r4\NarrativeGenerator.pas',
   FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
   FHIRNarrativeGenerator in '..\reference-platform\r4\FHIRNarrativeGenerator.pas',
-  SmartOnFhirUtilities in '..\reference-platform\r4\SmartOnFhirUtilities.pas',
+  SmartOnFhirUtilities in '..\reference-platform\support\SmartOnFhirUtilities.pas',
   FhirPath in '..\reference-platform\r4\FhirPath.pas',
   FHIRTags in '..\reference-platform\r4\FHIRTags.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
@@ -194,7 +194,7 @@ uses
   FHIRClient in '..\reference-platform\r4\FHIRClient.pas',
   FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas',
   ClosureManager in '..\server\ClosureManager.pas',
-  CDSHooksUtilities in '..\reference-platform\r4\CDSHooksUtilities.pas',
+  CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   AccessControlEngine in '..\server\AccessControlEngine.pas',
@@ -255,7 +255,9 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   OSXTests in '..\reference-platform\support\Tests\OSXTests.pas',
   OSXUtils in '..\reference-platform\support\OSXUtils.pas',
-  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas';
+  FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
+  CDSHooksServices in '..\Server\CDSHooksServices.pas',
+  CDSHooksServer in '..\Server\CDSHooksServer.pas';
 
 var
   runner : ITestRunner;

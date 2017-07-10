@@ -28,66 +28,72 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR2}
-This is the dstu2 version of the FHIR code
-{$ENDIF}
-
 
 interface
 
 uses
   SysUtils, Classes, ActiveX,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
-  AdvObjects, AdvGenerics, AdvThreads,
+  AdvObjects, AdvGenerics, AdvThreads, AdvJson, AdvStringStreams,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRClient, FHIRParser;
 
 type
   TCDSHooks = class
   public
-    class function patientView : TFhirCoding;
-    class function isPatientView(c : TFhirCoding) : boolean;
+    class function patientView : String;
+    class function isPatientView(c : String) : boolean;
 
-    class function codeView : TFhirCoding;
-    class function isCodeView(c : TFhirCoding) : boolean;
+    class function codeView : String;
+    class function isCodeView(c : String) : boolean;
 
-    class function identifierView : TFhirCoding;
-    class function isIdentifierView(c : TFhirCoding) : boolean;
+    class function identifierView : String;
+    class function isIdentifierView(c : String) : boolean;
 
-    class function allHooks : TAdvList<TFhirCoding>;
-    class function isKnownHook(c : TFhirCoding) : boolean;
+    class function allHooks : TStringList;
+    class function isKnownHook(c : String) : boolean;
+  end;
+
+  TCDSRequestOAuthDetails = class (TAdvObject)
+  private
+    FExpires : integer;
+    FScopes : string;
+    FToken : string;
+  public
+    Property Expires : integer read FExpires write FExpires;
+    Property Scopes : string read FScopes write FScopes;
+    Property Token : string read FToken write FToken;
   end;
 
   TCDSHookRequest = class (TAdvObject)
   private
-    Fencounter: String;
-    FoauthExpires: Integer;
-    FfhirServer: String;
-    Fpatient: String;
-    FoauthScope: String;
-    FactivityInstance: String;
-    Fuser: String;
-    FoauthToken: String;
-    Factivity: TFHIRCoding;
+    FHook : String;
+    FHookInstance : String;
+    FFhirServer: String;
+    Foauth: TCDSRequestOAuthDetails;
     Fredirect: String;
+    Fuser: String;
+    Fpatient: String;
+    Fencounter: String;
     FContext: TAdvList<TFHIRResource>;
     FBundle : TFHIRBundle;
-    procedure Setactivity(const Value: TFHIRCoding);
+
     procedure SetBundle(const Value: TFHIRBundle);
   public
     constructor Create; Overload; Override;
     constructor Create(params : TFHIRParameters); Overload;
+    constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookRequest; overload;
     function hash : Integer;
 
     function AsParams : TFHIRParameters;
-    property activity : TFHIRCoding read Factivity write Setactivity;
-    property activityInstance : String read FactivityInstance write FactivityInstance;
+    function AsJson : String;
+
+    property hook : String read FHook write FHook;
+    property hookInstance : String read FHookInstance write FHookInstance;
     property fhirServer : String read FfhirServer write FfhirServer;
-    property oauthToken : String read FoauthToken write FoauthToken;
-    property oauthScope : String read FoauthScope write FoauthScope;
-    property oauthExpires : Integer read FoauthExpires write FoauthExpires;
+    property oauth : TCDSRequestOAuthDetails read Foauth write Foauth;
     property redirect : String read Fredirect write Fredirect;
     property user : String read Fuser write Fuser;
     property patient : String read Fpatient write Fpatient;
@@ -99,31 +105,43 @@ type
   TCDSHookCardSuggestion = class (TAdvObject)
   private
     FLabel: String;
+    FUUID: String;
+    FCreate: String;
+    FDelete: String;
   public
     constructor Create; Overload; Override;
     constructor Create(params : TFHIRParametersParameter); Overload;
+    constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCardSuggestion; overload;
     function AsParam : TFHIRParametersParameter;
+    procedure AsJson(json : TJsonWriter);
 
     property label_ : String read FLabel write FLabel;
+    property uuid : String read FUUID write FUUID;
+    property create_ : String read FCreate write FCreate;
+    property delete : String read FDelete write FDelete;
   end;
 
   TCDSHookCardLink = class (TAdvObject)
   private
     FLabel: String;
     FUrl: String;
+    FType: String;
   public
     constructor Create; Overload; Override;
     constructor Create(params : TFHIRParametersParameter); Overload;
+    constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCardLink; overload;
     function AsParam : TFHIRParametersParameter;
+    procedure AsJson(json : TJsonWriter);
 
     property label_ : String read FLabel write FLabel;
     property url : String read FUrl write FUrl;
+    property type_ : String read FType write FType;
   end;
 
   TCDSHookCard = class (TAdvObject)
@@ -138,16 +156,18 @@ type
   public
     constructor Create; Overload; Override;
     constructor Create(params : TFHIRParametersParameter); Overload;
+    constructor Create(json : TJsonObject); Overload;
     constructor Create(summary, sourceLabel : String); Overload;
     constructor Create(summary, detail, sourceLabel : String); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCard; overload;
     function AsParam : TFHIRParametersParameter;
+    procedure AsJson(json : TJsonWriter);
 
     property summary : String read Fsummary write Fsummary;
-    property indicator : String read Findicator write Findicator;
     property detail : String read Fdetail write Fdetail;
+    property indicator : String read Findicator write Findicator;
     property sourceLabel : String read FsourceLabel write FsourceLabel;
     property sourceURL : String read FSourceURL write FSourceURL;
     property suggestions : TAdvList<TCDSHookCardSuggestion> read FSuggestions;
@@ -156,19 +176,42 @@ type
     procedure addLink(label_, uri : String);
   end;
 
+  TCDSHookDecision = class (TAdvObject)
+  private
+    FCreate: TStringList;
+    FDelete: TStringList;
+  public
+    constructor Create; Overload; Override;
+    constructor Create(params : TFHIRParametersParameter); Overload;
+    constructor Create(json : TJsonObject); Overload;
+    destructor Destroy; override;
+
+    function Link : TCDSHookDecision; overload;
+    function AsParam : TFHIRParametersParameter;
+    procedure AsJson(json : TJsonWriter);
+
+    property Create_ : TStringList read FCreate;
+    property Delete : TStringList read FDelete;
+  end;
+
   TCDSHookResponse = class (TAdvObject)
   private
     FCards: TAdvList<TCDSHookCard>;
+    FDecisions : TAdvList<TCDSHookDecision>;
   public
     constructor Create; Overload; Override;
     constructor Create(params : TFHIRParameters); Overload;
+    constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookResponse; overload;
     function AsParams : TFHIRParameters;
+    function AsJson : String;
 
     property cards : TAdvList<TCDSHookCard> read FCards;
     function addCard : TCDSHookCard;
+    property decisions : TAdvList<TCDSHookDecision> read FDecisions;
+    function addDecision : TCDSHookDecision;
   end;
 
   TCDSHookCache = class (TAdvObject)
@@ -525,6 +568,64 @@ end;
 
 { TCDSHookRequest }
 
+function TCDSHookRequest.AsJson: String;
+var
+  ss : TAdvStringStream;
+  writer : TJSONWriter;
+  c : TFhirResource;
+  comp : TFHIRJsonComposer;
+begin
+  ss := TAdvStringStream.Create;
+  try
+    writer := TJSONWriter.Create;
+    try
+      writer.HasWhitespace := true;
+      writer.Stream := ss.Link;
+      writer.Start;
+      writer.Value('hook', FHook);
+      writer.Value('hookInstance', FHookInstance);
+      writer.Value('fhirServer', FfhirServer);
+      if (Foauth <> nil) then
+      begin
+        writer.ValueObject('oauth');
+        writer.Value('token', Foauth.Token);
+        writer.Value('scope', Foauth.Scopes);
+        writer.Value('expires', Foauth.Expires);
+        writer.FinishObject;
+      end;
+      writer.Value('redirect', Fredirect);
+      writer.Value('user', Fuser);
+      writer.Value('patient', Fpatient);
+      writer.Value('encounter', Fencounter);
+      writer.ValueArray('oauth');
+      for c in context do
+      begin
+        comp := TFHIRJsonComposer.create(nil, 'en');
+        try
+          comp.Compose(writer, c);
+        finally
+          comp.Free;
+        end;
+      end;
+      if preFetchData <> nil then
+      begin
+        comp := TFHIRJsonComposer.create(nil, 'en');
+        try
+          comp.Compose(writer, preFetchData);
+        finally
+          comp.Free;
+        end;
+      end;
+      writer.Finish;
+    finally
+      writer.Free;
+    end;
+    result := ss.Data;
+  finally
+    ss.Free;
+  end;
+end;
+
 function TCDSHookRequest.AsParams: TFHIRParameters;
 var
   p : TFhirParametersParameter;
@@ -532,16 +633,16 @@ var
 begin
   result := TFHIRParameters.create;
   try
-    result.AddParameter('activity', Factivity.Link);
-    result.AddParameter('activityInstance', TFHIRString.Create(FactivityInstance));
+    result.AddParameter('hook', FHook);
+    result.AddParameter('hookInstance', FHookInstance);
     result.AddParameter('fhirServer', TFHIRUri.Create(FfhirServer));
-    if (FoauthToken <> '') then
+    if (Foauth <> nil) then
     begin
       p := Result.parameterList.Append;
       p.name := 'oauth';
-      p.AddParameter('token', TFHIRString.Create(FoauthToken));
-      p.AddParameter('scope', TFHIRString.Create(FoauthScope));
-      p.AddParameter('expires', TFhirInteger.Create(inttostr(FoauthExpires)));
+      p.AddParameter('token', TFHIRString.Create(Foauth.Token));
+      p.AddParameter('scope', TFHIRString.Create(Foauth.Scopes));
+      p.AddParameter('expires', TFhirInteger.Create(inttostr(Foauth.Expires)));
     end;
     result.AddParameter('redirect', TFHIRUri.Create(Fredirect));
     result.AddParameter('user', TFHIRString.Create(Fuser));
@@ -571,16 +672,17 @@ begin
   Fencounter := params.str['encounter'];
   FfhirServer := params.str['fhirServer'];
   Fpatient := params.str['patient'];
-  FactivityInstance := params.str['activityInstance'];
+  FHookInstance := params.str['hookInstance'];
   Fuser := params.str['user'];
   Fredirect := params.str['redirect'];
-  Factivity := (params['activity'] as TFHIRCoding).Link;
+  Fhook := params.str['hook'];
   p := params.param['oauth'];
   if (p <> nil) then
   begin
-    FoauthExpires := StrToIntDef(p.str['expires'], 0);
-    FoauthScope := p.str['scope'];
-    FoauthToken := p.str['token'];
+    Foauth := TCDSRequestOAuthDetails.Create;
+    Foauth.Expires := StrToIntDef(p.str['expires'], 0);
+    Foauth.Scopes := p.str['scope'];
+    Foauth.Token := p.str['token'];
   end;
   for p in params.parameterList do
     if p.name = 'context' then
@@ -589,11 +691,57 @@ begin
       preFetchData := (p.resource as TFhirBundle).Link;
 end;
 
+constructor TCDSHookRequest.Create(json: TJsonObject);
+var
+  a : TJsonArray;
+  o : TJsonObject;
+  n : TJsonNode;
+  p : TFHIRJsonParser;
+begin
+  Create;
+  Fencounter := json.str['encounter'];
+  FfhirServer := json.str['fhirServer'];
+  Fpatient := json.str['patient'];
+  FHookInstance := json.str['hookInstance'];
+  Fuser := json.str['user'];
+  Fredirect := json.str['redirect'];
+  FHook := json.str['hook'];
+  o := json.obj['oauth'];
+  if (o <> nil) then
+  begin
+    Foauth := TCDSRequestOAuthDetails.Create;
+    Foauth.Expires := StrToIntDef(o.str['expires'], 0);
+    Foauth.Scopes := o.str['scope'];
+    Foauth.Token := o.str['token'];
+  end;
+  a := json.arr['context'];
+  for n in a do
+  begin
+    p := TFHIRJsonParser.Create(nil, 'en');
+    try
+      p.Parse(TJsonObject(n));
+      FContext.Add(p.resource.Link);
+    finally
+      p.Free;
+    end;
+  end;
+  o := json.obj['prefetch'];
+  if (o <> nil) then
+  begin
+    p := TFHIRJsonParser.Create(nil, 'en');
+    try
+      p.Parse(o);
+      FBundle := p.resource.Link as TFhirBundle;
+    finally
+      p.Free;
+    end;
+  end;
+end;
+
 destructor TCDSHookRequest.Destroy;
 begin
   FBundle.Free;
   FContext.Free;
-  Factivity.Free;
   inherited;
 end;
 
@@ -622,12 +770,6 @@ begin
   result := TCDSHookRequest(inherited Link);
 end;
 
-procedure TCDSHookRequest.Setactivity(const Value: TFHIRCoding);
-begin
-  Factivity.Free;
-  Factivity := Value;
-end;
-
 procedure TCDSHookRequest.SetBundle(const Value: TFHIRBundle);
 begin
   FBundle.Free;
@@ -636,11 +778,28 @@ end;
 
 { TCDSHookCardSuggestion }
 
+procedure TCDSHookCardSuggestion.AsJson(json: TJsonWriter);
+begin
+  json.Value('label', FLabel);
+  if (uuid <> '') then
+    json.Value('uuid', FUUID);
+  if (FCreate <> '') then
+    json.Value('create', FCreate);
+  if (FDelete <> '') then
+    json.Value('delete', FDelete);
+end;
+
 function TCDSHookCardSuggestion.AsParam: TFHIRParametersParameter;
 begin
   result := TFhirParametersParameter.Create;
   try
     result.AddParameter('label', FLabel);
+    if (uuid <> '') then
+      result.AddParameter('uuid', FUUID);
+    if (FCreate <> '') then
+      result.AddParameter('create', FCreate);
+    if (FDelete <> '') then
+      result.AddParameter('delete', FDelete);
     result.link;
   finally
     result.free;
@@ -657,6 +816,9 @@ constructor TCDSHookCardSuggestion.Create(params: TFHIRParametersParameter);
 begin
   Create;
   FLabel := params.str['label'];
+  FUUID := params.str['uuid'];
+  FCreate := params.str['create'];
+  FDelete := params.str['delete'];
 end;
 
 destructor TCDSHookCardSuggestion.Destroy;
@@ -671,7 +833,25 @@ begin
 
 end;
 
+constructor TCDSHookCardSuggestion.Create(json: TJsonObject);
+begin
+  Create;
+  FLabel := json.str['label'];
+  FUUID := json.str['uuid'];
+  FCreate := json.str['create'];
+  FDelete := json.str['delete'];
+end;
+
 { TCDSHookCardLink }
+
+procedure TCDSHookCardLink.AsJson(json: TJsonWriter);
+begin
+  json.Value('label', FLabel);
+  if FUrl <> '' then
+    json.Value('url', FURL);
+  if FType <> '' then
+    json.Value('type', FType);
+end;
 
 function TCDSHookCardLink.AsParam: TFHIRParametersParameter;
 begin
@@ -679,6 +859,7 @@ begin
   try
     result.AddParameter('label', FLabel);
     result.AddParameter('url', FUrl);
+    result.AddParameter('type', FType);
 
     result.link;
   finally
@@ -697,6 +878,7 @@ begin
   Create;
   FLabel := params.str['label'];
   FUrl := params.str['url'];
+  FType := params.str['type'];
 end;
 
 destructor TCDSHookCardLink.Destroy;
@@ -708,6 +890,14 @@ end;
 function TCDSHookCardLink.Link: TCDSHookCardLink;
 begin
   result := TCDSHookCardLink(inherited Link);
+end;
+
+constructor TCDSHookCardLink.Create(json: TJsonObject);
+begin
+  Create;
+  FLabel := json.str['label'];
+  FUrl := json.str['url'];
+  FType := json.str['type'];
 end;
 
 { TCDSHookCard }
@@ -723,6 +913,39 @@ begin
     links.Add(link.Link);
   finally
     link.Free;
+  end;
+end;
+
+procedure TCDSHookCard.AsJson(json: TJsonWriter);
+var
+  link : TCDSHookCardLink;
+  suggestion : TCDSHookCardSuggestion;
+begin
+  json.Value('summary', Fsummary);
+  if Findicator <> '' then
+    json.Value('indicator', Findicator);
+  if Fdetail <> '' then
+    json.Value('detail', Fdetail);
+  if (sourceLabel <> '') then
+  begin
+    json.ValueObject('source');
+    json.Value('label', FsourceLabel);
+    json.Value('url', FSourceURL);
+    json.FinishObject;
+  end;
+  if FLinks.Count > 0 then
+  begin
+    json.ValueArray('links');
+    for link in FLinks do
+      link.AsJson(json);
+    json.FinishArray;
+  end;
+  if FSuggestions.Count > 0 then
+  begin
+    json.ValueArray('suggestions');
+    for suggestion in FSuggestions do
+      suggestion.AsJson(json);
+    json.FinishArray;
   end;
 end;
 
@@ -783,6 +1006,7 @@ begin
       FLinks.Add(TCDSHookCardLink.Create(p))
 end;
 
+
 destructor TCDSHookCard.Destroy;
 begin
   FSuggestions.Free;
@@ -810,12 +1034,70 @@ begin
   self.sourceLabel := sourceLabel;
 end;
 
+constructor TCDSHookCard.Create(json: TJsonObject);
+var
+  p : TJsonObject;
+  n : TJsonNode;
+begin
+  Create;
+  Fsummary := json.str['summary'];
+  Findicator := json.str['indicator'];
+  Fdetail := json.str['detail'];
+  p := json.obj['source'];
+  if (p <> nil) then
+  begin
+    FsourceLabel := p.str['label'];
+    FSourceURL := p.str['url'];
+  end;
+  for n in json.forceArr['suggestions'] do
+    FSuggestions.Add(TCDSHookCardSuggestion.Create(TJsonObject(n)));
+  for n in json.forceArr['links'] do
+    FLinks.Add(TCDSHookCardLink.Create(TJsonObject(n)));
+end;
+
+
+
 { TCDSHookResponse }
 
 function TCDSHookResponse.addCard: TCDSHookCard;
 begin
   result := TCDSHookCard.Create;
   cards.Add(result);
+end;
+
+function TCDSHookResponse.addDecision: TCDSHookDecision;
+begin
+  result := TCDSHookDecision.Create;
+  decisions.add(result);
+end;
+
+function TCDSHookResponse.AsJson: String;
+var
+  ss : TAdvStringStream;
+  writer : TJSONWriter;
+//  c : TFhirResource;
+//  comp : TFHIRJsonComposer;
+  card : TCDSHookCard;
+begin
+  ss := TAdvStringStream.Create;
+  try
+    writer := TJSONWriter.Create;
+    try
+      writer.HasWhitespace := true;
+      writer.Stream := ss.Link;
+      writer.Start;
+      writer.ValueArray('cards');
+      for card in FCards do
+        card.AsJson(writer);
+      writer.FinishArray;
+      writer.Finish;
+    finally
+      writer.Free;
+    end;
+    result := ss.Data;
+  finally
+    ss.Free;
+  end;
 end;
 
 function TCDSHookResponse.AsParams: TFHIRParameters;
@@ -837,6 +1119,22 @@ begin
   end;
 end;
 
+constructor TCDSHookResponse.Create(json: TJsonObject);
+var
+  a : TJsonArray;
+  n : TJsonNode;
+begin
+  Create;
+  a := json.arr['cards'];
+  if a <> nil then
+    for n in a do
+      cards.Add(TCDSHookCard.Create(TJsonObject(n)));
+  a := json.arr['decisions'];
+  if a <> nil then
+    for n in a do
+      decisions.Add(TCDSHookDecision.Create(TJsonObject(n)));
+end;
+
 constructor TCDSHookResponse.Create(params: TFHIRParameters);
 var
   p : TFHIRParametersParameter;
@@ -850,12 +1148,14 @@ end;
 constructor TCDSHookResponse.Create;
 begin
   inherited Create;
-  FCards := TAdvList<TCDSHookCard>.create
+  FCards := TAdvList<TCDSHookCard>.create;
+  FDecisions := TAdvList<TCDSHookDecision>.create;
 end;
 
 destructor TCDSHookResponse.Destroy;
 begin
   FCards.Free;
+  FDecisions.Free;
   inherited;
 end;
 
@@ -883,56 +1183,47 @@ end;
 
 { TCDSHooks }
 
-class function TCDSHooks.allHooks: TAdvList<TFhirCoding>;
+class function TCDSHooks.allHooks: TStringList;
 begin
-  result := TAdvList<TFhirCoding>.create;
+  result := TStringList.create;
   result.Add(codeView);
   result.Add(identifierView);
   result.Add(patientView);
 end;
 
-class function TCDSHooks.identifierView: TFhirCoding;
+class function TCDSHooks.identifierView: String;
 begin
-  result := TFhirCoding.Create;
-  result.system := 'http://cds-hooks.smarthealthit.org/activity';
-  result.code := 'identifier-view';
-  result.display := 'Provide any available information about an Identifier';
+  result := 'identifier-view';
 end;
 
-class function TCDSHooks.isIdentifierView(c: TFhirCoding): boolean;
+class function TCDSHooks.isIdentifierView(c: String): boolean;
 begin
-  result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'identifier-view');
+  result := (c = 'identifier-view');
 end;
 
-class function TCDSHooks.isKnownHook(c: TFhirCoding): boolean;
+class function TCDSHooks.isKnownHook(c: String): boolean;
 begin
   result := isPatientView(c) or isCodeView(c) or isIdentifierView(c);
 end;
 
-class function TCDSHooks.patientView: TFhirCoding;
+class function TCDSHooks.patientView: String;
 begin
-  result := TFhirCoding.Create;
-  result.system := 'http://cds-hooks.smarthealthit.org/activity';
-  result.code := 'patient-view';
-  result.display := 'Provide any important information about a patient';
+  result := 'patient-view';
 end;
 
-class function TCDSHooks.isPatientView(c: TFhirCoding): boolean;
+class function TCDSHooks.isPatientView(c: String): boolean;
 begin
-  result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'patient-view');
+  result := (c = 'patient-view');
 end;
 
-class function TCDSHooks.codeView: TFhirCoding;
+class function TCDSHooks.codeView: String;
 begin
-  result := TFhirCoding.Create;
-  result.system := 'http://cds-hooks.smarthealthit.org/activity';
-  result.code := 'code-view';
-  result.display := 'Provide any available information about a Coding/CodeableConcept';
+  result := 'code-view';
 end;
 
-class function TCDSHooks.isCodeView(c: TFhirCoding): boolean;
+class function TCDSHooks.isCodeView(c: String): boolean;
 begin
-  result := (c.system = 'http://cds-hooks.smarthealthit.org/activity') and (c.code = 'code-view');
+  result := (c = 'code-view');
 end;
 
 { TCDSHooksManager }
@@ -1088,7 +1379,7 @@ begin
   hash := inttostr(request.hash);
   for server in FServers do
   begin
-    if server.info.doesHook(request.activity) then
+    if server.info.doesHook(request.hook) then
     begin
       FLock.Lock;
       try
@@ -1229,6 +1520,9 @@ begin
           FClient := TFhirClient.Create(nil, server.fhirEndpoint, true);
           try
             FClient.timeout := 15000;
+            {$IFNDEF FHIR2}
+            FClient.allowR2 := true;
+            {$ENDIF}
             FClient.smartToken := token.link;
             pin := Frequest.AsParams;
             try
@@ -1296,6 +1590,56 @@ procedure TCDSHooksManagerWorkThread.SetToken(const Value: TSmartOnFhirAccessTok
 begin
   FToken.Free;
   FToken := Value;
+end;
+
+{ TCDSHookDecision }
+
+procedure TCDSHookDecision.AsJson(json: TJsonWriter);
+begin
+
+end;
+
+function TCDSHookDecision.AsParam: TFHIRParametersParameter;
+begin
+
+end;
+
+constructor TCDSHookDecision.Create;
+begin
+  inherited Create;
+  FCreate := TStringList.create;
+  FDelete := TStringList.create;
+end;
+
+constructor TCDSHookDecision.Create(json: TJsonObject);
+var
+  n : TJsonNode;
+begin
+  Create;
+  if json.has('create') then
+    for n in json.arr['create'] do
+      FCreate.add(TJsonString(n).value);
+  if json.has('delete') then
+    for n in json.arr['delete'] do
+      FDelete.add(TJsonString(n).value);
+end;
+
+constructor TCDSHookDecision.Create(params: TFHIRParametersParameter);
+begin
+  Create;
+  raise Exception.Create('Not done yet');
+end;
+
+destructor TCDSHookDecision.Destroy;
+begin
+  FCreate.Free;
+  FDelete.Free;
+  inherited;
+end;
+
+function TCDSHookDecision.Link: TCDSHookDecision;
+begin
+  result := TCDSHookDecision(inherited Link);
 end;
 
 { TCDSHooksManagerCachedResponse }

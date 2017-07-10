@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.153 2017-07-07</title>
+		<item><title>FHIRServer release 1.0.154 2017-07-10</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.154.exe</link>
+			<description>2017-07-10 (v1.0.154): Support for Hacking Health 2017</description>
+		</item>
+<item><title>FHIRServer release 1.0.153 2017-07-07</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.153.exe</link>
 			<description>2017-07-07 (v1.0.153): Add Code Generation</description>
 		</item>
-<item><title>FHIRServer release 1.0.152 2017-07-06</title>
+		<item><title>FHIRServer release 1.0.152 2017-07-06</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.152.exe</link>
 			<description>2017-07-06 (v1.0.152): fix bug expanding</description>
 		</item>

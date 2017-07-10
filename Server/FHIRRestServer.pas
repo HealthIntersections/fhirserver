@@ -83,7 +83,7 @@ Uses
   QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
-  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient,
+  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
@@ -211,6 +211,7 @@ Type
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
     FOWinSecurity : boolean;
+    FCDSHooksServer : TCDSHooksServer;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -293,6 +294,7 @@ Type
     Property SourcePath : String read FSourcePath;
     property Host : String read FHost;
     property OWinSecurity : boolean read FOWinSecurity write FOWinSecurity;
+    property CDSHooksServer : TCDSHooksServer read FCDSHooksServer;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -499,6 +501,7 @@ Begin
     logt(' ...paths: secure = '+FSecurePath)
   else
     logt(' ...paths: <none>');
+  FCDSHooksServer := TCDSHooksServer.create;
 
 //  FAuthRequired := FIni.ReadString('fhir', 'oauth-secure', '') = '1';
 //  FAppSecrets := FIni.ReadString('fhir', 'oauth-secrets', '');
@@ -506,6 +509,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  FCDSHooksServer.Free;
   carry.Free;
   FAdaptors.Free;
   FTerminologyWebServer.free;
@@ -667,8 +671,8 @@ begin
 
   req := TCDSHookRequest.Create;
   try
-    req.activity := TCDSHooks.patientView;
-    req.activityInstance := FServerContext.FormalURLPlain;  // arbitrary global
+    req.hook := TCDSHooks.patientView;
+    req.hookInstance := FServerContext.FormalURLPlain;  // arbitrary global
     req.patient := patient.id;
     req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
     req.preFetchData.id := NewGuidId;
@@ -921,7 +925,8 @@ begin
       HandleDiscoveryRedirect(AContext, request, response)
     else if request.document = '/.well-known/openid-configuration' then
       FAuthServer.HandleDiscovery(AContext, request, response)
-
+    else if request.Document.StartsWith(FBasePath+'/cds-services') and FCDSHooksServer.active then
+      FCDSHooksServer.HandleRequest(false, FBasePath, session, AContext, request, response)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
     else if request.Document.StartsWith(FBasePath, false) then
@@ -1067,6 +1072,8 @@ begin
       FTerminologyWebServer.Process(AContext, request, session, response, true)
     else if request.Document.StartsWith(FAuthServer.Path) then
       FAuthServer.HandleRequest(AContext, request, session, response)
+    else if request.Document.StartsWith(FSecurePath+'/cds-services') and FCDSHooksServer.active then
+      FCDSHooksServer.HandleRequest(true, FSecurePath, session, AContext, request, response)
     else if request.Document = '/' then
       ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
     else
