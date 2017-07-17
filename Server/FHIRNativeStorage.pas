@@ -105,19 +105,6 @@ type
     property DropDuplicates : boolean read FDropDuplicates write FDropDuplicates;
   end;
 
-  TMatchingResource = class (TAdvName)
-  private
-    key : integer;
-    version : integer;
-  end;
-
-  TMatchingResourceList = class (TAdvNameList)
-  private
-    function GetEntry(iIndex: Integer): TMatchingResource;
-  public
-    Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
-  end;
-
   TReferenceList = class (TStringList)
   public
     procedure seeReference(id : String);
@@ -177,15 +164,12 @@ type
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
 
-    function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource;
     function getResourceByReference(source : TFHIRResource; url, compartments : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
-    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>;
     function loadResources(keys : TList<integer>) : TAdvList<TFHIRResource>;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
-    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean;
     function FindResourceVersion(aType : String; sId, sVersionId : String; bAllowDeleted : boolean; var resourceVersionKey : integer; request: TFHIRRequest; response: TFHIRResponse): boolean;
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
@@ -197,7 +181,6 @@ type
     Procedure LoadTags(tags : TFHIRTagList; ResourceKey : integer);
     procedure CommitTags(tags : TFHIRTagList; key : integer);
     Procedure ProcessBlob(request: TFHIRRequest; response : TFHIRResponse; field : String; comp : TFHIRParserClass);
-    function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList;
     function ScanId(request : TFHIRRequest; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
     procedure FixXhtmlUrls(lang, base: String; ids: TFHIRTransactionEntryList; node: TFhirXHtmlNode);
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntry; ids : TFHIRTransactionEntryList);
@@ -273,6 +256,10 @@ type
 //    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
 
     function  LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
+    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; override;
+    function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; override;
+    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; override;
+    function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; override;
 
     Property TestServer : boolean read FTestServer write FTestServer;
     Property ServerContext : TFHIRServerContext read FServerContext;
@@ -440,25 +427,6 @@ type
   private
     procedure addResource(manager: TFHIRNativeOperationEngine; secure : boolean; bundle : TFHIRBundle; source : TFHIRDomainResource; reference : TFhirReference; required : boolean; compartments : String);
     procedure addSections(manager: TFHIRNativeOperationEngine; secure : boolean; bundle : TFHIRBundle; composition : TFhirComposition; sections : TFhirCompositionSectionList; compartments : String);
-  public
-    function Name : String; override;
-    function Types : TFhirResourceTypeSet; override;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
-  end;
-
-  TFhirGenerateCDSHookOperation = class (TFHIROperation)
-  private
-    procedure processPatientView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; context : TFHIRPatient; resp : TCDSHookResponse);
-    procedure addNamingSystemInfo(ns : TFHIRNamingSystem; baseUrl : String; resp : TCDSHookResponse);
-    procedure addSystemCard(resp : TCDSHookResponse; name, publisher, responsible, type_, usage, realm : String);
-
-    procedure executeIdentifierView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
-    procedure executeCodeView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
-    procedure executePatientView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; resp : TCDSHookResponse);
-  protected
-    function isWrite : boolean; override;
-    function owningResource : TFhirResourceType; override;
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
@@ -800,7 +768,6 @@ begin
   FOperations.add(TFhirProcessClaimOperation.create);
   FOperations.add(TFhirCurrentTestScriptOperation.create);
   FOperations.add(TFhirGenerateSnapshotOperation.create);
-  FOperations.add(TFhirGenerateCDSHookOperation.create);
   FOperations.add(TFhirGenerateTemplateOperation.create);
   FOperations.add(TFhirGenerateNarrativeOperation.create);
   FOperations.add(TFhirSuggestKeyWordsOperation.create);
@@ -7950,13 +7917,6 @@ begin
 end;
 
 
-{ TMatchingResourceList }
-
-function TMatchingResourceList.GetEntry(iIndex: Integer): TMatchingResource;
-begin
-  result := TMatchingResource(ObjectByIndex[iIndex]);
-end;
-
 { TFhirProcessClaimOperation }
 
 function TFhirProcessClaimOperation.CreateDefinition(base: String): TFHIROperationDefinition;
@@ -8304,304 +8264,6 @@ function TFhirGenerateSnapshotOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtStructureDefinition];
 end;
-
-{ TFhirGenerateCDSHookOperation }
-
-procedure TFhirGenerateCDSHookOperation.addNamingSystemInfo(ns: TFHIRNamingSystem; baseURL : String; resp: TCDSHookResponse);
-var
-  card : TCDSHookCard;
-  b : TStringBuilder;
-  cp : TFhirNamingSystemContact;
-  {$IFNDEF FHIR2}
-  uc : TFhirUsageContext;
-  {$ENDIF}
-  cc : TFhirCodeableConcept;
-begin
-  card := resp.addCard;
-  card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
-  b := TStringBuilder.Create;
-  try
-    b.append('* Identifier System Name: '+ns.name+#13#10);
-    if ns.publisher <> '' then
-      b.append('* Publisher: '+ns.publisher+#13#10);
-    if ns.responsible <> '' then
-      b.append('* Responsible: '+ns.responsible+#13#10);
-    if ns.type_ <> nil then
-      b.append('* Type: '+gen(ns.type_)+#13#10);
-    if ns.usage <> '' then
-      b.append('* Usage Notes: '+ns.usage+#13#10);
-
-    b.append(#13#10);
-
-    if (ns.useContextList.Count > 0) {$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
-    begin
-      b.Append('Contexts of Use'#13#10#13#10);
-      {$IFNDEF FHIR2}
-      for uc in ns.useContextList do
-        b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
-      for cc in ns.jurisdictionList do
-        b.Append('* Jurisdiction: '+gen(cc)+#13#10);
-      {$ELSE}
-      for cc in ns.useContextList do
-        b.Append('* '+gen(cc)+#13#10);
-      {$ENDIF}
-      b.append(#13#10);
-    end;
-
-    if ns.contactList.Count > 0 then
-    begin
-      b.Append('Contacts'#13#10#13#10);
-      for cp in ns.contactList do
-        b.Append('* '+cp.name+#13#10);
-      b.append(#13#10);
-    end;
-    card.detail := b.ToString;
-  finally
-    b.Free;
-  end;
-end;
-
-procedure TFhirGenerateCDSHookOperation.addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm : String);
-var
-  card : TCDSHookCard;
-  b : TStringBuilder;
-begin
-  card := resp.addCard;
-  b := TStringBuilder.Create;
-  try
-    b.append('* Identifier System Name: '+name+#13#10);
-    if publisher <> '' then
-      b.append('* Publisher: '+publisher+#13#10);
-    if responsible <> '' then
-      b.append('* Responsible: '+responsible+#13#10);
-    if type_ <> '' then
-      b.append('* Type: '+type_+#13#10);
-    if usage <> '' then
-      b.append('* Usage Notes: '+usage+#13#10);
-
-    b.append(#13#10);
-
-    if realm > '' then
-    begin
-      b.Append('Contexts of Use'#13#10#13#10);
-      b.Append('* '+realm+#13#10);
-      b.append(#13#10);
-    end;
-
-    card.detail := b.ToString;
-  finally
-    b.Free;
-  end;
-
-end;
-
-function TFhirGenerateCDSHookOperation.CreateDefinition(base: String): TFHIROperationDefinition;
-begin
-  result := nil;
-end;
-
-function TFhirGenerateCDSHookOperation.isWrite: boolean;
-begin
-  result := false;
-end;
-
-function TFhirGenerateCDSHookOperation.Name: String;
-begin
-  result := 'cds-hook';
-end;
-
-function TFhirGenerateCDSHookOperation.owningResource: TFhirResourceType;
-begin
-  result := frtNull;
-end;
-
-function TFhirGenerateCDSHookOperation.Types: TFhirResourceTypeSet;
-begin
-  result := [frtNull];
-end;
-
-procedure TFhirGenerateCDSHookOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
-var
-  req : TCDSHookRequest;
-  resp : TCDSHookResponse;
-begin
-  if not(request.Resource is TFhirParameters) then
-    raise Exception.Create('Expected Parameters Resource for a cds-hook operation ');
-
-  req := TCDSHookRequest.Create(request.Resource as TFhirParameters);
-  try
-    if req.hook = '' then
-      raise Exception.Create('No activity found');
-
-    resp := TCDSHookResponse.Create;
-    try
-      if TCDSHooks.isIdentifierView(req.hook) then
-        executeIdentifierView(manager, request, req, resp)
-      else if TCDSHooks.isCodeView(req.hook) then
-        executeCodeView(manager, request, req, resp)
-      else if TCDSHooks.isPatientView(req.hook) then
-        executePatientView(manager, request, req, resp)
-      else
-        raise Exception.Create('Unsupported activity: '+req.hook);
-      response.HTTPCode := 200;
-      response.Message := 'OK';
-      response.Resource := resp.AsParams;
-      response.LastModifiedDate := now;
-    finally
-      resp.Free;
-    end;
-  finally
-    req.Free;
-  end;
-end;
-
-procedure TFhirGenerateCDSHookOperation.executeIdentifierView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
-var
-  systems : TAdvList<TFHIRResource>;
-  id : TFhirIdentifier;
-  r : TFHIRResource;
-  card : TCDSHookCard;
-  needSecure : boolean;
-begin
-  id := nil;
-  for r in req.context do
-    if r is TFHIRParameters then
-      id := TFHIRParameters(r).param['identifier'].value as TFhirIdentifier;
-  if id = nil then
-    raise Exception.Create('No Code found for terminology-info');
-
-  if (id.type_ <> nil) then
-    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, id.type_, resp);
-
-  if (id.system <> '') then
-  begin
-    systems := Manager.getResourcesByParam(frtNamingSystem, 'value', id.system, needSecure);
-    try
-      for r in systems do
-        addNamingSystemInfo(r as TFHIRNamingSystem, request.baseUrl, resp);
-    finally
-      systems.Free;
-    end;
-  end;
-  if (id.system = 'urn:ietf:rfc:3986') then
-    addSystemCard(resp, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
-
-  for card in resp.cards do
-  begin
-    card.sourceLabel := manager.ServerContext.OwnerName;
-    card.sourceURL := request.baseUrl;
-    card.indicator := 'info';
-  end;
-end;
-
-procedure TFhirGenerateCDSHookOperation.executePatientView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
-var
-  pat : TFhirPatient;
-  entry : TFhirBundleEntry;
-begin
-  pat := nil;
-
-  if req.preFetchData <> nil then
-    for entry in req.preFetchData.entryList do
-      if (entry.resource <> nil) and (entry.resource is TFhirPatient) and (entry.resource.id = req.patient) then
-        pat := entry.resource as TFhirPatient;
-  processPatientView(manager, request, req, pat, resp);
-end;
-
-procedure TFhirGenerateCDSHookOperation.executeCodeView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req: TCDSHookRequest; resp: TCDSHookResponse);
-var
-  code : TFhirType;
-  r : TFhirResource;
-  card : TCDSHookCard;
-begin
-  code := nil;
-  for r in req.context do
-    if r is TFHIRParameters then
-      code := TFHIRParameters(r).param['code'].value;
-  if code = nil then
-    raise Exception.Create('No Code found for terminology-info');
-  if code is TFhirCoding then
-    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, code as TFHIRCoding, resp)
-  else
-    manager.ServerContext.TerminologyServer.getCodeView(request.Lang, code as TFHIRCodeableConcept, resp);
-  for card in resp.cards do
-  begin
-    card.sourceLabel := manager.ServerContext.OwnerName;
-    card.sourceURL := request.baseUrl;
-    card.indicator := 'info';
-  end;
-end;
-
-procedure TFhirGenerateCDSHookOperation.processPatientView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; context : TFHIRPatient; resp : TCDSHookResponse);
-var
-  patient : TFhirPatient;
-  resourceKey : integer;
-  matches, m : TMatchingResourceList;
-  id : TFhirIdentifier;
-  flag : TFhirFlag;
-  i : integer;
-  card : TCDSHookCard;
-  needSecure : boolean;
-begin
-  patient := nil;
-  try
-    // first, do we know the patient?
-    if manager.FindResource('Patient', context.id, false, resourceKey, request, nil, request.compartments) then
-      patient := manager.GetResourceById(request, 'Patient', context.Id, request.baseUrl, needSecure) as TFHIRPatient
-    else if context <> nil then
-    begin
-      matches := TMatchingResourceList.create;
-      try
-        for id in context.identifierList do
-        begin
-          m := manager.ResolveSearchId('Patient', request.compartmentId, request.compartments, request.baseURL, 'identifier='+id.system+'|'+id.value);
-          try
-            matches.AddAll(m);
-          finally
-            m.Free;
-          end;
-        end;
-        if matches.Count = 1 then
-          patient := manager.GetResourceByKey(matches[0].key, needSecure) as TFhirPatient;
-      finally
-        matches.Free;
-      end;
-    end;
-    if (patient <> nil) and (request.secure or not needSecure)  then
-    begin
-      m := manager.ResolveSearchId('Flag', request.compartmentId, request.compartments, request.baseURL, 'patient='+patient.id);
-      try
-        for i := 0 to m.Count - 1 do
-        begin
-          flag := manager.GetResourceByKey(m[i].key, needSecure) as TFhirFlag;
-          if (flag.status = FlagStatusActive) and (request.secure or not needSecure) then
-          begin
-            card := resp.addCard;
-            card.indicator := 'info';
-            if flag.author <> nil then
-            begin
-              card.sourceLabel := flag.author.display;
-              card.sourceURL := flag.author.reference;
-            end;
-            if card.sourceLabel = '' then
-              card.sourceLabel := manager.ServerContext.OwnerName;
-            if card.sourceURL = '' then
-              card.sourceURL := request.baseUrl;
-            if flag.code.text <> '' then
-              card.summary := flag.code.text
-            else if flag.code.codingList.Count > 0 then
-              card.summary := flag.code.codingList[0].display
-          end;
-        end;
-      finally
-        m.Free;
-      end;
-    end;
-  finally
-    patient.Free;
-  end;
-end;
-
 
 { TFhirGenerateTemplateOperation }
 

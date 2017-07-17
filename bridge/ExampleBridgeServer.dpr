@@ -115,7 +115,7 @@ uses
   libeay32 in '..\reference-platform\support\libeay32.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
-  CDSHooksUtilities in '..\reference-platform\dstu3\CDSHooksUtilities.pas',
+  CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas',
   FHIRClient in '..\reference-platform\dstu3\FHIRClient.pas',
   FHIRConstants in '..\reference-platform\dstu3\FHIRConstants.pas',
@@ -140,7 +140,7 @@ uses
   NarrativeGenerator in '..\reference-platform\dstu3\NarrativeGenerator.pas',
   QuestionnaireBuilder in '..\reference-platform\dstu3\QuestionnaireBuilder.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
-  SmartOnFhirUtilities in '..\reference-platform\dstu3\SmartOnFhirUtilities.pas',
+  SmartOnFhirUtilities in '..\reference-platform\support\SmartOnFhirUtilities.pas',
   TerminologyServices in '..\Libraries\TerminologyServices.pas',
   KDBLogging in '..\Libraries\db\KDBLogging.pas',
   KDBManager in '..\Libraries\db\KDBManager.pas',
@@ -209,7 +209,8 @@ uses
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
-  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas';
+  MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
+  CDSHooksServer in '..\Server\CDSHooksServer.pas';
 
 var
   gsrv : TExampleFhirServer;

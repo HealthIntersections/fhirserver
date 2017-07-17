@@ -7,15 +7,15 @@ uses
   IdHTTPServer, IdContext, IdCustomHTTPServer,
   AdvObjects, AdvGenerics, AdvJson,
   FHIRSupport,
-  CDSHooksUtilities;
+  CDSHooksUtilities, ServerUtilities, FHIRServerContext;
 
 type
   TCDSHooksService = class (TAdvObject)
   private
-    Procedure HandleRequest(secure : boolean; session : TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
+    Procedure HandleRequest(base : String; server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
   protected
     Procedure require(test : boolean; msg : String);
-    function HandleRequest(secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual;
+    function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual;
   public
     function hook : string; virtual; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
     function name : String; virtual;
@@ -24,13 +24,14 @@ type
     procedure registerPreFetch(json : TJsonObject); virtual;
   end;
 
-  TCDSHooksServer = class (TAdvObject)
+  TCDSHooksServer = class (TFHIRServerWorker)
   private
     FServices : TAdvMap<TCDSHooksService>;
     function GetActive: boolean;
     Procedure HandleServiceList(response: TIdHTTPResponseInfo);
+    function getBase(secure : boolean; basePath : String; request : TIdHTTPRequestInfo) : string;
   public
-    Constructor Create; override;
+    Constructor Create(ServerContext : TAdvObject);
     Destructor Destroy; override;
 
     procedure RegisterService(service : TCDSHooksService);
@@ -43,9 +44,9 @@ implementation
 
 { TCDSHooksServer }
 
-constructor TCDSHooksServer.Create;
+constructor TCDSHooksServer.Create(ServerContext : TAdvObject);
 begin
-  inherited;
+  inherited Create(ServerContext);
   FServices := TAdvMap<TCDSHooksService>.create;
 end;
 
@@ -60,12 +61,20 @@ begin
   result := FServices.Count > 0;
 end;
 
+function TCDSHooksServer.getBase(secure : boolean; basePath : String; request: TIdHTTPRequestInfo): string;
+begin
+  if secure then
+    result := 'https://'+request.Host+basePath
+  else
+    result := 'http://'+request.Host+basePath
+end;
+
 procedure TCDSHooksServer.HandleRequest(secure: boolean; basePath : String; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
   if request.Document = basePath+'/cds-services' then
     handleServiceList(response)
   else if FServices.ContainsKey(request.Document.Substring(basePath.Length + 14)) then
-    FServices[request.Document.Substring(basePath.Length + 14)].handleRequest(secure, session, context, request, response)
+    FServices[request.Document.Substring(basePath.Length + 14)].handleRequest(getBase(secure, basePath, request), TFHIRServerContext(ServerContext), secure, session, context, request, response)
   else
   begin
     response.ResponseNo := 404;
@@ -114,7 +123,7 @@ begin
   raise Exception.Create('Must override description() in '+className);
 end;
 
-procedure TCDSHooksService.HandleRequest(secure: boolean; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+procedure TCDSHooksService.HandleRequest(base : String; server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   jrequest, jresponse : TJsonObject;
   req : TCDSHookRequest;
@@ -129,7 +138,9 @@ begin
     try
       req := TCDSHookRequest.Create(jrequest);
       try
-        resp := HandleRequest(secure, session, context, req);
+        req.lang := request.AcceptLanguage;
+        req.baseURL := base;
+        resp := HandleRequest(server, secure, session, context, req);
         try
           response.ResponseNo := 200;
           response.ResponseText := 'OK';
@@ -155,7 +166,7 @@ begin
   end;
 end;
 
-function TCDSHooksService.HandleRequest(secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
+function TCDSHooksService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
 begin
   raise Exception.Create('Must override HandleRequest in '+className);
 end;
@@ -185,5 +196,6 @@ begin
   if not test then
     raise Exception.Create(msg);
 end;
+
 
 end.

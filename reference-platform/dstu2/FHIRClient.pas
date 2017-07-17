@@ -37,11 +37,12 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  StringSupport, EncodeSupport, GuidSupport,
   IdHTTP, IdSSLOpenSSL, MimeMessage,
-  AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches,
+  StringSupport, EncodeSupport, GuidSupport, DateSupport,
+  AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches, AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
-  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
+  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
+  SmartOnFhirUtilities, CDSHooksUtilities;
 
 Type
   EFHIRClientException = class (Exception)
@@ -88,6 +89,10 @@ Type
     function GetHeader(name : String) : String;
     function exchangeIndy(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
     function exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
+    function authoriseByOWinHttp(server, username,
+      password: String): TJsonObject;
+    function authoriseByOWinIndy(server, username,
+      password: String): TJsonObject;
   public
     constructor Create(worker : TWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -114,6 +119,10 @@ Type
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
+    function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
+
+    //authorization support
+    procedure authoriseByOWin(server, username, password : String);
 
     property OnClientStatus : TFHIRClientStatusEvent read FOnClientStatus write FOnClientStatus;
 
@@ -760,6 +769,53 @@ begin
   end;
 end;
 
+procedure TFhirClient.authoriseByOWin(server, username, password: String);
+var
+  token : TJsonObject;
+begin
+  if FUseIndy then
+    token := authoriseByOWinIndy(server, username, password)
+  else
+    token := authoriseByOWinHttp(server, username, password);
+  try
+  smartToken := TSmartOnFhirAccessToken.Create;
+    smartToken.accessToken := token.str['access_token'];
+    smartToken.expires := now + (StrToInt(token.num['expires_in']) * DATETIME_SECOND_ONE);
+  finally
+    token.Free;
+  end;
+end;
+
+function TFhirClient.authoriseByOWinHttp(server, username, password: String): TJsonObject;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+function TFhirClient.authoriseByOWinIndy(server, username, password: String): TJsonObject;
+var
+  ss : TStringStream;
+  resp : TMemoryStream;
+begin
+  createClient;
+  indy.Request.ContentType := 'application/x-www-form-encoded';
+
+  ss := TStringStream.Create('grant_type=password&username='+username+'&password='+(password));
+  try
+    resp := TMemoryStream.create;
+    Try
+      indy.Post(server, ss, resp);
+      if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
+        raise exception.create('unexpected condition');
+      resp.Position := 0;
+      result := TJSONParser.Parse(resp);
+    finally
+      resp.Free;
+    end;
+  finally
+    ss.Free;
+  end;
+end;
+
 procedure TFhirClient.cancelOperation;
 begin
   if not FUseIndy then
@@ -768,6 +824,11 @@ begin
     indy.Disconnect;
 end;
 
+
+function TFhirClient.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
+begin
+  result := nil;
+end;
 
 end.
 

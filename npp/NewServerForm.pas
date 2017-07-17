@@ -94,7 +94,7 @@ type
     function hookIndex(c : TFHIRCoding) : integer;
     procedure listHooks(list : TAdvList<TRegisteredCDSHook>);
     procedure loadHooks;
-    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList; var name: String; var c: TFHIRCoding);
+    procedure readExtension(ext: TFHIRExtension; preFetch: TStringList; var name: String; var c: String);
   public
     { Public declarations }
     procedure LoadFrom(i : integer);
@@ -130,7 +130,7 @@ var
   i : integer;
   cds : TRegisteredCDSHook;
   name : String;
-  c: TFHIRCoding;
+  c: String;
 begin
   list.Clear;
   for i := 0 to clHooks.Items.Count - 1 do
@@ -140,7 +140,7 @@ begin
       try
         readExtension(TFHIRExtension(clHooks.items.Objects[i]), cds.preFetch, name, c);
         cds.name := name;
-        cds.activity := c.Link;
+        cds.hook := c;
         list.Add(cds.link);
       finally
         cds.Free;
@@ -265,7 +265,7 @@ begin
     loadHooks;
 end;
 
-procedure TRegisterServerForm.readExtension(ext : TFHIRExtension; preFetch : TStringList; var name : String; var c : TFHIRCoding);
+procedure TRegisterServerForm.readExtension(ext : TFHIRExtension; preFetch : TStringList; var name : String; var c : String);
 var
   iext : TFhirExtension;
 begin
@@ -273,7 +273,7 @@ begin
     if iext.url = 'name' then
       name := (iext.value as TFhirPrimitiveType).primitiveValue
    else if iext.url = 'activity' then
-      c := iext.value as TFhirCoding
+      c := (iext.value as TFhirString).StringValue
    else if iext.url = 'preFetchMandatory' then
      if preFetch <> nil then
        preFetch.add(TFHIRPrimitiveType(iext.value).primitiveValue);
@@ -284,7 +284,7 @@ var
   ext, iext : TFhirExtension;
   rest : TFhirCapabilityStatementRest;
   name : String;
-  c : TFHIRCoding;
+  c : String;
   err : String;
 begin
   clHooks.items.Clear;
@@ -297,17 +297,17 @@ begin
       if ext.url = 'http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity' then
       begin
         err := '';
-        c := nil;
+        c := '';
         for iext in ext.extensionList do
           if iext.url = 'name' then
             name := (iext.value as TFhirPrimitiveType).primitiveValue
           else if iext.url = 'activity' then
           begin
-            if c <> nil then
+            if c <> '' then
               err := 'multiple activities found'
             else
             begin
-              c := iext.value as TFhirCoding;
+              c := (iext.value as TFhirString).StringValue;
               if not TCDSHooks.isKnownHook(c) then
                 err := 'Not a known hook type';
             end;
@@ -315,7 +315,7 @@ begin
           end
           else if iext.url = 'preFetchMandatory' then
             err := 'Prefetch requirements cannot be met';
-        if c = nil then
+        if c = '' then
           err := 'Activity code not found';
         if err = '' then
           clHooks.Items.AddObject(name, ext)
@@ -344,7 +344,7 @@ procedure TRegisterServerForm.LoadFrom(i: integer);
 var
   server : TRegisteredFHIRServer;
   c : TRegisteredCDSHook;
-  a : TFHIRCoding;
+  a : string;
   name : string;
 begin
   Caption := 'Edit Server';
@@ -368,7 +368,7 @@ begin
         if clHooks.Items.Objects[i] <> nil then
         begin
           readExtension(clHooks.Items.Objects[i] as TFHIRExtension, nil, name, a);
-          if (a <> nil) and (c.activity.system = a.system) and (c.activity.code = a.code) then
+          if (a <> '') and (c.hook = a) then
             clHooks.checked[i] := true;
         end;
       end;

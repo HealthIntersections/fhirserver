@@ -583,7 +583,9 @@ begin
       ctxt.userProvider := TSCIMServer.Create(Fdb.link, FWebServer.SourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
-      FWebServer.CDSHooksServer.registerService(TCDAHooksConceptService.create);
+      FWebServer.CDSHooksServer.registerService(TCDAHooksCodeViewService.create);
+      FWebServer.CDSHooksServer.registerService(TCDAHooksIdentifierViewService.create);
+      FWebServer.CDSHooksServer.registerService(TCDAHooksPatientViewService.create);
       FWebServer.CDSHooksServer.registerService(TCDAHackingHealthOrderService.create);
 
       FWebServer.Start(not FNotServing);

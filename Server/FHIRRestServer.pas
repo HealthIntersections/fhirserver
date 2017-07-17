@@ -218,8 +218,6 @@ Type
     procedure PopulateConformance(sender : TObject; conf : TFhirCapabilityStatement);
     function WebDump : String;
 
-    function BuildCompartmentList(session : TFHIRSession) : String;
-
     function hasInternalSSLToken(request : TIdHTTPRequestInfo) : boolean;
     procedure cacheResponse(response : TIdHTTPResponseInfo; caching : TFHIRCacheControl);
     procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
@@ -501,7 +499,7 @@ Begin
     logt(' ...paths: secure = '+FSecurePath)
   else
     logt(' ...paths: <none>');
-  FCDSHooksServer := TCDSHooksServer.create;
+  FCDSHooksServer := TCDSHooksServer.create(FServerContext);
 
 //  FAuthRequired := FIni.ReadString('fhir', 'oauth-secure', '') = '1';
 //  FAppSecrets := FIni.ReadString('fhir', 'oauth-secrets', '');
@@ -674,9 +672,9 @@ begin
     req.hook := TCDSHooks.patientView;
     req.hookInstance := FServerContext.FormalURLPlain;  // arbitrary global
     req.patient := patient.id;
-    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
-    req.preFetchData.id := NewGuidId;
-    entry := req.preFetchData.entryList.Append;
+//    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
+//    req.preFetchData.id := NewGuidId;
+//    entry := req.preFetchData.entryList.Append;
     entry.resource := patient.Link;
     ctxt.manager.makeRequest(req, OnCDSResponse, ctxt);
   finally
@@ -2173,7 +2171,7 @@ Begin
       begin
 
         if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
-          oRequest.compartments := BuildCompartmentList(oRequest.Session);
+          oRequest.compartments := oRequest.Session.BuildCompartmentList;
 
         if (oRequest.CommandType in [fcmdTransaction, fcmdBatch, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and (oPostStream.Size > 0))
           or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.size > 0) and (sContentType <> '')) Then
@@ -3382,16 +3380,6 @@ end;
 //  end;
 //end;
 //
-function TFhirWebServer.BuildCompartmentList(session: TFHIRSession): String;
-var
-  i : integer;
-begin
-  result := ''''+session.patientList[0]+'''';
-  for i := 1 to session.patientList.count - 1 do
-    result := result+', '''+session.patientList[i]+'''';
-  for i := 0 to session.TaggedCompartments.count - 1 do
-    result := result+', '''+session.TaggedCompartments[i]+'''';
-end;
 
 function TFhirWebServer.transform1(resource: TFhirResource; lang, xslt: String; saveOnly : boolean): string;
 var

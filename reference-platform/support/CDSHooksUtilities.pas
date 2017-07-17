@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, ActiveX,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads, AdvJson, AdvStringStreams,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRClient, FHIRParser;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRParser;
 
 type
   TCDSHooks = class
@@ -74,20 +74,19 @@ type
     Fuser: String;
     Fpatient: String;
     Fencounter: String;
+    FLang : String;
     FContext: TAdvList<TFHIRResource>;
-    FBundle : TFHIRBundle;
+    FPreFetch : TAdvMap<TFHIRResource>;
+    FBaseUrl: String;
 
-    procedure SetBundle(const Value: TFHIRBundle);
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParameters); Overload;
     constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookRequest; overload;
     function hash : Integer;
 
-    function AsParams : TFHIRParameters;
     function AsJson : String;
 
     property hook : String read FHook write FHook;
@@ -99,7 +98,9 @@ type
     property patient : String read Fpatient write Fpatient;
     property encounter : String read Fencounter write Fencounter;
     property context : TAdvList<TFHIRResource> read FContext;
-    property preFetchData : TFHIRBundle read FBundle write SetBundle;
+    property preFetch : TAdvMap<TFHIRResource> read FPreFetch;
+    property lang : String read FLang write FLang;
+    property baseURL : String read FBaseUrl write FBaseUrl;
   end;
 
   TCDSHookCardSuggestion = class (TAdvObject)
@@ -110,12 +111,10 @@ type
     FDelete: String;
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParametersParameter); Overload;
     constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCardSuggestion; overload;
-    function AsParam : TFHIRParametersParameter;
     procedure AsJson(json : TJsonWriter);
 
     property label_ : String read FLabel write FLabel;
@@ -131,12 +130,10 @@ type
     FType: String;
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParametersParameter); Overload;
     constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCardLink; overload;
-    function AsParam : TFHIRParametersParameter;
     procedure AsJson(json : TJsonWriter);
 
     property label_ : String read FLabel write FLabel;
@@ -155,14 +152,12 @@ type
     FLinks: TAdvList<TCDSHookCardLink>;
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParametersParameter); Overload;
     constructor Create(json : TJsonObject); Overload;
     constructor Create(summary, sourceLabel : String); Overload;
     constructor Create(summary, detail, sourceLabel : String); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookCard; overload;
-    function AsParam : TFHIRParametersParameter;
     procedure AsJson(json : TJsonWriter);
 
     property summary : String read Fsummary write Fsummary;
@@ -182,12 +177,10 @@ type
     FDelete: TStringList;
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParametersParameter); Overload;
     constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookDecision; overload;
-    function AsParam : TFHIRParametersParameter;
     procedure AsJson(json : TJsonWriter);
 
     property Create_ : TStringList read FCreate;
@@ -200,12 +193,10 @@ type
     FDecisions : TAdvList<TCDSHookDecision>;
   public
     constructor Create; Overload; Override;
-    constructor Create(params : TFHIRParameters); Overload;
     constructor Create(json : TJsonObject); Overload;
     destructor Destroy; override;
 
     function Link : TCDSHookResponse; overload;
-    function AsParams : TFHIRParameters;
     function AsJson : String;
 
     property cards : TAdvList<TCDSHookCard> read FCards;
@@ -266,8 +257,8 @@ type
     Fserver: TRegisteredFHIRServer;
     FToken: TSmartOnFhirAccessToken;
     FHash : String;
-    FClient : TFHIRCLient;
     FAlive : boolean;
+    FID: String;
     procedure Setrequest(const Value: TCDSHookRequest);
     procedure Setserver(const Value: TRegisteredFHIRServer);
     procedure SetToken(const Value: TSmartOnFhirAccessToken);
@@ -280,6 +271,7 @@ type
 
     procedure Cancel;
 
+    property id : String read FID write FID;
     property request : TCDSHookRequest read Frequest write Setrequest;
     property server : TRegisteredFHIRServer read Fserver write Setserver;
     property token : TSmartOnFhirAccessToken read FToken write SetToken;
@@ -344,6 +336,9 @@ type
 function presentAsHtml(cards : TAdvList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 
 implementation
+
+uses
+  FHIRClient;
 
 const
   CARDS_HTML_HEAD =
@@ -574,6 +569,7 @@ var
   writer : TJSONWriter;
   c : TFhirResource;
   comp : TFHIRJsonComposer;
+  s : String;
 begin
   ss := TAdvStringStream.Create;
   try
@@ -607,13 +603,19 @@ begin
           comp.Free;
         end;
       end;
-      if preFetchData <> nil then
+      if preFetch.Count > 0 then
       begin
-        comp := TFHIRJsonComposer.create(nil, 'en');
-        try
-          comp.Compose(writer, preFetchData);
-        finally
-          comp.Free;
+        writer.ValueObject('prefetch');
+        for s in prefetch.SortedKeys do
+        begin
+          writer.ValueObject(s);
+          comp := TFHIRJsonComposer.create(nil, 'en');
+          try
+            comp.Compose(writer, prefetch[s]);
+          finally
+            comp.Free;
+          end;
+          writer.FinishObject;
         end;
       end;
       writer.Finish;
@@ -626,69 +628,11 @@ begin
   end;
 end;
 
-function TCDSHookRequest.AsParams: TFHIRParameters;
-var
-  p : TFhirParametersParameter;
-  c : TFhirResource;
-begin
-  result := TFHIRParameters.create;
-  try
-    result.AddParameter('hook', FHook);
-    result.AddParameter('hookInstance', FHookInstance);
-    result.AddParameter('fhirServer', TFHIRUri.Create(FfhirServer));
-    if (Foauth <> nil) then
-    begin
-      p := Result.parameterList.Append;
-      p.name := 'oauth';
-      p.AddParameter('token', TFHIRString.Create(Foauth.Token));
-      p.AddParameter('scope', TFHIRString.Create(Foauth.Scopes));
-      p.AddParameter('expires', TFhirInteger.Create(inttostr(Foauth.Expires)));
-    end;
-    result.AddParameter('redirect', TFHIRUri.Create(Fredirect));
-    result.AddParameter('user', TFHIRString.Create(Fuser));
-    result.AddParameter('patient', TFhirId.Create(Fpatient));
-    result.AddParameter('encounter', TFhirId.Create(Fencounter));
-    for c in context do
-      result.AddParameter('context', c.Link);
-    if preFetchData <> nil then
-      result.AddParameter('preFetchData', preFetchData.Link);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
 constructor TCDSHookRequest.Create;
 begin
   inherited Create;
   FContext := TAdvList<TFHIRResource>.create;
-end;
-
-constructor TCDSHookRequest.Create(params: TFHIRParameters);
-var
-  p : TFhirParametersParameter;
-begin
-  Create;
-  Fencounter := params.str['encounter'];
-  FfhirServer := params.str['fhirServer'];
-  Fpatient := params.str['patient'];
-  FHookInstance := params.str['hookInstance'];
-  Fuser := params.str['user'];
-  Fredirect := params.str['redirect'];
-  Fhook := params.str['hook'];
-  p := params.param['oauth'];
-  if (p <> nil) then
-  begin
-    Foauth := TCDSRequestOAuthDetails.Create;
-    Foauth.Expires := StrToIntDef(p.str['expires'], 0);
-    Foauth.Scopes := p.str['scope'];
-    Foauth.Token := p.str['token'];
-  end;
-  for p in params.parameterList do
-    if p.name = 'context' then
-      FContext.Add(p.resource.Link)
-    else if (p.name = 'preFetchData') and (preFetchData = nil) and (p.resource is TFhirBundle) then
-      preFetchData := (p.resource as TFhirBundle).Link;
+  FPreFetch := TAdvMap<TFHIRResource>.create;
 end;
 
 constructor TCDSHookRequest.Create(json: TJsonObject);
@@ -697,6 +641,7 @@ var
   o : TJsonObject;
   n : TJsonNode;
   p : TFHIRJsonParser;
+  s : String;
 begin
   Create;
   Fencounter := json.str['encounter'];
@@ -728,52 +673,37 @@ begin
   o := json.obj['prefetch'];
   if (o <> nil) then
   begin
-    p := TFHIRJsonParser.Create(nil, 'en');
-    try
-      p.Parse(o);
-      FBundle := p.resource.Link as TFhirBundle;
-    finally
-      p.Free;
+    for s in o.properties.Keys do
+    begin
+      p := TFHIRJsonParser.Create(nil, 'en');
+      try
+        p.Parse(o.properties[s] as TJsonObject);
+        prefetch.add(s, p.resource.Link);
+      finally
+        p.Free;
+      end;
     end;
   end;
 end;
 
 destructor TCDSHookRequest.Destroy;
 begin
-  FBundle.Free;
+  FPreFetch.Free;
   FContext.Free;
   inherited;
 end;
 
 function TCDSHookRequest.hash: Integer;
 var
-  params : TFhirParameters;
-  json : TFHIRJsonComposer;
   s : String;
 begin
-  params := AsParams;
-  try
-    json := TFHIRJsonComposer.Create(nil, 'en');
-    try
-      s := json.Compose('request', params, false);
-      result := HashStringToCode32(s);
-    finally
-      json.Free;
-    end;
-  finally
-    params.Free;
-  end;
+  s := AsJson;
+  result := HashStringToCode32(s);
 end;
 
 function TCDSHookRequest.Link: TCDSHookRequest;
 begin
   result := TCDSHookRequest(inherited Link);
-end;
-
-procedure TCDSHookRequest.SetBundle(const Value: TFHIRBundle);
-begin
-  FBundle.Free;
-  FBundle := Value;
 end;
 
 { TCDSHookCardSuggestion }
@@ -789,36 +719,10 @@ begin
     json.Value('delete', FDelete);
 end;
 
-function TCDSHookCardSuggestion.AsParam: TFHIRParametersParameter;
-begin
-  result := TFhirParametersParameter.Create;
-  try
-    result.AddParameter('label', FLabel);
-    if (uuid <> '') then
-      result.AddParameter('uuid', FUUID);
-    if (FCreate <> '') then
-      result.AddParameter('create', FCreate);
-    if (FDelete <> '') then
-      result.AddParameter('delete', FDelete);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
 constructor TCDSHookCardSuggestion.Create;
 begin
   inherited Create;
   // nothing yet
-end;
-
-constructor TCDSHookCardSuggestion.Create(params: TFHIRParametersParameter);
-begin
-  Create;
-  FLabel := params.str['label'];
-  FUUID := params.str['uuid'];
-  FCreate := params.str['create'];
-  FDelete := params.str['delete'];
 end;
 
 destructor TCDSHookCardSuggestion.Destroy;
@@ -853,32 +757,10 @@ begin
     json.Value('type', FType);
 end;
 
-function TCDSHookCardLink.AsParam: TFHIRParametersParameter;
-begin
-  result := TFhirParametersParameter.Create;
-  try
-    result.AddParameter('label', FLabel);
-    result.AddParameter('url', FUrl);
-    result.AddParameter('type', FType);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
 constructor TCDSHookCardLink.Create;
 begin
   inherited Create;
   // nothing yet
-end;
-
-constructor TCDSHookCardLink.Create(params: TFHIRParametersParameter);
-begin
-  Create;
-  FLabel := params.str['label'];
-  FUrl := params.str['url'];
-  FType := params.str['type'];
 end;
 
 destructor TCDSHookCardLink.Destroy;
@@ -949,61 +831,11 @@ begin
   end;
 end;
 
-function TCDSHookCard.AsParam: TFHIRParametersParameter;
-var
-  p : TFhirParametersParameter;
-  link : TCDSHookCardLink;
-begin
-  result := TFhirParametersParameter.Create;
-  try
-    result.AddParameter('summary', Fsummary);
-    result.AddParameter('indicator', TFHIRCode.create(Findicator));
-    result.AddParameter('detail', Fdetail);
-    if (sourceLabel <> '') then
-    begin
-      p := result.partList.Append;
-      p.name := 'source';
-      p.AddParameter('label', FsourceLabel);
-      p.AddParameter('url', FSourceURL);
-    end;
-    for link in FLinks do
-    begin
-      p := link.AsParam;
-      p.name := 'link';
-      result.partList.Add(p);
-    end;
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
 constructor TCDSHookCard.Create;
 begin
   inherited Create;
   FSuggestions := TAdvList<TCDSHookCardSuggestion>.create;
   FLinks := TAdvList<TCDSHookCardLink>.create;
-end;
-
-constructor TCDSHookCard.Create(params: TFHIRParametersParameter);
-var
-  p : TFHIRParametersParameter;
-begin
-  Create;
-  Fsummary := params.str['summary'];
-  Findicator := params.str['indicator'];
-  Fdetail := params.str['detail'];
-  p := params.param['source'];
-  if (p <> nil) then
-  begin
-    FsourceLabel := p.str['label'];
-    FSourceURL := p.str['url'];
-  end;
-  for p in params.partList do
-    if p.name = 'suggestion' then
-      FSuggestions.Add(TCDSHookCardSuggestion.Create(p))
-    else if p.name = 'link' then
-      FLinks.Add(TCDSHookCardLink.Create(p))
 end;
 
 
@@ -1100,24 +932,6 @@ begin
   end;
 end;
 
-function TCDSHookResponse.AsParams: TFHIRParameters;
-var
-  p : TFhirParametersParameter;
-  card : TCDSHookCard;
-begin
-  result := TFHIRParameters.create;
-  try
-    for card in FCards do
-    begin
-      p := card.AsParam;
-      p.name := 'card';
-      result.parameterList.Add(p);
-    end;
-    result.link;
-  finally
-    result.free;
-  end;
-end;
 
 constructor TCDSHookResponse.Create(json: TJsonObject);
 var
@@ -1133,16 +947,6 @@ begin
   if a <> nil then
     for n in a do
       decisions.Add(TCDSHookDecision.Create(TJsonObject(n)));
-end;
-
-constructor TCDSHookResponse.Create(params: TFHIRParameters);
-var
-  p : TFHIRParametersParameter;
-begin
-  Create;
-  for p in params.parameterList do
-    if p.name = 'card' then
-      FCards.Add(TCDSHookCard.Create(p))
 end;
 
 constructor TCDSHookResponse.Create;
@@ -1509,44 +1313,34 @@ end;
 
 procedure TCDSHooksManagerWorkThread.Execute;
 var
-  pin, pout : TFhirParameters;
   resp : TCDSHookResponse;
+  client : TFHIRCLient;
 begin
   CoInitialize(nil);
   try
     try
       try
         try
-          FClient := TFhirClient.Create(nil, server.fhirEndpoint, true);
+          client := TFhirClient.Create(nil, server.fhirEndpoint, true);
           try
-            FClient.timeout := 15000;
+            client.timeout := 15000;
             {$IFNDEF FHIR2}
-            FClient.allowR2 := true;
+            client.allowR2 := true;
             {$ENDIF}
-            FClient.smartToken := token.link;
-            pin := Frequest.AsParams;
+            client.smartToken := token.link;
+            resp := client.cdshook(FID, FRequest);
             try
-              pout := FClient.operation(frtNull, 'cds-hook', pin) as TFhirParameters;
-              try
-                resp := TCDSHookResponse.Create(pout);
-                try
-                 if FManager <> nil then
-                 begin
-                   FManager.cacheResponse(hash, server, resp);
-                   if (FAlive) then
-                   event(FManager, server, FContext, resp, '');
-                 end;
-                finally
-                  resp.Free;
-                end;
-              finally
-                pout.Free;
+              if FManager <> nil then
+              begin
+                FManager.cacheResponse(hash, server, resp);
+                if (FAlive) then
+                event(FManager, server, FContext, resp, '');
               end;
             finally
-              pin.Free;
+              resp.Free;
             end;
           finally
-            FClient.Free;
+            client.Free;
           end;
         except
           on e : Exception do
@@ -1599,11 +1393,6 @@ begin
 
 end;
 
-function TCDSHookDecision.AsParam: TFHIRParametersParameter;
-begin
-
-end;
-
 constructor TCDSHookDecision.Create;
 begin
   inherited Create;
@@ -1622,12 +1411,6 @@ begin
   if json.has('delete') then
     for n in json.arr['delete'] do
       FDelete.add(TJsonString(n).value);
-end;
-
-constructor TCDSHookDecision.Create(params: TFHIRParametersParameter);
-begin
-  Create;
-  raise Exception.Create('Not done yet');
 end;
 
 destructor TCDSHookDecision.Destroy;

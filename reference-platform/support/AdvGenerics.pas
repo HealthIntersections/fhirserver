@@ -1445,16 +1445,14 @@ end;
 
 function TAdvMap<T>.GetSortedKeys: TStringList;
 var
-  list : TStringList;
   p : TAdvPair<T>;
-  i : integer;
 begin
   if FSortedKeys = nil then
   begin
-    list := TStringList.Create;
+    FSortedKeys := TStringList.Create;
     for p in self do
-      list.AddObject(p.Key, p.Value);
-    list.Sort;
+      FSortedKeys.AddObject(p.Key, p.Value);
+    FSortedKeys.Sort;
   end;
   result := FSortedKeys;
 end;

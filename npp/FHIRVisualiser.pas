@@ -118,8 +118,8 @@ type
     function generateBasicCard(path: String; focus: TFHIRObject): TCDSHookCard;
     procedure generateTypeCard(focus, next: TFHIRObject);
     function differentObjects(focus: array of TFHIRObject): boolean;
-    procedure queryCDS(coding : TFHIRCoding; context : TFhirResource);
-    procedure queryCDSPatient(coding : TFHIRCoding; patient : TFhirPatient);
+    procedure queryCDS(hook : string; context : TFhirResource);
+    procedure queryCDSPatient(hook : string; patient : TFhirPatient);
 
     procedure DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     function postToWeb(contentType : String; bytes : TBytes) : String; overload;
@@ -396,14 +396,14 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.queryCDS(coding : TFHIRCoding; context: TFhirResource);
+procedure TFHIRVisualizer.queryCDS(hook : string; context: TFhirResource);
 var
   req : TCDSHookRequest;
 begin
   req := TCDSHookRequest.Create;
   try
-    req.activity := coding;
-    req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.hook := hook;
+    req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
     req.redirect := 'http://localhost:45654/redirect';
     req.context.Add(context.Link);
     if context is TFHIRPatient then
@@ -414,21 +414,18 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.queryCDSPatient(coding: TFHIRCoding; patient: TFhirPatient);
+procedure TFHIRVisualizer.queryCDSPatient(hook : string; patient: TFhirPatient);
 var
   req : TCDSHookRequest;
   entry : TFHIRBundleEntry;
 begin
   req := TCDSHookRequest.Create;
   try
-    req.activity := coding;
-    req.activityInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
+    req.hook := hook;
+    req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
     req.redirect := 'http://localhost:45654/redirect';
     req.patient := patient.id;
-    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
-    req.preFetchData.id := NewGuidId;
-    entry := req.preFetchData.entryList.Append;
-    entry.resource := patient.Link;
+    req.preFetch.add('patient', patient.Link);
     FCDSManager.makeRequest(req, OnCDSResponse, nil);
   finally
     req.Free;

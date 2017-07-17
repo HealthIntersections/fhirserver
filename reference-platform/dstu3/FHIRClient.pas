@@ -41,7 +41,8 @@ uses
   IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches, AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
-  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase, SmartOnFhirUtilities;
+  FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
+  SmartOnFhirUtilities, CDSHooksUtilities;
 
 Type
   EFHIRClientException = class (Exception)
@@ -121,6 +122,7 @@ Type
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
+    function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
     //authorization support
     procedure authoriseByOWin(server, username, password : String);
@@ -849,6 +851,11 @@ begin
     indy.Disconnect;
 end;
 
+
+function TFhirClient.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
+begin
+  result := nil;
+end;
 
 end.
 

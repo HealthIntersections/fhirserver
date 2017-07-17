@@ -168,6 +168,8 @@ Type
     procedure describe(b : TStringBuilder);
     Property scopes : String read GetScopes write SetScopes;
 
+    function BuildCompartmentList : String;
+
     {@member Key
       Primary database key for this session. Don't change!
     }
@@ -1868,6 +1870,20 @@ end;
 procedure TFhirSession.allowAll;
 begin
   FSecurity.allowAll;
+end;
+
+function TFhirSession.BuildCompartmentList: String;
+var
+  i : integer;
+begin
+  if self = nil then
+    exit('');
+
+  result := ''''+patientList[0]+'''';
+  for i := 1 to patientList.count - 1 do
+    result := result+', '''+patientList[i]+'''';
+  for i := 0 to TaggedCompartments.count - 1 do
+    result := result+', '''+TaggedCompartments[i]+'''';
 end;
 
 function TFhirSession.canAdministerUsers: boolean;

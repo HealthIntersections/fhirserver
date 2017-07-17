@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   KCritSct,
-  AdvObjects, AdvGenerics, AdvStringMatches,  ThreadSupport,
+  AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, ThreadSupport,
   KDBDialects, DateSupport,
 
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
@@ -62,6 +62,20 @@ Type
   end;
 
   TFHIRStorageService = class;
+
+  TMatchingResource = class (TAdvName)
+  public
+    key : integer;
+    version : integer;
+  end;
+
+  TMatchingResourceList = class (TAdvNameList)
+  private
+    function GetEntry(iIndex: Integer): TMatchingResource;
+  public
+    Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
+  end;
+
 
   TFHIROperationEngine = class (TAdvObject)
   private
@@ -95,6 +109,10 @@ Type
 
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
+    function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
+    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
+    function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
+    function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
   end;
 
   TFHIRStorageService = class (TAdvObject)
@@ -354,77 +372,97 @@ end;
 
 procedure TFHIROperationEngine.ExecuteBatch(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Batch" function');
+  raise Exception.Create('This server does not implement the "Batch" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "ConformanceStmt" function');
+  raise Exception.Create('This server does not implement the "ConformanceStmt" function');
 end;
 
 function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
 begin
-  raise Exception.Create('This server does not implemnent the "Create" function');
+  raise Exception.Create('This server does not implement the "Create" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteDelete(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Delete" function');
+  raise Exception.Create('This server does not implement the "Delete" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "History" function');
+  raise Exception.Create('This server does not implement the "History" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Operation" function');
+  raise Exception.Create('This server does not implement the "Operation" function');
 end;
 
 function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise Exception.Create('This server does not implemnent the "Patch" function');
+  raise Exception.Create('This server does not implement the "Patch" function');
 end;
 
 function TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
-  raise Exception.Create('This server does not implemnent the "Read" function');
+  raise Exception.Create('This server does not implement the "Read" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Search" function');
+  raise Exception.Create('This server does not implement the "Search" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Transaction" function');
+  raise Exception.Create('This server does not implement the "Transaction" function');
 end;
 
 function TFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise Exception.Create('This server does not implemnent the "Update" function');
+  raise Exception.Create('This server does not implement the "Update" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteUpload(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "Upload" function');
+  raise Exception.Create('This server does not implement the "Upload" function');
 end;
 
 function TFHIROperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc: String): boolean;
 begin
-  raise Exception.Create('This server does not implemnent the "Validation" function');
+  raise Exception.Create('This server does not implement the "Validation" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteVersionRead(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('This server does not implemnent the "VersionRead" function');
+  raise Exception.Create('This server does not implement the "VersionRead" function');
+end;
+
+function TFHIROperationEngine.FindResource(aType, sId: String; bAllowDeleted: boolean; var resourceKey: integer; request: TFHIRRequest; response: TFHIRResponse; compartments: String): boolean;
+begin
+  raise Exception.Create('This server does not implement the "FindResource" function');
+end;
+
+function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResource;
+begin
+  raise Exception.Create('This server does not implement the "GetResourceByKey" function');
+end;
+
+function TFHIROperationEngine.getResourcesByParam(aType: TFhirResourceType; name, value: string; var needSecure: boolean): TAdvList<TFHIRResource>;
+begin
+  raise Exception.Create('This server does not implement the "getResourcesByParam" function');
 end;
 
 function TFHIROperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
   raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
+end;
+
+function TFHIROperationEngine.ResolveSearchId(resourceName, compartmentId, compartments, baseURL, params: String): TMatchingResourceList;
+begin
+  raise Exception.Create('This server does not implement the "GetResourceByKey" function');
 end;
 
 procedure TFHIROperationEngine.RollbackTransaction;
@@ -436,6 +474,14 @@ procedure TFHIROperationEngine.StartTransaction;
 begin
   raise Exception.Create('The function "StartTransaction" must be overridden in '+className);
 end;
+
+{ TMatchingResourceList }
+
+function TMatchingResourceList.GetEntry(iIndex: Integer): TMatchingResource;
+begin
+  result := TMatchingResource(ObjectByIndex[iIndex]);
+end;
+
 
 end.
 

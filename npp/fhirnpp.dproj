@@ -224,13 +224,14 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\dstu3\FHIRNarrativeGenerator.pas"/>
         <DCCReference Include="NewServerForm.pas">
-            <Form>RegisterServerForm</Form>
+            <Form>RegisterServcdshoo
+  erForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\SmartOnFhirLogin.pas">
+        <DCCReference Include="..\reference-platform\support\SmartOnFhirLogin.pas">
             <Form>SmartOnFhirLoginForm</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\Support\ParseMap.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
             <Form>FetchResourceFrm</Form>
         </DCCReference>
@@ -260,7 +261,7 @@
             <Form>UpgradePromptForm</Form>
         </DCCReference>
         <DCCReference Include="PluginUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\reference-platform\Support\ShellSupport.pas"/>
