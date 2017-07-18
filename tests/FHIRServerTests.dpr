@@ -257,7 +257,9 @@ uses
   OSXUtils in '..\reference-platform\support\OSXUtils.pas',
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
   CDSHooksServices in '..\Server\CDSHooksServices.pas',
-  CDSHooksServer in '..\Server\CDSHooksServer.pas';
+  CDSHooksServer in '..\Server\CDSHooksServer.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
+  TurtleTests in '..\reference-platform\support\Tests\TurtleTests.pas';
 
 var
   runner : ITestRunner;

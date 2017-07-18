@@ -156,19 +156,25 @@ Implementation
 
 function StringIsDecimal(s : String) : Boolean;
 var
-  bDec : Boolean;
+  bDec, bExp : Boolean;
   i : integer;
 Begin
   bDec := false;
+  bExp := false;
   result := true;
   for i := 1 to length(s) Do
   begin
     if not (
        ((i = 1) and (s[i] = '-')) or
+       ((i = 1) and (s[i] = '+')) or
        (not bDec and (s[i] = '.')) or
+       (not bExp and (i > 1) and CharInSet(s[i], ['e', 'E'])) or
+       ((i > 1) and CharInSet(s[i-1], ['e', 'E']) and (s[i] = '-')) or
+       ((i > 1) and CharInSet(s[i-1], ['e', 'E']) and (s[i] = '+')) or
        CharInSet(s[i], ['0'..'9'])) Then
       result := false;
     bdec := s[i] = '.';
+    bExp := s[i] = 'e';
   End;
 End;
 
