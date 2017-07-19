@@ -33,8 +33,14 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  StringSupport,
-  AdvObjects, AdvGenerics;
+  StringSupport, TextUtilities,
+  AdvObjects, AdvGenerics,
+  TurtleParser;
+
+const
+	GOOD_IRI_CHAR = 'a-zA-Z0-9\u00A0-\uFFFE';
+  IRI_URL = '(([a-z])+:)*((%[0-9a-fA-F]{2})|[&''\\(\\)*+,;:@_~?!$\\/\\-\\#.\\='+GOOD_IRI_CHAR+'])+';
+  LANG_REGEX = '[a-z]{2}(\\-[a-zA-Z]{2})?';
 
 
 {
@@ -57,6 +63,7 @@ type
   TRDFString = class (TRDFTriple)
   private
     FValue : String;
+    FType : String;
   public
     Constructor create(value : String);
   end;
@@ -70,6 +77,7 @@ type
     Destructor Destroy; override;
     function write(b : TStringBuilder; indent : integer) : boolean;
     function predicate(predicate, obj : String) : TRDFComplex; overload;
+    function predicate(predicate, obj, xtype : String) : TRDFComplex; overload;
     function predicate(predicate : String; obj : TRDFTriple) : TRDFComplex; overload;
     function predicate(predicate : String) : TRDFComplex; overload;
     function complex : TRDFComplex;
@@ -149,7 +157,6 @@ type
     procedure prefix(code, url : String);
     function section(sn: String) : TRDFSection;
     procedure generate(b : TStringBuilder; header : boolean);
-
   end;
 
 function ttlLiteral(s : String) : String;
@@ -240,6 +247,7 @@ begin
     Fgen.FPredicateSet.add(predicate);
   if (obj is TRDFString) and not Fgen.FObjectSet.contains(TRDFString(obj).FValue) then
     Fgen.FObjectSet.add(TRDFString(obj).FValue);
+
   p := TRDFPredicate.Create;
   try
     p.FPredicate := predicate;
@@ -263,6 +271,8 @@ begin
   if (Fpredicates.Count = 1) and (Fpredicates[0].Fobj is TRDFString) and (Fpredicates[0].Fcomment = '') then
   begin
     b.Append(' '+Fpredicates[0].Fpredicate+' '+TRDFString(Fpredicates[0].Fobj).Fvalue);
+      if TRDFString(Fpredicates[0].FObj).FType <> '' then
+        b.Append('^^'+TRDFString(Fpredicates[0].FObj).FType);
     exit(false);
   end;
 
@@ -273,7 +283,11 @@ begin
   begin
     b.Append(#13#10);
     if (po.FObj is TRDFString) then
-      b.Append(left+' '+po.FPredicate+ ' '+TRDFString(po.FObj).Fvalue)
+    begin
+      b.Append(left+' '+po.FPredicate+ ' '+TRDFString(po.FObj).Fvalue);
+      if TRDFString(po.FObj).FType <> '' then
+        b.Append('^^'+TRDFString(po.FObj).FType);
+    end
     else
     begin
       b.Append(left+' '+po.FPredicate+' [');
@@ -294,6 +308,15 @@ function TRDFComplex.predicate(predicate: String): TRDFComplex;
 begin
   result := complex;
   self.predicate(predicate, result);
+end;
+
+function TRDFComplex.predicate(predicate, obj, xtype: String): TRDFComplex;
+var
+  s : TRDFString;
+begin
+  s := TRDFString.create(obj);
+  result := self.predicate(predicate, s);
+  s.FType := xtype;
 end;
 
 { TRDFPredicate }
@@ -621,9 +644,12 @@ procedure TRDFGenerator.writeTurtlePrefixes(b: TStringBuilder; header : boolean)
 var
   p : String;
 begin
-  ln(b, '# FHIR Turtle');
-  ln(b, '# see http://hl7.org/fhir/rdf.html');
-  ln(b, '');
+  if (header) then
+  begin
+    ln(b, '# FHIR Turtle');
+    ln(b, '# see http://hl7.org/fhir/rdf.html');
+    ln(b, '');
+  end;
   for p in sorted(Fprefixes.Keys) do
     ln(b, '@prefix '+p+': <'+Fprefixes[p]+'> .');
   ln(b, '');

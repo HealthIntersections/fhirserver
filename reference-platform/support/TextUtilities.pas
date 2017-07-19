@@ -45,9 +45,11 @@ function UTF8StreamToString(value : TStream) : String; overload;
 function UTF8StreamToString(value : TAdvAccessStream) : String; overload;
 
 function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
-function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+function StreamToString(stream : TStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String; overload;
+function StreamToString(stream : TAdvStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String; overload;
 procedure StringToFile(content, filename : String; encoding : TEncoding);
-procedure StringToStream(content: String; stream : TStream; encoding : TEncoding);
+procedure StringToStream(content: String; stream : TStream; encoding : TEncoding); overload;
+procedure StringToStream(content: String; stream : TAdvStream; encoding : TEncoding); overload;
 
 procedure BytesToFile(bytes : TBytes; filename : String);
 function FileToBytes(filename : String; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : TBytes;
@@ -423,6 +425,15 @@ begin
     stream.write(bytes[0], length(bytes));
 end;
 
+procedure StringToStream(content: String; stream : TAdvStream; encoding : TEncoding);
+var
+  bytes : TBytes;
+begin
+  bytes := encoding.GetBytes(content);
+  if (length(bytes) > 0) then
+    stream.write(bytes[0], length(bytes));
+end;
+
 function FileToString(filename : String; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
 var
   LFileStream: TFilestream;
@@ -451,6 +462,16 @@ begin
   SetLength(bytes, stream.Size);
   if stream.Size > 0 then
     stream.Read(bytes[0], stream.size);
+  result := encoding.GetString(bytes);
+end;
+
+function StreamToString(stream : TAdvStream; encoding : TEncoding; AShareMode : Word = fmOpenRead + fmShareDenyWrite) : String;
+var
+  bytes : TBytes;
+begin
+  SetLength(bytes, stream.Readable);
+  if stream.Readable > 0 then
+    stream.Read(bytes[0], stream.Readable);
   result := encoding.GetString(bytes);
 end;
 

@@ -3,9 +3,9 @@ unit TurtleParser;
 interface
 
 uses
-  SysUtils, System.Character, System.RegularExpressions, System.Generics.Collections,
-  DecimalSupport, GuidSupport,
-  AdvObjects, AdvGenerics;
+  SysUtils, Classes, System.Character, System.RegularExpressions, System.Generics.Collections,
+  DecimalSupport, GuidSupport, ParserSupport, TextUtilities, StringSupport,
+  AdvObjects, AdvGenerics, AdvStreams;
 
 Const
 	GOOD_IRI_CHAR = 'a-zA-Z0-9'; // \u00A0-\uFFFE'; todo
@@ -13,71 +13,129 @@ Const
   LANG_REGEX = '[a-z]{2}(\\-[a-zA-Z]{2})?';
 
 Type
-  TTLObject = class (TAdvObject)
+  TTurtleDocument = class;
+
+  TTurtleObject = class (TAdvObject)
   protected
-		Fline : integer;
-		Fcol : integer;
+		FStart : TSourceLocation;
+		FStop : TSourceLocation;
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual;
   public
-    Constructor Create(line, col : integer); overload;
-    function Link : TTLObject; overload;
+    Constructor Create(start : TSourceLocation); overload;
+    function Link : TTurtleObject; overload;
     function hasValue(value : String) : boolean; virtual;
-    property line : integer read FLine;
-    property col : integer read FCol;
+    function isSimple : boolean; virtual;
+    function singleLiteral : String; virtual;
+    property start : TSourceLocation read FStart;
+    property stop : TSourceLocation read FStop;
   end;
 
-	TTLLiteral = class (TTLObject)
+	TTurtleLiteral = class (TTurtleObject)
   private
 		Fvalue : String;
 		Ftype : String;
+  protected
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    function Link : TTLLiteral; overload;
+    Constructor Create(start : TSourceLocation); overload;
+    Constructor Create(value : String); overload;
+    Constructor Create(value, type_ : String); overload;
+    function Link : TTurtleLiteral; overload;
     function hasValue(value : String) : boolean; override;
+    function singleLiteral : String; override;
+    function isSimple : boolean; override;
 		property value : String read Fvalue write Fvalue;
 		property type_ : String read Ftype write Ftype;
 	end;
 
-	TTLURL = class (TTLObject)
+	TTurtleURL = class (TTurtleObject)
   private
     Furi : String;
     procedure setUri(value : String);
+  protected
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    function Link : TTLURL; overload;
+    Constructor Create(start : TSourceLocation); overload;
+    Constructor Create(uri : String); overload;
+    function Link : TTurtleURL; overload;
 		property uri : String read Furi write Seturi;
     function hasValue(value : String) : boolean; override;
+    function isSimple : boolean; override;
+    function singleLiteral : String; override;
   end;
 
-	TTLList = class (TTLObject)
+	TTurtleList = class (TTurtleObject)
   private
-    Flist : TAdvList<TTLObject>;
+    Flist : TAdvList<TTurtleObject>;
+  protected
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(line, col : integer); overload;
-    Constructor Create(line, col : integer; obj : TTLObject); overload;
+    Constructor Create(start : TSourceLocation); overload;
+    Constructor Create(start : TSourceLocation; obj : TTurtleObject); overload;
     Destructor Destroy; override;
-    function Link : TTLList; overload;
+    function Link : TTurtleList; overload;
     function hasValue(value : String) : boolean; override;
-    property List : TAdvList<TTLObject> read FList;
+    property List : TAdvList<TTurtleObject> read FList;
+    function isSimple : boolean; override;
+    function singleLiteral : String; override;
   end;
 
-	TTLComplex = class (TTLObject)
+	TTurtleComplex = class (TTurtleObject)
   private
-    FPredicates : TAdvMap<TTLObject>;
+    FPredicates : TAdvMap<TTurtleObject>;
+    FNames : TStringList;
+  protected
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
   public
-    Constructor Create(line, col : integer); overload;
+    Constructor Create(start : TSourceLocation); overload;
     Destructor Destroy; override;
-    function Link : TTLComplex; overload;
+    function Link : TTurtleComplex; overload;
     function hasValue(value : String) : boolean; override;
-    property predicates : TAdvMap<TTLObject> read FPredicates;
-    procedure addPredicate(uri : String; obj : TTLObject);
-    procedure addPredicates(values : TAdvMap<TTLObject>);
+    property predicates : TAdvMap<TTurtleObject> read FPredicates;
+    function addPredicate(uri : String) : TTurtleComplex; overload;
+    procedure addPredicate(uri : String; obj : TTurtleObject); overload;
+    procedure addPredicate(uri : String; s : String); overload;
+    procedure addUriPredicate(uri : String; s : String); overload;
+    procedure addPredicate(uri : String; s, t : String); overload;
+    procedure addPredicates(values : TAdvMap<TTurtleObject>);
+    function singleLiteral : String; overload; override;
+    function isSimple : boolean; override;
+    function stringLiteral(uri : String) : String; overload;
+    function complex(uri : String) : TTurtleComplex;
+    function has(uri : String) : boolean; overload;
+    function has(uri : String; var complex : TTurtleComplex) : boolean; overload;
+    function list(uri : String) : TTurtleList;
+    function complexes(uri : String) : TArray<TTurtleComplex>;
   end;
 
   TTurtlePredicate = class (TAdvObject)
   private
-    FURL : TTLURL;
-    FValue : TTLComplex;
+    FURL : TTurtleURL;
+    FValue : TTurtleComplex;
+  protected
+    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
   public
-    Constructor Create(url : TTLURL; value : TTLComplex);
+    Constructor Create(url : TTurtleURL; value : TTurtleComplex);
     Destructor Destroy; override;
+    property URL : TTurtleURL read FURL;
+    property Value : TTurtleComplex read FValue;
+  end;
+
+  TTurtleDocument = class (TAdvObject)
+  private
+    FPrefixes : TDictionary<String, String>;
+    FObjects : TAdvList<TTurtlePredicate>;
+    FBase : String;
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+    property objects : TAdvList<TTurtlePredicate> read FObjects;
+    property prefixes : TDictionary<String, String> read FPrefixes;
+    function getPredicate(uri : String) : TTurtlePredicate;
+    function getObject(uri : String) : TTurtleComplex;
+    procedure addObject(uri : String; obj : TTurtleComplex); overload;
+    function prefixIse(s : String; var p : String) : boolean;
+    procedure prefix(pfx, ns : String);
   end;
 
 	TLexerTokenType = (
@@ -96,7 +154,8 @@ type
   private
     FSource : String;
     FType : TLexerTokenType;
-		cursor, line, col, startLine, startCol : integer;
+		cursor : integer;
+    pos, startPos : TSourceLocation;
 		Ftoken : String;
     procedure skipWhitespace;
     function grab : char;
@@ -119,103 +178,235 @@ type
 
   TTurtleParser = class (TAdvObject)
   private
-    FObjects : TAdvList<TTurtlePredicate>;
-    FBase : String;
-    prefixes : TDictionary<String, String>;
-
-//	private List<Section> sections = new ArrayList<Section>();
-//	protected Set<String> subjectSet = new HashSet<String>();
-//	protected Set<String> predicateSet = new HashSet<String>();
-//	protected Set<String> objectSet = new HashSet<String>();
-//	protected Map<String, String>  = new HashMap<String, String>();
-
-    procedure parse(lexer : TTurtleLexer); overload;
-    function anonymousId : TTLURL;
-    function parseComplex(lexer : TTurtleLexer) : TTLComplex;
+    class procedure parse(lexer : TTurtleLexer; doc : TTurtleDocument); overload;
+    class function anonymousId : TTurtleURL;
+    class function parseComplex(lexer : TTurtleLexer; doc : TTurtleDocument) : TTurtleComplex;
   public
-    Constructor Create; override;
-    Destructor Destroy; override;
-    procedure parse(source : String); overload;
-    property Objects : TAdvList<TTurtlePredicate> read FObjects;
-    function getObject(uri : String) : TTLComplex;
+    class function parse(source : String) : TTurtleDocument; overload;
+    class function parse(source : TStream) : TTurtleDocument; overload;
+    class function parse(source : TAdvStream) : TTurtleDocument; overload;
   end;
+
+  TTurtleComposer = class (TAdvObject)
+  public
+    class procedure writePrefixes(b : TStringBuilder; doc : TTurtleDocument);
+  public
+    class function compose(doc : TTurtleDocument) : String; overload;
+    class procedure compose(doc : TTurtleDocument; dest : TStream); overload;
+    class procedure compose(doc : TTurtleDocument; dest : TAdvStream); overload;
+  end;
+
+function ttlLiteral(s : String) : String;
 
 implementation
 
-{ TTLObject }
-
-constructor TTLObject.Create(line, col: integer);
+function ttlLiteral(s : String) : String;
 begin
-  inherited Create;
-  FLine := line;
-  FCol := col;
+  result := s; // '"'+jsonEscape(s, true)+'"';
 end;
 
-function TTLObject.hasValue(value: String): boolean;
+function sorted(list: TEnumerable<String>): TArray<String>;
+var
+  sort : TStringList;
+  s : String;
+begin
+  sort := TStringList.Create;
+  try
+    for s in list do
+      sort.Add(s);
+    sort.Sort;
+    result := sort.ToStringArray;
+  finally
+    sort.Free;
+  end;
+end;
+
+procedure ln(b: TStringBuilder; line: String);
+begin
+  b.Append(line);
+  b.Append(#13#10);
+end;
+
+{ TTurtleObject }
+
+constructor TTurtleObject.Create(start : TSourceLocation);
+begin
+  inherited Create;
+  FStart := start;
+end;
+
+function TTurtleObject.hasValue(value: String): boolean;
 begin
   raise Exception.Create('Must override hasValue in '+ClassName);
 end;
 
-function TTLObject.Link: TTLObject;
+function TTurtleObject.isSimple: boolean;
 begin
-  result := TTLObject(inherited Link);
+  raise Exception.Create('Must override isSimple in '+className);
 end;
 
-{ TTLLiteral }
+function TTurtleObject.Link: TTurtleObject;
+begin
+  result := TTurtleObject(inherited Link);
+end;
 
-function TTLLiteral.hasValue(value: String): boolean;
+function TTurtleObject.singleLiteral: String;
+begin
+  raise Exception.Create('Must override singleLiteral in '+className);
+end;
+
+function TTurtleObject.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+begin
+  raise Exception.Create('Must override write in '+className);
+end;
+
+{ TTurtleLiteral }
+
+constructor TTurtleLiteral.Create(start: TSourceLocation);
+begin
+  inherited Create(start);
+end;
+
+constructor TTurtleLiteral.Create(value: String);
+begin
+  inherited Create(nullLoc);
+  FValue := value;
+end;
+
+constructor TTurtleLiteral.Create(value, type_: String);
+begin
+  inherited Create(nullLoc);
+  FValue := value;
+  FType := type_;
+end;
+
+function TTurtleLiteral.hasValue(value: String): boolean;
 begin
   result := Fvalue = value;
 end;
 
-function TTLLiteral.Link: TTLLiteral;
+function TTurtleLiteral.isSimple: boolean;
 begin
-  result := TTLLiteral(inherited Link);
+  result := true;
 end;
 
-{ TTLURL }
+function TTurtleLiteral.Link: TTurtleLiteral;
+begin
+  result := TTurtleLiteral(inherited Link);
+end;
 
-function TTLURL.hasValue(value: String): boolean;
+function TTurtleLiteral.singleLiteral: String;
+begin
+  result := FValue;
+end;
+
+function TTurtleLiteral.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+var
+  p : String;
+  c : char;
+begin
+  if (StringIsInteger32(FValue)) and (FType = 'int') then
+    b.Append(FValue)
+  else
+  begin
+    b.Append('"');
+    for c in FValue do
+    begin
+      if CharInSet(c, ['"', '\']) then
+        b.Append('\');
+      b.Append(c);
+    end;
+    b.Append('"');
+  end;
+  if (FType <> '') and (FType <> 'int') then
+  begin
+    if doc.prefixIse(FType, p) then
+      b.Append('^^'+p)
+    else
+      b.Append('^^<'+FType+'>');
+  end;
+  result := false;
+end;
+
+{ TTurtleURL }
+
+constructor TTurtleURL.Create(start: TSourceLocation);
+begin
+  inherited Create(start);
+end;
+
+constructor TTurtleURL.Create(uri: String);
+begin
+  inherited Create(nullLoc);
+  self.uri := uri;
+end;
+
+function TTurtleURL.hasValue(value: String): boolean;
 begin
   result := FUri = value;
 end;
 
-function TTLURL.Link: TTLURL;
+function TTurtleURL.isSimple: boolean;
 begin
-  result := TTLURL(inherited Link);
+  result := true;
 end;
 
-procedure TTLURL.setUri(value: String);
+function TTurtleURL.Link: TTurtleURL;
+begin
+  result := TTurtleURL(inherited Link);
+end;
+
+procedure TTurtleURL.setUri(value: String);
 begin
   if (not TRegEx.Match(value, IRI_URL).Success) then
     raise Exception.create('Illegal URI '+uri);
   FUri := value;
 end;
 
-{ TTLList }
-
-constructor TTLList.Create(line, col: integer; obj: TTLObject);
+function TTurtleURL.singleLiteral: String;
 begin
-  Inherited Create(line, col);
-  FList := TAdvList<TTLObject>.create;
+  result := Furi;
+end;
+
+function TTurtleURL.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+var
+  s : String;
+begin
+  if doc.prefixIse(Furi, s) then
+    b.Append(s)
+  else
+  begin
+    b.Append('<');
+    b.Append(Furi);
+    b.Append('>');
+  end;
+  result := false;
+end;
+
+{ TTurtleList }
+
+constructor TTurtleList.Create(start : TSourceLocation; obj: TTurtleObject);
+begin
+  Inherited Create(start);
+  FList := TAdvList<TTurtleObject>.create;
   FList.Add(obj.Link);
 end;
 
-constructor TTLList.Create(line, col: integer);
+constructor TTurtleList.Create(start : TSourceLocation);
 begin
-  Inherited Create(line, col);
-  FList := TAdvList<TTLObject>.create;
+  Inherited Create(start);
+  FList := TAdvList<TTurtleObject>.create;
 end;
 
-destructor TTLList.Destroy;
+destructor TTurtleList.Destroy;
 begin
   FList.Free;
   inherited;
 end;
 
-function TTLList.hasValue(value: String): boolean;
+function TTurtleList.hasValue(value: String): boolean;
 var
-  obj : TTLObject;
+  obj : TTurtleObject;
 begin
   for obj in Flist do
     if (obj.hasValue(value)) then
@@ -223,59 +414,269 @@ begin
   exit(false);
 end;
 
-function TTLList.Link: TTLList;
+function TTurtleList.isSimple: boolean;
 begin
-  result := TTLList(inherited Link);
+  result := (Flist.Count = 0) or ((Flist.Count = 1) and Flist[0].isSimple);
 end;
 
-{ TTLComplex }
+function TTurtleList.Link: TTurtleList;
+begin
+  result := TTurtleList(inherited Link);
+end;
 
-constructor TTLComplex.Create(line, col: integer);
+function TTurtleList.singleLiteral: String;
+begin
+  if Flist.Count = 0 then
+    result := FList[0].singleLiteral
+  else
+    raise Exception.Create('Error finding single value: '+inttostr(FList.count)+' not found');
+end;
+
+function TTurtleList.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+var
+  first : boolean;
+  obj : TTurtleObject;
+begin
+  if FList.Count = 0 then
+  begin
+    b.Append('(');
+    b.Append(')');
+    result := false
+  end
+  else if FList.Count = 1 then
+    result := Flist[0].write(b, doc, indent)
+  else
+  begin
+    first := true;
+    result := false;
+    for obj in FList do
+    begin
+      if first then
+        first := false
+      else
+        b.Append(', ');
+      result := obj.write(b, doc, indent) or result;
+    end;
+  end;
+end;
+
+{ TTurtleComplex }
+
+constructor TTurtleComplex.Create(start : TSourceLocation);
 begin
   inherited;
-  FPredicates := TAdvMap<TTLObject>.create;
+  FPredicates := TAdvMap<TTurtleObject>.create;
+  FNames := TStringList.Create;
+  Fnames.Duplicates := dupIgnore;
 end;
 
-destructor TTLComplex.Destroy;
+destructor TTurtleComplex.Destroy;
 begin
+  FNames.Free;
   FPredicates.Free;
   inherited;
 end;
 
-function TTLComplex.Link: TTLComplex;
+function TTurtleComplex.Link: TTurtleComplex;
 begin
-  result := TTLComplex(inherited Link);
+  result := TTurtleComplex(inherited Link);
 end;
 
-function TTLComplex.hasValue(value: String): boolean;
+function TTurtleComplex.list(uri: String): TTurtleList;
+var
+  obj : TTurtleObject;
+  list : TTurtleList;
+begin
+  obj := FPredicates[uri];
+  if obj = nil then
+    exit(nil);
+  if (obj is TTurtleList) then
+    exit(TTurtleList(obj));
+  list := TTurtleList.Create(obj.FStart);
+  list.Flist.Add(obj.Link);
+  FPredicates.AddOrSetValue(uri, list);
+  exit(list);
+end;
+
+function TTurtleComplex.stringLiteral(uri: String): String;
+begin
+  if not has(uri) then
+    result := ''
+  else
+    result := predicates[uri].singleLiteral;
+end;
+
+function TTurtleComplex.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+var
+  left : String;
+  i : integer;
+  key, s : String;
+  prop : TTurtleObject;
+begin
+  if (predicates.Count = 0) then
+    exit(false);
+
+  if (indent > 0) then
+    b.Append(' [ ');
+  if (predicates.Count = 1) then
+  begin
+    for key in FNames do
+      if predicates.TryGetValue(key, prop) then
+      begin
+        if (prop.isSimple) then
+        begin
+          if doc.prefixIse(key, s) then
+            b.Append(' '+s+' ')
+          else
+            b.Append(' <'+key+'> ');
+          prop.write(b, doc, indent);
+          if (indent > 0) then
+            b.Append(' ] ');
+          exit(false);
+        end;
+      end;
+  end;
+
+  result := true;
+  left := StringPadLeft('', ' ', indent+2);
+  i := 0;
+  for key in FNames do
+    if predicates.TryGetValue(key, prop) then
+    begin
+      if (indent > 0) or (i > 0) then
+        b.Append(#13#10+left);
+      if (key = 'a') then
+        b.Append(' '+key+' ')
+      else if doc.prefixIse(key, s) then
+        b.Append(' '+s+' ')
+      else
+        b.Append(' <'+key+'> ');
+      prop.write(b, doc, indent+2);
+      b.Append(' ');
+      inc(i);
+      if (i < predicates.count) then
+        b.Append(' ;')
+    end;
+  if (indent > 0) then
+    b.Append(#13#10+StringPadLeft('', ' ', indent)+'] ');
+end;
+
+function TTurtleComplex.singleLiteral: String;
+begin
+  raise Exception.Create('Cannot convert a complex to a single value');
+end;
+
+function TTurtleComplex.has(uri: String): boolean;
+begin
+  result := predicates.ContainsKey(uri);
+end;
+
+function TTurtleComplex.has(uri: String; var complex: TTurtleComplex): boolean;
+var
+  o : TTurtleObject;
+begin
+  result := predicates.TryGetValue(uri, o);
+  if (result) then
+    if o is TTurtleComplex then
+      complex := TTurtleComplex(o)
+    else
+      result := false;
+end;
+
+function TTurtleComplex.hasValue(value: String): boolean;
 begin
   result := false;
 end;
 
-procedure TTLComplex.addPredicate(uri: String; obj: TTLObject);
+function TTurtleComplex.isSimple: boolean;
+begin
+  result := false;
+end;
+
+procedure TTurtleComplex.addPredicate(uri: String; obj: TTurtleObject);
 var
-  eo : TTLObject;
-  list : TTLList;
+  eo : TTurtleObject;
+  list : TTurtleList;
 begin
   if (not predicates.containsKey(uri)) then
-    predicates.add(uri, obj)
+  begin
+    predicates.add(uri, obj);
+    FNames.Add(uri);
+  end
   else
   begin
     eo := predicates[uri];
-    if (eo is TTLList) then
-      list := eo as TTLList
+    if (eo is TTurtleList) then
+      list := eo as TTurtleList
     else
     begin
-      list := TTLList.Create(0,0, eo);
+      list := TTurtleList.Create(nullLoc, eo);
       predicates.AddOrSetValue(uri, list);
     end;
     list.list.add(obj);
   end;
 end;
 
-procedure TTLComplex.addPredicates(values: TAdvMap<TTLObject>);
+procedure TTurtleComplex.addPredicate(uri, s: String);
+begin
+  addPredicate(uri, TTurtleLiteral.Create(s));
+end;
+
+procedure TTurtleComplex.addPredicate(uri, s, t: String);
+begin
+  addPredicate(uri, TTurtleLiteral.Create(s, t));
+end;
+
+function TTurtleComplex.addPredicate(uri: String): TTurtleComplex;
+begin
+  result := TTurtleComplex.Create(nullLoc);
+  addPredicate(uri, result);
+end;
+
+procedure TTurtleComplex.addPredicates(values: TAdvMap<TTurtleObject>);
 begin
   FPredicates.addAll(values);
+end;
+
+procedure TTurtleComplex.addUriPredicate(uri, s: String);
+begin
+  addPredicate(uri, TTurtleUrl.Create(s));
+end;
+
+function TTurtleComplex.complex(uri: String): TTurtleComplex;
+var
+  obj : TTurtleObject;
+begin
+  if not predicates.TryGetValue(uri, obj) then
+    exit(nil);
+  if not (obj is TTurtleComplex) then
+    raise Exception.Create('Wrong Type of Turtle object- looking for a complex');
+  result := TTurtleComplex(obj);
+end;
+
+function TTurtleComplex.complexes(uri: String): TArray<TTurtleComplex>;
+var
+  obj : TTurtleObject;
+  list : TTurtleList;
+  i : integer;
+begin
+  SetLength(result, 0);
+  if predicates.TryGetValue(uri, obj) then
+  begin
+    if (obj <> nil) and (obj is TTurtleList) then
+    begin
+      list := TTurtleList(obj);
+      SetLength(result, list.Flist.Count);
+      for i := 0 to list.Flist.Count - 1 do
+        if list.Flist[i] is TTurtleComplex then
+          result[i] := list.Flist[i] as TTurtleComplex;
+    end
+    else if (obj is TTurtleComplex) then
+    begin
+      SetLength(result, 1);
+      result[0] := obj as TTurtleComplex;
+    end;
+  end;
 end;
 
 { TTurtleLexer }
@@ -284,8 +685,8 @@ constructor TTurtleLexer.Create(source: String);
 begin
   Fsource := source;
   cursor := 1;
-  line := 1;
-  col := 1;
+  pos.line := 1;
+  pos.col := 1;
   readNext(false);
 end;
 
@@ -304,7 +705,7 @@ begin
       while (cursor <= FSource.length) do
       begin
         ch := grab();
-        if (ch = '\r') or (ch = '\n') then
+        if (ch = #13) or (ch = #10) then
           break;
       end;
     end
@@ -320,11 +721,11 @@ begin
   ch := FSource[cursor];
   if (ch = #10) then
   begin
-    inc(line);
-    col := 1;
+    inc(pos.line);
+    pos.col := 1;
   end
   else
-    inc(col);
+    inc(pos.col);
 
   inc(cursor);
   exit(ch);
@@ -341,8 +742,7 @@ begin
   skipWhitespace();
   if (cursor > FSource.length)  then
     exit;
-  startLine := line;
-  startCol := col;
+  startPos := pos;
   ch := grab();
   b := TStringBuilder.create();
   try
@@ -383,11 +783,11 @@ begin
           s := b.toString();
           if (s = '"""') then
 						e := '"""'
-          else if (s <> '""') and (copy(s, length(s)-length(e)+1, length(e)) = e) and not (copy(s, length(s)-length(e), length(e)+1) = '\'+e) then
+          else if (s <> '""') and (copy(s, length(s)-length(e)+1, length(e)) = e) and (not (copy(s, length(s)-length(e), length(e)+1) = '\'+e) or (copy(s, length(s)-length(e)-1, length(e)+2) = '\\'+e)) then
 						break;
 				end;
 				Ftype := lttLITERAL;
-				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length), false);
+				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
 				exit;
       end;
 			'''':
@@ -413,7 +813,7 @@ begin
           end;
 				end;
 				Ftype := lttLITERAL;
-				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length), false);
+				Ftoken := unescape(b.toString().substring(e.length, b.length-e.length*2), false);
 				exit;
       end;
 			else
@@ -562,45 +962,71 @@ end;
 
 procedure TTurtleLexer.error(message : String);
 begin
- raise Exception.create('Syntax Error parsing Turtle on line '+inttostr(line)+' col '+inttostr(col)+': '+message);
+ raise Exception.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
 end;
 
 { TTurtleParser }
 
-constructor TTurtleParser.Create;
-begin
-  inherited Create;
-  FObjects := TAdvList<TTurtlePredicate>.create;
-  prefixes := TDictionary<String, String>.create;
-end;
-
-destructor TTurtleParser.Destroy;
-begin
-  prefixes.Free;
-  FObjects.Free;
-  inherited;
-end;
-
-procedure TTurtleParser.parse(source: String);
+class function TTurtleParser.parse(source : String) : TTurtleDocument;
 var
   lexer : TTurtleLexer;
 begin
-  prefixes.clear();
-  prefixes.add('_', 'urn:uuid:4425b440-2c33-4488-b9fc-cf9456139995#');
-  lexer := TTurtleLexer.Create(source);
+  result := TTurtleDocument.Create;
   try
-		parse(lexer);
+    lexer := TTurtleLexer.Create(source);
+    try
+		  parse(lexer, result);
+    finally
+      lexer.Free;
+    end;
+    result.Link;
   finally
-    lexer.Free;
+    result.Free;
   end;
 end;
 
-procedure TTurtleParser.parse(lexer: TTurtleLexer);
+class function TTurtleParser.parse(source : TStream) : TTurtleDocument;
+var
+  lexer : TTurtleLexer;
+begin
+  result := TTurtleDocument.Create;
+  try
+    lexer := TTurtleLexer.Create(StreamToString(source, TEncoding.UTF8));
+    try
+		  parse(lexer, result);
+    finally
+      lexer.Free;
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+class function TTurtleParser.parse(source : TAdvStream) : TTurtleDocument;
+var
+  lexer : TTurtleLexer;
+begin
+  result := TTurtleDocument.Create;
+  try
+    lexer := TTurtleLexer.Create(StreamToString(source, TEncoding.UTF8));
+    try
+		  parse(lexer, result);
+    finally
+      lexer.Free;
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+class procedure TTurtleParser.parse(lexer: TTurtleLexer; doc : TTurtleDocument);
 var
   doPrefixes, sparqlStyle, base : boolean;
   p, sprefix, url, pfx : String;
-  uri : TTLURL;
-  complex, bnode : TTLComplex;
+  uri : TTurtleURL;
+  complex, bnode : TTurtleComplex;
 begin
 	doPrefixes := true;
   while (not lexer.done()) do
@@ -638,20 +1064,20 @@ begin
       if (not sparqlStyle) then
         lexer.token('.');
       if (not base) then
-        prefixes.AddOrSetValue(sprefix, url)
-      else if (Fbase = '') then
-        Fbase := url
+        doc.prefixes.AddOrSetValue(sprefix, url)
+      else if (doc.Fbase = '') then
+        doc.Fbase := url
       else
         raise Exception.create('Duplicate @base');
     end
     else if (lexer.peekType() = lttURI) then
     begin
       doPrefixes := false;
-      uri := TTLURL.create(lexer.startLine, lexer.startCol);
+      uri := TTurtleURL.create(lexer.startPos);
       try
         uri.Uri := lexer.uri();
-        complex := parseComplex(lexer);
-        Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
+        complex := parseComplex(lexer, doc);
+        doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
       finally
         uri.Free;
       end;
@@ -660,15 +1086,15 @@ begin
     else if (lexer.peekType() = lttWORD) then
     begin
       doPrefixes := false;
-      uri := TTLURL.create(lexer.startLine, lexer.startCol);
+      uri := TTurtleURL.create(lexer.startPos);
       try
         pfx := lexer.word();
-        if (not prefixes.containsKey(pfx)) then
+        if (not doc.prefixes.containsKey(pfx)) then
           raise Exception.create('Unknown prefix '+pfx);
         lexer.token(':');
-        uri.Uri := prefixes[pfx]+lexer.word();
-        complex := parseComplex(lexer);
-        Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
+        uri.Uri := doc.prefixes[pfx]+lexer.word();
+        complex := parseComplex(lexer, doc);
+        doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
       finally
         uri.free;
       end;
@@ -677,14 +1103,14 @@ begin
     else if (lexer.peek(lttTOKEN, ':')) then
     begin
       doPrefixes := false;
-      uri := TTLURL.create(lexer.startLine, lexer.startCol);
+      uri := TTurtleURL.create(lexer.startPos);
       try
         lexer.token(':');
-        if (not prefixes.containsKey('')) then
+        if (not doc.prefixes.containsKey('')) then
           raise Exception.create('Unknown prefix ''''');
-        uri.Uri := prefixes['']+lexer.word();
-        complex := parseComplex(lexer);
-        Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
+        uri.Uri := doc.prefixes['']+lexer.word();
+        complex := parseComplex(lexer, doc);
+        doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
       finally
         uri.Free;
       end;
@@ -694,12 +1120,12 @@ begin
     begin
       doPrefixes := false;
       lexer.token('[');
-      bnode := parseComplex(lexer);
+      bnode := parseComplex(lexer, doc);
       try
         lexer.token(']');
         if (not lexer.peek(lttTOKEN, '.')) then
         begin
-          complex := parseComplex(lexer);
+          complex := parseComplex(lexer, doc);
           try
             // at this point, we collapse bnode and complex, and give bnode a fictional identity
             bnode.addPredicates(complex.predicates);
@@ -708,7 +1134,7 @@ begin
           end;
         end;
 
-        Fobjects.add(TTurtlePredicate.Create(anonymousId(), bnode.Link));
+        doc.Fobjects.add(TTurtlePredicate.Create(anonymousId(), bnode.Link));
       finally
         bnode.Free;
       end;
@@ -719,16 +1145,16 @@ begin
   end;
 end;
 
-function TTurtleParser.parseComplex(lexer: TTurtleLexer): TTLComplex;
+class function TTurtleParser.parseComplex(lexer: TTurtleLexer; doc : TTurtleDocument): TTurtleComplex;
 var
   done, inlist, rpt : boolean;
   uri, t, l, lang, pfx : string;
-  u : TTLURL;
-  ul : TTLLiteral;
-  sl, sc : integer;
+  u : TTurtleURL;
+  ul : TTurtleLiteral;
+  sp : TSourceLocation;
 begin
   inlist := false;
-  result := TTLComplex.create(lexer.startLine, lexer.startCol);
+  result := TTurtleComplex.create(lexer.startPos);
   try
 		done := lexer.peek(lttTOKEN, ']');
 		while (not done) do
@@ -745,14 +1171,14 @@ begin
 				if (lexer.Ftype = lttTOKEN) and (lexer.Ftoken = ':') then
         begin
 					lexer.token(':');
-					if (not prefixes.containsKey(t)) then
+					if (not doc.prefixes.containsKey(t)) then
             lexer.error('unknown prefix '+t);
-					uri := prefixes[t]+lexer.word();
+					uri := doc.prefixes[t]+lexer.word();
 				end
         else if (t = 'a') then
         begin
-          if prefixes.containsKey('rdfs') then
-  					uri := prefixes['rdfs']+'type'
+          if doc.prefixes.containsKey('rdfs') then
+  					uri := doc.prefixes['rdfs']+'type'
           else
   					uri := 'http://www.w3.org/2000/01/rdf-schema#type'
         end
@@ -763,6 +1189,7 @@ begin
 			if (lexer.peek(lttTOKEN, '(')) then
       begin
 				inlist := true;
+        result.addPredicate(uri, TTurtleList.Create(lexer.startPos));
 				lexer.token('(');
 			end;
 
@@ -771,12 +1198,12 @@ begin
 				if (lexer.peek(lttTOKEN, '[')) then
         begin
 					lexer.token('[');
-          result.addPredicate(uri, parseComplex(lexer));
+          result.addPredicate(uri, parseComplex(lexer, doc));
 					lexer.token(']');
 				end
         else if (lexer.peekType() = lttURI) then
         begin
-					u := TTLURL.Create(lexer.startLine, lexer.startCol);
+					u := TTurtleURL.Create(lexer.startPos);
           try
 					  u.Uri := lexer.uri();
             result.addPredicate(uri, u.Link);
@@ -786,7 +1213,7 @@ begin
 				end
         else if (lexer.peekType() = lttLITERAL) then
         begin
-					ul := TTLLiteral.create(lexer.startLine, lexer.startCol);
+					ul := TTurtleLiteral.create(lexer.startPos);
           try
             ul.value := lexer.literal();
             if (lexer.peek(lttTOKEN, '^')) then
@@ -799,7 +1226,7 @@ begin
               begin
                 l := lexer.word();
                 lexer.token(':');
-                ul.type_ := prefixes[l]+ lexer.word();
+                ul.type_ := doc.prefixes[l]+ lexer.word();
               end;
             end;
             if (lexer.peek(lttTOKEN, '@')) then
@@ -817,12 +1244,11 @@ begin
 				end
         else if (lexer.peekType() = lttWORD) or (lexer.peek(lttTOKEN, ':')) then
         begin
-					sl := lexer.startLine;
-					sc := lexer.startCol;
+					sp := lexer.startPos;
 					if lexer.peekType() = lttWORD then pfx := lexer.word() else pfx := '';
 					if StringIsDecimal(pfx) and not lexer.peek(lttTOKEN, ':') then
           begin
-						ul := TTLLiteral.create(sl, sc);
+						ul := TTurtleLiteral.create(sp);
             try
 						  ul.value := pfx;
               result.addPredicate(uri, ul.Link);
@@ -832,7 +1258,7 @@ begin
 					end
           else if (('false'.equals(pfx)) or ('true'.equals(pfx))) and (not lexer.peek(lttTOKEN, ':')) then
           begin
-						ul := TTLLiteral.create(sl, sc);
+						ul := TTurtleLiteral.create(sp);
             try
               ul.value := pfx;
               result.addPredicate(uri, ul.Link);
@@ -842,12 +1268,12 @@ begin
 					end
           else
           begin
-						if (not prefixes.containsKey(pfx)) then
+						if (not doc.prefixes.containsKey(pfx)) then
               lexer.error('Unknown prefix "'+pfx+'"');
-						u := TTLURL.Create(sl, sc);
+						u := TTurtleURL.Create(sp);
             try
 						  lexer.token(':');
-						  u.setUri(prefixes[pfx]+lexer.word());
+						  u.setUri(doc.prefixes[pfx]+lexer.word());
               result.addPredicate(uri, u.Link);
             finally
               u.Free;
@@ -883,25 +1309,16 @@ begin
   end;
 end;
 
-function TTurtleParser.anonymousId() : TTLURL;
+class function TTurtleParser.anonymousId() : TTurtleURL;
 begin
-  result := TTLURL.create(-1, -1);
+  result := TTurtleURL.create(nullLoc);
   result.Uri := NewGuidURN;
 end;
 
-function TTurtleParser.getObject(uri : String) : TTLComplex;
-var
-  t : TTurtlePredicate;
-begin
-  for t in objects do
-    if (t.FURL.uri = uri) then
-      exit(t.FValue);
-  exit(nil);
-end;
 
 { TTurtlePredicate }
 
-constructor TTurtlePredicate.Create(url: TTLURL; value: TTLComplex);
+constructor TTurtlePredicate.Create(url: TTurtleURL; value: TTurtleComplex);
 begin
   inherited Create;
   FURL := url;
@@ -913,6 +1330,131 @@ begin
   FURL.Free;
   FValue.Free;
   inherited;
+end;
+
+function TTurtlePredicate.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+begin
+//  FURL.write(b, doc, indent);
+  b.append('<');
+  b.append(FURL.uri);
+  b.append('>');
+  b.append(' ');
+  result := FValue.write(b, doc, indent);
+  b.append(' .');
+  b.append(#13#10);
+end;
+
+{ TTurtleDocument }
+
+procedure TTurtleDocument.addObject(uri: String; obj: TTurtleComplex);
+begin
+  FObjects.Add(TTurtlePredicate.Create(TTurtleURL.Create(uri), obj));
+end;
+
+constructor TTurtleDocument.Create;
+begin
+  inherited;
+  FObjects := TAdvList<TTurtlePredicate>.create;
+  FPrefixes := TDictionary<String, String>.create;
+  FPrefixes.clear();
+  FPrefixes.add('_', 'urn:uuid:4425b440-2c33-4488-b9fc-cf9456139995#');
+end;
+
+destructor TTurtleDocument.Destroy;
+begin
+  FPrefixes.Free;
+  FObjects.Free;
+  inherited;
+end;
+
+function TTurtleDocument.getObject(uri: String): TTurtleComplex;
+var
+  t : TTurtlePredicate;
+begin
+  for t in objects do
+    if (t.FURL.uri = uri) then
+      exit(t.FValue);
+  exit(nil);
+end;
+
+function TTurtleDocument.getPredicate(uri: String): TTurtlePredicate;
+var
+  t : TTurtlePredicate;
+begin
+  for t in objects do
+    if (t.FURL.uri = uri) then
+      exit(t);
+  exit(nil);
+end;
+
+procedure TTurtleDocument.prefix(pfx, ns: String);
+begin
+  FPrefixes.AddOrSetValue(pfx, ns);
+end;
+
+function TTurtleDocument.prefixIse(s: String; var p : String) : boolean;
+var
+  pfx, ns : string;
+begin
+  result := false;
+  for pfx in prefixes.Keys do
+  begin
+    ns := prefixes[pfx];
+    if s.StartsWith(ns) then
+    begin
+      p := pfx+':'+s.Substring(ns.Length);
+      exit(true);
+    end;
+    if s.StartsWith(pfx+':') then
+    begin
+      p := s;
+      exit(true);
+    end;
+  end;
+end;
+
+{ TTurtleComposer }
+
+class function TTurtleComposer.compose(doc: TTurtleDocument): String;
+var
+  b : TStringBuilder;
+  pred :  TTurtlePredicate;
+begin
+  b := TStringBuilder.create;
+  try
+    writePrefixes(b, doc);
+    for pred in doc.objects do
+      pred.write(b, doc, 0);
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+class procedure TTurtleComposer.compose(doc: TTurtleDocument; dest: TStream);
+begin
+  StringToStream(compose(doc), dest, TEncoding.UTF8);
+end;
+
+class procedure TTurtleComposer.compose(doc: TTurtleDocument; dest: TAdvStream);
+begin
+  StringToStream(compose(doc), dest, TEncoding.UTF8);
+end;
+
+class procedure TTurtleComposer.writePrefixes(b: TStringBuilder; doc: TTurtleDocument);
+var
+  p : String;
+  done : boolean;
+begin
+  done := false;
+  for p in sorted(doc.prefixes.Keys) do
+    if (p <> '_') then
+    begin
+      ln(b, '@prefix '+p+': <'+doc.prefixes[p]+'> .');
+      done := true;
+    end;
+  if done then
+    ln(b, '');
 end;
 
 end.

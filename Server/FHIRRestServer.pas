@@ -2097,6 +2097,8 @@ Begin
         oRequest.PostFormat := ffXhtml
       else if StringStartsWithInsensitive(sContentType, 'text/fhir') Then
         oRequest.PostFormat := ffText
+      else if StringStartsWithInsensitive(sContentType, 'text/turtle') Then
+        oRequest.PostFormat := ffTurtle
       else if StringStartsWithInsensitive(sContentType, 'text/xml') or StringStartsWithInsensitive(sContentType, 'application/xml') or
           StringStartsWithInsensitive(sContentType, 'application/fhir+xml') or StringStartsWithInsensitive(sContentType, 'application/xml+fhir') or StringStartsWithInsensitive(sContentType, 'xml') Then
         oRequest.PostFormat := ffXML;
@@ -2452,13 +2454,14 @@ begin
             oComp := TFHIRXmlComposer.Create(FServerContext.Validator.Context.Link, oRequest.lang)
           else if oResponse.format = ffText then
             oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.Link, oRequest.lang)
+          {$IFNDEF FHIR2}
           else if (oResponse.Format = ffTurtle) or (res._source_format = ffTurtle) then
           begin
-            oComp := TFHIRRDFComposer.Create(FServerContext.Validator.Context.Link, oRequest.lang);
-            TFHIRRDFComposer(oComp).RDFFormat := rdfTurtle;
+            oComp := TFHIRTurtleComposer.Create(FServerContext.Validator.Context.Link, oRequest.lang);
             if (res <> nil) and (res.id <> '') then
-              TFHIRRDFComposer(oComp).URL :=  oRequest.baseUrl+'/'+CODES_TFhirResourceType[res.ResourceType]+'/'+res.id;
+              TFHIRTurtleComposer(oComp).URL := AppendForwardSlash(oRequest.baseUrl) + CODES_TFhirResourceType[res.ResourceType]+'/'+res.id;
           end
+          {$ENDIF}
           else if res._source_format = ffJson then
             oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.Link, oRequest.lang)
           else

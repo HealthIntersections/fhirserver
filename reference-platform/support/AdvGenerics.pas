@@ -1218,6 +1218,7 @@ begin
   Clear;
   FKeyCollection.Free;
   FValueCollection.Free;
+  FSortedKeys.Free;
   inherited;
 end;
 

@@ -45,7 +45,9 @@ public class DelphiGenerator {
   private DelphiCodeGenerator defCodeRes;
   private DelphiCodeGenerator defCodeConstGen;
   private DelphiCodeGenerator defCodeOp;
-  private DelphiCodeGenerator prsrCode;
+  private DelphiCodeGenerator prsrCodeX;
+  private DelphiCodeGenerator prsrCodeJ;
+  private DelphiCodeGenerator prsrCodeT;
   private DelphiCodeGenerator defIndexer;
   private Definitions definitions;
 
@@ -64,7 +66,7 @@ public class DelphiGenerator {
   private StringBuilder workingComposerXA;
   private StringBuilder workingParserJ;
   private StringBuilder workingComposerJ;
-  private StringBuilder workingParserR;
+  private StringBuilder workingParserT;
   private StringBuilder workingComposerR;
   private StringBuilder factoryIntf;
   private StringBuilder factoryImpl;
@@ -78,10 +80,14 @@ public class DelphiGenerator {
   private StringBuilder prsrRegJ = new StringBuilder();
   private StringBuilder srlsRegJ = new StringBuilder();
   private StringBuilder srlsRegR = new StringBuilder();
-  private StringBuilder prsrImpl = new StringBuilder();
+  private StringBuilder prsrRegT = new StringBuilder();
+  private StringBuilder prsrImplX = new StringBuilder();
+  private StringBuilder prsrImplJ = new StringBuilder();
+  private StringBuilder prsrImplT = new StringBuilder();
   private StringBuilder prsrdefX = new StringBuilder();
   private StringBuilder srlsdefX = new StringBuilder();
   private StringBuilder prsrdefJ = new StringBuilder();
+  private StringBuilder prsrdefT = new StringBuilder();
   private StringBuilder srlsdefJ = new StringBuilder();
   private StringBuilder prsrdefR = new StringBuilder();
   private StringBuilder srlsdefR = new StringBuilder();
@@ -90,6 +96,7 @@ public class DelphiGenerator {
   private StringBuilder prsrFragR = new StringBuilder();
   private StringBuilder prsrDTX = new StringBuilder();
   private StringBuilder prsrDTJ = new StringBuilder();
+  private StringBuilder prsrDTT = new StringBuilder();
   private StringBuilder prsrDTR = new StringBuilder();
   private StringBuilder compXBase = new StringBuilder();
   private StringBuilder compJBase = new StringBuilder();
@@ -146,7 +153,8 @@ public class DelphiGenerator {
               srlsRegX.append("    frt"+n.getName()+": Compose"+n.getName()+"(xml, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
               prsrRegJ.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(jsn)\r\n");
               srlsRegJ.append("    frt"+n.getName()+": Compose"+n.getName()+"(json, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
-              srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), -1);\r\n");
+              srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), true, -1);\r\n");
+              prsrRegT.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(obj)\r\n");
             }
             done.add(n.getName());
           } else
@@ -201,7 +209,8 @@ public class DelphiGenerator {
       srlsRegX.append("    frt"+n.getName()+": Compose"+n.getName()+"(xml, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
       prsrRegJ.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(jsn)\r\n");
       srlsRegJ.append("    frt"+n.getName()+": Compose"+n.getName()+"(json, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
-      srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), -1);\r\n");
+      srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), true, -1);\r\n");
+      prsrRegT.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(obj)\r\n");
     }
 
     opStart();
@@ -225,9 +234,15 @@ public class DelphiGenerator {
     defCodeConstGen.finish();
     defIndexer.finish();
 
-    prsrCode.classDefs.add(buildParser());
-    prsrCode.classImpls.add(prsrImpl.toString());
-    prsrCode.finish();
+    prsrCodeX.classDefs.add(buildParserXml());
+    prsrCodeX.classImpls.add(prsrImplX.toString());
+    prsrCodeX.finish();
+    prsrCodeJ.classDefs.add(buildParserJson());
+    prsrCodeJ.classImpls.add(prsrImplJ.toString());
+    prsrCodeJ.finish();
+    prsrCodeT.classDefs.add(buildParserTurtle());
+    prsrCodeT.classImpls.add(prsrImplT.toString());
+    prsrCodeT.finish();
   }
 
   private void finishIndexer() {
@@ -516,6 +531,7 @@ public class DelphiGenerator {
   private void parserGap() {
     prsrdefX.append("\r\n");
     prsrdefJ.append("\r\n");
+    prsrdefT.append("\r\n");
     srlsdefX.append("\r\n");
     srlsdefJ.append("\r\n");
     srlsdefR.append("\r\n");
@@ -603,9 +619,17 @@ public class DelphiGenerator {
     factoryByName = new StringBuilder();
 
 
-    prsrCode = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParser.pas")), dstuID);
-    prsrCode.start();
-    prsrCode.name = "FHIRParser";
+    prsrCodeX = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserXml.pas")), dstuID);
+    prsrCodeX.start();
+    prsrCodeX.name = "FHIRParserXml";
+
+    prsrCodeJ = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserJson.pas")), dstuID);
+    prsrCodeJ.start();
+    prsrCodeJ.name = "FHIRParserJson";
+
+    prsrCodeT = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserTurtle.pas")), dstuID);
+    prsrCodeT.start();
+    prsrCodeT.name = "FHIRParserTurtle";
 
     defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations.pas")), dstuID);
     defCodeOp.start();
@@ -675,26 +699,27 @@ public class DelphiGenerator {
     if (!root.getName().equals("Element") && !root.getName().equals("BackboneElement"))
       srlsdefX.append("    procedure Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : TFhir"+root.getName()+");\r\n");
     prsrdefJ.append("    function Parse"+root.getName()+"(jsn : TJsonObject) : TFhir"+root.getName()+"; overload;\r\n");
-    if (!root.getName().equals("Element") && !root.getName().equals("BackboneElement"))
+    prsrdefT.append("    function Parse"+root.getName()+"(obj : TTurtleComplex) : TFhir"+root.getName()+"; overload;\r\n");
+    if (!root.getName().equals("Element") && !root.getName().equals("BackboneElement")) {
       prsrdefJ.append("    procedure Parse"+root.getName()+"Properties(jsn : TJsonObject; result : TFhir"+root.getName()+"); overload;\r\n");
+      prsrdefT.append("    procedure Parse"+root.getName()+"Properties(obj : TTurtleComplex; result : TFhir"+root.getName()+"); overload;\r\n");
+    }
     srlsdefJ.append("    procedure Compose"+root.getName()+"(json : TJSONWriter; name : string; elem : TFhir"+root.getName()+"; noObj : boolean = false);"+"\r\n");
     prsrdefR.append("    function Parse"+root.getName()+"(rdf : TObject) : TFhir"+root.getName()+"; overload;\r\n");
-    if (root.getName().equals("Coding"))
-      srlsdefR.append("    procedure Compose"+root.getName()+"(inCodeable : boolean; parent :  TRDFComplex; parentType, name : String; elem : TFhir"+root.getName()+"; index : integer);"+"\r\n");
-    else
-      srlsdefR.append("    procedure Compose"+root.getName()+"(parent :  TRDFComplex; parentType, name : String; elem : TFhir"+root.getName()+"; index : integer);"+"\r\n");
+    srlsdefR.append("    procedure Compose"+root.getName()+"(parent :  TTurtleComplex; parentType, name : String; elem : TFhir"+root.getName()+"; useType : boolean; index : integer);"+"\r\n");
     prsrFragJ.append("  else if (type_ = '"+tn+"') then\r\n    result := parse"+root.getName()+"(jsn)\r\n");
     prsrFragX.append("  else if SameText(element.Name, '"+tn+"') then\r\n    result := parse"+root.getName()+"(element, element.Name)\r\n");
-    prsrFragR.append("  else if SameText(element.Name, '"+tn+"') then\r\n    result := parse"+root.getName()+"(rdf, element.Name)\r\n");
+    prsrFragR.append("  else if SameText(type_, '"+tn.substring(5)+"') then\r\n    result := parse"+root.getName()+"(obj)\r\n");
     if (category == ClassCategory.Type && !isAbstract) {
       prsrDTJ.append("  else if (type_ = "+tn+") then\r\n    result := parse"+root.getName()+"(jsn)\r\n");
+      prsrDTT.append("  else if (type_ = "+tn+") then\r\n    result := parse"+root.getName()+"(obj)\r\n");
       prsrDTX.append("  else if (type_ = "+tn+") then\r\n    result := parse"+root.getName()+"(element, name)\r\n");
       prsrDTR.append("  else if (type_ = "+tn+") then\r\n    result := parse"+root.getName()+"(rdf, name)\r\n");
     }
     if (!isAbstract) {
       compJBase.append("  else if (base is "+tn+") then\r\n    compose"+root.getName()+"(json, name, "+tn+"(base), false)\r\n");
       compXBase.append("  else if (base is "+tn+") then\r\n    compose"+root.getName()+"(xml, name,  "+tn+"(base))\r\n");
-      compRBase.append("  else if (base is "+tn+") then\r\n    compose"+root.getName()+"(section, name,  "+tn+"(base), -1)\r\n");
+      compRBase.append("  else if (base is "+tn+") then\r\n    compose"+root.getName()+"(section, name,  "+tn+"(base), true, -1)\r\n");
     }
     workingParserX = new StringBuilder();
     workingParserXA = new StringBuilder();
@@ -702,7 +727,7 @@ public class DelphiGenerator {
     workingComposerXA = new StringBuilder();
     workingParserJ = new StringBuilder();
     workingComposerJ = new StringBuilder();
-    workingParserR = new StringBuilder();
+    workingParserT = new StringBuilder();
     workingComposerR = new StringBuilder();
 
 
@@ -934,7 +959,7 @@ public class DelphiGenerator {
     workingComposerXA = new StringBuilder();
     workingParserJ = new StringBuilder();
     workingComposerJ = new StringBuilder();
-    workingParserR = new StringBuilder();
+    workingParserT = new StringBuilder();
     workingComposerR = new StringBuilder();
 
     for (ElementDefn e : root.getElements()) {
@@ -1092,82 +1117,98 @@ public class DelphiGenerator {
 
     if (!isSpecial) {
       prsrdefX.append("    Procedure Parse"+root.getName()+"Attributes(resource : "+tn+"; path : string; element : TMXmlElement);\r\n");
-      prsrImpl.append("Procedure TFHIRXmlParser.Parse"+root.getName()+"Attributes(resource : "+tn+"; path : string; element : TMXmlElement);\r\n");
-      prsrImpl.append("begin\r\n");
+      prsrImplX.append("Procedure TFHIRXmlParser.Parse"+root.getName()+"Attributes(resource : "+tn+"; path : string; element : TMXmlElement);\r\n");
+      prsrImplX.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  Parse"+root.typeCode()+"Attributes(resource, path, element);\r\n");
+        prsrImplX.append("  Parse"+root.typeCode()+"Attributes(resource, path, element);\r\n");
       else
-        prsrImpl.append("  GetObjectLocation(resource, element);\r\n");      
-      prsrImpl.append(workingParserXA.toString());
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("  GetObjectLocation(resource, element);\r\n");      
+      prsrImplX.append(workingParserXA.toString());
+      prsrImplX.append("end;\r\n\r\n");
       prsrdefX.append("    Function Parse"+root.getName()+"Child(resource : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n");
-      prsrImpl.append("Function TFHIRXmlParser.Parse"+root.getName()+"Child(resource : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  result := true;\r\n");
-      prsrImpl.append("  "+workingParserX.toString().substring(11).replace("      ", "  ").replace("result.", "resource."));
+      prsrImplX.append("Function TFHIRXmlParser.Parse"+root.getName()+"Child(resource : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n");
+      prsrImplX.append("begin\r\n");
+      prsrImplX.append("  result := true;\r\n");
+      prsrImplX.append("  "+workingParserX.toString().substring(11).replace("      ", "  ").replace("result.", "resource."));
       if (isBase)
-        prsrImpl.append("  else\r\n");
+        prsrImplX.append("  else\r\n");
       else
-        prsrImpl.append("  else if not parse"+root.typeCode()+"Child(resource, path, child) then\r\n");
-      prsrImpl.append("    result := false;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("  else if not parse"+root.typeCode()+"Child(resource, path, child) then\r\n");
+      prsrImplX.append("    result := false;\r\n");
+      prsrImplX.append("end;\r\n\r\n");
 
       prsrdefJ.append("    procedure Parse"+root.getName()+"Properties(jsn : TJsonObject; resource : "+tn+");\r\n");
-      prsrImpl.append("procedure TFHIRJsonParser.Parse"+root.getName()+"Properties(jsn : TJsonObject; resource : "+tn+");\r\n");
-      prsrImpl.append("begin\r\n");
+      prsrdefT.append("    procedure Parse"+root.getName()+"Properties(obj : TTurtleComplex; resource : "+tn+");\r\n");
+      prsrImplJ.append("procedure TFHIRJsonParser.Parse"+root.getName()+"Properties(jsn : TJsonObject; resource : "+tn+");\r\n");
+      prsrImplJ.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  Parse"+root.typeCode()+"Properties(jsn, resource);\r\n");
+        prsrImplJ.append("  Parse"+root.typeCode()+"Properties(jsn, resource);\r\n");
       else {
-        prsrImpl.append("  resource.LocationStart := jsn.LocationStart;\r\n");
-        prsrImpl.append("  resource.LocationEnd := jsn.LocationEnd;\r\n");
+        prsrImplJ.append("  resource.LocationStart := jsn.LocationStart;\r\n");
+        prsrImplJ.append("  resource.LocationEnd := jsn.LocationEnd;\r\n");
       }
 
-      prsrImpl.append(workingParserJ.toString().replace("    ", "  ").replace("result.", "resource."));
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplJ.append(workingParserJ.toString().replace("    ", "  ").replace("result.", "resource."));
+      prsrImplJ.append("end;\r\n\r\n");
 
+      prsrImplT.append("procedure TFHIRTurtleParser.Parse"+root.getName()+"Properties(obj : TTurtleComplex; resource : "+tn+");\r\n");
+      if (workingParserT.toString().contains("for item") || workingParserT.toString().contains("if obj.has(")) {
+        prsrImplT.append("var\r\n");
+        prsrImplT.append("  item : TTurtleComplex;\r\n");
+      }      
+      prsrImplT.append("begin\r\n");
+      if (!isBase)
+        prsrImplT.append("  Parse"+root.typeCode()+"Properties(obj, resource);\r\n");
+      else {
+        prsrImplT.append("  resource.LocationStart := obj.Start;\r\n");
+        prsrImplT.append("  resource.LocationEnd := obj.Stop;\r\n");
+      }
+
+      prsrImplT.append(workingParserT.toString().replace("    ", "  ").replace("result.", "resource."));
+      prsrImplT.append("end;\r\n\r\n");
 
       srlsdefX.append("    Procedure Compose"+root.getName()+"Attributes(xml : TXmlBuilder; resource : "+tn+");\r\n");
-      prsrImpl.append("Procedure TFHIRXmlComposer.Compose"+root.getName()+"Attributes(xml : TXmlBuilder; resource : "+tn+");\r\n");
-      prsrImpl.append("begin\r\n");
+      prsrImplX.append("Procedure TFHIRXmlComposer.Compose"+root.getName()+"Attributes(xml : TXmlBuilder; resource : "+tn+");\r\n");
+      prsrImplX.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  Compose"+root.typeCode()+"Attributes(xml, resource);\r\n");
-      prsrImpl.append(workingComposerXA.toString());        
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("  Compose"+root.typeCode()+"Attributes(xml, resource);\r\n");
+      prsrImplX.append(workingComposerXA.toString());        
+      prsrImplX.append("end;\r\n\r\n");
       srlsdefX.append("    Procedure Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
-      prsrImpl.append("Procedure TFHIRXmlComposer.Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
+      prsrImplX.append("Procedure TFHIRXmlComposer.Compose"+root.getName()+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
       if (workingComposerX.toString().contains("i :=")) {
-        prsrImpl.append("var\r\n");
-        prsrImpl.append("  i : integer;{z.a}\r\n");
+        prsrImplX.append("var\r\n");
+        prsrImplX.append("  i : integer;{z.a}\r\n");
       }
-      prsrImpl.append("begin\r\n");
+      prsrImplX.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  compose"+root.typeCode()+"Children(xml, elem);\r\n");
-      prsrImpl.append(workingComposerX.toString());        
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("  compose"+root.typeCode()+"Children(xml, elem);\r\n");
+      prsrImplX.append(workingComposerX.toString());        
+      prsrImplX.append("end;\r\n\r\n");
 
       srlsdefJ.append("    Procedure Compose"+root.getName()+"Properties(json : TJSONWriter; elem : "+tn+");\r\n");
-      prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+root.getName()+"Properties(json : TJSONWriter; elem : "+tn+");\r\n");
+      prsrImplJ.append("Procedure TFHIRJsonComposer.Compose"+root.getName()+"Properties(json : TJSONWriter; elem : "+tn+");\r\n");
       if (workingComposerJ.toString().contains("i :=")) {
-        prsrImpl.append("var\r\n");
-        prsrImpl.append("  i : integer{z.b};\r\n");
+        prsrImplJ.append("var\r\n");
+        prsrImplJ.append("  i : integer{z.b};\r\n");
       }
-      prsrImpl.append("begin\r\n");
+      prsrImplJ.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  Compose"+root.typeCode()+"Properties(json, elem);\r\n");
-      prsrImpl.append(workingComposerJ.toString());        
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplJ.append("  Compose"+root.typeCode()+"Properties(json, elem);\r\n");
+      prsrImplJ.append(workingComposerJ.toString());        
+      prsrImplJ.append("end;\r\n\r\n");
 
-      srlsdefR.append("    Procedure Compose"+root.getName()+"(this : TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer); overload;\r\n");
-      prsrImpl.append("Procedure TFHIRRDFComposer.Compose"+root.getName()+"(this : TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer);\r\n");
+      srlsdefR.append("    Procedure Compose"+root.getName()+"(this : TTurtleComplex; parentType, name : String; elem : "+tn+"; useType : boolean; index : integer); overload;\r\n");
+      prsrImplT.append("Procedure TFHIRTurtleComposer.Compose"+root.getName()+"(this : TTurtleComplex; parentType, name : String; elem : "+tn+"; useType : boolean; index : integer);\r\n");
       if (workingComposerR.toString().contains("i :=")) {
-        prsrImpl.append("var\r\n");
-        prsrImpl.append("  i : integer{z.c};\r\n");
+        prsrImplT.append("var\r\n");
+        prsrImplT.append("  i : integer{z.c};\r\n");
       }
-      prsrImpl.append("begin\r\n");
+      prsrImplT.append("begin\r\n");
       if (!isBase)
-        prsrImpl.append("  Compose"+root.typeCode()+"(this, '"+root.getName()+"', name, elem, index);\r\n");
-      prsrImpl.append(workingComposerR.toString().replace("%%%%", root.getName()));        
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplT.append("  Compose"+root.typeCode()+"(this, '', name, elem, false, index);\r\n");
+      prsrImplT.append(workingComposerR.toString().replace("%%%%", root.getName()));        
+      prsrImplT.append("end;\r\n\r\n");
     }
   }
   //
@@ -1615,13 +1656,16 @@ public class DelphiGenerator {
     if (!e.getName().equals("Element") && !e.getName().equals("BackboneElement"))
       srlsdefX.append("    procedure Compose"+tn.substring(5)+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
     prsrdefJ.append("    function Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+"; overload; {b\\}\r\n");
-    if (!e.getName().equals("Element") && !e.getName().equals("BackboneElement"))
+    prsrdefT.append("    function Parse"+tn.substring(5)+"(obj : TTurtleComplex) : "+tn+"; overload; {b\\}\r\n");
+    if (!e.getName().equals("Element") && !e.getName().equals("BackboneElement")) {
       prsrdefJ.append("    procedure Parse"+tn.substring(5)+"Properties(jsn : TJsonObject; result : "+tn+"); overload; {b\\}\r\n");
+      prsrdefT.append("    procedure Parse"+tn.substring(5)+"Properties(obj : TTurtleComplex; result : "+tn+"); overload; {b\\}\r\n");
+    }
     srlsdefJ.append("    procedure Compose"+tn.substring(5)+"(json : TJSONWriter; name : string; elem : "+tn+"; noObj : boolean = false)"+(tn.equals("TFhirExtension") ? " override;" : "")+";\r\n");
-    srlsdefR.append("    procedure Compose"+tn.substring(5)+"(parent :  TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer)"+(tn.equals("TFhirExtension") ? " override;" : "")+";\r\n");
+    srlsdefR.append("    procedure Compose"+tn.substring(5)+"(parent :  TTurtleComplex; parentType, name : String; elem : "+tn+"; useType : boolean; index : integer)"+(tn.equals("TFhirExtension") ? " override;" : "")+";\r\n");
     compJBase.append("  else if (base is "+tn+") then\r\n    compose"+tn.substring(5)+"(json, name, "+tn+"(base), false)\r\n");
     compXBase.append("  else if (base is "+tn+") then\r\n    compose"+tn.substring(5)+"(xml, name,  "+tn+"(base))\r\n");
-    compRBase.append("  else if (base is "+tn+") then\r\n    compose"+tn.substring(5)+"(section, name,  "+tn+"(base), -1)\r\n");
+    compRBase.append("  else if (base is "+tn+") then\r\n    compose"+tn.substring(5)+"(section, name,  "+tn+"(base), true, -1)\r\n");
 
     workingParserX = new StringBuilder();
     workingParserXA = new StringBuilder();
@@ -1629,7 +1673,7 @@ public class DelphiGenerator {
     workingComposerXA = new StringBuilder();
     workingParserJ = new StringBuilder();
     workingComposerJ = new StringBuilder();
-    workingParserR = new StringBuilder();
+    workingParserT = new StringBuilder();
     workingComposerR = new StringBuilder();
 
     StringBuilder def = new StringBuilder();
@@ -1952,24 +1996,24 @@ public class DelphiGenerator {
 
   private void generateParser(ElementDefn e, String tn, ClassCategory category, boolean isElement, String parent) throws Exception {
     String s = workingParserX.toString().replace("result.", "element.");
-    prsrImpl.append(
+    prsrImplX.append(
         "function TFHIRXmlParser.Parse"+tn.substring(5)+"(element : TMXmlElement; path : string) : "+tn+";\r\n"+
             "var\r\n"+
         "  child : TMXmlElement;\r\n");
 
-    prsrImpl.append(
+    prsrImplX.append(
         "begin\r\n"+
             "  result := "+tn+".create;\r\n"+
         "  try\r\n");
     if (isElement)
       if (category == ClassCategory.Resource)
-        prsrImpl.append("    parse"+parent+"Attributes(result, path, element);\r\n");
+        prsrImplX.append("    parse"+parent+"Attributes(result, path, element);\r\n");
       else
-        prsrImpl.append("    parseElementAttributes(result, path, element);\r\n");
+        prsrImplX.append("    parseElementAttributes(result, path, element);\r\n");
 
-    prsrImpl.append(workingParserXA.toString());
+    prsrImplX.append(workingParserXA.toString());
 
-    prsrImpl.append(
+    prsrImplX.append(
         "    child := FirstChild(element);\r\n"+
             "    while (child <> nil) do\r\n"+
             "    begin\r\n"+
@@ -1978,9 +2022,9 @@ public class DelphiGenerator {
             "      child := NextSibling(child);\r\n"+
         "    end;\r\n");
     if (isElement)
-      prsrImpl.append(
+      prsrImplX.append(
           "    closeOutElement(result, element);\r\n");
-    prsrImpl.append(
+    prsrImplX.append(
         "\r\n"+
             "    result.link;\r\n"+
             "  finally\r\n"+
@@ -1989,90 +2033,90 @@ public class DelphiGenerator {
             "end;\r\n\r\n"
         );
     if (!tn.equals("TFhirElement") && !tn.equals("TFhirBackboneElement")) {
-      prsrImpl.append(
+      prsrImplX.append(
           "function TFHIRXmlParser.Parse"+tn.substring(5)+"Child(element : "+tn+"; path : string; child : TMXmlElement) : boolean;\r\n"+
               "begin\r\n"+
           "  result := true;\r\n");
 
       if (s.length() >= 11)
-        prsrImpl.append("      "+s.substring(11)+"      else ");
+        prsrImplX.append("      "+s.substring(11)+"      else ");
       else
-        prsrImpl.append("      ");
+        prsrImplX.append("      ");
 
       if (!isElement)
-        prsrImpl.append("\r\n");
+        prsrImplX.append("\r\n");
       else if (category == ClassCategory.Resource)
-        prsrImpl.append("if Not Parse"+parent+"Child(element, path, child) then\r\n");
+        prsrImplX.append("if Not Parse"+parent+"Child(element, path, child) then\r\n");
       else if (category == ClassCategory.Component)
-        prsrImpl.append("if Not ParseBackboneElementChild(element, path, child) then\r\n");
+        prsrImplX.append("if Not ParseBackboneElementChild(element, path, child) then\r\n");
       else if (hasExplicitParent(e))
-        prsrImpl.append("if Not Parse"+e.typeCode()+"Child(element, path, child) then\r\n");
+        prsrImplX.append("if Not Parse"+e.typeCode()+"Child(element, path, child) then\r\n");
       else
-        prsrImpl.append("if Not ParseElementChild(element, path, child) then\r\n");
-      prsrImpl.append("    result := false;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("if Not ParseElementChild(element, path, child) then\r\n");
+      prsrImplX.append("    result := false;\r\n");
+      prsrImplX.append("end;\r\n\r\n");
     }
     s = workingComposerX.toString();
-    prsrImpl.append(
+    prsrImplX.append(
         "procedure TFHIRXmlComposer.Compose"+tn.substring(5)+"(xml : TXmlBuilder; name : String; elem : "+tn+");\r\n");
-    prsrImpl.append(
+    prsrImplX.append(
         "begin\r\n"+
         "  if (elem = nil) then\r\n    exit;\r\n");
     if (isElement)
       if (category == ClassCategory.Resource)
-        prsrImpl.append("  compose"+parent+"Attributes(xml, elem);\r\n");
+        prsrImplX.append("  compose"+parent+"Attributes(xml, elem);\r\n");
       else 
-        prsrImpl.append("  composeElementAttributes(xml, elem);\r\n");
-    prsrImpl.append(workingComposerXA.toString());        
-    prsrImpl.append(
+        prsrImplX.append("  composeElementAttributes(xml, elem);\r\n");
+    prsrImplX.append(workingComposerXA.toString());        
+    prsrImplX.append(
         "  xml.open(name);\r\n");
-    prsrImpl.append("  compose"+tn.substring(5)+"Children(xml, elem);\r\n");
+    prsrImplX.append("  compose"+tn.substring(5)+"Children(xml, elem);\r\n");
     if (isElement)
-      prsrImpl.append("  closeOutElement(xml, elem);\r\n");
-    prsrImpl.append(
+      prsrImplX.append("  closeOutElement(xml, elem);\r\n");
+    prsrImplX.append(
         "  xml.close(name);\r\n"+
             "end;\r\n\r\n"
         );
 
     if (!tn.equals("TFhirElement") && !tn.equals("TFhirBackboneElement")) {
-      prsrImpl.append(
+      prsrImplX.append(
           "procedure TFHIRXmlComposer.Compose"+tn.substring(5)+"Children(xml : TXmlBuilder; elem : "+tn+");\r\n");
       boolean var = false;
       if (s.contains("for i := ")) {
-        prsrImpl.append("var\r\n  i : integer;\r\n");
+        prsrImplX.append("var\r\n  i : integer;\r\n");
         var = true;
       }
       if (s.contains("ext := ")) {
         if (!var) 
-          prsrImpl.append("var\r\n");
-        prsrImpl.append("  ext : boolean;\r\n");
-        prsrImpl.append("  val : boolean;\r\n");
+          prsrImplX.append("var\r\n");
+        prsrImplX.append("  ext : boolean;\r\n");
+        prsrImplX.append("  val : boolean;\r\n");
       }
-      prsrImpl.append(
+      prsrImplX.append(
           "begin\r\n");
       if (isElement)
         if (category == ClassCategory.Resource)
-          prsrImpl.append("  compose"+parent+"Children(xml, elem);\r\n");
+          prsrImplX.append("  compose"+parent+"Children(xml, elem);\r\n");
         else if (category == ClassCategory.Component)
-          prsrImpl.append("  composeBackboneElementChildren(xml, elem);\r\n");
+          prsrImplX.append("  composeBackboneElementChildren(xml, elem);\r\n");
         else if (Utilities.noString(parent))
-          prsrImpl.append("  composeElementChildren(xml, elem);\r\n");
+          prsrImplX.append("  composeElementChildren(xml, elem);\r\n");
         else
-          prsrImpl.append("  compose"+parent+"Children(xml, elem);\r\n");
+          prsrImplX.append("  compose"+parent+"Children(xml, elem);\r\n");
 
-      prsrImpl.append(s);
-      prsrImpl.append(
+      prsrImplX.append(s);
+      prsrImplX.append(
           "end;\r\n\r\n"
           );
     }
 
     prsrdefJ.append("    procedure Parse"+tn.substring(5)+"(jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+"); overload; {b.}\r\n");
-    prsrImpl.append("procedure TFHIRJsonParser.Parse"+tn.substring(5)+"(jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+");\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  ctxt.add(Parse"+tn.substring(5)+"(jsn)); {2}\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplJ.append("procedure TFHIRJsonParser.Parse"+tn.substring(5)+"(jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+");\r\n");
+    prsrImplJ.append("begin\r\n");
+    prsrImplJ.append("  ctxt.add(Parse"+tn.substring(5)+"(jsn)); {2}\r\n");
+    prsrImplJ.append("end;\r\n\r\n");
 
-    prsrImpl.append(
+    prsrImplJ.append(
         "function TFHIRJsonParser.Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+";\r\n"+
             "begin\r\n"+
             "  result := "+tn+".create;\r\n"+
@@ -2084,143 +2128,143 @@ public class DelphiGenerator {
             "  end;\r\n"+
             "end;\r\n\r\n"
         );
+    prsrImplT.append(
+        "function TFHIRTurtleParser.Parse"+tn.substring(5)+"(obj : TTurtleComplex) : "+tn+";\r\n"+
+            "begin\r\n"+
+            "  if (obj = nil) then\r\n"+
+            "    exit(nil);\r\n"+      
+            "  result := "+tn+".create;\r\n"+
+            "  try\r\n"+
+            "    Parse"+tn.substring(5)+"Properties(obj, result);\r\n"+ 
+            "    result.link;\r\n"+
+            "  finally\r\n"+
+            "    result.free;\r\n"+
+            "  end;\r\n"+
+            "end;\r\n\r\n"
+        );
     if (!tn.equals("TFhirElement") && !tn.equals("TFhirBackboneElement")) {
-      prsrImpl.append(
+      prsrImplJ.append(
           "procedure TFHIRJsonParser.Parse"+tn.substring(5)+"Properties(jsn : TJsonObject; result : "+tn+");\r\n"+
           "begin\r\n");
       s = workingParserJ.toString();
       if (isElement) {
         if (category == ClassCategory.Resource)
-          prsrImpl.append("    Parse"+parent+"Properties(jsn, result);\r\n");
+          prsrImplJ.append("    Parse"+parent+"Properties(jsn, result);\r\n");
         else if (category == ClassCategory.Component)
-          prsrImpl.append("    ParseBackboneElementProperties(jsn, result);\r\n");
+          prsrImplJ.append("    ParseBackboneElementProperties(jsn, result);\r\n");
         else if (Utilities.noString(parent))
-          prsrImpl.append("    ParseElementProperties(jsn, result);\r\n");
+          prsrImplJ.append("    ParseElementProperties(jsn, result);\r\n");
         else
-          prsrImpl.append("    Parse"+parent+"Properties(jsn, result);\r\n");
+          prsrImplJ.append("    Parse"+parent+"Properties(jsn, result);\r\n");
       }
-      prsrImpl.append(s);
-      prsrImpl.append(
+      prsrImplJ.append(s);
+      prsrImplJ.append(
+          "end;\r\n\r\n");
+      prsrImplT.append(
+          "procedure TFHIRTurtleParser.Parse"+tn.substring(5)+"Properties(obj : TTurtleComplex; result : "+tn+");\r\n");
+      if (workingParserT.toString().contains("for item") || workingParserT.toString().contains("if obj.has(")) {
+        prsrImplT.append("var\r\n");
+        prsrImplT.append("  item : TTurtleComplex;\r\n");
+      }
+      prsrImplT.append("begin\r\n");
+      s = workingParserT.toString();
+      if (isElement) {
+        if (category == ClassCategory.Resource)
+          prsrImplT.append("    Parse"+parent+"Properties(obj, result);\r\n");
+        else if (category == ClassCategory.Component)
+          prsrImplT.append("    ParseBackboneElementProperties(obj, result);\r\n");
+        else if (Utilities.noString(parent))
+          prsrImplT.append("    ParseElementProperties(obj, result);\r\n");
+        else
+          prsrImplT.append("    Parse"+parent+"Properties(obj, result);\r\n");
+      }
+      prsrImplT.append(s);
+      prsrImplT.append(
           "end;\r\n\r\n");
     }
 
     s = workingComposerJ.toString();
-    prsrImpl.append(
+    prsrImplJ.append(
         "procedure TFHIRJsonComposer.Compose"+tn.substring(5)+"(json : TJSONWriter; name : string; elem : "+tn+"; noObj : boolean = false);\r\n");
     boolean var = false;
     if (s.contains("for i := ")) { // || category == ClassCategory.Resource) {
-      prsrImpl.append("var\r\n  i : integer;\r\n");
+      prsrImplJ.append("var\r\n  i : integer;\r\n");
       var = true;
     }
     if (s.contains("ext := ")) {
       if (!var) 
-        prsrImpl.append("var\r\n");
-      prsrImpl.append("  ext : boolean;\r\n");
-      prsrImpl.append("  val : boolean;\r\n");
+        prsrImplJ.append("var\r\n");
+      prsrImplJ.append("  ext : boolean;\r\n");
+      prsrImplJ.append("  val : boolean;\r\n");
     }
 
     if (category == ClassCategory.Resource)
-      prsrImpl.append(
+      prsrImplJ.append(
           "begin\r\n"+
           "  if (elem = nil) then\r\n    exit;\r\n");
     else 
-      prsrImpl.append(
+      prsrImplJ.append(
           "begin\r\n"+
               "  if (elem = nil) then\r\n    exit;\r\n"+
           "  if not noObj then json.valueObject(name);\r\n");
     if (isElement)
       if (category == ClassCategory.Resource)
-        prsrImpl.append("  Compose"+parent+"Properties(json, elem);\r\n");
+        prsrImplJ.append("  Compose"+parent+"Properties(json, elem);\r\n");
       else if (category == ClassCategory.Component)
-        prsrImpl.append("  ComposeBackboneElementProperties(json, elem);\r\n");
+        prsrImplJ.append("  ComposeBackboneElementProperties(json, elem);\r\n");
       else if (!Utilities.noString(parent))
-        prsrImpl.append("  Compose"+parent+"(json, '', elem, true);\r\n");
+        prsrImplJ.append("  Compose"+parent+"(json, '', elem, true);\r\n");
       else if (!tn.substring(5).equals("Element"))
-        prsrImpl.append("  ComposeElementProperties(json, elem);\r\n");
+        prsrImplJ.append("  ComposeElementProperties(json, elem);\r\n");
 
 
-    prsrImpl.append(s);
+    prsrImplJ.append(s);
     if (category == ClassCategory.Resource)
-      prsrImpl.append(
+      prsrImplJ.append(
           "end;\r\n\r\n");
     else
-      prsrImpl.append(
+      prsrImplJ.append(
           "  if not noObj then json.finishObject;\r\n"+
           "end;\r\n\r\n");
 
-    s = workingComposerR.toString().replace("%%%%", tn.substring(5));
-    // special cases in RDF
-    if (tn.substring(5).equals("Quantity")) {
-      s = s + "  // special case. system and code are simplified Coding, so we use the generic Coding approach\r\n"+
-          "  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and ((elem.systemElement <> nil) or (elem.codeElement <> nil)) then\r\n"+
-          "  begin\r\n"+
-          "    cb := this.predicate('fhir:Quantity.code');\r\n"+
-          "    cb.predicate('a', 'fhir:ConceptBase');\r\n"+
-          "    c := cb.predicate('fhir:ConceptBase.coding');\r\n"+
-          "    ComposeUri(c, 'CodingBase', 'system', elem.systemElement, -1);\r\n"+
-          "    ComposeCode(c, 'CodingBase', 'code', elem.codeElement, -1);\r\n"+
-          "    if elem.unit_Element <> nil then\r\n"+
-          "      ComposeString(cb, 'ConceptBase', 'text', elem.unit_Element, -1);\r\n"+
-          "  end;\r\n";
-    }
-    if (tn.substring(5).equals("CodeableConcept")) {
-      s = s.replace("CodeableConcept", "ConceptBase").replace("ComposeCoding(false, ", "ComposeCoding(true, ");
-    }
-    if (tn.substring(5).equals("Coding")) {
-      s = s.replace("Coding", "CodingBase");
-    }
+    s = workingComposerR.toString().replace("%%%%", e.getPath());
 
-    if (tn.substring(5).equals("Coding"))
-      prsrImpl.append("procedure TFHIRRDFComposer.Compose"+tn.substring(5)+"(inCodeable : boolean; parent :  TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer);\r\n");
-    else
-      prsrImpl.append("procedure TFHIRRDFComposer.Compose"+tn.substring(5)+"(parent :  TRDFComplex; parentType, name : String; elem : "+tn+"; index : integer);\r\n");
-    prsrImpl.append("var\r\n  this : TRDFComplex;\r\n");
+    prsrImplT.append("procedure TFHIRTurtleComposer.Compose"+tn.substring(5)+"(parent :  TTurtleComplex; parentType, name : String; elem : "+tn+"; useType : boolean; index : integer);\r\n");
+    prsrImplT.append("var\r\n  this : TTurtleComplex;\r\n");
     if (tn.substring(5).equals("Quantity")) 
-      prsrImpl.append("var\r\n  cb, c : TRDFComplex;\r\n");
+      prsrImplT.append("var\r\n  cb, c : TTurtleComplex;\r\n");
     if (s.contains("for i := "))
-      prsrImpl.append("  i : integer;\r\n");
+      prsrImplT.append("  i : integer;\r\n");
     if (s.contains("ext := ")) {
-      prsrImpl.append("  ext : boolean;\r\n");
-      prsrImpl.append("  val : boolean;\r\n");
+      prsrImplT.append("  ext : boolean;\r\n");
+      prsrImplT.append("  val : boolean;\r\n");
     }
-    prsrImpl.append(
+    prsrImplT.append(
         "begin\r\n"+
         "  if (elem = nil) then\r\n    exit;\r\n");
     if (tn.substring(5).equals("Element"))
-      prsrImpl.append("    this := parent;\r\n");
+      prsrImplT.append("    this := parent;\r\n");
     else 
-      prsrImpl.append(
+      prsrImplT.append(
           "  if (parentType = '') then\r\n"+    
               "    this := parent\r\n"+    
               "  else\r\n"+    
               "  begin\r\n"+    
-              "    this := parent.predicate('fhir:'+parentType+'.'+name);\r\n"+
-              (tn.substring(5).equals("Coding") ? "    if inCodeable then\r\n      this.predicate('a', 'fhir:CodingBase')\r\n    else\r\n      this.predicate('a', 'fhir:Coding');\r\n" : "    this.predicate('a', 'fhir:"+tn.substring(5)+"');\r\n")+
-              (tn.substring(5).equals("CodeableConcept") ? "    this.predicate('a', 'fhir:ConceptBase');\r\n" : "")+
+              "    this := parent.addPredicate('fhir:'+parentType+'.'+name);\r\n"+
+              "    if (useType) then\r\n"+
+              "      this.addPredicate('a', 'fhir:"+tn.substring(5)+"'); {z}\r\n"+
           "  end;\r\n");
-    if (tn.substring(5).equals("Coding")) {
-      prsrImpl.append("  if not inCodeable then\r\n"+
-          "  begin\r\n"+
-          "    this.predicate('a', 'fhir:ConceptBase');\r\n"+
-          "    this := this.predicate('fhir:ConceptBase.coding');\r\n"+
-          "    this.predicate('a', 'fhir:CodingBase');\r\n"+
-          "  end;\r\n");
-    }
     if (category == ClassCategory.Resource)
-      prsrImpl.append("  compose"+parent+"(this, '"+tn.substring(5)+"', name, elem, index);\r\n");
+      prsrImplT.append("  compose"+parent+"(this, '', name, elem, false, index);\r\n");
     else if (category == ClassCategory.Component)
-      prsrImpl.append("  composeBackboneElement(this, '"+tn.substring(5)+"', name, elem, index);\r\n");
+      prsrImplT.append("  composeBackboneElement(this, '', name, elem, false, index);\r\n");
     else if (tn.substring(5).equals("Element"))
-      prsrImpl.append("  if (index > -1)  then\r\n    this.predicate('fhir:index', inttostr(index));\r\n");
-    else if (tn.substring(5).equals("CodeableConcept"))
-      prsrImpl.append("  composeElement(this, 'ConceptBase', name, elem, index);\r\n");
-    else if (tn.substring(5).equals("Coding"))
-      prsrImpl.append("  composeElement(this, 'CodingBase', name, elem, index);\r\n");
+      prsrImplT.append("  if (index > -1)  then\r\n    this.addPredicate('fhir:index', inttostr(index), 'int');\r\n");
     else
-      prsrImpl.append("  composeElement(this, '"+tn.substring(5)+"', name, elem, index);\r\n");
+      prsrImplT.append("  composeElement(this, '', name, elem, false, index);\r\n");
 
-    prsrImpl.append(s);
-    prsrImpl.append(
+    prsrImplT.append(s);
+    prsrImplT.append(
         "end;\r\n\r\n"
         );
   }
@@ -2474,13 +2518,16 @@ public class DelphiGenerator {
         workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
             "      ComposeEnum(xml, '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+");\r\n");
 
-        if (!specialCaseInRDF(cn, e.getName()))
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
-              "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", i);\r\n");
+        workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
+              "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", false, i);\r\n");
 
         workingParserJ.append(
             "    if jsn.has('"+e.getName()+"') or jsn.has('_"+e.getName()+"') then\r\n"+
                 "      iterateEnumArray(jsn.vArr['"+e.getName()+"'], jsn.vArr['_"+e.getName()+"'], jsn.path+'/"+e.getName()+"', result."+s+obj+", parseEnum, CODES_"+tn+", SYSTEMS_"+tn+");\r\n");
+
+        workingParserT.append(
+            "    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
+            "      result."+s+obj+".Add(parseEnum(item, CODES_"+tn+", SYSTEMS_"+tn+"));\r\n");
 
         workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+obj+".Count > 0) then\r\n");
         workingComposerJ.append(
@@ -2508,9 +2555,8 @@ public class DelphiGenerator {
                 "    end;\r\n"+
             "  end;\r\n");
 
-        if (!specialCaseInRDF(cn, e.getName()))
           workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
-              "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", i);\r\n");
+              "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", false, i);\r\n");
       } else {
         String tnl;
         if (tn.contains("{"))
@@ -2587,16 +2633,18 @@ public class DelphiGenerator {
             "        result."+s+".Add("+parse+"){y.2}\r\n");
         workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
             "      "+srlsd+"(xml, '"+e.getName()+"', "+getParam3(tn)+srls.replace("#", "elem."+s+"[i]")+");\r\n");
-        if (!specialCaseInRDF(cn, e.getName()))
           workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
-              "      "+srlsr+"("+(srlsr.equals("ComposeCoding") ? "false, " : "")+"this, '%%%%', '"+e.getName()+"', "+srls.replace("#", "elem."+s+"[i]")+", i);\r\n");
-        if (typeIsPrimitive(e.typeCode())) 
+              "      "+srlsr+"(this, '%%%%', '"+e.getName()+"', "+srls.replace("#", "elem."+s+"[i]")+", false, i);\r\n");
+        if (typeIsPrimitive(e.typeCode())) { 
           workingParserJ.append(
               "      if jsn.has('"+e.getName()+"') or jsn.has('_"+e.getName()+"') then\r\n"+
                   "      iteratePrimitiveArray(jsn.vArr['"+e.getName()+"'], jsn.vArr['_"+e.getName()+"'], result."+s+", parse"+parseName(tn)+");\r\n");
-        else 
+        } else { 
           workingParserJ.append("    if jsn.has('"+e.getName()+"') then\r\n"+
               "      iterateArray(jsn.vArr['"+e.getName()+"'], result."+s+", parse"+parseName(tn)+");\r\n");
+        }
+        workingParserT.append("    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
+            "      result."+s+".Add(parse"+parseName(tn)+"(item));\r\n");
 
         workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+".Count > 0) then\r\n");
         if (typeIsPrimitive(e.typeCode())) 
@@ -2707,19 +2755,18 @@ public class DelphiGenerator {
           workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n        result."+s+"Element := "+parse+"{1a}\r\n");
         workingParserJ.append("    if jsn.has('"+e.getName()+"') or jsn.has('_"+e.getName()+"')  then\r\n"+
             "      result."+s+"Element := parseEnum(jsn.path+'/"+e.getName()+"', jsn['"+e.getName()+"'], jsn.vObj['_"+e.getName()+"'], CODES_"+tn+", SYSTEMS_"+tn+");\r\n");
+        workingParserT.append("    result."+s+"Element := ParseEnum(obj.complex('http://hl7.org/fhir/"+e.getPath()+"'), CODES_"+tn+", SYSTEMS_"+tn+");\r\n");
         if (!e.isInherited()) {
           destroy.append("  F"+getTitle(s)+".free;\r\n");
         }
         if (enumNames.contains(tn)) {         
           workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(xml, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+");\r\n");
-          if (!specialCaseInRDF(cn, e.getName()))
-            workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", SYSTEMS_"+tn+", -1);\r\n");
+          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", SYSTEMS_"+tn+", false, -1);\r\n");
           workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumValue(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
           workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumProps(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
         } else {
           workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(xml, '"+e.getName()+"', elem."+getTitle(s)+");{x.1}\r\n");
-          if (!specialCaseInRDF(cn, e.getName()))
-            workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"("+(tn.equals("Coding") ? "false, " : "")+"this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+", -1);{x.1}\r\n");
+          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+", false, -1);{x.1}\r\n");
           workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Value(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {1}\r\n");        
           workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Props(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {y}\r\n");        
         }
@@ -2819,14 +2866,17 @@ public class DelphiGenerator {
               workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(xml, '"+e.getName()+"', "+getParam3(tn)+"elem."+s+");{x.2a}\r\n");
             }
           }
-          if (!specialCaseInRDF(cn, e.getName()))
-            workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"("+(parseNameR(tn).equals("Coding") ? "false, " : "")+"this, '%%%%', '"+e.getName()+"', elem."+s+"Element, -1);{x.2c}\r\n");
+          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2c}\r\n");
           if (typeIsPrimitive(e.typeCode())) {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') or jsn.has('_"+e.getName()+"') then\r\n        result."+s+"Element := Parse"+parseName(tn)+"(jsn['"+e.getName()+"'], jsn.vObj['_"+e.getName()+"']);{q}\r\n");
-          } else if (e.typeCode().equals("xhtml"))
+            workingParserT.append("    result."+s+"Element := Parse"+parseName(tn)+"(obj.complex('http://hl7.org/fhir/"+e.getPath()+"'));{q}\r\n");
+          } else if (e.typeCode().equals("xhtml")) {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') then\r\n        result."+s+" := Parse"+parseName(tn)+"(jsn.path+'.div', jsn['"+e.getName()+"']);{q}\r\n");
-          else
+            workingParserT.append("    result."+s+" := Parse"+parseName(tn)+"(obj.stringLiteral('http://hl7.org/fhir/"+e.getPath()+"'));{q}\r\n");
+          } else {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') then\r\n        result."+s+" := Parse"+parseName(tn)+"(jsn.vObj['"+e.getName()+"']);{q}\r\n");
+            workingParserT.append("    result."+s+" := Parse"+parseName(tn)+"(obj.complex('http://hl7.org/fhir/"+e.getPath()+"'));{q}\r\n");
+          }
           if (typeIsPrimitive(e.typeCode())) {
             workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Value(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
             workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Props(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
@@ -2848,9 +2898,9 @@ public class DelphiGenerator {
           for (ElementDefn ed : definitions.getTypes().values()) {
             workingParserX.append("      else if (child.localName = '"+pfx+getTitle(ed.getName())+"') then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(child, path+'."+pfx+getTitle(ed.getName())+"') {e"+ed.getName()+"}\r\n");
             workingComposerX.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
-            if (!specialCaseInRDF(cn, e.getName())) 
-              workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"("+(ed.getName().equals("Coding") ? "false, " : "")+"this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), -1)\r\n");
+            workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), false, -1)\r\n");
             workingParserJ.append("    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a7} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
+            workingParserT.append("    if obj.has('"+pfx+getTitle(ed.getName())+"') {a7} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
             workingComposerJ.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
           }
           int t = definitions.getStructures().size();
@@ -2858,9 +2908,9 @@ public class DelphiGenerator {
           for (ElementDefn ed : definitions.getStructures().values()) {
             workingParserX.append("      else if (child.localName = '"+pfx+getTitle(ed.getName())+"') then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(child, path+'/"+pfx+getTitle(ed.getName())+"') {f}\r\n");
             workingComposerX.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
-            if (!specialCaseInRDF(cn, e.getName()))
-              workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), -1)"+(i < t-1 ? "" : ";")+"\r\n");
+            workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), true, -1)"+(i < t-1 ? "" : ";")+"\r\n");
             workingParserJ.append("    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a9} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
+            workingParserT.append("//t.5    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a9} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
             workingComposerJ.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
             i++;
           }
@@ -2886,9 +2936,9 @@ public class DelphiGenerator {
     workingParserX.append("      else if (child.localName = '"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(child, path+'."+pfx+getTitle(cd.getCode())+"') {c}\r\n");
     String ptn = "TFhir"+getTitle(cd.getCode());
     workingComposerX.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(xml, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"))\r\n");
-    if (!specialCaseInRDF(cn, e.getName()))
-      workingComposerR.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(this, '%%%%', '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), -1)\r\n");
+    workingComposerR.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(this, '%%%%', '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false, -1)\r\n");
     workingParserJ.append("    if jsn.has('"+pfx+getTitle(cd.getCode())+"') or jsn.has('_"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(jsn['"+pfx+getTitle(cd.getCode())+"'], jsn.vObj['_"+pfx+getTitle(cd.getCode())+"']);\r\n");
+    workingParserT.append("//t.6    if jsn.has('"+pfx+getTitle(cd.getCode())+"') or jsn.has('_"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(jsn['"+pfx+getTitle(cd.getCode())+"'], jsn.vObj['_"+pfx+getTitle(cd.getCode())+"']);\r\n");
     workingComposerJ.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") then\r\n"+
         "  begin\r\n"+
         "    Compose"+ptn.substring(5)+"Value(json, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false);\r\n"+
@@ -2905,9 +2955,9 @@ public class DelphiGenerator {
       workingParserX.append("      else if (child.localName = '"+pfx+"Reference') then\r\n        result."+s+" := ParseReference(child, path+'/"+pfx+"Reference') {a}\r\n");
       workingComposerX.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(xml, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
       workingParserJ.append("    if jsn.has('"+pfx+"Reference') {a3} then\r\n      result."+s+" := ParseReference(jsn.vObj['"+pfx+"Reference']);\r\n");
+      workingParserT.append("    if obj.has('http://hl7.org/fhir/"+e.getPathHead()+"."+pfx+"Reference', item) {a3} then\r\n      result."+s+" := ParseReference(item);\r\n");
       workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) then\r\n    ComposeReference(json, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
-      if (!specialCaseInRDF(cn, e.getName()))
-        workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(this, '%%%%', '"+pfx+"Reference', TFhirReference(elem."+s+"), -1)"+(last?";" : "")+"\r\n");
+      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(this, '%%%%', '"+pfx+"Reference', TFhirReference(elem."+s+"), false,-1)"+(last?";" : "")+"\r\n");
     }
     else {
       if (td.hasParams())
@@ -2927,17 +2977,9 @@ public class DelphiGenerator {
             "    Compose"+getTitle(tname)+"(json, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+")) "+(last?";" : "")+"\r\n");
         workingParserJ.append("    if jsn.has('"+pfx+getTitle(tpname)+"') {a4} then\r\n      result."+s+" := Parse"+getTitle(tname)+"(jsn.vObj['"+pfx+getTitle(tpname)+"']);\r\n");
       }
-      if (!specialCaseInRDF(cn, e.getName()))
-        workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"("+(tname.equals("Coding") ? "false, " : "")+"this, '%%%%', '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), -1)"+(last?";" : "")+"\r\n");
+      workingParserT.append("    if obj.has('http://hl7.org/fhir/"+e.getPathHead()+"."+pfx+getTitle(tpname)+"', item) then\r\n      result."+s+" := parse"+Utilities.capitalize(tname)+"(item);\r\n");
+      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"(this, '%%%%', '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), false, -1)"+(last?";" : "")+"\r\n");
     }
-  }
-
-  private boolean specialCaseInRDF(String tn, String name) {
-    String type = tn.substring(5);
-    if (type.equals("Quantity"))
-      return Utilities.existsInList(name, "system", "code");
-    else
-      return false;
   }
 
   private String primitiveParse(String name, String prefix) {
@@ -3533,276 +3575,322 @@ public class DelphiGenerator {
 
     if (isEnum) {
       prsrdefX.append("    function Parse"+tn+"(Const aNames, aSystems : Array Of String; path : String; element : TMXmlElement) : TFhir"+tn+";\r\n");
-      prsrImpl.append("function TFHIRXmlParser.Parse"+tn+"(Const aNames, aSystems : Array Of String; path : String; element : TMXmlElement) : TFhir"+tn+";\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  child : TMXmlElement;\r\n");
-      prsrImpl.append("  i : integer;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  result := TFhir"+tn+".create;\r\n");
-      prsrImpl.append("  try\r\n");
-      prsrImpl.append("    ParseElementAttributes(result, path, element);\r\n");
-      prsrImpl.append("    result.value := GetAttribute(element, 'value');\r\n");
-      prsrImpl.append("    i := StringArrayIndexOfSensitive(aNames, result.value);\r\n");
-      prsrImpl.append("    if i < 0 then\r\n");
-      prsrImpl.append("      raise Exception.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"');\r\n");
-      prsrImpl.append("    result.system := aSystems[i];\r\n");
-      prsrImpl.append("    child := FirstChild(element);\r\n");
-      prsrImpl.append("    while (child <> nil) do\r\n");
-      prsrImpl.append("    begin\r\n");
-      prsrImpl.append("      if Not ParseElementChild(result, path, child) then\r\n");
-      prsrImpl.append("         UnknownContent(child, path);\r\n");
-      prsrImpl.append("      child := NextSibling(child);\r\n");
-      prsrImpl.append("    end;\r\n");
-      prsrImpl.append("    closeOutElement(result, element);\r\n\r\n");
-      prsrImpl.append("    result.link;\r\n");
-      prsrImpl.append("  finally\r\n");
-      prsrImpl.append("    result.free;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplX.append("function TFHIRXmlParser.Parse"+tn+"(Const aNames, aSystems : Array Of String; path : String; element : TMXmlElement) : TFhir"+tn+";\r\n");
+      prsrImplX.append("var\r\n");
+      prsrImplX.append("  child : TMXmlElement;\r\n");
+      prsrImplX.append("  i : integer;\r\n");
+      prsrImplX.append("begin\r\n");
+      prsrImplX.append("  result := TFhir"+tn+".create;\r\n");
+      prsrImplX.append("  try\r\n");
+      prsrImplX.append("    ParseElementAttributes(result, path, element);\r\n");
+      prsrImplX.append("    result.value := GetAttribute(element, 'value');\r\n");
+      prsrImplX.append("    i := StringArrayIndexOfSensitive(aNames, result.value);\r\n");
+      prsrImplX.append("    if i < 0 then\r\n");
+      prsrImplX.append("      raise Exception.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"');\r\n");
+      prsrImplX.append("    result.system := aSystems[i];\r\n");
+      prsrImplX.append("    child := FirstChild(element);\r\n");
+      prsrImplX.append("    while (child <> nil) do\r\n");
+      prsrImplX.append("    begin\r\n");
+      prsrImplX.append("      if Not ParseElementChild(result, path, child) then\r\n");
+      prsrImplX.append("         UnknownContent(child, path);\r\n");
+      prsrImplX.append("      child := NextSibling(child);\r\n");
+      prsrImplX.append("    end;\r\n");
+      prsrImplX.append("    closeOutElement(result, element);\r\n\r\n");
+      prsrImplX.append("    result.link;\r\n");
+      prsrImplX.append("  finally\r\n");
+      prsrImplX.append("    result.free;\r\n");
+      prsrImplX.append("  end;\r\n");
+      prsrImplX.append("end;\r\n\r\n");
 
       prsrdefJ.append("    procedure ParseEnum(path, value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+"; Const aNames, aSystems : Array Of String); overload;\r\n");
-      prsrImpl.append("procedure TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+"; Const aNames, aSystems : Array Of String);\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  ctxt.add(ParseEnum(path, value, jsn, aNames, aSystems));\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplJ.append("procedure TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+"; Const aNames, aSystems : Array Of String);\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  ctxt.add(ParseEnum(path, value, jsn, aNames, aSystems));\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
       prsrdefJ.append("    function ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;\r\n");
-      prsrImpl.append("function TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum;\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  i : integer;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  i := StringArrayIndexOfSensitive(aNames, value);\r\n");
-      prsrImpl.append("  if (value <> '') and (i < 0) then\r\n");
-      prsrImpl.append("    raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"');\r\n");
-      prsrImpl.append("  result := TFHIREnum.create;\r\n");
-      prsrImpl.append("  try\r\n");
-      prsrImpl.append("    result.value := value;\r\n");
-      prsrImpl.append("    result.system := aSystems[i];\r\n");
-      prsrImpl.append("    if (jsn <> nil) then\r\n");
-      prsrImpl.append("      parseElementProperties(jsn, result);\r\n");
-      prsrImpl.append("    result.link;\r\n");
-      prsrImpl.append("  finally\r\n");
-      prsrImpl.append("    result.free;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplJ.append("function TFHIRJsonParser.ParseEnum(path, value : string; jsn : TJsonObject; Const aNames, aSystems : Array Of String) : TFHIREnum;\r\n");
+      prsrImplJ.append("var\r\n");
+      prsrImplJ.append("  i : integer;\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  i := StringArrayIndexOfSensitive(aNames, value);\r\n");
+      prsrImplJ.append("  if (value <> '') and (i < 0) then\r\n");
+      prsrImplJ.append("    raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for \"'+path+'\"');\r\n");
+      prsrImplJ.append("  result := TFHIREnum.create;\r\n");
+      prsrImplJ.append("  try\r\n");
+      prsrImplJ.append("    result.value := value;\r\n");
+      prsrImplJ.append("    result.system := aSystems[i];\r\n");
+      prsrImplJ.append("    if (jsn <> nil) then\r\n");
+      prsrImplJ.append("      parseElementProperties(jsn, result);\r\n");
+      prsrImplJ.append("    result.link;\r\n");
+      prsrImplJ.append("  finally\r\n");
+      prsrImplJ.append("    result.free;\r\n");
+      prsrImplJ.append("  end;\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
+
+      prsrdefT.append("    function ParseEnum(obj : TTurtleComplex; Const aNames, aSystems : Array Of String) : TFHIREnum; overload;\r\n");
+      prsrImplT.append("function TFHIRTurtleParser.ParseEnum(obj : TTurtleComplex; Const aNames, aSystems : Array Of String) : TFHIREnum;\r\n");
+      prsrImplT.append("var\r\n");
+      prsrImplT.append("  i : integer;\r\n");
+      prsrImplT.append("  value : String;\r\n");
+      prsrImplT.append("begin\r\n");
+      prsrImplT.append("  if obj = nil then\r\n");
+      prsrImplT.append("    exit(nil);\r\n");
+      prsrImplT.append("\r\n");
+      prsrImplT.append("  if (obj.has('http://hl7.org/fhir/value')) then\r\n");
+      prsrImplT.append("    value := obj.stringLiteral('http://hl7.org/fhir/value');\r\n");
+      prsrImplT.append("  i := StringArrayIndexOfSensitive(aNames, value);\r\n");
+      prsrImplT.append("  if (value <> '') and (i < 0) then\r\n");
+      prsrImplT.append("    raise Exception.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));\r\n");
+      prsrImplT.append("  result := TFHIREnum.create;\r\n");
+      prsrImplT.append("  try\r\n");
+      prsrImplT.append("    result.value := value;\r\n");
+      prsrImplT.append("    result.system := aSystems[i];\r\n");
+      prsrImplT.append("    parseElementProperties(obj, result);\r\n");
+      prsrImplT.append("    result.link;\r\n");
+      prsrImplT.append("  finally\r\n");
+      prsrImplT.append("    result.free;\r\n");
+      prsrImplT.append("  end;\r\n");
+      prsrImplT.append("end;\r\n\r\n");
 
 
       srlsdefX.append("    Procedure Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+"; Const aNames : Array Of String);\r\n");
-      prsrImpl.append("Procedure TFHIRXmlComposer.Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+"; Const aNames : Array Of String);\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) then\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  composeElementAttributes(xml, value);\r\n");
-      prsrImpl.append("  attribute(xml, 'value', value.value);\r\n");
-      prsrImpl.append("  xml.open(name);\r\n");
-      prsrImpl.append("  composeElementChildren(xml, value);\r\n");
-      prsrImpl.append("  closeOutElement(xml, value);\r\n");
-      prsrImpl.append("  xml.close(name);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplX.append("Procedure TFHIRXmlComposer.Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+"; Const aNames : Array Of String);\r\n");
+      prsrImplX.append("begin\r\n");
+      prsrImplX.append("  if (value = nil) then\r\n");
+      prsrImplX.append("    exit;\r\n");
+      prsrImplX.append("  composeElementAttributes(xml, value);\r\n");
+      prsrImplX.append("  attribute(xml, 'value', value.value);\r\n");
+      prsrImplX.append("  xml.open(name);\r\n");
+      prsrImplX.append("  composeElementChildren(xml, value);\r\n");
+      prsrImplX.append("  closeOutElement(xml, value);\r\n");
+      prsrImplX.append("  xml.close(name);\r\n");
+      prsrImplX.append("end;\r\n\r\n");
       srlsdefJ.append("    Procedure Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
       srlsdefJ.append("    Procedure Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
-      prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) or (value.Value = '') then\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if inArray then\r\n");
-      prsrImpl.append("      propNull(json, name);\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  end\r\n");
-      prsrImpl.append("  else\r\n");
-      prsrImpl.append("    prop(json, name, value.value);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
-      prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments) }) then\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if inArray then\r\n");
-      prsrImpl.append("      propNull(json, name);\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  end\r\n");
-      prsrImpl.append("  else\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if (inArray) then\r\n");
-      prsrImpl.append("      json.valueObject('')\r\n");
-      prsrImpl.append("    else\r\n");
-      prsrImpl.append("      json.valueObject('_'+name);\r\n");
-      prsrImpl.append("    ComposeElementProperties(json, value);\r\n");
-      prsrImpl.append("    json.finishObject;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplJ.append("Procedure TFHIRJsonComposer.Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  if (value = nil) or (value.Value = '') then\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("    exit;\r\n");
+      prsrImplJ.append("  end\r\n");
+      prsrImplJ.append("  else\r\n");
+      prsrImplJ.append("    prop(json, name, value.value);\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
+      prsrImplJ.append("Procedure TFHIRJsonComposer.Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; Const aNames : Array Of String; inArray : boolean);\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments) }) then\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("    exit;\r\n");
+      prsrImplJ.append("  end\r\n");
+      prsrImplJ.append("  else\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if (inArray) then\r\n");
+      prsrImplJ.append("      json.valueObject('')\r\n");
+      prsrImplJ.append("    else\r\n");
+      prsrImplJ.append("      json.valueObject('_'+name);\r\n");
+      prsrImplJ.append("    ComposeElementProperties(json, value);\r\n");
+      prsrImplJ.append("    json.finishObject;\r\n");
+      prsrImplJ.append("  end;\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
 
-      srlsdefR.append("    Procedure Compose"+tn+"(parent :  TRDFComplex; parentType, name : String; value : TFhir"+tn+"; Const aNames, aSystems : Array Of String; index : integer);\r\n");
-      prsrImpl.append("Procedure TFHIRRDFComposer.Compose"+tn+"(parent :  TRDFComplex; parentType, name : String; value : TFhir"+tn+"; Const aNames, aSystems : Array Of String; index : integer);\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  this, c, cc, cs : TRDFComplex;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) then\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  this := parent.predicate('fhir:'+parentType+'.'+name);\r\n");
-      prsrImpl.append("  this.predicate('a', 'fhir:code');\r\n");
-      prsrImpl.append("  this.predicate('a', 'fhir:ConceptBase');\r\n");
-      prsrImpl.append("  c := this.predicate('fhir:ConceptBase.coding');\r\n");
-      prsrImpl.append("  c.predicate('a', 'fhir:CodingBase');\r\n");
-      prsrImpl.append("  cc := c.predicate('fhir:CodingBase.code');\r\n");
-      prsrImpl.append("  cc.predicate('a', 'fhir:codeBase');\r\n");
-      prsrImpl.append("  cc.predicate('fhir:value', ttlLiteral(value.value));\r\n");
-      prsrImpl.append("  cs := c.predicate('fhir:CodingBase.system');\r\n");
-      prsrImpl.append("  cs.predicate('a', 'fhir:string');\r\n");
-      prsrImpl.append("  cs.predicate('fhir:value', ttlLiteral(aSystems[StringArrayIndexOf(aNames, value.value)]));\r\n");
-      prsrImpl.append("  composeElement(this, parentType, name, value, index);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      srlsdefR.append("    Procedure Compose"+tn+"(parent :  TTurtleComplex; parentType, name : String; value : TFhir"+tn+"; Const aNames, aSystems : Array Of String; useType : boolean; index : integer);\r\n");
+      prsrImplT.append("Procedure TFHIRTurtleComposer.Compose"+tn+"(parent :  TTurtleComplex; parentType, name : String; value : TFhir"+tn+"; Const aNames, aSystems : Array Of String; useType : boolean; index : integer);\r\n");
+      prsrImplT.append("var\r\n");
+      prsrImplT.append("  this : TTurtleComplex;\r\n");
+      prsrImplT.append("begin\r\n");
+      prsrImplT.append("  if (value = nil) then\r\n");
+      prsrImplT.append("    exit;\r\n");
+      prsrImplT.append("  this := parent.addPredicate('fhir:'+parentType+'.'+name);\r\n");
+      prsrImplT.append("  if (useType) then\r\n");
+      prsrImplT.append("    this.addPredicate('a', 'fhir:code');\r\n");
+      prsrImplT.append("  this.addPredicate('fhir:value', ttlLiteral(value.value));\r\n");
+      prsrImplT.append("  composeElement(this, parentType, name, value, false, index);\r\n");
+      prsrImplT.append("end;\r\n\r\n");
     } else {
       prsrdefX.append("    function Parse"+tn+"(element : TMXmlElement; path : string) : TFhir"+tn+";\r\n");
-      prsrImpl.append("function TFHIRXmlParser.Parse"+tn+"(element : TMXmlElement; path : string) : TFhir"+tn+";\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  child : TMXmlElement;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  result := TFhir"+tn+".create;\r\n");
-      prsrImpl.append("  try\r\n");
-      prsrImpl.append("    ParseElementAttributes(result, path, element);\r\n");
+      prsrImplX.append("function TFHIRXmlParser.Parse"+tn+"(element : TMXmlElement; path : string) : TFhir"+tn+";\r\n");
+      prsrImplX.append("var\r\n");
+      prsrImplX.append("  child : TMXmlElement;\r\n");
+      prsrImplX.append("begin\r\n");
+      prsrImplX.append("  result := TFhir"+tn+".create;\r\n");
+      prsrImplX.append("  try\r\n");
+      prsrImplX.append("    ParseElementAttributes(result, path, element);\r\n");
       if (pn.equals("Boolean"))
-        prsrImpl.append("    result.value := StringToBoolean(GetAttribute(element, 'value'));\r\n");
+        prsrImplX.append("    result.value := StringToBoolean(GetAttribute(element, 'value'));\r\n");
       else  if (!pn.equals("String"))
-        prsrImpl.append("    result.value := to"+pn+"(GetAttribute(element, 'value'));\r\n");
+        prsrImplX.append("    result.value := to"+pn+"(GetAttribute(element, 'value'));\r\n");
       else
-        prsrImpl.append("    result.value := GetAttribute(element, 'value');\r\n");
-      prsrImpl.append("    child := FirstChild(element);\r\n");
-      prsrImpl.append("    while (child <> nil) do\r\n");
-      prsrImpl.append("    begin\r\n");
-      prsrImpl.append("      if Not ParseElementChild(result, path, child) then\r\n");
-      prsrImpl.append("         UnknownContent(child, path);\r\n");
-      prsrImpl.append("      child := NextSibling(child);\r\n");
-      prsrImpl.append("    end;\r\n");
-      prsrImpl.append("    closeOutElement(result, element);\r\n\r\n");
-      prsrImpl.append("    result.link;\r\n");
-      prsrImpl.append("  finally\r\n");
-      prsrImpl.append("    result.free;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("    result.value := GetAttribute(element, 'value');\r\n");
+      prsrImplX.append("    child := FirstChild(element);\r\n");
+      prsrImplX.append("    while (child <> nil) do\r\n");
+      prsrImplX.append("    begin\r\n");
+      prsrImplX.append("      if Not ParseElementChild(result, path, child) then\r\n");
+      prsrImplX.append("         UnknownContent(child, path);\r\n");
+      prsrImplX.append("      child := NextSibling(child);\r\n");
+      prsrImplX.append("    end;\r\n");
+      prsrImplX.append("    closeOutElement(result, element);\r\n\r\n");
+      prsrImplX.append("    result.link;\r\n");
+      prsrImplX.append("  finally\r\n");
+      prsrImplX.append("    result.free;\r\n");
+      prsrImplX.append("  end;\r\n");
+      prsrImplX.append("end;\r\n\r\n");
 
 
       prsrdefJ.append("    procedure Parse"+tn+"(value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+"); overload;\r\n");
-      prsrImpl.append("procedure TFHIRJsonParser.Parse"+tn+"(value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+");\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  ctxt.add(Parse"+tn+"(value, jsn)) {1};\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      prsrImplJ.append("procedure TFHIRJsonParser.Parse"+tn+"(value : string; jsn : TJsonObject; ctxt : "+listForm("TFHIRObject")+");\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  ctxt.add(Parse"+tn+"(value, jsn)) {1};\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
+      prsrdefT.append("    function Parse"+tn+"(obj : TTurtleComplex) : TFHIR"+tn+"; overload;\r\n");
       prsrdefJ.append("    function Parse"+tn+"(value : string; jsn : TJsonObject) : TFHIR"+tn+"; overload;\r\n");
-      prsrImpl.append("function TFHIRJsonParser.Parse"+tn+"(value : string; jsn : TJsonObject) : TFHIR"+tn+";\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  result := TFhir"+tn+".Create;\r\n");
-      prsrImpl.append("  try\r\n");
+      prsrImplJ.append("function TFHIRJsonParser.Parse"+tn+"(value : string; jsn : TJsonObject) : TFHIR"+tn+";\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  result := TFhir"+tn+".Create;\r\n");
+      prsrImplJ.append("  try\r\n");
       if (pn.equals("Boolean"))
-        prsrImpl.append("    result.value := StringToBoolean(value);\r\n");
+        prsrImplJ.append("    result.value := StringToBoolean(value);\r\n");
       else if (!pn.equals("String"))
-        prsrImpl.append("     result.value := to"+pn+"(value);\r\n");
+        prsrImplJ.append("     result.value := to"+pn+"(value);\r\n");
       else
-        prsrImpl.append("    result.value := value;\r\n");
-      prsrImpl.append("    if (jsn <> nil) then\r\n");
-      prsrImpl.append("      parseElementProperties(jsn, result);\r\n");
-      prsrImpl.append("    result.Link;\r\n");
-      prsrImpl.append("  finally\r\n");
-      prsrImpl.append("    result.Free;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
-
-
-
-
-
-
-
+        prsrImplJ.append("    result.value := value;\r\n");
+      prsrImplJ.append("    if (jsn <> nil) then\r\n");
+      prsrImplJ.append("      parseElementProperties(jsn, result);\r\n");
+      prsrImplJ.append("    result.Link;\r\n");
+      prsrImplJ.append("  finally\r\n");
+      prsrImplJ.append("    result.Free;\r\n");
+      prsrImplJ.append("  end;\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
+      prsrImplT.append("function TFHIRTurtleParser.Parse"+tn+"(obj : TTurtleComplex) : TFHIR"+tn+";\r\n");
+      prsrImplT.append("begin\r\n");
+      prsrImplT.append("  if (obj = nil) then\r\n");
+      prsrImplT.append("    exit(nil);\r\n");      
+      prsrImplT.append("  result := TFhir"+tn+".Create;\r\n");
+      prsrImplT.append("  try\r\n");
+      prsrImplT.append("    if (obj.has('http://hl7.org/fhir/value')) then\r\n");
+      if (pn.equals("Boolean"))
+        prsrImplT.append("     result.value := StringToBoolean(obj.stringLiteral('http://hl7.org/fhir/value'));\r\n");
+      else if (!pn.equals("String"))
+        prsrImplT.append("      result.value := to"+pn+"(obj.stringLiteral('http://hl7.org/fhir/value'));\r\n");
+      else
+        prsrImplT.append("      result.value := obj.stringLiteral('http://hl7.org/fhir/value');\r\n");
+      prsrImplT.append("    parseElementProperties(obj, result);\r\n");
+      prsrImplT.append("    result.Link;\r\n");
+      prsrImplT.append("  finally\r\n");
+      prsrImplT.append("    result.Free;\r\n");
+      prsrImplT.append("  end;\r\n");
+      prsrImplT.append("end;\r\n\r\n");
 
       srlsdefX.append("    Procedure Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+");\r\n");
-      prsrImpl.append("Procedure TFHIRXmlComposer.Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+");\r\n");
-      prsrImpl.append("begin\r\n");
+      prsrImplX.append("Procedure TFHIRXmlComposer.Compose"+tn+"(xml : TXmlBuilder; name : String; value : TFhir"+tn+");\r\n");
+      prsrImplX.append("begin\r\n");
       if (pn.equals("Boolean"))
-        prsrImpl.append("  if (value = nil) then\r\n");
+        prsrImplX.append("  if (value = nil) then\r\n");
       else if (pn.equals("TDateTimeEx"))
-        prsrImpl.append("  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then\r\n");
+        prsrImplX.append("  if (value = nil) or ((value.value.null) and (value.extensionList.count = 0)) then\r\n");
       else if (!pn.equals("String"))
-        prsrImpl.append("  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then\r\n");
+        prsrImplX.append("  if (value = nil) or ((value.value = nil) and (value.extensionList.count = 0)) then\r\n");
       else 
-        prsrImpl.append("  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  composeElementAttributes(xml, value);\r\n");
+        prsrImplX.append("  if (value = nil) or ((value.value = '') and (value.extensionList.count = 0)) then\r\n");
+      prsrImplX.append("    exit;\r\n");
+      prsrImplX.append("  composeElementAttributes(xml, value);\r\n");
       if (pn.equals("Boolean")) {
-        prsrImpl.append("  attribute(xml, 'value', LCBooleanToString(value.value));\r\n");
+        prsrImplX.append("  attribute(xml, 'value', LCBooleanToString(value.value));\r\n");
       } else if (pn.equals("TDateTimeEx")) {
-        prsrImpl.append("  if (value.value.notNull) then\r\n");
-        prsrImpl.append("    attribute(xml, 'value', asString(value.value));\r\n");
+        prsrImplX.append("  if (value.value.notNull) then\r\n");
+        prsrImplX.append("    attribute(xml, 'value', asString(value.value));\r\n");
       } else if (!pn.equals("String")) {
-        prsrImpl.append("  if (value.value <> nil) then\r\n");
-        prsrImpl.append("    attribute(xml, 'value', asString(value.value));\r\n");
+        prsrImplX.append("  if (value.value <> nil) then\r\n");
+        prsrImplX.append("    attribute(xml, 'value', asString(value.value));\r\n");
       } else
-        prsrImpl.append("  attribute(xml, 'value', value.value);\r\n");
-      prsrImpl.append("  xml.open(name);\r\n");
-      prsrImpl.append("  composeElementChildren(xml, value);\r\n");
-      prsrImpl.append("  closeOutElement(xml, value);\r\n");
-      prsrImpl.append("  xml.close(name);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplX.append("  attribute(xml, 'value', value.value);\r\n");
+      prsrImplX.append("  xml.open(name);\r\n");
+      prsrImplX.append("  composeElementChildren(xml, value);\r\n");
+      prsrImplX.append("  closeOutElement(xml, value);\r\n");
+      prsrImplX.append("  xml.close(name);\r\n");
+      prsrImplX.append("end;\r\n\r\n");
       srlsdefJ.append("    Procedure Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
       srlsdefJ.append("    Procedure Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
-      prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
-      prsrImpl.append("begin\r\n");
+      prsrImplJ.append("Procedure TFHIRJsonComposer.Compose"+tn+"Value(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
+      prsrImplJ.append("begin\r\n");
       if (pn.equals("Boolean"))
-        prsrImpl.append("  if (value = nil) then\r\n");
+        prsrImplJ.append("  if (value = nil) then\r\n");
       else if (pn.equals("TDateTimeEx"))
-        prsrImpl.append("  if (value = nil) or (value.value.null) then\r\n");
+        prsrImplJ.append("  if (value = nil) or (value.value.null) then\r\n");
       else if (!pn.equals("String"))
-        prsrImpl.append("  if (value = nil) or (value.value = nil) then\r\n");
+        prsrImplJ.append("  if (value = nil) or (value.value = nil) then\r\n");
       else 
-        prsrImpl.append("  if (value = nil) or (value.value = '') then\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if inArray then\r\n");
-      prsrImpl.append("      propNull(json, name);\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  end\r\n");
-      prsrImpl.append("  else\r\n");
+        prsrImplJ.append("  if (value = nil) or (value.value = '') then\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("    exit;\r\n");
+      prsrImplJ.append("  end\r\n");
+      prsrImplJ.append("  else\r\n");
       if (pn.equals("Boolean"))
-        prsrImpl.append("    prop(json, name, value.value);\r\n");
+        prsrImplJ.append("    prop(json, name, value.value);\r\n");
       else if (!pn.equals("String"))
-        prsrImpl.append("    prop(json, name, asString(value.value));\r\n");
+        prsrImplJ.append("    prop(json, name, asString(value.value));\r\n");
       else if (tn.equals("Decimal") || tn.equals("Integer") || tn.equals("UnsignedInt")  || tn.equals("PositiveInt"))
-        prsrImpl.append("    propNumber(json, name, value.value);\r\n");
+        prsrImplJ.append("    propNumber(json, name, value.value);\r\n");
       else
-        prsrImpl.append("    prop(json, name, value.value);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
-      prsrImpl.append("Procedure TFHIRJsonComposer.Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if inArray then\r\n");
-      prsrImpl.append("      propNull(json, name);\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  end\r\n");
-      prsrImpl.append("  else\r\n");
-      prsrImpl.append("  begin\r\n");
-      prsrImpl.append("    if (inArray) then\r\n");
-      prsrImpl.append("      json.valueObject('')\r\n");
-      prsrImpl.append("    else\r\n");
-      prsrImpl.append("      json.valueObject('_'+name);\r\n");
-      prsrImpl.append("    ComposeElementProperties(json, value);\r\n");
-      prsrImpl.append("    json.finishObject;\r\n");
-      prsrImpl.append("  end;\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+        prsrImplJ.append("    prop(json, name, value.value);\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
+      prsrImplJ.append("Procedure TFHIRJsonComposer.Compose"+tn+"Props(json : TJSONWriter; name : String; value : TFhir"+tn+"; inArray : boolean);\r\n");
+      prsrImplJ.append("begin\r\n");
+      prsrImplJ.append("  if (value = nil) or ((value.Id = '') and (not value.hasExtensionList) {no-comments and (not value.hasComments)}) then\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if inArray then\r\n");
+      prsrImplJ.append("      propNull(json, name);\r\n");
+      prsrImplJ.append("    exit;\r\n");
+      prsrImplJ.append("  end\r\n");
+      prsrImplJ.append("  else\r\n");
+      prsrImplJ.append("  begin\r\n");
+      prsrImplJ.append("    if (inArray) then\r\n");
+      prsrImplJ.append("      json.valueObject('')\r\n");
+      prsrImplJ.append("    else\r\n");
+      prsrImplJ.append("      json.valueObject('_'+name);\r\n");
+      prsrImplJ.append("    ComposeElementProperties(json, value);\r\n");
+      prsrImplJ.append("    json.finishObject;\r\n");
+      prsrImplJ.append("  end;\r\n");
+      prsrImplJ.append("end;\r\n\r\n");
 
-      srlsdefR.append("    Procedure Compose"+tn+"(parent :  TRDFComplex; parentType, name : String; value : TFhir"+tn+"; index : integer);\r\n");
-      prsrImpl.append("Procedure TFHIRRDFComposer.Compose"+tn+"(parent :  TRDFComplex; parentType, name : String; value : TFhir"+tn+"; index : integer);\r\n");
-      prsrImpl.append("var\r\n");
-      prsrImpl.append("  this : TRDFComplex;\r\n");
-      prsrImpl.append("begin\r\n");
-      prsrImpl.append("  if (value = nil) then\r\n");
-      prsrImpl.append("    exit;\r\n");
-      prsrImpl.append("  this := parent.predicate('fhir:'+parentType+'.'+name);\r\n");
-      prsrImpl.append("  this.predicate('a', 'fhir:"+t.getCode()+"');\r\n");
-      prsrImpl.append("  this.predicate('fhir:value', ttlLiteral(asString(value.value)));\r\n");
-      prsrImpl.append("  composeElement(this, parentType, name, value, index);\r\n");
-      prsrImpl.append("end;\r\n\r\n");
+      srlsdefR.append("    Procedure Compose"+tn+"(parent :  TTurtleComplex; parentType, name : String; value : TFhir"+tn+"; useType : boolean; index : integer);\r\n");
+      prsrImplT.append("Procedure TFHIRTurtleComposer.Compose"+tn+"(parent :  TTurtleComplex; parentType, name : String; value : TFhir"+tn+"; useType : boolean; index : integer);\r\n");
+      prsrImplT.append("var\r\n");
+      prsrImplT.append("  this : TTurtleComplex;\r\n");
+      prsrImplT.append("begin\r\n");
+      prsrImplT.append("  if (value = nil) then\r\n");
+      prsrImplT.append("    exit;\r\n");
+      prsrImplT.append("  this := parent.addPredicate('fhir:'+parentType+'.'+name);\r\n");
+      prsrImplT.append("  if (useType) then\r\n");
+      prsrImplT.append("    this.addPredicate('a', 'fhir:"+t.getCode()+"');\r\n");
+      prsrImplT.append("  this.addPredicate('fhir:value', ttlLiteral(asString(value.value))"+typeParam(tn)+");\r\n");
+      prsrImplT.append("  composeElement(this, parentType, name, value, false, index);\r\n");
+      prsrImplT.append("end;\r\n\r\n");
     }
 
     defCodeType.classDefs.add(def.toString());
     defCodeType.classImpls.add(impl2.toString());
     defCodeType.classFwds.add("  TFhir"+tn+" = class;\r\n");
     defineList("TFhir"+tn, "TFhir"+tn+"List", pn, ClassCategory.Type, false, isEnum);
+  }
+
+  private String typeParam(String tn) {
+    if (tn.equals("Date"))
+      return ", 'xsd:date'";
+    if (tn.equals("DateTime"))
+      return ", 'xsd:dateTime'";
+    if (tn.equals("Instant"))
+      return ", 'xsd:dateTime'";
+    if (tn.equals("Boolean"))
+      return ", 'xsd:boolean'";
+    if (tn.equals("Base64Binary"))
+      return ", 'xsd:base64Binary'";
+    return "";
   }
 
   private String listForm(String name) {
@@ -4073,109 +4161,132 @@ public class DelphiGenerator {
     impl2.append("end;\r\n\r\n");
 
     prsrdefX.append("    Procedure ParseElementAttributes(value : TFhirElement; path : string; element : TMXmlElement);\r\n");
-    prsrImpl.append("Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : TMXmlElement);\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  TakeCommentsStart(value);\r\n");
-    prsrImpl.append("  GetObjectLocation(value, element);\r\n");
-    prsrImpl.append("  value.Id := GetAttribute(element, 'id');\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Procedure TFHIRXmlParser.ParseElementAttributes(value : TFhirElement; path : string; element : TMXmlElement);\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  TakeCommentsStart(value);\r\n");
+    prsrImplX.append("  GetObjectLocation(value, element);\r\n");
+    prsrImplX.append("  value.Id := GetAttribute(element, 'id');\r\n");
+    prsrImplX.append("end;\r\n\r\n");
 
     prsrdefX.append("    Function ParseBackboneElementChild(element : TFhirBackboneElement; path : string; child : TMXmlElement) : boolean;\r\n");
-    prsrImpl.append("Function TFHIRXmlParser.ParseBackboneElementChild(element : TFhirBackboneElement; path : string; child : TMXmlElement) : boolean;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  result := true;\r\n");
-    prsrImpl.append("  if (child.localName = 'modifierExtension') then\r\n");
-    prsrImpl.append("    element.ModifierExtensionList.add(ParseExtension(child, path+'/modifierExtension'))\r\n");
-    prsrImpl.append("  else\r\n");
-    prsrImpl.append("    result := ParseElementChild(element, path, child);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Function TFHIRXmlParser.ParseBackboneElementChild(element : TFhirBackboneElement; path : string; child : TMXmlElement) : boolean;\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  result := true;\r\n");
+    prsrImplX.append("  if (child.localName = 'modifierExtension') then\r\n");
+    prsrImplX.append("    element.ModifierExtensionList.add(ParseExtension(child, path+'/modifierExtension'))\r\n");
+    prsrImplX.append("  else\r\n");
+    prsrImplX.append("    result := ParseElementChild(element, path, child);\r\n");
+    prsrImplX.append("end;\r\n\r\n");
 
     prsrdefX.append("    Function ParseElementChild(element : TFhirElement; path : string; child : TMXmlElement) : boolean;\r\n");
-    prsrImpl.append("Function TFHIRXmlParser.ParseElementChild(element : TFhirElement; path : string; child : TMXmlElement) : boolean;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  result := true;\r\n");
-    prsrImpl.append("  if (child.localName = 'extension') then\r\n");
-    prsrImpl.append("    element.ExtensionList.add(ParseExtension(child, path+'/extension'))\r\n");
-    prsrImpl.append("  else\r\n");
-    prsrImpl.append("    result := false;\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Function TFHIRXmlParser.ParseElementChild(element : TFhirElement; path : string; child : TMXmlElement) : boolean;\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  result := true;\r\n");
+    prsrImplX.append("  if (child.localName = 'extension') then\r\n");
+    prsrImplX.append("    element.ExtensionList.add(ParseExtension(child, path+'/extension'))\r\n");
+    prsrImplX.append("  else\r\n");
+    prsrImplX.append("    result := false;\r\n");
+    prsrImplX.append("end;\r\n\r\n");
 
     prsrdefJ.append("    procedure ParseElementProperties(jsn : TJsonObject; element : TFhirElement);\r\n");
-    prsrImpl.append("procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  parseComments(element, jsn);\r\n\r\n");
-    prsrImpl.append("  element.LocationStart := jsn.LocationStart;\r\n");
-    prsrImpl.append("  element.LocationEnd := jsn.LocationEnd;\r\n");
-    prsrImpl.append("  if jsn.has('id') then\r\n");
-    prsrImpl.append("    element.Id := jsn['id']\r\n");
-    prsrImpl.append("  else if jsn.has('_id') then\r\n");
-    prsrImpl.append("    element.Id := jsn['_id'];\r\n");
-    prsrImpl.append("  if jsn.has('extension') then\r\n");
-    prsrImpl.append("    iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrdefT.append("    procedure ParseElementProperties(obj : TTurtleComplex; element : TFhirElement);\r\n");
+    prsrImplJ.append("procedure TFHIRJsonParser.ParseElementProperties(jsn : TJsonObject; element : TFhirElement);\r\n");
+    prsrImplJ.append("begin\r\n");
+    prsrImplJ.append("  parseComments(element, jsn);\r\n\r\n");
+    prsrImplJ.append("  element.LocationStart := jsn.LocationStart;\r\n");
+    prsrImplJ.append("  element.LocationEnd := jsn.LocationEnd;\r\n");
+    prsrImplJ.append("  if jsn.has('id') then\r\n");
+    prsrImplJ.append("    element.Id := jsn['id']\r\n");
+    prsrImplJ.append("  else if jsn.has('_id') then\r\n");
+    prsrImplJ.append("    element.Id := jsn['_id'];\r\n");
+    prsrImplJ.append("  if jsn.has('extension') then\r\n");
+    prsrImplJ.append("    iterateArray(jsn.vArr['extension'], element.extensionList, parseExtension);\r\n");
+    prsrImplJ.append("end;\r\n\r\n");
+    prsrImplT.append("procedure TFHIRTurtleParser.ParseElementProperties(obj : TTurtleComplex; element : TFhirElement);\r\n");
+    prsrImplT.append("var\r\n");
+    prsrImplT.append("  item : TTurtleComplex;\r\n");
+    prsrImplT.append("begin\r\n");
+    prsrImplT.append("  element.LocationStart := obj.Start;\r\n");
+    prsrImplT.append("  element.LocationEnd := obj.Stop;\r\n");
+    prsrImplT.append("  if obj.predicates.ContainsKey('http://hl7.org/fhir/Element.id') then\r\n");
+    prsrImplT.append("    element.Id := obj.predicates['http://hl7.org/fhir/Element.id'].singleLiteral;\r\n");
+    prsrImplT.append("  for item in obj.complexes('http://hl7.org/fhir/Element.extension') do\r\n");
+    prsrImplT.append("    element.extensionList.Add(parseExtension(item));\r\n");
+    prsrImplT.append("end;\r\n\r\n");
+
 
     prsrdefJ.append("    procedure ParseBackboneElementProperties(jsn : TJsonObject; element : TFhirBackboneElement);\r\n");
-    prsrImpl.append("procedure TFHIRJsonParser.ParseBackboneElementProperties(jsn : TJsonObject; element : TFhirBackboneElement);\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  parseElementProperties(jsn, element);\r\n\r\n");
-    prsrImpl.append("  if jsn.has('modifierExtension') then\r\n");
-    prsrImpl.append("    iterateArray(jsn.vArr['modifierExtension'], element.modifierExtensionList, parseExtension);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrdefT.append("    procedure ParseBackboneElementProperties(obj : TTurtleComplex; element : TFhirBackboneElement);\r\n");
+    prsrImplJ.append("procedure TFHIRJsonParser.ParseBackboneElementProperties(jsn : TJsonObject; element : TFhirBackboneElement);\r\n");
+    prsrImplJ.append("begin\r\n");
+    prsrImplJ.append("  parseElementProperties(jsn, element);\r\n\r\n");
+    prsrImplJ.append("  if jsn.has('modifierExtension') then\r\n");
+    prsrImplJ.append("    iterateArray(jsn.vArr['modifierExtension'], element.modifierExtensionList, parseExtension);\r\n");
+    prsrImplJ.append("end;\r\n\r\n");
+
+    prsrImplT.append("procedure TFHIRTurtleParser.ParseBackboneElementProperties(obj : TTurtleComplex; element : TFhirBackboneElement);\r\n");
+    prsrImplT.append("var\r\n");
+    prsrImplT.append("  item : TTurtleComplex;\r\n");
+    prsrImplT.append("begin\r\n");
+    prsrImplT.append("  parseElementProperties(obj, element);\r\n");
+    prsrImplT.append("  for item in obj.complexes('http://hl7.org/fhir/Element.modifierExtension') do\r\n");
+    prsrImplT.append("    element.modifierExtensionList.Add(parseExtension(item));\r\n");
+    prsrImplT.append("end;\r\n\r\n");
 
     srlsdefX.append("    Procedure ComposeElementAttributes(xml : TXmlBuilder; element : TFhirElement);\r\n");
-    prsrImpl.append("Procedure TFHIRXmlComposer.ComposeElementAttributes(xml : TXmlBuilder; element : TFhirElement);\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  CommentsStart(xml, element);\r\n");
-    prsrImpl.append("  Attribute(xml, 'id', element.Id);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Procedure TFHIRXmlComposer.ComposeElementAttributes(xml : TXmlBuilder; element : TFhirElement);\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  CommentsStart(xml, element);\r\n");
+    prsrImplX.append("  Attribute(xml, 'id', element.Id);\r\n");
+    prsrImplX.append("end;\r\n\r\n");
     srlsdefX.append("    Procedure ComposeElementChildren(xml : TXmlBuilder; element : TFhirElement);\r\n");
-    prsrImpl.append("Procedure TFHIRXmlComposer.ComposeElementChildren(xml : TXmlBuilder; element : TFhirElement);\r\n");
-    prsrImpl.append("var\r\n");
-    prsrImpl.append("  i : integer;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  if element.hasExtensionList then\r\n");
-    prsrImpl.append("    for i := 0 to element.extensionList.count - 1 do\r\n");
-    prsrImpl.append("      ComposeExtension(xml, 'extension', element.extensionList[i]);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Procedure TFHIRXmlComposer.ComposeElementChildren(xml : TXmlBuilder; element : TFhirElement);\r\n");
+    prsrImplX.append("var\r\n");
+    prsrImplX.append("  i : integer;\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  if element.hasExtensionList then\r\n");
+    prsrImplX.append("    for i := 0 to element.extensionList.count - 1 do\r\n");
+    prsrImplX.append("      ComposeExtension(xml, 'extension', element.extensionList[i]);\r\n");
+    prsrImplX.append("end;\r\n\r\n");
     srlsdefX.append("    Procedure ComposeBackboneElementChildren(xml : TXmlBuilder; element : TFhirBackboneElement);\r\n");
-    prsrImpl.append("Procedure TFHIRXmlComposer.ComposeBackboneElementChildren(xml : TXmlBuilder; element : TFhirBackboneElement);\r\n");
-    prsrImpl.append("var\r\n");
-    prsrImpl.append("  i : integer;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  ComposeElementChildren(xml, element);\r\n");
-    prsrImpl.append("  if element.hasModifierExtensionList then\r\n");
-    prsrImpl.append("    for i := 0 to element.modifierExtensionList.count - 1 do\r\n");
-    prsrImpl.append("      ComposeExtension(xml, 'modifierExtension', element.modifierExtensionList[i]);\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplX.append("Procedure TFHIRXmlComposer.ComposeBackboneElementChildren(xml : TXmlBuilder; element : TFhirBackboneElement);\r\n");
+    prsrImplX.append("var\r\n");
+    prsrImplX.append("  i : integer;\r\n");
+    prsrImplX.append("begin\r\n");
+    prsrImplX.append("  ComposeElementChildren(xml, element);\r\n");
+    prsrImplX.append("  if element.hasModifierExtensionList then\r\n");
+    prsrImplX.append("    for i := 0 to element.modifierExtensionList.count - 1 do\r\n");
+    prsrImplX.append("      ComposeExtension(xml, 'modifierExtension', element.modifierExtensionList[i]);\r\n");
+    prsrImplX.append("end;\r\n\r\n");
     srlsdefJ.append("    Procedure ComposeElementProperties(json : TJSONWriter; elem : TFhirElement);\r\n");
-    prsrImpl.append("Procedure TFHIRJsonComposer.ComposeElementProperties(json : TJSONWriter; elem : TFhirElement);\r\n");
-    prsrImpl.append("var\r\n");
-    prsrImpl.append("  i : integer;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  {no-comments composeComments(json, elem);}\r\n");
-    prsrImpl.append("  Prop(json, 'id', elem.Id);\r\n");
-    prsrImpl.append("  if elem.hasExtensionList then\r\n");
-    prsrImpl.append("  begin\r\n");
-    prsrImpl.append("    json.valueArray('extension');\r\n");
-    prsrImpl.append("    for i := 0 to elem.extensionList.Count - 1 do\r\n");
-    prsrImpl.append("      ComposeExtension(json, '',elem.extensionList[i]);\r\n");
-    prsrImpl.append("    json.FinishArray;\r\n");
-    prsrImpl.append("  end;\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplJ.append("Procedure TFHIRJsonComposer.ComposeElementProperties(json : TJSONWriter; elem : TFhirElement);\r\n");
+    prsrImplJ.append("var\r\n");
+    prsrImplJ.append("  i : integer;\r\n");
+    prsrImplJ.append("begin\r\n");
+    prsrImplJ.append("  {no-comments composeComments(json, elem);}\r\n");
+    prsrImplJ.append("  Prop(json, 'id', elem.Id);\r\n");
+    prsrImplJ.append("  if elem.hasExtensionList then\r\n");
+    prsrImplJ.append("  begin\r\n");
+    prsrImplJ.append("    json.valueArray('extension');\r\n");
+    prsrImplJ.append("    for i := 0 to elem.extensionList.Count - 1 do\r\n");
+    prsrImplJ.append("      ComposeExtension(json, '',elem.extensionList[i]);\r\n");
+    prsrImplJ.append("    json.FinishArray;\r\n");
+    prsrImplJ.append("  end;\r\n");
+    prsrImplJ.append("end;\r\n\r\n");
     srlsdefJ.append("    Procedure ComposeBackboneElementProperties(json : TJSONWriter; elem : TFhirBackboneElement);\r\n");
-    prsrImpl.append("Procedure TFHIRJsonComposer.ComposeBackboneElementProperties(json : TJSONWriter; elem : TFhirBackboneElement);\r\n");
-    prsrImpl.append("var\r\n");
-    prsrImpl.append("  i : integer;\r\n");
-    prsrImpl.append("begin\r\n");
-    prsrImpl.append("  ComposeElementProperties(json, elem);\r\n");
-    prsrImpl.append("  if elem.hasModifierExtensionList then\r\n");
-    prsrImpl.append("  begin\r\n");
-    prsrImpl.append("    json.valueArray('modifierExtension');\r\n");
-    prsrImpl.append("    for i := 0 to elem.modifierExtensionList.Count - 1 do\r\n");
-    prsrImpl.append("      ComposeExtension(json, '', elem.modifierExtensionList[i]);\r\n");
-    prsrImpl.append("    json.FinishArray;\r\n");
-    prsrImpl.append("  end;\r\n");
-    prsrImpl.append("end;\r\n\r\n");
+    prsrImplJ.append("Procedure TFHIRJsonComposer.ComposeBackboneElementProperties(json : TJSONWriter; elem : TFhirBackboneElement);\r\n");
+    prsrImplJ.append("var\r\n");
+    prsrImplJ.append("  i : integer;\r\n");
+    prsrImplJ.append("begin\r\n");
+    prsrImplJ.append("  ComposeElementProperties(json, elem);\r\n");
+    prsrImplJ.append("  if elem.hasModifierExtensionList then\r\n");
+    prsrImplJ.append("  begin\r\n");
+    prsrImplJ.append("    json.valueArray('modifierExtension');\r\n");
+    prsrImplJ.append("    for i := 0 to elem.modifierExtensionList.Count - 1 do\r\n");
+    prsrImplJ.append("      ComposeExtension(json, '', elem.modifierExtensionList[i]);\r\n");
+    prsrImplJ.append("    json.FinishArray;\r\n");
+    prsrImplJ.append("  end;\r\n");
+    prsrImplJ.append("end;\r\n\r\n");
 
     defCodeType.classDefs.add(def.toString());
     defCodeType.classImpls.add(impl2.toString());
@@ -4291,33 +4402,71 @@ public class DelphiGenerator {
   }
 
   private void initParser(String version, DateTimeType dateTimeType) {
-    prsrCode.uses.add("SysUtils");
-    prsrCode.uses.add("Classes");
-    prsrCode.uses.add("ActiveX");
-    prsrCode.uses.add("StringSupport");
-    prsrCode.uses.add("DateSupport");
-    prsrCode.uses.add("MXml");
-    prsrCode.uses.add("FHIRParserBase");
-    prsrCode.uses.add("RDFUtilities");
-    prsrCode.uses.add("FHIRBase");
-    prsrCode.uses.add("FHIRResources");
-    prsrCode.uses.add("FHIRConstants");
-    prsrCode.uses.add("FHIRTypes");
-    prsrCode.uses.add("XmlBuilder");
-    prsrCode.uses.add("AdvJSON");
-    prsrCode.uses.add("AdvStringMatches");
-    prsrCode.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    prsrCodeX.uses.add("SysUtils");
+    prsrCodeX.uses.add("Classes");
+    prsrCodeX.uses.add("StringSupport");
+    prsrCodeX.uses.add("DateSupport");
+    prsrCodeX.uses.add("DecimalSupport");
+    prsrCodeX.uses.add("FHIRParserBase");
+    prsrCodeX.uses.add("FHIRBase");
+    prsrCodeX.uses.add("FHIRResources");
+    prsrCodeX.uses.add("FHIRConstants");
+    prsrCodeX.uses.add("FHIRTypes");
+    prsrCodeX.uses.add("AdvStringMatches");
 
-    prsrImpl.append(
+    prsrCodeJ.uses.add("SysUtils");
+    prsrCodeJ.uses.add("Classes");
+    prsrCodeJ.uses.add("StringSupport");
+    prsrCodeJ.uses.add("DateSupport");
+    prsrCodeJ.uses.add("DecimalSupport");
+    prsrCodeJ.uses.add("FHIRParserBase");
+    prsrCodeJ.uses.add("FHIRBase");
+    prsrCodeJ.uses.add("FHIRResources");
+    prsrCodeJ.uses.add("FHIRConstants");
+    prsrCodeJ.uses.add("FHIRTypes");
+    prsrCodeJ.uses.add("AdvStringMatches");
+
+    prsrCodeT.uses.add("SysUtils");
+    prsrCodeT.uses.add("Classes");
+    prsrCodeT.uses.add("StringSupport");
+    prsrCodeT.uses.add("DateSupport");
+    prsrCodeT.uses.add("DecimalSupport");
+    prsrCodeT.uses.add("FHIRParserBase");
+    prsrCodeT.uses.add("FHIRBase");
+    prsrCodeT.uses.add("FHIRResources");
+    prsrCodeT.uses.add("FHIRConstants");
+    prsrCodeT.uses.add("FHIRTypes");
+    prsrCodeT.uses.add("AdvStringMatches");
+
+    prsrCodeX.uses.add("XmlBuilder");
+    prsrCodeX.uses.add("MXml");
+    prsrCodeJ.uses.add("AdvJSON");
+    prsrCodeT.uses.add("TurtleParser");
+    
+    prsrCodeX.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    prsrCodeJ.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+    prsrCodeT.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
+
+    prsrImplX.append(
         "{ TFHIRXmlParser }\r\n"+
+            "\r\n"
+        );
+
+    prsrImplJ.append(
+        "{ TFHIRJsonParser }\r\n"+
+            "\r\n"
+        );
+
+    prsrImplT.append(
+        "{ TFHIRTurtleParser }\r\n"+
             "\r\n"
         );
 
   }
 
-  private String buildParser() {
+  private String buildParserXml() {
 
-    prsrImpl.append(
+    prsrImplX.append(
         "function TFHIRXmlParser.ParseResource(element : TMXmlElement; path : String) : TFhirResource;\r\n"+
             "begin\r\n"+
             "  if (element = nil) Then\r\n"+
@@ -4328,7 +4477,7 @@ public class DelphiGenerator {
             "end;\r\n\r\n"
         );
 
-    prsrImpl.append(
+    prsrImplX.append(
         "procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; resource: TFhirResource; links : TFhirBundleLinkList);\r\n"+
             "begin\r\n"+
             "  if (resource = nil) Then\r\n"+
@@ -4340,29 +4489,7 @@ public class DelphiGenerator {
             "  end;\r\n"+
             "end;\r\n\r\n"
         );
-
-    prsrImpl.append(
-        "function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;\r\n"+
-            "var\r\n" +
-            "  s : String;\r\n" +
-            "begin\r\n"+
-            "  s := jsn['resourceType'];\r\n "+
-            prsrRegJ.toString().substring(6)+
-            "  else\r\n"+
-            "    raise Exception.create('error: the element '+s+' is not a valid resource name');\r\n" +
-            "end;\r\n\r\n"
-        );
-
-    prsrImpl.append(
-        "function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;\r\n"+
-            "begin\r\n  "+
-            prsrFragJ.toString().substring(6)+
-            "  else\r\n"+
-            "    raise Exception.create('error: the element '+type_+' is not a valid fragment name');\r\n" +
-            "end;\r\n\r\n"
-        );
-
-    prsrImpl.append(
+    prsrImplX.append(
         "function TFHIRXmlParser.ParseFragment(element : TMXmlElement) : TFHIRObject;\r\n"+
             "begin\r\n  "+
             prsrFragX.toString().substring(6)+
@@ -4370,17 +4497,7 @@ public class DelphiGenerator {
             "    raise Exception.create('error: the element '+element.Name+' is not a valid fragment name');\r\n" +
             "end;\r\n\r\n"
         );
-
-    prsrImpl.append(
-        "function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;\r\n"+
-            "begin\r\n  "+
-            prsrDTJ.toString().substring(6)+
-            "  else\r\n"+
-            "    raise Exception.create('Unknown Type');\r\n" +
-            "end;\r\n\r\n"
-        );
-
-    prsrImpl.append(
+    prsrImplX.append(
         "function TFHIRXmlParser.ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFhirType;\r\n"+
             "begin\r\n  "+
             "  if (name <> '') and (name <> element.localName) then\r\n"+
@@ -4390,8 +4507,7 @@ public class DelphiGenerator {
             "    raise Exception.create('Unknown Type');\r\n" +
             "end;\r\n\r\n"
         );
-
-    prsrImpl.append(
+    prsrImplX.append(
         "procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject);\r\n"+
             "begin\r\n  "+
             compXBase.toString().substring(6)+
@@ -4399,48 +4515,6 @@ public class DelphiGenerator {
             "    raise Exception.create('Unknown Type '+base.className);\r\n" +
             "end;\r\n\r\n"
         );
-
-    prsrImpl.append(
-        "procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);\r\n"+
-            "begin\r\n  "+
-            compJBase.toString().substring(6)+
-            "  else\r\n"+
-            "    raise Exception.create('Unknown Type '+base.className);\r\n" +
-            "end;\r\n\r\n"
-        );
-
-    prsrImpl.append(
-        "procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; resource: TFhirResource; links : TFhirBundleLinkList);\r\n"+
-            "begin\r\n"+
-            "  if (resource = nil) Then\r\n"+
-            "    Raise Exception.Create('error - resource is nil');\r\n"+
-            "  json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);\r\n"+
-            "  Case resource.ResourceType of\r\n"+
-            srlsRegJ.toString()+
-            "  else\r\n"+
-            "    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');\r\n" +
-            "  end;\r\n"+
-            "end;\r\n\r\n"
-        );
-
-
-    prsrImpl.append(
-        "procedure TFHIRRDFComposer.ComposeResource(parent : TRDFComplex; resource : TFhirResource);\r\n"+
-            "var\r\n"+
-            "  this : TRDFComplex;\r\n"+
-            "begin\r\n"+
-            "  if (resource = nil) Then\r\n"+
-            "    Raise Exception.Create('error - resource is nil');\r\n"+
-            "  this := parent;\r\n"+
-            "  Case resource.ResourceType of\r\n"+
-            srlsRegR.toString().replace("%%%%", "")+
-            "  else\r\n"+
-            "    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');\r\n" +
-            "  end;\r\n"+
-            "end;\r\n\r\n"
-        );
-
-
 
     return
         "  TFHIRXmlParser = class (TFHIRXmlParserBase)\r\n"+
@@ -4456,7 +4530,63 @@ public class DelphiGenerator {
         srlsdefX.toString()+
         "    procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource; links : TFhirBundleLinkList); override;\r\n"+
         "    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;\r\n"+
-        "  end;\r\n\r\n"+
+        "  end;\r\n\r\n";
+  }
+  
+  private String buildParserJson() {
+    prsrImplJ.append(
+        "function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;\r\n"+
+            "var\r\n" +
+            "  s : String;\r\n" +
+            "begin\r\n"+
+            "  s := jsn['resourceType'];\r\n "+
+            prsrRegJ.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('error: the element '+s+' is not a valid resource name');\r\n" +
+            "end;\r\n\r\n"
+        );
+
+    prsrImplJ.append(
+        "function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;\r\n"+
+            "begin\r\n  "+
+            prsrFragJ.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('error: the element '+type_+' is not a valid fragment name');\r\n" +
+            "end;\r\n\r\n"
+        );
+    prsrImplJ.append(
+        "function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;\r\n"+
+            "begin\r\n  "+
+            prsrDTJ.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('Unknown Type');\r\n" +
+            "end;\r\n\r\n"
+        );
+
+    prsrImplJ.append(
+        "procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);\r\n"+
+            "begin\r\n  "+
+            compJBase.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('Unknown Type '+base.className);\r\n" +
+            "end;\r\n\r\n"
+        );
+
+    prsrImplJ.append(
+        "procedure TFHIRJsonComposer.ComposeResource(json : TJSONWriter; resource: TFhirResource; links : TFhirBundleLinkList);\r\n"+
+            "begin\r\n"+
+            "  if (resource = nil) Then\r\n"+
+            "    Raise Exception.Create('error - resource is nil');\r\n"+
+            "  json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);\r\n"+
+            "  Case resource.ResourceType of\r\n"+
+            srlsRegJ.toString()+
+            "  else\r\n"+
+            "    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');\r\n" +
+            "  end;\r\n"+
+            "end;\r\n\r\n"
+        );
+
+    return
         "  TFHIRJsonParser = class (TFHIRJsonParserBase)\r\n"+
         "  protected\r\n"+
         prsrdefJ.toString()+
@@ -4470,12 +4600,73 @@ public class DelphiGenerator {
         srlsdefJ.toString()+
         "    procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;\r\n"+
         "    procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;\r\n"+
+        "  end;\r\n\r\n";
+  }
+
+  private String buildParserTurtle() {
+    prsrImplT.append(
+        "function TFHIRTurtleParser.ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;\r\n"+
+            "begin\r\n  "+
+            prsrFragR.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('error: the element '+type_+' is not a valid fragment name');\r\n" +
+            "end;\r\n\r\n"
+        );
+
+    prsrImplT.append(
+        "function TFHIRTurtleParser.ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType;\r\n"+
+            "begin\r\n  "+
+            prsrDTT.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('Unknown Type');\r\n" +
+            "end;\r\n\r\n"
+        );
+
+
+    prsrImplT.append(
+        "procedure TFHIRTurtleComposer.ComposeResource(parent : TTurtleComplex; resource : TFhirResource);\r\n"+
+            "var\r\n"+
+            "  this : TTurtleComplex;\r\n"+
+            "begin\r\n"+
+            "  if (resource = nil) Then\r\n"+
+            "    Raise Exception.Create('error - resource is nil');\r\n"+
+            "  this := parent;\r\n"+
+            "  Case resource.ResourceType of\r\n"+
+            srlsRegR.toString().replace("%%%%", "")+
+            "  else\r\n"+
+            "    raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');\r\n" +
+            "  end;\r\n"+
+            "end;\r\n\r\n"
+        );
+
+
+    prsrImplT.append(
+        "function TFHIRTurtleParser.ParseResource(obj : TTurtleComplex) : TFhirResource;\r\n"+
+            "var\r\n" +
+            "  s : String;\r\n" +
+            "begin\r\n"+
+            "  s := rdfsType(obj);\r\n "+
+            prsrRegT.toString().substring(6)+
+            "  else\r\n"+
+            "    raise Exception.create('error: the element '+s+' is not a valid resource name');\r\n" +
+            "end;\r\n\r\n"
+        );
+
+
+    return
+        "  TFHIRTurtleParser = class (TFHIRTurtleParserBase)\r\n"+
+        "  protected\r\n"+
+        prsrdefT.toString()+
+        "    function ParseResource(obj : TTurtleComplex) : TFhirResource; override;\r\n"+
+        "    function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;\r\n"+
+        "  public\r\n"+
+        "    function ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;  overload;\r\n"+
         "  end;\r\n\r\n"+
-        "  TFHIRRDFComposer = class (TFHIRRDFComposerBase)\r\n"+
+        "  TFHIRTurtleComposer = class (TFHIRTurtleComposerBase)\r\n"+
         "  protected\r\n"+
         srlsdefR.toString()+
         "  \r\n"+
-        "    procedure ComposeResource(parent :  TRDFComplex; resource : TFhirResource); overload; override;\r\n"+
+        "    procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; override;\r\n"+
         "  end;\r\n\r\n";
   }
 

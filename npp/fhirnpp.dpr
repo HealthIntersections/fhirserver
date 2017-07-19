@@ -100,7 +100,10 @@ uses
   AfsVolumes in '..\reference-platform\Support\AfsVolumes.pas',
   AfsStreamManagers in '..\reference-platform\Support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\reference-platform\Support\AdvObjectMatches.pas',
-  FHIRParser in '..\reference-platform\dstu3\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
+  FHIRParserXml in '..\reference-platform\dstu3\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\dstu3\FHIRParserJson.pas',
+  FHIRParserTurtle in '..\reference-platform\dstu3\FHIRParserTurtle.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   MsXmlParser in '..\reference-platform\Support\MsXmlParser.pas',
   XMLBuilder in '..\reference-platform\Support\XMLBuilder.pas',
@@ -158,7 +161,7 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
-  CDSHooksServer in '..\Server\CDSHooksServer.pas';
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
 
 {$R *.res}
 

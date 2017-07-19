@@ -69,7 +69,10 @@ uses
   HMAC in '..\reference-platform\support\HMAC.pas',
   JWT in '..\reference-platform\support\JWT.pas',
   AdvStringMatches in '..\reference-platform\support\AdvStringMatches.pas',
-  FHIRParser in '..\reference-platform\r4\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
+  FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
+  FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   FHIRResources in '..\reference-platform\r4\FHIRResources.pas',
   FHIRTypes in '..\reference-platform\r4\FHIRTypes.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
@@ -99,7 +102,8 @@ uses
   FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
   AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
-  FhirPath in '..\reference-platform\r4\FhirPath.pas';
+  FhirPath in '..\reference-platform\r4\FhirPath.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
 
 var
   runner : ITestRunner;

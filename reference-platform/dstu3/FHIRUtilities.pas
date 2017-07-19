@@ -42,7 +42,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts,
 
-  MimeMessage, TextUtilities, ZLib, InternetFetcher,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -651,6 +651,8 @@ begin
     result := DetectFormat(oContent).create(oWorker.Link, lang)
   else if aFormat = ffText then
     result := TFHIRTextParser.create(oWorker.Link, lang)
+//  else if aFormat = ffTurtle then
+//    result := TFHIRTurtleParser.create(oWorker.Link, lang)
   else
     result := TFHIRXmlParser.Create(oWorker.Link, lang);
   try

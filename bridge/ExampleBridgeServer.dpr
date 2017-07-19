@@ -124,7 +124,10 @@ uses
   FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRMetaModel in '..\reference-platform\dstu3\FHIRMetaModel.pas',
   FHIROperations in '..\reference-platform\dstu3\FHIROperations.pas',
-  FHIRParser in '..\reference-platform\dstu3\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
+  FHIRParserXml in '..\reference-platform\dstu3\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\dstu3\FHIRParserJson.pas',
+  FHIRParserTurtle in '..\reference-platform\dstu3\FHIRParserTurtle.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
@@ -210,7 +213,8 @@ uses
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
-  CDSHooksServer in '..\Server\CDSHooksServer.pas';
+  CDSHooksServer in '..\Server\CDSHooksServer.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
 
 var
   gsrv : TExampleFhirServer;

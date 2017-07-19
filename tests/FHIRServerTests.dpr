@@ -185,7 +185,7 @@ uses
   FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\r4\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\r4\FHIRResources.pas',
-  FHIRParser in '..\reference-platform\r4\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
   FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
@@ -259,7 +259,10 @@ uses
   CDSHooksServices in '..\Server\CDSHooksServices.pas',
   CDSHooksServer in '..\Server\CDSHooksServer.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
-  TurtleTests in '..\reference-platform\support\Tests\TurtleTests.pas';
+  TurtleTests in '..\reference-platform\support\Tests\TurtleTests.pas',
+  FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
+  FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas';
 
 var
   runner : ITestRunner;

@@ -105,7 +105,10 @@ uses
   FHIRXhtml in '..\support\FHIRXhtml.pas',
   FHIRResources in 'FHIRResources.pas',
   FHIRConstants,
-  FHIRParser,
+  FHIRParser in '..\support\FHIRParser.pas',
+  FHIRParserXml,
+  FHIRParserJson,
+  FHIRParserTurtle,
   FHIRParserBase in '..\support\FHIRParserBase.pas',
   FHIRSupport in 'FHIRSupport.pas',
   FHIRLang in '..\support\FHIRLang.pas',
@@ -124,7 +127,8 @@ uses
   XmlTests in '..\support\Tests\XmlTests.pas',
   JsonTests in '..\support\Tests\JsonTests.pas',
   SCIMObjects in '..\support\SCIMObjects.pas',
-  FHIRSecurity in '..\support\FHIRSecurity.pas';
+  FHIRSecurity in '..\support\FHIRSecurity.pas',
+  TurtleParser in '..\support\TurtleParser.pas';
 
 var
   s: String;

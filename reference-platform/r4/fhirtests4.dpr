@@ -68,7 +68,7 @@ uses
   FHIRBase in '..\support\FHIRBase.pas',
   FHIRConstants,
   FHIRLang in '..\support\FHIRLang.pas',
-  FHIRParser,
+  FHIRParser in '..\support\FHIRParser.pas',
   FHIRParserBase in '..\support\FHIRParserBase.pas',
   FHIRPath in 'FHIRPath.pas',
   FHIRPathTests in 'tests\FHIRPathTests.pas',
@@ -112,7 +112,11 @@ uses
   XmlTests in '..\support\Tests\XmlTests.pas',
   XmlPatch in '..\support\XmlPatch.pas',
   SCIMObjects in '..\support\SCIMObjects.pas',
-  FHIRSecurity in '..\support\FHIRSecurity.pas';
+  FHIRSecurity in '..\support\FHIRSecurity.pas',
+  FHIRParserXml in 'FHIRParserXml.pas',
+  FHIRParserJson in 'FHIRParserJson.pas',
+  TurtleParser in '..\support\TurtleParser.pas',
+  FHIRParserTurtle in 'FHIRParserTurtle.pas';
 
 var
   s: String;

@@ -444,6 +444,10 @@ public class ElementDefn {
     return path.contains(".") ? path.substring(path.lastIndexOf(".")+1) : path;
   } 
 
+  public String getPathHead() {
+    return path.contains(".") ? path.substring(0, path.lastIndexOf(".")) : "";
+  } 
+
   public void loadFrom(ElementDefinition ed, StructureDefinition sd, Map<String, ValueSet> vsmap) throws FHIRException {
     path = ed.getPath();
     name = Utilities.oidTail(ed.getPath());

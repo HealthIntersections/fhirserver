@@ -264,7 +264,7 @@ uses
   FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\r4\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\r4\FHIRResources.pas',
-  FHIRParser in '..\reference-platform\r4\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
   FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
@@ -306,7 +306,11 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
   CDSHooksServer in 'CDSHooksServer.pas',
-  CDSHooksServices in 'CDSHooksServices.pas';
+  CDSHooksServices in 'CDSHooksServices.pas',
+  FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
+  FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

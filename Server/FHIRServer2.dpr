@@ -218,7 +218,9 @@ uses
   FHIRBase in '..\reference-platform\support\FHIRBase.pas',
   FHIRTypes in '..\reference-platform\dstu2\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstu2\FHIRResources.pas',
-  FHIRParser in '..\reference-platform\dstu2\FHIRParser.pas',
+  FHIRParser in '..\reference-platform\support\FHIRParser.pas',
+  FHIRParserXml in '..\reference-platform\dstu2\FHIRParserXml.pas',
+  FHIRParserJson in '..\reference-platform\dstu2\FHIRParserJson.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRConstants in '..\reference-platform\dstu2\FHIRConstants.pas',
   FHIRSupport in '..\reference-platform\dstu2\FHIRSupport.pas',
@@ -257,7 +259,8 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
   CDSHooksServer in 'CDSHooksServer.pas',
-  CDSHooksServices in 'CDSHooksServices.pas';
+  CDSHooksServices in 'CDSHooksServices.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

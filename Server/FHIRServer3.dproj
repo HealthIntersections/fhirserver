@@ -328,7 +328,10 @@
         <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserXml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserJson.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserTurtle.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRConstants.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRSupport.pas"/>
@@ -377,6 +380,7 @@
         <DCCReference Include="..\reference-platform\support\FHIRCodeGenerator.pas"/>
         <DCCReference Include="CDSHooksServer.pas"/>
         <DCCReference Include="CDSHooksServices.pas"/>
+        <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

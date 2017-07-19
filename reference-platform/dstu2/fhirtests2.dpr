@@ -12,7 +12,6 @@ uses
   FluentPathTests in 'tests\FluentPathTests.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   FHIRConstants,
-  FHIRParser,
   SysUtils,
   Classes,
   ActiveX,
@@ -74,6 +73,9 @@ uses
   FHIRBase in '..\support\FHIRBase.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
   FHIRResources in 'FHIRResources.pas',
+  FHIRParser in '..\support\FHIRParser.pas',
+  FHIRParserXml,
+  FHIRParserJson,
   FHIRParserBase in '..\support\FHIRParserBase.pas',
   FHIRSupport in 'FHIRSupport.pas',
   ParseMap in '..\support\ParseMap.pas',
@@ -120,7 +122,8 @@ uses
   MXML in '..\support\MXML.pas',
   AdvZipWriters in '..\support\AdvZipWriters.pas',
   SCIMObjects in '..\support\SCIMObjects.pas',
-  FHIRSecurity in '..\support\FHIRSecurity.pas';
+  FHIRSecurity in '..\support\FHIRSecurity.pas',
+  TurtleParser in '..\support\TurtleParser.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

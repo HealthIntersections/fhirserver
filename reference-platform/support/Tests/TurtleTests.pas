@@ -32,9 +32,11 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  Sysutils,
-  TextUtilities,
-  TurtleParser,
+  Sysutils, Classes,
+  IdGlobalProtocols,
+  TextUtilities, ShellSupport,
+  TurtleParser, RDFUtilities,
+  FHIRResources, FHIRParserBase, FHIRParser,
   DUnitX.TestFramework;
 
 Type
@@ -42,7 +44,6 @@ Type
   TTurtleTests = Class (TObject)
   Private
     procedure parseTTl(filename : String; ok : boolean);
-
   Published
     [TestCase] procedure test_double_lower_case_e1;
     [TestCase] procedure test_double_lower_case_e2();
@@ -415,6 +416,13 @@ Type
     [TestCase] procedure test_comment_following_PNAME_NSNT();
     [TestCase] procedure test_comment_following_PNAME_NS();
     [TestCase] procedure test__default_namespace_IRI();
+  End;
+
+  [TextFixture]
+  TTurtleResourceTests = Class (TObject)
+  Private
+    procedure parseResource(filename : String);
+  Published
     [TestCase] procedure test_audit_event_example_pixQuery();
     [TestCase] procedure test_audit_event_example_media();
     [TestCase] procedure test_audit_event_example_logout();
@@ -745,27 +753,34 @@ Type
     [TestCase] procedure test_audit_event_example_search();
   End;
 
+function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
+
 implementation
 
 { TTurtleTests }
 
 procedure TTurtleTests.parseTtl(filename: String; ok: boolean);
 var
-  s : String;
-  ttl : TTurtleParser;
+  s, p, m : String;
+  ttl : TTurtleDocument;
 begin
+  ttl := nil;
   s := fileToString('C:\work\org.hl7.fhir\build\tests\turtle\'+filename, TEncoding.UTF8);
   try
-    ttl := TTurtleParser.create;
-    try
-      ttl.parse(s);
-      Assert.IsTrue(ok);
-    finally
-      ttl.Free;
-    end;
+    ttl := TTurtleParser.parse(s);
   except
     Assert.IsTrue(not ok);
   end;
+  if ttl <> nil then
+    try
+//      p := TTurtleComposer.compose(ttl);
+//      if not CheckTurtleIsSame(s, p, m) then
+//        Assert.Fail(m)
+//      else
+//        Assert.Pass();
+    finally
+      ttl.Free;
+    end;
 end;
 
 procedure TTurtleTests.test_double_lower_case_e1;
@@ -2635,1649 +2650,1814 @@ begin
 end;
 //
 
-
-procedure TTurtleTests.test_audit_event_example_pixQuery();
+procedure TTurtleResourceTests.parseResource(filename: String);
+var
+  i, o, m : string;
+  p : TFHIRParser;
+  c : TFHIRComposer;
+  s : TStringStream;
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-pixQuery.ttl")));
+  i := FileToString('C:\work\org.hl7.fhir\build\publish\'+filename, TEncoding.UTF8);
+  p := TFHIRTurtleParser.Create(nil, 'en');
+  try
+    p.source := TStringStream.Create(i);
+    try
+      p.Parse;
+      c := TFHIRTurtleComposer.Create(nil, 'en');
+      try
+        s := TStringStream.Create;
+        try
+          c.Compose(s, p.resource);
+          o := s.DataString;
+          if not CheckTurtleIsSame(i, o, m) then
+            Assert.Fail(m)
+          else
+            Assert.Pass();
+        finally
+          s.Free;
+        end;
+      finally
+        c.Free;
+      end;
+    finally
+      p.source.Free;
+    end;
+  finally
+    p.free;
   end;
+end;
 
-procedure TTurtleTests.test_audit_event_example_media();
+procedure TTurtleResourceTests.test_audit_event_example_pixQuery();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-media.ttl")));
-  end;
+  parseResource('audit-event-example-pixQuery.ttl');
+end;
 
-procedure TTurtleTests.test_audit_event_example_logout();
+procedure TTurtleResourceTests.test_audit_event_example_media();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-logout.ttl")));
-  end;
+  parseResource('audit-event-example-media.ttl');
+end;
 
-procedure TTurtleTests.test_audit_event_example_login();
+procedure TTurtleResourceTests.test_audit_event_example_logout();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-login.ttl")));
-  end;
+  parseResource('audit-event-example-logout.ttl');
+end;
 
-procedure TTurtleTests.test_appointmentresponse_example();
+procedure TTurtleResourceTests.test_audit_event_example_login();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "appointmentresponse-example.ttl")));
-  end;
+  parseResource('audit-event-example-login.ttl');
+end;
 
-procedure TTurtleTests.test_appointmentresponse_example_req();
+procedure TTurtleResourceTests.test_appointmentresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "appointmentresponse-example-req.ttl")));
-  end;
+  parseResource('appointmentresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_appointment_example2doctors();
+procedure TTurtleResourceTests.test_appointmentresponse_example_req();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "appointment-example2doctors.ttl")));
-  end;
+  parseResource('appointmentresponse-example-req.ttl');
+end;
 
-procedure TTurtleTests.test_appointment_example();
+procedure TTurtleResourceTests.test_appointment_example2doctors();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "appointment-example.ttl")));
-  end;
+  parseResource('appointment-example2doctors.ttl');
+end;
 
-procedure TTurtleTests.test_appointment_example_request();
+procedure TTurtleResourceTests.test_appointment_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "appointment-example-request.ttl")));
-  end;
+  parseResource('appointment-example.ttl');
+end;
 
-procedure TTurtleTests.test_allergyintolerance_medication();
+procedure TTurtleResourceTests.test_appointment_example_request();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "allergyintolerance-medication.ttl")));
-  end;
+  parseResource('appointment-example-request.ttl');
+end;
 
-procedure TTurtleTests.test_allergyintolerance_fishallergy();
+procedure TTurtleResourceTests.test_allergyintolerance_medication();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "allergyintolerance-fishallergy.ttl")));
-  end;
+  parseResource('allergyintolerance-medication.ttl');
+end;
 
-procedure TTurtleTests.test_allergyintolerance_example();
+procedure TTurtleResourceTests.test_allergyintolerance_fishallergy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "allergyintolerance-example.ttl")));
-  end;
+  parseResource('allergyintolerance-fishallergy.ttl');
+end;
 
-procedure TTurtleTests.test_account_example();
+procedure TTurtleResourceTests.test_allergyintolerance_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "account-example.ttl")));
-  end;
+  parseResource('allergyintolerance-example.ttl');
+end;
 
-procedure TTurtleTests.test_xds_example();
+procedure TTurtleResourceTests.test_account_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "xds-example.ttl")));
-  end;
+  parseResource('account-example.ttl');
+end;
 
-procedure TTurtleTests.test_visionprescription_example();
+procedure TTurtleResourceTests.test_xds_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "visionprescription-example.ttl")));
-  end;
+  parseResource('xds-example.ttl');
+end;
 
-procedure TTurtleTests.test_visionprescription_example_1();
+procedure TTurtleResourceTests.test_visionprescription_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "visionprescription-example-1.ttl")));
-  end;
+  parseResource('visionprescription-example.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_ucum_common();
+procedure TTurtleResourceTests.test_visionprescription_example_1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-ucum-common.ttl")));
-  end;
+  parseResource('visionprescription-example-1.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_nhin_purposeofuse();
+procedure TTurtleResourceTests.test_valueset_ucum_common();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-nhin-purposeofuse.ttl")));
-  end;
+  parseResource('valueset-ucum-common.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_example();
+procedure TTurtleResourceTests.test_valueset_nhin_purposeofuse();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-example.ttl")));
-  end;
+  parseResource('valueset-nhin-purposeofuse.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_example_yesnodontknow();
+procedure TTurtleResourceTests.test_valueset_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-example-yesnodontknow.ttl")));
-  end;
+  parseResource('valueset-example.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_example_intensional();
+procedure TTurtleResourceTests.test_valueset_example_yesnodontknow();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-example-intensional.ttl")));
-  end;
+  parseResource('valueset-example-yesnodontknow.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_example_expansion();
+procedure TTurtleResourceTests.test_valueset_example_intensional();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-example-expansion.ttl")));
-  end;
+  parseResource('valueset-example-intensional.ttl');
+end;
 
-procedure TTurtleTests.test_valueset_cpt_all();
+procedure TTurtleResourceTests.test_valueset_example_expansion();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "valueset-cpt-all.ttl")));
-  end;
+  parseResource('valueset-example-expansion.ttl');
+end;
 
-procedure TTurtleTests.test_testscript_example();
+procedure TTurtleResourceTests.test_valueset_cpt_all();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "testscript-example.ttl")));
-  end;
+  parseResource('valueset-cpt-all.ttl');
+end;
 
-procedure TTurtleTests.test_testscript_example_rule();
+procedure TTurtleResourceTests.test_testscript_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "testscript-example-rule.ttl")));
-  end;
+  parseResource('testscript-example.ttl');
+end;
 
-procedure TTurtleTests.test_supplydelivery_example();
+procedure TTurtleResourceTests.test_testscript_example_rule();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "supplydelivery-example.ttl")));
-  end;
+  parseResource('testscript-example-rule.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example();
+procedure TTurtleResourceTests.test_supplydelivery_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example.ttl")));
-  end;
+  parseResource('supplydelivery-example.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example_silver_nitrate_product();
+procedure TTurtleResourceTests.test_substance_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example-silver-nitrate-product.ttl")));
-  end;
+  parseResource('substance-example.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example_f203_potassium();
+procedure TTurtleResourceTests.test_substance_example_silver_nitrate_product();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example-f203-potassium.ttl")));
-  end;
+  parseResource('substance-example-silver-nitrate-product.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example_f202_staphylococcus();
+procedure TTurtleResourceTests.test_substance_example_f203_potassium();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example-f202-staphylococcus.ttl")));
-  end;
+  parseResource('substance-example-f203-potassium.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example_f201_dust();
+procedure TTurtleResourceTests.test_substance_example_f202_staphylococcus();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example-f201-dust.ttl")));
-  end;
+  parseResource('substance-example-f202-staphylococcus.ttl');
+end;
 
-procedure TTurtleTests.test_substance_example_amoxicillin_clavulanate();
+procedure TTurtleResourceTests.test_substance_example_f201_dust();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "substance-example-amoxicillin-clavulanate.ttl")));
-  end;
+  parseResource('substance-example-f201-dust.ttl');
+end;
 
-procedure TTurtleTests.test_subscription_example();
+procedure TTurtleResourceTests.test_substance_example_amoxicillin_clavulanate();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "subscription-example.ttl")));
-  end;
+  parseResource('substance-example-amoxicillin-clavulanate.ttl');
+end;
 
-procedure TTurtleTests.test_subscription_example_error();
+procedure TTurtleResourceTests.test_subscription_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "subscription-example-error.ttl")));
-  end;
+  parseResource('subscription-example.ttl');
+end;
 
-procedure TTurtleTests.test_structuremap_example();
+procedure TTurtleResourceTests.test_subscription_example_error();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "structuremap-example.ttl")));
-  end;
+  parseResource('subscription-example-error.ttl');
+end;
 
-procedure TTurtleTests.test_structuredefinition_example();
+procedure TTurtleResourceTests.test_structuremap_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "structuredefinition-example.ttl")));
-  end;
+  parseResource('structuremap-example.ttl');
+end;
 
-procedure TTurtleTests.test_specimen_example();
+procedure TTurtleResourceTests.test_structuredefinition_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "specimen-example.ttl")));
-  end;
+  parseResource('structuredefinition-example.ttl');
+end;
 
-procedure TTurtleTests.test_specimen_example_urine();
+procedure TTurtleResourceTests.test_specimen_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "specimen-example-urine.ttl")));
-  end;
+  parseResource('specimen-example.ttl');
+end;
 
-procedure TTurtleTests.test_specimen_example_isolate();
+procedure TTurtleResourceTests.test_specimen_example_urine();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "specimen-example-isolate.ttl")));
-  end;
+  parseResource('specimen-example-urine.ttl');
+end;
 
-procedure TTurtleTests.test_slot_example();
+procedure TTurtleResourceTests.test_specimen_example_isolate();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "slot-example.ttl")));
-  end;
+  parseResource('specimen-example-isolate.ttl');
+end;
 
-procedure TTurtleTests.test_slot_example_unavailable();
+procedure TTurtleResourceTests.test_slot_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "slot-example-unavailable.ttl")));
-  end;
+  parseResource('slot-example.ttl');
+end;
 
-procedure TTurtleTests.test_slot_example_tentative();
+procedure TTurtleResourceTests.test_slot_example_unavailable();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "slot-example-tentative.ttl")));
-  end;
+  parseResource('slot-example-unavailable.ttl');
+end;
 
-procedure TTurtleTests.test_slot_example_busy();
+procedure TTurtleResourceTests.test_slot_example_tentative();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "slot-example-busy.ttl")));
-  end;
+  parseResource('slot-example-tentative.ttl');
+end;
 
-procedure TTurtleTests.test_sequence_example();
+procedure TTurtleResourceTests.test_slot_example_busy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "sequence-example.ttl")));
-  end;
+  parseResource('slot-example-busy.ttl');
+end;
 
-procedure TTurtleTests.test_searchparameter_example();
+procedure TTurtleResourceTests.test_sequence_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "searchparameter-example.ttl")));
-  end;
+  parseResource('sequence-example.ttl');
+end;
 
-procedure TTurtleTests.test_searchparameter_example_extension();
+procedure TTurtleResourceTests.test_searchparameter_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "searchparameter-example-extension.ttl")));
-  end;
+  parseResource('searchparameter-example.ttl');
+end;
 
-procedure TTurtleTests.test_schedule_example();
+procedure TTurtleResourceTests.test_searchparameter_example_extension();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "schedule-example.ttl")));
-  end;
+  parseResource('searchparameter-example-extension.ttl');
+end;
 
-procedure TTurtleTests.test_riskassessment_example();
+procedure TTurtleResourceTests.test_schedule_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "riskassessment-example.ttl")));
-  end;
+  parseResource('schedule-example.ttl');
+end;
 
-procedure TTurtleTests.test_riskassessment_example_prognosis();
+procedure TTurtleResourceTests.test_riskassessment_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "riskassessment-example-prognosis.ttl")));
-  end;
+  parseResource('riskassessment-example.ttl');
+end;
 
-procedure TTurtleTests.test_riskassessment_example_population();
+procedure TTurtleResourceTests.test_riskassessment_example_prognosis();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "riskassessment-example-population.ttl")));
-  end;
+  parseResource('riskassessment-example-prognosis.ttl');
+end;
 
-procedure TTurtleTests.test_riskassessment_example_cardiac();
+procedure TTurtleResourceTests.test_riskassessment_example_population();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "riskassessment-example-cardiac.ttl")));
-  end;
+  parseResource('riskassessment-example-population.ttl');
+end;
 
-procedure TTurtleTests.test_relatedperson_example();
+procedure TTurtleResourceTests.test_riskassessment_example_cardiac();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "relatedperson-example.ttl")));
-  end;
+  parseResource('riskassessment-example-cardiac.ttl');
+end;
 
-procedure TTurtleTests.test_relatedperson_example_peter();
+procedure TTurtleResourceTests.test_relatedperson_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "relatedperson-example-peter.ttl")));
-  end;
+  parseResource('relatedperson-example.ttl');
+end;
 
-procedure TTurtleTests.test_relatedperson_example_f002_ariadne();
+procedure TTurtleResourceTests.test_relatedperson_example_peter();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "relatedperson-example-f002-ariadne.ttl")));
-  end;
+  parseResource('relatedperson-example-peter.ttl');
+end;
 
-procedure TTurtleTests.test_relatedperson_example_f001_sarah();
+procedure TTurtleResourceTests.test_relatedperson_example_f002_ariadne();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "relatedperson-example-f001-sarah.ttl")));
-  end;
+  parseResource('relatedperson-example-f002-ariadne.ttl');
+end;
 
-procedure TTurtleTests.test_provenance_example();
+procedure TTurtleResourceTests.test_relatedperson_example_f001_sarah();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "provenance-example.ttl")));
-  end;
+  parseResource('relatedperson-example-f001-sarah.ttl');
+end;
 
-procedure TTurtleTests.test_provenance_example_sig();
+procedure TTurtleResourceTests.test_provenance_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "provenance-example-sig.ttl")));
-  end;
+  parseResource('provenance-example.ttl');
+end;
 
-procedure TTurtleTests.test_processresponse_example();
+procedure TTurtleResourceTests.test_provenance_example_sig();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processresponse-example.ttl")));
-  end;
+  parseResource('provenance-example-sig.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example();
+procedure TTurtleResourceTests.test_processresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example.ttl")));
-  end;
+  parseResource('processresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_status();
+procedure TTurtleResourceTests.test_processrequest_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-status.ttl")));
-  end;
+  parseResource('processrequest-example.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_reverse();
+procedure TTurtleResourceTests.test_processrequest_example_status();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-reverse.ttl")));
-  end;
+  parseResource('processrequest-example-status.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_reprocess();
+procedure TTurtleResourceTests.test_processrequest_example_reverse();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-reprocess.ttl")));
-  end;
+  parseResource('processrequest-example-reverse.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_poll_specific();
+procedure TTurtleResourceTests.test_processrequest_example_reprocess();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-poll-specific.ttl")));
-  end;
+  parseResource('processrequest-example-reprocess.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_poll_payrec();
+procedure TTurtleResourceTests.test_processrequest_example_poll_specific();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-poll-payrec.ttl")));
-  end;
+  parseResource('processrequest-example-poll-specific.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_poll_inclusive();
+procedure TTurtleResourceTests.test_processrequest_example_poll_payrec();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-poll-inclusive.ttl")));
-  end;
+  parseResource('processrequest-example-poll-payrec.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_poll_exclusive();
+procedure TTurtleResourceTests.test_processrequest_example_poll_inclusive();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-poll-exclusive.ttl")));
-  end;
+  parseResource('processrequest-example-poll-inclusive.ttl');
+end;
 
-procedure TTurtleTests.test_processrequest_example_poll_eob();
+procedure TTurtleResourceTests.test_processrequest_example_poll_exclusive();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "processrequest-example-poll-eob.ttl")));
-  end;
+  parseResource('processrequest-example-poll-exclusive.ttl');
+end;
 
-procedure TTurtleTests.test_procedurerequest_example();
+procedure TTurtleResourceTests.test_processrequest_example_poll_eob();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedurerequest-example.ttl")));
-  end;
+  parseResource('processrequest-example-poll-eob.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example();
+procedure TTurtleResourceTests.test_procedurerequest_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example.ttl")));
-  end;
+  parseResource('procedurerequest-example.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_implant();
+procedure TTurtleResourceTests.test_procedure_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-implant.ttl")));
-  end;
+  parseResource('procedure-example.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_f201_tpf();
+procedure TTurtleResourceTests.test_procedure_example_implant();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-f201-tpf.ttl")));
-  end;
+  parseResource('procedure-example-implant.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_f004_tracheotomy();
+procedure TTurtleResourceTests.test_procedure_example_f201_tpf();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-f004-tracheotomy.ttl")));
-  end;
+  parseResource('procedure-example-f201-tpf.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_f003_abscess();
+procedure TTurtleResourceTests.test_procedure_example_f004_tracheotomy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-f003-abscess.ttl")));
-  end;
+  parseResource('procedure-example-f004-tracheotomy.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_f002_lung();
+procedure TTurtleResourceTests.test_procedure_example_f003_abscess();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-f002-lung.ttl")));
-  end;
+  parseResource('procedure-example-f003-abscess.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_f001_heart();
+procedure TTurtleResourceTests.test_procedure_example_f002_lung();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-f001-heart.ttl")));
-  end;
+  parseResource('procedure-example-f002-lung.ttl');
+end;
 
-procedure TTurtleTests.test_procedure_example_biopsy();
+procedure TTurtleResourceTests.test_procedure_example_f001_heart();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "procedure-example-biopsy.ttl")));
-  end;
+  parseResource('procedure-example-f001-heart.ttl');
+end;
 
-procedure TTurtleTests.test_practitionerrole_example();
+procedure TTurtleResourceTests.test_procedure_example_biopsy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitionerrole-example.ttl")));
-  end;
+  parseResource('procedure-example-biopsy.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_examples_general();
+procedure TTurtleResourceTests.test_practitionerrole_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-examples-general.ttl")));
-  end;
+  parseResource('practitionerrole-example.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example();
+procedure TTurtleResourceTests.test_practitioner_examples_general();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example.ttl")));
-  end;
+  parseResource('practitioner-examples-general.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_xcda1();
+procedure TTurtleResourceTests.test_practitioner_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-xcda1.ttl")));
-  end;
+  parseResource('practitioner-example.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_xcda_author();
+procedure TTurtleResourceTests.test_practitioner_example_xcda1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-xcda-author.ttl")));
-  end;
+  parseResource('practitioner-example-xcda1.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f204_ce();
+procedure TTurtleResourceTests.test_practitioner_example_xcda_author();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f204-ce.ttl")));
-  end;
+  parseResource('practitioner-example-xcda-author.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f203_jvg();
+procedure TTurtleResourceTests.test_practitioner_example_f204_ce();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f203-jvg.ttl")));
-  end;
+  parseResource('practitioner-example-f204-ce.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f202_lm();
+procedure TTurtleResourceTests.test_practitioner_example_f203_jvg();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f202-lm.ttl")));
-  end;
+  parseResource('practitioner-example-f203-jvg.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f201_ab();
+procedure TTurtleResourceTests.test_practitioner_example_f202_lm();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f201-ab.ttl")));
-  end;
+  parseResource('practitioner-example-f202-lm.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f007_sh();
+procedure TTurtleResourceTests.test_practitioner_example_f201_ab();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f007-sh.ttl")));
-  end;
+  parseResource('practitioner-example-f201-ab.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f006_rvdb();
+procedure TTurtleResourceTests.test_practitioner_example_f007_sh();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f006-rvdb.ttl")));
-  end;
+  parseResource('practitioner-example-f007-sh.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f005_al();
+procedure TTurtleResourceTests.test_practitioner_example_f006_rvdb();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f005-al.ttl")));
-  end;
+  parseResource('practitioner-example-f006-rvdb.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f004_rb();
+procedure TTurtleResourceTests.test_practitioner_example_f005_al();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f004-rb.ttl")));
-  end;
+  parseResource('practitioner-example-f005-al.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f003_mv();
+procedure TTurtleResourceTests.test_practitioner_example_f004_rb();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f003-mv.ttl")));
-  end;
+  parseResource('practitioner-example-f004-rb.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f002_pv();
+procedure TTurtleResourceTests.test_practitioner_example_f003_mv();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f002-pv.ttl")));
-  end;
+  parseResource('practitioner-example-f003-mv.ttl');
+end;
 
-procedure TTurtleTests.test_practitioner_example_f001_evdb();
+procedure TTurtleResourceTests.test_practitioner_example_f002_pv();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "practitioner-example-f001-evdb.ttl")));
-  end;
+  parseResource('practitioner-example-f002-pv.ttl');
+end;
 
-procedure TTurtleTests.test_person_provider_directory();
+procedure TTurtleResourceTests.test_practitioner_example_f001_evdb();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "person-provider-directory.ttl")));
-  end;
+  parseResource('practitioner-example-f001-evdb.ttl');
+end;
 
-procedure TTurtleTests.test_person_patient_portal();
+procedure TTurtleResourceTests.test_person_provider_directory();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "person-patient-portal.ttl")));
-  end;
+  parseResource('person-provider-directory.ttl');
+end;
 
-procedure TTurtleTests.test_person_grahame();
+procedure TTurtleResourceTests.test_person_patient_portal();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "person-grahame.ttl")));
-  end;
+  parseResource('person-patient-portal.ttl');
+end;
 
-procedure TTurtleTests.test_person_example();
+procedure TTurtleResourceTests.test_person_grahame();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "person-example.ttl")));
-  end;
+  parseResource('person-grahame.ttl');
+end;
 
-procedure TTurtleTests.test_person_example_f002_ariadne();
+procedure TTurtleResourceTests.test_person_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "person-example-f002-ariadne.ttl")));
-  end;
+  parseResource('person-example.ttl');
+end;
 
-procedure TTurtleTests.test_paymentreconciliation_example();
+procedure TTurtleResourceTests.test_person_example_f002_ariadne();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "paymentreconciliation-example.ttl")));
-  end;
+  parseResource('person-example-f002-ariadne.ttl');
+end;
 
-procedure TTurtleTests.test_paymentnotice_example();
+procedure TTurtleResourceTests.test_paymentreconciliation_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "paymentnotice-example.ttl")));
-  end;
+  parseResource('paymentreconciliation-example.ttl');
+end;
 
-procedure TTurtleTests.test_patient_glossy_example();
+procedure TTurtleResourceTests.test_paymentnotice_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-glossy-example.ttl")));
-  end;
+  parseResource('paymentnotice-example.ttl');
+end;
 
-procedure TTurtleTests.test_patient_examples_general();
+procedure TTurtleResourceTests.test_patient_glossy_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-examples-general.ttl")));
-  end;
+  parseResource('patient-glossy-example.ttl');
+end;
 
-procedure TTurtleTests.test_patient_examples_cypress_template();
+procedure TTurtleResourceTests.test_patient_examples_general();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-examples-cypress-template.ttl")));
-  end;
+  parseResource('patient-examples-general.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example();
+procedure TTurtleResourceTests.test_patient_examples_cypress_template();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example.ttl")));
-  end;
+  parseResource('patient-examples-cypress-template.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_xds();
+procedure TTurtleResourceTests.test_patient_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-xds.ttl")));
-  end;
+  parseResource('patient-example.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_xcda();
+procedure TTurtleResourceTests.test_patient_example_xds();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-xcda.ttl")));
-  end;
+  parseResource('patient-example-xds.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_proband();
+procedure TTurtleResourceTests.test_patient_example_xcda();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-proband.ttl")));
-  end;
+  parseResource('patient-example-xcda.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_ihe_pcd();
+procedure TTurtleResourceTests.test_patient_example_proband();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-ihe-pcd.ttl")));
-  end;
+  parseResource('patient-example-proband.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_f201_roel();
+procedure TTurtleResourceTests.test_patient_example_ihe_pcd();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-f201-roel.ttl")));
-  end;
+  parseResource('patient-example-ihe-pcd.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_f001_pieter();
+procedure TTurtleResourceTests.test_patient_example_f201_roel();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-f001-pieter.ttl")));
-  end;
+  parseResource('patient-example-f201-roel.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_dicom();
+procedure TTurtleResourceTests.test_patient_example_f001_pieter();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-dicom.ttl")));
-  end;
+  parseResource('patient-example-f001-pieter.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_d();
+procedure TTurtleResourceTests.test_patient_example_dicom();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-d.ttl")));
-  end;
+  parseResource('patient-example-dicom.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_c();
+procedure TTurtleResourceTests.test_patient_example_d();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-c.ttl")));
-  end;
+  parseResource('patient-example-d.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_b();
+procedure TTurtleResourceTests.test_patient_example_c();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-b.ttl")));
-  end;
+  parseResource('patient-example-c.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_animal();
+procedure TTurtleResourceTests.test_patient_example_b();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-animal.ttl")));
-  end;
+  parseResource('patient-example-b.ttl');
+end;
 
-procedure TTurtleTests.test_patient_example_a();
+procedure TTurtleResourceTests.test_patient_example_animal();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "patient-example-a.ttl")));
-  end;
+  parseResource('patient-example-animal.ttl');
+end;
 
-procedure TTurtleTests.test_parameters_example();
+procedure TTurtleResourceTests.test_patient_example_a();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "parameters-example.ttl")));
-  end;
+  parseResource('patient-example-a.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example();
+procedure TTurtleResourceTests.test_parameters_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example.ttl")));
-  end;
+  parseResource('parameters-example.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_lab();
+procedure TTurtleResourceTests.test_organization_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-lab.ttl")));
-  end;
+  parseResource('organization-example.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_insurer();
+procedure TTurtleResourceTests.test_organization_example_lab();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-insurer.ttl")));
-  end;
+  parseResource('organization-example-lab.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_good_health_care();
+procedure TTurtleResourceTests.test_organization_example_insurer();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-good-health-care.ttl")));
-  end;
+  parseResource('organization-example-insurer.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_gastro();
+procedure TTurtleResourceTests.test_organization_example_good_health_care();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-gastro.ttl")));
-  end;
+  parseResource('organization-example-good-health-care.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_f203_bumc();
+procedure TTurtleResourceTests.test_organization_example_gastro();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-f203-bumc.ttl")));
-  end;
+  parseResource('organization-example-gastro.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_f201_aumc();
+procedure TTurtleResourceTests.test_organization_example_f203_bumc();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-f201-aumc.ttl")));
-  end;
+  parseResource('organization-example-f203-bumc.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_f003_burgers_ENT();
+procedure TTurtleResourceTests.test_organization_example_f201_aumc();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-f003-burgers-ENT.ttl")));
-  end;
+  parseResource('organization-example-f201-aumc.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_f002_burgers_card();
+procedure TTurtleResourceTests.test_organization_example_f003_burgers_ENT();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-f002-burgers-card.ttl")));
-  end;
+  parseResource('organization-example-f003-burgers-ENT.ttl');
+end;
 
-procedure TTurtleTests.test_organization_example_f001_burgers();
+procedure TTurtleResourceTests.test_organization_example_f002_burgers_card();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "organization-example-f001-burgers.ttl")));
-  end;
+  parseResource('organization-example-f002-burgers-card.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example();
+procedure TTurtleResourceTests.test_organization_example_f001_burgers();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example.ttl")));
-  end;
+  parseResource('organization-example-f001-burgers.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example_validationfail();
+procedure TTurtleResourceTests.test_operationoutcome_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example-validationfail.ttl")));
-  end;
+  parseResource('operationoutcome-example.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example_searchfail();
+procedure TTurtleResourceTests.test_operationoutcome_example_validationfail();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example-searchfail.ttl")));
-  end;
+  parseResource('operationoutcome-example-validationfail.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example_exception();
+procedure TTurtleResourceTests.test_operationoutcome_example_searchfail();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example-exception.ttl")));
-  end;
+  parseResource('operationoutcome-example-searchfail.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example_break_the_glass();
+procedure TTurtleResourceTests.test_operationoutcome_example_exception();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example-break-the-glass.ttl")));
-  end;
+  parseResource('operationoutcome-example-exception.ttl');
+end;
 
-procedure TTurtleTests.test_operationoutcome_example_allok();
+procedure TTurtleResourceTests.test_operationoutcome_example_break_the_glass();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationoutcome-example-allok.ttl")));
-  end;
+  parseResource('operationoutcome-example-break-the-glass.ttl');
+end;
 
-procedure TTurtleTests.test_operationdefinition_example();
+procedure TTurtleResourceTests.test_operationoutcome_example_allok();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "operationdefinition-example.ttl")));
-  end;
+  parseResource('operationoutcome-example-allok.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example();
+procedure TTurtleResourceTests.test_operationdefinition_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example.ttl")));
-  end;
+  parseResource('operationdefinition-example.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_unsat();
+procedure TTurtleResourceTests.test_observation_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-unsat.ttl")));
-  end;
+  parseResource('observation-example.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_satO2();
+procedure TTurtleResourceTests.test_observation_example_unsat();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-satO2.ttl")));
-  end;
+  parseResource('observation-example-unsat.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_sample_data();
+procedure TTurtleResourceTests.test_observation_example_satO2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-sample-data.ttl")));
-  end;
+  parseResource('observation-example-satO2.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_glasgow();
+procedure TTurtleResourceTests.test_observation_example_sample_data();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-glasgow.ttl")));
-  end;
+  parseResource('observation-example-sample-data.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_glasgow_qa();
+procedure TTurtleResourceTests.test_observation_example_glasgow();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-glasgow-qa.ttl")));
-  end;
+  parseResource('observation-example-glasgow.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_genetics_5();
+procedure TTurtleResourceTests.test_observation_example_glasgow_qa();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-genetics-5.ttl")));
-  end;
+  parseResource('observation-example-glasgow-qa.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_genetics_4();
+procedure TTurtleResourceTests.test_observation_example_genetics_5();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-genetics-4.ttl")));
-  end;
+  parseResource('observation-example-genetics-5.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_genetics_3();
+procedure TTurtleResourceTests.test_observation_example_genetics_4();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-genetics-3.ttl")));
-  end;
+  parseResource('observation-example-genetics-4.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_genetics_2();
+procedure TTurtleResourceTests.test_observation_example_genetics_3();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-genetics-2.ttl")));
-  end;
+  parseResource('observation-example-genetics-3.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_genetics_1();
+procedure TTurtleResourceTests.test_observation_example_genetics_2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-genetics-1.ttl")));
-  end;
+  parseResource('observation-example-genetics-2.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f206_staphylococcus();
+procedure TTurtleResourceTests.test_observation_example_genetics_1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f206-staphylococcus.ttl")));
-  end;
+  parseResource('observation-example-genetics-1.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f205_egfr();
+procedure TTurtleResourceTests.test_observation_example_f206_staphylococcus();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f205-egfr.ttl")));
-  end;
+  parseResource('observation-example-f206-staphylococcus.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f204_creatinine();
+procedure TTurtleResourceTests.test_observation_example_f205_egfr();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f204-creatinine.ttl")));
-  end;
+  parseResource('observation-example-f205-egfr.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f203_bicarbonate();
+procedure TTurtleResourceTests.test_observation_example_f204_creatinine();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f203-bicarbonate.ttl")));
-  end;
+  parseResource('observation-example-f204-creatinine.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f202_temperature();
+procedure TTurtleResourceTests.test_observation_example_f203_bicarbonate();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f202-temperature.ttl")));
-  end;
+  parseResource('observation-example-f203-bicarbonate.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f005_hemoglobin();
+procedure TTurtleResourceTests.test_observation_example_f202_temperature();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f005-hemoglobin.ttl")));
-  end;
+  parseResource('observation-example-f202-temperature.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f004_erythrocyte();
+procedure TTurtleResourceTests.test_observation_example_f005_hemoglobin();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f004-erythrocyte.ttl")));
-  end;
+  parseResource('observation-example-f005-hemoglobin.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f003_co2();
+procedure TTurtleResourceTests.test_observation_example_f004_erythrocyte();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f003-co2.ttl")));
-  end;
+  parseResource('observation-example-f004-erythrocyte.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f002_excess();
+procedure TTurtleResourceTests.test_observation_example_f003_co2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f002-excess.ttl")));
-  end;
+  parseResource('observation-example-f003-co2.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_f001_glucose();
+procedure TTurtleResourceTests.test_observation_example_f002_excess();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-f001-glucose.ttl")));
-  end;
+  parseResource('observation-example-f002-excess.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_bloodpressure();
+procedure TTurtleResourceTests.test_observation_example_f001_glucose();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-bloodpressure.ttl")));
-  end;
+  parseResource('observation-example-f001-glucose.ttl');
+end;
 
-procedure TTurtleTests.test_observation_example_bloodpressure_cancel();
+procedure TTurtleResourceTests.test_observation_example_bloodpressure();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "observation-example-bloodpressure-cancel.ttl")));
-  end;
+  parseResource('observation-example-bloodpressure.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_texture_modified();
+procedure TTurtleResourceTests.test_observation_example_bloodpressure_cancel();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-texture-modified.ttl")));
-  end;
+  parseResource('observation-example-bloodpressure-cancel.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_renaldiet();
+procedure TTurtleResourceTests.test_nutritionorder_example_texture_modified();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-renaldiet.ttl")));
-  end;
+  parseResource('nutritionorder-example-texture-modified.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_pureeddiet();
+procedure TTurtleResourceTests.test_nutritionorder_example_renaldiet();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-pureeddiet.ttl")));
-  end;
+  parseResource('nutritionorder-example-renaldiet.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_pureeddiet_simple();
+procedure TTurtleResourceTests.test_nutritionorder_example_pureeddiet();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-pureeddiet-simple.ttl")));
-  end;
+  parseResource('nutritionorder-example-pureeddiet.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_proteinsupplement();
+procedure TTurtleResourceTests.test_nutritionorder_example_pureeddiet_simple();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-proteinsupplement.ttl")));
-  end;
+  parseResource('nutritionorder-example-pureeddiet-simple.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_infantenteral();
+procedure TTurtleResourceTests.test_nutritionorder_example_proteinsupplement();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-infantenteral.ttl")));
-  end;
+  parseResource('nutritionorder-example-proteinsupplement.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_fiberrestricteddiet();
+procedure TTurtleResourceTests.test_nutritionorder_example_infantenteral();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-fiberrestricteddiet.ttl")));
-  end;
+  parseResource('nutritionorder-example-infantenteral.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_enteralcontinuous();
+procedure TTurtleResourceTests.test_nutritionorder_example_fiberrestricteddiet();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-enteralcontinuous.ttl")));
-  end;
+  parseResource('nutritionorder-example-fiberrestricteddiet.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_enteralbolus();
+procedure TTurtleResourceTests.test_nutritionorder_example_enteralcontinuous();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-enteralbolus.ttl")));
-  end;
+  parseResource('nutritionorder-example-enteralcontinuous.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_energysupplement();
+procedure TTurtleResourceTests.test_nutritionorder_example_enteralbolus();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-energysupplement.ttl")));
-  end;
+  parseResource('nutritionorder-example-enteralbolus.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_diabeticsupplement();
+procedure TTurtleResourceTests.test_nutritionorder_example_energysupplement();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-diabeticsupplement.ttl")));
-  end;
+  parseResource('nutritionorder-example-energysupplement.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_diabeticdiet();
+procedure TTurtleResourceTests.test_nutritionorder_example_diabeticsupplement();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-diabeticdiet.ttl")));
-  end;
+  parseResource('nutritionorder-example-diabeticsupplement.ttl');
+end;
 
-procedure TTurtleTests.test_nutritionorder_example_cardiacdiet();
+procedure TTurtleResourceTests.test_nutritionorder_example_diabeticdiet();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "nutritionorder-example-cardiacdiet.ttl")));
-  end;
+  parseResource('nutritionorder-example-diabeticdiet.ttl');
+end;
 
-procedure TTurtleTests.test_namingsystem_registry();
+procedure TTurtleResourceTests.test_nutritionorder_example_cardiacdiet();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "namingsystem-registry.ttl")));
-  end;
+  parseResource('nutritionorder-example-cardiacdiet.ttl');
+end;
 
-procedure TTurtleTests.test_namingsystem_example();
+procedure TTurtleResourceTests.test_namingsystem_registry();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "namingsystem-example.ttl")));
-  end;
+  parseResource('namingsystem-registry.ttl');
+end;
 
-procedure TTurtleTests.test_namingsystem_example_replaced();
+procedure TTurtleResourceTests.test_namingsystem_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "namingsystem-example-replaced.ttl")));
-  end;
+  parseResource('namingsystem-example.ttl');
+end;
 
-procedure TTurtleTests.test_namingsystem_example_id();
+procedure TTurtleResourceTests.test_namingsystem_example_replaced();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "namingsystem-example-id.ttl")));
-  end;
+  parseResource('namingsystem-example-replaced.ttl');
+end;
 
-procedure TTurtleTests.test_messageheader_example();
+procedure TTurtleResourceTests.test_namingsystem_example_id();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "messageheader-example.ttl")));
-  end;
+  parseResource('namingsystem-example-id.ttl');
+end;
 
-procedure TTurtleTests.test_message_response_link();
+procedure TTurtleResourceTests.test_messageheader_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "message-response-link.ttl")));
-  end;
+  parseResource('messageheader-example.ttl');
+end;
 
-procedure TTurtleTests.test_message_request_link();
+procedure TTurtleResourceTests.test_message_response_link();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "message-request-link.ttl")));
-  end;
+  parseResource('message-response-link.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample7();
+procedure TTurtleResourceTests.test_message_request_link();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample7.ttl")));
-  end;
+  parseResource('message-request-link.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample6();
+procedure TTurtleResourceTests.test_medicationstatementexample7();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample6.ttl")));
-  end;
+  parseResource('medicationstatementexample7.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample5();
+procedure TTurtleResourceTests.test_medicationstatementexample6();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample5.ttl")));
-  end;
+  parseResource('medicationstatementexample6.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample4();
+procedure TTurtleResourceTests.test_medicationstatementexample5();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample4.ttl")));
-  end;
+  parseResource('medicationstatementexample5.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample2();
+procedure TTurtleResourceTests.test_medicationstatementexample4();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample2.ttl")));
-  end;
+  parseResource('medicationstatementexample4.ttl');
+end;
 
-procedure TTurtleTests.test_medicationstatementexample1();
+procedure TTurtleResourceTests.test_medicationstatementexample2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationstatementexample1.ttl")));
-  end;
+  parseResource('medicationstatementexample2.ttl');
+end;
 
-procedure TTurtleTests.test_medicationrequestexample2();
+procedure TTurtleResourceTests.test_medicationstatementexample1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationrequestexample2.ttl")));
-  end;
+  parseResource('medicationstatementexample1.ttl');
+end;
 
-procedure TTurtleTests.test_medicationrequestexample1();
+procedure TTurtleResourceTests.test_medicationrequestexample2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationrequestexample1.ttl")));
-  end;
+  parseResource('medicationrequestexample2.ttl');
+end;
 
-procedure TTurtleTests.test_medicationexample15();
+procedure TTurtleResourceTests.test_medicationrequestexample1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationexample15.ttl")));
-  end;
+  parseResource('medicationrequestexample1.ttl');
+end;
 
-procedure TTurtleTests.test_medicationexample1();
+procedure TTurtleResourceTests.test_medicationexample15();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationexample1.ttl")));
-  end;
+  parseResource('medicationexample15.ttl');
+end;
 
-procedure TTurtleTests.test_medicationdispenseexample8();
+procedure TTurtleResourceTests.test_medicationexample1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationdispenseexample8.ttl")));
-  end;
+  parseResource('medicationexample1.ttl');
+end;
 
-procedure TTurtleTests.test_medicationadministrationexample3();
+procedure TTurtleResourceTests.test_medicationdispenseexample8();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationadministrationexample3.ttl")));
-  end;
+  parseResource('medicationdispenseexample8.ttl');
+end;
 
-procedure TTurtleTests.test_medication_example_f203_paracetamol();
+procedure TTurtleResourceTests.test_medicationadministrationexample3();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "medicationexample0312.ttl")));
-  end;
+  parseResource('medicationadministrationexample3.ttl');
+end;
 
-procedure TTurtleTests.test_media_example();
+procedure TTurtleResourceTests.test_medication_example_f203_paracetamol();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "media-example.ttl")));
-  end;
+  parseResource('medicationexample0312.ttl');
+end;
 
-procedure TTurtleTests.test_media_example_sound();
+procedure TTurtleResourceTests.test_media_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "media-example-sound.ttl")));
-  end;
+  parseResource('media-example.ttl');
+end;
 
-procedure TTurtleTests.test_media_example_dicom();
+procedure TTurtleResourceTests.test_media_example_sound();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "media-example-dicom.ttl")));
-  end;
+  parseResource('media-example-sound.ttl');
+end;
 
-procedure TTurtleTests.test_measurereport_cms146_cat3_example();
+procedure TTurtleResourceTests.test_media_example_dicom();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "measurereport-cms146-cat3-example.ttl")));
-  end;
+  parseResource('media-example-dicom.ttl');
+end;
 
-procedure TTurtleTests.test_measurereport_cms146_cat2_example();
+procedure TTurtleResourceTests.test_measurereport_cms146_cat3_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "measurereport-cms146-cat2-example.ttl")));
-  end;
+  parseResource('measurereport-cms146-cat3-example.ttl');
+end;
 
-procedure TTurtleTests.test_measurereport_cms146_cat1_example();
+procedure TTurtleResourceTests.test_measurereport_cms146_cat2_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "measurereport-cms146-cat1-example.ttl")));
-  end;
+  parseResource('measurereport-cms146-cat2-example.ttl');
+end;
 
-procedure TTurtleTests.test_measure_exclusive_breastfeeding();
+procedure TTurtleResourceTests.test_measurereport_cms146_cat1_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "measure-exclusive-breastfeeding.ttl")));
-  end;
+  parseResource('measurereport-cms146-cat1-example.ttl');
+end;
 
-procedure TTurtleTests.test_location_example();
+procedure TTurtleResourceTests.test_measure_exclusive_breastfeeding();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example.ttl")));
-  end;
+  parseResource('measure-exclusive-breastfeeding.ttl');
+end;
 
-procedure TTurtleTests.test_location_example_ukpharmacy();
+procedure TTurtleResourceTests.test_location_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example-ukpharmacy.ttl")));
-  end;
+  parseResource('location-example.ttl');
+end;
 
-procedure TTurtleTests.test_location_example_room();
+procedure TTurtleResourceTests.test_location_example_ukpharmacy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example-room.ttl")));
-  end;
+  parseResource('location-example-ukpharmacy.ttl');
+end;
 
-procedure TTurtleTests.test_location_example_patients_home();
+procedure TTurtleResourceTests.test_location_example_room();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example-patients-home.ttl")));
-  end;
+  parseResource('location-example-room.ttl');
+end;
 
-procedure TTurtleTests.test_location_example_hl7hq();
+procedure TTurtleResourceTests.test_location_example_patients_home();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example-hl7hq.ttl")));
-  end;
+  parseResource('location-example-patients-home.ttl');
+end;
 
-procedure TTurtleTests.test_location_example_ambulance();
+procedure TTurtleResourceTests.test_location_example_hl7hq();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "location-example-ambulance.ttl")));
-  end;
+  parseResource('location-example-hl7hq.ttl');
+end;
 
-procedure TTurtleTests.test_list_example();
+procedure TTurtleResourceTests.test_location_example_ambulance();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "list-example.ttl")));
-  end;
+  parseResource('location-example-ambulance.ttl');
+end;
 
-procedure TTurtleTests.test_list_example_medlist();
+procedure TTurtleResourceTests.test_list_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "list-example-medlist.ttl")));
-  end;
+  parseResource('list-example.ttl');
+end;
 
-procedure TTurtleTests.test_list_example_familyhistory_f201_roel();
+procedure TTurtleResourceTests.test_list_example_medlist();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "list-example-familyhistory-f201-roel.ttl")));
-  end;
+  parseResource('list-example-medlist.ttl');
+end;
 
-procedure TTurtleTests.test_list_example_empty();
+procedure TTurtleResourceTests.test_list_example_familyhistory_f201_roel();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "list-example-empty.ttl")));
-  end;
+  parseResource('list-example-familyhistory-f201-roel.ttl');
+end;
 
-procedure TTurtleTests.test_list_example_allergies();
+procedure TTurtleResourceTests.test_list_example_empty();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "list-example-allergies.ttl")));
-  end;
+  parseResource('list-example-empty.ttl');
+end;
 
-procedure TTurtleTests.test_linkage_example();
+procedure TTurtleResourceTests.test_list_example_allergies();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "linkage-example.ttl")));
-  end;
+  parseResource('list-example-allergies.ttl');
+end;
 
-procedure TTurtleTests.test_library_exclusive_breastfeeding_cqm_logic();
+procedure TTurtleResourceTests.test_linkage_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "library-exclusive-breastfeeding-cqm-logic.ttl")));
-  end;
+  parseResource('linkage-example.ttl');
+end;
 
-procedure TTurtleTests.test_library_exclusive_breastfeeding_cds_logic();
+procedure TTurtleResourceTests.test_library_exclusive_breastfeeding_cqm_logic();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "library-exclusive-breastfeeding-cds-logic.ttl")));
-  end;
+  parseResource('library-exclusive-breastfeeding-cqm-logic.ttl');
+end;
 
-procedure TTurtleTests.test_library_example();
+procedure TTurtleResourceTests.test_library_exclusive_breastfeeding_cds_logic();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "library-example.ttl")));
-  end;
+  parseResource('library-exclusive-breastfeeding-cds-logic.ttl');
+end;
 
-procedure TTurtleTests.test_library_cms146_example();
+procedure TTurtleResourceTests.test_library_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "library-cms146-example.ttl")));
-  end;
+  parseResource('library-example.ttl');
+end;
 
-procedure TTurtleTests.test_implementationguide_example();
+procedure TTurtleResourceTests.test_library_cms146_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "implementationguide-example.ttl")));
-  end;
+  parseResource('library-cms146-example.ttl');
+end;
 
-procedure TTurtleTests.test_immunizationrecommendation_example();
+procedure TTurtleResourceTests.test_implementationguide_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "immunizationrecommendation-example.ttl")));
-  end;
+  parseResource('implementationguide-example.ttl');
+end;
 
-procedure TTurtleTests.test_immunization_example();
+procedure TTurtleResourceTests.test_immunizationrecommendation_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "immunization-example.ttl")));
-  end;
+  parseResource('immunizationrecommendation-example.ttl');
+end;
 
-procedure TTurtleTests.test_immunization_example_refused();
+procedure TTurtleResourceTests.test_immunization_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "immunization-example-refused.ttl")));
-  end;
+  parseResource('immunization-example.ttl');
+end;
 
-procedure TTurtleTests.test_imagingstudy_example();
+procedure TTurtleResourceTests.test_immunization_example_refused();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "imagingstudy-example.ttl")));
-  end;
+  parseResource('immunization-example-refused.ttl');
+end;
 
-procedure TTurtleTests.test_healthcareservice_example();
+procedure TTurtleResourceTests.test_imagingstudy_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "healthcareservice-example.ttl")));
-  end;
+  parseResource('imagingstudy-example.ttl');
+end;
 
-procedure TTurtleTests.test_guidanceresponse_example();
+procedure TTurtleResourceTests.test_healthcareservice_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "guidanceresponse-example.ttl")));
-  end;
+  parseResource('healthcareservice-example.ttl');
+end;
 
-procedure TTurtleTests.test_group_example();
+procedure TTurtleResourceTests.test_guidanceresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "group-example.ttl")));
-  end;
+  parseResource('guidanceresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_group_example_member();
+procedure TTurtleResourceTests.test_group_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "group-example-member.ttl")));
-  end;
+  parseResource('group-example.ttl');
+end;
 
-procedure TTurtleTests.test_goal_example();
+procedure TTurtleResourceTests.test_group_example_member();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "goal-example.ttl")));
-  end;
+  parseResource('group-example-member.ttl');
+end;
 
-procedure TTurtleTests.test_flag_example();
+procedure TTurtleResourceTests.test_goal_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "flag-example.ttl")));
-  end;
+  parseResource('goal-example.ttl');
+end;
 
-procedure TTurtleTests.test_flag_example_encounter();
+procedure TTurtleResourceTests.test_flag_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "flag-example-encounter.ttl")));
-  end;
+  parseResource('flag-example.ttl');
+end;
 
-procedure TTurtleTests.test_familymemberhistory_example();
+procedure TTurtleResourceTests.test_flag_example_encounter();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "familymemberhistory-example.ttl")));
-  end;
+  parseResource('flag-example-encounter.ttl');
+end;
 
-procedure TTurtleTests.test_familymemberhistory_example_mother();
+procedure TTurtleResourceTests.test_familymemberhistory_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "familymemberhistory-example-mother.ttl")));
-  end;
+  parseResource('familymemberhistory-example.ttl');
+end;
 
-procedure TTurtleTests.test_explanationofbenefit_example();
+procedure TTurtleResourceTests.test_familymemberhistory_example_mother();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "explanationofbenefit-example.ttl")));
-  end;
+  parseResource('familymemberhistory-example-mother.ttl');
+end;
 
-procedure TTurtleTests.test_episodeofcare_example();
+procedure TTurtleResourceTests.test_explanationofbenefit_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "episodeofcare-example.ttl")));
-  end;
+  parseResource('explanationofbenefit-example.ttl');
+end;
 
-procedure TTurtleTests.test_enrollmentresponse_example();
+procedure TTurtleResourceTests.test_episodeofcare_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "enrollmentresponse-example.ttl")));
-  end;
+  parseResource('episodeofcare-example.ttl');
+end;
 
-procedure TTurtleTests.test_enrollmentrequest_example();
+procedure TTurtleResourceTests.test_enrollmentresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "enrollmentrequest-example.ttl")));
-  end;
+  parseResource('enrollmentresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_endpoint_example();
+procedure TTurtleResourceTests.test_enrollmentrequest_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "endpoint-example.ttl")));
-  end;
+  parseResource('enrollmentrequest-example.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example();
+procedure TTurtleResourceTests.test_endpoint_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example.ttl")));
-  end;
+  parseResource('endpoint-example.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_xcda();
+procedure TTurtleResourceTests.test_encounter_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-xcda.ttl")));
-  end;
+  parseResource('encounter-example.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_home();
+procedure TTurtleResourceTests.test_encounter_example_xcda();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-home.ttl")));
-  end;
+  parseResource('encounter-example-xcda.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f203_20130311();
+procedure TTurtleResourceTests.test_encounter_example_home();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f203-20130311.ttl")));
-  end;
+  parseResource('encounter-example-home.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f202_20130128();
+procedure TTurtleResourceTests.test_encounter_example_f203_20130311();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f202-20130128.ttl")));
-  end;
+  parseResource('encounter-example-f203-20130311.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f201_20130404();
+procedure TTurtleResourceTests.test_encounter_example_f202_20130128();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f201-20130404.ttl")));
-  end;
+  parseResource('encounter-example-f202-20130128.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f003_abscess();
+procedure TTurtleResourceTests.test_encounter_example_f201_20130404();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f003-abscess.ttl")));
-  end;
+  parseResource('encounter-example-f201-20130404.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f002_lung();
+procedure TTurtleResourceTests.test_encounter_example_f003_abscess();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f002-lung.ttl")));
-  end;
+  parseResource('encounter-example-f003-abscess.ttl');
+end;
 
-procedure TTurtleTests.test_encounter_example_f001_heart();
+procedure TTurtleResourceTests.test_encounter_example_f002_lung();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "encounter-example-f001-heart.ttl")));
-  end;
+  parseResource('encounter-example-f002-lung.ttl');
+end;
 
-procedure TTurtleTests.test_eligibilityresponse_example();
+procedure TTurtleResourceTests.test_encounter_example_f001_heart();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "eligibilityresponse-example.ttl")));
-  end;
+  parseResource('encounter-example-f001-heart.ttl');
+end;
 
-procedure TTurtleTests.test_eligibilityrequest_example();
+procedure TTurtleResourceTests.test_eligibilityresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "eligibilityrequest-example.ttl")));
-  end;
+  parseResource('eligibilityresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_documentreference_example();
+procedure TTurtleResourceTests.test_eligibilityrequest_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "documentreference-example.ttl")));
-  end;
+  parseResource('eligibilityrequest-example.ttl');
+end;
 
-procedure TTurtleTests.test_documentmanifest_fm_attachment();
+procedure TTurtleResourceTests.test_documentreference_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "documentmanifest-fm-attachment.ttl")));
-  end;
+  parseResource('documentreference-example.ttl');
+end;
 
-procedure TTurtleTests.test_document_example_dischargesummary();
+procedure TTurtleResourceTests.test_documentmanifest_fm_attachment();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "document-example-dischargesummary.ttl")));
-  end;
+  parseResource('documentmanifest-fm-attachment.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_micro1();
+procedure TTurtleResourceTests.test_document_example_dischargesummary();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-micro1.ttl")));
-  end;
+  parseResource('document-example-dischargesummary.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_hla_genetics_results_example();
+procedure TTurtleResourceTests.test_diagnosticreport_micro1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-hla-genetics-results-example.ttl")));
-  end;
+  parseResource('diagnosticreport-micro1.ttl');
+end;
+
+procedure TTurtleResourceTests.test_diagnosticreport_hla_genetics_results_example();
+begin
+  parseResource('diagnosticreport-hla-genetics-results-example.ttl');
+end;
 
 
-procedure TTurtleTests.test_diagnosticreport_genetics_comprehensive_bone_marrow_report();
+procedure TTurtleResourceTests.test_diagnosticreport_genetics_comprehensive_bone_marrow_report();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-genetics-comprehensive-bone-marrow-report.ttl")));
-  end;
+  parseResource('diagnosticreport-genetics-comprehensive-bone-marrow-report.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_examples_general();
+procedure TTurtleResourceTests.test_diagnosticreport_examples_general();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-examples-general.ttl")));
-  end;
+  parseResource('diagnosticreport-examples-general.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_ultrasound();
+procedure TTurtleResourceTests.test_diagnosticreport_example_ultrasound();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-ultrasound.ttl")));
-  end;
+  parseResource('diagnosticreport-example-ultrasound.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_lipids();
+procedure TTurtleResourceTests.test_diagnosticreport_example_lipids();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-lipids.ttl")));
-  end;
+  parseResource('diagnosticreport-example-lipids.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_ghp();
+procedure TTurtleResourceTests.test_diagnosticreport_example_ghp();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-ghp.ttl")));
-  end;
+  parseResource('diagnosticreport-example-ghp.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_f202_bloodculture();
+procedure TTurtleResourceTests.test_diagnosticreport_example_f202_bloodculture();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-f202-bloodculture.ttl")));
-  end;
+  parseResource('diagnosticreport-example-f202-bloodculture.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_f201_brainct();
+procedure TTurtleResourceTests.test_diagnosticreport_example_f201_brainct();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-f201-brainct.ttl")));
-  end;
+  parseResource('diagnosticreport-example-f201-brainct.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_f001_bloodexam();
+procedure TTurtleResourceTests.test_diagnosticreport_example_f001_bloodexam();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-f001-bloodexam.ttl")));
-  end;
+  parseResource('diagnosticreport-example-f001-bloodexam.ttl');
+end;
 
-procedure TTurtleTests.test_diagnosticreport_example_dxa();
+procedure TTurtleResourceTests.test_diagnosticreport_example_dxa();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "diagnosticreport-example-dxa.ttl")));
-  end;
+  parseResource('diagnosticreport-example-dxa.ttl');
+end;
 
-procedure TTurtleTests.test_deviceusestatement_example();
+procedure TTurtleResourceTests.test_deviceusestatement_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "deviceusestatement-example.ttl")));
-  end;
+  parseResource('deviceusestatement-example.ttl');
+end;
 
-procedure TTurtleTests.test_devicemetric_example();
+procedure TTurtleResourceTests.test_devicemetric_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "devicemetric-example.ttl")));
-  end;
+  parseResource('devicemetric-example.ttl');
+end;
 
-procedure TTurtleTests.test_devicecomponent_example();
+procedure TTurtleResourceTests.test_devicecomponent_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "devicecomponent-example.ttl")));
-  end;
+  parseResource('devicecomponent-example.ttl');
+end;
 
-procedure TTurtleTests.test_devicecomponent_example_prodspec();
+procedure TTurtleResourceTests.test_devicecomponent_example_prodspec();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "devicecomponent-example-prodspec.ttl")));
-  end;
+  parseResource('devicecomponent-example-prodspec.ttl');
+end;
 
-procedure TTurtleTests.test_device_example();
+procedure TTurtleResourceTests.test_device_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example.ttl")));
-  end;
+  parseResource('device-example.ttl');
+end;
 
-procedure TTurtleTests.test_device_example_udi1();
+procedure TTurtleResourceTests.test_device_example_udi1();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example-udi1.ttl")));
-  end;
+  parseResource('device-example-udi1.ttl');
+end;
 
-procedure TTurtleTests.test_device_example_software();
+procedure TTurtleResourceTests.test_device_example_software();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example-software.ttl")));
-  end;
+  parseResource('device-example-software.ttl');
+end;
 
-procedure TTurtleTests.test_device_example_pacemaker();
+procedure TTurtleResourceTests.test_device_example_pacemaker();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example-pacemaker.ttl")));
-  end;
+  parseResource('device-example-pacemaker.ttl');
+end;
 
-procedure TTurtleTests.test_device_example_ihe_pcd();
+procedure TTurtleResourceTests.test_device_example_ihe_pcd();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example-ihe-pcd.ttl")));
-  end;
+  parseResource('device-example-ihe-pcd.ttl');
+end;
 
-procedure TTurtleTests.test_device_example_f001_feedingtube();
+procedure TTurtleResourceTests.test_device_example_f001_feedingtube();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "device-example-f001-feedingtube.ttl")));
-  end;
+  parseResource('device-example-f001-feedingtube.ttl');
+end;
 
-procedure TTurtleTests.test_detectedissue_example();
+procedure TTurtleResourceTests.test_detectedissue_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "detectedissue-example.ttl")));
-  end;
+  parseResource('detectedissue-example.ttl');
+end;
 
-procedure TTurtleTests.test_detectedissue_example_lab();
+procedure TTurtleResourceTests.test_detectedissue_example_lab();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "detectedissue-example-lab.ttl")));
-  end;
+  parseResource('detectedissue-example-lab.ttl');
+end;
 
-procedure TTurtleTests.test_detectedissue_example_dup();
+procedure TTurtleResourceTests.test_detectedissue_example_dup();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "detectedissue-example-dup.ttl")));
-  end;
+  parseResource('detectedissue-example-dup.ttl');
+end;
 
-procedure TTurtleTests.test_detectedissue_example_allergy();
+procedure TTurtleResourceTests.test_detectedissue_example_allergy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "detectedissue-example-allergy.ttl")));
-  end;
+  parseResource('detectedissue-example-allergy.ttl');
+end;
 
-procedure TTurtleTests.test_coverage_example();
+procedure TTurtleResourceTests.test_coverage_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "coverage-example.ttl")));
-  end;
+  parseResource('coverage-example.ttl');
+end;
 
-procedure TTurtleTests.test_coverage_example_2();
+procedure TTurtleResourceTests.test_coverage_example_2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "coverage-example-2.ttl")));
-  end;
+  parseResource('coverage-example-2.ttl');
+end;
 
-procedure TTurtleTests.test_contract_example();
+procedure TTurtleResourceTests.test_contract_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "contract-example.ttl")));
-  end;
+  parseResource('contract-example.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example2();
+procedure TTurtleResourceTests.test_condition_example2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example2.ttl")));
-  end;
+  parseResource('condition-example2.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example();
+procedure TTurtleResourceTests.test_condition_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example.ttl")));
-  end;
+  parseResource('condition-example.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_stroke();
+procedure TTurtleResourceTests.test_condition_example_stroke();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-stroke.ttl")));
-  end;
+  parseResource('condition-example-stroke.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f205_infection();
+procedure TTurtleResourceTests.test_condition_example_f205_infection();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f205-infection.ttl")));
-  end;
+  parseResource('condition-example-f205-infection.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f204_renal();
+procedure TTurtleResourceTests.test_condition_example_f204_renal();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f204-renal.ttl")));
-  end;
+  parseResource('condition-example-f204-renal.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f203_sepsis();
+procedure TTurtleResourceTests.test_condition_example_f203_sepsis();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f203-sepsis.ttl")));
-  end;
+  parseResource('condition-example-f203-sepsis.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f202_malignancy();
+procedure TTurtleResourceTests.test_condition_example_f202_malignancy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f202-malignancy.ttl")));
-  end;
+  parseResource('condition-example-f202-malignancy.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f201_fever();
+procedure TTurtleResourceTests.test_condition_example_f201_fever();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f201-fever.ttl")));
-  end;
+  parseResource('condition-example-f201-fever.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f003_abscess();
+procedure TTurtleResourceTests.test_condition_example_f003_abscess();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f003-abscess.ttl")));
-  end;
+  parseResource('condition-example-f003-abscess.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f002_lung();
+procedure TTurtleResourceTests.test_condition_example_f002_lung();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f002-lung.ttl")));
-  end;
+  parseResource('condition-example-f002-lung.ttl');
+end;
 
-procedure TTurtleTests.test_condition_example_f001_heart();
+procedure TTurtleResourceTests.test_condition_example_f001_heart();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "condition-example-f001-heart.ttl")));
-  end;
+  parseResource('condition-example-f001-heart.ttl');
+end;
 
-procedure TTurtleTests.test_conceptmap_example();
+procedure TTurtleResourceTests.test_conceptmap_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "conceptmap-example.ttl")));
-  end;
+  parseResource('conceptmap-example.ttl');
+end;
 
-procedure TTurtleTests.test_conceptmap_example_specimen_type();
+procedure TTurtleResourceTests.test_conceptmap_example_specimen_type();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "conceptmap-example-specimen-type.ttl")));
-  end;
+  parseResource('conceptmap-example-specimen-type.ttl');
+end;
 
-procedure TTurtleTests.test_conceptmap_103();
+procedure TTurtleResourceTests.test_conceptmap_103();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "conceptmap-103.ttl")));
-  end;
+  parseResource('conceptmap-103.ttl');
+end;
 
-procedure TTurtleTests.test_composition_example();
+procedure TTurtleResourceTests.test_composition_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "composition-example.ttl")));
-  end;
+  parseResource('composition-example.ttl');
+end;
 
-procedure TTurtleTests.test_communicationrequest_example();
+procedure TTurtleResourceTests.test_communicationrequest_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "communicationrequest-example.ttl")));
-  end;
+  parseResource('communicationrequest-example.ttl');
+end;
 
-procedure TTurtleTests.test_communication_example();
+procedure TTurtleResourceTests.test_communication_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "communication-example.ttl")));
-  end;
+  parseResource('communication-example.ttl');
+end;
 
-procedure TTurtleTests.test_codesystem_nhin_purposeofuse();
+procedure TTurtleResourceTests.test_codesystem_nhin_purposeofuse();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "codesystem-nhin-purposeofuse.ttl")));
-  end;
+  parseResource('codesystem-nhin-purposeofuse.ttl');
+end;
 
-procedure TTurtleTests.test_codesystem_example();
+procedure TTurtleResourceTests.test_codesystem_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "codesystem-example.ttl")));
-  end;
+  parseResource('codesystem-example.ttl');
+end;
 
-procedure TTurtleTests.test_clinicalimpression_example();
+procedure TTurtleResourceTests.test_clinicalimpression_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "clinicalimpression-example.ttl")));
-  end;
+  parseResource('clinicalimpression-example.ttl');
+end;
 
-procedure TTurtleTests.test_claimresponse_example();
+procedure TTurtleResourceTests.test_claimresponse_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claimresponse-example.ttl")));
-  end;
+  parseResource('claimresponse-example.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example();
+procedure TTurtleResourceTests.test_claim_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example.ttl")));
-  end;
+  parseResource('claim-example.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_vision();
+procedure TTurtleResourceTests.test_claim_example_vision();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-vision.ttl")));
-  end;
+  parseResource('claim-example-vision.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_vision_glasses();
+procedure TTurtleResourceTests.test_claim_example_vision_glasses();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-vision-glasses.ttl")));
-  end;
+  parseResource('claim-example-vision-glasses.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_professional();
+procedure TTurtleResourceTests.test_claim_example_professional();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-professional.ttl")));
-  end;
+  parseResource('claim-example-professional.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_pharmacy();
+procedure TTurtleResourceTests.test_claim_example_pharmacy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-pharmacy.ttl")));
-  end;
+  parseResource('claim-example-pharmacy.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_oral_orthoplan();
+procedure TTurtleResourceTests.test_claim_example_oral_orthoplan();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-oral-orthoplan.ttl")));
-  end;
+  parseResource('claim-example-oral-orthoplan.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_oral_identifier();
+procedure TTurtleResourceTests.test_claim_example_oral_identifier();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-oral-identifier.ttl")));
-  end;
+  parseResource('claim-example-oral-identifier.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_oral_contained();
+procedure TTurtleResourceTests.test_claim_example_oral_contained();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-oral-contained.ttl")));
-  end;
+  parseResource('claim-example-oral-contained.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_oral_contained_identifier();
+procedure TTurtleResourceTests.test_claim_example_oral_contained_identifier();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-oral-contained-identifier.ttl")));
-  end;
+  parseResource('claim-example-oral-contained-identifier.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_oral_average();
+procedure TTurtleResourceTests.test_claim_example_oral_average();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-oral-average.ttl")));
-  end;
+  parseResource('claim-example-oral-average.ttl');
+end;
 
-procedure TTurtleTests.test_claim_example_institutional();
+procedure TTurtleResourceTests.test_claim_example_institutional();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "claim-example-institutional.ttl")));
-  end;
+  parseResource('claim-example-institutional.ttl');
+end;
 
-procedure TTurtleTests.test_careteam_example();
+procedure TTurtleResourceTests.test_careteam_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careteam-example.ttl")));
-  end;
+  parseResource('careteam-example.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example();
+procedure TTurtleResourceTests.test_careplan_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example.ttl")));
-  end;
+  parseResource('careplan-example.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_pregnancy();
+procedure TTurtleResourceTests.test_careplan_example_pregnancy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-pregnancy.ttl")));
-  end;
+  parseResource('careplan-example-pregnancy.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_integrated();
+procedure TTurtleResourceTests.test_careplan_example_integrated();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-integrated.ttl")));
-  end;
+  parseResource('careplan-example-integrated.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_GPVisit();
+procedure TTurtleResourceTests.test_careplan_example_GPVisit();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-GPVisit.ttl")));
-  end;
+  parseResource('careplan-example-GPVisit.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f203_sepsis();
+procedure TTurtleResourceTests.test_careplan_example_f203_sepsis();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f203-sepsis.ttl")));
-  end;
+  parseResource('careplan-example-f203-sepsis.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f202_malignancy();
+procedure TTurtleResourceTests.test_careplan_example_f202_malignancy();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f202-malignancy.ttl")));
-  end;
+  parseResource('careplan-example-f202-malignancy.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f201_renal();
+procedure TTurtleResourceTests.test_careplan_example_f201_renal();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f201-renal.ttl")));
-  end;
+  parseResource('careplan-example-f201-renal.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f003_pharynx();
+procedure TTurtleResourceTests.test_careplan_example_f003_pharynx();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f003-pharynx.ttl")));
-  end;
+  parseResource('careplan-example-f003-pharynx.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f002_lung();
+procedure TTurtleResourceTests.test_careplan_example_f002_lung();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f002-lung.ttl")));
-  end;
+  parseResource('careplan-example-f002-lung.ttl');
+end;
 
-procedure TTurtleTests.test_careplan_example_f001_heart();
+procedure TTurtleResourceTests.test_careplan_example_f001_heart();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "careplan-example-f001-heart.ttl")));
-  end;
+  parseResource('careplan-example-f001-heart.ttl');
+end;
 
-procedure TTurtleTests.test_bundle_transaction();
+procedure TTurtleResourceTests.test_bundle_transaction();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "bundle-transaction.ttl")));
-  end;
+  parseResource('bundle-transaction.ttl');
+end;
 
-procedure TTurtleTests.test_bundle_response();
+procedure TTurtleResourceTests.test_bundle_response();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "bundle-response.ttl")));
-  end;
+  parseResource('bundle-response.ttl');
+end;
 
-procedure TTurtleTests.test_bundle_example();
+procedure TTurtleResourceTests.test_bundle_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "bundle-example.ttl")));
-  end;
+  parseResource('bundle-example.ttl');
+end;
 
-procedure TTurtleTests.test_binary_f006();
+procedure TTurtleResourceTests.test_binary_f006();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "binary-f006.ttl")));
-  end;
+  parseResource('binary-f006.ttl');
+end;
 
-procedure TTurtleTests.test_binary_example();
+procedure TTurtleResourceTests.test_binary_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "binary-example.ttl")));
-  end;
+  parseResource('binary-example.ttl');
+end;
 
-procedure TTurtleTests.test_basic_example2();
+procedure TTurtleResourceTests.test_basic_example2();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "basic-example2.ttl")));
-  end;
+  parseResource('basic-example2.ttl');
+end;
 
-procedure TTurtleTests.test_basic_example();
+procedure TTurtleResourceTests.test_basic_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "basic-example.ttl")));
-  end;
+  parseResource('basic-example.ttl');
+end;
 
-procedure TTurtleTests.test_basic_example_narrative();
+procedure TTurtleResourceTests.test_basic_example_narrative();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "basic-example-narrative.ttl")));
-  end;
+  parseResource('basic-example-narrative.ttl');
+end;
 
-procedure TTurtleTests.test_auditevent_example();
+procedure TTurtleResourceTests.test_auditevent_example();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "auditevent-example.ttl")));
-  end;
+  parseResource('auditevent-example.ttl');
+end;
 
-procedure TTurtleTests.test_auditevent_example_disclosure();
+procedure TTurtleResourceTests.test_auditevent_example_disclosure();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "auditevent-example-disclosure.ttl")));
-  end;
+  parseResource('auditevent-example-disclosure.ttl');
+end;
 
-procedure TTurtleTests.test_audit_event_example_vread();
+procedure TTurtleResourceTests.test_audit_event_example_vread();
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-vread.ttl")));
-  end;
+  parseResource('audit-event-example-vread.ttl');
+end;
+
+procedure TTurtleResourceTests.test_audit_event_example_search();
+begin
+  parseResource('audit-event-example-search.ttl');
+end;
+
+function compareObjects(path : String; t1, t2 : TTurtleObject) : String;
+var
+  c1, c2 : TTurtleComplex;
+  l1, l2 : TTurtleList;
+  o1, o2 : TTurtleObject;
+  key, s : String;
+  i : integer;
+begin
+  result := '';
+  if (t1.ClassName <> t2.ClassName) then
+    result := 'Objects at '+path+' have different types ("'+t1.ClassName+'"/"'+t2.ClassName+'")'
+  else if t1 is TTurtleLiteral then
+  begin
+    if TTurtleLiteral(t1).value <> TTurtleLiteral(t2).value then
+      result := 'Objects at '+path+' have different values ("'+TTurtleLiteral(t1).value+'"/"'+TTurtleLiteral(t2).value+'")'
+    else if TTurtleLiteral(t1).type_ <> TTurtleLiteral(t2).type_ then
+      result := 'Objects at '+path+' have different types ("'+TTurtleLiteral(t1).type_+'"/"'+TTurtleLiteral(t2).type_+'")'
+  end
+  else if t1 is TTurtleURL then
+  begin
+    if TTurtleURL(t1).uri <> TTurtleURL(t2).uri then
+      result := 'Objects at '+path+' have different uris ("'+TTurtleURL(t1).uri+'"/"'+TTurtleURL(t2).uri+'")'
+  end
+  else if t1 is TTurtleComplex then
+  begin
+    c1 := TTurtleComplex(t1);
+    c2 := TTurtleComplex(t2);
+    if c1.predicates.Count <> c2.predicates.Count then
+      result := 'Objects at '+path+' have different property counts ("'+inttostr(c1.predicates.Count)+'"/"'+inttostr(c2.predicates.Count)+'")'
+    else
+    begin
+      for key in c1.predicates.Keys do
+      begin
+        o1 := c1.predicates[key];
+        if not c2.predicates.TryGetValue(key, o2) then
+          exit('Object at '+path+' has no property for "'+key+'" ("'+c1.predicates.SortedKeys.CommaText+'" vs "'+c2.predicates.SortedKeys.CommaText+'")')
+        else
+        begin
+          s := compareObjects(path+' / '+key, o1, o2);
+          if s <> '' then
+            exit(s);
+        end;
+      end;
+    end;
+  end
+  else if t1 is TTurtleList then
+  begin
+    l1 := TTurtleList(t1);
+    l2 := TTurtleList(t2);
+    if l1.List.Count <> l2.list.Count then
+      result := 'Objects at '+path+' have different property counts ("'+inttostr(l1.list.Count)+'"/"'+inttostr(l2.list.Count)+'")'
+    else
+    begin
+      for i := 0 to l1.List.count - 1 do
+      begin
+        s := compareObjects(path+' # '+inttostr(i), l1.List[i], l2.List[i]);
+        if s <> '' then
+          exit(s);
+      end;
+    end;
+  end
+end;
 
-procedure TTurtleTests.test_audit_event_example_search();
+function compareTurtle(t1, t2 : TTurtleDocument; var msg : string) : boolean;
+var
+  i : integer;
+  p1, p2 : TTurtlePredicate;
 begin
-//    new Turtle().parse(TextFile.fileToString(Utilities.path(TestingUtilities.home(), "publish", "audit-event-example-search.ttl")));
+  if t1.objects.Count <> t2.objects.Count then
+    msg := 'Object Counts differ ('+inttostr(t1.objects.Count)+'/'+inttostr(t2.objects.Count)+')'
+  else
+  begin
+    for i := 0 to t1.objects.Count - 1 do
+    begin
+      p1 := t1.objects[i];
+      p2 := t2.objects[i];
+      if (p1.URL.uri <> p2.URL.uri) then
+        msg := 'URL mismatch: "'+p1.URL.uri+'"/"'+p2.URL.uri+'"'
+      else
+        msg := compareObjects(p1.URL.uri, p1.Value, p2.Value);
+    end;
   end;
+  result := msg = '';
+end;
 
+function CheckTurtleIsSame(src1, src2 : String; var msg : string) : boolean;
+var
+  t1, t2 : TTurtleDocument;
+  f1, f2, cmd : String;
+begin
+  result := false;
+  try
+    t1 := TTurtleParser.parse(src1);
+    try
+      t2 := TTurtleParser.parse(src2);
+      try
+        result := compareTurtle(t1, t2, msg);
+        if not result then
+        begin
+          f1 := MakeTempFilename +'-source.xml';
+          f2 := MakeTempFilename +'-dest.xml';
+      StringToFile(src1, f1, TEncoding.UTF8);
+      StringToFile(src2, f2, TEncoding.UTF8);
+
+//          TRDFGenerator.saveToFile(t1, f1);
+//          TRDFGenerator.saveToFile(t2, f2);
+          cmd := f1+' '+f2;
+          ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+        end;
+      finally
+        t2.free;
+      end;
+    finally
+      t1.free;
+    end;
+  except
+    on e : Exception do
+    begin
+      msg := e.Message;
+      f1 := MakeTempFilename +'-source.xml';
+      f2 := MakeTempFilename +'-dest.xml';
+      StringToFile(src1, f1, TEncoding.UTF8);
+      StringToFile(src2, f2, TEncoding.UTF8);
+      cmd := f1+' '+f2;
+      ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
+    end;
+  end;
+end;
 
 initialization
   TDUnitX.RegisterTestFixture(TTurtleTests);
+  TDUnitX.RegisterTestFixture(TTurtleResourceTests);
 end.
