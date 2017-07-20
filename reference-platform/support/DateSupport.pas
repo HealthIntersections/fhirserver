@@ -95,7 +95,7 @@ type
     {@member Precision
       The precision to which the date and time is specified
     }
-    Precision : TDateTimeExPrecision;
+    FPrecision : TDateTimeExPrecision;
     FractionPrecision : integer;
     {@member TimezoneType
       The type of timezone
@@ -140,7 +140,7 @@ type
     function DateTime : TDateTime;
     function TimeStamp : TTimeStamp;
 
-    function fixPrecision(precision : TDateTimeExPrecision) : TDateTimeEx;
+    function fixPrecision(FPrecision : TDateTimeExPrecision) : TDateTimeEx;
 
     function Local : TDateTimeEx;
     function UTC : TDateTimeEx;
@@ -155,8 +155,8 @@ type
     function add(length : TDateTime) : TDateTimeEx;
     function subtract(length : TDateTime) : TDateTimeEx;
 
-    function equal(other : TDateTimeEx) : Boolean;  // returns true if the timezone, precision, and actual instant are the same
-    function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified precision - corrects for timezone
+    function equal(other : TDateTimeEx) : Boolean;  // returns true if the timezone, FPrecision, and actual instant are the same
+    function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
 
     {@
     Valid formatting strings are
@@ -177,6 +177,8 @@ type
     function toString: String;  overload; // as human readable
     function toHL7: String; // as hhhhmmhhnnss.zzz+T
     function toXML : String;
+
+    property Precision : TDateTimeExPrecision read FPrecision;
   end;
 
 
@@ -205,7 +207,7 @@ uses
 function TDateTimeEx.add(length: TDateTime): TDateTimeEx;
 begin
   result := makeUTC(dateTime + length);
-  result.Precision := Precision;
+  result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := TimezoneType;
   result.TimeZoneHours := TimeZoneHours;
@@ -219,17 +221,17 @@ begin
   err := '';
   if (year < 1000) or (year > 3000) then
     err := 'Year is not valid'
-  else if (precision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
+  else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
     err := 'Month is not valid'
-  else if (precision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month-1)] < Day)) then
+  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month-1)] < Day)) then
     err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
-  else if (precision >= dtpHour) and (Hour > 23) then
+  else if (FPrecision >= dtpHour) and (Hour > 23) then
     err := 'Hour is not valid'
-  else if (precision >= dtpMin) and (Minute > 59) then
+  else if (FPrecision >= dtpMin) and (Minute > 59) then
     err := 'Minute is not valid'
-  else if (precision >= dtpSec) and (Second > 59) then
+  else if (FPrecision >= dtpSec) and (Second > 59) then
     err := 'Second is not valid'
-  else if (precision >= dtpNanoSeconds) and (FractionPrecision > 999999999) then
+  else if (FPrecision >= dtpNanoSeconds) and (FractionPrecision > 999999999) then
     err := 'Fraction is not valid'
   else if (TimezoneType = dttzSpecified) and ((TimezoneHours < -13) or (TimezoneHours > 14)) then
     err := 'Timezone hours is not valid'
@@ -242,7 +244,7 @@ end;
 function TDateTimeEx.DateTime: TDateTime;
 begin
   check;
-  case Precision of
+  case FPrecision of
     dtpYear : Result := EncodeDate(Year, 1, 1);
     dtpMonth : Result := EncodeDate(Year, Month, 1);
     dtpDay: Result := EncodeDate(Year, Month, Day);
@@ -288,7 +290,7 @@ begin
     raise Exception.Create('Fail!');
   DecodeDate(value, yr, result.Month, result.Day);
   result.Year := yr;
-  result.Precision := dtpSec;
+  result.FPrecision := dtpSec;
   result.FractionPrecision := 0;
   result.TimezoneType := tz;
   result.Source := 'makeDT';
@@ -416,9 +418,9 @@ begin
 
   result.check;
   if (result.Hour = 0) and (result.Minute = 0) and (result.Second = 0) then
-    result.Precision := dtpDay
+    result.FPrecision := dtpDay
   else
-    result.Precision := dtpSec;
+    result.FPrecision := dtpSec;
   result.FractionPrecision := 0;
   result.TimezoneType := dttzLocal;
   result.Source := date;
@@ -541,38 +543,38 @@ begin
   if Length(value) >=4 then
     result.Year := vs(Value, 1, 4, 1800, 2100, 'years');
   if Length(value) < 6 then
-    result.Precision := dtpYear
+    result.FPrecision := dtpYear
   else
   begin
     result.Month := vs(Value, 5, 2, 1, 12, 'months');
     if length(Value) < 8 then
-      result.Precision := dtpMonth
+      result.FPrecision := dtpMonth
     else
     begin
       result.Day := vs(Value, 7, 2, 1, 31, 'days');
       if length(Value) < 10 then
-        result.Precision := dtpDay
+        result.FPrecision := dtpDay
       else
       begin
         result.Hour := vs(Value, 9, 2, 0, 23, 'hours');
         if length(Value) < 12 then
-          result.Precision := dtpHour
+          result.FPrecision := dtpHour
         else
         begin
           result.Minute := vs(Value, 11, 2, 0, 59, 'minutes');
           if length(Value) < 14 then
-            result.Precision := dtpMin
+            result.FPrecision := dtpMin
           else
           begin
             result.Second := vs(Value, 13, 2, 0, 59, 'seconds');
             if length(Value) <= 15 then
-              result.Precision := dtpSec
+              result.FPrecision := dtpSec
             else
             begin
               s := copy(Value, 16, 4);
               result.FractionPrecision := length(s);
               result.fraction := trunc(vs(Value, 16, 4, 0, 9999, 'fractions') * power(10, 9 - result.FractionPrecision));
-              result.Precision := dtpNanoSeconds;
+              result.FPrecision := dtpNanoSeconds;
             end;
           end;
         end;
@@ -615,38 +617,38 @@ begin
   if Length(value) >=4 then
     result.Year := vs(Value, 1, 4, 1800, 2100, 'years');
   if Length(value) < 7 then
-    result.Precision := dtpYear
+    result.FPrecision := dtpYear
   else
   begin
     result.Month := vs(Value, 6, 2, 1, 12, 'months');
     if length(Value) < 10 then
-      result.Precision := dtpMonth
+      result.FPrecision := dtpMonth
     else
     begin
       result.Day := vs(Value, 9, 2, 1, 31, 'days');
       if length(Value) < 13 then
-        result.Precision := dtpDay
+        result.FPrecision := dtpDay
       else
       begin
         result.Hour := vs(Value, 12, 2, 0, 23, 'hours');
         if length(Value) < 15 then
-          result.Precision := dtpHour
+          result.FPrecision := dtpHour
         else
         begin
           result.Minute := vs(Value, 15, 2, 0, 59, 'minutes');
           if length(Value) < 18 then
-            result.Precision := dtpMin
+            result.FPrecision := dtpMin
           else
           begin
             result.Second := vs(Value, 18, 2, 0, 59, 'seconds');
             if length(Value) <= 20 then
-              result.Precision := dtpSec
+              result.FPrecision := dtpSec
             else
             begin
               s := copy(Value, 21, 6);
               result.FractionPrecision := length(s);
               result.fraction := trunc(vs(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - result.FractionPrecision));
-              result.Precision := dtpNanoSeconds;
+              result.FPrecision := dtpNanoSeconds;
             end;
           end;
         end;
@@ -666,7 +668,7 @@ end;
 
 function TDateTimeEx.toHL7: String;
 begin
-  case Precision of
+  case FPrecision of
     dtpYear:  result := sv(Year, 4);
     dtpMonth: result := sv(Year, 4) + sv(Month, 2);
     dtpDay:   result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2);
@@ -694,7 +696,7 @@ end;
 
 function TDateTimeEx.toXml: String;
 begin
-  case Precision of
+  case FPrecision of
     dtpYear:  result := sv(Year, 4);
     dtpMonth: result := sv(Year, 4) + '-' + sv(Month, 2);
     dtpDay:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2);
@@ -703,7 +705,7 @@ begin
     dtpSec:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2);
     dtpNanoSeconds: result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
   end;
-  if (Precision > dtpDay) then
+  if (FPrecision > dtpDay) then
     case TimezoneType of
       dttzUTC : result := result + 'Z';
       dttzSpecified :
@@ -725,7 +727,7 @@ function TDateTimeEx.Local: TDateTimeEx;
 var
   bias : TDateTime;
 begin
-  if Precision >= dtpHour then
+  if FPrecision >= dtpHour then
     case TimezoneType of
       dttzUTC : result := TDateTimeEx.makeLocal(TTimeZone.Local.ToLocalTime(self.DateTime));
       dttzSpecified :
@@ -739,7 +741,7 @@ begin
     else
       result := self;
     end;
-  result.precision := precision;
+  result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := dttzLocal;
 end;
@@ -747,7 +749,7 @@ end;
 function TDateTimeEx.Max: TDateTimeEx;
 begin
   result := self;
-  case Precision of
+  case FPrecision of
     dtpYear:
       begin
       inc(result.year);
@@ -799,14 +801,14 @@ begin
       end;
   end;
   result.RollUp;
-  result.Precision := dtpNanoSeconds;
+  result.FPrecision := dtpNanoSeconds;
   result.check;
 end;
 
 function TDateTimeEx.Min: TDateTimeEx;
 begin
   result := self;
-  case Precision of
+  case FPrecision of
     dtpYear:
       begin
       result.Month := 1;
@@ -850,7 +852,7 @@ begin
       begin
       end;
   end;
-  result.Precision := dtpNanoSeconds;
+  result.FPrecision := dtpNanoSeconds;
 end;
 
 function TDateTimeEx.notNull: boolean;
@@ -898,7 +900,7 @@ begin
 
   bias := timezoneBias;
   result.TimezoneType := dttzLocal;
-  if Precision >= dtpHour then
+  if FPrecision >= dtpHour then
     case TimezoneType of
       dttzUTC : result := TDateTimeEx.makeLocal(self.DateTime+nbias);
       dttzLocal : result := TDateTimeEx.makeLocal(TTimeZone.Local.ToUniversalTime(self.DateTime-bias)+nbias);
@@ -913,7 +915,7 @@ begin
     else
       result := self;
     end;
-  result.precision := precision;
+  result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := dttzSpecified;
   result.TimezoneHours := hr;
@@ -925,7 +927,7 @@ var
   bias : TDateTime;
 begin
   result := self;
-  if Precision >= dtpHour then
+  if FPrecision >= dtpHour then
     case TimezoneType of
       dttzLocal : result := TDateTimeEx.makeUTC(TTimeZone.Local.ToUniversalTime(self.DateTime));
       dttzSpecified :
@@ -938,7 +940,7 @@ begin
         end;
     else
     end;
-  result.precision := precision;
+  result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := dttzUTC;
 end;
@@ -972,7 +974,7 @@ end;
 class function TDateTimeEx.makeToday: TDateTimeEx;
 begin
   result := TDateTimeEx.makeLocal(trunc(now));
-  result.Precision := dtpDay;
+  result.FPrecision := dtpDay;
 end;
 
 class function TDateTimeEx.fromTS(value: TTimestamp; tz : TDateTimeExTimezone): TDateTimeEx;
@@ -984,7 +986,7 @@ begin
   result.minute := value.minute;
   result.second := value.second;
   result.Fraction := value.fraction;
-  result.Precision := dtpNanoSeconds;
+  result.FPrecision := dtpNanoSeconds;
   result.FractionPrecision := 0;
   result.TimezoneType := tz;
   result.Source := 'fromTS';
@@ -996,20 +998,20 @@ var
 begin
   src := TDateTimeEx(other);
   result := (year = src.year) and
-    ((Precision < dtpMonth) or (month = src.month)) and
-    ((Precision < dtpDay) or (day = src.day)) and
-    ((Precision < dtpHour) or (hour = src.hour)) and
-    ((Precision < dtpMin) or (minute = src.minute)) and
-    ((Precision < dtpSec) or (second = src.second)) and
-    ((Precision < dtpNanoSeconds) or (fraction = src.fraction)) and (Precision = src.Precision) and (FractionPrecision = src.FractionPrecision) and
+    ((FPrecision < dtpMonth) or (month = src.month)) and
+    ((FPrecision < dtpDay) or (day = src.day)) and
+    ((FPrecision < dtpHour) or (hour = src.hour)) and
+    ((FPrecision < dtpMin) or (minute = src.minute)) and
+    ((FPrecision < dtpSec) or (second = src.second)) and
+    ((FPrecision < dtpNanoSeconds) or (fraction = src.fraction)) and (FPrecision = src.FPrecision) and (FractionPrecision = src.FractionPrecision) and
     (TimezoneType = src.TimezoneType) and (TimeZoneHours = src.TimeZoneHours) and (TimezoneMins = src.TimezoneMins);
 end;
 
 
-function TDateTimeEx.fixPrecision(precision: TDateTimeExPrecision): TDateTimeEx;
+function TDateTimeEx.fixPrecision(FPrecision: TDateTimeExPrecision): TDateTimeEx;
 begin
   result := Self;
-  result.Precision := precision;
+  result.FPrecision := FPrecision;
 end;
 
 function TDateTimeEx.SameTime(other: TDateTimeEx): Boolean;
@@ -1082,7 +1084,7 @@ end;
 function TDateTimeEx.subtract(length: TDateTime): TDateTimeEx;
 begin
   result := TDateTimeEx.makeUTC(dateTime - length);
-  result.Precision := Precision;
+  result.FPrecision := FPrecision;
   result.FractionPrecision := FractionPrecision;
   result.TimezoneType := TimezoneType;
   result.TimeZoneHours := TimeZoneHours;

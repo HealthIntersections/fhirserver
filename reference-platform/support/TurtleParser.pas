@@ -98,6 +98,7 @@ Type
     procedure addUriPredicate(uri : String; s : String); overload;
     procedure addPredicate(uri : String; s, t : String); overload;
     procedure addPredicates(values : TAdvMap<TTurtleObject>);
+    function predicate(uri : String) : TTurtleObject;
     function singleLiteral : String; overload; override;
     function isSimple : boolean; override;
     function stringLiteral(uri : String) : String; overload;
@@ -498,6 +499,12 @@ begin
   exit(list);
 end;
 
+function TTurtleComplex.predicate(uri: String): TTurtleObject;
+begin
+  if not FPredicates.TryGetValue(uri, result) then
+    result := nil;
+end;
+
 function TTurtleComplex.stringLiteral(uri: String): String;
 begin
   if not has(uri) then
@@ -650,7 +657,7 @@ begin
   if not predicates.TryGetValue(uri, obj) then
     exit(nil);
   if not (obj is TTurtleComplex) then
-    raise Exception.Create('Wrong Type of Turtle object- looking for a complex');
+    raise Exception.Create('Wrong Type of Turtle object- looking for a complex for '+uri);
   result := TTurtleComplex(obj);
 end;
 

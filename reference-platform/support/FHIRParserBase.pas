@@ -34,7 +34,7 @@ Interface
 
 uses
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
-  DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities,
+  DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities, GuidSupport,
   AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, TurtleParser,
   FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
@@ -182,10 +182,12 @@ Type
 
   {$IFNDEF FHIR2}
   TFHIRTurtleParserBase = class (TFHIRParser)
+  private
+    Fdoc : TTurtleDocument;
   protected
     function GetFormat: TFHIRFormat; override;
     function rdfsType(obj : TTurtleComplex) : string;
-    function ParseInnerResource(obj : TTurtleComplex) : TFHIRResource;
+    function ParseInnerResource(obj : TTurtleObject) : TFHIRResource;
     function ParseResource(obj : TTurtleComplex) : TFHIRResource; virtual;
     function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
     function ParseXHtmlNode(literal : String) : TFhirXHtmlNode;
@@ -315,15 +317,18 @@ Type
   TFHIRTurtleComposerBase = class (TFHIRComposer)
   private
     FURL: String;
+    FTtl : TTurtleDocument;
   protected
     procedure ComposeXHtmlNode(parent : TTurtleComplex; parentType, name : String; value: TFhirXHtmlNode; useType : boolean; index : integer); overload;
 
+    function dateXsdType(value : TDateTimeEx) : string;
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList); overload; override;
     procedure ComposeExpression(stream : TStream; expr : TFHIRExpressionNode; items : TFHIRObjectList; types : TAdvStringSet; isPretty : Boolean); overload; override;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList; isPretty : Boolean); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject; isPretty : Boolean); override;
 
     Procedure ComposeResource(parent :  TTurtleComplex; oResource : TFhirResource); overload; virtual;
+    Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResource; useType : boolean; index : integer); overload;
   public
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Function MimeType : String; Override;
@@ -2711,17 +2716,14 @@ end;
 
 procedure TFHIRTurtleComposerBase.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
 var
-  ttl : TTurtleDocument;
-  b : TStringBuilder;
-  bytes : TBytes;
   base : TTurtleComplex;
 begin
-  ttl := TTurtleDocument.create;
+  Fttl := TTurtleDocument.create;
   try
-    ttl.prefix('fhir', 'http://hl7.org/fhir/');
-    ttl.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
-    ttl.prefix('owl' ,'http://www.w3.org/2002/07/owl#');
-    ttl.prefix('xsd', 'http://www.w3.org/2001/XMLSchema#');
+    Fttl.prefix('fhir', 'http://hl7.org/fhir/');
+    Fttl.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
+    Fttl.prefix('owl' ,'http://www.w3.org/2002/07/owl#');
+    Fttl.prefix('xsd', 'http://www.w3.org/2001/XMLSchema#');
 
     if (url = '') then
       url := oResource.Tags['rdf-url'];
@@ -2730,24 +2732,43 @@ begin
     try
       base.addUriPredicate('a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType]);
       base.addUriPredicate('fhir:nodeRole', 'fhir:treeRoot');
-      composeResource(base, oResource);
       if URL <> '' then
-        ttl.addObject(url, base.link)
+        Fttl.addObject(url, base.link)
       else
-        ttl.addObject('_', base.link);
+        Fttl.addObject('_', base.link);
+      composeResource(base, oResource);
     finally
       base.free;
     end;
 
-    TTurtleComposer.compose(ttl, stream);
+    TTurtleComposer.compose(Fttl, stream);
   finally
-    ttl.Free;
+    Fttl.Free;
   end;
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeExpression(stream: TStream; expr: TFHIRExpressionNode; items: TFHIRObjectList; types: TAdvStringSet; isPretty: Boolean);
 begin
   raise Exception.Create('not implemented yet');
+end;
+
+procedure TFHIRTurtleComposerBase.ComposeInnerResource(this: TTurtleComplex; parentType, name: String; elem: TFhirResource; useType: boolean; index: integer);
+var
+  base : TTurtleComplex;
+  url : String;
+begin
+  if (elem = nil) then
+    exit;
+  url := NewGuidURN;
+  this.addUriPredicate('fhir:'+parentType+'.'+name, url);
+  base := TTurtleComplex.Create(nullLoc);
+  try
+    base.addUriPredicate('a', 'fhir:'+CODES_TFHIRResourceType[elem.ResourceType]);
+    Fttl.addObject(url, base.link);
+    composeResource(base, elem);
+  finally
+    base.free;
+  end;
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRObject; isPretty: Boolean);
@@ -2766,12 +2787,21 @@ begin
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeXHtmlNode(parent: TTurtleComplex; parentType, name: String; value: TFhirXHtmlNode; useType : boolean; index: integer);
-var
-  this : TTurtleComplex;
 begin
   if (value = nil) then
     exit;
   parent.addPredicate('fhir:'+parentType+'.'+name, ttlLiteral(TFHIRXhtmlParser.compose(value)));
+end;
+
+function TFHIRTurtleComposerBase.dateXsdType(value: TDateTimeEx): string;
+begin
+  case value.Precision of
+    dtpYear : result := 'xsd:gYear';
+    dtpMonth : result := 'xsd:gYearMonth';
+    dtpDay : result := 'xsd:date';
+  else
+    result := 'xsd:dateTime';
+  end;
 end;
 
 function TFHIRTurtleComposerBase.Extension: String;
@@ -2902,15 +2932,14 @@ end;
 
 procedure TFHIRTurtleParserBase.Parse;
 var
-  doc : TTurtleDocument;
   p, pred : TTurtlePredicate;
   s : String;
 begin
   start;
-  doc := TTurtleParser.parse(StreamToString(source, TENcoding.UTF8));
+  Fdoc := TTurtleParser.parse(StreamToString(source, TENcoding.UTF8));
   try
     p := nil;
-    for pred in doc.Objects do
+    for pred in Fdoc.Objects do
       for s in pred.Value.predicates.Keys do
         if (s = FHIR_TTL_URI_BASE + 'nodeRole') and pred.Value.predicates[s].hasValue(FHIR_TTL_URI_BASE + 'treeRoot') then
         begin
@@ -2925,7 +2954,7 @@ begin
     resource := ParseResource(p.Value);
     resource.Tags['rdf-url'] := p.URL.uri;
   finally
-    doc.Free;
+    Fdoc.Free;
   end;
 end;
 
@@ -2952,12 +2981,26 @@ begin
   end;
 end;
 
-function TFHIRTurtleParserBase.ParseInnerResource(obj: TTurtleComplex): TFHIRResource;
+function TFHIRTurtleParserBase.ParseInnerResource(obj: TTurtleObject): TFHIRResource;
+var
+  c : TTurtleComplex;
 begin
   if obj = nil then
     result := nil
   else
-    result := ParseResource(obj);
+  begin
+    if obj is TTurtleComplex then
+      c := obj as TTurtleComplex
+    else if (obj is TTurtleURL) then
+    begin
+      c := FDoc.getObject(TTurtleURL(obj).uri);
+      if c = nil then
+        raise Exception.Create('Unable to resolve internal resource reference in RDF - to '+TTurtleURL(obj).uri)
+    end
+    else
+      raise Exception.Create('Unable to process internal resource reference in RDF');
+    result := ParseResource(c);
+  end;
 end;
 
 function TFHIRTurtleParserBase.ParseResource(obj: TTurtleComplex): TFHIRResource;
