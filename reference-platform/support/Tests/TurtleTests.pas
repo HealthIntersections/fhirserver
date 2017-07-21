@@ -761,7 +761,7 @@ implementation
 
 procedure TTurtleTests.parseTtl(filename: String; ok: boolean);
 var
-  s, p, m : String;
+  s{, p, m} : String;
   ttl : TTurtleDocument;
 begin
   ttl := nil;
@@ -2653,7 +2653,7 @@ end;
 
 procedure TTurtleResourceTests.parseResource(filename: String);
 var
-  i, o, m : string;
+  i, o{, m} : string;
   p : TFHIRParser;
   c : TFHIRComposer;
   s : TStringStream;

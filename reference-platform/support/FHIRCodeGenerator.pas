@@ -458,7 +458,7 @@ var
   ch : Char;
   i : integer;
   last : boolean;
-  s,pfx : String;
+  pfx : String;
 begin
   // figure out the type
   pfx := '';

@@ -651,7 +651,6 @@ procedure TFhirWebServer.startHooks(ctxt: TFHIRWebServerPatientViewContext; pati
 var
   server : TRegisteredFHIRServer;
   req : TCDSHookRequest;
-  entry : TFHIRBundleEntry;
   s : String;
 begin
   for s in FPatientViewServers.Keys do
@@ -672,10 +671,7 @@ begin
     req.hook := TCDSHooks.patientView;
     req.hookInstance := FServerContext.FormalURLPlain;  // arbitrary global
     req.patient := patient.id;
-//    req.preFetchData := TFhirBundle.Create(BundleTypeCollection);
-//    req.preFetchData.id := NewGuidId;
-//    entry := req.preFetchData.entryList.Append;
-    entry.resource := patient.Link;
+    req.preFetch.Add('patient', patient.Link);
     ctxt.manager.makeRequest(req, OnCDSResponse, ctxt);
   finally
     req.Free;

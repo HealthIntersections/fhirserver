@@ -587,10 +587,12 @@ end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
 var
-  s : AnsiString;
+  sa : AnsiString;
+  s : String;
 begin
-  setlength(s, length(bytes));
-  move(bytes[0], s[1], length(s));
+  setlength(sa, length(bytes));
+  move(bytes[0], sa[1], length(sa));
+  s := String(sa);
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
   else

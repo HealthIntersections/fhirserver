@@ -419,7 +419,9 @@ begin
     patient := identifyPatient(engine, session, context, request, needSecure);
     try
       if (patient <> nil) and (secure or not needSecure) then
-        result := buildPatientView(server, engine, request.baseURL, secure, patient, session);
+        result := buildPatientView(server, engine, request.baseURL, secure, patient, session)
+      else
+        result := nil;
     finally
       patient.Free;
     end;
@@ -518,29 +520,4 @@ begin
 end;
 
 end.
-
-(*
-
-procedure TFhirGenerateCDSHookOperation.processPatientView(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; req : TCDSHookRequest; context : TFHIRPatient; resp : TCDSHookResponse);
-var
-  patient : TFhirPatient;
-  resourceKey : integer;
-  matches, m : TMatchingResourceList;
-  id : TFhirIdentifier;
-  flag : TFhirFlag;
-  i : integer;
-  card : TCDSHookCard;
-  needSecure : boolean;
-begin
-  patient := nil;
-  try
-    end;
-    if (patient <> nil) and (request.secure or not needSecure)  then
-    begin
-    end;
-  finally
-    patient.Free;
-  end;
-end;
-*)
 

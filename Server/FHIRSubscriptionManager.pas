@@ -851,7 +851,8 @@ var
   part: TIdText;
   m : TMemoryStream;
   att : TIdAttachment;
-  s : AnsiString;
+  s : String;
+  b : TBytes;
 begin
   if ok then
     exit; // on advice from Luis Maas
@@ -913,9 +914,10 @@ begin
              'Action: failed'+#13#10+
              'Diagnostic-Code: '+message+#13#10;
       end;
+      b := TEncoding.ANSI.GetBytes(s);
       m := TMemoryStream.Create;
       try
-        m.write(s[1], length(s));
+        m.write(b[0], length(b));
         m.position := 0;
         att.LoadFromStream(m);
       finally
@@ -1000,7 +1002,6 @@ procedure TSubscriptionManager.processIncomingDirectMessage(msg: TIdMessage);
 var
   id, s : String;
   ct : TArray<String>;
-  i : integer;
   part : TIdMessagePart;
   ss : TStringStream;
   ts : TStringList;

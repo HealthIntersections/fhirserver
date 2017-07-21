@@ -3,7 +3,7 @@ unit CDSHooksServer;
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
   AdvObjects, AdvGenerics, AdvJson,
   FHIRSupport,
@@ -125,7 +125,7 @@ end;
 
 procedure TCDSHooksService.HandleRequest(base : String; server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  jrequest, jresponse : TJsonObject;
+  jrequest : TJsonObject;
   req : TCDSHookRequest;
   resp : TCDSHookResponse;
 begin
