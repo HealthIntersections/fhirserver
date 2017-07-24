@@ -84,6 +84,7 @@ type
   TFHIRStructureMapUtilities = class (TAdvObject)
   private
 	  FWorker : TWorkerContext;
+   	fpp : TFHIRPathParser;
    	fpe : TFHIRExpressionEngine;
   	FLib : TAdvMap<TFHIRStructureMap>;
   	FServices : TTransformerServices;
@@ -151,12 +152,14 @@ begin
   FLib := lib;
   FServices := services;
   fpe := TFHIRExpressionEngine.Create(context.link);
+  fpp := TFHIRPathParser.create;
 end;
 
 destructor TFHIRStructureMapUtilities.destroy;
 begin
   FWorker.Free;
   fpe.Free;
+  fpp.Free;
 	FLib.Free;
 	FServices.Free;
   inherited;
@@ -935,14 +938,14 @@ begin
   if (lexer.hasToken('where')) then
   begin
     lexer.take();
-    node := fpe.parse(lexer);
+    node := fpp.parse(lexer);
     source.Condition := node.toString();
     source.conditionElement.Tag := node;
   end;
   if (lexer.hasToken('check')) then
   begin
     lexer.take();
-    node := fpe.parse(lexer);
+    node := fpp.parse(lexer);
     source.check := node.toString();
     source.checkElement.Tag := node;
   end;
@@ -978,7 +981,7 @@ begin
         parseParameter(target, lexer);
         lexer.token(',');
         p := target.parameterList.Append;
-        node := fpe.parse(lexer);
+        node := fpp.parse(lexer);
         p.tag := node;
         p.Value := TFHIRString.create(node.toString());
       end

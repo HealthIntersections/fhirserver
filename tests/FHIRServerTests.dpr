@@ -262,7 +262,10 @@ uses
   TurtleTests in '..\reference-platform\support\Tests\TurtleTests.pas',
   FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
-  FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas';
+  FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
+  CqlModel in '..\Libraries\cql\CqlModel.pas',
+  CqlParser in '..\Libraries\cql\CqlParser.pas',
+  CqlTests in '..\Libraries\cql\CqlTests.pas';
 
 var
   runner : ITestRunner;

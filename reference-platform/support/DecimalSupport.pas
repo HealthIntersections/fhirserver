@@ -154,29 +154,47 @@ function StringIsDecimal(s : String) : Boolean;
 
 Implementation
 
-function StringIsDecimal(s : String) : Boolean;
+function SimpleStringIsDecimal(s : String; allowDec : boolean) : boolean;
 var
-  bDec, bExp : Boolean;
+  bDec : Boolean;
   i : integer;
 Begin
+  if s.StartsWith('+') or s.StartsWith('-')  then
+    delete(s, 1, 1);
+  if s = '' then
+    exit(false);
+
   bDec := false;
-  bExp := false;
   result := true;
   for i := 1 to length(s) Do
   begin
-    if not (
-       ((i = 1) and (s[i] = '-')) or
-       ((i = 1) and (s[i] = '+')) or
-       (not bDec and (s[i] = '.')) or
-       (not bExp and (i > 1) and CharInSet(s[i], ['e', 'E'])) or
-       ((i > 1) and CharInSet(s[i-1], ['e', 'E']) and (s[i] = '-')) or
-       ((i > 1) and CharInSet(s[i-1], ['e', 'E']) and (s[i] = '+')) or
-       CharInSet(s[i], ['0'..'9'])) Then
-      result := false;
-    bdec := s[i] = '.';
-    bExp := s[i] = 'e';
-  End;
-End;
+    if not (CharInSet(s[i], ['0'..'9'])) then
+      if s[i] <> '.' then
+        exit(false)
+      else if bDec then
+        exit(false)
+      else
+        bDec := true;
+  end;
+end;
+
+function StringIsDecimal(s : String) : Boolean;
+var
+  l, r : String;
+begin
+  if (s.Contains('e')) then
+  begin
+    StringSplit(s, 'e', l, r);
+    result := SimpleStringIsDecimal(l, true) and SimpleStringIsDecimal(r, false)
+  end
+  else if (s.Contains('e')) or (s.Contains('E')) then
+  begin
+    StringSplit(s, 'E', l, r);
+    result := SimpleStringIsDecimal(l, true) and SimpleStringIsDecimal(r, false)
+  end
+  else
+    result := SimpleStringIsDecimal(s, true);
+end;
 
 
 class function TSmartDecimalHelper.CheckValue(sValue: String): boolean;

@@ -361,6 +361,9 @@
         <DCCReference Include="..\reference-platform\r4\FHIRParserXml.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParserJson.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParserTurtle.pas"/>
+        <DCCReference Include="..\Libraries\cql\CqlModel.pas"/>
+        <DCCReference Include="..\Libraries\cql\CqlParser.pas"/>
+        <DCCReference Include="..\Libraries\cql\CqlTests.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

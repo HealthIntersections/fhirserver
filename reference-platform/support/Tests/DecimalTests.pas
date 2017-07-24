@@ -55,6 +55,8 @@ Type
     procedure TestRoundTrip(n1, n2, n3, t : String);
     procedure TestBoundsCase(v, low, high, ilow, ihigh : String);
   Published
+    [TestCase]
+    Procedure TestIsDecimal;
 
     [TestCase]
     Procedure TestAsInteger;
@@ -455,6 +457,33 @@ var
 begin
   d := TSmartDecimal.valueOf(i);
   Assert.IsTrue(d.AsInteger = i);
+end;
+
+procedure TDecimalTests.TestIsDecimal;
+begin
+  Assert.IsTrue(StringIsDecimal('0'), '"0" is a decimal');
+  Assert.IsTrue(StringIsDecimal('+0'), '"+0" is a decimal');
+  Assert.IsFalse(StringIsDecimal('0+'), '"0+" is not a decimal');
+  Assert.IsFalse(StringIsDecimal('+'), '"+" is not a decimal');
+  Assert.IsTrue(StringIsDecimal('-0'), '"-0" is a decimal');
+  Assert.IsFalse(StringIsDecimal('0-'), '"0-" is not a decimal');
+  Assert.IsFalse(StringIsDecimal('-'), '"-" is not a decimal');
+  Assert.IsTrue(StringIsDecimal('0e0'), '"0e0" is a decimal');
+  Assert.IsTrue(StringIsDecimal('+0e+0'), '"+0e+0" is a decimal');
+  Assert.IsTrue(StringIsDecimal('-0e-0'), '"-0e-0" is a decimal');
+  Assert.IsFalse(StringIsDecimal('0e'), '"0e" is not a decimal');
+  Assert.IsFalse(StringIsDecimal('e0'), '"e0" is not a decimal');
+  Assert.IsTrue(StringIsDecimal('1.2'), '"1.2" is a decimal');
+  Assert.IsTrue(StringIsDecimal('-1.2'), '"-1.2" is a decimal');
+  Assert.IsTrue(StringIsDecimal('+1.2'), '"+1.2" is a decimal');
+  Assert.IsFalse(StringIsDecimal('1. 2'), '"1. 2" is not a decimal');
+  Assert.IsFalse(StringIsDecimal('1 .2'), '"1 .2" is not a decimal');
+  Assert.IsFalse(StringIsDecimal(' 1.2'), '" 1.2" is not a decimal');
+  Assert.IsFalse(StringIsDecimal('1.2 '), '"1.2 " is not a decimal');
+  Assert.IsTrue(StringIsDecimal('1.2e2'), '"1.2e2" is a decimal');
+  Assert.IsTrue(StringIsDecimal('1.2e-2'), '"1.2e2" is a decimal');
+  Assert.IsTrue(StringIsDecimal('1.2e+2'), '"1.2e2" is a decimal');
+  Assert.IsFalse(StringIsDecimal('1.2e2e3'), '"1.2e2e3" is not a decimal');
 end;
 
 procedure TDecimalTests.TestCardinal(i: cardinal);

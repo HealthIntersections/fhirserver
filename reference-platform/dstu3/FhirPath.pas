@@ -81,20 +81,19 @@ type
     property context : TFHIRTypeDetails read FContext;
   end;
 
-
   TFHIRPathLexer = class (TAdvObject)
   private
-    FPath : String;
     FCursor : integer;
     FCurrentLocation : TSourceLocation;
     FCurrent : String;
     FCurrentStart : integer;
     FCurrentStartLocation : TSourceLocation;
     FId : integer;
+    FPath : String;
   public
     constructor Create(path : String); overload;
     destructor Destroy; override;
-    procedure next;
+    procedure next; virtual;
     property current : String read FCurrent;
     property CurrentStart : integer read FCurrentStart;
     function done : boolean;
@@ -102,6 +101,7 @@ type
 
     function hasComment: boolean;
     procedure skipComments;
+    procedure checkArithmeticPrefixes;
 
     function nextId : integer;
     function error(msg : String) : Exception; overload;
@@ -111,14 +111,37 @@ type
     function isConstant(incDoubleQuotes : boolean = false) : boolean;
     function isStringConstant: boolean;
     function readConstant(desc: String): String;
+    function readIdentifier(desc : String) : String;
     class function processConstant(s: String): String;
+    class function endingToken(s : String) : boolean;
 
     function isOp : boolean;
+    function isNumericalConstant : boolean;
     function isToken : boolean; overload;
+    function isUnit : boolean;
     function hasToken(kw : String) : boolean; overload;
+    function takeToken(kw : String) : boolean; overload;
     procedure token(kw : String); overload;
     procedure skiptoken(kw : String); overload;
     function takeDottedToken: String;
+    property CurrentLocation : TSourceLocation read FCurrentLocation;
+    property CurrentStartLocation : TSourceLocation read FCurrentStartLocation;
+  end;
+
+  TFHIRPathParser = class (TAdvObject)
+  private
+    function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
+    procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TFHIRExpressionNode);
+    procedure gatherPrecedence(lexer : TFHIRPathLexer; var start: TFHIRExpressionNode; ops: TFHIRPathOperationSet);
+    function newGroup(lexer : TFHIRPathLexer; next: TFHIRExpressionNode): TFHIRExpressionNode;
+  protected
+    procedure checkParameters(lexer : TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode);
+    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer); overload;
+    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer); overload;
+  public
+    // Parse a path for later use using execute
+    function parse(path : String) : TFHIRExpressionNode; overload;
+    function parse(lexer : TFHIRPathLexer) : TFHIRExpressionNode; overload;
   end;
 
   TFHIRPathDebugPackage = class (TAdvObject)
@@ -163,13 +186,6 @@ type
     FOnResolveReference: TFHIRResolveReferenceEvent;
 
     procedure log(name, value : String);
-    function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
-    procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TFHIRExpressionNode);
-    procedure gatherPrecedence(lexer : TFHIRPathLexer; var start: TFHIRExpressionNode; ops: TFHIRPathOperationSet);
-    function newGroup(lexer : TFHIRPathLexer; next: TFHIRExpressionNode): TFHIRExpressionNode;
-    procedure checkParameters(lexer : TFHIRPathLexer; location : TSourceLocation; offset : Integer; exp : TFHIRExpressionNode);
-    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer); overload;
-    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer); overload;
 
     function execute(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
     function execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
@@ -282,6 +298,10 @@ type
     function contains(list: TFHIRSelectionList; item: TFHIRObject): boolean;
     function isAbstractType(list: TFHIRElementDefinitionTypeList): boolean;
 
+  protected
+    function funcCustom(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList; virtual;
+    function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode): TFHIRTypeDetails; virtual;
+
   public
     constructor Create(context : TWorkerContext);
     destructor Destroy; override;
@@ -290,7 +310,6 @@ type
 
     // Parse a path for later use using execute
     function parse(path : String) : TFHIRExpressionNode; overload;
-    function parse(lexer : TFHIRPathLexer) : TFHIRExpressionNode; overload;
 
     // check that paths referred to in the expression are valid
     function check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
@@ -373,76 +392,6 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer);
-begin
-  if (exp.Parameters.count <> count) then
-    lexer.error('The function "'+exp.name+'" requires '+inttostr(count)+' parameters', location);
-end;
-
-procedure TFHIRExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer);
-begin
-    if (exp.Parameters.count < countMin) or (exp.Parameters.count > countMax) then
-      lexer.error('The function "'+exp.name+'" requires between '+inttostr(countMin)+' and '+inttostr(countMax)+' parameters', location);
-end;
-
-procedure TFHIRExpressionEngine.checkParameters(lexer: TFHIRPathLexer; location : TSourceLocation; offset: Integer; exp: TFHIRExpressionNode);
-begin
-  case exp.FunctionId of
-    pfEmpty: checkParamCount(lexer, location, exp, 0);
-    pfNot: checkParamCount(lexer, location, exp, 0);
-    pfExists: checkParamCount(lexer, location, exp, 0);
-    pfSubsetOf: checkParamCount(lexer, location, exp, 1);
-    pfSupersetOf: checkParamCount(lexer, location, exp, 1);
-    pfIsDistinct: checkParamCount(lexer, location, exp, 0);
-    pfDistinct: checkParamCount(lexer, location, exp, 0);
-    pfCount: checkParamCount(lexer, location, exp, 0);
-    pfWhere: checkParamCount(lexer, location, exp, 1);
-    pfSelect: checkParamCount(lexer, location, exp, 1);
-    pfAll: checkParamCount(lexer, location, exp, 0, 1);
-    pfRepeat: checkParamCount(lexer, location, exp, 1);
-    pfItem: checkParamCount(lexer, location, exp, 1);
-    pfAs: checkParamCount(lexer, location, exp, 1);
-    pfIs: checkParamCount(lexer, location, exp, 1);
-    pfSingle: checkParamCount(lexer, location, exp, 0);
-    pfFirst: checkParamCount(lexer, location, exp, 0);
-    pfLast: checkParamCount(lexer, location, exp, 0);
-    pfTail: checkParamCount(lexer, location, exp, 0);
-    pfSkip: checkParamCount(lexer, location, exp, 1);
-    pfTake: checkParamCount(lexer, location, exp, 1);
-    pfIif: checkParamCount(lexer, location, exp, 2,3);
-    pfToInteger: checkParamCount(lexer, location, exp, 0);
-    pfToDecimal: checkParamCount(lexer, location, exp, 0);
-    pfToString: checkParamCount(lexer, location, exp, 0);
-    pfSubstring: checkParamCount(lexer, location, exp, 1, 2);
-    pfStartsWith: checkParamCount(lexer, location, exp, 1);
-    pfEndsWith: checkParamCount(lexer, location, exp, 1);
-    pfMatches: checkParamCount(lexer, location, exp, 1);
-    pfReplaceMatches: checkParamCount(lexer, location, exp, 2);
-    pfContains: checkParamCount(lexer, location, exp, 1);
-    pfReplace: checkParamCount(lexer, location, exp, 2);
-    pfLength: checkParamCount(lexer, location, exp, 0);
-    pfChildren: checkParamCount(lexer, location, exp, 0);
-    pfDescendants: checkParamCount(lexer, location, exp, 0);
-    pfMemberOf: checkParamCount(lexer, location, exp, 1);
-    pfTrace: checkParamCount(lexer, location, exp, 1);
-    pfToday: checkParamCount(lexer, location, exp, 0);
-    pfNow: checkParamCount(lexer, location, exp, 0);
-    pfResolve: checkParamCount(lexer, location, exp, 0);
-    pfExtension: checkParamCount(lexer, location, exp, 1);
-    pfAllFalse: checkParamCount(lexer, location, exp, 0);
-    pfAnyFalse: checkParamCount(lexer, location, exp, 0);
-    pfCombine: checkParamCount(lexer, location, exp, 1);
-    pfType: checkParamCount(lexer, location, exp, 0);
-    pfOfType: checkParamCount(lexer, location, exp, 1);
-    pfElementDefinition: checkParamCount(lexer, location, exp, 0);
-    pfSlice: checkParamCount(lexer, location, exp, 2);
-    pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
-    pfConformsTo: checkParamCount(lexer, location, exp, 1);
-    pfHasValue: checkParamCount(lexer, location, exp, 0);
-    pfHtmlChecks: checkParamCount(lexer, location, exp, 0);
-  end;
-end;
-
 function TFHIRExpressionEngine.convertToBoolean(items: TFHIRSelectionList): boolean;
 begin
   if (items = nil) then
@@ -479,7 +428,7 @@ begin
     for sd in worker.allStructures do
       if (sd.kind <> StructureDefinitionKindLogical) then
       begin
-        {$IFDEF FHIR3}
+        {$IFNDEF FHIR2}
         if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
           allTypes.add(sd.id);
         if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
@@ -692,6 +641,11 @@ begin
   finally
     list.Free;
   end;
+end;
+
+function TFHIRExpressionEngine.evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode): TFHIRTypeDetails;
+begin
+  raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
 function TFHIRExpressionEngine.evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
@@ -1629,18 +1583,6 @@ begin
   result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday));
 end;
 
-function StringIsDecimal(s : String) : boolean;
-var
-  ch : char;
-begin
-  result := true;
-  for ch in s do
-    if not CharInSet(ch, ['0'..'9', '.']) then
-      exit(false);
-  result := (StringCount(s, '.') <= 1) and not s.StartsWith('.') and not s.EndsWith('.');
-end;
-
-
 function TFHIRExpressionEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
 var
   s : string;
@@ -1975,6 +1917,7 @@ begin
     popMod: result := opMod(left, right);
     popIs: result := opIs(left, right);
     popAs: result := opAs(left, right);
+    popCustom : raise EFHIRPath.create('An internal error has occurred (custom operation not implemented)');
   else
     raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
   end;
@@ -2039,6 +1982,7 @@ begin
     end;
     popIn:  result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
     popContains:  result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
+    popCustom : raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
   else
     raise EFHIRPath.create('not done yet');
   end;
@@ -2932,9 +2876,15 @@ begin
     pfConformsTo: result := funcConformsTo(context, focus, exp);
     pfHasValue : result := funcHasValue(context, focus, exp);
     pfHtmlChecks : result := funcHtmlChecks(context, focus, exp);
+    pfCustom : result := funcCustom(context, focus, exp);
   else
     raise EFHIRPath.create('Unknown Function '+exp.name);
   end;
+end;
+
+function TFHIRExpressionEngine.funcCustom(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+begin
+  raise EFHIRPath.create('Unknown Function '+exp.name);
 end;
 
 procedure TFHIRExpressionEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
@@ -3247,6 +3197,8 @@ begin
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
       pfHtmlChecks:
         result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
+      pfCustom :
+        result := evaluateCustomFunctionType(context, focus, exp);
     else
       raise EFHIRPath.create('not Implemented yet?');
     end;
@@ -3307,241 +3259,6 @@ begin
   end;
 end;
 
-
-function TFHIRExpressionEngine.parse(lexer: TFHIRPathLexer): TFHIRExpressionNode;
-var
-  msg : String;
-begin
-  if lexer.done then
-    raise lexer.error('Path cannot be empty');
-  result := parseExpression(lexer, true);
-  try
-    if not result.check(msg, 0) then
-      raise EFHIRPath.create('Error parsing "'+lexer.FPath+'": '+msg);
-    result.Link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRExpressionEngine.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
-var
-  c : Integer;
-  focus, item : TFHIRExpressionNode;
-begin
-  result := TFHIRExpressionNode.Create(lexer.nextId);
-  try
-    result.SourceLocationStart := lexer.FCurrentStartLocation;
-    c := lexer.CurrentStart;
-    // special:
-    if (lexer.Current = '-') then
-    begin
-      lexer.take;
-      lexer.Fcurrent := '-' + lexer.Fcurrent;
-    end;
-
-    if (lexer.Current = '+') then
-    begin
-      lexer.take;
-      lexer.Fcurrent := '+' + lexer.Fcurrent;
-    end;
-
-    if lexer.isConstant then
-    begin
-      if lexer.current.startsWith('''') then
-        lexer.processConstant(lexer.current);
-      result.Constant := lexer.take;
-      result.kind := enkConstant;
-      result.SourceLocationEnd := lexer.FCurrentLocation;
-    end
-    else if lexer.current = '(' then
-    begin
-      lexer.next;
-      result.kind := enkGroup;
-      result.group := parseExpression(lexer, true);
-      if lexer.current <> ')' then
-        raise lexer.error('Found '+lexer.current+' expecting a ")"');
-      result.SourceLocationEnd := lexer.FCurrentLocation;
-      lexer.next;
-    end
-    else
-    begin
-      if not lexer.isToken and not lexer.current.startsWith('"') then
-        raise lexer.error('Found '+lexer.current+' expecting a token name');
-      if (lexer.current.startsWith('"')) then
-        result.Name := lexer.readConstant('Path Name')
-      else
-        result.Name := lexer.take;
-      result.SourceLocationEnd := lexer.FCurrentLocation;
-      if not result.checkName then
-        raise lexer.error('Found '+lexer.current+' expecting a valid token name');
-      if (lexer.current = '(') then
-      begin
-        if StringArrayExistsSensitive(CODES_TFHIRPathFunctions, result.Name) then
-          result.FunctionId := TFHIRPathFunction(StringArrayIndexOfSensitive(CODES_TFHIRPathFunctions, result.Name))
-        else if result.Name = 'descendents' then
-          result.FunctionId := pfDescendants
-        else
-          raise lexer.error('The name '+result.Name+' is not a valid function name');
-        result.kind := enkFunction;
-        lexer.next;
-        while lexer.current <> ')' do
-        begin
-          result.Parameters.add(parseExpression(lexer, true));
-          if lexer.current = ',' then
-            lexer.next
-          else if lexer.current <> ')' then
-            raise lexer.error('The token '+lexer.current+' is not expected here - either a "," or a ")" expected');
-        end;
-        result.SourceLocationEnd := lexer.FCurrentLocation;
-        lexer.next;
-        checkParameters(lexer, result.SourceLocationStart, c, result);
-      end;
-    end;
-    focus := result;
-    if (lexer.current = '[') then
-    begin
-      lexer.next();
-      item := TFHIRExpressionNode.Create(lexer.nextId);
-      item.Kind := enkFunction;
-      item.Functionid := pfItem;
-      item.Parameters.add(parseExpression(lexer, true));
-      if (lexer.current <> ']') then
-        raise lexer.error('The token '+lexer.Current+' is not expected here - a "]" expected');
-      lexer.next;
-      result.inner := item;
-      focus := item;
-    end;
-    if lexer.current = '.' then
-    begin
-      lexer.next;
-      focus.Inner := parseExpression(lexer, false);
-    end;
-    result.Proximal := proximal;
-    if (proximal) then
-    begin
-      while lexer.isOp do
-      begin
-        focus.Operation := TFHIRPathOperation(StringArrayIndexOfSensitive(CODES_TFHIRPathOperation, lexer.current));
-        focus.OpSourceLocationStart := lexer.FCurrentStartLocation;
-        focus.OpSourceLocationEnd := lexer.FCurrentLocation;
-        lexer.next;
-        focus.opNext := parseExpression(lexer, false);
-        focus := focus.OpNext;
-      end;
-      organisePrecedence(lexer, result);
-    end;
-    result.link;
-  finally
-    result.Free;
-  end;
-end;
-
-function TFHIRExpressionEngine.newGroup(lexer : TFHIRPathLexer; next : TFHIRExpressionNode) : TFHIRExpressionNode;
-begin
-  result := TFHIRExpressionNode.Create(lexer.nextId);
-  try
-    result.kind := enkGroup;
-    result.Group := next.Link;
-    result.Group.Proximal := true;
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRExpressionEngine.gatherPrecedence(lexer : TFHIRPathLexer; var start : TFHIRExpressionNode; ops : TFHIRPathOperationSet);
-var
-  work : boolean;
-  focus, node, group : TFHIRExpressionNode;
-begin
-  assert(start.Proximal);
-
-  // is there anything to do?
-  work := false;
-  focus := start.OpNext;
-  if start.Operation in ops then
-    while (focus <> nil) and (focus.operation <> popNull) do
-    begin
-      work := work or not (focus.Operation in Ops);
-      focus := focus.OpNext;
-    end
-  else
-    while (focus <> nil) and (focus.operation <> popNull) do
-    begin
-      work := work or (focus.Operation in Ops);
-      focus := focus.OpNext;
-    end;
-  if not work then
-    exit;
-
-  // entry point: tricky
-  if start.Operation in ops then
-  begin
-    group := newGroup(lexer, start);
-    group.proximal := true;
-    focus := start;
-    start.Free;
-    start := group;
-  end
-  else
-  begin
-    node := start;
-    focus := node.OpNext;
-    while not (focus.Operation in Ops) do
-    begin
-      node := focus;
-      focus := focus.OpNext;
-    end;
-    group := newGroup(lexer, focus);
-    node.OpNext := group;
-  end;
-
-  // now, at this point:
-  //   group is the group we are adding to, it already has a .group property filled out.
-  //   focus points at the group.group
-  repeat
-    // run until we find the end of the sequence
-    while (focus.Operation in ops) do
-      focus := focus.OpNext;
-    if (focus.Operation <> popNull) then
-    begin
-      group.Operation := focus.Operation;
-      group.OpNext := focus.OpNext.Link;
-      focus.Operation := popNull;
-      focus.OpNext := nil;
-      // now look for another sequence, and start it
-      node := group;
-      focus := group.OpNext;
-      if (focus <> nil) then
-      begin
-        while (focus <> nil) and not (focus.Operation in Ops) do
-        begin
-          node := focus;
-          focus := focus.OpNext;
-        end;
-        if (focus <> nil) { and (focus.Operation in Ops) - must be true } then
-        begin
-          group := newGroup(lexer, focus);
-          node.OpNext := group;
-        end;
-      end;
-    end;
-  until (focus = nil) or (focus.Operation = popNull);
-end;
-
-procedure TFHIRExpressionEngine.organisePrecedence(lexer : TFHIRPathLexer; var node : TFHIRExpressionNode);
-begin
-  gatherPrecedence(lexer, node, [popTimes, popDivideBy, popDiv, popMod]);
-  gatherPrecedence(lexer, node, [popPlus, popMinus, popConcatenate]);
-  gatherPrecedence(lexer, node, [popUnion]);
-  gatherPrecedence(lexer, node, [popLessThan, popGreater, popLessOrEqual, popGreaterOrEqual]);
-  gatherPrecedence(lexer, node, [popIs]);
-  gatherPrecedence(lexer, node, [popEquals, popEquivalent, popNotEquals, popNotEquivalent]);
-  gatherPrecedence(lexer, node, [popAnd]);
-  gatherPrecedence(lexer, node, [popXor, popOr]);
-  // last: implies
-end;
 
 
 function processDateConstant(s : String) : TFHIRType;
@@ -3652,26 +3369,13 @@ end;
 
 function TFHIRExpressionEngine.parse(path: String): TFHIRExpressionNode;
 var
-  lexer : TFHIRPathLexer;
-  msg : String;
+  parser : TFHIRPathParser;
 begin
-  lexer := TFHIRPathLexer.Create(path);
-  try
-    if lexer.done then
-      raise lexer.error('Path cannot be empty');
-    result := parseExpression(lexer, true);
+  parser := TFHIRPathParser.Create;
     try
-      if not lexer.done then
-        raise lexer.error('Premature expression termination at unexpected token "'+lexer.current+'"');
-      if not result.check(msg, 0) then
-        raise EFHIRPath.create('Error parsing "'+path+'": '+msg);
-
-      result.Link;
-    finally
-      result.free;
-    end;
+    result := parser.parse(path);
   finally
-    lexer.Free;
+    parser.Free;
   end;
 end;
 
@@ -3938,7 +3642,7 @@ end;
 
 constructor EFHIRPath.create(path: String; offset: integer; problem: String);
 begin
-  inherited create('FHIRPath error in "'+path+'" at position '+inttostr(offset)+': '+problem);
+  inherited create('FHIRPath error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
 end;
 
 constructor EFHIRPath.create(problem: String);
@@ -3947,6 +3651,21 @@ begin
 end;
 
 { TFHIRPathLexer }
+
+procedure TFHIRPathLexer.checkArithmeticPrefixes;
+begin
+  if (Current = '-') then
+  begin
+    take;
+    Fcurrent := '-' + Fcurrent;
+  end;
+
+  if (Current = '+') then
+  begin
+    take;
+    Fcurrent := '+' + Fcurrent;
+  end;
+end;
 
 constructor TFHIRPathLexer.Create(path: String);
 begin
@@ -4058,7 +3777,25 @@ begin
     else if (ch = '/') then
     begin
       inc(FCursor);
-      while (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['/']) do
+      if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['*']) then
+      begin
+        flast13 := false;
+        while (FCursor <= FPath.Length) and not ((FPath[FCursor-1] = '*') and (FPath[FCursor] = '/'))  do
+        begin
+          if (FPath[FCursor] = #13) or ((FPath[FCursor] = #10) and not flast13) then
+          begin
+            inc(FCurrentLocation.line);
+            FCurrentLocation.col := 1;
+          end
+          else
+            inc(FCurrentLocation.col);
+          flast13 := FPath[FCursor] = #13;
+          inc(FCursor);
+        end;
+        if (FCursor <= FPath.Length) then
+          inc(FCursor);
+      end
+      else if (FCursor <= FPath.Length) and CharInSet(FPath[FCursor], ['/']) then
       begin
         inc(FCursor);
         while (FCursor <= FPath.Length) and not CharInSet(FPath[FCursor], [#13, #10]) do
@@ -4141,7 +3878,7 @@ end;
 
 function TFHIRPathLexer.hasComment : boolean;
 begin
-  result := not done() and FCurrent.startsWith('//');
+  result := not done() and (FCurrent.startsWith('//') or (FCurrent.startsWith('/*')));
 end;
 
 procedure TFHIRPathLexer.skipComments;
@@ -4161,30 +3898,51 @@ begin
   result := FCurrentStart > FPath.Length;
 end;
 
+class function TFHIRPathLexer.endingToken(s: String): boolean;
+begin
+  result := StringArrayExistsSensitive([']', ')', '}', ','], s)
+end;
+
 function TFHIRPathLexer.error(msg: String; location: TSourceLocation): Exception;
 begin
-  result := Exception.Create('Error in '+FPath+' at line '+inttostr(location.line)+' col '+inttostr(location.col)+': '+msg);
+  result := Exception.Create('Error "'+msg+'" at line '+inttostr(location.line)+' col '+inttostr(location.col)+' in "'+FPath+'"');
 end;
 
 function TFHIRPathLexer.error(msg: String; offset: integer): Exception;
 begin
-  result := EFHIRPath.Create('Error in '+FPath+' at '+inttostr(offset)+': '+msg);
+  result := EFHIRPath.Create('Error "'+msg+'" at '+inttostr(offset)+' in "'+FPath+'"');
 end;
 
 function TFHIRPathLexer.error(msg: String): Exception;
 begin
-  result := error(msg, FCurrentStart);
+  result := error(msg, FCurrentLocation);
 end;
 
 function TFHIRPathLexer.isConstant(incDoubleQuotes : boolean): boolean;
 begin
-  result := (FCurrent <> '') and (CharInSet(FCurrent[1], ['''', '0'..'9', '@', '%', '-', '+']) or
-    (incDoubleQuotes and (FCurrent[1] = '"')) or (FCurrent = 'true') or (FCurrent = 'false') or (FCurrent = '{}'));
+  if FCurrent = '' then
+    result := false
+  else if (FCurrent[1] = '''') or (FCurrent[1] = '%') or (FCurrent[1] = '@') then
+    result := true
+  else if incDoubleQuotes and (FCurrent[1] = '"') then
+    result := true
+  else if DecimalSupport.StringIsDecimal(FCurrent) then
+    result := true
+  else
+    result := StringArrayExistsSensitive(['true', 'false', '{}'], FCurrent);
+end;
+
+function TFHIRPathLexer.isNumericalConstant: boolean;
+begin
+  result := (FCurrent <> '') and StringIsDecimal(FCurrent);
 end;
 
 function TFHIRPathLexer.isOp: boolean;
 begin
-  result := (current <> '') and StringArrayExistsSensitive(CODES_TFHIRPathOperation, current);
+  if current = '' then
+    result := false
+  else
+    result := StringArrayExistsSensitive(CODES_TFHIRPathOperation, current);
 end;
 
 function TFHIRPathLexer.hasToken(kw: String): boolean;
@@ -4212,6 +3970,11 @@ begin
     result := false;
 end;
 
+function TFHIRPathLexer.isUnit: boolean;
+begin
+  result := StringArrayExistsSensitive(['years', 'months', 'week', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'], current);
+end;
+
 function TFHIRPathLexer.take: String;
 begin
   result := current;
@@ -4231,6 +3994,14 @@ begin
     raise error('Found '+current+' expecting "['+desc+']"');
 
   result := processConstant(take);
+end;
+
+function TFHIRPathLexer.readIdentifier(desc: String): String;
+begin
+  if (current.startsWith('"')) then
+    result := readConstant(desc)
+  else
+    result := take;
 end;
 
 function TFHIRPathLexer.isStringConstant : boolean;
@@ -4258,6 +4029,13 @@ begin
 end;
 
 
+
+function TFHIRPathLexer.takeToken(kw: String): boolean;
+begin
+  result := not done() and (kw = current);
+  if result then
+    token(kw);
+end;
 
 { TFHIRPathExecutionTypeContext }
 
@@ -4349,6 +4127,338 @@ procedure TFHIRPathDebugPackage.Setoutcome(const Value: TFHIRSelectionList);
 begin
   Foutcome.Free;
   Foutcome := Value;
+end;
+
+{ TFHIRPathParser }
+
+function TFHIRPathParser.parse(lexer: TFHIRPathLexer): TFHIRExpressionNode;
+var
+  msg : String;
+begin
+  if lexer.done then
+    raise lexer.error('Path cannot be empty');
+  result := parseExpression(lexer, true);
+  try
+    if not result.check(msg, 0) then
+      raise EFHIRPath.create('Error "'+msg+'" parsing "'+lexer.FPath);
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRPathParser.parse(path: String): TFHIRExpressionNode;
+var
+  lexer : TFHIRPathLexer;
+  msg : String;
+begin
+  lexer := TFHIRPathLexer.Create(path);
+  try
+    if lexer.done then
+      raise lexer.error('Path cannot be empty');
+    result := parseExpression(lexer, true);
+    try
+      if not lexer.done then
+        raise lexer.error('Premature expression termination at unexpected token "'+lexer.current+'"');
+      if not result.check(msg, 0) then
+        raise EFHIRPath.create('Error parsing "'+path+'": '+msg);
+
+      result.Link;
+    finally
+      result.free;
+    end;
+  finally
+    lexer.Free;
+  end;
+end;
+
+procedure TFHIRPathParser.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer);
+begin
+  if (exp.Parameters.count <> count) then
+    raise lexer.error('The function "'+exp.name+'" requires '+inttostr(count)+' parameters', location);
+end;
+
+procedure TFHIRPathParser.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer);
+begin
+    if (exp.Parameters.count < countMin) or (exp.Parameters.count > countMax) then
+      lexer.error('The function "'+exp.name+'" requires between '+inttostr(countMin)+' and '+inttostr(countMax)+' parameters', location);
+end;
+
+procedure TFHIRPathParser.checkParameters(lexer: TFHIRPathLexer; location : TSourceLocation; exp: TFHIRExpressionNode);
+begin
+  case exp.FunctionId of
+    pfEmpty: checkParamCount(lexer, location, exp, 0);
+    pfNot: checkParamCount(lexer, location, exp, 0);
+    pfExists: checkParamCount(lexer, location, exp, 0, 1); // 1 is allowed in cql, and should be allowed in FHIRPath as well
+    pfSubsetOf: checkParamCount(lexer, location, exp, 1);
+    pfSupersetOf: checkParamCount(lexer, location, exp, 1);
+    pfIsDistinct: checkParamCount(lexer, location, exp, 0);
+    pfDistinct: checkParamCount(lexer, location, exp, 0);
+    pfCount: checkParamCount(lexer, location, exp, 0);
+    pfWhere: checkParamCount(lexer, location, exp, 1);
+    pfSelect: checkParamCount(lexer, location, exp, 1);
+    pfAll: checkParamCount(lexer, location, exp, 0, 1);
+    pfRepeat: checkParamCount(lexer, location, exp, 1);
+    pfItem: checkParamCount(lexer, location, exp, 1);
+    pfAs: checkParamCount(lexer, location, exp, 1);
+    pfIs: checkParamCount(lexer, location, exp, 1);
+    pfSingle: checkParamCount(lexer, location, exp, 0);
+    pfFirst: checkParamCount(lexer, location, exp, 0);
+    pfLast: checkParamCount(lexer, location, exp, 0);
+    pfTail: checkParamCount(lexer, location, exp, 0);
+    pfSkip: checkParamCount(lexer, location, exp, 1);
+    pfTake: checkParamCount(lexer, location, exp, 1);
+    pfIif: checkParamCount(lexer, location, exp, 2,3);
+    pfToInteger: checkParamCount(lexer, location, exp, 0);
+    pfToDecimal: checkParamCount(lexer, location, exp, 0);
+    pfToString: checkParamCount(lexer, location, exp, 0);
+    pfSubstring: checkParamCount(lexer, location, exp, 1, 2);
+    pfStartsWith: checkParamCount(lexer, location, exp, 1);
+    pfEndsWith: checkParamCount(lexer, location, exp, 1);
+    pfMatches: checkParamCount(lexer, location, exp, 1);
+    pfReplaceMatches: checkParamCount(lexer, location, exp, 2);
+    pfContains: checkParamCount(lexer, location, exp, 1);
+    pfReplace: checkParamCount(lexer, location, exp, 2);
+    pfLength: checkParamCount(lexer, location, exp, 0);
+    pfChildren: checkParamCount(lexer, location, exp, 0);
+    pfDescendants: checkParamCount(lexer, location, exp, 0);
+    pfMemberOf: checkParamCount(lexer, location, exp, 1);
+    pfTrace: checkParamCount(lexer, location, exp, 1);
+    pfToday: checkParamCount(lexer, location, exp, 0);
+    pfNow: checkParamCount(lexer, location, exp, 0);
+    pfResolve: checkParamCount(lexer, location, exp, 0);
+    pfExtension: checkParamCount(lexer, location, exp, 1);
+    pfAllFalse: checkParamCount(lexer, location, exp, 0);
+    pfAnyFalse: checkParamCount(lexer, location, exp, 0);
+    pfCombine: checkParamCount(lexer, location, exp, 1);
+    pfType: checkParamCount(lexer, location, exp, 0);
+    pfOfType: checkParamCount(lexer, location, exp, 1);
+    pfElementDefinition: checkParamCount(lexer, location, exp, 0);
+    pfSlice: checkParamCount(lexer, location, exp, 2);
+    pfCheckModifiers: checkParamCount(lexer, location, exp, 1);
+    pfConformsTo: checkParamCount(lexer, location, exp, 1);
+    pfHasValue: checkParamCount(lexer, location, exp, 0);
+    pfCustom: ; // nothing
+  end;
+end;
+
+
+function TFHIRPathParser.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
+var
+  c : Integer;
+  focus, item : TFHIRExpressionNode;
+begin
+  result := TFHIRExpressionNode.Create(lexer.nextId);
+  try
+    result.SourceLocationStart := lexer.FCurrentStartLocation;
+    c := lexer.CurrentStart;
+    lexer.checkArithmeticPrefixes;
+    // special:
+    if (lexer.Current = '-') then
+    begin
+      lexer.take;
+      lexer.Fcurrent := '-' + lexer.Fcurrent;
+    end;
+
+    if (lexer.Current = '+') then
+    begin
+      lexer.take;
+      lexer.Fcurrent := '+' + lexer.Fcurrent;
+    end;
+
+    if lexer.isConstant then
+    begin
+      if lexer.current.startsWith('''') then
+        lexer.processConstant(lexer.current);
+      result.Constant := lexer.take;
+      result.kind := enkConstant;
+      result.SourceLocationEnd := lexer.FCurrentLocation;
+    end
+    else if lexer.current = '(' then
+    begin
+      lexer.next;
+      result.kind := enkGroup;
+      result.group := parseExpression(lexer, true);
+      if lexer.current <> ')' then
+        raise lexer.error('Found '+lexer.current+' expecting a ")"');
+      result.SourceLocationEnd := lexer.FCurrentLocation;
+      lexer.next;
+    end
+    else
+    begin
+      if not lexer.isToken and not lexer.current.startsWith('"') then
+        raise lexer.error('Found '+lexer.current+' expecting a token name');
+
+      result.Name := lexer.readIdentifier('Path Name');
+      result.SourceLocationEnd := lexer.FCurrentLocation;
+      if not result.checkName then
+        raise lexer.error('Found '+lexer.current+' expecting a valid token name');
+      if (lexer.current = '(') then
+      begin
+        if StringArrayExistsSensitive(CODES_TFHIRPathFunctions, result.Name) then
+          result.FunctionId := TFHIRPathFunction(StringArrayIndexOfSensitive(CODES_TFHIRPathFunctions, result.Name))
+        else if result.Name = 'descendents' then
+          result.FunctionId := pfDescendants
+        else
+          raise lexer.error('The name '+result.Name+' is not a valid function name');
+        result.kind := enkFunction;
+        lexer.next;
+        while lexer.current <> ')' do
+        begin
+          result.Parameters.add(parseExpression(lexer, true));
+          if lexer.current = ',' then
+            lexer.next
+          else if lexer.current <> ')' then
+            raise lexer.error('The token '+lexer.current+' is not expected here - either a "," or a ")" expected');
+        end;
+        result.SourceLocationEnd := lexer.FCurrentLocation;
+        lexer.next;
+        checkParameters(lexer, result.SourceLocationStart, result);
+      end;
+    end;
+    focus := result;
+    if (lexer.current = '[') then
+    begin
+      lexer.next();
+      item := TFHIRExpressionNode.Create(lexer.nextId);
+      item.Kind := enkFunction;
+      item.Functionid := pfItem;
+      item.Parameters.add(parseExpression(lexer, true));
+      if (lexer.current <> ']') then
+        raise lexer.error('The token '+lexer.Current+' is not expected here - a "]" expected');
+      lexer.next;
+      result.inner := item;
+      focus := item;
+    end;
+    if lexer.current = '.' then
+    begin
+      lexer.next;
+      focus.Inner := parseExpression(lexer, false);
+    end;
+    result.Proximal := proximal;
+    if (proximal) then
+    begin
+      while lexer.isOp() do
+      begin
+        focus.Operation := TFHIRPathOperation(StringArrayIndexOfSensitive(CODES_TFHIRPathOperation, lexer.current));
+        focus.OpSourceLocationStart := lexer.FCurrentStartLocation;
+        focus.OpSourceLocationEnd := lexer.FCurrentLocation;
+        lexer.next;
+        focus.opNext := parseExpression(lexer, false);
+        focus := focus.OpNext;
+      end;
+      organisePrecedence(lexer, result);
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFHIRPathParser.newGroup(lexer : TFHIRPathLexer; next : TFHIRExpressionNode) : TFHIRExpressionNode;
+begin
+  result := TFHIRExpressionNode.Create(lexer.nextId);
+  try
+    result.kind := enkGroup;
+    result.Group := next.Link;
+    result.Group.Proximal := true;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRPathParser.gatherPrecedence(lexer : TFHIRPathLexer; var start : TFHIRExpressionNode; ops : TFHIRPathOperationSet);
+var
+  work : boolean;
+  focus, node, group : TFHIRExpressionNode;
+begin
+  assert(start.Proximal);
+
+  // is there anything to do?
+  work := false;
+  focus := start.OpNext;
+  if start.Operation in ops then
+    while (focus <> nil) and (focus.operation <> popNull) do
+    begin
+      work := work or not (focus.Operation in Ops);
+      focus := focus.OpNext;
+    end
+  else
+    while (focus <> nil) and (focus.operation <> popNull) do
+    begin
+      work := work or (focus.Operation in Ops);
+      focus := focus.OpNext;
+    end;
+  if not work then
+    exit;
+
+  // entry point: tricky
+  if start.Operation in ops then
+  begin
+    group := newGroup(lexer, start);
+    group.proximal := true;
+    focus := start;
+    start.Free;
+    start := group;
+  end
+  else
+  begin
+    node := start;
+    focus := node.OpNext;
+    while not (focus.Operation in Ops) do
+    begin
+      node := focus;
+      focus := focus.OpNext;
+    end;
+    group := newGroup(lexer, focus);
+    node.OpNext := group;
+  end;
+
+  // now, at this point:
+  //   group is the group we are adding to, it already has a .group property filled out.
+  //   focus points at the group.group
+  repeat
+    // run until we find the end of the sequence
+    while (focus.Operation in ops) do
+      focus := focus.OpNext;
+    if (focus.Operation <> popNull) then
+    begin
+      group.Operation := focus.Operation;
+      group.OpNext := focus.OpNext.Link;
+      focus.Operation := popNull;
+      focus.OpNext := nil;
+      // now look for another sequence, and start it
+      node := group;
+      focus := group.OpNext;
+      if (focus <> nil) then
+      begin
+        while (focus <> nil) and not (focus.Operation in Ops) do
+        begin
+          node := focus;
+          focus := focus.OpNext;
+        end;
+        if (focus <> nil) { and (focus.Operation in Ops) - must be true } then
+        begin
+          group := newGroup(lexer, focus);
+          node.OpNext := group;
+        end;
+      end;
+    end;
+  until (focus = nil) or (focus.Operation = popNull);
+end;
+
+procedure TFHIRPathParser.organisePrecedence(lexer : TFHIRPathLexer; var node : TFHIRExpressionNode);
+begin
+  gatherPrecedence(lexer, node, [popTimes, popDivideBy, popDiv, popMod]);
+  gatherPrecedence(lexer, node, [popPlus, popMinus, popConcatenate]);
+  gatherPrecedence(lexer, node, [popUnion]);
+  gatherPrecedence(lexer, node, [popLessThan, popGreater, popLessOrEqual, popGreaterOrEqual]);
+  gatherPrecedence(lexer, node, [popIs]);
+  gatherPrecedence(lexer, node, [popEquals, popEquivalent, popNotEquals, popNotEquivalent]);
+  gatherPrecedence(lexer, node, [popAnd]);
+  gatherPrecedence(lexer, node, [popXor, popOr]);
+  // last: implies
 end;
 
 end.
