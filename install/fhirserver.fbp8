@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix significant stability issue, and add DirectTrust support"
+        as.returnvalue = "Add turtle support, fix bug with mime type"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -114,11 +114,13 @@ begin
       action.group
       begin
         description = "DUnit Tests"
+        enabled = false
         id = {77AF12F8-DBE0-4ABB-BD31-13E85E4F5E1D}
         action.files.delete
         begin
           deletehidden = false
           deletereadonly = false
+          enabled = false
           failifnofile = false
           filespec = C:\\work\\fhirserver\\Exec\\FHIRServerTests.exe
           id = {91E95BB6-0B1C-46FB-B761-F29762E59894}
@@ -426,13 +428,13 @@ begin
           enablereturncodecheck = true
           enabletimeout = false
           expandimpersonationtoken = false
-          hidewindow = true
+          hidewindow = false
           id = {10CA498F-3322-4E89-9626-95B594AF39CE}
           impersonateusenetcredonly = false
           impersonateuser = false
           logoutput = true
           logprocessparameters = true
-          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"HL7Connect COM Library\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer4.exe\""
+          params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIRServr\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\Exec\\FHIRServer4.exe\""
           programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
           redirectstderr = true
           returncodecomparator = rcEqualTo

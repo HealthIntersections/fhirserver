@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.155 2017-07-11</title>
+		<item><title>FHIRServer release 1.0.156 2017-07-25</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.156.exe</link>
+			<description>2017-07-25 (v1.0.156): Add turtle support, fix bug with mime type</description>
+		</item>
+<item><title>FHIRServer release 1.0.155 2017-07-11</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.155.exe</link>
 			<description>2017-07-11 (v1.0.155): fix bug with pre-fetch</description>
 		</item>
-<item><title>FHIRServer release 1.0.154 2017-07-10</title>
+		<item><title>FHIRServer release 1.0.154 2017-07-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver3-1.0.154.exe</link>
 			<description>2017-07-10 (v1.0.154): Support for Hacking Health 2017</description>
 		</item>
