@@ -904,16 +904,7 @@ begin
     try
       result := this.parseXPath;
       this.moveOperationsToProximal(result);
-      b := Result.ToString;
       this.organisePrecedence(result, true);
-      a := result.ToString;
-      if b <> a then
-      begin
-        try
-          raise Exception.Create('changed from '+b+' to '+a);
-        except
-        end;
-      end;
     finally
       this.reader.Free;
     end;
