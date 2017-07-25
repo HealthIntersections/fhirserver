@@ -700,7 +700,7 @@ function TFHIRXmlComposerBase.MimeType: String;
 begin
   {$IFDEF FHIR2}
   result := 'application/xml+fhir; charset=UTF-8';
-  {ELSE}
+  {$ELSE}
   result := 'application/fhir+xml; charset=UTF-8';
   {$ENDIF} 
 end;
@@ -2739,6 +2739,20 @@ begin
       composeResource(base, oResource);
     finally
       base.free;
+    end;
+
+    if URL <> '' then
+    begin
+      // Protege Ontology Link
+      base := TTurtleComplex.Create(nullLoc);
+      try
+        base.addUriPredicate('a', 'owl:ontology');
+        base.addUriPredicate('owl:imports', 'fhir:fhir.ttl');
+        base.addUriPredicate('owl:versionIRI', url+'.ttl');
+        Fttl.addObject(url+'.ttl', base.link);
+      finally
+        base.free;
+      end;
     end;
 
     TTurtleComposer.compose(Fttl, stream);
