@@ -11,7 +11,7 @@ valueset "Office Visit": '2.16.840.1.113883.3.464.1003.101.12.1001'
 valueset "Valvular Heart Disease": '2.16.840.1.113883.3.464.1003.104.12.1017'
 valueset "INR Lab Result": '2.16.840.1.113883.3.117.1.7.1.213'
 
-parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0)]
+parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0))
 
 context Patient
 

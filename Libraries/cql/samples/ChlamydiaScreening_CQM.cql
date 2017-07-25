@@ -17,7 +17,7 @@ valueset "Lab Tests During Pregnancy": '2.16.840.1.113883.3.464.1003.111.12.1007
 valueset "Lab Tests for Sexually Transmitted Infections": '2.16.840.1.113883.3.464.1003.110.12.1051'
 valueset "Chlamydia Screening": '2.16.840.1.113883.3.464.1003.110.12.1052'
 
-parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0)]
+parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0))
 
 context Patient
 

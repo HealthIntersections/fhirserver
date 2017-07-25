@@ -4,14 +4,36 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  StringSupport, ParserSupport,
+  StringSupport, ParserSupport, DecimalSupport,
   AdvObjects, AdvGenerics,
   FHIRBase, FHIRPath,
   CQLModel;
 
 Type
   TCqlLexer = class (TFHIRPathLexer)
-  private
+  protected
+    procedure checkStart(var details : TCqlIntervalOperationDetails);
+    procedure readDateTimePrecision(var details : TCqlIntervalOperationDetails);
+    procedure readProperly(var details : TCqlIntervalOperationDetails);
+    function readQuantity(var details : TCqlIntervalOperationDetails) : boolean;
+    function readQuantityOffset(var details : TCqlIntervalOperationDetails) : boolean;
+
+    function readSame(var details : TCqlIntervalOperationDetails) : boolean;
+    function readIncludes(var details : TCqlIntervalOperationDetails) : boolean;
+    function readMeets(var details : TCqlIntervalOperationDetails) : boolean;
+    function readOverlaps(var details : TCqlIntervalOperationDetails) : boolean;
+    function readStarts(var details : TCqlIntervalOperationDetails) : boolean;
+    function readEnds(var details : TCqlIntervalOperationDetails) : boolean;
+    function readDuring(var details : TCqlIntervalOperationDetails) : boolean;
+    function readIncludedIn(var details : TCqlIntervalOperationDetails) : boolean;
+    function readWithin(var details : TCqlIntervalOperationDetails) : boolean;
+    function readAfter(var details : TCqlIntervalOperationDetails; checkOnOr : boolean) : boolean;
+    function readBefore(var details : TCqlIntervalOperationDetails; checkOnOr : boolean) : boolean;
+
+    function isIntervalOperator(var details : TCqlIntervalOperationDetails; doRevert : boolean) : boolean;
+    function isUnaryOperator : boolean;
+  protected
+    function collapseEmptyLists : boolean; override;
   public
     procedure next; override;
   end;
@@ -49,44 +71,57 @@ Type
     function IndexOf(name : String) : integer;
   end;
 
-  TCqlParserState = (cpsProximal, cpsCheckAlias, cpsAllowInner);
+  TCqlParserState = (cpsProximal, cpsCheckAlias, cpsAllowInner, cpsNoprocessEnd);
   TCqlParserStateSet = set of TCqlParserState;
 
   TCqlParser = class (TFHIRPathParser)
   private
     FRegistry : TCqlFunctionRegistry;
     function isReservedWord(word : String) : boolean;
+    function isStructuralWord(word : String) : boolean;
 
-    procedure readVersion(lexer : TFHIRPathLexer; item : TCqlVersioned);
-    function readContext(lexer : TFHIRPathLexer) : TCqlContextType;
+    procedure readVersion(lexer : TCqlLexer; item : TCqlVersioned);
+    function readContext(lexer : TCqlLexer) : TCqlContextType;
+    function expConstant(lexer : TCqlLexer; value : String) : TCqlExpressionNode;
+    function expNull(lexer : TCqlLexer) : TCqlExpressionNode;
 
-    procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TCqlExpressionNode);
+    procedure organisePrecedence(lexer : TCqlLexer; var node: TCqlExpressionNode);
 
-    procedure readConstant(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readGroup(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readRetrieve(lexer: TFHIRPathLexer; expression : TCqlExpressionNode; states : TCqlParserStateSet);
-    procedure checkForAlias(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readTuple(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readFunction(lexer : TFHIRPathLexer; expression : TCqlExpressionNode; name : String);
-    procedure readCode(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readInterval(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
-    procedure readIf(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
-    function parseExpression(lexer : TFHIRPathLexer; states : TCqlParserStateSet) : TCQLExpressionNode;
+    procedure readConstant(lexer: TCqlLexer; expression : TCqlExpressionNode);
+    procedure readGroup(lexer: TCqlLexer; expression : TCqlExpressionNode);
+    procedure readRetrieve(lexer: TCqlLexer; expression : TCqlExpressionNode; states : TCqlParserStateSet);
+    procedure checkForAlias(lexer: TCqlLexer; expression : TCqlExpressionNode);
+    procedure processFilters(lexer: TCqlLexer; expression : TCqlExpressionNode);
+    procedure readTupleOrList(lexer : TCqlLexer; expression : TCqlExpressionNode; name : String; alreadyEntered : boolean);
+    procedure readFunction(lexer : TCqlLexer; expression : TCqlExpressionNode; name : String);
+    procedure readMultiSource(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readCode(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readConcept(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readConvert(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readCast(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readInterval(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readIf(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    procedure readCase(lexer : TCqlLexer; expression : TCqlExpressionNode);
+    function readIndexer(lexer : TCqlLexer; expression : TCqlExpressionNode) : TCqlExpressionNode;
+    function parseTypeExpression(lexer : TCqlLexer) : TCQLExpressionNode;
+    function parseExpression(lexer : TCqlLexer; states : TCqlParserStateSet) : TCQLExpressionNode;
 
-    function parseListType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
-    function parseIntervalType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
-    function parseTupleType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
-    function parseChoiceType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
-    function parseSimpleType(lexer : TFHIRPathLexer; token : string) : TCqlTypeSpecifier;
-    function parseTypeDetails(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
-    function parseDefine(lexer : TFHIRPathLexer; context : TCqlContextType; access : TCqlAccessLevel) : TCqlExpressionDefinition;
-    function parseFunction(lexer : TFHIRPathLexer; context : TCqlContextType; access : TCqlAccessLevel) : TCqlFunctionDefinition;
-    function parseValueSet(lexer : TFHIRPathLexer; access : TCqlAccessLevel) : TCqlValueSetReference;
-    function parseCodeSystem(lexer : TFHIRPathLexer; access : TCqlAccessLevel) : TCqlCodeSystemReference;
-    function parseParameter(lexer : TFHIRPathLexer) : TCqlParameterDefinition;
-    function parseInclude(lexer : TFHIRPathLexer) : TCqlInclude;
-    function parseUsing(lexer : TFHIRPathLexer) : TCqlUsing;
-    function parseLibrary(lexer : TFHIRPathLexer) : TCqlLibrary;
+    function parseListType(lexer : TCqlLexer) : TCqlTypeSpecifier;
+    function parseIntervalType(lexer : TCqlLexer) : TCqlTypeSpecifier;
+    function parseTupleType(lexer : TCqlLexer) : TCqlTypeSpecifier;
+    function parseChoiceType(lexer : TCqlLexer) : TCqlTypeSpecifier;
+    function parseSimpleType(lexer : TCqlLexer; token : string) : TCqlTypeSpecifier;
+    function parseTypeDetails(lexer : TCqlLexer) : TCqlTypeSpecifier;
+    function parseDefine(lexer : TCqlLexer; context : TCqlContextType) : TCqlExpressionDefinition;
+    function parseFunction(lexer : TCqlLexer; context : TCqlContextType) : TCqlFunctionDefinition;
+    function parseValueSet(lexer : TCqlLexer; access : TCqlAccessLevel) : TCqlValueSetReference;
+    function parseCode(lexer : TCqlLexer; access : TCqlAccessLevel) : TCqlCodeDefinition;
+    function parseConcept(lexer : TCqlLexer; access : TCqlAccessLevel) : TCqlConceptDefinition;
+    function parseCodeSystem(lexer : TCqlLexer; access : TCqlAccessLevel) : TCqlCodeSystemReference;
+    function parseParameter(lexer : TCqlLexer) : TCqlParameterDefinition;
+    function parseInclude(lexer : TCqlLexer) : TCqlInclude;
+    function parseUsing(lexer : TCqlLexer) : TCqlUsing;
+    function parseLibrary(lexer : TCqlLexer) : TCqlLibrary;
 
   public
     constructor Create; override;
@@ -98,7 +133,37 @@ implementation
 
 { TCqlParser }
 
-function TCqlParser.parseCodeSystem(lexer: TFHIRPathLexer; access : TCqlAccessLevel): TCqlCodeSystemReference;
+function TCqlParser.parseCode(lexer: TCqlLexer; access: TCqlAccessLevel): TCqlCodeDefinition;
+var
+  s : String;
+begin
+  result := TCqlCodeDefinition.Create;
+  try
+    result.StartPosition := lexer.CurrentLocation;
+    result.Name := lexer.readConstant('code name');
+    result.AccessLevel := access;
+    lexer.token(':');
+    result.code := lexer.readIdentifier('code code');
+    lexer.token('from');
+    s := lexer.readIdentifier('code system');
+    if lexer.takeToken('.') then
+    begin
+      result.system.LibraryName := s;
+      result.system.Id := lexer.readIdentifier('code system');
+    end
+    else
+      result.system.Id := s;
+    if lexer.takeToken('display') then
+      result.display := lexer.readConstant('display');
+
+    result.EndPosition := lexer.CurrentLocation;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
+function TCqlParser.parseCodeSystem(lexer: TCqlLexer; access : TCqlAccessLevel): TCqlCodeSystemReference;
 begin
   result := TCqlCodeSystemReference.Create;
   try
@@ -108,6 +173,52 @@ begin
     lexer.token(':');
     result.URL := lexer.readConstant('url');
     readVersion(lexer, result);
+
+    result.EndPosition := lexer.CurrentLocation;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
+function TCqlParser.parseConcept(lexer: TCqlLexer; access: TCqlAccessLevel): TCqlConceptDefinition;
+var
+  s : String;
+  first : boolean;
+  code : TCqlScopedIdReference;
+begin
+  result := TCqlConceptDefinition.Create;
+  try
+    result.StartPosition := lexer.CurrentLocation;
+    result.Name := lexer.readConstant('code name');
+    result.AccessLevel := access;
+    lexer.token(':');
+    lexer.token('{');
+    first := true;
+    while not lexer.takeToken('}') do
+    begin
+      if first then
+        first := false
+      else
+        lexer.token(',');
+      s := lexer.readIdentifier('concept code');
+      code := TCqlScopedIdReference.Create;
+      try
+        if lexer.takeToken('.') then
+        begin
+          code.LibraryName := s;
+          code.Id := lexer.readIdentifier('concept code');
+        end
+        else
+          code.Id := s;
+        result.Codes.Add(code.Link);
+      finally
+        code.Free;
+      end;
+    end;
+
+    if lexer.takeToken('display') then
+      result.display := lexer.readConstant('display');
 
     result.EndPosition := lexer.CurrentLocation;
     result.Link;
@@ -128,12 +239,13 @@ begin
   end;
 end;
 
-function TCqlParser.parseFunction(lexer: TFHIRPathLexer; context: TCqlContextType; access: TCqlAccessLevel): TCqlFunctionDefinition;
+function TCqlParser.parseFunction(lexer: TCqlLexer; context: TCqlContextType): TCqlFunctionDefinition;
 var
   first : boolean;
-  s : String;
   param : TCqlFunctionParameterDefinition;
+  access: TCqlAccessLevel;
 begin
+  access := CqlAccessDefault;
   lexer.Next;
   result := TCqlFunctionDefinition.create;
   try
@@ -161,6 +273,8 @@ begin
     end;
     lexer.token(')');
 
+    if (lexer.takeToken('returns')) then
+      result.typeInfo := parseTypeDetails(lexer);
     lexer.token(':');
     result.body := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
     result.EndPosition := lexer.CurrentLocation;
@@ -170,15 +284,23 @@ begin
   end;
 end;
 
-function TCqlParser.parseDefine(lexer: TFHIRPathLexer; context: TCqlContextType; access: TCqlAccessLevel): TCqlExpressionDefinition;
+function TCqlParser.parseDefine(lexer: TCqlLexer; context: TCqlContextType): TCqlExpressionDefinition;
+var
+  access: TCqlAccessLevel;
 begin
+  access := CqlAccessDefault;
   result := TCqlExpressionDefinition.Create;
   try
     result.StartPosition := lexer.CurrentLocation;
     result.AccessLevel := access;
     result.Context := context;
 
-    result.Name := lexer.readIdentifier('define');
+    if (lexer.takeToken('public')) then
+      access := CqlAccessPublic
+    else if (lexer.takeToken('private')) then
+      access := CqlAccessPrivate;
+
+    result.Name := lexer.readIdentifier('define name');
     lexer.token(':');
     result.expression := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
     result.EndPosition := lexer.CurrentLocation;
@@ -189,7 +311,7 @@ begin
 end;
 
 
-function TCqlParser.parseInclude(lexer: TFHIRPathLexer): TCqlInclude;
+function TCqlParser.parseInclude(lexer: TCqlLexer): TCqlInclude;
 begin
   result := TCqlInclude.Create;
   try
@@ -211,7 +333,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseLibrary(lexer: TFHIRPathLexer): TCqlLibrary;
+function TCqlParser.parseLibrary(lexer: TCqlLexer): TCqlLibrary;
 var
   token : String;
   access : TCqlAccessLevel;
@@ -239,8 +361,17 @@ begin
           result.CodeSystems.Add(parseCodeSystem(lexer, access))
         else if (token = 'valueset') then
           result.ValueSets.Add(parseValueSet(lexer, access))
+        else if (token = 'code') then
+          result.Codes.Add(parseCode(lexer, access))
+        else if (token = 'concept') then
+          result.Concepts.Add(parseConcept(lexer, access))
         else if access <> CqlAccessDefault then
           raise Exception.Create('Unexpected token '+CODES_AccessLevel[access])
+        else if (token = 'define') then
+          if lexer.hasToken('function') then
+            result.Functions.add(parseFunction(lexer, context))
+          else
+            result.Definitions.add(parseDefine(lexer, context))
         else if (token = 'using') then
           result.Using.Add(parseUsing(lexer))
         else if (token = 'include') then
@@ -249,11 +380,6 @@ begin
           result.Parameters.Add(parseParameter(lexer))
         else if (token = 'context') then
           context := readContext(lexer)
-        else if (token = 'define') then
-          if lexer.hasToken('function') then
-            result.Functions.add(parseFunction(lexer, context, access))
-          else
-            result.Definitions.add(parseDefine(lexer, context, access))
         else
           raise lexer.error('not done yet: '+token);
         access := CqlAccessDefault;
@@ -268,14 +394,14 @@ begin
 end;
 
 
-function TCqlParser.parseParameter(lexer: TFHIRPathLexer): TCqlParameterDefinition;
+function TCqlParser.parseParameter(lexer: TCqlLexer): TCqlParameterDefinition;
 begin
   result := TCqlParameterDefinition.Create;
   try
     result.StartPosition := lexer.CurrentLocation;
     result.Name := lexer.take;
     // what comes next may be a type
-    if not isReservedWord(lexer.current) then
+    if not isStructuralWord(lexer.current) then
     begin
       if not lexer.hasToken('default') then
         result.TypeDetails := parseTypeDetails(lexer);
@@ -292,7 +418,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseListType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
+function TCqlParser.parseListType(lexer : TCqlLexer) : TCqlTypeSpecifier;
 begin
   result := TCqlTypeSpecifier.Create;
   try
@@ -309,7 +435,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseIntervalType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
+function TCqlParser.parseIntervalType(lexer : TCqlLexer) : TCqlTypeSpecifier;
 var
   param : TCqlTypeSpecifier;
 begin
@@ -334,7 +460,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseTupleType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
+function TCqlParser.parseTupleType(lexer : TCqlLexer) : TCqlTypeSpecifier;
 var
   loc : TSourceLocation;
   s : String;
@@ -369,17 +495,29 @@ end;
 
 function TCqlParser.isReservedWord(word: String): boolean;
 begin
-  result := StringArrayExistsSensitive(['define', 'function', 'context', 'parameter', 'valueset', 'codesystem', 'concept', 'code', 'public', 'private', 'then', 'else'], word)
+  result := StringArrayExistsSensitive(['Choice', 'Interval', 'List', 'Tuple', 'after', 'and', 'as', 'asc', 'ascending', 'before', 'between', 'by', 'called', 'case', 'cast', 'codesystem',
+      'codesystems', 'collapse', 'context', 'convert', 'day', 'days', 'default', 'define', 'desc', 'descending', 'difference', 'div', 'duration', 'during',
+      'else', 'ends', 'except', 'external', 'false', 'flatten', 'from', 'function', 'hour', 'hours', 'if', 'implies', 'in', 'include', 'included', 'includes',
+      'intersect', 'is', 'less', 'let', 'library', 'maximum', 'meets', 'millisecond', 'milliseconds', 'minimum', 'minute', 'minutes', 'mod', 'month', 'months',
+      'more', 'null', 'occurs', 'of', 'on', 'or', 'overlaps', 'parameter', 'point', 'predecessor', 'private', 'properly', 'public', 'return', 'returns', 'same',
+      'second', 'seconds', 'singleton', 'sort', 'starts', 'successor', 'such', 'than', 'that', 'then', 'to', 'true', 'union', 'using', 'valueset', 'week',
+      'weeks', 'when', 'width', 'with', 'within', 'without', 'xor', 'year', 'years'
+      ], word)
     or StringArrayExistsSensitive(CODES_CqlOperationId, word);
 end;
 
 
-procedure TCqlParser.organisePrecedence(lexer: TFHIRPathLexer; var node: TCqlExpressionNode);
+function TCqlParser.isStructuralWord(word: String): boolean;
+begin
+  result := StringArrayExistsSensitive(['codesystem', 'define', 'code', 'concept', 'valueset', 'includes', 'parameter'], word);
+end;
+
+procedure TCqlParser.organisePrecedence(lexer: TCqlLexer; var node: TCqlExpressionNode);
 begin
   // nothing yet
 end;
 
-function TCqlParser.parseChoiceType(lexer : TFHIRPathLexer) : TCqlTypeSpecifier;
+function TCqlParser.parseChoiceType(lexer : TCqlLexer) : TCqlTypeSpecifier;
 begin
   result := TCqlTypeSpecifier.Create;
   try
@@ -401,7 +539,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseSimpleType(lexer : TFHIRPathLexer; token : string) : TCqlTypeSpecifier;
+function TCqlParser.parseSimpleType(lexer : TCqlLexer; token : string) : TCqlTypeSpecifier;
 begin
   result := TCqlTypeSpecifier.Create;
   try
@@ -421,7 +559,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseTypeDetails(lexer: TFHIRPathLexer): TCqlTypeSpecifier;
+function TCqlParser.parseTypeDetails(lexer: TCqlLexer): TCqlTypeSpecifier;
 var
   token : string;
 begin
@@ -438,7 +576,20 @@ begin
     result := parseSimpleType(lexer, token);
 end;
 
-function TCqlParser.parseUsing(lexer: TFHIRPathLexer): TCqlUsing;
+function TCqlParser.parseTypeExpression(lexer: TCqlLexer): TCQLExpressionNode;
+begin
+  result := TCqlExpressionNode.Create(lexer.nextId);
+  try
+    result.kind := enkStructure;
+    result.StructureType := cstType;
+    result.TypeInfo := parseTypeDetails(lexer);
+    result.link;
+  finally
+    result.Free;
+  end;;
+end;
+
+function TCqlParser.parseUsing(lexer: TCqlLexer): TCqlUsing;
 begin
   result := TCqlUsing.Create;
   try
@@ -452,7 +603,7 @@ begin
   end;
 end;
 
-function TCqlParser.parseValueSet(lexer: TFHIRPathLexer; access : TCqlAccessLevel): TCqlValueSetReference;
+function TCqlParser.parseValueSet(lexer: TCqlLexer; access : TCqlAccessLevel): TCqlValueSetReference;
 var
   ref : TCqlScopedIdReference;
 begin
@@ -480,12 +631,13 @@ begin
             lexer.take;
             ref.Id := lexer.take;
           end;
-          result.CodeSystems.Add(ref);
+          result.CodeSystems.Add(ref.link);
           ref.EndPosition := lexer.CurrentLocation;
         finally
           ref.Free;
         end;
       end;
+      lexer.token('}');
     end;
 
     result.EndPosition := lexer.CurrentLocation;
@@ -495,7 +647,7 @@ begin
   end;
 end;
 
-function TCqlParser.readContext(lexer: TFHIRPathLexer): TCqlContextType;
+function TCqlParser.readContext(lexer: TCqlLexer): TCqlContextType;
 var
   token : String;
 begin
@@ -509,7 +661,27 @@ begin
     raise lexer.error('Unknown value for context: "'+token+'"');
 end;
 
-procedure TCqlParser.readVersion(lexer: TFHIRPathLexer; item: TCqlVersioned);
+procedure TCqlParser.readConvert(lexer: TCqlLexer; expression: TCqlExpressionNode);
+begin
+  expression.name := 'convert';
+  expression.kind := enkStructure;
+  expression.StructureType := cstConvert;
+
+  expression.Items.Add(parseExpression(lexer, [cpsProximal]));
+  lexer.token('to');
+  expression.TypeInfo := parseTypeDetails(lexer);
+end;
+
+procedure TCqlParser.readCast(lexer: TCqlLexer; expression: TCqlExpressionNode);
+begin
+  expression.name := 'cast';
+  expression.kind := enkStructure;
+  expression.StructureType := cstConvert;
+
+  expression.Items.Add(parseExpression(lexer, [cpsProximal]));
+end;
+
+procedure TCqlParser.readVersion(lexer: TCqlLexer; item: TCqlVersioned);
 begin
   if lexer.hasToken('version') then
   begin
@@ -531,13 +703,373 @@ begin
   inherited;
 end;
 
+function TCqlParser.expConstant(lexer : TCqlLexer; value: String): TCqlExpressionNode;
+begin
+  result := TCqlExpressionNode.Create(lexer.nextId);
+  try
+    result.constant := value;
+    result.kind := enkConstant;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TCqlParser.expNull(lexer: TCqlLexer): TCqlExpressionNode;
+begin
+  result := TCqlExpressionNode.Create(lexer.nextId);
+  try
+    result.constant := '$$null';
+    result.kind := enkConstant;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 { TCqlLexer }
+
+procedure TCqlLexer.checkStart(var details: TCqlIntervalOperationDetails);
+begin
+  if takeToken('starts') then
+    details.leftQualfier := CqlLeftStarts
+  else if takeToken('ends') then
+    details.leftQualfier := CqlLeftEnds
+  else if takeToken('occurs') then
+    details.leftQualfier := CqlLeftOccurs
+end;
+
+procedure TCqlLexer.readDateTimePrecision(var details: TCqlIntervalOperationDetails);
+begin
+  if (StringArrayExistsSensitive(['year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'], Current)) then
+    details.precision := TCqlIntervalPrecision(StringArrayIndexOfSensitive(['year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'], take));
+end;
+
+procedure TCqlLexer.readProperly(var details: TCqlIntervalOperationDetails);
+begin
+  if takeToken('properly') then
+    details.properly := true;
+end;
+
+function TCqlLexer.readQuantity(var details : TCqlIntervalOperationDetails): boolean;
+begin
+  if not isNumericalConstant then
+    exit(false);
+  try
+    details.value := take;
+  except
+    exit(false);
+  end;
+  if not StringIsDecimal(details.value) then
+    exit(false);
+  if not (isUnit or isConstant) then
+    exit(false);
+  details.units := take;
+  result := true;
+end;
+
+function TCqlLexer.readQuantityOffset(var details: TCqlIntervalOperationDetails): boolean;
+begin
+  if takeToken('less') then
+  begin
+    if not takeToken('than') then
+      exit(false);
+    details.relativeness := CqlRelativeLessThan;
+
+    exit(readQuantity(details));
+  end
+  else if takeToken('more') then
+  begin
+    if not takeToken('than') then
+      exit(false);
+    details.relativeness := CqlRelativeMoreThan;
+    exit(readQuantity(details));
+  end
+  else if readQuantity(details) then
+  begin
+    if not takeToken('or') then
+      exit(true);
+    if takeToken('less') then
+      details.relativeness := CqlRelativeOrLess
+    else if takeToken('more') then
+      details.relativeness := CqlRelativeOrMore
+    else
+      exit(false);
+    result := true;
+  end
+  else
+    result := true; // note: here we return true if we didn't consume anything, irrespective of whether there's a match
+end;
+
+function TCqlLexer.readSame(var details: TCqlIntervalOperationDetails): boolean;
+begin
+  details.operation := CqlIntervalSame;
+  readDateTimePrecision(details);
+  if not takeToken('as') then
+  begin
+    if not takeToken('or') then
+      exit(false);
+    if takeToken('before') then
+      details.relativeness := CqlRelativeBefore
+    else if takeToken('after') then
+      details.relativeness := CqlRelativeAfter
+    else
+      exit(false);
+  end;
+  if takeToken('start') then
+  begin
+    details.rightQualifier := CqlRightStart;
+    takeToken('of');
+  end
+  else if takeToken('end') then
+  begin
+    details.rightQualifier := CqlRightEnd;
+    takeToken('of');
+  end;
+  result := true;
+end;
+
+function TCqlLexer.readIncludes(var details: TCqlIntervalOperationDetails): boolean;
+begin
+  details.operation := CqlIntervalIncludes;
+  readDateTimePrecision(details);
+  if takeToken('start') then
+  begin
+    details.rightQualifier := CqlRightStart;
+    takeToken('of');
+  end
+  else if takeToken('end') then
+  begin
+    details.rightQualifier := CqlRightEnd;
+    takeToken('of');
+  end;
+  result := true;
+end;
+
+function TCqlLexer.readMeets(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalMeets;
+  if takeToken('before') then
+    details.relativeness := CqlRelativeBefore
+  else if takeToken('after') then
+    details.relativeness := CqlRelativeAfter;
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readOverlaps(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalOverlaps;
+  if takeToken('before') then
+    details.relativeness := CqlRelativeBefore
+  else if takeToken('after') then
+    details.relativeness := CqlRelativeAfter;
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readStarts(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalStarts;
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readEnds(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalEnds;
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readDuring(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalDuring;
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readIncludedIn(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalIncludedIn;
+  if not takeToken('in') then
+    exit(false);
+  readDateTimePrecision(details);
+  result := true;
+end;
+
+function TCqlLexer.readWithin(var details : TCqlIntervalOperationDetails) : boolean;
+begin
+  details.operation := CqlIntervalWithin;
+  if not readQuantity(details) then
+    exit(false);
+
+  if not takeToken('of') then
+    exit(false);
+  if takeToken('start') then
+  begin
+    details.rightQualifier := CqlRightStart;
+    takeToken('of');
+  end
+  else if takeToken('end') then
+  begin
+    details.rightQualifier := CqlRightEnd;
+    takeToken('of');
+  end;
+  result := true;
+end;
+
+function TCqlLexer.readAfter(var details : TCqlIntervalOperationDetails; checkOnOr : boolean) : boolean;
+begin
+  details.operation := CqlIntervalAfter;
+  if (checkOnOr) then
+    if (takeToken('on')) then
+      begin
+        if not (takeToken('or')) then
+          exit(false);
+        details.onOr := true;
+      end;
+  readDateTimePrecision(details);
+  if takeToken('start') then
+  begin
+    details.rightQualifier := CqlRightStart;
+    takeToken('of');
+  end
+  else if takeToken('end') then
+  begin
+    details.rightQualifier := CqlRightEnd;
+    takeToken('of');
+  end;
+  result := true;
+end;
+
+function TCqlLexer.readBefore(var details : TCqlIntervalOperationDetails; checkOnOr : boolean) : boolean;
+begin
+  details.operation := CqlIntervalBefore;
+  if (checkOnOr) then
+    if (takeToken('or')) then
+      begin
+        if not (takeToken('on')) then
+          exit(false);
+        details.onOr := true;
+      end;
+  readDateTimePrecision(details);
+  if takeToken('start') then
+  begin
+    details.rightQualifier := CqlRightStart;
+    takeToken('of');
+  end
+  else if takeToken('end') then
+  begin
+    details.rightQualifier := CqlRightEnd;
+    takeToken('of');
+  end;
+  result := true;
+end;
+
+
+function TCqlLexer.isIntervalOperator(var details: TCqlIntervalOperationDetails; doRevert : boolean): boolean;
+begin
+  mark;
+  try
+    // looking for same:
+    details.clear();
+    checkStart(details);
+    if takeToken('meets') then
+      exit(readMeets(details))
+    else if takeToken('overlaps') then
+      exit(readOverlaps(details))
+    else if takeToken('same') then
+      exit(readSame(details))
+    else
+    begin
+      readProperly(details);
+      if takeToken('during') then
+        exit(readDuring(details))
+      else if takeToken('included') then
+        exit(readIncludedIn(details))
+      else if takeToken('within') then
+        exit(readWithin(details))
+    end;
+
+    revert;
+    details.clear();
+    checkStart(details);
+    if readQuantityOffset(details) then
+    begin
+      if (takeToken('on')) then
+      begin
+        if not (takeToken('or')) then
+          exit(false);
+        details.onOr := true;
+        if takeToken('after') then
+          exit(readAfter(details, false))
+        else if takeToken('before') then
+          exit(readBefore(details, false))
+        else
+          exit(false);
+      end
+      else if takeToken('after') then
+        exit(readAfter(details, true))
+      else if takeToken('before') then
+        exit(readBefore(details, true));
+    end;
+
+    revert;
+    details.clear();
+    if takeToken('starts') then
+      exit(readStarts(details))
+    else if takeToken('ends') then
+      exit(readEnds(details));
+
+    revert;
+    details.clear();
+    readProperly(details);
+    if takeToken('includes') then
+      exit(readIncludes(details));
+
+    revert;
+    result := false;
+  finally
+    if doRevert then
+      revert;
+  end;
+end;
+
+function TCqlLexer.isUnaryOperator: boolean;
+var
+  t1, t2 : String;
+  cop : TCqlOperationId;
+begin
+  if StringArrayExistsSensitive(['+', '-'], Current) then
+    exit(true);
+
+  t1 := current;
+  result := StringArrayExistsSensitive(NAMES_UNPREFIXED_OPERATORS, t1);
+  if result then
+  begin
+    cop := TCqlOperationId(StringArrayIndexOfSensitive(CODES_CqlOperationId, t1));
+    if (FOLLOWING_WORDS_CqlOperationId[cop] <> '') then
+    begin
+      mark;
+      next;
+      t2 := current;
+      revert;
+      result := t2 = FOLLOWING_WORDS_CqlOperationId[cop];
+    end;
+  end;
+end;
 
 procedure TCqlLexer.next;
 begin
   inherited next;
   while hasComment do
     inherited next;
+end;
+
+function TCqlLexer.collapseEmptyLists: boolean;
+begin
+  result := false;
 end;
 
 { TCqlFunction }
@@ -608,18 +1140,51 @@ begin
     result := 0;
 end;
 
-procedure TCqlParser.readConstant(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
+procedure TCqlParser.readConcept(lexer: TCqlLexer; expression: TCqlExpressionNode);
+var
+  first : boolean;
+begin
+  lexer.token('{');
+
+  if lexer.hasToken('Code') then
+  begin
+    expression.kind := enkFunction;
+    expression.FunctionId := pfCustom;
+    expression.CqlFunctionId := cfConcept;
+
+    first := true;
+    while not (lexer.takeToken('}')) do
+    begin
+      if first then
+        first := false
+      else
+        lexer.token(',');
+      expression.Parameters.Add(parseExpression(lexer, [cpsProximal, cpsAllowInner]));
+    end;
+    if (lexer.hasToken('display')) then
+    begin
+      lexer.token('display');
+      expression.Parameters.Add(parseExpression(lexer, [cpsProximal, cpsAllowInner]));
+    end
+    else
+      expression.Parameters.Add(expNull(lexer));
+  end
+  else
+    readTupleOrList(lexer, expression, 'Concept', true);
+end;
+
+procedure TCqlParser.readConstant(lexer: TCqlLexer; expression : TCqlExpressionNode);
 begin
   if lexer.current.startsWith('''') then
     lexer.processConstant(lexer.current);
   expression.Constant := lexer.take;
   expression.kind := enkConstant;
   expression.SourceLocationEnd := lexer.CurrentLocation;
-  if lexer.isUnit or lexer.isConstant then
+  if lexer.isUnit() or lexer.isConstant then
     expression.units := lexer.take;
 end;
 
-procedure TCqlParser.readGroup(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
+procedure TCqlParser.readGroup(lexer: TCqlLexer; expression : TCqlExpressionNode);
 begin
   lexer.next;
   expression.kind := enkGroup;
@@ -630,7 +1195,7 @@ begin
   lexer.next;
 end;
 
-procedure TCqlParser.readRetrieve(lexer: TFHIRPathLexer; expression : TCqlExpressionNode; states : TCqlParserStateSet);
+procedure TCqlParser.readRetrieve(lexer: TCqlLexer; expression : TCqlExpressionNode; states : TCqlParserStateSet);
 var
   s : String;
 begin
@@ -671,9 +1236,9 @@ begin
     checkForAlias(lexer, expression);
 end;
 
-procedure TCqlParser.checkForAlias(lexer: TFHIRPathLexer; expression : TCqlExpressionNode);
+procedure TCqlParser.checkForAlias(lexer: TCqlLexer; expression : TCqlExpressionNode);
 begin
-  if not lexer.done and not isReservedWord(lexer.current) and not lexer.endingToken(lexer.current) and
+  if not lexer.done and lexer.isNameToken and not isReservedWord(lexer.current) and not lexer.endingToken(lexer.current) and
       not StringArrayExistsSensitive(CODES_TFHIRPathOperation, lexer.current) and
       not StringArrayExistsSensitive(CODES_CqlOperationId, lexer.current) then
   begin
@@ -681,12 +1246,6 @@ begin
     begin
       expression.kind := enkStructure;
       expression.StructureType := cstRetrieve;
-      if (expression.Inner <> nil) then
-      begin
-        expression.LibraryName := expression.name;
-        expression.name := expression.Inner.name;
-        expression.Inner := nil;
-      end;
     end;
     expression.alias := lexer.readIdentifier('alias');
     while (lexer.hasToken('with')) do
@@ -698,62 +1257,150 @@ begin
       lexer.token('that');
       expression.suchThat := parseExpression(lexer, [cpsProximal]);
     end;
-    if (lexer.hasToken('where')) then
+    processFilters(lexer, expression);
+  end;
+end;
+
+procedure TCqlParser.processFilters(lexer: TCqlLexer; expression : TCqlExpressionNode);
+var
+  first : boolean;
+  c : TCqlExpressionNode;
+  s : String;
+begin
+  if lexer.takeToken('let') then
+  begin
+    first := true;
+    repeat
+      s := lexer.readIdentifier('let name');
+      lexer.token(':');
+      expression.elements.add(s, parseExpression(lexer, [cpsProximal, cpsCheckAlias]));
+    until not lexer.takeToken(',');
+  end;
+  if (lexer.hasToken('where')) then
+  begin
+    lexer.token('where');
+    expression.where := parseExpression(lexer, [cpsProximal]);
+  end;
+  if (lexer.hasToken('return')) then
+  begin
+    lexer.token('return');
+    if (lexer.takeToken('all')) then
+      expression.returnType := cqlReturnAll
+    else if (lexer.takeToken('distinct')) then
+      expression.returnType := cqlReturnDistinct
+    else
+      expression.returnType := cqlReturnUnspecified;
+    expression.return := parseExpression(lexer, [cpsProximal]);
+  end;
+  if (lexer.hasToken('sort')) then
+  begin
+    lexer.token('sort');
+    if (lexer.takeToken('by')) then
     begin
-      lexer.token('where');
-      expression.where := parseExpression(lexer, [cpsProximal]);
-    end;
-    if (lexer.hasToken('return')) then
+      first := true;
+      repeat
+        if first then
+          first := false
+        else
+          lexer.token(',');
+        c := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
+        try
+          if lexer.takeToken('asc') then
+            c.sortOrder := cqlSortAscending
+          else if lexer.takeToken('desc') then
+            c.sortOrder := cqlSortDescending;
+          expression.sort.Add(c.Link);
+        finally
+          c.Free;
+        end;
+      until not lexer.hasToken(',');
+    end
+    else if lexer.takeToken('asc') then
+      expression.sortOrder := cqlSortAscending
+    else
     begin
-      lexer.token('return');
-      if (lexer.takeToken('all')) then
-        expression.returnType := cqlReturnAll
-      else if (lexer.takeToken('distinct')) then
-        expression.returnType := cqlReturnDistinct
-      else
-        expression.returnType := cqlReturnUnspecified;
-      expression.return := parseExpression(lexer, [cpsProximal]);
+      lexer.takeToken('desc');
+      expression.sortOrder := cqlSortDescending;
     end;
   end;
 end;
 
-procedure TCqlParser.readTuple(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
+procedure TCqlParser.readTupleOrList(lexer : TCqlLexer; expression : TCqlExpressionNode; name : String; alreadyEntered : boolean);
 var
-  names, first : boolean;
+  first, list, tuple : boolean;
   s : String;
+  l : TCqlExpressionNode;
 begin
-  expression.name := 'Tuple';
+  list := false;
+  tuple := false;
   expression.kind := enkStructure;
-  expression.StructureType := cstTuple;
 
-  if lexer.current = 'Tuple' then
+  if not alreadyEntered then
   begin
-    names := true;
-    lexer.token('Tuple');
-  end
-  else
-    names := false; // check this with Bryn
-  lexer.token('{');
+    if (name = '') then
+      if lexer.takeToken('Tuple') then
+        tuple := true
+     else if lexer.takeToken('List') then
+        list := true;
+
+    if lexer.takeToken('<') then
+    begin
+      expression.typeInfo := parseTypeDetails(lexer);
+      lexer.token('>');
+    end;
+
+    lexer.takeToken('{');
+  end;
   first := true;
   while not lexer.hasToken('}') do
   begin
-    if (first) then
+    if first then
       first := false
     else
       lexer.token(',');
-    if names then
+
+    if list then
+      expression.items.Add(parseExpression(lexer, [cpsProximal, cpsCheckAlias]))
+    else if tuple then
     begin
       s := lexer.readIdentifier('Tuple Field Name');
       lexer.token(':');
+      expression.elements.Add(s, parseExpression(lexer, [cpsProximal, cpsCheckAlias]));
     end
     else
-      s := 'param'+inttostr(expression.elements.count+1);
-    expression.elements.Add(s, parseExpression(lexer, [cpsProximal, cpsCheckAlias]));
+    begin
+      l := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
+      try
+        if lexer.hasToken(':') then // we're a tuple:
+        begin
+          tuple := true;
+          lexer.token(':');
+          expression.elements.Add(l.name, parseExpression(lexer, [cpsProximal, cpsCheckAlias]));
+        end
+        else
+        begin
+          list := true;
+          expression.items.Add(l.Link);
+        end;
+      finally
+        l.Free;
+      end;
+    end;
   end;
   lexer.token('}');
+
+  if expression.name = '' then
+    if tuple then
+      expression.name := 'Tuple'
+    else
+      expression.name := 'List';
+  if tuple then
+    expression.StructureType := cstTuple
+  else
+    expression.StructureType := cstList;
 end;
 
-procedure TCqlParser.readFunction(lexer : TFHIRPathLexer; expression : TCqlExpressionNode; name : String);
+procedure TCqlParser.readFunction(lexer : TCqlLexer; expression : TCqlExpressionNode; name : String);
 var
   first : boolean;
 begin
@@ -783,7 +1430,38 @@ begin
   checkParameters(lexer, expression.SourceLocationStart, expression);
 end;
 
-procedure TCqlParser.readCode(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
+procedure TCqlParser.readCase(lexer: TCqlLexer; expression: TCqlExpressionNode);
+var
+  c  : TCqlExpressionNode;
+begin
+  lexer.token('case');
+  expression.name := 'case';
+  expression.kind := enkStructure;
+  expression.StructureType := cstCase;
+
+  if not lexer.hasToken('when') then
+    expression.ifTest := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
+
+  while lexer.takeToken('when') do
+  begin
+    c := TCqlExpressionNode.Create(lexer.nextId);
+    try
+      c.kind := enkStructure;
+      c.StructureType := cstCaseItem;
+      c.ifTest := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
+      lexer.token('then');
+      c.thenStmt := parseExpression(lexer, [cpsProximal, cpsCheckAlias, cpsNoprocessEnd]);
+      expression.items.add(c.Link);
+    finally
+      c.Free;
+    end;
+  end;
+  if lexer.takeToken('else') then
+    expression.elseStmt := parseExpression(lexer, [cpsProximal, cpsCheckAlias, cpsNoprocessEnd]);
+  lexer.token('end');
+end;
+
+procedure TCqlParser.readCode(lexer : TCqlLexer; expression : TCqlExpressionNode);
 begin
   expression.kind := enkFunction;
   expression.FunctionId := pfCustom;
@@ -798,7 +1476,7 @@ begin
   end;
 end;
 
-procedure TCqlParser.readIf(lexer: TFHIRPathLexer; expression: TCqlExpressionNode);
+procedure TCqlParser.readIf(lexer: TCqlLexer; expression: TCqlExpressionNode);
 begin
   lexer.token('if');
   expression.name := 'if';
@@ -812,24 +1490,69 @@ begin
     expression.elseStmt := parseExpression(lexer, [cpsProximal, cpsCheckAlias]);
 end;
 
-procedure TCqlParser.readInterval(lexer : TFHIRPathLexer; expression : TCqlExpressionNode);
+function TCqlParser.readIndexer(lexer: TCqlLexer; expression: TCqlExpressionNode) : TCqlExpressionNode;
+begin
+  lexer.next();
+  result := TCqlExpressionNode.Create(lexer.nextId);
+  try
+    result.Kind := enkFunction;
+    result.Functionid := pfItem;
+    result.Parameters.add(parse(lexer));
+    if (lexer.current <> ']') then
+      raise lexer.error('The token '+lexer.Current+' is not expected here - a "]" expected');
+    lexer.next;
+    expression.inner := result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TCqlParser.readInterval(lexer : TCqlLexer; expression : TCqlExpressionNode);
 begin
   expression.kind := enkFunction;
   expression.FunctionId := pfCustom;
   expression.CqlFunctionId := cfInterval;
-  lexer.token('[');
+
+  if lexer.takeToken('(') then
+    expression.Parameters.Add(expConstant(lexer, 'open'))
+  else
+  begin
+    lexer.token('[');
+    expression.Parameters.Add(expConstant(lexer, 'closed'))
+  end;
+
+
   expression.Parameters.Add(parseExpression(lexer, [cpsProximal, cpsAllowInner]));
   lexer.token(',');
   expression.Parameters.Add(parseExpression(lexer, [cpsProximal, cpsAllowInner]));
-  lexer.token(']');
+  if lexer.takeToken(')') then
+    expression.Parameters.Add(expConstant(lexer, 'open'))
+  else
+  begin
+    lexer.token(']');
+    expression.Parameters.Add(expConstant(lexer, 'closed'))
+  end;
+
 end;
 
-function TCqlParser.parseExpression(lexer: TFHIRPathLexer; states : TCqlParserStateSet): TCQLExpressionNode;
+procedure TCqlParser.readMultiSource(lexer: TCqlLexer; expression: TCqlExpressionNode);
+begin
+  lexer.token('from');
+  expression.kind := enkStructure;
+  expression.StructureType := cstMultiRetrieve;
+  repeat
+    expression.items.Add(parseExpression(lexer, [cpsProximal, cpsCheckAlias]));
+  until not lexer.takeToken(',');
+  processFilters(lexer, expression);
+end;
+
+function TCqlParser.parseExpression(lexer: TCqlLexer; states : TCqlParserStateSet): TCQLExpressionNode;
 var
   c : Integer;
   s : String;
   focus : TCQLExpressionNode;
   localStates : TCqlParserStateSet;
+  details : TCqlIntervalOperationDetails;
 begin
   localStates := states;
   result := TCQLExpressionNode.Create(lexer.nextId);
@@ -848,11 +1571,15 @@ begin
       readRetrieve(lexer, result, localStates);
       localStates := localStates - [cpsCheckAlias];
     end
-    else if (lexer.current = 'Tuple') or (lexer.current = '{')  then
-      readTuple(lexer, result)
+    else if (StringArrayExistsSensitive(['Tuple', 'List', '{'], lexer.current)) then
+      readTupleOrList(lexer, result, '', false)
     else if (lexer.current = 'if') then
       readIf(lexer, result)
-    else if (cpsProximal in localStates) and (StringArrayExistsSensitive(NAMES_UNPREFIXED_OPERATORS, lexer.current)) then
+    else if (lexer.current = 'case') then
+      readCase(lexer, result)
+    else if (lexer.current = 'from') then
+      readMultiSource(lexer, result)
+    else if (cpsProximal in localStates) and lexer.isUnaryOperator then
     begin
       result.kind := enkStructure;
       result.StructureType := cstPlaceHolder;
@@ -860,27 +1587,43 @@ begin
     end
     else
     begin
-      if not lexer.isConstant and not lexer.isToken and not lexer.current.startsWith('"') then
+      if not (lexer.isConstant or lexer.isToken or lexer.current.startsWith('"') or StringArrayExistsSensitive(CODES_CqlModifier, lexer.Current) or StringArrayExistsSensitive(['('], lexer.current)) then
         raise lexer.error('Found '+lexer.current+' expecting a constant or a token name');
       if not lexer.isConstant and StringArrayExistsSensitive(CODES_CqlModifier, lexer.Current) then
       begin
         result.Modifier := TCqlModifier(StringArrayIndexOfSensitive(CODES_CqlModifier, result.Name));
         lexer.Next;
       end;
-      if lexer.isConstant then
+      if lexer.current = '(' then
+      begin
+        readGroup(lexer, result);
+        localStates := localStates + [cpsAllowInner];
+      end
+      else if lexer.isConstant then
         readConstant(lexer, result)
       else
       begin
         s := lexer.readIdentifier('Expression Token');
-        if (lexer.current = '(') then
+        if s = 'Interval' then
+          readInterval(lexer, result)
+        else if (lexer.current = '(') then
         begin
           readFunction(lexer, result, s);
           localStates := localStates + [cpsAllowInner];
         end
+        else if s = 'Concept' then
+          readConcept(lexer, result)
+        else if (lexer.current = '{') then
+        begin
+          readTupleOrList(lexer, result, s, false);
+          localStates := localStates + [cpsAllowInner];
+        end
         else if s = 'Code' then
           readCode(lexer, result)
-        else if s = 'Interval' then
-          readInterval(lexer, result)
+        else if s = 'convert' then
+          readConvert(lexer, result)
+        else if s = 'cast' then
+          readCast(lexer, result)
         else
         begin
           result.Name := s;
@@ -890,25 +1633,14 @@ begin
     end;
     result.SourceLocationEnd := lexer.CurrentLocation;
 
-    {
-    if (lexer.current = '[') then
-    begin
-      lexer.next();
-      item := TFHIRExpressionNode.Create(lexer.nextId);
-      item.Kind := enkFunction;
-      item.Functionid := pfItem;
-      item.Parameters.add(parseExpression(lexer, true, extensions));
-      if (lexer.current <> ']') then
-        raise lexer.error('The token '+lexer.Current+' is not expected here - a "]" expected');
-      lexer.next;
-      result.inner := item;
-      focus := item;
-    end;
-    }
+    focus := result;
+    while (lexer.current = '[') do
+      focus := readIndexer(lexer, focus);
+
     if (cpsAllowInner in localStates) and (lexer.current = '.') then
     begin
       lexer.next;
-      result.Inner := parseExpression(lexer, [cpsAllowInner]);
+      focus.Inner := parseExpression(lexer, [cpsAllowInner]);
     end;
 
     if cpsCheckAlias in localStates then
@@ -918,27 +1650,39 @@ begin
     if (result.proximal) then
     begin
       focus := result;
-      while not lexer.done and (lexer.isOp or StringArrayExistsSensitive(CODES_CqlOperationId, lexer.current) or lexer.isNumericalConstant) do
+      while not lexer.done and (lexer.isOp or StringArrayExistsSensitive(CODES_CqlOperationId, lexer.current) or lexer.isNumericalConstant or lexer.isIntervalOperator(details, true)) and
+        not ((cpsNoprocessEnd in states) and (lexer.current = 'end')) do
       begin
         if lexer.isOp then
           focus.Operation := TFHIRPathOperation(StringArrayIndexOfSensitive(CODES_TFHIRPathOperation, lexer.current))
+        else if StringArrayExistsSensitive(CODES_CqlOperationId, lexer.current) then
+        begin
+          focus.Operation := popCustom;
+          focus.CqlOperation := TCqlOperationId(StringArrayIndexOfSensitive(CODES_CqlOperationId, lexer.current))
+        end
+        else if lexer.isIntervalOperator(details, false) then
+        begin
+          focus.Operation := popCustom;
+          focus.CqlOperation := copInterval;
+          focus.IntervalOpDetails := details;
+        end
         else if lexer.isNumericalConstant then
         begin
           focus.Operation := popCustom;
           focus.CqlOperation := copUnnamedWhen;
         end
         else
-        begin
-          focus.Operation := popCustom;
-          focus.CqlOperation := TCqlOperationId(StringArrayIndexOfSensitive(CODES_CqlOperationId, lexer.current))
-        end;
+          raise lexer.error('internal Error');
         focus.OpSourceLocationStart := lexer.CurrentStartLocation;
         focus.OpSourceLocationEnd := lexer.CurrentLocation;
-        if not lexer.isNumericalConstant then
+        if not lexer.isNumericalConstant and not (focus.CqlOperation = copInterval) then
           lexer.next;
         if (focus.CqlOperation <> copNull) and (lexer.current = FOLLOWING_WORDS_CqlOperationId[focus.CqlOperation]) then
           lexer.Next;
-        focus.opNext := parseExpression(lexer, states - [cpsProximal]);
+        if (focus.Operation = popAs) or ((focus.Operation = popIs) and not StringArrayExistsSensitive(['not', 'null'], lexer.current)) then
+          focus.OpNext := parseTypeExpression(lexer)
+        else
+          focus.opNext := parseExpression(lexer, states - [cpsProximal]);
         focus := focus.OpNext as TCQLExpressionNode;
       end;
       organisePrecedence(lexer, result);

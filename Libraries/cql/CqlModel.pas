@@ -13,31 +13,43 @@ type
   TCqlAccessLevel = (CqlAccessDefault, CqlAccessPublic, CqlAccessPrivate);
   TCqlTypeKind = (CqlTypeSimple, CqlTypeList, CqlTypeInterval, CqlTypeTuple, CqlTypeChoice);
   TCqlOperationId = (copNull,
-    copDuring, copSame, copUnion, copIntersect, copExcept, copOf, copOverlaps, copSort, copIncludes, copAfter,
-    copBefore, copBetween, copStarts, copEnds, copOccurs, copConvert, copStart, copEnd, copWidth, copSuccessor,
-    copPredecessor, copSingleton, copPoint, copMinimum, copMaximum, copDistinct, copCollapse, copFlatten,
-    copFrom,
-    copUnnamedWhen);
-  TCqlFunctionDefinitionId = (cfNull, cfCode, cfInterval, cfAgeInYears, cfAgeInYearsAt, cfToday, cfDateTime, cfLast, cfCount);
-  TCqlModifier = (CqlModifierNull, CqlModifierNot, CqlModifierSame, CqlModifierBefore, CqlModifierAfter, CqlModifierWithin, CqlModifierDuring);
+    copPower, copUnion, copIntersect, copExcept, copOf, copIncludes,
+    copBetween, copConvert, copStart, copEnd, copWidth, copSuccessor,
+    copPredecessor, copSingleton, copPoint, copMinimum, copMaximum, copDistinct,
+    copCollapse, copFlatten, copFrom, copInterval, copUnnamedWhen);
+
+  TCqlFunctionDefinitionId = (cfNull, cfCode, cfInterval, cfAgeInYears, cfAgeInYearsAt, cfToday, cfDateTime, cfLast, cfCount, cfConcept);
+  TCqlModifier = (CqlModifierNull, CqlModifierNot{, CqlModifierSame, CqlModifierBefore, CqlModifierAfter, CqlModifierWithin, CqlModifierDuring});
   TCqlStructureType = (cstNull,
     cstPlaceHolder, // for operations that hae no left side
     cstRetrieve, // retrieve and/or query
+    cstMultiRetrieve, // using 'from'....
     cstIf, // if statement
-    cstTuple); // tuple specifies
+    cstCase, cstCaseItem,
+    cstType,
+    cstConvert, // convert X to...
+    cstList, // list specifier
+    cstTuple); // tuple specifier
 
   TCqlExpressionReturnType = (cqlReturnUnspecified, cqlReturnAll, cqlReturnDistinct);
+  TCqlSortOrder = (cqlSortNotSpecified, cqlSortAscending, cqlSortDescending);
 
 const
   CODES_AccessLevel : array [TCqlAccessLevel] of String = ('', 'public', 'private');
-  CODES_CqlModifier : array [TCqlModifier] of string = ('', 'not', 'same', 'before', 'after', 'within', 'during');
-  CODES_CqlOperationId : array [TCqlOperationId] of string = ('', 'during', 'same', 'union', 'intersect', 'except', 'of', 'overlaps', 'sort', 'includes',
-    'after', 'before', 'between', 'starts', 'ends', 'occurs', 'convert', 'start', 'end', 'width', 'successor',
-    'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct', 'collapse', 'flatten', 'from', 'x-x');
-  FOLLOWING_WORDS_CqlOperationId : array [TCqlOperationId] of String = ('', '', '', '', '', '', '', '', 'by', '', '', '', '', '', '', '', '', 'of', 'of', 'from', 'from', '', '', '', '', '', '', '', '', '', '');
-  NAMES_CqlFunctions : array [TCqlFunctionDefinitionId] of string = ('', '.xx..', '.xx..', 'AgeInYears', 'AgeInYearsAt', 'Today', 'DateTime', 'Last', 'Count');
+  CODES_CqlModifier : array [TCqlModifier] of string = ('', 'not' {, 'same', 'before', 'after', 'within', 'during'});
+  CODES_CqlOperationId : array [TCqlOperationId] of string = ('',
+     '^', 'union', 'intersect', 'except', 'of', 'includes',
+     'between', 'convert', 'start', 'end', 'width', 'successor',
+     'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct',
+     'collapse', 'flatten', 'from', 'y-y', 'x-x');
+  FOLLOWING_WORDS_CqlOperationId : array [TCqlOperationId] of String = ('',
+    '', '', '', '', '', '',
+    '', '', 'of', 'of', 'of', 'of',
+    'of', 'from', 'from', '', '',
+    '', '', '', '', '',  '');
+  NAMES_CqlFunctions : array [TCqlFunctionDefinitionId] of string = ('', '.xx..', '.xx..', 'AgeInYears', 'AgeInYearsAt', 'Today', 'DateTime', 'Last', 'Count', 'Concept');
 
-  NAMES_UNPREFIXED_OPERATORS : array of String = ['convert', 'start', 'end', 'width', 'successor', 'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct', 'collapse', 'flatten'];
+  NAMES_UNPREFIXED_OPERATORS : array of String = ['start', 'end', 'width', 'successor', 'predecessor', 'singleton', 'point', 'minimum', 'maximum', 'distinct', 'collapse', 'flatten', '-', '+'];
 
 type
   { Foundation Stuff }
@@ -61,6 +73,46 @@ type
     property Id : String read FId write FId;
   end;
 
+  TCqlTypeSpecifier = class (TCqlElement)
+  private
+    FKind: TCqlTypeKind;
+    FId: String;
+    FLibraryName: String;
+    FParameters: TAdvList<TCqlTypeSpecifier>;
+    FElements: TAdvMap<TCqlTypeSpecifier>;
+
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+    function Link : TCqlTypeSpecifier; overload;
+
+    property Kind : TCqlTypeKind read FKind write FKind;
+    property LibraryName : String read FLibraryName write FLibraryName;
+    property Id : String read FId write FId;
+    Property Parameters : TAdvList<TCqlTypeSpecifier> read FParameters;
+    Property Elements : TAdvMap<TCqlTypeSpecifier> read FElements;
+  end;
+
+
+  TCqlIntervalOperation = (CqlIntervalNull, CqlIntervalSame, CqlIntervalIncludes, CqlIntervalDuring, CqlIntervalIncludedIn, CqlIntervalMeets, CqlIntervalOverlaps, CqlIntervalStarts, CqlIntervalEnds, CqlIntervalWithin, CqlIntervalBefore, CqlIntervalAfter);
+  TCqlIntervalPrecision = (CqqlPrecsionYear, CqqlPrecsionMonth, CqqlPrecsionWeek, CqqlPrecsionDay, CqqlPrecsionHour, CqqlPrecsionMinute, CqqlPrecsionSecond, CqqlPrecsionMillisecnd);
+  TCqlIntervalLeftQualifier = (CqlLeftNull, CqlLeftStarts, CqlLeftEnds, CqlLeftOccurs);
+  TCqlIntervalRelativeness = (CqlRelativeNull, CqlRelativeBefore, CqlRelativeAfter, CqlRelativeLessThan, CqlRelativeOrLess, CqlRelativeMoreThan, CqlRelativeOrMore);
+  TCqlIntervalRightQualifier = (CqlRightNull, CqlRightStart, CqlRightEnd);
+
+  TCqlIntervalOperationDetails = record
+    leftQualfier : TCqlIntervalLeftQualifier;
+    properly : boolean;
+    onOr : boolean;
+    operation : TCqlIntervalOperation;
+    relativeness : TCqlIntervalRelativeness;
+    rightQualifier : TCqlIntervalRightQualifier;
+    value : String;
+    Units : String;
+    precision : TCqlIntervalPrecision;
+    procedure clear;
+  end;
+
   // expressions - build un underlying FHIR Path library
   TCqlExpressionNode = class (TFHIRExpressionNode)
   private
@@ -76,12 +128,17 @@ type
     FSuchThat: TCqlExpressionNode;
     FWhere: TCqlExpressionNode;
     FElements : TAdvMap<TCqlExpressionNode>;
+    FItems : TAdvList<TCqlExpressionNode>;
     FLibraryName: String;
     FReturnType: TCqlExpressionReturnType;
     FReturn: TCqlExpressionNode;
     FThenStmt: TCqlExpressionNode;
     FIfTest: TCqlExpressionNode;
     FElseStmt: TCqlExpressionNode;
+    FSort: TAdvList<TCqlExpressionNode>;
+    FTypeInfo: TCqlTypeSpecifier;
+    FSortOrder: TCqlSortOrder;
+    FIntervalOpDetails : TCqlIntervalOperationDetails;
     procedure SetWithStmt(const Value: TCqlExpressionNode);
     procedure SetSuchThat(const Value: TCqlExpressionNode);
     procedure SetWhere(const Value: TCqlExpressionNode);
@@ -90,6 +147,9 @@ type
     procedure SetElseStmt(const Value: TCqlExpressionNode);
     procedure SetIfTest(const Value: TCqlExpressionNode);
     procedure SetThenStmt(const Value: TCqlExpressionNode);
+    function getItems: TAdvList<TCqlExpressionNode>;
+    procedure SetTypeInfo(const Value: TCqlTypeSpecifier);
+    function GetSort: TAdvList<TCqlExpressionNode>;
   public
     Destructor Destroy; override;
     function Link : TCqlExpressionNode; overload;
@@ -110,14 +170,19 @@ type
     property where : TCqlExpressionNode read FWhere write SetWhere;
     property returnType : TCqlExpressionReturnType read FReturnType write FReturnType;
     property return : TCqlExpressionNode read FReturn write SetReturn;
+    property sort : TAdvList<TCqlExpressionNode> read GetSort;
+    property sortOrder : TCqlSortOrder read FSortOrder write FSortOrder;
 
     // if
     property ifTest : TCqlExpressionNode read FIfTest write SetIfTest;
     property thenStmt : TCqlExpressionNode read FThenStmt write SetThenStmt;
     property elseStmt : TCqlExpressionNode read FElseStmt write SetElseStmt;
 
-    // tuple
-    property elements : TAdvMap<TCqlExpressionNode> read getElements;
+    property elements : TAdvMap<TCqlExpressionNode> read getElements; // tuple
+    property items : TAdvList<TCqlExpressionNode> read getItems; // list
+
+    property TypeInfo : TCqlTypeSpecifier read FTypeInfo write SetTypeInfo;
+    property IntervalOpDetails : TCqlIntervalOperationDetails read FIntervalOpDetails write FIntervalOpDetails;
   end;
 
   { Definition Stuff }
@@ -166,12 +231,13 @@ type
   TCqlValueSetReference = class (TCqlTerminologyReference)
   private
     FCodeSystems : TAdvList<TCqlScopedIdReference>;
+    function GetCodeSystems: TAdvList<TCqlScopedIdReference>;
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TCqlValueSetReference; overload;
 
-    property CodeSystems : TAdvList<TCqlScopedIdReference> read FCodeSystems;
+    property CodeSystems : TAdvList<TCqlScopedIdReference> read GetCodeSystems;
   end;
 
   TCqlCodeDefinition = class (TCqlNamed)
@@ -202,24 +268,6 @@ type
     property Codes : TAdvList<TCqlScopedIdReference> read FCodes;
   end;
 
-  TCqlTypeSpecifier = class (TCqlElement)
-  private
-    FKind: TCqlTypeKind;
-    FId: String;
-    FLibraryName: String;
-    FParameters: TAdvList<TCqlTypeSpecifier>;
-    FElements: TAdvMap<TCqlTypeSpecifier>;
-  public
-    Constructor Create; override;
-    Destructor Destroy; override;
-    function Link : TCqlTypeSpecifier; overload;
-
-    property Kind : TCqlTypeKind read FKind write FKind;
-    property LibraryName : String read FLibraryName write FLibraryName;
-    property Id : String read FId write FId;
-    Property Parameters : TAdvList<TCqlTypeSpecifier> read FParameters;
-    Property Elements : TAdvMap<TCqlTypeSpecifier> read FElements;
-  end;
 
   TCqlExpressionDefinition = class (TCqlStatement)
   private
@@ -251,13 +299,16 @@ type
   private
     FParameters: TAdvList<TCqlFunctionParameterDefinition>;
     FBody: TCqlExpressionNode;
+    FTypeInfo: TCqlTypeSpecifier;
     procedure SetBody(const Value: TCqlExpressionNode);
+    procedure SetTypeInfo(const Value: TCqlTypeSpecifier);
   public
     Constructor Create; override;
     Destructor Destroy; override;
     function Link : TCqlFunctionDefinition; overload;
 
     property parameters : TAdvList<TCqlFunctionParameterDefinition> read FParameters;
+    property typeInfo : TCqlTypeSpecifier read FTypeInfo write SetTypeInfo;
     property body : TCqlExpressionNode read FBody write SetBody;
   end;
 
@@ -354,8 +405,15 @@ end;
 
 destructor TCqlValueSetReference.Destroy;
 begin
-
+  FCodeSystems.Free;
   inherited;
+end;
+
+function TCqlValueSetReference.GetCodeSystems: TAdvList<TCqlScopedIdReference>;
+begin
+  if FCodeSystems = nil then
+    FCodeSystems := TAdvList<TCqlScopedIdReference>.create;
+  result := FCodeSystems;
 end;
 
 function TCqlValueSetReference.Link: TCqlValueSetReference;
@@ -568,6 +626,7 @@ end;
 
 destructor TCqlFunctionDefinition.Destroy;
 begin
+  FTypeInfo.Free;
   FParameters.Free;
   FBody.Free;
   inherited;
@@ -585,10 +644,19 @@ begin
   FBody := Value;
 end;
 
+procedure TCqlFunctionDefinition.SetTypeInfo(const Value: TCqlTypeSpecifier);
+begin
+  FTypeInfo.Free;
+  FTypeInfo := Value;
+end;
+
 { TCqlExpressionNode }
 
 destructor TCqlExpressionNode.Destroy;
 begin
+  FTypeInfo.Free;
+  FItems.Free;
+  FSort.Free;
   FThenStmt.Free;
   FIfTest.Free;
   FElseStmt.Free;
@@ -605,6 +673,20 @@ begin
   if FElements = nil then
     FElements := TAdvMap<TCqlExpressionNode>.create;
   result := FElements;
+end;
+
+function TCqlExpressionNode.getItems: TAdvList<TCqlExpressionNode>;
+begin
+  if FItems = nil then
+    FItems := TAdvList<TCqlExpressionNode>.create;
+  result := FItems;
+end;
+
+function TCqlExpressionNode.GetSort: TAdvList<TCqlExpressionNode>;
+begin
+  if FSort = nil then
+    FSort := TAdvList<TCqlExpressionNode>.create;
+  result := FSort;
 end;
 
 function TCqlExpressionNode.Link: TCqlExpressionNode;
@@ -642,6 +724,12 @@ begin
   FThenStmt := Value;
 end;
 
+procedure TCqlExpressionNode.SetTypeInfo(const Value: TCqlTypeSpecifier);
+begin
+  FTypeInfo.Free;
+  FTypeInfo := Value;
+end;
+
 procedure TCqlExpressionNode.SetWhere(const Value: TCqlExpressionNode);
 begin
   FWhere.Free;
@@ -676,6 +764,20 @@ procedure TCqlFunctionParameterDefinition.SetTypeDetails(const Value: TCqlTypeSp
 begin
   FTypeDetails.Free;
   FTypeDetails := Value;
+end;
+
+{ TCqlIntervalOperationDetails }
+
+procedure TCqlIntervalOperationDetails.clear;
+begin
+  leftQualfier := CqlLeftNull;
+  properly := false;
+  operation := CqlIntervalNull;
+  relativeness := TCqlIntervalRelativeness.CqlRelativeNull;;
+  rightQualifier := CqlRightNull;
+  onOr := false;
+  value := '';
+  Units := '';
 end;
 
 end.

@@ -79,7 +79,7 @@ valueset "Preventive Care - Established Office Visit, 0 to 17": '2.16.840.1.1138
 valueset "Preventive Care- Initial Office Visit, 0 to 17": '2.16.840.1.113883.3.464.1003.101.12.1022'
 valueset "Antibiotic Medications": '2.16.840.1.113883.3.464.1003.196.12.1001'
 
-parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0)]
+parameter MeasurementPeriod default Interval[DateTime(2013, 1, 1, 0, 0, 0, 0), DateTime(2014, 1, 1, 0, 0, 0, 0))
 
 context Patient
 
