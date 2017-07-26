@@ -1453,9 +1453,9 @@ Begin
     SQL_C_USHORT:
       Result:= SizeOf(Word);
     SQL_C_SLONG:
-      Result:= SizeOf(Integer);
+      Result:= SizeOf(NativeInt);
     SQL_C_ULONG:
-      Result:= SizeOf(Cardinal);
+      Result:= SizeOf(NativeUInt);
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
       Result:= SizeOf(Int64);
