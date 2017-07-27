@@ -125,7 +125,6 @@ uses
   FHIRNarrativeGenerator in '..\reference-platform\dstu3\FHIRNarrativeGenerator.pas',
   NewServerForm in 'NewServerForm.pas' {RegisterServcdshoo
   erForm},
-  SmartOnFhirLogin in '..\reference-platform\support\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
   ParseMap in '..\reference-platform\Support\ParseMap.pas',
   SmartOnFhirUtilities in '..\reference-platform\support\SmartOnFhirUtilities.pas',
   FetchResourceForm in 'FetchResourceForm.pas' {FetchResourceFrm},
@@ -161,7 +160,8 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
-  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
+  SmartOnFhirLogin in '..\reference-platform\support\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm};
 
 {$R *.res}
 

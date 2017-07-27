@@ -171,10 +171,6 @@ type
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
     function FindResourceVersion(aType : String; sId, sVersionId : String; bAllowDeleted : boolean; var resourceVersionKey : integer; request: TFHIRRequest; response: TFHIRResponse): boolean;
-    procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
-    procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
-    procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
-    procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
     function GetNewResourceId(aType : String; ForTesting : boolean; var id : string; var key : integer):Boolean;
     function AddNewResourceId(aType, id, lang : string; forTesting : boolean; var resourceKey : integer) : Boolean;
     Procedure CollectIncludes(session : TFhirSession; includes : TReferenceList; resource : TFHIRResource; path : String);
@@ -246,11 +242,7 @@ type
     procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 
     function AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
-    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean;
     procedure DefineConformanceResources(base : String); // called after database is created
-
-    // when want an MRN to store the resource against
-    function GetPatientId : String; virtual;
 
     // called when kernel actually wants to process against the store
 //    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
@@ -668,7 +660,7 @@ type
     Destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
     procedure Initialise(ini: TFHIRServerIniFile);
-    procedure SaveResource(res: TFhirResource; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
+//    procedure SaveResource(res: TFhirResource; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
     function ProfilesAsOptionList: String; override;
@@ -704,7 +696,7 @@ type
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
     function hasOAuthSessionByKey(key, status : integer) : boolean; override;
-    procedure updateOAuthSession(id : String; state, key : integer); override;
+    procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); override;
 
     function FetchResourceCounts(comps : String) : TStringList; override;
 
@@ -960,19 +952,6 @@ begin
         result.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.ToString+ '(UTC)';
       end;
     end;
-  end;
-end;
-
-function TFHIRNativeOperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TFhirIssueTypeEnum): Boolean;
-begin
-  result := test;
-  if not test and (response <> nil) then
-  begin
-    response.HTTPCode := code;
-    response.Message := message;
-    response.ContentType := 'text/plain';
-    response.Body := message;
-    response.Resource := BuildOperationOutcome(lang, message, issueCode);
   end;
 end;
 
@@ -3184,44 +3163,6 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
-begin
-  response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_MATCH', lang), [request.ResourceName+'?'+request.parameters.source]);
-  response.Body := response.Message;
-  response.Resource := BuildOperationOutcome(lang, response.Message);
-end;
-
-procedure TFHIRNativeOperationEngine.NotFound(request: TFHIRRequest; response: TFHIRResponse);
-begin
-  response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id]);
-  response.Body := response.Message;
-  response.Resource := BuildOperationOutcome(lang, response.Message);
-end;
-
-procedure TFHIRNativeOperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
-begin
-  response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id+'/_history/'+request.subId]);
-  response.Body := response.Message;
-  response.Resource := BuildOperationOutcome(lang, response.Message);
-end;
-
-function TFHIRNativeOperationEngine.GetPatientId(): String;
-begin
-
-end;
-
-procedure TFHIRNativeOperationEngine.TypeNotFound(request: TFHIRRequest; response: TFHIRResponse);
-begin
-  response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [request.ResourceName]);
-  response.Body := response.Message;
-  response.Resource := BuildOperationOutcome(lang, response.Message);
-end;
-
-
 procedure TFHIRNativeOperationEngine.checkNotRedacted(meta: TFhirMeta; msg: String);
 begin
   if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'REDACTED') then
@@ -3701,7 +3642,7 @@ begin
     '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+#13#10;
 
     if request.session <> nil then
-      response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.Name);
+      response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.SessionName);
 
     response.Body := response.Body +
     '  &nbsp;<a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', lang)+'</a>'#13#10+
@@ -5513,7 +5454,7 @@ begin
       p.userId.value := inttostr(session.Key);
       p.userId.system := ServerContext.SystemId;
       p.altId := session.Id;
-      p.name := session.Name;
+      p.name := session.SessionName;
     end;
     p.requestor := true;
     p.network := TFhirAuditEventParticipantNetwork.create;
@@ -8436,7 +8377,7 @@ end;
 
 function TFhirConceptMapClosureOperation.checkName(request: TFHIRRequest; response: TFHIRResponse; var name: String) : boolean;
 begin
-  if request.Session.anonymous then
+  if request.Session.UserEvidence = userAnonymous then
     result := IsGuid(name)
   else
   begin
@@ -9186,7 +9127,7 @@ begin
     if request.Session.TestScript = nil then
       request.Session.TestScript := TFhirTestScript.Create;
     request.Session.TestScript.id := inttostr(request.Session.Key);
-    request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.Name;
+    request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.SessionName;
     request.Session.TestScript.status := PublicationStatusActive;
     request.Session.TestScript.publisher := manager.ServerContext.OwnerName;
     request.Session.TestScript.date := TDateTimeEx.makeLocal;
@@ -9674,9 +9615,10 @@ begin
     conn.BindInteger('sk', session.key);
     conn.BindInteger('uk', StrToInt(session.User.id));
     conn.BindTimeStamp('d', DateTimeToTS(now));
-    conn.BindInteger('p', integer(session.provider));
+    conn.BindInteger('p', integer(session.providerCode));
     conn.BindString('i', session.id);
-    conn.BindString('n', session.name);
+    conn.BindString('n', session.SessionName);
+//    conn.BindString('sn', session.SystemName);
     conn.BindString('e', session.email);
     conn.BindTimeStamp('ex', DateTimeToTS(session.expires));
     conn.Execute;
@@ -9755,7 +9697,7 @@ var
   context : TOperationContext;
 begin
   if bWantSession then
-    request.session := ServerContext.SessionManager.CreateImplicitSession('server', true);
+    request.session := ServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.OwnerName, 'subscripion manager', systemInternal, true, false);
   context := TOperationContext.create;
   try
     storage := TFHIRNativeOperationEngine.Create('en', FServerContext, self.Link);
@@ -10162,7 +10104,7 @@ begin
     p.userId.system := ServerContext.SystemId;
     p.userId.value := inttostr(session.key);
     p.altId := session.id;
-    p.name := session.name;
+    p.name := session.SessionName;
     if (ip <> '') then
     begin
       p.network := TFhirAuditEventParticipantNetwork.Create;
@@ -10549,13 +10491,22 @@ begin
   conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 0)');
 end;
 
-procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer);
+procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 var
   conn : TKDBConnection;
 begin
   conn := DB.GetConnection('oauth2');
   try
     conn.ExecSQL('Update OAuthLogins set Status = '+inttostr(state)+', SessionKey = '+inttostr(Key)+', DateSignedIn = '+DBGetDate(conn.Owner.Platform)+' where Id = '''+SQLWrapString(id)+'''');
+
+    conn.SQL := 'select Client from OAuthLogins where Id = '''+SQLWrapString(id)+'''';
+    conn.Prepare;
+    conn.Execute;
+    if not conn.FetchNext then
+      raise Exception.Create('Internal error - unable to find record '+id);
+    client_id := conn.ColStringByName['Client'];
+    conn.Terminate;
+
     conn.release;
   except
     on e:exception do
@@ -10634,6 +10585,7 @@ begin
   end;
 end;
 
+(*
 procedure TFHIRNativeStorageService.SaveResource(res: TFhirResource; dateTime: TDateTimeEx; origin : TFHIRRequestOrigin);
 var
   request: TFHIRRequest;
@@ -10656,6 +10608,7 @@ begin
     request.free;
   end;
 end;
+*)
 
 procedure TFHIRNativeStorageService.ProcessEmails;
 begin

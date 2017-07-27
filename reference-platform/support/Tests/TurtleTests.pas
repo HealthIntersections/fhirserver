@@ -768,20 +768,15 @@ begin
   s := fileToString('C:\work\org.hl7.fhir\build\tests\turtle\'+filename, TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);
-  except
-    Assert.IsTrue(not ok);
-  end;
-  if ttl <> nil then
     try
-      Assert.Pass();
-//      p := TTurtleComposer.compose(ttl);
-//      if not CheckTurtleIsSame(s, p, m) then
-//        Assert.Fail(m)
-//      else
-//        Assert.Pass();
+      Assert.IsNotNull(ttl);
+      Assert.IsTrue(ok);
     finally
       ttl.Free;
     end;
+  except
+    Assert.IsTrue(not ok);
+  end;
 end;
 
 procedure TTurtleTests.test_double_lower_case_e1;

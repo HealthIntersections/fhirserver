@@ -33,10 +33,11 @@ interface
 
 uses
   SysUtils, Classes, kCritSct,
-  DateSupport, GuidSupport, StringSupport,
-  AdvObjects, AdvGenerics,
-  SCIMServer, 
+  DateSupport, GuidSupport, StringSupport, HashSupport,
+  AdvObjects, AdvGenerics, AdvJson,
+  JWT,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSecurity,
+  SCIMServer,
   FHIRUserProvider, ServerUtilities, FHIRStorageService, ServerValidator;
 
 Const
@@ -55,13 +56,16 @@ Type
     property LastSessionKey: integer read FLastSessionKey write FLastSessionKey;
 
     procedure CloseAll;
-    Function CreateImplicitSession(clientInfo: String; server: Boolean) : TFhirSession;
+    Function CreateImplicitSession(ClientIp, ClientSystemId, UserName : String; SystemEvidence : TFHIRSystemIdEvidence; server, useGUID: Boolean) : TFhirSession;
+    function getSessionFromJWT(ClientIp, SystemName : String; SystemEvidence : TFHIRSystemIdEvidence; JWT : TJWT) : TFhirSession;
+
     Procedure EndSession(sCookie, ip: String);
     function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
     function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
-    function RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
-    procedure MarkSessionChecked(sCookie, sName: String);
+    function RegisterSession(userEvidence : TFHIRUserIdEvidence; provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
+    procedure MarkSessionChecked(sCookie: String);
     function isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean;
+    function isOkSession(session: TFhirSession): Boolean;
     function GetSessionByKey(userkey : integer) : TFhirSession;
     procedure Sweep;
     function DumpSessions : String;
@@ -98,7 +102,7 @@ begin
   end;
 end;
 
-function TFHIRSessionManager.CreateImplicitSession(clientInfo: String; server: Boolean): TFhirSession;
+function TFHIRSessionManager.CreateImplicitSession(ClientIp, ClientSystemId, UserName : String; SystemEvidence : TFHIRSystemIdEvidence; server, useGUID: Boolean): TFhirSession;
 var
   session: TFhirSession;
   dummy: Boolean;
@@ -107,87 +111,98 @@ var
   C: TFHIRCoding;
   p: TFhirAuditEventParticipant;
   key : integer;
+  intcookie : String;
 begin
+  if useGUID then
+    intcookie := NewGuidURN
+  else
+    intcookie := IMPL_COOKIE_PREFIX + inttostr(HashStringToCode32(ClientIp+':'+ClientSystemId+':'+UserName));
   session := nil;
-  new := false;
-  FLock.Lock('CreateImplicitSession');
   try
-    if not GetSession(IMPL_COOKIE_PREFIX + clientInfo, result, dummy) then
-    begin
-      new := true;
-      session := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.link, false);
-      try
+    new := false;
+    FLock.Lock('CreateImplicitSession');
+    try
+      if not GetSession(intcookie, result, dummy) then
+      begin
+        new := true;
+        session := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.link, false);
         inc(FLastSessionKey);
         session.key := FLastSessionKey;
         session.id := '';
-        session.name := clientInfo;
+        session.UserName := userName;
+        session.SystemName := ClientSystemId;
+        session.SystemEvidence := SystemEvidence;
+        session.SessionName := session.UserName+' ('+session.SystemName+')';
+        if server then
+          session.UserEvidence := userInternal
+        else
+          session.UserEvidence := userAnonymous;
         session.expires := TDateTimeEx.makeUTC.DateTime + DATETIME_SECOND_ONE * 60 * 60;
         // 1 hour
-        session.Cookie := NewGuidId;
-        session.provider := apNone;
+        session.Cookie := intcookie;
+        session.providerCode := apNone;
         session.originalUrl := '';
         session.email := '';
-        session.anonymous := true;
         session.userkey := 0;
         FSessions.Add(session.Cookie, session.Link);
         result := session.Link as TFhirSession;
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    if new then
+    begin
+      if server then
+        session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_SYSTEM_USER, key)
+      else
+        session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
+      session.UserName := session.User.username;
+      session.SessionName := session.UserName+' ('+session.SystemName+')';
+      session.UserKey := key;
+      session.scopes := TFHIRSecurityRights.allScopes;
+      // though they'll only actually get what the user allows
+      TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
+      se := TFhirAuditEvent.Create;
+      try
+        se.event := TFhirAuditEventEvent.Create;
+        se.event.type_ := TFHIRCoding.Create;
+        C := se.event.type_;
+        C.code := '110114';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'User Authentication';
+        C := se.event.subtypeList.append;
+        C.code := '110122';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'Login';
+        se.event.action := AuditEventActionE;
+        se.event.outcome := AuditEventOutcome0;
+        se.event.dateTime := TDateTimeEx.makeUTC;
+        se.source := TFhirAuditEventSource.Create;
+        se.source.site := TFHIRServerContext(serverContext).OwnerName;
+        se.source.identifier := TFhirIdentifier.Create;
+        se.source.identifier.system := 'urn:ietf:rfc:3986';
+        se.source.identifier.value := TFHIRServerContext(serverContext).SystemId;
+
+        C := se.source.type_List.append;
+        C.code := '3';
+        C.Display := 'Web Server';
+        C.system := 'http://hl7.org/fhir/security-source-type';
+
+        // participant - the web browser / user proxy
+        p := se.participantList.append;
+        p.network := TFhirAuditEventParticipantNetwork.Create;
+        p.network.address := clientIp;
+        p.network.type_ := NetworkType2;
+
+        TFHIRServerContext(serverContext).Storage.QueueResource(se, se.event.dateTime);
       finally
-        session.free;
+        se.free;
       end;
     end;
   finally
-    FLock.Unlock;
-  end;
-  if new then
-  begin
-    if server then
-      session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_SYSTEM_USER, key)
-    else
-      session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
-    session.name := session.User.username + ' (' + clientInfo + ')';
-    session.UserKey := key;
-    session.scopes := TFHIRSecurityRights.allScopes;
-    // though they'll only actually get what the user allows
-    TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
-    se := TFhirAuditEvent.Create;
-    try
-      se.event := TFhirAuditEventEvent.Create;
-      se.event.type_ := TFHIRCoding.Create;
-      C := se.event.type_;
-      C.code := '110114';
-      C.system := 'http://nema.org/dicom/dcid';
-      C.Display := 'User Authentication';
-      C := se.event.subtypeList.append;
-      C.code := '110122';
-      C.system := 'http://nema.org/dicom/dcid';
-      C.Display := 'Login';
-      se.event.action := AuditEventActionE;
-      se.event.outcome := AuditEventOutcome0;
-      se.event.dateTime := TDateTimeEx.makeUTC;
-      se.source := TFhirAuditEventSource.Create;
-      se.source.site := TFHIRServerContext(serverContext).OwnerName;
-      se.source.identifier := TFhirIdentifier.Create;
-      se.source.identifier.system := 'urn:ietf:rfc:3986';
-      se.source.identifier.value := TFHIRServerContext(serverContext).SystemId;
-
-      C := se.source.type_List.append;
-      C.code := '3';
-      C.Display := 'Web Server';
-      C.system := 'http://hl7.org/fhir/security-source-type';
-
-      // participant - the web browser / user proxy
-      p := se.participantList.append;
-      p.network := TFhirAuditEventParticipantNetwork.Create;
-      p.network.address := clientInfo;
-      p.network.type_ := NetworkType2;
-
-      TFHIRServerContext(serverContext).Storage.QueueResource(se, se.event.dateTime);
-    finally
-      se.free;
-    end;
+    session.free;
   end;
 end;
-
 
 procedure TFHIRSessionManager.EndSession(sCookie, ip: String);
 var
@@ -233,7 +248,7 @@ begin
         p.userId.system := TFHIRServerContext(serverContext).SystemId;
         p.userId.value := inttostr(session.key);
         p.altId := session.id;
-        p.name := session.name;
+        p.name := session.SessionName;
         if (ip <> '') then
         begin
           p.network := TFhirAuditEventParticipantNetwork.Create;
@@ -270,7 +285,7 @@ begin
       if session.expires > TDateTimeEx.makeUTC.DateTime then
       begin
         session.Link;
-        check := (session.provider in [apFacebook, apGoogle]) and
+        check := (session.providerCode in [apFacebook, apGoogle]) and
           (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime);
       end
       else
@@ -301,7 +316,7 @@ begin
       begin
         session.useCount := session.useCount + 1;
         c := session.Key;
-        if (session.expires > TDateTimeEx.makeUTC.DateTime) and not ((session.provider in [apFacebook, apGoogle]) and (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime)) then
+        if (session.expires > TDateTimeEx.makeUTC.DateTime) and not ((session.providerCode in [apFacebook, apGoogle]) and (session.NextTokenCheck < TDateTimeEx.makeUTC.DateTime)) then
           result := session.Link
         else
           FSessions.Remove(session.Cookie);
@@ -320,10 +335,13 @@ begin
       result.id := NewGuidURN;
       result.UserKey := userkey;
       result.User := TFHIRServerContext(serverContext).UserProvider.loadUser(userkey);
-      result.name := result.User.formattedName;
+      result.UserName := result.User.formattedName;
+      result.SystemName := 'unknown';
+      result.SessionName := result.UserName+' ('+result.SystemName+')';
       result.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 500;
-      result.Cookie := NewGuidId;
-      result.provider := apInternal;
+      result.Cookie := NewGuidUrn;
+      result.providerCode := apInternal;
+      result.ProviderName := 'Internal';
       result.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
       result.scopes := TFHIRSecurityRights.allScopes;
       FLock.Lock('RegisterSession2');
@@ -361,6 +379,99 @@ begin
       end;
   finally
     FLock.Unlock;
+  end;
+end;
+
+function TFHIRSessionManager.getSessionFromJWT(ClientIp, SystemName: String; SystemEvidence: TFHIRSystemIdEvidence; JWT: TJWT): TFhirSession;
+var
+  id : String;
+//var
+//  session: TFhirSession;
+  dummy: Boolean;
+  new: Boolean;
+  se: TFhirAuditEvent;
+  C: TFHIRCoding;
+  p: TFhirAuditEventParticipant;
+  key : integer;
+//  intcookie : String;
+begin
+  id := jwt.id;
+  if id = '' then
+    id := inttostr(HashStringToCode32(TJSONWriter.writeObjectStr(jwt.payload, false)));
+  result := nil;
+  try
+    new := false;
+    FLock.Lock('getSessionFromJWT');
+    try
+      if not GetSession('jwt:'+id, result, dummy) then
+      begin
+        new := true;
+        result := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.link, false);
+        inc(FLastSessionKey);
+        result.key := FLastSessionKey;
+        result.id := '';
+        result.UserEvidence := userBearerJWT;
+        result.UserName := jwt.userName;
+        result.SystemName := SystemName;
+        result.SystemEvidence := SystemEvidence;
+        result.SessionName := result.UserName+' ('+result.SystemName+')';
+        result.expires := JWT.expires;
+        result.Cookie := 'jwt:'+id;
+        result.providerName := jwt.issuer;
+        result.originalUrl := '';
+        result.email := jwt.email;
+        result.userkey := 0;
+        FSessions.Add(result.Cookie, result.Link);
+        result := result.Link as TFhirSession;
+      end;
+    finally
+      FLock.Unlock;
+    end;
+    if new then
+    begin
+      result.User := TFHIRServerContext(serverContext).UserProvider.loadUser(SCIM_ANONYMOUS_USER, key);
+      result.UserKey := key;
+      result.scopes := TFHIRSecurityRights.allScopes;
+      TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
+      se := TFhirAuditEvent.Create;
+      try
+        se.event := TFhirAuditEventEvent.Create;
+        se.event.type_ := TFHIRCoding.Create;
+        C := se.event.type_;
+        C.code := '110114';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'User Authentication';
+        C := se.event.subtypeList.append;
+        C.code := '110122';
+        C.system := 'http://nema.org/dicom/dcid';
+        C.Display := 'Login';
+        se.event.action := AuditEventActionE;
+        se.event.outcome := AuditEventOutcome0;
+        se.event.dateTime := TDateTimeEx.makeUTC;
+        se.source := TFhirAuditEventSource.Create;
+        se.source.site := TFHIRServerContext(serverContext).OwnerName;
+        se.source.identifier := TFhirIdentifier.Create;
+        se.source.identifier.system := 'urn:ietf:rfc:3986';
+        se.source.identifier.value := TFHIRServerContext(serverContext).SystemId;
+
+        C := se.source.type_List.append;
+        C.code := '3';
+        C.Display := 'Web Server';
+        C.system := 'http://hl7.org/fhir/security-source-type';
+
+        // participant - the web browser / user proxy
+        p := se.participantList.append;
+        p.network := TFhirAuditEventParticipantNetwork.Create;
+        p.network.address := clientIp;
+        p.network.type_ := NetworkType2;
+
+        TFHIRServerContext(serverContext).Storage.QueueResource(se, se.event.dateTime);
+      finally
+        se.free;
+      end;
+    end;
+  finally
+    result.free;
   end;
 end;
 
@@ -403,15 +514,18 @@ begin
         session.id := id;
         session.User := TFHIRServerContext(ServerContext).UserProvider.loadUser(username, key);
         session.UserKey := key;
-        session.name := session.User.bestName;
+        session.UserName := session.User.bestName;
+        session.SystemName := 'unknown';
+        session.SessionName := session.UserName+' ('+session.SystemName+')';
         session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * 0.25;
-        session.provider := apInternal;
+        session.providerCode := apInternal;
+        session.providerName := 'Internal';
         session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
         session.scopes := TFHIRSecurityRights.allScopes;
         if (session.User.emails.Count > 0) then
           session.email := session.User.emails[0].value;
         // session.scopes := ;
-        FLock.Lock('CreateImplicitSession');
+        FLock.Lock('isOkBearer');
         try
           inc(FLastSessionKey);
           session.key := FLastSessionKey;
@@ -467,16 +581,15 @@ begin
   end;
 end;
 
-procedure TFHIRSessionManager.MarkSessionChecked(sCookie, sName: String);
-var
-  session: TFhirSession;
+function TFHIRSessionManager.isOkSession(session: TFhirSession): Boolean;
 begin
   FLock.Lock('MarkSessionChecked');
   try
-    if FSessions.TryGetValue(sCookie, session) then
+    result := FSessions.ContainsKey(session.Cookie);
+    if result then
     begin
-      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
-      session.name := sName;
+//      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+      session.useCount := session.useCount + 1;
     end;
   finally
     FLock.Unlock;
@@ -484,7 +597,20 @@ begin
 
 end;
 
-function TFHIRSessionManager.RegisterSession(provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
+procedure TFHIRSessionManager.MarkSessionChecked(sCookie: String);
+var
+  session: TFhirSession;
+begin
+  FLock.Lock('MarkSessionChecked');
+  try
+    if FSessions.TryGetValue(sCookie, session) then
+      session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRSessionManager.RegisterSession(userEvidence : TFHIRUserIdEvidence; provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
 var
   session: TFhirSession;
   key : integer;
@@ -494,11 +620,10 @@ begin
     session.innerToken := innerToken;
     session.outerToken := outerToken;
     session.id := id;
-    session.name := name;
     session.expires := TDateTimeEx.makeLocal.DateTime + DATETIME_SECOND_ONE * StrToInt(expires);
-    session.Cookie := OAUTH_SESSION_PREFIX +
-      copy(GUIDToString(CreateGuid), 2, 36);
-    session.provider := provider;
+    session.Cookie := OAUTH_SESSION_PREFIX + NewGuidId;
+    session.providerCode := provider;
+    session.providerName := Names_TFHIRAuthProvider[provider];
     session.originalUrl := original;
     session.email := email;
     session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
@@ -506,9 +631,13 @@ begin
       session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(id, key)
     else
       session.User := TFHIRServerContext(serverContext).UserProvider.loadOrCreateUser(USER_SCHEME_PROVIDER[provider] + '#' + id, name, email, key);
+    session.UserEvidence := userEvidence;
     session.UserKey := key;
-    if session.name = '' then
-      session.name := session.User.bestName;
+    session.UserName := name;
+    if session.UserName = '' then
+      session.UserName := session.User.userName;
+    session.SystemName := 'unknown';
+    session.SessionName := session.UserName+' ('+session.SystemName+')';
     if (session.email = '') and (session.User.emails.Count > 0) then
       session.email := session.User.emails[0].value;
 

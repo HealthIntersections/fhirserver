@@ -36,6 +36,7 @@ uses
 
 var
   filelog : boolean = false;
+  consolelog : boolean = false;
   logfile : String = '';
 
 procedure logt(s : String);
@@ -76,15 +77,15 @@ begin
   if today <> lastday then
   begin
     if filelog then
-      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10)
-    else
+      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
+    if consolelog then
       System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
     lastDay := today;
   end;
 
   if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s+#13#10)
-  else
+    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s+#13#10);
+  if consolelog then
     System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
 end;
 
@@ -97,15 +98,15 @@ begin
   if today <> lastday then
   begin
     if filelog then
-      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10)
-    else
+      log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
+    if consolelog then
       System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
     lastDay := today;
   end;
 
   if filelog then
-    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+s+#13#10)
-  else
+    log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+s+#13#10);
+  if consolelog then
     System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
 end;
 

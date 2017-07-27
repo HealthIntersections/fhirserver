@@ -260,7 +260,8 @@ uses
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
   CDSHooksServer in 'CDSHooksServer.pas',
   CDSHooksServices in 'CDSHooksServices.pas',
-  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

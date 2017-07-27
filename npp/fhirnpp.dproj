@@ -230,9 +230,6 @@
             <Form>RegisterServcdshoo
   erForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\support\SmartOnFhirLogin.pas">
-            <Form>SmartOnFhirLoginForm</Form>
-        </DCCReference>
         <DCCReference Include="..\reference-platform\Support\ParseMap.pas"/>
         <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="FetchResourceForm.pas">
@@ -292,6 +289,10 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\FHIRCodeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
+        <DCCReference Include="..\reference-platform\support\SmartOnFhirLogin.pas">
+            <Form>SmartOnFhirLoginForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -343,7 +344,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -683,16 +693,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

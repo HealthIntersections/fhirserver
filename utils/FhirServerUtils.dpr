@@ -239,7 +239,8 @@ uses
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
-  FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas';
+  FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
 
 {$R *.res}
 

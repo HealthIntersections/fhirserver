@@ -210,6 +210,7 @@ Type
     function GetEntitlementCount: integer;
   public
     Constructor Create(FJson : TJsonObject); override;
+    Constructor CreateNew;
     Destructor Destroy; override;
     Function Link : TSCIMUser; overload;
 
@@ -519,6 +520,11 @@ begin
   inherited Create(FJson);
   if not hasSchema('urn:scim:schemas:core:2.0:User') then
     FJson.forceArr['schemas'].add('urn:scim:schemas:core:2.0:User');
+end;
+
+constructor TSCIMUser.CreateNew;
+begin
+  Create(TJsonObject.Create);
 end;
 
 destructor TSCIMUser.Destroy;

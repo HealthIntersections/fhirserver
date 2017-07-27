@@ -265,7 +265,10 @@ uses
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   CqlModel in '..\Libraries\cql\CqlModel.pas',
   CqlParser in '..\Libraries\cql\CqlParser.pas',
-  CqlTests in '..\Libraries\cql\CqlTests.pas';
+  CqlTests in '..\Libraries\cql\CqlTests.pas',
+  RestFulServerTests in 'RestFulServerTests.pas',
+  SmartOnFhirTestingLogin in 'SmartOnFhirTestingLogin.pas',
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
 
 var
   runner : ITestRunner;

@@ -41,7 +41,7 @@ Type
 
   // Simple types
 
-  TAfsHandle = Cardinal;
+  TAfsHandle = NativeUInt;
 
   // Forward declarations
 

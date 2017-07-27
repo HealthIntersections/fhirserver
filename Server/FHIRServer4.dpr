@@ -310,7 +310,8 @@ uses
   FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
-  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

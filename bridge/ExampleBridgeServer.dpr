@@ -214,7 +214,8 @@ uses
   MXML in '..\reference-platform\support\MXML.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   CDSHooksServer in '..\Server\CDSHooksServer.pas',
-  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
 
 var
   gsrv : TExampleFhirServer;

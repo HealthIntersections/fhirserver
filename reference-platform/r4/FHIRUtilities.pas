@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts,
 
-  MimeMessage, TextUtilities, ZLib, InternetFetcher,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -147,6 +147,10 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
+function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
 
 type
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
@@ -4592,6 +4596,68 @@ end;
 function TFhirReferenceHelper.isRelative: boolean;
 begin
   result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
+end;
+
+function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(name, fmOpenRead + fmShareDenyWrite);
+  try
+    result := streamToResource(f, format);
+  finally
+    f.Free;
+  end;
+end;
+
+function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+var
+  p :  TFHIRParser;
+begin
+  case format of
+    ffXml : p := TFHIRXmlParser.Create(nil, 'en');
+    ffJson : p := TFHIRJsonParser.Create(nil, 'en');
+    ffTurtle : p := TFHIRTurtleParser.Create(nil, 'en');
+  else
+    raise Exception.Create('Format Not supported');
+  end;
+  try
+    p.source := stream;
+    p.Parse;
+    result := p.resource.Link;
+  finally
+    p.Free;
+  end;
+end;
+
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(name, fmCreate);
+  try
+    resourceToStream(res, f, format);
+  finally
+    f.Free;
+  end;
+end;
+
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+var
+  c : TFHIRComposer;
+begin
+  case format of
+    ffXml : c := TFHIRXmlComposer.Create(nil, 'en');
+    ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
+    ffTurtle : c := TFHIRTurtleComposer.Create(nil, 'en');
+  else
+    raise Exception.Create('Format Not supported');
+  end;
+  try
+    c.Compose(stream, res, true);
+  finally
+    c.Free;
+  end;
 end;
 
 end.

@@ -64,6 +64,7 @@ Function FolderExists(Const sFolder : String) : Boolean;
 
 Function FileSize(Const sFileName : String) : Int64; Overload;
 function Path(parts : array of String) : String;
+function URLPath(parts : array of String) : String;
 
 Implementation
 
@@ -233,5 +234,20 @@ begin
     else
       result := IncludeTrailingPathDelimiter(result)+ part;
 end;
+
+function URLPath(parts : array of String) : String;
+var
+  part : String;
+begin
+  result := '';
+  for part in parts do
+    if result = '' then
+      result := part
+    else if result.EndsWith('/') then
+      result := result+ part
+    else
+      result := result+'/'+part;
+end;
+
 
 End. // FileSupport //

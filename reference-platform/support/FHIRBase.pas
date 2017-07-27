@@ -86,7 +86,6 @@ Type
     ffUnspecified, {@enum.value ffAsIs leave the format as received/expected, or default to XML}
     ffXml, {@enum.value ffXml XML}
     ffJson,{@enum.value ffJson JSON}
-    ffJsonLD,{@enum.value ffJson JSON}
     ffTurtle, {@enum.value ffTurtle RDF using Turtle syntax}
     ffText,
     ffXhtml); {@enum.value ffXhtml XHTML - only for retrieval from the server}
@@ -130,8 +129,8 @@ Const
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
     'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
-  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'JSON-LD', 'RDF/Turtle', 'Text Representation', 'XHTML');
-  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'application/ld+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'text/xhtml');
+  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'XHTML');
+  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'text/xml+fhir', 'application/json+fhir', 'text/turtle; x-dialect=fhir', 'text/fhir', 'text/xhtml');
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =

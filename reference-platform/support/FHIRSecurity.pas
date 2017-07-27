@@ -49,6 +49,7 @@ Const
 type
   TFHIRSecurityRights = class (TAdvObject)
   private
+    id:integer;
     FSource : String;
     FUserInfo : boolean;
     FAdministerUsers : boolean;
@@ -83,6 +84,9 @@ function UriForScope(scope : String): String;
 function prefixScope(uri : String): String;
 
 implementation
+
+var
+  gid : integer = $70707070;
 
 function secureToStr(secure : boolean):String;
 begin
@@ -161,6 +165,8 @@ end;
 
 procedure TFHIRSecurityRights.init(worker : TWorkerContext);
 begin
+  inc(gid);
+  id := gid;
   FWorker := worker;
 
   FReadAllowed := TAdvStringSet.create;

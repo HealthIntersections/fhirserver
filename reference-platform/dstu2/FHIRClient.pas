@@ -36,9 +36,9 @@ This is the dstu2 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  IdHTTP, IdSSLOpenSSL, MimeMessage,
+  SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
   StringSupport, EncodeSupport, GuidSupport, DateSupport,
+  IdHTTP, IdSSLOpenSSL, MimeMessage,
   AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches, AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
@@ -72,9 +72,12 @@ Type
     FTimeout: cardinal;
     FUseIndy: boolean;
     FWorker : TWorkerContext;
+    FCertPWord: String;
 
+    FCertFile: String;
 //    FLastUpdated : TDateTimeEx;
     procedure status(msg : String);
+    procedure getSSLpassword(var Password: String);
     function serialise(resource : TFhirResource):TStream; overload;
     function makeUrl(tail : String; params : TAdvStringMatch = nil) : String;
     function makeUrlPath(tail : String) : String;
@@ -89,10 +92,11 @@ Type
     function GetHeader(name : String) : String;
     function exchangeIndy(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
     function exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
-    function authoriseByOWinHttp(server, username,
-      password: String): TJsonObject;
-    function authoriseByOWinIndy(server, username,
-      password: String): TJsonObject;
+
+    function authoriseByOWinIndy(server, username, password : String): TJsonObject;
+    function authoriseByOWinHttp(server, username, password : String): TJsonObject;
+    procedure SetCertFile(const Value: String);
+    procedure SetCertPWord(const Value: String);  protected
   public
     constructor Create(worker : TWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -104,6 +108,8 @@ Type
     property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
     property timeout : cardinal read FTimeout write SetTimeout;
     property UseIndy : boolean read FUseIndy write FUseIndy; // set this to true for a service, but you may have problems with SSL
+    property certFile : String read FCertFile write SetCertFile;
+    property certPWord : String read FCertPWord write SetCertPWord;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
@@ -287,6 +293,24 @@ begin
     if not ok then
       result.free;
   end;
+end;
+
+procedure TFhirClient.SetCertFile(const Value: String);
+begin
+  FCertFile := Value;
+  indy.free;
+  indy := nil;
+  http.Free;
+  http := nil;
+end;
+
+procedure TFhirClient.SetCertPWord(const Value: String);
+begin
+  FCertPWord := Value;
+  indy.free;
+  indy := nil;
+  http.Free;
+  http := nil;
 end;
 
 procedure TFhirClient.SetSmartToken(const Value: TSmartOnFhirAccessToken);
@@ -525,11 +549,19 @@ begin
       ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
       indy.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
-      ssl.SSLOptions.SSLVersions := [sslvTLSv1_2]
+      ssl.SSLOptions.SSLVersions := [sslvTLSv1_2];
+      if certFile <> '' then
+      begin
+        ssl.SSLOptions.CertFile := certFile;
+        ssl.SSLOptions.KeyFile := ChangeFileExt(certFile,'.key');
+        ssl.OnGetPassword := getSSLpassword;
+      end;
     end;
   end
   else if http = nil then
   begin
+    if certFile <> '' then
+      raise Exception.Create('Certificates are not supported with winInet yet'); // have to figure out how to do that ...
     http := TAdvWinInetClient.Create;
     http.UseWindowsProxySettings := true;
     http.UserAgent := 'FHIR Client';
@@ -554,6 +586,11 @@ begin
     result := http.getResponseHeader(name);
 end;
 
+
+procedure TFhirClient.getSSLpassword(var Password: String);
+begin
+  Password := FCertPWord;
+end;
 
 function TFhirClient.exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
 begin
@@ -692,6 +729,8 @@ begin
   end;
   if ct <> '' then
     indy.Request.ContentType := ct;
+  if smartToken <> nil then
+    indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;
 
   ok := false;
   result := TMemoryStream.create;
@@ -748,9 +787,7 @@ begin
           raise exception.Create(cnt)
       end;
       on e : exception do
-      begin
-        raise exception.Create(e.Message)
-      end;
+        raise;
     end;
   finally
     if not ok then
@@ -797,7 +834,7 @@ var
   resp : TMemoryStream;
 begin
   createClient;
-  indy.Request.ContentType := 'application/x-www-form-encoded';
+  indy.Request.ContentType := 'application/x-www-form-urlencoded';
 
   ss := TStringStream.Create('grant_type=password&username='+username+'&password='+(password));
   try

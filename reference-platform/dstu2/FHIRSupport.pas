@@ -75,7 +75,14 @@ Type
   TFHIRRequestOrigin = (roRest, roOperation, roConfig, roSubscription, roSweep, roUpload);
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew, idCheckNew);
   TFHIRCacheControl = (cacheNotAtAll, cacheAsException, cacheNormal, cacheLong);
+  TFHIRUserIdEvidence = (userNoInformation, userAnonymous, userInternal, userLogin, userExternalOAuth, userBearerJWT);
+  TFHIRSystemIdEvidence = (systemNoInformation, systemUnknown, systemInternal, systemFromOAuth, systemFromOWin, systemFromCertificate);
 
+Const
+  CODES_UserIdEvidence : array [TFHIRUserIdEvidence] of string = ('?', 'Anonymous', 'Internal' ,'Login', 'External AOuth', 'JWT Bearer Token');
+  CODES_SystemIdEvidence : array [TFHIRSystemIdEvidence] of String = ('?', 'Unknown', 'This Server', 'by OAuth', 'By OWin', 'By Certificate');
+
+Type
   {$M+}
 
   TFHIRCompartment = class (TAdvObject)
@@ -131,9 +138,12 @@ Type
   TFhirSession = class (TAdvObject)
   private
     Fworker : TWorkerContext;
-    FProvider : TFHIRAuthProvider;
+    FProviderCode : TFHIRAuthProvider;
+    FProviderName : String;
     FId : String;
-    FName : String;
+    FSessionName : String;
+    FSystemName: String;
+    FUserName: String;
     FCookie : String;
     FExpires : TDateTime;
     FOriginal: String;
@@ -149,7 +159,8 @@ Type
     FPatientList: TStringList;
     FsessionLength: String;
     FUser : TSCIMUser;
-    Fanonymous : boolean;
+    FUserEvidence : TFHIRUserIdEvidence;
+    FSystemEvidence : TFHIRSystemIdEvidence;
     FSecurity : TFHIRSecurityRights;
     FSecure : boolean;
     FUserKey: integer;
@@ -178,7 +189,8 @@ Type
     {@member Provider
       Which Authorization provider scopes the login (blank = direct login)
     }
-    Property Provider : TFHIRAuthProvider read FProvider write FProvider;
+    Property ProviderCode : TFHIRAuthProvider read FProviderCode write FProviderCode;
+    Property ProviderName : String read FProviderName write FProviderName;
 
    {@member InnerToken
       the OAuth authorization token (Don't change!)
@@ -202,9 +214,29 @@ Type
     property UserKey : integer read FUserKey write FUserKey;
 
     {@member Name
-      OAuth provider User name
+      Name that describes the user associated with this session
     }
-    Property Name : String read FName write FName;
+    property UserName : String read FUserName write FUserName;
+
+    {@member UserEvidence
+      Basis of the evidence for the user identification
+    }
+    Property UserEvidence : TFHIRUseridEvidence read FUserEvidence write FUserEvidence;
+
+    {@member SystemName
+      Name that describes the user associated with this session
+    }
+    property SystemName : String read FSystemName write FSystemName;
+
+    {@member SystemEvidence
+      Basis of the evidence for the system identification
+    }
+    Property SystemEvidence : TFHIRSystemIdEvidence read FSystemEvidence write FSystemEvidence;
+
+    {@member SessionName
+      Summary name for the session
+    }
+    Property SessionName : String read FSessionName write FSessionName;
 
     {@member Email
       OAuth provided Users email address
@@ -259,7 +291,6 @@ Type
     property TaggedCompartments : TStringList read FTaggedCompartments;
     property sessionLength : String read FsessionLength write FsessionLength;
     property PatientList : TStringList read FPatientList;
-    Property anonymous : boolean read Fanonymous write Fanonymous;
     Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
   end;
@@ -1861,6 +1892,9 @@ function TFhirSession.BuildCompartmentList: String;
 var
   i : integer;
 begin
+  if self = nil then
+    exit('');
+
   result := ''''+patientList[0]+'''';
   for i := 1 to patientList.count - 1 do
     result := result+', '''+patientList[i]+'''';
@@ -1912,12 +1946,7 @@ begin
   b.Append('</td>');
 //  identity
   b.Append('<td>');
-  if Fanonymous then
-    b.Append('(anonymous)')
-  else if FProvider = apNone then
-    b.Append(FId)
-  else
-    b.Append(Names_TFHIRAuthProvider[FProvider]+'\'+FId);
+  b.Append(FId);
   b.Append('</td>');
 //  userkey
   b.Append('<td>');
@@ -1925,8 +1954,29 @@ begin
   b.Append('</td>');
 //  name
   b.Append('<td>');
-  b.Append(FormatTextToHTML(FName));
+  b.Append(FormatTextToHTML(FSessionName));
   b.Append('</td>');
+  b.Append('<td>');
+  b.Append(FormatTextToHTML(FSystemName));
+  b.Append(' (');
+  b.Append(CODES_SystemIdEvidence[FSystemEvidence]);
+  b.Append(')');
+  b.Append('</td>');
+  b.Append('<td>');
+  b.Append(FormatTextToHTML(FUserName));
+  b.Append(' (');
+  b.Append(CODES_UserIdEvidence[FUserEvidence]);
+  if (FUserEvidence in [userExternalOAuth, userBearerJWT]) then
+  begin
+    b.Append(' via ');
+    b.Append(ProviderName);
+  end;
+  b.Append(')');
+  b.Append('</td>');
+  b.Append('<td>');
+  b.Append(FormatTextToHTML(FUserName));
+  b.Append('</td>');
+
 //  created
   b.Append('<td>');
   b.Append(FormatDateTime('c', FFirstCreated));
@@ -1985,6 +2035,7 @@ end;
 
 procedure TFhirSession.setScopes(scopes: String);
 begin
+  FSecurity.Free;
   FSecurity := TFHIRSecurityRights.create(FWorker.Link, FUser, scopes, FSecure);
 end;
 

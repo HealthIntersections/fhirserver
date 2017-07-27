@@ -144,6 +144,10 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
+function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
 
 type
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
@@ -4333,6 +4337,66 @@ end;
 procedure TFhirConceptMapGroupElementTargetHelper.SetCommentElement(const Value: TFHIRString);
 begin
   CommentsElement := value;
+end;
+
+function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(name, fmOpenRead + fmShareDenyWrite);
+  try
+    result := streamToResource(f, format);
+  finally
+    f.Free;
+  end;
+end;
+
+function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+var
+  p :  TFHIRParser;
+begin
+  case format of
+    ffXml : p := TFHIRXmlParser.Create(nil, 'en');
+    ffJson : p := TFHIRJsonParser.Create(nil, 'en');
+  else
+    raise Exception.Create('Format Not supported');
+  end;
+  try
+    p.source := stream;
+    p.Parse;
+    result := p.resource.Link;
+  finally
+    p.Free;
+  end;
+end;
+
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+var
+  f : TFileStream;
+begin
+  f := TFileStream.Create(name, fmCreate);
+  try
+    resourceToStream(res, f, format);
+  finally
+    f.Free;
+  end;
+end;
+
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+var
+  c : TFHIRComposer;
+begin
+  case format of
+    ffXml : c := TFHIRXmlComposer.Create(nil, 'en');
+    ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
+  else
+    raise Exception.Create('Format Not supported');
+  end;
+  try
+    c.Compose(stream, res, true);
+  finally
+    c.Free;
+  end;
 end;
 
 end.

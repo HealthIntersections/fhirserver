@@ -350,11 +350,11 @@ begin
     try
 //      ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.ownername := FSystemName;
-      FWebServer := TFhirWebServer.create(FIni.Link, nil, FSystemname, nil {FTerminologyServer}, ctxt.link);
+      FWebServer := TFhirWebServer.create(FIni.Link, FSystemname, nil {FTerminologyServer}, ctxt.link);
       ctxt.UserProvider := TExampleFHIRUserProvider.Create;
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
-      FWebServer.OWinSecurity := true;
+      FWebServer.OWinSecurityPlain := true;
       FWebServer.Start(true);
     finally
       ctxt.free;

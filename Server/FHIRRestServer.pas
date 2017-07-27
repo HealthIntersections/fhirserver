@@ -34,31 +34,45 @@ POSSIBILITY OF SUCH DAMAGE.
 {$ENDIF}
 
 {
-Copyright (c) 2001-2013, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
-All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+how security works for the FHIR Server
 
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to
-   endorse or promote products derived from this software without specific
-   prior written permission.
+The FHIR Server offers 2 end-points - secure, and insecure.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+The insecure API grants full access to the store, and never applies any security, on the specified port and path.
+You can turn this on or off by controlling seting the port in the ini file that controls the server
+
+[web]
+http=[port]
+base=/path
+
+The server can also provide a secure end-point:
+
+[web]
+https=[port]
+secure=/path  ; must be a different port to the unsecured end-point.
+modes=
+
+The modes setting controls which kind of security models are applied to the interface.
+It is a comma separated list of the following codes:
+
+oauth - OAuth2 using the Smart-on-fhir profile. Users must use a registered client, and idenitfy themselves
+   notes:
+     - clients are configured in auth.ini
+     - user accounts / default right are configured through the SCIM server
+
+owin - Client must authenticate using the owin protocol, and then pass the owin token in the bearer.
+   notes:
+     - client details are configured.... where....?
+     - client is trusted, and users are not authenticated. Client has access to all resources
+
+cert - Client must provide an SSL certificate, which must be pre-registered on the server.
+   notes:
+     - client certificates are registered in auth.ini. See notes there
+     - how users are handled depends on settings in auth.ini
+
+
+
 }
 
 Interface
@@ -66,16 +80,17 @@ Interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
-  EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport,
+  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
+  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
+  IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
+
+  EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport, CertificateSupport,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
-  DCPsha256, AdvJSON, libeay32, RDFUtilities,
+  DCPsha256, AdvJSON, libeay32, RDFUtilities, JWT,
 
-  IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
-  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
-  IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
   MXML, GraphQL, MsXml, MsXmlParser,
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
@@ -210,8 +225,11 @@ Type
     FPatientViewServers : TDictionary<String, String>;
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
-    FOWinSecurity : boolean;
+    FOWinSecurityPlain : boolean;
+    FOWinSecuritySecure : boolean;
     FCDSHooksServer : TCDSHooksServer;
+    FRequireClientCertificate: boolean;
+    FCertificateIdList : TStringList;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -254,7 +272,7 @@ Type
     Procedure ReverseProxy(proxy : TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String; esession : TFhirSession; cert : TIdX509);
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleOWinToken(AContext: TIdContext; secure : boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -266,7 +284,7 @@ Type
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; status : word; format : TFHIRFormat; lang, message, url : String; e : exception; session : TFhirSession; addLogins : boolean; path : String; relativeReferenceAdjustment : integer; code : TFhirIssueTypeEnum);
     Procedure ProcessRequest(context : TOperationContext; request : TFHIRRequest; response : TFHIRResponse);
-    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean): TFHIRRequest;
+    function BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse;     var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean; session : TFhirSession; cert : TIdX509): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc : String;
@@ -279,7 +297,7 @@ Type
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
   Public
-    Constructor Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+    Constructor Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
 
     Procedure Start(active : boolean);
@@ -291,8 +309,13 @@ Type
     property AuthServer : TAuth2Server read FAuthServer;
     Property SourcePath : String read FSourcePath;
     property Host : String read FHost;
-    property OWinSecurity : boolean read FOWinSecurity write FOWinSecurity;
+    property OWinSecurityPlain : boolean read FOWinSecurityPlain write FOWinSecurityPlain;
+    property OWinSecuritySecure : boolean read FOWinSecuritySecure write FOWinSecuritySecure;
+    property RequireClientCertificate : boolean read FRequireClientCertificate write FRequireClientCertificate;
+    property CertificateIdList : TStringList read FCertificateIdList;
     property CDSHooksServer : TCDSHooksServer read FCDSHooksServer;
+
+    function ClientAddress(secure : boolean) : String;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -368,13 +391,14 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFHIRServerIniFile; db : TKDBManager; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+Constructor TFhirWebServer.Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
 var
   s, txu : String;
   ts : TStringList;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
+  FCertificateIdList := TStringList.create;
   FName := Name;
   FIni := ini;
   FHost := FIni.ReadString(voVersioningNotApplicable, 'web', 'host', '');
@@ -519,6 +543,7 @@ Begin
   FReverseProxyList.Free;
   FServerContext.free;
   FLock.Free;
+  FCertificateIdList.Free;
   Inherited;
 End;
 
@@ -578,8 +603,10 @@ begin
 end;
 
 function TFhirWebServer.DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth, AError: Integer): Boolean;
+var
+  i : integer;
 begin
-  result := true;
+  result := (FCertificateIdList.Count = 0) or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
 end;
 
 function port(port, default : integer): String;
@@ -732,7 +759,10 @@ Begin
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
-    FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, {sslvrfFailIfNoPeerCert, }sslvrfClientOnce];
+    if RequireClientCertificate then
+      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfFailIfNoPeerCert, sslvrfClientOnce]
+    else
+      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, {sslvrfFailIfNoPeerCert, }sslvrfClientOnce];
     FIOHandler.SSLOptions.VerifyDepth := 2;
     FIOHandler.OnVerifyPeer := DoVerifyPeer;
 //    FIOHandler.SSLOptions.
@@ -785,7 +815,7 @@ begin
       else
         req.resource := ProcessZip('en', stream, name, base, init, ini, context, cursor);
       req.resource.tags['duplicates'] := 'ignore';
-      req.session := FServerContext.SessionManager.CreateImplicitSession('service', true);
+      req.session := FServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.OwnerName, 'Service Manager', systemInternal, true, false);
       req.session.allowAll;
       req.LoadParams('');
       req.baseUrl := FServerContext.Bases[0];
@@ -808,6 +838,7 @@ begin
     context.free;
   end;
 end;
+
 
 function TFhirWebServer.WebDesc: String;
 begin
@@ -887,7 +918,7 @@ begin
         FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check);
     end;
 
-    if OWinSecurity and (((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) or not ServerContext.UserProvider.allowInsecure) then
+    if OWinSecurityPlain and (((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) or not ServerContext.UserProvider.allowInsecure) then
     begin
       response.ResponseNo := 401;
       response.ResponseText := 'Unauthorized';
@@ -905,7 +936,7 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
-    else if OWinSecurity and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
+    else if OWinSecurityPlain and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
       HandleOWinToken(AContext, false, request, response)
     else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
@@ -924,11 +955,11 @@ begin
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
     else if request.Document.StartsWith(FBasePath, false) then
-      HandleRequest(AContext, request, response, false, false, FBasePath)
+      HandleRequest(AContext, request, response, false, false, FBasePath, session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'FSecurePath', false) then
       HandleWebSockets(AContext, request, response, false, false, FSecurePath)
     else if request.Document.StartsWith(FSecurePath, false) and hasInternalSSLToken(request) then
-      HandleRequest(AContext, request, response, true, true, FSecurePath)
+      HandleRequest(AContext, request, response, true, true, FSecurePath, session, nil)
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
@@ -1006,17 +1037,31 @@ var
   check, handled : boolean;
   c : integer;
   rp : TReverseProxyInfo;
-//  ssl : TIDSSLIOHandlerSocketOpenSSL;
+  cert : TIdX509;
+  jwt : TJWT;
 begin
-//  ssl := TIDSSLIOHandlerSocketOpenSSL(AContext.Connection.IOHandler);
-//  if ssl.SSLSocket.PeerCert <> nil then
-//    writeln(ssl.SSLSocket.PeerCert.Subject.OneLine);
+  check := false;
+  cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
   session := nil;
   MarkEntry(AContext, request, response);
   try
     if (request.AuthUsername = INTERNAL_SECRET) then
-      FServerContext.SessionManager.GetSession(request.AuthPassword, session, check);
+      if request.AuthPassword.StartsWith('urn:') then
+        FServerContext.SessionManager.GetSession(request.AuthPassword, session, check)
+      else
+      begin
+        jwt := TJWTUtils.unpack(request.AuthPassword, false, nil); // todo: change this to true, and validate the JWT, under the right conditions
+        try
+          if cert = nil then
+            session := FServerContext.SessionManager.getSessionFromJWT(request.RemoteIP, 'Unknown', systemUnknown, jwt)
+          else
+            session := FServerContext.SessionManager.getSessionFromJWT(request.RemoteIP, cert.CanonicalName, systemFromCertificate, jwt);
+        finally
+          jwt.free;
+        end;
+      end;
+
     if (session = nil) then
     begin
       c := request.Cookies.GetCookieIndex(FHIR_COOKIE_NAME);
@@ -1024,13 +1069,8 @@ begin
         FServerContext.SessionManager.GetSession(request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1), session, check); // actually, in this place, we ignore check.  we just established the session
     end;
 
-    if OWinSecurity and ((session = nil) and (request.Document <> FBasePath+OWIN_TOKEN_PATH)) then
-    begin
-      response.ResponseNo := 401;
-      response.ResponseText := 'Unauthorized';
-      response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
-      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
-    end
+    if request.Document.StartsWith(FAuthServer.Path) then
+      FAuthServer.HandleRequest(AContext, request, session, response)
     else if (request.CommandType = hcOption) then
     begin
       response.ResponseNo := 200;
@@ -1042,8 +1082,19 @@ begin
       if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
     end
-    else if OWinSecurity and (request.Document = FSecurePath+OWIN_TOKEN_PATH) then
+    else if OWinSecuritySecure and (request.Document = URLPath([FSecurePath, OWIN_TOKEN_PATH])) then
       HandleOWinToken(AContext, true, request, response)
+    else if request.document = FBasePath+'/.well-known/openid-configuration' then
+      HandleDiscoveryRedirect(AContext, request, response)
+    else if request.Document.StartsWith(FSecurePath, false) then
+      HandleRequest(AContext, request, response, true, true, FSecurePath, session, cert)
+    else if OWinSecuritySecure and ((session = nil) and (request.Document <> URLPath([FSecurePath, OWIN_TOKEN_PATH]))) then
+    begin
+      response.ResponseNo := 401;
+      response.ResponseText := 'Unauthorized';
+      response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
+      response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
+    end
     else if FileExists(AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, AltFile(request.Document))
     else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
@@ -1052,20 +1103,14 @@ begin
   //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FSourcePath)+request.Document)
   //  else if FileExists(AltFile(ExtractFileName(request.Document))) then
   //    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
-    else if request.document = FBasePath+'/.well-known/openid-configuration' then
-      HandleDiscoveryRedirect(AContext, request, response)
     else if request.Document.StartsWith('/scim') then
       processSCIMRequest(AContext, request, response)
     else if request.document = '/.well-known/openid-configuration' then
       FAuthServer.HandleDiscovery(AContext, request, response)
   //  else if request.Document.StartsWith(FBasePath, false) then
   //    HandleRequest(AContext, request, response, true, false, FBasePath)
-    else if request.Document.StartsWith(FSecurePath, false) then
-      HandleRequest(AContext, request, response, true, true, FSecurePath)
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, true)
-    else if request.Document.StartsWith(FAuthServer.Path) then
-      FAuthServer.HandleRequest(AContext, request, session, response)
     else if request.Document.StartsWith(FSecurePath+'/cds-services') and FCDSHooksServer.active then
       FCDSHooksServer.HandleRequest(true, FSecurePath, session, AContext, request, response)
     else if request.Document = '/' then
@@ -1089,6 +1134,7 @@ begin
     end;
   finally
     markExit(AContext);
+    session.free;
   end;
 end;
 
@@ -1151,7 +1197,7 @@ begin
           response.ContentText := 'Unknown usernmame/password'
         else
         begin
-          session := FServerContext.SessionManager.CreateImplicitSession(pm.GetVar('username'), false);
+          session := FServerContext.SessionManager.CreateImplicitSession(request.RemoteIP, pm.GetVar('username'), 'Anonymous', systemFromOWin, false, true);
           try
             session.ExternalUserKey := userkey;
             json := TJsonObject.Create;
@@ -1180,7 +1226,7 @@ begin
   end;
 end;
 
-Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
+Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String; esession : TFhirSession; cert : TIdX509);
 var
   sHost : string;
   oRequest : TFHIRRequest;
@@ -1193,7 +1239,6 @@ var
   aFormat : TFHIRFormat;
   lang : String;
   sPath : String;
-  session : TFhirSession;
   redirect : Boolean;
   form : TMimeMessage;
   relativeReferenceAdjustment : integer;
@@ -1203,11 +1248,11 @@ var
   sBearer : String;
   noErrCode, upload : boolean;
   context : TOperationContext;
+  session : TFhirSession;
 Begin
   noErrCode := false;
   upload := false;
 
-  Session := nil;
   try
     if ssl then
       sHost := 'https://'+request.Host
@@ -1270,11 +1315,11 @@ Begin
                 if c > -1 then
                   sCookie := request.Cookies[c].CookieText.Substring(FHIR_COOKIE_NAME.Length+1);
               end;
-              sBearer := sCookie;
 
+              sBearer := sCookie;
               oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP, request.CustomHeaders.Values['content-location'],
                  request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie, request.RawHeaders.Values['Provenance'], sBearer,
-                 oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty);
+                 oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty, esession, cert);
               try
                 oRequest.requestId := request.RawHeaders.Values['X-Request-Id'];
                 if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
@@ -2043,12 +2088,11 @@ end;
 
 
 Function TFhirWebServer.BuildRequest(lang, sBaseUrl, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding, sCookie, provenance, sBearer : String; oPostStream : TStream; oResponse : TFHIRResponse; var aFormat : TFHIRFormat;
-   var redirect : boolean; form : TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean) : TFHIRRequest;
+   var redirect : boolean; form : TMimeMessage; bAuth, secure : Boolean; out relativeReferenceAdjustment : integer; var pretty : boolean; session : TFhirSession; cert : TIdX509) : TFHIRRequest;
 Var
   sURL, msg : String;
   oRequest : TFHIRRequest;
   parser : TFHIRParser;
-  session : TFhirSession;
   check : boolean;
   comp : TIdCompressorZLib;
   mem : TMemoryStream;
@@ -2145,6 +2189,8 @@ Begin
         oRequest.session := nil;
         redirect := true;
       end
+      else if (session <> nil) and FServerContext.SessionManager.isOkSession(session) then
+        oRequest.session := session.Link
       else if (sURL = 'internal') then
         redirect := true
       else if (sUrl <> 'auth-login') and FServerContext.SessionManager.GetSession(sCookie, session, check) then
@@ -2158,8 +2204,10 @@ Begin
       else
         Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), msg, HTTP_ERR_UNAUTHORIZED);
     end
+    else if cert <> nil then
+      oRequest.session := FServerContext.SessionManager.CreateImplicitSession(sClient, cert.CanonicalName, 'Anonymous', systemFromCertificate, false, false)
     else
-      oRequest.session := FServerContext.SessionManager.CreateImplicitSession(sClient, false);
+      oRequest.session := FServerContext.SessionManager.CreateImplicitSession(sClient, 'Unknown', 'Anonymous', systemUnknown, false, false);
 
     if not redirect then
     begin
@@ -2573,7 +2621,7 @@ begin
   if request.session = nil then // during OAuth only
     us := 'user=(in-oauth)'
   else
-    us := 'user='+request.Session.Name;
+    us := 'user='+request.Session.UserName;
   if request.CommandType = fcmdOperation then
     cs := '$'+request.OperationName
   else
@@ -2717,14 +2765,14 @@ begin
       if session <> nil then
         if secure then
         begin
-          b.Append('<p>Welcome '+FormatTextToXml(session.Name)+'</p>'#13#10);
+          b.Append('<p>Welcome '+FormatTextToXml(session.SessionName)+'</p>'#13#10);
           if session.canGetUser and (session.User <> nil) then
           begin
             b.Append('<p>You bearer token is '+inttostr(session.UserKey)+'.'+session.User.hash+'. Use this to get access to the secure API without needing OAuth login</p>');
           end;
         end
         else
-          b.Append('<p>Welcome '+FormatTextToXml(session.Name)+' (or use <a href="https://'+FHost+port(FStatedSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
+          b.Append('<p>Welcome '+FormatTextToXml(session.SessionName)+' (or use <a href="https://'+FHost+port(FStatedSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
 
     b.Append(
     '<p>'#13#10+
@@ -2863,7 +2911,7 @@ FHIR_JS+
 '  FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+''#13#10;
 
 if session <> nil then
-  result := result +'&nbsp;&nbsp;'+FormatTextToXml(Session.Name);
+  result := result +'&nbsp;&nbsp;'+FormatTextToXml(Session.SessionName);
 
 result := result +
 '  &nbsp;<a href="'+s+'">'+GetFhirMessage('MSG_BACK_HOME', lang)+'</a>'#13#10+
@@ -3180,18 +3228,26 @@ function TFhirWebServer.CheckSessionOK(session: TFhirSession; ip : string): Bool
 var
   id, name, email, msg : String;
 begin
-  if session.provider = apGoogle then
+  if session.providerCode = apGoogle then
     result := GoogleGetDetails(session.InnerToken, FAuthServer.GoogleAppKey, '', id, name, email, msg)
-  else if session.provider = apFacebook then
+  else if session.providerCode = apFacebook then
     result := FacebookGetDetails(session.InnerToken, id, name, email, msg)
   else
     result := false;
   if result then
     result := session.Id = id;
   if result then
-    FServerContext.SessionManager.MarkSessionChecked(session.Cookie, session.Name)
+    FServerContext.SessionManager.MarkSessionChecked(session.Cookie)
   else
     FServerContext.SessionManager.EndSession(session.Cookie, ip);
+end;
+
+function TFhirWebServer.ClientAddress(secure: boolean): String;
+begin
+  if secure then
+    result := 'https://localhost:'+IntToStr(FActualSSLPort)+FSecurePath
+  else
+    result := 'http://localhost:'+IntToStr(FActualPort)+FBasePath;
 end;
 
 //procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
@@ -3294,7 +3350,7 @@ begin
   if (session = nil) then
     s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll])
   else
-    s := s.Replace('[%logout%]', '|&nbsp;User: '+session.Name+'&nbsp; <a href="/closed/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;', [rfReplaceAll]);
+    s := s.Replace('[%logout%]', '|&nbsp;User: '+session.SessionName+'&nbsp; <a href="/closed/logout" title="Log Out"><img src="/logout.png"></a>  &nbsp;', [rfReplaceAll]);
   if FStatedPort = 80 then
     s := s.Replace('[%host%]', FHost, [rfReplaceAll])
   else

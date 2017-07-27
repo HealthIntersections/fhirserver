@@ -39,7 +39,7 @@ uses
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
-  OAUTH_SESSION_PREFIX = 'b35b7vX3KTAe-';
+  OAUTH_SESSION_PREFIX = 'urn:oauth:';
 
 Type
   TQuestionnaireCache = class(TAdvObject)
@@ -333,16 +333,17 @@ begin
   FSubscriptionManager.Free;
   FIndexes.free;
   FTerminologyServer.Free;
+  FStorage.Free;
+  FQuestionnaireCache.free;
+  UserProvider.Free;
+
   FValidator.free;
-  if FValidatorContext.AdvObjectReferenceCount > 0 then
-    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
-  
+//  if FValidatorContext.AdvObjectReferenceCount > 0 then
+//    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
+
   FValidatorContext.Free;
   FResConfig.free;
-  FQuestionnaireCache.free;
-  FStorage.Free;
   FBases.free;
-  UserProvider.Free;
   FLock.Free;
   inherited;
 end;

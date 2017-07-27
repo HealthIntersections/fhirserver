@@ -260,6 +260,7 @@ end;
 constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
 begin
   FStartTime := GetTickCount;
+  Consolelog := true;
   inherited create(ASystemName, ADisplayName);
   FIni := TFHIRServerIniFile.Create(AIniName);
 end;
@@ -579,7 +580,7 @@ begin
       ctxt.ForLoad := not FindCmdLineSwitch('noload');
       ctxt.ownername := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
       store.Initialise(FIni);
-      FWebServer := TFhirWebServer.create(FIni.link, FDb, DisplayName, FTerminologyServer, ctxt.link);
+      FWebServer := TFhirWebServer.create(FIni.link, DisplayName, FTerminologyServer, ctxt.link);
       ctxt.userProvider := TSCIMServer.Create(Fdb.link, FWebServer.SourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;

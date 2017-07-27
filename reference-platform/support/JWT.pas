@@ -287,6 +287,8 @@ Type
     property addressRegion : string read GetaddressRegion write SetaddressRegion; // 'address.region'  State, province, prefecture, or region component.
     property addressPostCode : string read GetaddressPostCode write SetaddressPostCode; // 'address.postal_code'  Zip code or postal code component.
     property addressCountry : string read GetaddressCountry write SetaddressCountry; // 'address.country'  Country name component.
+
+    function userName : String;
   end;
 
   TJWTUtils = class (TAdvObject)
@@ -945,6 +947,16 @@ end;
 procedure TJWT.Setwebsite(value : string);
 begin
   payload['website'] := value;
+end;
+
+function TJWT.userName: String;
+begin
+  if name <> '' then
+    result := name
+  else if email <> '' then
+    result := email
+  else
+    result := subject;
 end;
 
 function TJWT.Getemail : string;

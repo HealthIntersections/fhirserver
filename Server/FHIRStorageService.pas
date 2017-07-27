@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  KCritSct,
+  KCritSct, StringSupport,
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, ThreadSupport,
   KDBDialects, DateSupport,
 
@@ -101,12 +101,18 @@ Type
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
 
+    procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
+    procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
+    procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
+    procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
+
   public
     constructor create(lang : String);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property lang : String read FLang write FLang;
 
+    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
@@ -129,7 +135,7 @@ Type
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); virtual;
     function hasOAuthSession(id : String; status : integer) : boolean; virtual;
     function hasOAuthSessionByKey(key, status : integer) : boolean; virtual;
-    procedure updateOAuthSession(id : String; state, key : integer); virtual;
+    procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); virtual;
     procedure RegisterConsentRecord(session: TFhirSession); virtual;
 
     // server total counts:
@@ -288,7 +294,7 @@ begin
   raise Exception.Create('The function "Sweep" must be overridden in '+className);
 end;
 
-procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer);
+procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 begin
   raise Exception.Create('This server does not support OAuth');
 end;
@@ -335,6 +341,54 @@ begin
   inherited create;
   FLang := lang;
 end;
+
+procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  response.HTTPCode := 404;
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_MATCH', lang), [request.ResourceName+'?'+request.parameters.source]);
+  response.Body := response.Message;
+  response.Resource := BuildOperationOutcome(lang, response.Message);
+end;
+
+procedure TFHIROperationEngine.NotFound(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  response.HTTPCode := 404;
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id]);
+  response.Body := response.Message;
+  response.Resource := BuildOperationOutcome(lang, response.Message);
+end;
+
+procedure TFHIROperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  response.HTTPCode := 404;
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id+'/_history/'+request.subId]);
+  response.Body := response.Message;
+  response.Resource := BuildOperationOutcome(lang, response.Message);
+end;
+
+
+procedure TFHIROperationEngine.TypeNotFound(request: TFHIRRequest; response: TFHIRResponse);
+begin
+  response.HTTPCode := 404;
+  response.Message := StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [request.ResourceName]);
+  response.Body := response.Message;
+  response.Resource := BuildOperationOutcome(lang, response.Message);
+end;
+
+function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TFhirIssueTypeEnum): Boolean;
+begin
+  result := test;
+  if not test and (response <> nil) then
+  begin
+    response.HTTPCode := code;
+    response.Message := message;
+    response.ContentType := 'text/plain';
+    response.Body := message;
+    response.Resource := BuildOperationOutcome(lang, message, issueCode);
+  end;
+end;
+
+
 
 function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
 begin

@@ -2227,55 +2227,55 @@ end;
 class function TFHIRXhtmlComposer.Footer(base, lang : String; tail : boolean = true): string;
 begin
   result :=
-'</div>'+#13#10+
-''+#13#10+
-''+#13#10+
-'				</div>  <!-- /inner-wrapper -->'+#13#10+
-'            </div>  <!-- /row -->'+#13#10+
-'        </div>  <!-- /container -->'+#13#10+
-'    </div>  <!-- /segment-content -->'+#13#10+
-''+#13#10+
-''+#13#10+
-'	<div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
-'		<div class="container">  <!-- container -->'+#13#10+
-'			<div class="inner-wrapper">'+#13#10+
-'				<p>'+#13#10+
-'        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
-'        </span>'+#13#10+
-'        </p>'+#13#10+
-'			</div>  <!-- /inner-wrapper -->'+#13#10+
-'		</div>  <!-- /container -->'+#13#10+
-'	</div>  <!-- /segment-footer -->'+#13#10+
-''+#13#10+
-''+#13#10+
-'	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
-'		<div class="container">  <!-- container -->'+#13#10+
-'		</div>  <!-- /container -->'+#13#10+
-'	</div>  <!-- /segment-post-footer -->'+#13#10+
-''+#13#10+
-''+#13#10+
-''+#13#10+
-''+#13#10+
-''+#13#10+
-'      <!-- JS and analytics only. -->'+#13#10+
-'      <!-- Bootstrap core JavaScript'+#13#10+
-'================================================== -->'+#13#10+
-'  <!-- Placed at the end of the document so the pages load faster -->'+#13#10+
-'<script src="/assets/js/jquery.js"/>'+#13#10+
-'<script src="/dist/js/bootstrap.min.js"/>'+#13#10+
-'<script src="/assets/js/respond.min.js"/>'+#13#10+
-''+#13#10+
-'<script src="/assets/js/fhir.js"/>'+#13#10+
-''+#13#10+
-'  <!-- Analytics Below'+#13#10+
-'================================================== -->'+#13#10+
-''+#13#10+
-''+#13#10+
-''+#13#10;
+    '</div>'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    '				</div>  <!-- /inner-wrapper -->'+#13#10+
+    '            </div>  <!-- /row -->'+#13#10+
+    '        </div>  <!-- /container -->'+#13#10+
+    '    </div>  <!-- /segment-content -->'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    '	<div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
+    '		<div class="container">  <!-- container -->'+#13#10+
+    '			<div class="inner-wrapper">'+#13#10+
+    '				<p>'+#13#10+
+    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+    '        </span>'+#13#10+
+    '        </p>'+#13#10+
+    '			</div>  <!-- /inner-wrapper -->'+#13#10+
+    '		</div>  <!-- /container -->'+#13#10+
+    '	</div>  <!-- /segment-footer -->'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    '	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
+    '		<div class="container">  <!-- container -->'+#13#10+
+    '		</div>  <!-- /container -->'+#13#10+
+    '	</div>  <!-- /segment-post-footer -->'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    '      <!-- JS and analytics only. -->'+#13#10+
+    '      <!-- Bootstrap core JavaScript'+#13#10+
+    '================================================== -->'+#13#10+
+    '  <!-- Placed at the end of the document so the pages load faster -->'+#13#10+
+    '<script src="/assets/js/jquery.js"/>'+#13#10+
+    '<script src="/dist/js/bootstrap.min.js"/>'+#13#10+
+    '<script src="/assets/js/respond.min.js"/>'+#13#10+
+    ''+#13#10+
+    '<script src="/assets/js/fhir.js"/>'+#13#10+
+    ''+#13#10+
+    '  <!-- Analytics Below'+#13#10+
+    '================================================== -->'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    ''+#13#10;
 if tail then
   result := result +
-'</body>'+#13#10+
-'</html>'+#13#10;
+    '</body>'+#13#10+
+    '</html>'+#13#10;
 end;
 
 class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang, version: String): String;
@@ -2284,32 +2284,31 @@ var
    f : boolean;
 begin
   result :=
-'	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
-'		<div id="stripe"> </div>'+#13#10+
-'		<div class="container">  <!-- container -->'+#13#10+
-'		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
+    '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
+    '		<div id="stripe"> </div>'+#13#10+
+    '		<div class="container">  <!-- container -->'+#13#10+
+    '		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
 
 
   result := result +
-
-  '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
-  ''#13#10+
-  '  &copy; HL7.org'#13#10+
-  '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
-  '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
-  '  &nbsp;|&nbsp;'#13#10+
-  '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
+    '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
+    ''#13#10+
+    '  &copy; HL7.org'#13#10+
+    '  &nbsp;|&nbsp;'#13#10+
+    '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
+    '  &nbsp;|&nbsp;'#13#10+
+    '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
+    '  &nbsp;|&nbsp;'#13#10+
+    '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
 
   if (session <> nil)  then
   begin
     result := result +'&nbsp;|&nbsp;';
     if session.canGetUser then
-      result := result +'User: '+FormatTextToXml(Session.Name)
+      result := result +'User: '+FormatTextToXml(Session.SessionName)
     else
       result := result +'User: [n/a]';
-    if not session.anonymous then
+    if session.UserEvidence <> userAnonymous then
       result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
     if session.PatientList.Count > 0 then
     begin
@@ -2330,24 +2329,24 @@ begin
   end;
 
   result := result +
-  '  &nbsp;'#13#10+
-'		</div>  <!-- /container -->'+#13#10+
-'		</div>  <!-- /container -->'+#13#10+
-  '</div>'#13#10+
-  ''#13#10;
+    '  &nbsp;'#13#10+
+    '		</div>  <!-- /container -->'+#13#10+
+    '		</div>  <!-- /container -->'+#13#10+
+    '</div>'#13#10+
+    ''#13#10;
 //    if FFacebookLike and (FOauthUrl <> '') then
 //      result := result + '<iframe src="https://www.facebook.com/plugins/like.php?href='+FOauthUrl+'" scrolling="no" frameborder="0" style="border:none; width:450px; height:30px"></iframe>'#13#10;
 
   result := result +
-'	<!-- /segment-breadcrumb -->'+#13#10+
-''+#13#10+
-'	<div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
-'	<div class="container">  <!-- container -->'+#13#10+
-'            <div class="row">'+#13#10+
-'            	<div class="inner-wrapper">'+#13#10+
-' <div id="div-cnt" class="col-9">'+#13#10+
-''+#13#10+
-''+#13#10;
+    '	<!-- /segment-breadcrumb -->'+#13#10+
+    ''+#13#10+
+    '	<div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
+    '	<div class="container">  <!-- container -->'+#13#10+
+    '            <div class="row">'+#13#10+
+    '            	<div class="inner-wrapper">'+#13#10+
+    ' <div id="div-cnt" class="col-9">'+#13#10+
+    ''+#13#10+
+    ''+#13#10;
 end;
 
 function TFHIRXhtmlComposer.MimeType: String;
@@ -2377,37 +2376,37 @@ end;
 
 class function TFHIRXhtmlComposer.PageLinks: String;
 begin
-result :=
-'  <meta charset="utf-8"/>'+#13#10+
-'  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
-'  <meta content="http://hl7.org/fhir" name="author"/>'+#13#10+
-''+#13#10+
-'  <link rel="stylesheet" href="/fhir.css"/>'+#13#10+
-''+#13#10+
-''+#13#10+
-'    <!-- Bootstrap core CSS -->'+#13#10+
-'  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>'+#13#10+
-'  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>'+#13#10+
-''+#13#10+
-'    <!-- Project extras -->'+#13#10+
-'  <link rel="stylesheet" href="/assets/css/project.css"/>'+#13#10+
-'  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>'+#13#10+
-''+#13#10+
-'    <!-- FHIR Server stuff -->'+#13#10+
-'  <link rel="stylesheet" href="/css/tags.css"/>'+#13#10+
-''+#13#10+
-'    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'+#13#10+
-'    <!-- [if lt IE 9]>'+#13#10+
-'  <script src="/assets/js/html5shiv.js"></script>'+#13#10+
-'  <script src="/assets/js/respond.min.js"></script>'+#13#10+
-'  <![endif] -->'+#13#10+
-''+#13#10+
-'    <!-- Favicons -->'+#13#10+
-'  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>'+#13#10+
-'  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>'+#13#10+
-'  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>'+#13#10+
-'  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>'+#13#10+
-'  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>'+#13#10;
+  result :=
+    '  <meta charset="utf-8"/>'+#13#10+
+    '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
+    '  <meta content="http://hl7.org/fhir" name="author"/>'+#13#10+
+    ''+#13#10+
+    '  <link rel="stylesheet" href="/fhir.css"/>'+#13#10+
+    ''+#13#10+
+    ''+#13#10+
+    '    <!-- Bootstrap core CSS -->'+#13#10+
+    '  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>'+#13#10+
+    '  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>'+#13#10+
+    ''+#13#10+
+    '    <!-- Project extras -->'+#13#10+
+    '  <link rel="stylesheet" href="/assets/css/project.css"/>'+#13#10+
+    '  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>'+#13#10+
+    ''+#13#10+
+    '    <!-- FHIR Server stuff -->'+#13#10+
+    '  <link rel="stylesheet" href="/css/tags.css"/>'+#13#10+
+    ''+#13#10+
+    '    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'+#13#10+
+    '    <!-- [if lt IE 9]>'+#13#10+
+    '  <script src="/assets/js/html5shiv.js"></script>'+#13#10+
+    '  <script src="/assets/js/respond.min.js"></script>'+#13#10+
+    '  <![endif] -->'+#13#10+
+    ''+#13#10+
+    '    <!-- Favicons -->'+#13#10+
+    '  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>'+#13#10+
+    '  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>'+#13#10+
+    '  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>'+#13#10+
+    '  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>'+#13#10+
+    '  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>'+#13#10;
 end;
 
 function TFHIRXhtmlComposer.PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer): String;

@@ -42,7 +42,7 @@ uses
 
   ParseMap, KDBManager, KDBDialects, KCritSct,
 
-  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT, AdvExceptions,
+  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT, AdvExceptions, AdvGenerics,
 
   FacebookSupport, SCIMServer, SCIMObjects,
 
@@ -60,6 +60,8 @@ type
     FProvider : TFHIRAuthProvider;
     FPath : String;
     FExpires : TDateTime;
+  public
+    Function Link : TFhirLoginToken; overload;
   end;
 
   // predefined token per user for testing
@@ -80,7 +82,7 @@ type
 
     FFacebookAppid : String;
     FFacebookAppSecret : String;
-    FLoginTokens : TStringList;
+    FLoginTokens : TAdvMap<TFhirLoginToken>;
     FGoogleAppid : String;
     FGoogleAppSecret : String;
     FGoogleAppKey : String;
@@ -161,7 +163,7 @@ begin
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TCriticalSection.Create('auth-server');
-  FLoginTokens := TStringList.create;
+  FLoginTokens := TAdvMap<TFhirLoginToken>.create;
 
   FHL7Appid := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-id', '');
   FHL7AppSecret := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-secret', '');
@@ -224,8 +226,9 @@ end;
 function TAuth2Server.MakeLoginToken(path : String; provider : TFHIRAuthProvider): String;
 var
   login : TFhirLoginToken;
-  i : integer;
   t : TDateTime;
+  st : TStringlist;
+  s : String;
 begin
   t := now;
   FLock.Lock;
@@ -236,18 +239,22 @@ begin
       login.FExpires := now + DATETIME_MINUTE_ONE * 30;
       login.Fprovider := provider;
       result := OAUTH_LOGIN_PREFIX + copy(GUIDToString(CreateGuid), 2, 36);
-      FLoginTokens.AddObject(result, login.link);
+      FLoginTokens.Add(result, login.link);
     finally
       login.free;
     end;
-    for i := FLoginTokens.Count - 1 downto 0 do
-    begin
-      login := TFhirLoginToken(FLoginTokens.Objects[i]);
-      if login.FExpires < t then
+    st := TStringList.Create;
+    try
+      for s in FLoginTokens.Keys do
       begin
-        login.free;
-        FLoginTokens.Delete(i);
+        login := FLoginTokens[s];
+        if login.FExpires < t then
+          st.Add(s)
       end;
+      for s in st do
+        FLoginTokens.Remove(s);
+    finally
+      st.Free;
     end;
   finally
     FLock.Unlock;
@@ -467,60 +474,56 @@ begin
   else
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
-  try
-    if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope) then
-      raise Exception.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
+  if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope) then
+    raise Exception.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice');
 
-    if params.getVar('form') = 'true' then
-    begin
-      scopes := TStringList.create;
-      try
-        readScopes(scopes, params);
+  if params.getVar('form') = 'true' then
+  begin
+    scopes := TStringList.create;
+    try
+      readScopes(scopes, params);
 
-        session.JWT := TJWT.Create;
-        session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
-        session.jwt.issuer := FHost;
-        session.jwt.expires := session.Expires;
-        session.jwt.issuedAt := now;
-        session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
+      session.JWT := TJWT.Create;
+      session.jwt.header['kid'] := authurl+'/auth_key'; // cause we'll sign with our SSL certificate
+      session.jwt.issuer := FHost;
+      session.jwt.expires := session.Expires;
+      session.jwt.issuedAt := now;
+      session.jwt.id := FHost+'/sessions/'+inttostr(Session.Key);
 
-        if params.getVar('user') = '1' then
-        begin
-        // if user rights granted
-          session.jwt.subject := Names_TFHIRAuthProvider[session.Provider]+':'+session.id;
-          session.jwt.name := session.Name;
-          if session.Email <> '' then
-            session.jwt.email := session.Email;
-        end;
-        session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
-
-        ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
-        if params.GetVar('patient') <> '' then
-          session.PatientList.Add(params.GetVar('patient'));
-
-        session.scopes := scopes.CommaText.Replace(',', ' ');
-        ServerContext.Storage.RegisterConsentRecord(session);
-        response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
-      finally
-        scopes.Free;
+      if params.getVar('user') = '1' then
+      begin
+      // if user rights granted
+        session.jwt.subject := Names_TFHIRAuthProvider[session.ProviderCode]+':'+session.id;
+        session.jwt.name := session.UserName;
+        if session.Email <> '' then
+          session.jwt.email := session.Email;
       end;
-    end
-    else
-    begin
-      variables := TDictionary<String,String>.create;
-      try
-        variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
-        variables.Add('/oauth2', FPath);
-        variables.Add('username', name);
-        variables.Add('patient-list', GetPatientListAsOptions);
-        loadScopeVariables(variables, scope, session.User);
-        OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
-      finally
-        variables.free;
-      end;
+      session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
+
+      ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
+      if params.GetVar('patient') <> '' then
+        session.PatientList.Add(params.GetVar('patient'));
+
+      session.scopes := scopes.CommaText.Replace(',', ' ');
+      ServerContext.Storage.RegisterConsentRecord(session);
+      response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
+    finally
+      scopes.Free;
     end;
-  finally
-    session.Free;
+  end
+  else
+  begin
+    variables := TDictionary<String,String>.create;
+    try
+      variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
+      variables.Add('/oauth2', FPath);
+      variables.Add('username', name);
+      variables.Add('patient-list', GetPatientListAsOptions);
+      loadScopeVariables(variables, scope, session.User);
+      OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
+    finally
+      variables.free;
+    end;
   end;
 end;
 
@@ -580,7 +583,7 @@ end;
 procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   id, username, password, domain, state, jwt : String;
-  authurl, token, expires, msg, uid, name, email : String;
+  authurl, token, expires, msg, uid, name, email, client_id : String;
   provider : TFHIRAuthProvider;
   ok : boolean;
   key : integer;
@@ -601,9 +604,11 @@ begin
     if not ServerContext.Storage.hasOAuthSession(id, 1) then
       raise Exception.Create('State failed - no login session active');
 
-    session := ServerContext.SessionManager.RegisterSession(apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
+    session := ServerContext.SessionManager.RegisterSession(userLogin, apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
     try
-      ServerContext.Storage.UpdateOAuthSession(id, 2, session.key);
+      ServerContext.Storage.UpdateOAuthSession(id, 2, session.key, client_id);
+      session.SystemName := client_id;
+      session.SystemEvidence := systemFromOAuth;
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
@@ -618,9 +623,11 @@ begin
     uid := params.GetVar('userid');
     name := params.GetVar('fullName');
     expires := inttostr(60 * 24 * 10); // 10 days
-    session := ServerContext.SessionManager.RegisterSession(aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
+    session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, aphl7, '', id, uid, name, '', '', expires, AContext.Binding.PeerIP, '');
     try
-      ServerContext.Storage.updateOAuthSession(id, 2, session.key);
+      ServerContext.Storage.updateOAuthSession(id, 2, session.key, client_id);
+      session.SystemName := client_id;
+      session.SystemEvidence := systemFromOAuth;
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
@@ -656,9 +663,11 @@ begin
     end;
     if not ok then
       raise Exception.Create('Processing the login failed ('+msg+')');
-    session := ServerContext.SessionManager.RegisterSession(provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
+    session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
     try
-      ServerContext.Storage.updateOAuthSession(id, 2, session.key);
+      ServerContext.Storage.updateOAuthSession(id, 2, session.key, client_id);
+      session.SystemName := client_id;
+      session.SystemEvidence := systemFromOAuth;
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
@@ -720,7 +729,7 @@ end;
 
 procedure TAuth2Server.HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  token, id, name, email, password, domain : String;
+  token, id, name, email, password, domain, client_id : String;
   variables : TDictionary<String,String>;
 begin
   domain := request.Host;
@@ -739,9 +748,11 @@ begin
 
     // update the login record
     // create a session
-    session := ServerContext.SessionManager.RegisterSession(apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
+    session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, apInternal, '', token, id, name, email, '', inttostr(24*60), AContext.Binding.PeerIP, '');
     try
-      ServerContext.Storage.updateOAuthSession(token, 2, session.Key);
+      ServerContext.Storage.updateOAuthSession(token, 2, session.Key, client_id);
+      session.SystemName := client_id;
+      session.SystemEvidence := systemFromOAuth;
     finally
       session.Free;
     end;
@@ -792,7 +803,7 @@ end;
 
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
-  code, clientId, clientSecret, uri, errCode : string;
+  code, clientId, clientSecret, uri, errCode, client_id : string;
   psecret, pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
@@ -845,7 +856,9 @@ begin
         // ok, well, it's passed.
         scope := pscope;
         launch := readFromScope(scope, 'launch');
-        ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key);
+        ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
+        if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
+          raise Exception.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
 
         json := TJsonWriter.create;
         try
@@ -936,8 +949,8 @@ begin
           json.Value('use_count', inttostr(session.useCount));
           if session.canGetUser then
           begin
-            json.Value('user_id', Names_TFHIRAuthProvider[session.Provider]+':'+session.id);
-            json.Value('user_name', session.Name);
+            json.Value('user_id', Names_TFHIRAuthProvider[session.ProviderCode]+':'+session.id);
+            json.Value('user_name', session.UserName);
             if session.Email <> '' then
               json.Value('email', session.Email);
           end;
@@ -1040,24 +1053,27 @@ end;
 
 function TAuth2Server.CheckLoginToken(state: string; var original : String; var provider : TFHIRAuthProvider): Boolean;
 var
-  i : integer;
   token : TFhirLoginToken;
 begin
   FLock.Lock;
   try
-    i := FLoginTokens.Indexof(state);
-    result := i <> -1;
+    result := FLoginTokens.TryGetValue(state, token);
     if result then
     begin
-      token := TFhirLoginToken(FLoginTokens.Objects[i]);
       original := token.FPath;
       provider := token.FProvider;
-      token.free;
-      FLoginTokens.Delete(i);
+      FLoginTokens.remove(state);
     end;
   finally
     FLock.Unlock;
   end;
+end;
+
+{ TFhirLoginToken }
+
+function TFhirLoginToken.Link: TFhirLoginToken;
+begin
+  result := TFhirLoginToken(inherited link);
 end;
 
 end.

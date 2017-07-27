@@ -52,7 +52,7 @@ uses
 Function FacebookCheckLogin(id, secret, url, code : String; var token, expires, error : String) : boolean;
 var
   fetch : TInternetFetcher;
-  parsemap : TParseMap;
+  json : TJSONObject;
 begin
   result := false;
   try
@@ -60,12 +60,12 @@ begin
     try
       fetch.URL := 'https://graph.facebook.com/oauth/access_token?client_id='+id+'&redirect_uri='+url+'&client_secret='+secret+'&code='+code;
       fetch.Fetch;
-      parsemap := TParseMap.create(fetch.Buffer.AsUnicode);
+      json := TJSONParser.Parse(fetch.Buffer.AsUnicode);
       try
-        token := parsemap.GetVar('access_token');
-        expires := parsemap.GetVar('expires');
+        token := json.str['access_token'];
+        expires := json.str['expires_in'];
       finally
-        parsemap.free;
+        json.free;
       end;
       result := true;
     finally
@@ -101,7 +101,7 @@ begin
         Try
           http.IOHandler := ssl;
           ssl.SSLOptions.Mode := sslmClient;
-          ssl.SSLOptions.Method := sslvSSLv3;
+          ssl.SSLOptions.Method := sslvTLSv1_2;
           http.Request.ContentType := 'application/x-www-form-urlencoded';
           resp := TBytesStream.create;
           try
