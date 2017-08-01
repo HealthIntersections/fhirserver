@@ -11035,6 +11035,7 @@ begin
         subj := resolveReference(conn, obs.subject.reference);
         if (subj <> 0) then
         begin
+          {$IFNDEF FHIR2}
           i := obs.categoryList.count;
           for cc in obs.categoryList do
             inc(i, cc.codingList.Count);
@@ -11046,6 +11047,20 @@ begin
               categories[i] := resolveConcept(conn, c);
               inc(i);
             end;
+          {$ELSE}
+          if obs.category <> nil then
+          begin
+            SetLength(categories, obs.category.codingList.Count);
+            i := 0;
+            for c in obs.category.codingList do
+            begin
+              categories[i] := resolveConcept(conn, c);
+              inc(i);
+            end;
+          end
+          else
+            i := 0;
+          {$ENDIF}
           ProcessObservationContent(conn, key, rk, obs, subj, categories)
         end;
       end;
