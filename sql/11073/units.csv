@@ -1,0 +1,553 @@
+_UOM_GROUPS,DIMENSION,DIM,DIMC,Symbol,UOM_UCUM,UOM_MDC,UCODE10,CF_UCODE10,Tags
+," Unspecified","","","?","{unknown}","MDC_DIM_NOS",0","262144","ds-ip-rel_2.0"
+," Dimension- less","1","1","-","{unitless} 1","MDC_DIM_DIMLESS",512","262656","ds-ip-rel_2.0"
+," Dimension- less","1","1","1/0","1 {bool}","MDC_DIM_BOOLEAN",7776","269920",
+," - decibel  (existing 11073 definition)","[Bel]","[Bel]","DB","dB dB[10.nV]","MDC_DIM_DECIBEL",6432","268576",
+," - decibel  (proposal "dB1")","[Bel]","[Bel]","dB(V)","dB[V]","MDC_DIM_DECIBEL_X_V",7808","269952",
+," - decibel  (proposal "dB1")","[Bel]","[Bel]","dB(mV)","dB[mV]","MDC_DIM_DECIBEL_X_MV",7840","269984",
+," - decibel  (proposal "dB1")","[Bel]","[Bel]","dB(uV)","dB[uV]","MDC_DIM_DECIBEL_X_UV",7872","270016",
+," - decibel  (proposal "dB1")","[Bel]","[Bel]","dB(nV)","dB[nV]","MDC_DIM_DECIBEL_X_NV",7904","270048",
+," - decibel  (proposal "dB1")","[Bel]","[Bel]","dB(10nV)","dB[10.nV]","MDC_DIM_DECIBEL_DECA_NV",7936","270080",
+," - decibel  (proposal "dB2")","[Bel]","[Bel]","B(mV)","B[mV]","MDC_DIM_X_BEL_MV",7968","270112",
+," - Bel and deciBel   (proposal "dB3")","[Bel]","[Bel]","B","B","MDC_DIM_X_BEL",8000","270144",
+," - Bel and deciBel   (proposal "dB3")","[Bel]","[Bel]","dB","dB","MDC_DIM_DECI_BEL",8016","270160",
+_UOM_CONC_GAS," - Bel and deciBel   (proposal "dB3")","1","1","%","%","MDC_DIM_PERCENT",544","262688",
+," - Bel and deciBel   (proposal "dB3")","1","1","Ppht","[ppth]","MDC_DIM_PARTS_PER_10_TO_MINUS_3",576","262720",
+," - Bel and deciBel   (proposal "dB3")","1","1","Ppm","[ppm]","MDC_DIM_PARTS_PER_10_TO_MINUS_6",608","262752",
+," - Bel and deciBel   (proposal "dB3")","1","1","","10*-9 10^-9","MDC_DIM_PARTS_PER_10_TO_MINUS_9",640","262784",
+," - Bel and deciBel   (proposal "dB3")","1","1","Ppb","10*-12 10^-12","MDC_DIM_PARTS_PER_10_TO_MINUS_12",672","262816",
+," - Bel and deciBel   (proposal "dB3")","1","1","Ppt","10*-15 10^-15","MDC_DIM_PARTS_PER_10_TO_MINUS_15",704","262848",
+," - angles","[rad]","[rad]","Degree","deg","MDC_DIM_ANG_DEG",736","262880",
+," - angles","[rad]","[rad]","Rad","rad","MDC_DIM_ANG_RAD",768","262912",
+," - mass fraction","MM-1","1","g g-1","g/g","MDC_DIM_X_G_PER_G",800","262944",
+_UOM_DOSE_QUAN," - mass fraction","MM-1","1","g kg-1","g/kg","MDC_DIM_X_G_PER_KG",832","262976","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - mass fraction","MM-1","1","mg kg-1","mg/kg","MDC_DIM_MILLI_G_PER_KG",850","262994","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - mass fraction","MM-1","1","ug kg-1","ug/kg","MDC_DIM_MICRO_G_PER_KG",851","262995","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - mass fraction","MM-1","1","ng kg-1","ng/kg","MDC_DIM_NANO_G_PER_KG",852","262996","ds-ip-rel_2.0"
+," - mass fraction","MM-1","1","g mg-1","g/mg","MDC_DIM_X_G_PER_MG",6464","268608",
+," - relative quantity","NN-1","1","mol mol-1","mol/mol","MDC_DIM_X_MOLE_PER_MOLE",864","263008",
+," - volume fraction","L3L-3","1","l l-1","L/L","MDC_DIM_X_L_PER_L",896","263040",
+," - volume fraction","L3L-3","1","l dl-1","L/dL","MDC_DIM_X_L_PER_DL",6400","268544",
+," - volume fraction","L3L-3","1","","mL/dL","MDC_DIM_MILLI_L_PER_DL",6418","268562",
+," - volume fraction","L3L-3","1","m m-3 ","DO_NOT_USE","MDC_DIM_CUBIC_X_M_PER_M_CUBE",928","263072",
+," - volume fraction","L3L-3","1","m cm-3","DO_NOT_USE","MDC_DIM_CUBIC_X_M_PER_CM_CUBE",960","263104",
+_UOM_CONC_GAS," - volume fraction","L3L-3","1","vol %","%{vol}","MDC_DIM_VOL_PERCENT",6240","268384",
+," - special vital signs counts","[pH]","[pH]","PH","[pH]","MDC_DIM_PH",992","263136",
+," - special vital signs counts","1","1","Drop","[drp]","MDC_DIM_DROP",1024","263168",
+," - special vital signs counts","1","1","Rbc","{rbc}","MDC_DIM_RBC",1056","263200",
+," - special vital signs counts","1","1","Beat","{beat}","MDC_DIM_BEAT",1088","263232",
+," - special vital signs counts","1","1","Breath","{breath}","MDC_DIM_BREATH",1120","263264",
+," - special vital signs counts","1","1","Cell","{cell}","MDC_DIM_CELL",1152","263296",
+," - special vital signs counts","1","1","Cough","{cough}","MDC_DIM_COUGH",1184","263328",
+," - special vital signs counts","1","1","Sigh","{sigh}","MDC_DIM_SIGH",1216","263360",
+," - special vital signs counts","1","1","%PCV","%{pcv}","MDC_DIM_PCT_PCV",1248","263392",
+," L (length)","L","L","m","m","MDC_DIM_X_M",1280","263424",
+," L (length)","L","L","cm","cm","MDC_DIM_CENTI_M",1297","263441","ds-ip-rel_2.0"
+," L (length)","L","L","mm","mm","MDC_DIM_MILLI_M",1298","263442",
+," L (length)","L","L","um","um","MDC_DIM_MICRO_M",1299","263443",
+," L (length)","L","L","yd","[yd_i]","MDC_DIM_X_YARD",1312","263456",
+," L (length)","L","L","ft","[ft_i]","MDC_DIM_X_FOOT",1344","263488",
+," L (length)","L","L","in","[in_i]","MDC_DIM_X_INCH",1376","263520",
+," L (areic volume)","L","L","l/m-2","L/m2","MDC_DIM_X_L_PER_M_SQ",1408","263552",
+," L (areic volume)","L","L","ml/m-2","mL/m2","MDC_DIM_MILLI_L_PER_M_SQ",1426","263570",
+," L-1","L-1","L-1","m-1","/m","MDC_DIM_PER_X_M",1440","263584",
+," LT-1","LT-1","LT-1","m min-1 ","m/min","MDC_DIM_X_M_PER_MIN",6560","268704",
+," L2 (area)","L2","L2","m2","m2","MDC_DIM_SQ_X_M",1472","263616","ds-ip-rel_2.0"
+," L2 (area)","L2","L2","in2","[in_i]2","MDC_DIM_SQ_X_INCH",1504","263648",
+," L2 (area)","L2","L2","cm2","cm2","MDC_DIM_SQ_X_CM",8032","270176",
+," L-2","L-2","L-2","m-2","/m2","MDC_DIM_PER_SQ_X_M",1536","263680",
+," L3 (volume)","L3","L3","m3","m3","MDC_DIM_CUBIC_X_M",1568","263712",
+," L3 (volume)","L3","L3","l","L","MDC_DIM_X_L",1600","263744",
+_UOM_DOSE_QUAN," L3 (volume)","L3","L3","ml","mL","MDC_DIM_MILLI_L",1618","263762","ds-ip-rel_2.0"
+," L3 (volume)","L3","L3","ul","uL","MDC_DIM_MICRO_L",1619","263763",
+," L3 (volume)","L3","L3","l breath-1","L/{breath}","MDC_DIM_X_L_PER_BREATH",1632","263776",
+," L3 (volume)","L3","L3","ml breath-1","mL/{breath}","MDC_DIM_MILLI_L_PER_BREATH",1650","263794",
+," L3 (volume)","L3","L3","l beat-1","L/{beat}","MDC_DIM_X_L_PER_BEAT",6112","268256",
+," L3 (volume)","L3","L3","ml beat-1","mL/{beat}","MDC_DIM_MILLI_L_PER_BEAT",6130","268274",
+," L-3","L-3","L-3","m-3","/m3","MDC_DIM_PER_CUBIC_X_M",1664","263808",
+," L-3","L-3","L-3","l-1","/L","MDC_DIM_PER_X_L",1696","263840",
+_UOM_DOSE_QUAN," M (mass)","M","M","g","g","MDC_DIM_X_G",1728","263872","ds-ip-rel_2.0"
+," M (mass)","M","M","kg","kg","MDC_DIM_KILO_G",1731","263875","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," M (mass)","M","M","mg","mg","MDC_DIM_MILLI_G",1746","263890","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," M (mass)","M","M","ug","ug","MDC_DIM_MICRO_G",1747","263891","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," M (mass)","M","M","ng","ng","MDC_DIM_NANO_G",1748","263892","ds-ip-rel_2.0"
+," M (mass)","M","M","lb","[lb_av]","MDC_DIM_X_LB",1760","263904","ds-ip-rel_2.0"
+," M (mass)","M","M","oz","[oz_av]","MDC_DIM_X_OZ",1792","263936",
+," M-1","M-1","M-1","g-1","/g","MDC_DIM_PER_X_G",1824","263968",
+," ML","ML","ML","g m","g.m","MDC_DIM_X_G_M",1856","264000",
+," ML-1","ML-1","ML-1","g m m-2","g.m/m2","MDC_DIM_X_G_M_PER_M_SQ",1888","264032",
+," ML2 (moment of inertia)","ML2","ML2","g m2","g.m2","MDC_DIM_X_G_M_SQ",1920","264064",
+_UOM_DOSE_QUAN," ML-2","ML-2","ML-2","g m-2","g/m2","MDC_DIM_X_G_PER_M_SQ",7744","269888","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," ML-2","ML-2","ML-2","kg m-2","kg/m2","MDC_DIM_KILO_G_PER_M_SQ",7747","269891","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," ML-2","ML-2","ML-2","mg m-2","mg/m2","MDC_DIM_MILLI_G_PER_M_SQ",7762","269906","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," ML-2","ML-2","ML-2","ug m-2","ug/m2","MDC_DIM_MICRO_G_PER_M_SQ",7763","269907","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," ML-2","ML-2","ML-2","ng m-2","ng/m2","MDC_DIM_NANO_G_PER_M_SQ",7764","269908","ds-ip-rel_2.0"
+_UOM_DEPRECATE," ML-2","ML-2","ML-2","kg m-2","kg/m2#","MDC_DIM_KG_PER_M_SQ#",1952","264096",
+," ML-3 (concentration of mass)","ML-3","ML-3","g m-3 ","g/m3","MDC_DIM_X_G_PER_M_CUBE",1984","264128",
+," ML-3 (concentration of mass)","ML-3","ML-3","g cm-3","g/cm3","MDC_DIM_X_G_PER_CM_CUBE",2016","264160",
+," ML-3 (concentration of mass)","ML-3","ML-3","g l-1","g/L","MDC_DIM_X_G_PER_L",2048","264192",
+," ML-3 (concentration of mass)","ML-3","ML-3","g cl-3","g/cL","MDC_DIM_X_G_PER_CL",2080","264224",
+," ML-3 (concentration of mass)","ML-3","ML-3","g dl-3","g/dL","MDC_DIM_X_G_PER_DL",2112","264256",
+," ML-3 (concentration of mass)","ML-3","ML-3","mg dl-3","mg/dL","MDC_DIM_MILLI_G_PER_DL",2130","264274",
+_UOM_DOSE_CONC," ML-3 (concentration of mass)","ML-3","ML-3","g ml-3","g/mL","MDC_DIM_X_G_PER_ML",2144","264288","ds-ip-rel_2.0, ML-3 (concentration of mass)"
+_UOM_DOSE_CONC," ML-3 (concentration of mass)","ML-3","ML-3","mg ml-3","mg/mL","MDC_DIM_MILLI_G_PER_ML",2162","264306","ds-ip-rel_2.0, ML-3 (concentration of mass)"
+_UOM_DOSE_CONC," ML-3 (concentration of mass)","ML-3","ML-3","ug ml-3","ug/mL","MDC_DIM_MICRO_G_PER_ML",2163","264307","ds-ip-rel_2.0, ML-3 (concentration of mass)"
+_UOM_DOSE_CONC," ML-3 (concentration of mass)","ML-3","ML-3","ng ml-3","ng/mL","MDC_DIM_NANO_G_PER_ML",2164","264308","ds-ip-rel_2.0, ML-3 (concentration of mass)"
+," T (time)","T","T","s","s","MDC_DIM_X_SEC",2176","264320",
+," T (time)","T","T","ms","ms","MDC_DIM_MILLI_SEC",2194","264338",
+," T (time)","T","T","us","us","MDC_DIM_MICRO_SEC",2195","264339",
+," T (time)","T","T","ns","ns","MDC_DIM_NANO_SEC",2196","264340",
+," T (time)","T","T","min","min","MDC_DIM_MIN",2208","264352","ds-ip-rel_2.0"
+," T (time)","T","T","h","h","MDC_DIM_HR",2240","264384","ds-ip-rel_2.0"
+," T (time)","T","T","d","d","MDC_DIM_DAY",2272","264416",
+," T (time)","T","T","weeks","wk","MDC_DIM_WEEKS",2304","264448",
+," T (time)","T","T","mth","mo","MDC_DIM_MON",2336","264480",
+," T (time)","T","T","y","a","MDC_DIM_YR",2368","264512",
+," T (time)","T","T","TOD",,"MDC_DIM_TOD",2400","264544",
+," T (time)","T","T","DATE",,"MDC_DIM_DATE",2432","264576",
+," T-1 (rate; frequency)","T-1","T-1","s-1","/s","MDC_DIM_PER_X_SEC",2464","264608",
+," T-1 (rate; frequency)","T-1","T-1","1/1000s","/(1000.s)","MDC_DIM_PER_KILO_SEC",2167","264311",
+," T-1 (rate; frequency)","T-1","T-1","Hz","Hz","MDC_DIM_HZ",2496","264640",
+," T-1 (rate; frequency)","T-1","T-1","min-1","/min 1/min {count}/min","MDC_DIM_PER_MIN",2528","264672",
+," T-1 (rate; frequency)","T-1","T-1","h-1","/h","MDC_DIM_PER_HR",2560","264704","ds-ip-rel_2.0"
+," T-1 (rate; frequency)","T-1","T-1","d-1","/d","MDC_DIM_PER_DAY",2592","264736",
+," T-1 (rate; frequency)","T-1","T-1","week-1","/wk","MDC_DIM_PER_WK",2624","264768",
+," T-1 (rate; frequency)","T-1","T-1","mth-1","/mo","MDC_DIM_PER_MO",2656","264800",
+," T-1 (rate; frequency)","T-1","T-1","y-1","/a","MDC_DIM_PER_YR",2688","264832",
+," T-2 (rate; frequency squared)","T-2","T-2","s-2","/s2","MDC_DIM_PER_X_SEC_SQ",8064","270208",
+," T-2 (rate; frequency squared)","T-2","T-2","1/100s2","/(100.s2)","MDC_DIM_PER_HECTO_SEC_SQ",8066","270210",
+," - special vital signs rates","T-1","T-1","bpm","/min 1/min {beat}/min {beats}/min","MDC_DIM_BEAT_PER_MIN",2720","264864",
+," - special vital signs rates","T-1","T-1","bpm l-1","{beat}/min/L 1/min/L /min/L {beats}/min/L","MDC_DIM_BEAT_PER_MIN_PER_X_L",6496","268640",
+," - special vital signs rates","T-1","T-1","puls min-1","/min 1/min {pulse}/min {pulses}/min","MDC_DIM_PULS_PER_MIN",2752","264896",
+," - special vital signs rates","T-1","T-1","resp min-1","/min 1/min {breath}/min {breaths}/min {resp}/min","MDC_DIM_RESP_PER_MIN",2784","264928",
+," LT-1  (velocity)","LT-1","LT-1","m s-1","m/s","MDC_DIM_X_M_PER_SEC",2816","264960",
+," LT-1  (velocity)","LT-1","LT-1","mm s-1","mm/s","MDC_DIM_MILLI_M_PER_SEC",2834","264978",
+," LT-1  (velocity)","[rad]T-1","T-1[rad]","rad/s","rad/s","MDC_DIM_X_RAD_PER_SEC",6688","268832",
+," LT-1  (velocity)","[rad]T-1","T-1[rad]","rpm","360.deg/min 2.[pi].rad/min","MDC_DIM_X_ROTATIONS_PER_MIN",8096","270240",
+," Volume per minute per body surface area","L3T-1L-2","LT-1","l min-1 m-2","L/min/m2","MDC_DIM_X_L_PER_MIN_PER_M_SQ",2848","264992",
+," Volume per minute per body surface area","L3T-1L-2","LT-1","ml min-1 m-2","mL/min/m2","MDC_DIM_MILLI_L_PER_MIN_PER_M_SQ",2866","265010",
+," Volume per minute per body surface area","L2T-1","L2T-1","m2 s-1","m2/s","MDC_DIM_SQ_X_M_PER_SEC",2880","265024",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","m3 s-1","m3/s","MDC_DIM_CUBIC_X_M_PER_SEC",2912","265056",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","m3 min-1","m3/min","MDC_DIM_CUBIC_X_M_PER_MIN",2944","265088",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","m3 h-1","m3/h","MDC_DIM_CUBIC_X_M_PER_HR",2976","265120",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","m3 d-1","m3/d","MDC_DIM_CUBIC_X_M_PER_DAY",3008","265152",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","l s-1","L/s","MDC_DIM_X_L_PER_SEC",3040","265184",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","l min-1","L/min","MDC_DIM_X_L_PER_MIN",3072","265216",
+_UOM_DOSE_RATE_LIQUID," L3T-1  (volume flow rate)","L3T-1","L3T-1","ml min-1","mL/min","MDC_DIM_MILLI_L_PER_MIN",3090","265234","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," L3T-1  (volume flow rate)","L3T-1","L3T-1","ul min-1","uL/min","MDC_DIM_MICRO_L_PER_MIN",3091","265235","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," L3T-1  (volume flow rate)","L3T-1","L3T-1","l h-1","L/h","MDC_DIM_X_L_PER_HR",3104","265248","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," L3T-1  (volume flow rate)","L3T-1","L3T-1","ml h-1","mL/h","MDC_DIM_MILLI_L_PER_HR",3122","265266","ds-ip-rel_2.0"
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","l d-1","L/d","MDC_DIM_X_L_PER_DAY",3136","265280",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","drops min-1","[drp]/min","MDC_DIM_X_DROPS_PER_MIN",8128","270272",
+," L3M-1 (volume content)","L3M-1","L3M-1","l kg-1","L/kg","MDC_DIM_X_L_PER_KG",3168","265312",
+_UOM_DOSE_QUAN," L3M-1 (volume content)","L3M-1","L3M-1","ml kg-1","mL/kg","MDC_DIM_MILLI_L_PER_KG",3186","265330","ds-ip-rel_2.0"
+," L3M-1 (volume content)","L3M-1","L3M-1","m3 d-1","m3/kg","MDC_DIM_CUBIC_X_L_PER_KG",3200","265344",
+," L2M-1T (permeability)","L2M-1T","L2M-1T","m Pa-1s-1","m/Pa/s","MDC_DIM_X_M_PER_PASCAL_SEC",3232","265376",
+," L2M-1T (permeability)","L2M-1T","L2M-1T","l min-1 mmHG-1","L/min/mm[Hg]","MDC_DIM_X_L_PER_MIN_PER_ML_HG",3264","265408",
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","g s-1","g/s","MDC_DIM_X_G_PER_SEC",3296","265440","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","g min-1","g/min","MDC_DIM_X_G_PER_MIN",3328","265472","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","mg/min","MDC_DIM_MILLI_G_PER_MIN",3346","265490","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ug/min","MDC_DIM_MICRO_G_PER_MIN",3347","265491","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ng/min","MDC_DIM_NANO_G_PER_MIN",3348","265492","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","g h-1","g/h","MDC_DIM_X_G_PER_HR",3360","265504","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","mg/h","MDC_DIM_MILLI_G_PER_HR",3378","265522","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ug/h","MDC_DIM_MICRO_G_PER_HR",3379","265523","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ng/h","MDC_DIM_NANO_G_PER_HR",3380","265524","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","g d-1","g/d","MDC_DIM_X_G_PER_DAY",3392","265536","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","mg/d","MDC_DIM_MILLI_G_PER_DAY",3410","265554","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ug/d","MDC_DIM_MICRO_G_PER_DAY",3411","265555","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," MT-1 (mass flow rate)","MT-1","MT-1","","ng/d","MDC_DIM_NANO_G_PER_DAY",3412","265556","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g kg-1 s-1","g/kg/s","MDC_DIM_X_G_PER_KG_PER_SEC",3424","265568","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g kg-1 m-1","g/kg/min","MDC_DIM_X_G_PER_KG_PER_MIN",3456","265600","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","mg/kg/min","MDC_DIM_MILLI_G_PER_KG_PER_MIN",3474","265618","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ug/kg/min","MDC_DIM_MICRO_G_PER_KG_PER_MIN",3475","265619","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ng/kg/min","MDC_DIM_NANO_G_PER_KG_PER_MIN",3476","265620","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g kg-1 h-1","g/kg/h","MDC_DIM_X_G_PER_KG_PER_HR",3488","265632","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","mg/kg/h","MDC_DIM_MILLI_G_PER_KG_PER_HR",3506","265650","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ug/kg/h","MDC_DIM_MICRO_G_PER_KG_PER_HR",3507","265651","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ng/kg/h","MDC_DIM_NANO_G_PER_KG_PER_HR",3508","265652","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g kg-1 d-1","g/kg/d","MDC_DIM_X_G_PER_KG_PER_DAY",3520","265664","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","mg/kg/d","MDC_DIM_MILLI_G_PER_KG_PER_DAY",3538","265682","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ug/kg/d","MDC_DIM_MICRO_G_PER_KG_PER_DAY",3539","265683","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ng/kg/d","MDC_DIM_NANO_G_PER_KG_PER_DAY",3540","265684","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g lb-1 min-1","g/[lb_av]/min","MDC_DIM_X_G_PER_LB_PER_MIN",6784","268928","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","mg/[lb_av]/min","MDC_DIM_MILLI_G_PER_LB_PER_MIN",6802","268946","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ug/[lb_av]/min","MDC_DIM_MICRO_G_PER_LB_PER_MIN",6803","268947","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ng/[lb_av]/min","MDC_DIM_NANO_G_PER_LB_PER_MIN",6804","268948","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","g lb-1 h-1","g/[lb_av]/h","MDC_DIM_X_G_PER_LB_PER_HR",6752","268896","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","mg/[lb_av]/h","MDC_DIM_MILLI_G_PER_LB_PER_HR",6770","268914","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ug/[lb_av]/h","MDC_DIM_MICRO_G_PER_LB_PER_HR",6771","268915","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body weight","MT-1M-1","T-1","","ng/[lb_av]/h","MDC_DIM_NANO_G_PER_LB_PER_HR",6772","268916","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","g m2 min-1","g/m2/min","MDC_DIM_X_G_PER_M_SQ_PER_MIN",6848","268992","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","mg/m2/min","MDC_DIM_MILLI_G_PER_M_SQ_PER_MIN",6866","269010","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ug/m2/min","MDC_DIM_MICRO_G_PER_M_SQ_PER_MIN",6867","269011","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ng/m2/min","MDC_DIM_NANO_G_PER_M_SQ_PER_MIN",6868","269012","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","g m2 h-1","g/m2/h","MDC_DIM_X_G_PER_M_SQ_PER_HR",6816","268960","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","mg/m2/h","MDC_DIM_MILLI_G_PER_M_SQ_PER_HR",6834","268978","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ug/m2/h","MDC_DIM_MICRO_G_PER_M_SQ_PER_HR",6835","268979","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ng/m2/h","MDC_DIM_NANO_G_PER_M_SQ_PER_HR",6836","268980","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","g m2 d-1","g/m2/d","MDC_DIM_X_G_PER_M_SQ_PER_DAY",7168","269312","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","mg/m2/d","MDC_DIM_MILLI_G_PER_M_SQ_PER_DAY",7186","269330","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ug/m2/d","MDC_DIM_MICRO_G_PER_M_SQ_PER_DAY",7187","269331","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mass dose rate per body surface area","MT-1L-2","L-2MT-1","","ng/m2/d","MDC_DIM_NANO_G_PER_M_SQ_PER_DAY",7188","269332","ds-ip-rel_2.0"
+," L-3MT-1 (mass concentration rate)","ML-3T-1","L-3MT-1","g l-1 s-1","g/L/s","MDC_DIM_X_G_PER_L_PER_SEC",3552","265696",
+," L-3MT-1 (mass concentration rate)","ML-3T-1","L-3MT-1","g l-1 m-1","g/L/min","MDC_DIM_X_G_PER_L_PER_MIN",3584","265728",
+," L-3MT-1 (mass concentration rate)","ML-3T-1","L-3MT-1","g l-1 h-1","g/L/h","MDC_DIM_X_G_PER_L_PER_HR",3616","265760",
+," L-3MT-1 (mass concentration rate)","ML-3T-1","L-3MT-1","g l-1 d-1","g/L/d","MDC_DIM_X_G_PER_L_PER_DAY",3648","265792",
+," L-1MT-1 (dynamic viscosity)","L-1MT-1","L-1MT-1","g m-1 s-1","g/m/s","MDC_DIM_X_G_PER_M_PER_SEC",3680","265824",
+," LMT-1 (momentum; impulse)","LMT-1","LMT-1","gm s-1","g.m/s","MDC_DIM_X_G_M_PER_SEC",3712","265856",
+," LMT-1 (momentum; impulse)","LMT-1","LMT-1","Ns","N.s","MDC_DIM_X_NEWTON_SEC",3744","265888",
+," LMT-2 (force)","LMT-2","LMT-2","N","N","MDC_DIM_X_NEWTON",3776","265920",
+," LMT-2 (force)","LMT-2","LMT-2","dyn","dyn","MDC_DIM_X_DYNE",3808","265952",
+," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","Pa","Pa","MDC_DIM_X_PASCAL",3840","265984",
+," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","hPa","hPa","MDC_DIM_HECTO_PASCAL",3842","265986",
+_UOM_CONC_GAS _UOM_PRESS_GAS_RESP _UOM_PRESS_MEDGAS," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","kPa","kPa","MDC_DIM_KILO_PASCAL",3843","265987",
+_UOM_CONC_GAS _UOM_PRESS_GAS_RESP," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","mmHg","mm[Hg]","MDC_DIM_MMHG",3872","266016",
+_UOM_PRESS_GAS_RESP," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","cm H2O","cm[H2O]","MDC_DIM_CM_H2O",3904","266048",
+," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","bar","bar","MDC_DIM_X_BAR",3936","266080",
+_UOM_PRESS_MEDGAS," L-1MT-2 (pressure)","LMT-2L-2","L-1MT-2","PSI","[psi]","MDC_DIM_PSI",6592","268736",
+," L2MT-2 (energy, work)","L2MT-2","L2MT-2","J","J","MDC_DIM_X_JOULES",3968","266112",
+," L2MT-2 (energy, work)","L2MT-2","L2MT-2","eV","eV","MDC_DIM_EVOLT",4000","266144",
+," L2MT-3 (power)","L2MT-3","L2MT-3","W","W","MDC_DIM_X_WATT",4032","266176",
+," L2MT-3 (power)","L2MT-3","L2MT-3","mW","mW","MDC_DIM_MILLI_WATT",4050","266194",
+," L2MT-3 (power)","L2MT-3","L2MT-3","uW","uW","MDC_DIM_MICRO_WATT",4051","266195",
+," L2MT-3 (power)","L2MT-3","L2MT-3","nW","nW","MDC_DIM_NANO_WATT",4052","266196",
+," L-4MT-1 (hydraulic impedance)","L-4MT-1","L-4MT-1","Pa s m-3","Pa.s/m3","MDC_DIM_X_PASCAL_SEC_PER_M_CUBE",4064","266208",
+," L-4MT-1 (hydraulic impedance)","L-4MT-1","L-4MT-1","Pa s l-1","Pa.s/L","MDC_DIM_X_PASCAL_SEC_PER_L",4096","266240",
+," L-4MT-1 (hydraulic impedance)","L-4MT-1","L-4MT-1","dyn s cm-5","dyn.s/cm5","MDC_DIM_X_DYNE_SEC_PER_CM5",4128","266272",
+," compliance","L4M-1T2","L4M-1T2","l (cmH2O)-1","L/cm[H2O]","MDC_DIM_X_L_PER_CM_H2O",5888","268032",
+_UOM_COMPL_LUNG," compliance","L4M-1T2","L4M-1T2","ml (cmH2O)-1","mL/cm[H2O]","MDC_DIM_MILLI_L_PER_CM_H2O",5906","268050",
+," compliance","L4M-1T2","L4M-1T2","l (mmHg)-1","L/mm[Hg]","MDC_DIM_X_L_PER_MM_HG",6272","268416",
+," compliance","L4M-1T2","L4M-1T2","l Pa-1","L/Pa","MDC_DIM_X_L_PER_MM_PA",6304","268448",
+," compliance per body weight","L4M-2T2","L4M-2T2","l (cmH2O)-1 kg-1","L/cm[H2O]/kg","MDC_DIM_X_L_PER_CM_H2O_PER_KG",8160","270304",
+," compliance per body weight","L4M-2T2","L4M-2T2","ml (cmH2O)-1 kg-1","mL/cm[H2O]/kg","MDC_DIM_MILLI_L_PER_CM_H2O_PER_KG",8178","270322",
+," L-4M1T-2 (elastance)","L-4M1T-2","L-4M1T-2","cmH2O l-1","cm[H2O]/L","MDC_DIM_CM_H2O_PER_L",6144","268288",
+," L-4M1T-2 (elastance)","L-4M1T-2","L-4M1T-2","mmHg l-1","mm[Hg]/L","MDC_DIM_MM_HG_PER_X_L",6336","268480",
+," L-4M1T-2 (elastance)","L-4M1T-2","L-4M1T-2","Pa l-1","Pa/L","MDC_DIM_PA_PER_X_L",6368","268512",
+," L-4M1T-2 (elastance)","L-4M1T-2","L-4M1T-2"," l-1 min-1","/L/min","MDC_DIM_PER_X_L_PER_MIN",6528","268672",
+," I (electrical current)","I","I","A","a","MDC_DIM_X_AMPS",4160","266304",
+," IT (electrical charge)","IT","TI","C","C","MDC_DIM_X_COULOMB",4192","266336",
+," IT (electrical charge)","IT","TI","Ah","A.h","MDC_DIM_X_AMP_HR",6080","268224",
+," IL-1 (magnetic field strength)","IL-1","L-1I","A m-1","A/m","MDC_DIM_X_AMPS_PER_M",4224","266368",
+," IL-1 (magnetic field strength)","IL-1","L-1I","Wb m-2","T","MDC_DIM_X_TESLA",8192","270336",
+," ML2I-1T-3 (electric potential)","ML2I-1T-3","L2MT-3I-1","V","V","MDC_DIM_X_VOLT",4256","266400",
+," ML2I-1T-3 (electric potential)","ML2I-1T-3","L2MT-3I-1","mV","mV","MDC_DIM_MILLI_VOLT",4274","266418",
+," ML2I-1T-3 (electric potential)","ML2I-1T-3","L2MT-3I-1","uV","uV","MDC_DIM_MICRO_VOLT",4275","266419",
+," ML2I-1T-3 (electric potential)","ML2I-1T-3","L2MT-3I-1","nV","nV","MDC_DIM_NANO_VOLT",4276","266420",
+," ML2I-1T-2 (electric potential time integral)","ML2I-1T-2","L2MT-2I-1","V.s","V.s","MDC_DIM_X_VOLT_SEC",8224","270368",
+," ML2I-1T-2 (electric potential time integral)","ML2I-1T-2","L2MT-2I-1","uV.ms","uV.ms","MDC_DIM_NANO_VOLT_SEC",8244","270388",
+," ML2I-1T-4 (electric potential rate of change)","ML2I-1T-4","L2MT-4I-1","V/s","V/s","MDC_DIM_X_VOLT_PER_SEC",8256","270400",
+," ML2I-1T-4 (electric potential rate of change)","ML2I-1T-4","L2MT-4I-1","uV/s","uV/s","MDC_DIM_MICRO_VOLT_PER_SEC",8275","270419",
+," ML2I-2T-3 (electric resistance)","ML2I-2T-3","L2MT-3I-2","W","Ohm","MDC_DIM_X_OHM",4288","266432",
+," ML2I-2T-3 (electric resistance)","ML2I-2T-3","L2MT-3I-2","","mOhm","MDC_DIM_MILLI_OHM",4306","266450",
+," ML3I-2T-3 (electrical resistivity)","ML3I-2T-3","L3MT-3I-2","Wm","Ohm.m","MDC_DIM_X_OHM_M",4320","266464",
+," M-1L-2I2T3 (electric conductance)","M-1L-2I2T3","L-2M-1T3I2","W-1, S","s 1/Ohm /Ohm","MDC_DIM_PER_X_OHM",8288","270432",
+," M-1L-2I2T3 (electric conductance)","M-1L-2I2T3","L-2M-1T3I2","","1/kOhm /kOhm","MDC_DIM_PER_KILO_OHM",8291","270435",
+," I2T4M-1L-2 (electrical capacitance)","I2T4M-1L-2","L-2M-1T4I2","F","F","MDC_DIM_X_FARAD",4352","266496",
+," Q (temperature)","Q","Q","K","K","MDC_DIM_KELVIN",4384","266528",
+," Q (temperature)","Q","Q","C","Cel","MDC_DIM_DEGC",6048","268192",
+," Q (temperature)","Q","Q","F","[degF]","MDC_DIM_FAHR",4416","266560",
+," QT3M-1L-2 (thermal resistance)","QT3M-1L-2","L-2M-1T3Q","K W-1","K/W","MDC_DIM_KELVIN_PER_X_WATT",4448","266592",
+," J (luminous intensity)","J","J","cd","cd","MDC_DIM_X_CANDELA",4480","266624",
+," Luminance","JL-2","L-2J","lumen/m2","lm/m2","MDC_DIM_X_LUMEN_PER_M_SQ",6720","268864",
+," N (amount of substance)","N","N","osmole","osm","MDC_DIM_X_OSM",4512","266656",
+_UOM_DOSE_QUAN," N (amount of substance)","N","N","mol","mol","MDC_DIM_X_MOLE",4544","266688","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," N (amount of substance)","N","N","mmol","mmol","MDC_DIM_MILLI_MOLE",4562","266706","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," N (amount of substance)","N","N","eq","eq","MDC_DIM_X_EQUIV",4576","266720","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," N (amount of substance)","N","N","meq","meq","MDC_DIM_MILLI_EQUIV",4594","266738","ds-ip-rel_2.0"
+," NL-3 (concentration)","NL-3","L-3N","osmol l-1","osm/L","MDC_DIM_X_OSM_PER_L",4608","266752",
+," NL-3 (concentration)","NL-3","L-3N","mol cm-3","mol/cm3","MDC_DIM_X_MOLE_PER_CM_CUBE",4640","266784",
+," NL-3 (concentration)","NL-3","L-3N","mol m-3","mol/m3","MDC_DIM_X_MOLE_PER_M_CUBE",4672","266816",
+," NL-3 (concentration)","NL-3","L-3N","mol l-1","mol/L","MDC_DIM_X_MOLE_PER_L",4704","266848",
+," NL-3 (concentration)","NL-3","L-3N","mmol l-1","mmol/L","MDC_DIM_MILLI_MOLE_PER_L",4722","266866",
+," NL-3 (concentration)","NL-3","L-3N","mol ml-1","mol/mL","MDC_DIM_X_MOLE_PER_ML",4736","266880",
+_UOM_DOSE_CONC," NL-3 (concentration)","NL-3","L-3N","mmol ml-1","mmol/mL","MDC_DIM_MILLI_MOLE_PER_ML",4754","266898","ds-ip-rel_2.0, NL-3 (concentration)"
+," NL-3 (concentration)","NL-3","L-3N","eq cm-3","mol/cm3","MDC_DIM_X_EQUIV_PER_CM_CUBE",4768","266912",
+," NL-3 (concentration)","NL-3","L-3N","eq m-3","eq/m3","MDC_DIM_X_EQUIV_PER_M_CUBE",4800","266944",
+," NL-3 (concentration)","NL-3","L-3N","eq l-1","eq/L","MDC_DIM_X_EQUIV_PER_L",4832","266976",
+," NL-3 (concentration)","NL-3","L-3N","meq l-1","meq/L","MDC_DIM_MILLI_EQUIV_PER_L",4850","266994",
+," NL-3 (concentration)","NL-3","L-3N","eq ml-1","eq/mL","MDC_DIM_X_EQUIV_PER_ML",4864","267008",
+_UOM_DOSE_CONC," NL-3 (concentration)","NL-3","L-3N","meq ml-1","meq/mL","MDC_DIM_MILLI_EQUIV_PER_ML",4882","267026","ds-ip-rel_2.0, NL-3 (concentration)"
+," NM-1 (substance content)","NM-1","M-1N","osmol  kg-1","osm/kg","MDC_DIM_X_OSM_PER_KG",4896","267040",
+_UOM_DOSE_QUAN," NM-1 (substance content)","NM-1","M-1N","mol kg-1","mol/kg","MDC_DIM_X_MOLE_PER_KG",4928","267072","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NM-1","M-1N","mmol kg-1","mmol/kg","MDC_DIM_MILLI_MOLE_PER_KG",4946","267090","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NL-2","L-2N","mol m-2","mol/m2","MDC_DIM_X_MOLE_PER_M_SQ",7552","269696","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NL-2","L-2N","mmol m-2","mmol/m2","MDC_DIM_MILLI_MOLE_PER_M_SQ",7570","269714","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NM-1","M-1N","eq kg-1","eq/kg","MDC_DIM_X_EQUIV_PER_KG",7584","269728","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NM-1","M-1N","meq kg-1","meq/kg","MDC_DIM_MILLI_EQUIV_PER_KG",7602","269746","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NL-2","L-2N","eq m-2","eq/m2","MDC_DIM_X_EQUIV_PER_M_SQ",7616","269760","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," NM-1 (substance content)","NL-2","L-2N","meq m-2","meq/m2","MDC_DIM_MILLI_EQUIV_PER_M_SQ",7634","269778","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mol s-1","mol/s","MDC_DIM_X_MOLE_PER_SEC",4960","267104","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mol min-1","mol/min","MDC_DIM_X_MOLE_PER_MIN",4992","267136","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mmol min-1","mmol/min","MDC_DIM_MILLI_MOLE_PER_MIN",5010","267154","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mol h-1","mol/h","MDC_DIM_X_MOLE_PER_HR",5024","267168","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mmol h-1","mmol/h","MDC_DIM_MILLI_MOLE_PER_HR",5042","267186","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mol d-1","mol/d","MDC_DIM_X_MOLE_PER_DAY",5056","267200","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate","NT-1","T-1N","mmol d-1","mmol/d","MDC_DIM_MILLI_MOLE_PER_DAY",5074","267218","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","eq s-1","eq/s","MDC_DIM_X_EQUIV_PER_SEC",5088","267232","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","eq min-1","eq/min","MDC_DIM_X_EQUIV_PER_MIN",5120","267264","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","","meq/min","MDC_DIM_MILLI_EQUIV_PER_MIN",5138","267282","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","eq h-1","eq/h","MDC_DIM_X_EQUIV_PER_HR",5152","267296","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","","meq/h","MDC_DIM_MILLI_EQUIV_PER_HR",5170","267314","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","eq d-1","eq/d","MDC_DIM_X_EQUIV_PER_DAY",5184","267328","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate","NT-1","T-1N","","meq/d","MDC_DIM_MILLI_EQUIV_PER_DAY",5202","267346","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mol kg-1 s-1","mol/kg/s","MDC_DIM_X_MOLE_PER_KG_PER_SEC",5216","267360","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mol kg-1 min-1","mol/kg/min","MDC_DIM_X_MOLE_PER_KG_PER_MIN",5248","267392","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mmol kg-1 min-1","mmol/kg/min","MDC_DIM_MILLI_MOLE_PER_KG_PER_MIN",5266","267410","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mol kg-1 h-1","mol/kg/h","MDC_DIM_X_MOLE_PER_KG_PER_HR",5280","267424","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mmol kg-1 h-1","mmol/kg/h","MDC_DIM_MILLI_MOLE_PER_KG_PER_HR",5298","267442","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mol kg-1 d-1","mol/kg/d","MDC_DIM_X_MOLE_PER_KG_PER_DAY",5312","267456","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body weight","NT-1M-1","M-1T-1N","mmol kg-1 d-1","mmol/kg/d","MDC_DIM_MILLI_MOLE_PER_KG_PER_DAY",5330","267474","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mol m-2 s-1","mol/m2/s","MDC_DIM_X_MOLE_PER_M_SQ_PER_SEC",7424","269568","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mol m-2 min-1","mol/m2/min","MDC_DIM_X_MOLE_PER_M_SQ_PER_MIN",7456","269600","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mmol m-2 min-1","mmol/m2/min","MDC_DIM_MILLI_MOLE_PER_M_SQ_PER_MIN",7474","269618","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mol m-2 h-1","mol/m2/h","MDC_DIM_X_MOLE_PER_M_SQ_PER_HR",7488","269632","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mmol m-2 h-1","mmol/m2/h","MDC_DIM_MILLI_MOLE_PER_M_SQ_PER_HR",7506","269650","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mol m-2 d-1","mol/m2/d","MDC_DIM_X_MOLE_PER_M_SQ_PER_DAY",7520","269664","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mmol m-2 d-1","mmol/m2/d","MDC_DIM_MILLI_MOLE_PER_M_SQ_PER_DAY",7538","269682","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq kg-1 s-1","eq/kg/s","MDC_DIM_X_EQUIV_PER_KG_PER_SEC",5344","267488","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq kg-1 min-1","eq/kg/min","MDC_DIM_X_EQUIV_PER_KG_PER_MIN",5376","267520","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","meq kg-1 min-1","meq/kg/min","MDC_DIM_MILLI_EQUIV_PER_KG_PER_MIN",5394","267538","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq kg-1 h-1","eq/kg/h","MDC_DIM_X_EQUIV_PER_KG_PER_HR",5408","267552","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","meq kg-1 h-1","meq/kg/h","MDC_DIM_MILLI_EQUIV_PER_KG_PER_HR",5426","267570","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq kg-1 d-1","eq/kg/d","MDC_DIM_X_EQUIV_PER_KG_PER_DAY",5440","267584","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","meq kg-1 d-1","meq/kg/d","MDC_DIM_MILLI_EQUIV_PER_KG_PER_DAY",5458","267602","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq lb-1 min-1","eq/[lb_av]/min","MDC_DIM_X_EQUIV_PER_LB_PER_MIN",7040","269184","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","meq lb-1 min-1","meq/[lb_av]/min","MDC_DIM_MILLI_EQUIV_PER_LB_PER_MIN",7058","269202","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","eq lb-1 h-1","eq/[lb_av]/h","MDC_DIM_X_EQUIV_PER_LB_PER_HR",7008","269152","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body weight","NT-1M-1","M-1T-1N","meq lb-1 h-1","meq/[lb_av]/h","MDC_DIM_MILLI_EQUIV_PER_LB_PER_HR",7026","269170","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","eq m-2 min-1","eq/m2/min","MDC_DIM_X_EQUIV_PER_M_SQ_PER_MIN",7104","269248","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","meq m-2 min-1","meq/m2/min","MDC_DIM_MILLI_EQUIV_PER_M_SQ_PER_MIN",7122","269266","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","eq m-2 h-1","eq/m2/h","MDC_DIM_X_EQUIV_PER_M_SQ_PER_HR",7072","269216","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","meq m-2 h-1","meq/m2/h","MDC_DIM_MILLI_EQUIV_PER_M_SQ_PER_HR",7090","269234","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","eq m-2 d-1","eq/m2/d","MDC_DIM_X_EQUIV_PER_M_SQ_PER_DAY",7136","269280","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - eq dose rate per body surface area","NT-1L-2","L-2T-1N","meq m-2 d-1","meq/m2/d","MDC_DIM_MILLI_EQUIV_PER_M_SQ_PER_DAY",7154","269298","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," International Unit","[iU]","[iU]","i.u.","[iU]","MDC_DIM_X_INTL_UNIT",5472","267616","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," International Unit","[iU]","[iU]","","m[iU]","MDC_DIM_MILLI_INTL_UNIT",5490","267634","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," International Unit","[iU]","[iU]"," ","M[iU]","MDC_DIM_MEGA_INTL_UNIT",5476","267620","ds-ip-rel_2.0"
+," - IU concentration","[iU]L-3","L-3[iU]","i.u. cm-3","[iU]/cm3","MDC_DIM_X_INTL_UNIT_PER_CM_CUBE",5504","267648",
+," - IU concentration","[iU]L-3","L-3[iU]","i.u. m-3","[iU]/m3","MDC_DIM_X_INTL_UNIT_PER_M_CUBE",5536","267680",
+," - IU concentration","[iU]L-3","L-3[iU]","i.u. l-1","[iU]/L","MDC_DIM_X_INTL_UNIT_PER_L",5568","267712",
+_UOM_DOSE_CONC," - IU concentration","[iU]L-3","L-3[iU]","i.u. ml-1","[iU]/mL","MDC_DIM_X_INTL_UNIT_PER_ML",5600","267744","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," - IU concentration","[iU]L-3","L-3[iU]","","m[iU]/mL","MDC_DIM_MILLI_INTL_UNIT_PER_ML",5618","267762","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," - IU concentration","[iU]L-3","L-3[iU]"," ","M[iU]/mL","MDC_DIM_MEGA_INTL_UNIT_PER_ML",5604","267748","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","i.u. s-1","[iU]/s","MDC_DIM_X_INTL_UNIT_PER_SEC",5632","267776","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","","M[iU]/s","MDC_DIM_MEGA_INTL_UNIT_PER_SEC",5636","267780","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","i.u. min-1","[iU]/min","MDC_DIM_X_INTL_UNIT_PER_MIN",5664","267808","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","","m[iU]/min","MDC_DIM_MILLI_INTL_UNIT_PER_MIN",5682","267826","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]"," ","M[iU]/min","MDC_DIM_MEGA_INTL_UNIT_PER_MIN",5668","267812","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","i.u. h-1","[iU]/h","MDC_DIM_X_INTL_UNIT_PER_HR",5696","267840","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","","m[iU]/h","MDC_DIM_MILLI_INTL_UNIT_PER_HR",5714","267858","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]"," ","M[iU]/h","MDC_DIM_MEGA_INTL_UNIT_PER_HR",5700","267844","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","i.u. d-1","[iU]/d","MDC_DIM_X_INTL_UNIT_PER_DAY",5728","267872","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","","m[iU]/d","MDC_DIM_MILLI_INTL_UNIT_PER_DAY",5746","267890","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]"," ","M[iU]/d","MDC_DIM_MEGA_INTL_UNIT_PER_DAY",5732","267876","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - IU dose quantity per body weight","[iU]M-1","M-1[iU]","i.u. kg-1","[iU]/kg","MDC_DIM_X_INTL_UNIT_PER_KG",7680","269824","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - IU dose quantity per body weight","[iU]M-1","M-1[iU]","","m[iU]/kg","MDC_DIM_MILLI_INTL_UNIT_PER_KG",7698","269842","ds-ip-rel_2.0"
+_UOM_NOT_USED," - IU dose quantity per body weight","[iU]M-1","M-1[iU]","","u[iU]/kg","MDC_DIM_MICRO_INTL_UNIT_PER_KG",7699","269843",
+_UOM_NOT_USED," - IU dose quantity per body weight","[iU]M-1","M-1[iU]","","n[iU]/kg","MDC_DIM_NANO_INTL_UNIT_PER_KG",7700","269844",
+_UOM_DOSE_QUAN," - IU dose quantity per body weight","[iU]M-1","M-1[iU]"," ","M[iU]/kg","MDC_DIM_MEGA_INTL_UNIT_PER_KG",7684","269828","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - IU dose quantity per body surface area","[iU]L-2","L-2[iU]","i.u. m-2","[iU]/m2","MDC_DIM_X_INTL_UNIT_PER_M_SQ",7712","269856","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - IU dose quantity per body surface area","[iU]L-2","L-2[iU]","","m[iU]/m2","MDC_DIM_MILLI_INTL_UNIT_PER_M_SQ",7730","269874","ds-ip-rel_2.0"
+_UOM_NOT_USED," - IU dose quantity per body surface area","[iU]L-2","L-2[iU]","","u[iU]/m2","MDC_DIM_MICRO_INTL_UNIT_PER_M_SQ",7731","269875",
+_UOM_NOT_USED," - IU dose quantity per body surface area","[iU]L-2","L-2[iU]","","n[iU]/m2","MDC_DIM_NANO_INTL_UNIT_PER_M_SQ",7732","269876",
+_UOM_DOSE_QUAN," - IU dose quantity per body surface area","[iU]L-2","L-2[iU]"," ","M[iU]/m2","MDC_DIM_MEGA_INTL_UNIT_PER_M_SQ",7716","269860","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. kg-1 s-1","[iU]/kg/s","MDC_DIM_X_INTL_UNIT_PER_KG_PER_SEC",5760","267904","ds-ip-rel_2.0"
+_UOM_DOSE_RATE _UOM_NOT_USED," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/kg/s","MDC_DIM_MILLI_INTL_UNIT_PER_KG_PER_SEC",5778","267922",""
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]"," ","M[iU]/kg/s","MDC_DIM_MEGA_INTL_UNIT_PER_KG_PER_SEC",5764","267908","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. kg-1 min-1","[iU]/kg/min","MDC_DIM_X_INTL_UNIT_PER_KG_PER_MIN",5792","267936","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/kg/min","MDC_DIM_MILLI_INTL_UNIT_PER_KG_PER_MIN",5810","267954","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]"," ","M[iU]/kg/min","MDC_DIM_MEGA_INTL_UNIT_PER_KG_PER_MIN",5796","267940","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. kg-1 h-1","[iU]/kg/h","MDC_DIM_X_INTL_UNIT_PER_KG_PER_HR",5824","267968","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/kg/h","MDC_DIM_MILLI_INTL_UNIT_PER_KG_PER_HR",5842","267986","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]"," ","M[iU]/kg/h","MDC_DIM_MEGA_INTL_UNIT_PER_KG_PER_HR",5828","267972","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. kg-1 d-1","[iU]/kg/d","MDC_DIM_X_INTL_UNIT_PER_KG_PER_DAY",5856","268000","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/kg/d","MDC_DIM_MILLI_INTL_UNIT_PER_KG_PER_DAY",5874","268018","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]"," ","M[iU]/kg/d","MDC_DIM_MEGA_INTL_UNIT_PER_KG_PER_DAY",5860","268004","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. lb-1 min-1","[iU]/[lb_av]/min","MDC_DIM_X_INTL_UNIT_PER_LB_PER_MIN",6912","269056","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/[lb_av]/min","MDC_DIM_MILLI_INTL_UNIT_PER_LB_PER_MIN",6930","269074","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","i.u. lb-1 h-1","[iU]/[lb_av]/h","MDC_DIM_X_INTL_UNIT_PER_LB_PER_HR",10400","272544","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body weight","[iU]T-1M-1","M-1T-1[iU]","","m[iU]/[lb_av]/h","MDC_DIM_MILLI_INTL_UNIT_PER_LB_PER_HR",10418","272562","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","i.u. m-2 sec-1","[iU]/m2/s","MDC_DIM_X_INTL_UNIT_PER_M_SQ_PER_SEC",7648","269792","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","","m[iU]/m2/s","MDC_DIM_MILLI_INTL_UNIT_PER_M_SQ_PER_SEC",7666","269810","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]"," ","M[iU]/m2/s","MDC_DIM_MEGA_INTL_UNIT_PER_M_SQ_PER_SEC",7652","269796","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","i.u. m-2 min-1","[iU]/m2/min","MDC_DIM_X_INTL_UNIT_PER_M_SQ_PER_MIN",6976","269120","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","","m[iU]/m2/min","MDC_DIM_MILLI_INTL_UNIT_PER_M_SQ_PER_MIN",6994","269138","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]"," ","M[iU]/m2/min","MDC_DIM_MEGA_INTL_UNIT_PER_M_SQ_PER_MIN",6980","269124","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","i.u. m-2 h-1","[iU]/m2/h","MDC_DIM_X_INTL_UNIT_PER_M_SQ_PER_HR",6944","269088","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","","m[iU]/m2/h","MDC_DIM_MILLI_INTL_UNIT_PER_M_SQ_PER_HR",6962","269106","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]"," ","M[iU]/m2/h","MDC_DIM_MEGA_INTL_UNIT_PER_M_SQ_PER_HR",6948","269092","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","i.u. m-2 d-1","[iU]/m2/d","MDC_DIM_X_INTL_UNIT_PER_M_SQ_PER_DAY",7200","269344","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]","","m[iU]/m2/d","MDC_DIM_MILLI_INTL_UNIT_PER_M_SQ_PER_DAY",7218","269362","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU dose rate per body surface area","[iU]T-1L-2","L-2T-1[iU]"," ","M[iU]/m2/d","MDC_DIM_MEGA_INTL_UNIT_PER_M_SQ_PER_DAY",7204","269348","ds-ip-rel_2.0"
+_UOM_RES_AWAY," - Lung Resistance","L-4MT-3","L-4MT-3","cmH2O l-1s-1","cm[H2O].s/L cm[H2O]/(L/s)","MDC_DIM_CM_H2O_PER_L_PER_SEC",5920","268064",
+," - HF Transport Coefficient","L6T-1","L6T-1","l2s-1","L2/s","MDC_DIM_X_L_SQ_PER_SEC",5952","268096",
+," - ratio of paO2 to FIO2","L-1MT-2","L-1MT-2","cmH2O %-1","cm[H2O]/%","MDC_DIM_CM_H2O_PER_PERCENT",5984","268128",
+," - ratio of paO2 to FIO2","L-1MT-2","L-1MT-2","mmHg %-1","mm[Hg]/%","MDC_DIM_MM_HG_PER_PERCENT",6176","268320",
+," - ratio of paO2 to FIO2","L-1MT-2","L-1MT-2","Pa %-1","Pa/%","MDC_DIM_X_PA_PER_PERCENT",6208","268352",
+," - Pulmonary/ Systemic Vascular Resistance Index","L-4MT-1L-2","L-6MT-1","dyne s m-2 cm-5","dyn.s/cm5/m2 dyn.s.cm-5.m-2 dyn.s.m2/cm5","MDC_DIM_DYNE_SEC_PER_M_SQ_PER_CM_5",6016","268160",
+," - Pulmonary/ Systemic Vascular Resistance Index","L-2MT-1","L-2MT-1","dyne s m2 cm-5","dyn.s.m2/cm5 dyn.s.cm-5.m2","MDC_DIM_DYNE_SEC_M_SQ_PER_CM_5",8320","270464",
+," thermal calories","L2MT-2","L2MT-2","cal","cal","MDC_DIM_X_CAL",8352","270496",
+," thermal calories","L2MT-2","L2MT-2","kcal","kcal","MDC_DIM_KILO_CAL",8355","270499",
+," nutrition label calories","L2MT-2","L2MT-2","nutr cal ???","[Cal]","MDC_DIM_X_NUTR_CAL",8384","270528",
+," thermal caloric rate","L2MT-3","L2MT-3","cal per day","cal/d","MDC_DIM_X_CAL_PER_DAY",8416","270560",
+," thermal caloric rate","L2MT-3","L2MT-3","kcal per day","kcal/d","MDC_DIM_KILO_CAL_PER_DAY",8419","270563",
+," Flow rate per body weight","L3M-1T-1","L3M-1T-1","L per kg per hour","L/kg/h","MDC_DIM_X_L_PER_KG_PER_HR",7232","269376",
+_UOM_DOSE_RATE_LIQUID," Flow rate per body weight","L3M-1T-1","L3M-1T-1","mL per kg per hour","mL/kg/h","MDC_DIM_MILLI_L_PER_KG_PER_HR",7250","269394","ds-ip-rel_2.0"
+," Flow rate per body surface area","L3L-2T-1","LT-1","L per m2 per hour","L/m2/h","MDC_DIM_X_L_PER_M_SQ_PER_HR",7360","269504",
+_UOM_DOSE_RATE_LIQUID," Flow rate per body surface area","L3L-2T-1","LT-1","mL per m2 per hour","mL/m2/h","MDC_DIM_MILLI_L_PER_M_SQ_PER_HR",7378","269522","ds-ip-rel_2.0"
+," Work of breathing (per breath)","L2MT-2","L2MT-2","J per breath","J/{breath}","MDC_DIM_X_JOULES_PER_BREATH",8448","270592",
+," Work of breathing (per liter)","L2MT-2L-3","L-1MT-2","J/L","J/L","MDC_DIM_X_JOULES_PER_L",8480","270624",
+," Vascular Resistance","L-4MT-1","L-4MT-1","dyne s cm-5","dyn.s/cm5","MDC_DIM_DYNE_SEC_PER_CM_5",8512","270656",
+," Vascular Resistance (Peripheral Reistance Unit)","L-4MT-1","L-4MT-1","PRU","[PRU] mm[Hg].s/mL","MDC_DIM_MMHG_SEC_PER_ML",8544","270688",
+," Vascular Resistance (Wood's unit, pediatric)","L-4MT-1","L-4MT-1","Woods Unit, WU, HRU","[wood'U] mm[Hg].min/L","MDC_DIM_MMHG_MIN_PER_L",8576","270720",
+," Amount of information","1","1","bit, b","bit","MDC_DIM_BIT",8608","270752",
+," Amount of information","1","1","byte, B","By","MDC_DIM_BYTE",8640","270784",
+," Volume concentration","L3L-3","1","drops/L","[drp]/L","MDC_DIM_DROPS_PER_X_L",8672","270816",
+," Volume concentration","L3L-3","1","drops/mL","[drp]/mL","MDC_DIM_DROPS_PER_MILLI_L",8690","270834",
+," Shallow Breathing Index (breath)","L-3","L-3","breaths/min/L","/min/L {breaths}/min/L {breath}/min/L","MDC_DIM_BREATHS_PER_MIN_PER_L",8704","270848",
+," Shallow Breathing Index (breaths squared)","L-3","L-3","breaths^2/min/L","/min/L {breaths-squared}/min/L","MDC_DIM_SQUARE_BREATHS_PER_MIN_PER_L",8736","270880",
+," Volume per minute per body weight","L3T-1M-1","L3M-1T-1","L/min/kg","L/min/kg","MDC_DIM_X_L_PER_MIN_PER_KG",8768","270912",
+," Oxygen saturation-seconds","T","T","sat-sec","{sat}%.s","MDC_DIM_O2_SAT_PERCENT_SEC",8800","270944",
+," millimeters per millivolt  (display gain)","L-1M-1T3I","L-1M-1T3I","mm/mV","mm/mV m/V","MDC_DIM_X_M_PER_VOLT",8832","270976",
+," Cardiac stroke work","L2MT-2","L2MT-2","gf.m  [trad g.m] ","gf.m","MDC_DIM_X_G_FORCE_M",8864","271008",
+," Cardiac stroke work","L2MT-2","L2MT-2","kgf.m  [trad kg.m] ","kgf.m","MDC_DIM_KILO_G_FORCE_M",8867","271011",
+," Cardiac stroke work per liter of fluid","L2MT-2L-3","L-1MT-2","gf.m/L  [trad g.m/L] ","gf.m/L","MDC_DIM_X_G_FORCE_M_PER_L",8896","271040",
+," Cardiac stroke work per liter of fluid","L2MT-2L-3","L-1MT-2","kgf.m/L  [trad kg.m/L] ","kgf.m/L","MDC_DIM_KILO_G_FORCE_M_PER_L",8899","271043",
+," Cardiac Stroke Work per Body Surface Area","L2MT-2L-2","MT-2","gf.m/m2  [trad g.m/m2] ","gf.m/m2","MDC_DIM_X_G_FORCE_M_PER_M_SQ",8928","271072",
+," Cardiac Stroke Work per Body Surface Area","L2MT-2L-2","MT-2","kgf.m/m2  [trad kg.m/m2] ","kgf.m/m2","MDC_DIM_KILO_G_FORCE_M_PER_M_SQ",8931","271075",
+,,,,,"L/min/m2","MDC_DIM_L_PER_MIN_PER_M_SQ",2848","264992",
+,,,,,"L/min","MDC_DIM_L_PER_MIN",3072","265216",
+,,,,,"dyn.s/cm5","MDC_DIM_DYNE_SEC_PER_CM5",4128","266272",
+,,,,,"g.m","MDC_DIM_G_M",1856","264000",
+,,,,,"g/dL","MDC_DIM_G_PER_DL",2112","264256",
+,"  "," "," "," ","g/L","MDC_DIM_G_PER_L",2048","264192",
+,,,,,"[in_i]","MDC_DIM_INCH",1376","263520","ds-ip-rel_2.0"
+,,,,,"g","MDC_DIM_G",1728","263872",
+,,,,,"[lb_av]","MDC_DIM_LB",1760","263904",
+,,,,,"g/mL","MDC_DIM_G_PER_ML",,,
+,,,,,"[iU]/mL","MDC_DIM_INTL_UNIT_PER_ML",,,
+,,,,,"s","MDC_DIM_SEC",2176","264320","ds-ip-rel_2.0"
+,,,,,"L","MDC_DIM_L",1600","263744",
+,,,,,"[oz_av]","MDC_DIM_OZ",1792","263936",
+,,,,,"J/L","MDC_DIM_JOULES_PER_L",8480","270624",
+,,,,,"mL","DIM_MILLI_L",,,
+,,,,,"Ohm","MDC_DIM_OHM",,,
+," L2MT-2 (energy, work)","L2MT-2"," "," ","gf.m","MDC_DIM_G_FORCE_M",,,
+_UOM_DOSE_RATE_LIQUID," Volume per minute per body surface area","L3L-2T-1","LT-1","l m-2 m-1","L/m2/min","MDC_DIM_X_L_PER_M_SQ_PER_MIN",7328","269472","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," Flow rate per body weight","L3M-1T-1","L3M-1T-1","mL per kg per minute","mL/kg/min","MDC_DIM_MILLI_L_PER_KG_PER_MIN",7282","269426","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," Flow rate per body weight","L3M-1T-1","L3M-1T-1","mL per kg per day","mL/kg/d","MDC_DIM_MILLI_L_PER_KG_PER_DAY",7314","269458","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," Flow rate per body surface area","L3L-2T-1","L3L-2T-1"," ","L/m2/d","MDC_DIM_X_L_PER_M_SQ_PER_DAY",7392","269536","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," Flow rate per body surface area","L3L-2T-1","L3L-2T-1"," ","mL/m2/min","MDC_DIM_MILLI_L_PER_M_SQ_PER_MIN",7346","269490","ds-ip-rel_2.0"
+_UOM_DOSE_RATE_LIQUID," Flow rate per body surface area","L3L-2T-1","L3L-2T-1"," ","mL/m2/d","MDC_DIM_MILLI_L_PER_M_SQ_PER_DAY",7410","269554","ds-ip-rel_2.0"
+," Flow rate per body weight"," L3M-1T-1","L3M-1T-1","L per kg per minute","L/kg/min","MDCX_DIM_X_L_PER_KG_PER_MIN",7264","269408",
+," Flow rate per body weight","L3M-1T-1","L3M-1T-1","L per kg per day","L/kg/d","MDC_DIM_X_L_PER_KG_PER_DAY",7296","269440",
+," - mol dose rate per body surface area","NT-1L-2","L-2T-1N","mmol m-2 s-1","mmol/m2/s","MDCX_DIM_MILLI_MOLE_PER_M_SQ_PER_SEC",7442","269586",""
+_UOM_DOSE_QUAN,"  International Unit","[iU]","[iU]","kg-1 i.u.","k[iU]","MDC_DIM_KILO_INTL_UNIT",5475","267619","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," - IU dose quantity per body weight","[iU]M-1","M-1[iU]","i.u. kg-1","k[iU]/kg","MDC_DIM_KILO_INTL_UNIT_PER_KG",7683","269827","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," - IU concentration","[iU]L-3","L-3[iU]","kg ml-1","k[iU]/mL","MDC_DIM_KILO_INTL_UNIT_PER_ML",5603","267747","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," - IU mass flow rate","[iU]T-1","T-1[iU]","kg-1 i.u. h-1","k[iU]/h","MDC_DIM_KILO_INTL_UNIT_PER_HR",5699","267843","ds-ip-rel_2.0"
+_UOM_DOSE_RATE,"  - IU mass flow rate","[iU]T-1","T-1[iU]","kg-1 i.u. d-1","k[iU]/d","MDC_DIM_KILO_INTL_UNIT_PER_DAY",5731","267875","ds-ip-rel_2.0"
+_UOM_DOSE_RATE,"  - IU mass flow rate","[iU]T-1M-1","M-1T-1[iU]","kg-1 i.u. kg-1 h-1","k[iU]/kg/h","MDC_DIM_KILO_INTL_UNIT_PER_KG_PER_HR",5827","267971","ds-ip-rel_2.0"
+_UOM_DOSE_RATE,"  - IU mass flow rate","[iU]T-1M-1","M-1T-1[iU]","kg-1 i.u. kg-1 d-1","k[iU]/kg/d","MDC_DIM_KILO_INTL_UNIT_PER_KG_PER_DAY",5859","268003","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," Arbitrary Unit (arb’U)  ","(arb’U)","(arb’U)","arb.u","[arb'U]","MDC_DIM_X_ARB_UNIT",9056","271200","ds-ip-rel_2.0"
+," arb'U  concentration","arb.u","arb.u","arb.u cm-3","[arb'U]/cm3","MDC_DIM_X_ARB_UNIT_PER_CM_CUBE",9088","271232","ds-ip-rel_2.0"
+," arb'U  concentration","arb.u","arb.u","arb.u m-3","[arb'U]/m3","MDC_DIM_X_ARB_UNIT_PER_M_CUBE",9120","271264","ds-ip-rel_2.0"
+," arb'U  concentration","arb.u ","arb.u ","arb.u l-1","[arb'U]/L","MDC_DIM_X_ARB_UNIT_PER_L",9152","271296","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," arb'U  concentration","arb.u ","arb.u ","arb.u ml-1","[arb'U]/mL","MDC_DIM_X_ARB_UNIT_PER_ML",9184","271328","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","arb.u ","arb.u ","arb.u s-1","[arb'U]/s","MDC_DIM_X_ARB_UNIT_PER_SEC",9216","271360","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","arb.u ","arb.u ","arb.u min-1","[arb'U]/min","MDC_DIM_X_ARB_UNIT_PER_MIN",9248","271392","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","arb.u","arb.u","arb.u h-1","[arb'U]/h","MDC_DIM_X_ARB_UNIT_PER_HR",9280","271424","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","arb.u ","arb.u ","arb.u d-1","[arb'U]/d","MDC_DIM_X_ARB_UNIT_PER_DAY",9312","271456","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body weight","arb.u ","arb.u ","arb.u kg-1","[arb'U]/kg","MDC_DIM_X_ARB_UNIT_PER_KG",9344","271488","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body surface area","arb.u ","arb.u ","arb.u m-2","[arb'U]/m2","MDC_DIM_X_ARB_UNIT_PER_M_SQ",9376","271520","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u kg-1 s-1","[arb'U]/kg/s","MDC_DIM_X_ARB_UNIT_PER_KG_PER_SEC",9408","271552","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u kg-1 min-1","[arb'U]/kg/min","MDC_DIM_X_ARB_UNIT_PER_KG_PER_MIN",9440","271584","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u kg-1 h-1","[arb'U]/kg/h","MDC_DIM_X_ARB_UNIT_PER_KG_PER_HR",9472","271616","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u kg-1 d-1","[arb'U]/kg/d","MDC_DIM_X_ARB_UNIT_PER_KG_PER_DAY",9504","271648","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u lb-1 min-1","[arb'U]/[lb_av]/min","MDC_DIM_X_ARB_UNIT_PER_LB_PER_MIN",9536","271680","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u lb-1 h-1","[arb'U]/[lb_av]/h","MDC_DIM_X_ARB_UNIT_PER_LB_PER_HR",10432","272576","ds-ip-rel_2.0"
+," arb'U  dose rate per body weight","arb.u ","arb.u ","arb.u lb-1 d-1","[arb'U]/[lb_av]/d","MDC_DIM_X_ARB_UNIT_PER_LB_PER_DAY",9568","271712","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","arb.u ","arb.u ","arb.u m-2 sec-1","[arb'U]/m2/sec","MDC_DIM_X_ARB_UNIT_PER_M_SQ_PER_SEC",9600","271744","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","arb.u ","arb.u ","arb.u m-2 min-1","[arb'U]/m2/min","MDC_DIM_X_ARB_UNIT_PER_M_SQ_PER_MIN",9632","271776","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","arb.u ","arb.u ","arb.u m-2 h-1","[arb'U]/m2/h","MDC_DIM_X_ARB_UNIT_PER_M_SQ_PER_HR",9664","271808","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","arb.u ","arb.u ","arb.u m-2 d-1","[arb'U]/m2/d","MDC_DIM_X_ARB_UNIT_PER_M_SQ_PER_DAY",9696","271840","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," Arbitrary Unit (arb’U)  ","arb.u","arb.u"," ","M[arb'U]","MDC_DIM_MEGA_ARB_UNIT",9060","271204","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","M[arb'U]/d","MDC_DIM_MEGA_ARB_UNIT_PER_DAY",9316","271460","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","M[arb'U]/h","MDC_DIM_MEGA_ARB_UNIT_PER_HR",9284","271428","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body weight","[arb.u]M-1","M-1[arb.u]"," ","M[arb'U]/kg","MDC_DIM_MEGA_ARB_UNIT_PER_KG",9348","271492","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","M[arb'U]/kg/d","MDC_DIM_MEGA_ARB_UNIT_PER_KG_PER_DAY",9508","271652","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","M[arb'U]/kg/h","MDC_DIM_MEGA_ARB_UNIT_PER_KG_PER_HR",9476","271620","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","M[arb'U]/kg/min","MDC_DIM_MEGA_ARB_UNIT_PER_KG_PER_MIN",9444","271588","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","M[arb'U]/kg/s","MDC_DIM_MEGA_ARB_UNIT_PER_KG_PER_SEC",9412","271556","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body surface area","[arb.u]L-2","L-2[arb.u]"," ","M[arb'U]/m2","MDC_DIM_MEGA_ARB_UNIT_PER_M_SQ",9380","271524","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","M[arb'U]/m2/d","MDC_DIM_MEGA_ARB_UNIT_PER_M_SQ_PER_DAY",9700","271844","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","M[arb'U]/m2/h","MDC_DIM_MEGA_ARB_UNIT_PER_M_SQ_PER_HR",9668","271812","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","M[arb'U]/m2/min","MDC_DIM_MEGA_ARB_UNIT_PER_M_SQ_PER_MIN",9636","271780","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","M[arb'U]/m2/sec","MDC_DIM_MEGA_ARB_UNIT_PER_M_SQ_PER_SEC",9604","271748","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","M[arb'U]/min","MDC_DIM_MEGA_ARB_UNIT_PER_MIN",9252","271396","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," arb'U  concentration","[arb.u]L-3","L-3[arb.u]"," ","M[arb'U]/mL","MDC_DIM_MEGA_ARB_UNIT_PER_ML",9188","271332","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","M[arb'U]/s","MDC_DIM_MEGA_ARB_UNIT_PER_SEC",9220","271364","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," Arbitrary Unit (arb’U)  ","[arb.u]","[arb.u]","kg-1 arb.u","k[arb'U]","MDC_DIM_KILO_ARB_UNIT",9059","271203","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]","kg-1 arb.u d-1","k[arb'U]/d","MDC_DIM_KILO_ARB_UNIT_PER_DAY",9315","271459","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]","kg-1 arb.u h-1","k[arb'U]/h","MDC_DIM_KILO_ARB_UNIT_PER_HR",9283","271427","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body weight","[arb.u]M-1","M-1[arb.u]","arb.u kg-1","k[arb'U]/kg","MDC_DIM_KILO_ARB_UNIT_PER_KG",9347","271491","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]","kg-1 arb.u kg-1 d-1","k[arb'U]/kg/d","MDC_DIM_KILO_ARB_UNIT_PER_KG_PER_DAY",9507","271651","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]","kg-1 arb.u kg-1 h-1","k[arb'U]/kg/h","MDC_DIM_KILO_ARB_UNIT_PER_KG_PER_HR",9475","271619","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," arb'U  concentration","[arb.u]L-3","L-3[arb.u]","kg arb.u ml-1","k[arb'U]/mL","MDC_DIM_KILO_ARB_UNIT_PER_ML",9187","271331","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," Arbitrary Unit (arb’U)  ","[arb.u]","[arb.u]"," ","m[arb'U]","MDC_DIM_MILLI_ARB_UNIT",9074","271218","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","m[arb'U]/d","MDC_DIM_MILLI_ARB_UNIT_PER_DAY",9330","271474","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","m[arb'U]/h","MDC_DIM_MILLI_ARB_UNIT_PER_HR",9298","271442","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body weight","[arb.u]M-1","M-1[arb.u]"," ","m[arb'U]/kg","MDC_DIM_MILLI_ARB_UNIT_PER_KG",9362","271506","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","m[arb'U]/kg/d","MDC_DIM_MILLI_ARB_UNIT_PER_KG_PER_DAY",9522","271666","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","m[arb'U]/kg/h","MDC_DIM_MILLI_ARB_UNIT_PER_KG_PER_HR",9490","271634","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","m[arb'U]/kg/min","MDC_DIM_MILLI_ARB_UNIT_PER_KG_PER_MIN",9458","271602","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","m[arb'U]/[lb_av]/h","MDC_DIM_MILLI_ARB_UNIT_PER_LB_PER_HR",10450","272594","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body weight","[arb.u]T-1M-1","M-1T-1[arb.u]"," ","m[arb'U]/[lb_av]/min","MDC_DIM_MILLI_ARB_UNIT_PER_LB_PER_MIN",9554","271698","ds-ip-rel_2.0"
+_UOM_DOSE_QUAN," arb'U  dose quantity per body surface area","[arb.u]L-2","L-2[arb.u]"," ","m[arb'U]/m2","MDC_DIM_MILLI_ARB_UNIT_PER_M_SQ",9394","271538","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","m[arb'U]/m2/d","MDC_DIM_MILLI_ARB_UNIT_PER_M_SQ_PER_DAY",9714","271858","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","m[arb'U]/m2/h","MDC_DIM_MILLI_ARB_UNIT_PER_M_SQ_PER_HR",9682","271826","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","m[arb'U]/m2/min","MDC_DIM_MILLI_ARB_UNIT_PER_M_SQ_PER_MIN",9650","271794","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  dose rate per body surface area","[arb.u]T-1L-2","L-2T-1[arb.u]"," ","m[arb'U]/m2/sec","MDC_DIM_MILLI_ARB_UNIT_PER_M_SQ_PER_SEC",9618","271762","ds-ip-rel_2.0"
+_UOM_DOSE_RATE," arb'U  mass flow rate","[arb.u]T-1","T-1[arb.u]"," ","m[arb'U]/min","MDC_DIM_MILLI_ARB_UNIT_PER_MIN",9266","271410","ds-ip-rel_2.0"
+_UOM_DOSE_CONC," arb'U  concentration","[arb.u]L-3","L-3[arb.u]"," ","m[arb'U]/mL","MDC_DIM_MILLI_ARB_UNIT_PER_ML",9202","271346","ds-ip-rel_2.0"
+_UOM_DOSE_RATE,"  - IU mass flow rate","[iU]T-1M-1","M-1T-1[iU]","i.u. lb-1 d-1","[iU]/[lb_av]/d","MDC_DIM_X_INTL_UNIT_PER_LB_PER_DAY",6880","269024","ds-ip-rel_2.0"
+_UOM_DOSE_RATE,"  - IU mass flow rate","[iU]T-1M-1","M-1T-1[iU]","i.u. lb-1 d-1","m[iU]/[lb_av]/d","MDC_DIM_MILLI_INTL_UNIT_PER_LB_PER_DAY",6898","269042","ds-ip-rel_2.0"
+,"  "," "," "," ","L/kg","MDC_DIM_L_PER_KG",3168","265312",
+,"  "," "," "," ","L/min/kg","MDC_DIM_L_PER_MIN_PER_KG",,,
+,"  "," "," "," ","mL/min/m2","MDC_DIM_MILLI_L_PER_MIN_PER_M2",,,
+,"  ","L2MT-2L-3M-1"," "," ","J/L/kg","MDC_DIM_JOULES_PER_L_PER_KG",11424","273568",
+,"  ","L2MT-2L-3M-1"," "," ","J/mL/kg","MDC_DIM_JOULES_PER_ML_PER_KG",11456","273600",
+," Pressure Time Product","L-1MT-1","L-1MT-1","cm[H2O].s/{breath}","cm[H2O].s/{breath}","MDC_DIM_CM_H2O_SEC_PER_BREATH",11232","273376",
+,"  ","NN-1","1","mmol mol-1","mmol/mol","MDC_DIM_MILLI_MOLE_PER_MOLE",882","263026",
+,"  "," "," "," ","{INR}","MDC_DIM_INR",11392","273536",
+,"  ","L3T-1M-1","L3T-1M-1","mL/min/kg","mL/min/kg","MDC_DIM_MILLI_L_PER_MIN_PER_KG",8786","270930",
+," Slope of component gas concentration per expired total gas volume","L3L-3L-3","L-3","vol % per liter","%{vol}/L","MDC_DIM_VOL_PERCENT_PER_L",10560","272704",
+,"  ","L2MT-3T","L2MT-2","pW/Hz","pW/Hz","MDC_DIM_PICO_WATT_PER_HZ",11381","273525",
+,"  ","[Bel]","[Bel]","dB(10nV)","dB[10.nV]","MDC_DIM_DECIBEL_10_NANO_VOLT",7860","270004",
+,"  ","L2MT-3","L2MT-3","pW","pW","MDC_DIM_PICO_WATT",4053","266197",
+,"  ","L2MT-3L-2","MT-3","kgf.m/min/m2","kgf.m/min/m2","MDC_DIM_KILO_G_FORCE_M_PER_MIN_PER_M2",11331","273475",
+_UOM_CONC_GAS _UOM_PRESS_GAS_RESP _UOM_PRESS_MEDGAS,"  ","LMT-2L-2","L-1MT-2","m","mbar","MDC_DIM_MILLI_BAR",3954","266098",
+,"  ","L-1MT-1","L-1MT-1","mbar.s","mbar.s/{breath} mbar.s","MDC_DIM_MILLI_BAR_SEC_PER_BREATH",11314","273458",
+,"  ","L-1MT-2","L-1MT-2","cm[H2O].s/min","cm[H2O].s/min","MDC_DIM_CM_H2O_SEC_PER_MIN",11264","273408",
+_UOM_RES_AWAY,"  ","L-4MT-1","L-4MT-1","mbar s l-1","mbar.s/L mbar/(L/s)","MDC_DIM_MILLI_BAR_SEC_PER_L",10770","272914",
+,"  "," "," "," ","J/{breath}","MDC_DIM_JOULES_PER_BREATH",8448","270592",
+,"  "," "," "," ","J/mL","MDC_DIM_JOULES_PER_ML",10528","272672",
+,"  "," "," "," ","J/day","MDC_DIM_JOULES_PER_DAY",10496","272640",
+," L2MT-3 (power)","L2MT-3","L2MT-3","W","W","MDC_DIM_WATT",4032","266176",
+_UOM_COMPL_LUNG,"  ","L4M-1T2","L4M-1T2","mL mbar-1","mL/mbar","MDC_DIM_MILLI_L_PER_MBAR",10898","273042",
+_UOM_COMPL_LUNG,"  ","L4M-1T2","L4M-1T2"," ","L/bar","MDC_DIM_L_PER_BAR",10848","272992",
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","mL/s","{unknown}","MDC_DIM_MILLI_L_PER_SEC",,,
+," L3T-1  (volume flow rate)","L3T-1","L3T-1","cm3/min","{unknown}","MDC_DIM_CUBIC_CENTI_M_PER_MIN",,,
+," ML2I-2T-3 (electric resistance)","ML2I-2T-3","ML2I-2T-3","kW","{unknown}","MDC_DIM_KILO_OHM",,,
+," ML2I-2T-3 (electric resistance)","ML2I-2T-3","ML2I-2T-3","hW","{unknown}","MDC_DIM_HECTO_OHM",,,
+," I (electrical current)","I","I","uA","{unknown}","MDC_DIM_MICRO_AMPS",,,
+," L-1MT-2 (pressure)","L-1MT-2","L-1MT-2","PSIg","{unknown}","MDCX_DIM_PSIG",,,
+," ML-3 (concentration of mass)","ML-3","ML-3","g cl-3","g/cL","MDC_DIM_G_PER_CL",2080","264224",
+,"  ","L2MT-3L-2","MT-3","gf.m/min/m2","gf.m/min/m2","MDC_DIM_G_FORCE_M_PER_MIN_PER_M2",11328","273472",
+," Cardiac Stroke Work per Body Surface Area","L2MT-2L-2","MT-2","gf.m/m2  [trad g.m/m2] ","gf.m/m2","MDC_DIM_G_FORCE_M_PER_M_SQ",8928","271072",
+," Work (of breathing) per liter per kg (body mass)","L2MT-2L-3M-1","L-1T-2","J/L/kg","J/L/kg","MDC_DIM_X_JOULES_PER_L_PER_KG",,,
+," Work (of breathing) per milliliter per kg (body mass)","L2MT-2L-3M-1","L-1T-2","J/mL/kg","J/mL/kg","MDC_DIM_X_JOULES_PER_ML_PER_KG",,,
+," Microabsorbance (SpO2, optical)","1","1","1","{unitless} 1 {microabsorbance}","MDC_DIM_MICRO_ABSORBANCE",,,
+," L2 (area)","L2","L2","m2","m2","MDC_DIM_SQ_M",1472","263616",
+," International Unit","[iU]","[iU]","i.u.","[iU]","MDC_DIM_INTL_UNIT",5472","267616",

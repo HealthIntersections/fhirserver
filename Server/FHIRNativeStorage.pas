@@ -679,10 +679,10 @@ type
     function resolveReference(conn: TKDBConnection; ref : string) : Integer;
     function resolveConcept(conn: TKDBConnection; c : TFHIRCoding) : Integer; overload;
     function resolveConcept(conn: TKDBConnection; sys, code : String) : Integer; overload;
-    procedure ProcessObservationValue(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRType);
-    procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantity);
-    procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
-    procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; categories, concepts, compConcepts : TArray<Integer>);
+    procedure ProcessObservationValue(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRType);
+    procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantity);
+    procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
+    procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
   protected
     function GetTotalResourceCount: integer; override;
   public
@@ -7253,77 +7253,120 @@ begin
 end;
 
 procedure TFhirObservationLastNOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
-//var
-//  req : TFHIRLastNOpRequest;
-////  s : string;
-//  ose : TObservationLastNEvaluator;
-////  c : TFhirCoding;
-////  list : TAdvList<TFHIRResource>;
-////  res : TFHIRResource;*)
+var
+  sp : TSearchProcessor;
+  p : TParseMap;
+  key : integer;
+  item : TMatchingResource;
+  conn : TKDBConnection;
+  base, field, type_ : String;
+  bundle : TFHIRBundle;
+  op : TFhirOperationOutcome;
+  keys : TKeyList;
+  summaryStatus : TFHIRSummaryOption;
+  needsObject : boolean;
+  comp : TFHIRParserClass;
 begin
+  conn := manager.FConnection;
   try
-    // perform the search, return the id of the search
+    sp := TSearchProcessor.create(manager.ServerContext);
+    try
+      sp.typeKey := manager.FConnection.CountSQL('select ResourceTypeKey from Types where ResourceName = ''Observation''');
+      sp.type_ := 'Observation';
+      sp.compartmentId := request.compartmentId;
+      sp.compartments := request.compartments;
+      sp.baseURL := request.baseURL;
+      sp.lang := request.lang;
+      sp.params := request.Parameters;
+      manager.CreateIndexer;
+      sp.indexes := manager.ServerContext.Indexes.Link;
+      sp.countAllowed := false;
+      sp.Connection := conn.link;
+      sp.build;
 
+      bundle := TFHIRBundle.Create(BundleTypeSearchset);
+      op := TFhirOperationOutcome.Create;
+      keys := TKeyList.Create;
+      try
+        bundle.id := FhirGUIDToString(CreateGUID);
+        bundle.meta := TFhirMeta.Create;
+        bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+        summaryStatus := request.Summary;
 
-//    manager.NotFound(request, response);
-//    req := TFHIRLastNOpRequest.create();
-//    try
-//      if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
-//        req.load(request.Resource as TFHIRParameters)
-//      else
-//        req.load(request.Parameters);
+        base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastN?';
+        if response.Format <> ffUnspecified then
+          base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
+        bundle.link_List.AddRelRef('self', base+sp.link_);
+        manager.chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
+        if (not needsObject) then
+          comp := nil;
+
+        conn.SQL :=
+//            'Select '+
+//              'Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, Tags, '+field+' '+
+//            'from '+
+//              'Versions, Ids, Types '+
+//            'where '+
+//              'Ids.MostRecent = Versions.ResourceVersionKey and '+
+//              'Ids.resourceKey in (select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+')';
 //
-//      ose := TObservationLastNEvaluator.create(manager.Connection);
-//      try
-//        ose.subjectKey := resolvePatient(manager, request, req.subject);
-//        for s in req.codeList do
-//          ose.concepts.add(TFHIRCoding.Create(req.system, s));
-//        for c in req.codingList do
-//          ose.concepts.add(c.Link);
-//        if (ose.concepts.empty) then
-//          raise Exception.Create('no code or coding found');
-//        if (req.duration <> '') then
-//        begin
-//          ose.start := TDateTimeEx.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
-//          ose.finish := TDateTimeEx.makeUTC.DateTime;
-//        end
-//        else if (req.period <> nil) then
-//        begin
-//          if (req.period.start.null) then
-//            raise Exception.Create('Period.start is required');
-//          ose.start := req.period.start.UTC.DateTime;
-//          if (req.period.end_.null) then
-//            raise Exception.Create('Period.end is required');
-//          ose.finish := req.period.end_.UTC.DateTime;
-//        end
-//        else
-//          raise Exception.Create('duration or period is required');
-//        if (req.statisticList.Count = 0) then
-//          raise Exception.Create('at least one parameter is required');
-//
-//        for s in req.statisticList do
-//          ose.parameters := ose.parameters + [resolveParameter(s)];
-//
-//        ose.execute;
-//        if (req.include) then
-//        begin
-//          list := manager.loadResources(ose.Observations);
-//          try
-//            for res in list do
-//              ose.Resp.sourceList.Add(res.link as TFhirObservation)
-//          finally
-//            list.Free;
+
+'Select '+#13#10+
+'  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, JsonContent '+#13#10+
+'from ( '+#13#10+
+'Select '+#13#10+
+'  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, JsonContent, '+#13#10+
+'  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
+'                              ORDER BY StatedDate DESC '+#13#10+
+'                             ) '+#13#10+
+'             AS rn '+#13#10+
+'from '+#13#10+
+'  Versions, Ids, Types, Observations '+#13#10+
+'where '+#13#10+
+'  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#13#10+
+'  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#13#10+
+'    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#13#10+
+'   ) '+#13#10+
+') tmp '+#13#10+
+'WHERE rn <= 3 '+#13#10+
+'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
+
+        conn.Prepare;
+        try
+          conn.Execute;
+          while conn.FetchNext do
+          Begin
+            manager.AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
+            keys.Add(TKeyPair.Create(type_, conn.ColStringByName['ResourceKey']));
+          end;
+        finally
+          conn.Terminate;
+        end;
+        manager.processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+
+//          if (op.issueList.Count > 0) then
+//          begin
+//            be := bundle.entryList.Append;
+//            be.resource := op.Link;
+//            be.search := TFhirBundleEntrySearch.Create;
+//            be.search.mode := SearchEntryModeOutcome;
 //          end;
-//        end;
-//
-//        response.Resource := ose.resp.asParams;
-//      finally
-//        ose.Free;
-//      end;
-//
-//    finally
-//      req.Free;
-//    end;
+
+          //bundle.link_List['self'] := request.url;
+        response.HTTPCode := 200;
+        response.Message := 'OK';
+        response.Body := '';
+        response.Resource := nil;
+        response.bundle := bundle.Link;
+      finally
+        keys.Free;
+        bundle.Free;
+        op.Free;
+      end;
+    finally
+      sp.Free;
+    end;
+
     manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
   except
     on e: exception do
@@ -10869,7 +10912,7 @@ begin
   conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 1)');
 end;
 
-procedure TFHIRNativeStorageService.storeObservationConcepts(conn: TKDBConnection; ok: integer; categories, concepts, compConcepts: TArray<Integer>);
+procedure TFHIRNativeStorageService.storeObservationConcepts(conn: TKDBConnection; ok: integer; isComp : boolean; categories, concepts, compConcepts: TArray<Integer>);
   procedure iterate(arr : TArray<Integer>; src : integer);
   var
     i : integer;
@@ -10884,6 +10927,9 @@ procedure TFHIRNativeStorageService.storeObservationConcepts(conn: TKDBConnectio
         conn.Execute;
       end;
   end;
+var
+  s  : String;
+  i : integer;
 begin
   conn.sql := 'Insert into ObservationCodes (ObservationCodeKey, ObservationKey, ConceptKey, Source) values (:k, :ok, :ck, :s)';
   conn.Prepare;
@@ -10891,6 +10937,15 @@ begin
   iterate(concepts, 2);
   iterate(compconcepts, 3);
   conn.Terminate;
+  s := '';
+  if isComp then
+    for i in compConcepts do
+      CommaAdd(s, inttostr(i))
+  else
+    for i in concepts do
+      CommaAdd(s, inttostr(i));
+  if (s <> '') then
+    conn.execsql('Update Observations set CodeList = '''+s+''' where ObservationKey = '+inttostr(ok));
 end;
 
 procedure TFHIRNativeStorageService.DropResource(key, vkey, pvkey: integer; id: string; resource: String; indexer: TFhirIndexManager; conn: TKDBConnection);
@@ -10987,9 +11042,9 @@ begin
       dtMax := (obs.effective as TFHIRPeriod).end_.Max.UTC.DateTime;
   end;
   if (obs.value <> nil) then
-    ProcessObservationValue(conn, rk, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.value)
+    ProcessObservationValue(conn, rk, subj, false, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.value)
   else if (obs.dataAbsentReason <> nil) then
-    ProcessObservationValue(conn, rk, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.dataAbsentReason);
+    ProcessObservationValue(conn, rk, subj, false, categories, concepts, compConcepts, dt, dtMin, dtMax, obs.dataAbsentReason);
   for cmp in obs.componentList do
   begin
     Setlength(compConcepts, cmp.code.codingList.Count);
@@ -11000,9 +11055,9 @@ begin
       inc(i);
     end;
     if (cmp.value <> nil) then
-      ProcessObservationValue(conn, rk, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.value)
+      ProcessObservationValue(conn, rk, subj, true, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.value)
     else if (cmp.dataAbsentReason <> nil) then
-      ProcessObservationValue(conn, rk, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.dataAbsentReason);
+      ProcessObservationValue(conn, rk, subj, true, categories, concepts, compConcepts, dt, dtMin, dtMax, cmp.dataAbsentReason);
   end;
 end;
 
@@ -11024,6 +11079,7 @@ begin
   rk := conn.ColIntegerByName['ResourceKey'];
   deleted := conn.ColIntegerByName['Status'] = 0;
   conn.Terminate;
+  conn.ExecSQL('Delete from ObservationCodes where ObservationKey in (select ObservationKey from Observations where ResourceKey = '+inttostr(rk)+')');
   conn.ExecSQL('Delete from Observations where ResourceKey = '+inttostr(rk));
   if not deleted then
   begin
@@ -11083,8 +11139,15 @@ begin
       key := conn.CountSQL('Select min(ObservationQueueKey) from ObservationQueue');
       if key > 0 then
       begin
-        processObservation(conn, key);
-        conn.ExecSQL('Delete from ObservationQueue where ObservationQueueKey = '+inttostr(key));
+        conn.startTransact;
+        try
+          processObservation(conn, key);
+          conn.ExecSQL('Delete from ObservationQueue where ObservationQueueKey = '+inttostr(key));
+          conn.commit;
+        except
+          conn.rollback;
+          raise;
+        end;
       end;
       conn.release;
     except
@@ -11097,15 +11160,15 @@ begin
   until (key = 0) or (now > cutoff);
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValue(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRType);
+procedure TFHIRNativeStorageService.ProcessObservationValue(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRType);
 begin
   if value is TFHIRQuantity then
-    ProcessObservationValueQty(conn, key, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirQuantity)
+    ProcessObservationValueQty(conn, key, subj, isComp, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirQuantity)
   else if value is TFhirCodeableConcept then
-    ProcessObservationValueCode(conn, key, subj, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirCodeableConcept)
+    ProcessObservationValueCode(conn, key, subj, isComp, categories, concepts, compConcepts, dt, dtMin, dtMax, value as TFhirCodeableConcept)
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRCodeableConcept);
+procedure TFHIRNativeStorageService.ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRCodeableConcept);
 var
   c : TFHIRCoding;
   ok, ck : Integer;
@@ -11116,8 +11179,8 @@ begin
     if (ck <> 0) then
     begin
       ok := nextObservationKey;
-      conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, ValueConcept) VALUES' +
-                   '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :val)';
+      conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, ValueConcept, IsComponent) VALUES' +
+                   '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :val, :ic)';
       conn.Prepare;
       conn.BindInteger('key', ok);
       conn.BindInteger('rkey', key);
@@ -11128,15 +11191,16 @@ begin
         conn.BindTimeStamp('dt', DateTimeToTS(dt));
       conn.BindTimeStamp('dtMin', DateTimeToTS(dtMin));
       conn.BindTimeStamp('dtMax', DateTimeToTS(dtMax));
+      conn.BindIntegerFromBoolean('ic', isComp);
       conn.BindInteger('val', ck);
       conn.Execute;
       conn.Terminate;
-      storeObservationConcepts(conn, ok, categories, concepts, compConcepts);
+      storeObservationConcepts(conn, ok, isComp, categories, concepts, compConcepts);
     end;
   end;
 end;
 
-procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantity);
+procedure TFHIRNativeStorageService.ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax: TDateTime; value: TFHIRQuantity);
 var
   val, cval : TSmartDecimal;
   upS, upC : TUcumPair;
@@ -11161,8 +11225,8 @@ begin
     else
       Cu := 0;
     ok := nextObservationKey;
-    conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit) VALUES' +
-                 '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :v, :vu, :c, :cu)';
+    conn.SQL := 'INSERT INTO Observations (ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit, IsComponent) VALUES' +
+                 '                         (:key, :rkey, :subj, :dt, :dtMin, :dtMax, :v, :vu, :c, :cu, :ic)';
     conn.Prepare;
     conn.BindInteger('key', ok);
     conn.BindInteger('rkey', key);
@@ -11185,9 +11249,11 @@ begin
       conn.BindDouble('c', cval.asDouble);
       conn.BindInteger('cu', cu);
     end;
+    conn.BindIntegerFromBoolean('ic', isComp);
     conn.Execute;
     conn.Terminate;
-    storeObservationConcepts(conn, ok, categories, concepts, compConcepts);
+    storeObservationConcepts(conn, ok, isComp, categories, concepts, compConcepts);
+
   end;
 end;
 

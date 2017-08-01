@@ -51,7 +51,8 @@ const
 //  ServerDBVersion = 9; // added Observations Table
 //  ServerDBVersion = 10; // added ForTesting flag
 //  ServerDBVersion = 11; // added ResourcePreviousVersion field to SubscriptionQueue
-  ServerDBVersion = 12; // rework Observations Table (can't do this as an upgrade)
+//  ServerDBVersion = 12; // rework Observations Table (can't do this as an upgrade)
+  ServerDBVersion = 13; // add Observations.ConceptList
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -359,16 +360,19 @@ begin
        ' Canonical      '+DBFloatType(FConn.owner.platform)+'    '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+             // canonical value (if units)
        ' CanonicalUnit  '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+         // canonical units (if canonical value)
        ' ValueConcept   '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+          // if observation is a concept (or a data missing value)
+       ' IsComponent    int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+          // if observation is a concept (or a data missing value)
+       ' CodeList       nchar(30)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+          // roll up of observations as an optimization for grouping
        PrimaryKeyType(FConn.owner.Platform, 'PK_Observations', 'ObservationKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Observations_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'SubjectKey', 'Ids', 'ResourceKey', 'FK_Observations_SubjKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ValueUnit', 'Concepts', 'ConceptKey', 'FK_Observations_ValueUnitKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'CanonicalUnit', 'Concepts', 'ConceptKey', 'FK_Observations_CanonicalUnitKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ValueConcept', 'Concepts', 'ConceptKey', 'FK_Observations_ValueConceptKey'));
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON Observations (SubjectKey, DateTimeMin)');
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON Observations (SubjectKey, DateTimeMax)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON Observations (SubjectKey, IsComponent, DateTimeMin)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON Observations (SubjectKey, IsComponent, DateTimeMax)');
   FConn.ExecSQL('Create INDEX SK_Obs_Dt3 ON Observations (DateTimeMin)');
   FConn.ExecSQL('Create INDEX SK_Obs_Dt4 ON Observations (DateTimeMax)');
+  FConn.ExecSQL('Create INDEX SK_Obs_CL ON Observations (CodeList)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateObservationCodes;
@@ -980,6 +984,12 @@ begin
     raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
   if (version < 12) then
     raise Exception.Create('Database must be rebuilt');
+  if (version < 13) then
+  begin
+    Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	IsComponent int NULL');
+    Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	CodeList nchar(30) NULL');
+  end;
+
   Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 

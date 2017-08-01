@@ -1,0 +1,5202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ConceptMap xmlns="http://hl7.org/fhir">
+  <id value="loinc-mdc"/>
+  <url value="http:/???/fhir/ConceptMap/loinc-mdc"/>
+  <version value="[todo]"/>
+  <name value="LoincMdcCrossMap"/>
+  <title value="Cross Map between LOINC and MDC"/>
+  <status value="draft"/>
+  <experimental value="true"/>
+  <publisher value="HL7, Inc"/>
+  <contact>
+    <name value="LOINC + IEEE"/>
+    <telecom>
+      <system value="url"/>
+      <value value="http://loinc.org"/>
+    </telecom>
+  </contact>
+  <description value="A Cross Map between the LOINC and MDC Code systems"/>
+  <purpose value="To implementers map between medical device codes and LOINC codes"/>
+  <copyright value="This content LOINC&#xAE; is copyright &#xA9; 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at http://loinc.org/terms-of-use"/>
+  <sourceUri value="http://loinc.org/vs"/>
+  <targetUri value="http://????"/>
+  <group>
+    <source value="urn:iso:std:iso:11073:10101"/>
+    <target value="http://loinc.org"/>
+    <element>
+      <code value="160116"/>
+      <target>
+        <code value="11556-8"/>
+        <display value="Oxygen [Partial pressure] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160064"/>
+      <target>
+        <code value="11557-6"/>
+        <display value="Carbon dioxide [Partial pressure] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160004"/>
+      <target>
+        <code value="11558-4"/>
+        <display value="pH of Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160080"/>
+      <target>
+        <code value="12961-9"/>
+        <display value="Urea nitrogen [Mass/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160196"/>
+      <display value="Plasma glucose concentration taken from venous"/>
+      <target>
+        <code value="14749-6"/>
+        <display value="Glucose [Moles/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160368"/>
+      <display value="Plasma glucose concentration taken from undetermined sample source"/>
+      <target>
+        <code value="14749-6"/>
+        <display value="Glucose [Moles/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160020"/>
+      <target>
+        <code value="15074-8"/>
+        <display value="Glucose [Moles/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160364"/>
+      <display value="Whole blood glucose concentration taken from undetermined sample source"/>
+      <target>
+        <code value="15074-8"/>
+        <display value="Glucose [Moles/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160024"/>
+      <target>
+        <code value="17861-6"/>
+        <display value="Calcium [Mass/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157744"/>
+      <display value="Urine collected in bag (comment: site attribute according to table Miscellaneous body sites... optional)"/>
+      <target>
+        <code value="19153-6"/>
+        <display value="Volume in Urine collected for unspecified duration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160252"/>
+      <display value="Base excess of arterial blood"/>
+      <target>
+        <code value="1925-7"/>
+        <display value="Base excess in Arterial blood by calculation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160008"/>
+      <target>
+        <code value="1959-6"/>
+        <display value="Bicarbonate [Moles/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159760"/>
+      <target>
+        <code value="1960-4"/>
+        <display value="Bicarbonate [Moles/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16928802"/>
+      <display value="Displayed minimum and/or actual ventilator rate setting, may be mode dependent."/>
+      <target>
+        <code value="19834-1"/>
+        <display value="Breath rate setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151680"/>
+      <display value="Difference in volume between maximum inspiration and maximum expiration"/>
+      <target>
+        <code value="19867-1"/>
+        <display value="Vital capacity [Volume] Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151764"/>
+      <display value="Gas flow in airway"/>
+      <target>
+        <code value="19930-7"/>
+        <display value="Gas flow Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929048"/>
+      <target>
+        <code value="19974-5"/>
+        <display value="Inspiration/Expiration setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150336"/>
+      <target>
+        <code value="19991-9"/>
+        <display value="Alveolar-arterial oxygen Partial pressure difference"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160024"/>
+      <target>
+        <code value="2000-8"/>
+        <display value="Calcium [Moles/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152832"/>
+      <display value="Barometric (atmospheric) air pressure"/>
+      <target>
+        <code value="20053-5"/>
+        <display value="Atmospheric pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929192"/>
+      <display value="Positive end expiratory pressure applied to the airway by the ventilator during expiratory phase."/>
+      <target>
+        <code value="20077-4"/>
+        <display value="Positive end expiratory pressure setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929196"/>
+      <target>
+        <code value="20112-9"/>
+        <display value="Tidal volume setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159752"/>
+      <target>
+        <code value="2019-8"/>
+        <display value="Carbon dioxide [Partial pressure] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159800"/>
+      <target>
+        <code value="2021-4"/>
+        <display value="Carbon dioxide [Partial pressure] in Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150404"/>
+      <display value="Volume of blood ejected per beat"/>
+      <target>
+        <code value="20562-5"/>
+        <display value="Left ventricular Stroke volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160132"/>
+      <target>
+        <code value="20570-8"/>
+        <display value="Hematocrit [Volume Fraction] of Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160104"/>
+      <target>
+        <code value="2075-0"/>
+        <display value="Chloride [Moles/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160020"/>
+      <target>
+        <code value="2339-0"/>
+        <display value="Glucose [Mass/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160365"/>
+      <display value="Whole blood glucose concentration taken from undetermined sample source"/>
+      <target>
+        <code value="2339-0"/>
+        <display value="Glucose [Mass/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160197"/>
+      <display value="Plasma glucose concentration taken from venous"/>
+      <target>
+        <code value="2345-7"/>
+        <display value="Glucose [Mass/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160369"/>
+      <display value="Plasma glucose concentration taken from undetermined sample source"/>
+      <target>
+        <code value="2345-7"/>
+        <display value="Glucose [Mass/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159756"/>
+      <target>
+        <code value="2703-7"/>
+        <display value="Oxygen [Partial pressure] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159804"/>
+      <target>
+        <code value="2705-2"/>
+        <display value="Oxygen [Partial pressure] in Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150324"/>
+      <target>
+        <code value="2708-6"/>
+        <display value="Oxygen saturation in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150332"/>
+      <target>
+        <code value="2711-0"/>
+        <display value="Oxygen saturation in Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159748"/>
+      <target>
+        <code value="2744-1"/>
+        <display value="pH of Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159796"/>
+      <target>
+        <code value="2746-6"/>
+        <display value="pH of Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68063"/>
+      <target>
+        <code value="29463-7"/>
+        <display value="Body weight"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160012"/>
+      <target>
+        <code value="2947-0"/>
+        <display value="Sodium [Moles/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159960"/>
+      <target>
+        <code value="2951-2"/>
+        <display value="Sodium [Moles/volume] in Serum or Plasma"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159852"/>
+      <target>
+        <code value="2955-3"/>
+        <display value="Sodium [Moles/volume] in Urine"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159764"/>
+      <target>
+        <code value="30313-1"/>
+        <display value="Hemoglobin [Mass/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188740"/>
+      <display value="The actual height of the patient, especially for neonates, babies, and children during long-term therapy"/>
+      <target>
+        <code value="3137-7"/>
+        <display value="Body height Measured"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188744"/>
+      <display value="The actual body surface area of the patient, calculated from patient actual weight and patient actual length."/>
+      <target>
+        <code value="3140-1"/>
+        <display value="Body surface area Derived from formula"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188736"/>
+      <display value="The measurement of the mass of patient, e.g., by a scale in bed, e.g., during therapy"/>
+      <target>
+        <code value="3141-9"/>
+        <display value="Body weight Measured"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188792"/>
+      <display value="Last Taken Weight"/>
+      <target>
+        <code value="3141-9"/>
+        <display value="Body weight Measured"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160184"/>
+      <display value="Whole blood glucose concentration taken from capillary"/>
+      <target>
+        <code value="32016-8"/>
+        <display value="Glucose [Mass/volume] in Capillary blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160068"/>
+      <target>
+        <code value="32354-3"/>
+        <display value="Hematocrit [Volume Fraction] of Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151756"/>
+      <target>
+        <code value="33022-5"/>
+        <display value="Carbon dioxide [Partial pressure] in Capillary blood by Transcutaneous CO2 monitor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151760"/>
+      <target>
+        <code value="33437-5"/>
+        <display value="Oxygen [Partial pressure] in Capillary blood by Transcutaneous O2 monitor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151586"/>
+      <display value="Rate of mechanical ventilation; method not specified"/>
+      <target>
+        <code value="33438-3"/>
+        <display value="Breath rate mechanical --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151769"/>
+      <display value="Maximum expiratory gas flow"/>
+      <target>
+        <code value="33452-4"/>
+        <display value="Maximum expiratory gas flow Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159792"/>
+      <target>
+        <code value="34581-9"/>
+        <display value="Calcium.ionized [Moles/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151796"/>
+      <display value="Continuous pressure in airway during spontaneous respiration"/>
+      <target>
+        <code value="35410-0"/>
+        <display value="Continuous positive airway pressure Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151808"/>
+      <display value=".The component of alveolar pressure in the lungs above extrinsic PEEP due to physiologic causes at the end of expiration."/>
+      <target>
+        <code value="38199-6"/>
+        <display value="Intrinsic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188752"/>
+      <display value="The individual&#39;s body weight, in kilograms, divided by the square of height, in meters"/>
+      <target>
+        <code value="39156-5"/>
+        <display value="Body mass index (BMI) [Ratio]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160192"/>
+      <display value="Whole blood glucose concentration taken from venous"/>
+      <target>
+        <code value="39480-9"/>
+        <display value="Glucose [Moles/volume] in Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160200"/>
+      <display value="Whole blood glucose concentration taken from arterial"/>
+      <target>
+        <code value="39481-7"/>
+        <display value="Glucose [Moles/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160200"/>
+      <display value="Whole blood glucose concentration taken from arterial"/>
+      <target>
+        <code value="41651-1"/>
+        <display value="Glucose [Mass/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160192"/>
+      <display value="Whole blood glucose concentration taken from venous"/>
+      <target>
+        <code value="41652-9"/>
+        <display value="Glucose [Mass/volume] in Venous blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188748"/>
+      <display value="The individual&#39;s body fat in kilograms divided by the individual&#39;s weight in kilograms"/>
+      <target>
+        <code value="41982-0"/>
+        <display value="Percentage of body fat Measured"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160220"/>
+      <display value="A1c or glycated hemoglobin concentration."/>
+      <target>
+        <code value="4548-4"/>
+        <display value="Hemoglobin A1c/Hemoglobin.total in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188796"/>
+      <display value="Ideal body weight (IBW), an estimate based solely on patient height using the Devine Formula (1974):&lt;br/&gt;&lt;i&gt;Male (in kg):  50.0 + 2.3 kg per inch over 5 feet&lt;/i&gt;&lt;br/&gt;&lt;i&gt;Female (in kg):  45.5 + 2.3 kg per inch over 5 fee&lt;/i&gt;t&lt;b&gt;&lt;br/&gt;&lt;/b&gt;The Devine formula can be re-expressed using other units-of-measure.  Also called the Predicted Body Weight."/>
+      <target>
+        <code value="50064-5"/>
+        <display value="Ideal body weight"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160184"/>
+      <display value="Whole blood glucose concentration taken from capillary"/>
+      <target>
+        <code value="51596-5"/>
+        <display value="Glucose [Moles/volume] in Capillary blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160256"/>
+      <display value="Ionized calcium in blood fluid, normalized to pH 7.4"/>
+      <target>
+        <code value="53138-4"/>
+        <display value="Calcium.ionized [Moles/volume] adjusted to pH 7.4 in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159768"/>
+      <target>
+        <code value="59274-1"/>
+        <display value="Oxygen content in Arterial blood by calculation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160296"/>
+      <display value="Preductal oxygen saturation measured at a site that receives blood flow from the aorta before the level of the ductus arteriosus (see&#xA0;Note 1)."/>
+      <target>
+        <code value="59407-7"/>
+        <display value="Oxygen saturation in Blood Preductal by Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150456"/>
+      <target>
+        <code value="59408-5"/>
+        <display value="Oxygen saturation in Arterial blood by Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160300"/>
+      <display value="Postductal oxygen saturation is measured at a site that receives blood flow from the aorta after the level of the ductus arteriosus (see&#xA0;Note 2)."/>
+      <target>
+        <code value="59418-4"/>
+        <display value="Oxygen saturation in Blood Postductal by Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159792"/>
+      <target>
+        <code value="59470-5"/>
+        <display value="Calcium.ionized [Mass/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151820"/>
+      <display value="Pressure measured in the esophagus"/>
+      <target>
+        <code value="60738-2"/>
+        <display value="Intraluminal [Pressure] Esophagus"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152612"/>
+      <display value="Duration of an expiratory phase"/>
+      <target>
+        <code value="60739-0"/>
+        <display value="Expiration [Time] Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152608"/>
+      <display value="Duration of an inspiratory phase"/>
+      <target>
+        <code value="60740-8"/>
+        <display value="Inspiration [Time] Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929300"/>
+      <target>
+        <code value="60741-6"/>
+        <display value="Desflurane target [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929416"/>
+      <target>
+        <code value="60744-0"/>
+        <display value="Gas delivery system inspiratory Desflurane setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152140"/>
+      <display value="Concentration of desflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="60746-5"/>
+        <display value="Desflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152200"/>
+      <display value="Concentration of desflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+      <target>
+        <code value="60747-3"/>
+        <display value="Desflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152896"/>
+      <display value="Volume of desflurane gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60748-1"/>
+        <display value="Desflurane gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929304"/>
+      <target>
+        <code value="60749-9"/>
+        <display value="Target enflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929420"/>
+      <target>
+        <code value="60752-3"/>
+        <display value="Gas delivery system inspiratory Enflurane setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152144"/>
+      <display value="Concentration of enflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="60754-9"/>
+        <display value="Enflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152912"/>
+      <display value="Volume of enflurane gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60755-6"/>
+        <display value="Enflurane gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929308"/>
+      <target>
+        <code value="60756-4"/>
+        <display value="Target halothane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929424"/>
+      <target>
+        <code value="60759-8"/>
+        <display value="Gas delivery system inspiratory Halothane setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152148"/>
+      <display value="Concentration of halothane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="60761-4"/>
+        <display value="Halothane [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152928"/>
+      <display value="Volume of halothane gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60762-2"/>
+        <display value="Halothane gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929316"/>
+      <target>
+        <code value="60763-0"/>
+        <display value="Target isoflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929432"/>
+      <target>
+        <code value="60766-3"/>
+        <display value="Gas delivery system inspiratory Isoflurane setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152156"/>
+      <display value="Concentration of isoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="60768-9"/>
+        <display value="Isoflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152944"/>
+      <display value="Volume of isoflurane gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60769-7"/>
+        <display value="Isoflurane gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152960"/>
+      <display value="Volume (gas) of nitrous oxide delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60775-4"/>
+        <display value="Nitrous oxide gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929312"/>
+      <target>
+        <code value="60776-2"/>
+        <display value="Target sevoflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929428"/>
+      <target>
+        <code value="60779-6"/>
+        <display value="Gas delivery system inspiratory Sevoflurane setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152064"/>
+      <display value="Concentration of sevoflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="60781-2"/>
+        <display value="Sevoflurane [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152976"/>
+      <display value="Volume of sevoflurane gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60782-0"/>
+        <display value="Sevoflurane gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153032"/>
+      <display value="Volume (gas) of carbon dioxide delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="60789-5"/>
+        <display value="Carbon dioxide gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153036"/>
+      <display value="Total volume (gas) of carbon dioxide delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="60790-3"/>
+        <display value="Carbon dioxide gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151940"/>
+      <display value="Airway flow measured at the ventilator"/>
+      <target>
+        <code value="60791-1"/>
+        <display value="Gas flow Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151944"/>
+      <display value="Expiratory gas flow during mechanical ventilation"/>
+      <target>
+        <code value="60792-9"/>
+        <display value="Expiratory gas flow Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151945"/>
+      <display value="Maximum expiratory gas flow during mechanical ventilation"/>
+      <target>
+        <code value="60793-7"/>
+        <display value="Maximum expiratory gas flow Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151948"/>
+      <display value="Inspiratory gas flow in airway during mechanical ventilation"/>
+      <target>
+        <code value="60794-5"/>
+        <display value="Inspiratory gas flow Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151949"/>
+      <display value="Maximum inspiratory gas flow during mechanical ventilation"/>
+      <target>
+        <code value="60795-2"/>
+        <display value="Inspiratory gas flow.max Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929656"/>
+      <target>
+        <code value="60796-0"/>
+        <display value="Target oxygen [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930360"/>
+      <target>
+        <code value="60799-4"/>
+        <display value="Gas delivery system inspiratory Oxygen setting [VFr/PPres]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151992"/>
+      <display value="Volume of gas remaining in lung at end of expiration"/>
+      <target>
+        <code value="60801-8"/>
+        <display value="Trapped lung volume --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152776"/>
+      <display value="The estimated airway pressure that would have occurred during an inspiratory-hold or during a flow pause in a pressure control inflation."/>
+      <target>
+        <code value="60802-6"/>
+        <display value="Dynamic plateau pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152872"/>
+      <display value="Mean Aveolar Concentration, expressed as a percentage relative to the needed to prevent movement (motor response) in 50% of subjects in response to surgical (pain) stimulus."/>
+      <target>
+        <code value="60804-2"/>
+        <display value="Minimum alveolar concentration (MAC) for anesthesia.XXX Anesthetic agent.XXX"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152168"/>
+      <display value="Partial pressure of desflurane in airway gas measured during inspiration"/>
+      <target>
+        <code value="60805-9"/>
+        <display value="Desflurane [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152124"/>
+      <display value="Partial pressure of sevoflurane in airway gas measured during expiration"/>
+      <target>
+        <code value="60807-5"/>
+        <display value="Sevoflurane [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151708"/>
+      <display value="Partial pressure of carbon dioxide in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60808-3"/>
+        <display value="Carbon dioxide [VFr/PPres] in Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151712"/>
+      <display value="Partial pressure of carbon dioxide in airway gas measured during expiration"/>
+      <target>
+        <code value="60809-1"/>
+        <display value="Carbon dioxide [VFr/PPres] in Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153044"/>
+      <display value="Partial pressure of helium in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60812-5"/>
+        <display value="Helium [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153048"/>
+      <display value="Partial pressure of helium in airway gas measured during expiration"/>
+      <target>
+        <code value="60813-3"/>
+        <display value="Helium [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152864"/>
+      <display value="Sum of the Minimum Alveolar Concentration for anesthetic gas and N2O"/>
+      <target>
+        <code value="60815-8"/>
+        <display value="Minimum alveolar concentration (MAC) sum Anesthetic agent.XXX+Nitrous oxide"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152868"/>
+      <display value="Age corrected sum of the Minimum Alveolar Concentration for anesthetic gas and N2O"/>
+      <target>
+        <code value="60816-6"/>
+        <display value="Minimum alveolar concentration (MAC) sum corrected for age Anesthetic agent.XXX+Nitrous oxide"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160308"/>
+      <display value="Difference (gap) between gastric mucosal (PgCO2) and arterial (PaCO2) partial pressures of carbon dioxide."/>
+      <target>
+        <code value="60817-4"/>
+        <display value="Gastric-arterial pCO2 gap"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160312"/>
+      <display value="Difference (gap) between gastric mucosal (PgCO2) and end-tidal (EtCO2) partial pressures of carbon dioxide."/>
+      <target>
+        <code value="60818-2"/>
+        <display value="Gastric-end tidal pCO2 gap"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160316"/>
+      <display value="Gastric mucosal (PgCO2) partial pressure of carbon dioxide."/>
+      <target>
+        <code value="60819-0"/>
+        <display value="Gastric mucosal pCO2"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151856"/>
+      <display value="Duration of apnea - no flow measured"/>
+      <target>
+        <code value="60821-6"/>
+        <display value="Apnea duration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152840"/>
+      <display value="The (estimated) fraction of cardiac output that returns to the left heart without the benefit of exposure to ventilated alveoli."/>
+      <target>
+        <code value="60822-4"/>
+        <display value="Estimated pulmonary Shunt fraction"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152820"/>
+      <display value="The volume of oxygen a patient inhales (consumes) per minute, normalized by patient body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)."/>
+      <target>
+        <code value="60823-2"/>
+        <display value="Oxygen consumption (VO2)/Body surface area [Volume Rate/Area]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151776"/>
+      <display value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ /min)"/>
+      <target>
+        <code value="60825-7"/>
+        <display value="Carbon dioxide production (VCO2) in Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151688"/>
+      <display value="Change of tidal volume per unit change of airway pressure"/>
+      <target>
+        <code value="60826-5"/>
+        <display value="Lung compliance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151692"/>
+      <display value="Change of tidal volume per unit change of transthoracic pressure"/>
+      <target>
+        <code value="60827-3"/>
+        <display value="Dynamic lung compliance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151696"/>
+      <display value="Change of tidal volume per unit change in esophageal pressure measured statically at expiration end"/>
+      <target>
+        <code value="60828-1"/>
+        <display value="Compliance.static Lung"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188432"/>
+      <display value="Finger temperature"/>
+      <target>
+        <code value="60830-7"/>
+        <display value="Finger temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188508"/>
+      <display value="Room temperature"/>
+      <target>
+        <code value="60832-3"/>
+        <display value="Room temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188448"/>
+      <display value="Surface temperature measured at toe (reflects blood circulation)"/>
+      <target>
+        <code value="60833-1"/>
+        <display value="Toe temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188436"/>
+      <display value="Blood temperature"/>
+      <target>
+        <code value="60834-9"/>
+        <display value="Blood temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150352"/>
+      <target>
+        <code value="60835-6"/>
+        <display value="Arterial blood temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150372"/>
+      <target>
+        <code value="60836-4"/>
+        <display value="Esophageal temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150376"/>
+      <display value="Temperature of an indicator injectate (cold indicator) used to calculate cardiac output"/>
+      <target>
+        <code value="60837-2"/>
+        <display value="Injectate temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150380"/>
+      <target>
+        <code value="60838-0"/>
+        <display value="Nasopharyngeal temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150388"/>
+      <target>
+        <code value="60839-8"/>
+        <display value="Skin temperature --in microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160216"/>
+      <display value="Base excess of extracellular fluid"/>
+      <target>
+        <code value="60840-6"/>
+        <display value="Base excess in Extracellular fluid by calculation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159816"/>
+      <target>
+        <code value="60841-4"/>
+        <display value="Oxygen content in Venous blood by calculation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150272"/>
+      <display value="Oxygen consumption of the body"/>
+      <target>
+        <code value="60842-2"/>
+        <display value="Oxygen consumption (VO2)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152420"/>
+      <display value="The volume of oxygen a patient inhales (consumes) per minute."/>
+      <target>
+        <code value="60842-2"/>
+        <display value="Oxygen consumption (VO2)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153980"/>
+      <display value="Mean dominant frequency of Power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+      <target>
+        <code value="60843-0"/>
+        <display value="Mean dominant power frequency on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153984"/>
+      <display value="Median power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+      <target>
+        <code value="60844-8"/>
+        <display value="Median power frequency on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153988"/>
+      <display value="Peak power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+      <target>
+        <code value="60845-5"/>
+        <display value="Peak power frequency on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="156241"/>
+      <display value="Epileptic or potentially epileptogenic activity identifiers, burst count"/>
+      <target>
+        <code value="60846-3"/>
+        <display value="Burst count Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154032"/>
+      <display value="Seizures, as determined out of the EEG, EOG, and EMG"/>
+      <target>
+        <code value="60847-1"/>
+        <display value="Seizure count Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154068"/>
+      <display value="Relative power of alpha band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+      <target>
+        <code value="60848-9"/>
+        <display value="Alpha frequency relative power on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154072"/>
+      <display value="Relative power of beta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+      <target>
+        <code value="60849-7"/>
+        <display value="Beta frequency relative power on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154076"/>
+      <display value="Relative power of delta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+      <target>
+        <code value="60850-5"/>
+        <display value="Delta frequency relative power on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154080"/>
+      <display value="Relative power of theta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+      <target>
+        <code value="60851-3"/>
+        <display value="Theta frequency relative power on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153640"/>
+      <display value="Electromyographic signal strength, predominantly representing muscle activity above 70 Hz."/>
+      <target>
+        <code value="60852-1"/>
+        <display value="Electrical potential Muscle on EMG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152052"/>
+      <display value="Concentration of desflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="60853-9"/>
+        <display value="Desflurane [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152056"/>
+      <display value="Concentration of enflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="60854-7"/>
+        <display value="Enflurane [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152204"/>
+      <display value="Concentration of enflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient."/>
+      <target>
+        <code value="60855-4"/>
+        <display value="Enflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152060"/>
+      <display value="Concentration of halothane in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="60856-2"/>
+        <display value="Halothane [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152208"/>
+      <display value="Concentration of halothane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+      <target>
+        <code value="60857-0"/>
+        <display value="Halothane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152068"/>
+      <display value="Concentration of isoflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="60858-8"/>
+        <display value="Isoflurane [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152216"/>
+      <display value="Concentration of isoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+      <target>
+        <code value="60859-6"/>
+        <display value="Isoflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152076"/>
+      <display value="Concentration of nitrous oxide in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="60860-4"/>
+        <display value="Nitrous oxide [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152164"/>
+      <display value="Concentration of nitrous oxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="60861-2"/>
+        <display value="Nitrous oxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152224"/>
+      <display value="Concentration of nitrous oxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="60862-0"/>
+        <display value="Nitrous oxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152036"/>
+      <display value="Measured partial pressure of sevoflurane in airway gas"/>
+      <target>
+        <code value="60863-8"/>
+        <display value="Sevoflurane [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152212"/>
+      <display value="Concentration of sevoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+      <target>
+        <code value="60864-6"/>
+        <display value="Sevoflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151908"/>
+      <display value="Measured partial pressure of oxygen in airway gas"/>
+      <target>
+        <code value="60866-1"/>
+        <display value="Oxygen [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153132"/>
+      <display value="Partial pressure of oxygen in airway gas measured during expiration"/>
+      <target>
+        <code value="60867-9"/>
+        <display value="Oxygen [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151984"/>
+      <display value="Volume of gas in airway per breath during mechanical ventilation not involved in respiratory exchange"/>
+      <target>
+        <code value="60869-5"/>
+        <display value="Physiological dead space [Volume] Respiratory system --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151988"/>
+      <display value="Ratio of dead space to tidal volume during mechanical ventilation."/>
+      <target>
+        <code value="60870-3"/>
+        <display value="Physiological dead space/Tidal volume Respiratory system --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152460"/>
+      <display value="Concentration of agent in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60873-7"/>
+        <display value="Anesthetic agent.XXX Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152464"/>
+      <display value="Concentration of agent in airway gas measured in inspiration"/>
+      <target>
+        <code value="60874-5"/>
+        <display value="Anesthetic agent.XXX Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152024"/>
+      <display value="Measured partial pressure of desflurane in airway gas"/>
+      <target>
+        <code value="60876-0"/>
+        <display value="Desflurane [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152084"/>
+      <display value="Partial pressure of desflurane in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60877-8"/>
+        <display value="Desflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152088"/>
+      <display value="Partial pressure of enflurane in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60884-4"/>
+        <display value="Enflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152172"/>
+      <display value="Partial pressure of enflurane in airway gas measured during inspiration"/>
+      <target>
+        <code value="60885-1"/>
+        <display value="Enflurane [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152092"/>
+      <display value="Partial pressure of halothane in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60889-3"/>
+        <display value="Halothane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152100"/>
+      <display value="Partial pressure of isoflurane in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60895-0"/>
+        <display value="Isoflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152108"/>
+      <display value="Partial pressure of nitrous oxide in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60901-6"/>
+        <display value="Nitrous oxide [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152180"/>
+      <display value="Partial pressure of sevoflurane in airway gas measured during inspiration"/>
+      <target>
+        <code value="60907-3"/>
+        <display value="Sevoflurane [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152096"/>
+      <display value="Partial pressure of sevoflurane in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60908-1"/>
+        <display value="Sevoflurane [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152992"/>
+      <display value="Measured partial pressure of argon in airway gas"/>
+      <target>
+        <code value="60914-9"/>
+        <display value="Argon [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153000"/>
+      <display value="Partial pressure of argon in airway gas measured during expiration"/>
+      <target>
+        <code value="60915-6"/>
+        <display value="Argon [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153004"/>
+      <display value="Partial pressure of argon in airway gas measured during inspiration"/>
+      <target>
+        <code value="60916-4"/>
+        <display value="Argon [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152996"/>
+      <display value="Partial pressure of argon in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60918-0"/>
+        <display value="Argon [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152444"/>
+      <display value="Measured partial pressure of nitrogen in airway gas"/>
+      <target>
+        <code value="60919-8"/>
+        <display value="Nitrogen [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152448"/>
+      <display value="Partial pressure of nitrogen in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60920-6"/>
+        <display value="Nitrogen [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152452"/>
+      <display value="Partial pressure of nitrogen in airway gas measured during inspiration"/>
+      <target>
+        <code value="60921-4"/>
+        <display value="Nitrogen [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151716"/>
+      <display value="Partial pressure of carbon dioxide in airway gas measured during inspiration"/>
+      <target>
+        <code value="60924-8"/>
+        <display value="Carbon dioxide [VFr/PPres] in Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151700"/>
+      <display value="Measured partial pressure of carbon dioxide in airway gas"/>
+      <target>
+        <code value="60926-3"/>
+        <display value="Carbon dioxide [VFr/PPres] in Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153040"/>
+      <display value="Measured partial pressure of helium in airway gas"/>
+      <target>
+        <code value="60932-1"/>
+        <display value="Helium [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153052"/>
+      <display value="Partial pressure of helium in airway gas measured during inspiration"/>
+      <target>
+        <code value="60934-7"/>
+        <display value="Helium [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153076"/>
+      <display value="Partial pressure of nitrogen in airway gas measured during expiration"/>
+      <target>
+        <code value="60935-4"/>
+        <display value="Nitrogen [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152136"/>
+      <display value="Partial pressure of nitrous oxide in airway gas measured during expiration"/>
+      <target>
+        <code value="60939-6"/>
+        <display value="Nitrous oxide [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152440"/>
+      <display value="Partial pressure of oxygen in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="60943-8"/>
+        <display value="Oxygen [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151773"/>
+      <display value="Maximum inspiratory gas flow"/>
+      <target>
+        <code value="60948-7"/>
+        <display value="Peak inspiratory flow Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151795"/>
+      <display value="Average pressure of gas in airway"/>
+      <target>
+        <code value="60949-5"/>
+        <display value="Mean airway pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151817"/>
+      <target>
+        <code value="60951-1"/>
+        <display value="Pressure max Respiratory system airway --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151817"/>
+      <display value="Maximum pressure of gas in airway during inspiration"/>
+      <target>
+        <code value="60951-1"/>
+        <display value="Pressure max Respiratory system airway --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151819"/>
+      <display value="Mean pressure of gas in airway during inspiration"/>
+      <target>
+        <code value="60952-9"/>
+        <display value="Mean airway pressure --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150356"/>
+      <target>
+        <code value="60955-2"/>
+        <display value="Airway temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153608"/>
+      <display value="Pressure inside skull"/>
+      <target>
+        <code value="60956-0"/>
+        <display value="Intracranial pressure (ICP)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153610"/>
+      <display value="Minimum pressure inside skull, caused by emptying of vessels during diastolic phase of blood pressure"/>
+      <target>
+        <code value="60957-8"/>
+        <display value="Intracranial pressure (ICP) Diastolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153611"/>
+      <display value="Mean pressure inside skull"/>
+      <target>
+        <code value="60958-6"/>
+        <display value="Intracranial pressure (ICP) Mean"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153609"/>
+      <display value="Maximum pressure inside skull, caused by filling of vessels during systolic phase of blood pressure"/>
+      <target>
+        <code value="60959-4"/>
+        <display value="Intracranial pressure (ICP) Systolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131973"/>
+      <target>
+        <code value="60960-2"/>
+        <display value="ST amplitude.lead AI"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131972"/>
+      <target>
+        <code value="60961-0"/>
+        <display value="ST amplitude.lead AS"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131873"/>
+      <target>
+        <code value="60962-8"/>
+        <display value="ST amplitude.derived lead V1"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131874"/>
+      <target>
+        <code value="60963-6"/>
+        <display value="ST amplitude.derived lead V2"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131875"/>
+      <target>
+        <code value="60964-4"/>
+        <display value="ST amplitude.derived lead V3"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131876"/>
+      <target>
+        <code value="60965-1"/>
+        <display value="ST amplitude.derived lead V4"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131877"/>
+      <target>
+        <code value="60966-9"/>
+        <display value="ST amplitude.derived lead V5"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131878"/>
+      <target>
+        <code value="60967-7"/>
+        <display value="ST amplitude.derived lead V6"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131971"/>
+      <target>
+        <code value="60968-5"/>
+        <display value="ST amplitude.lead ES"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131931"/>
+      <target>
+        <code value="60969-3"/>
+        <display value="ST amplitude.lead MCL"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131932"/>
+      <target>
+        <code value="60970-1"/>
+        <display value="ST amplitude.lead MCL1"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131937"/>
+      <target>
+        <code value="60971-9"/>
+        <display value="ST amplitude.lead MCL6"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131927"/>
+      <target>
+        <code value="60972-7"/>
+        <display value="ST amplitude.precordial lead"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150628"/>
+      <display value="The time interval from the beginning of electrical stimulation of the ventricles to the opening of the aortic valve (electrical systole)."/>
+      <target>
+        <code value="60973-5"/>
+        <display value="Left ventricular Pre ejection Time"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150520"/>
+      <display value="Period between opening and closing aortic valve"/>
+      <target>
+        <code value="60974-3"/>
+        <display value="Left ventricular Ejection Time"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150304"/>
+      <display value="Resistance to blood flow within circulation"/>
+      <target>
+        <code value="60975-0"/>
+        <display value="Vascular resistance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150420"/>
+      <display value="Ventricular stroke - work of right side of the heart in one cardiac cycle"/>
+      <target>
+        <code value="60976-8"/>
+        <display value="Right ventricular Work [Energy]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150416"/>
+      <display value="Ventricular stroke - work of left side of the heart in one cardiac cycle"/>
+      <target>
+        <code value="60977-6"/>
+        <display value="Left ventricular Work [Energy]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149514"/>
+      <display value="Rate of blood pulse in an artery"/>
+      <target>
+        <code value="60978-4"/>
+        <display value="Heart rate Intra arterial line by Invasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149522"/>
+      <display value="Rate of blood pulse in an artery, measured invasively"/>
+      <target>
+        <code value="60978-4"/>
+        <display value="Heart rate Intra arterial line by Invasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150028"/>
+      <display value="Pressure of the blood in the aorta"/>
+      <target>
+        <code value="60981-8"/>
+        <display value="Aorta blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150030"/>
+      <target>
+        <code value="60982-6"/>
+        <display value="Aorta Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150031"/>
+      <display value="Mean pressure of the blood in the aorta"/>
+      <target>
+        <code value="60983-4"/>
+        <display value="Aorta Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150029"/>
+      <display value="Systolic pressure of the blood in the aorta"/>
+      <target>
+        <code value="60984-2"/>
+        <display value="Aorta Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150084"/>
+      <display value="Pressure of the blood in the thoracic venae cavae"/>
+      <target>
+        <code value="60985-9"/>
+        <display value="Central venous pressure (CVP)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150086"/>
+      <display value="Diastolic pressure of the blood in the thoracic venae cavae"/>
+      <target>
+        <code value="60986-7"/>
+        <display value="Central venous pressure (CVP) Diastolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150085"/>
+      <display value="Systolic pressure of the blood in the thoracic venae cavae"/>
+      <target>
+        <code value="60987-5"/>
+        <display value="Central venous pressure (CVP) Systolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150064"/>
+      <display value="Pressure of the blood in the left atrium of the heart"/>
+      <target>
+        <code value="60988-3"/>
+        <display value="Left atrial pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150065"/>
+      <display value="Systolic pressure of the blood in the left atrium of the heart"/>
+      <target>
+        <code value="60989-1"/>
+        <display value="Left atrial pressure Systolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150068"/>
+      <display value="Pressure of the blood in the right atrium of the heart"/>
+      <target>
+        <code value="60996-6"/>
+        <display value="Right atrial pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150070"/>
+      <display value="Diastolic pressure of the blood in the right atrium of the heart"/>
+      <target>
+        <code value="60997-4"/>
+        <display value="Right atrial pressure Diastolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150069"/>
+      <display value="Systolic pressure of the blood in the right atrium of the heart"/>
+      <target>
+        <code value="60998-2"/>
+        <display value="Right atrial pressure Systolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150056"/>
+      <display value="Pressure of the blood in the umbilical arteries of a fetus"/>
+      <target>
+        <code value="61002-2"/>
+        <display value="Umbilical artery blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150090"/>
+      <display value="Diastolic pressure of the blood in the umbilical veins of a fetus"/>
+      <target>
+        <code value="61003-0"/>
+        <display value="Umbilical vein Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150091"/>
+      <display value="Mean pressure of the blood in the umbilical veins of a fetus"/>
+      <target>
+        <code value="61004-8"/>
+        <display value="Umbilical vein Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150089"/>
+      <display value="Systolic pressure of the blood in the umbilical veins of a fetus"/>
+      <target>
+        <code value="61005-5"/>
+        <display value="Umbilical vein Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150488"/>
+      <display value="Tissue perfusion computed as milliliters per minute of blood flow per gram of tissue"/>
+      <target>
+        <code value="61006-3"/>
+        <display value="Perfusion index Tissue by Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152844"/>
+      <display value="The (estimated) difference in the oxygen content of the blood between the arterial blood and the venous blood."/>
+      <target>
+        <code value="61007-1"/>
+        <display value="Oxygen arterial - venous [Volume Fraction Difference] in Blood arterial + Blood venous by Estimated"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150364"/>
+      <target>
+        <code value="61008-9"/>
+        <display value="Body surface temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188500"/>
+      <display value="Myocardial temperature"/>
+      <target>
+        <code value="61009-7"/>
+        <display value="Myocardial temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="155024"/>
+      <display value="Epileptic or potentially epileptogenic activity identifiers, burst suppression"/>
+      <target>
+        <code value="61010-5"/>
+        <display value="Burst suppression ratio [Ratio] Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150088"/>
+      <display value="Pressure of the blood in the umbilical veins of a fetus"/>
+      <target>
+        <code value="61011-3"/>
+        <display value="Umbilical vein blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150496"/>
+      <display value="Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as not continuous measurement"/>
+      <target>
+        <code value="61014-7"/>
+        <display value="Left ventricular Cardiac output by Intermitent measure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153604"/>
+      <display value="Pressure difference between mean arterial pressure and mean pressure inside skull"/>
+      <target>
+        <code value="61017-0"/>
+        <display value="Cerebral perfusion pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153136"/>
+      <display value="Concentration of oxygen in airway gas in the system or circuit conducting gas to and from the patient"/>
+      <target>
+        <code value="61018-8"/>
+        <display value="Oxygen [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152116"/>
+      <display value="Partial pressure of enflurane in airway gas measured during expiration"/>
+      <target>
+        <code value="61019-6"/>
+        <display value="Enflurane [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152120"/>
+      <display value="Partial pressure of halothane in airway gas measured during expiration"/>
+      <target>
+        <code value="61020-4"/>
+        <display value="Halothane [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152176"/>
+      <display value="Partial pressure of halothane in airway gas measured during inspiration"/>
+      <target>
+        <code value="61021-2"/>
+        <display value="Halothane [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152908"/>
+      <display value="Total volume of desflurane gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="61022-0"/>
+        <display value="Desflurane gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152924"/>
+      <display value="Total volume of enflurane gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="61023-8"/>
+        <display value="Enflurane gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152940"/>
+      <display value="Total volume of halothane gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="61024-6"/>
+        <display value="Halothane gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152956"/>
+      <display value="Total volume of isoflurane gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="61025-3"/>
+        <display value="Isoflurane gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152964"/>
+      <display value="Total volume (gas) of nitrous oxide delivered"/>
+      <target>
+        <code value="61026-1"/>
+        <display value="Nitrous oxide gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152988"/>
+      <display value="Total volume of sevoflurane gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="61027-9"/>
+        <display value="Sevoflurane gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153020"/>
+      <display value="Concentration of carbon dioxide in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="62264-7"/>
+        <display value="Carbon dioxide [VFr/PPres] in Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152112"/>
+      <display value="Partial pressure of desflurane in airway gas measured during expiration"/>
+      <target>
+        <code value="62265-4"/>
+        <display value="Desflurane [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152028"/>
+      <display value="Measured partial pressure of enflurane in airway gas"/>
+      <target>
+        <code value="62266-2"/>
+        <display value="Enflurane [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152032"/>
+      <display value="Measured partial pressure of halothane in airway gas"/>
+      <target>
+        <code value="62267-0"/>
+        <display value="Halothane [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152040"/>
+      <display value="Measured partial pressure of isoflurane in airway gas"/>
+      <target>
+        <code value="62268-8"/>
+        <display value="Isoflurane [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152128"/>
+      <display value="Partial pressure of isoflurane in airway gas measured during expiration"/>
+      <target>
+        <code value="62269-6"/>
+        <display value="Isoflurane [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152184"/>
+      <display value="Partial pressure of isoflurane in airway gas measured during inspiration"/>
+      <target>
+        <code value="62270-4"/>
+        <display value="Isoflurane [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152048"/>
+      <display value="Measured partial pressure of nitrous oxide in airway gas"/>
+      <target>
+        <code value="62271-2"/>
+        <display value="Nitrous oxide [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152192"/>
+      <display value="Partial pressure of nitrous oxide in airway gas measured during inspiration"/>
+      <target>
+        <code value="62272-0"/>
+        <display value="Nitrous oxide [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152196"/>
+      <display value="Partial pressure of oxygen in airway gas measured during inspiration"/>
+      <target>
+        <code value="62274-6"/>
+        <display value="Oxygen [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160016"/>
+      <target>
+        <code value="6298-4"/>
+        <display value="Potassium [Moles/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160260"/>
+      <display value="The globally recommended normalized unit for measuring prothrombin time"/>
+      <target>
+        <code value="6301-6"/>
+        <display value="INR in Platelet poor plasma by Coagulation assay"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160304"/>
+      <display value="The difference between preductal and postductal oxygen saturation measurement (see Note 3)."/>
+      <target>
+        <code value="73696-7"/>
+        <display value="Oxygen saturation.preductal-oxygen saturation.postductal [Mass fraction difference] in Bld.preductal and Bld.postductal"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184339"/>
+      <display value="The air curtain on an incubator is a specially-designed airflow to reduce temperature fluctuation and maintain the temperature inside the incubator when its access doors are opened.  The air curtain state indicates whether the air curtain is on, off or has been disabled by the user."/>
+      <target>
+        <code value="75915-9"/>
+        <display value="Air curtain status Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184336"/>
+      <display value="The type of bed used for an infant in the neonatal intensive care unit or newborn nursery. A radiant warmer is an open bed, an incubator is a closed bed, and an incubator that can serve as a radiant warmer is a combination bed."/>
+      <target>
+        <code value="75916-7"/>
+        <display value="Bed type Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184338"/>
+      <display value="The bed state indicates whether the infant&#x2019;s incubator is closed, partially open or open, i.e. the top of the incubator is raised."/>
+      <target>
+        <code value="75917-5"/>
+        <display value="Bed state Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153644"/>
+      <display value="The bispectral index (BIS) is a quantitative assessment of depth of anesthesia, specifically the level of consciousness.  It is an index that ranges from 0 to 100.  No&#xA0;measurable cortical activity would result in a BIS of 0 and a typical awake state is usually associated with an index of 90 to 100. Typical values for a patient undergoing general anesthesia are 40 to 60."/>
+      <target>
+        <code value="75918-3"/>
+        <display value="Bispectral index Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149772"/>
+      <display value="Quantity of blood pumped by the left ventricle into the aorta per minute and divided by the body surface area (CO/BSA)"/>
+      <target>
+        <code value="75919-1"/>
+        <display value="Left ventricular Cardiac index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151780"/>
+      <display value="Transthoracic measurement of electrical impedance (influenced by respiration and other factors)"/>
+      <target>
+        <code value="75920-9"/>
+        <display value="Transthoracic impedance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153900"/>
+      <display value="Electrical potential derived bipolarly between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. The electrode at Position 1 is Number 1 in the list. Position 2 can be a combined reference, e.g., linked ear. All connected electrode sites are listed beginning with Number 2 in the list. The attribute values must be taken from the Table A.9.4.3."/>
+      <target>
+        <code value="75921-7"/>
+        <display value="Electrical potential Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184341"/>
+      <display value="The speed of the fan that controls the airflow in an infant incubator, such as low or high."/>
+      <target>
+        <code value="75922-5"/>
+        <display value="Fan speed Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152876"/>
+      <display value="Flow of Air component of Fresh Gas"/>
+      <target>
+        <code value="75923-3"/>
+        <display value="Fresh gas.air flow Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153092"/>
+      <display value="Flow of Nitrous Oxide component of Fresh Gas"/>
+      <target>
+        <code value="75924-1"/>
+        <display value="Fresh gas.nitrous oxide flow Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153156"/>
+      <display value="Flow of Oxygen component of Fresh Gas"/>
+      <target>
+        <code value="75925-8"/>
+        <display value="Fresh gas.oxygen flow Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184337"/>
+      <display value="Incubator or warmer heater currently being used.  This may include radiant, convective or none (no heat)."/>
+      <target>
+        <code value="75926-6"/>
+        <display value="Heater type Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184300"/>
+      <display value="The heater power is the percentage of power (or actual power in watts) necessary to maintain the set temperature of the incubator or warmer."/>
+      <target>
+        <code value="75927-4"/>
+        <display value="Heater power Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="159764"/>
+      <target>
+        <code value="75928-2"/>
+        <display value="Hemoglobin [Moles/volume] in Arterial blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184292"/>
+      <display value="Measured relative humidity inside the infant incubator"/>
+      <target>
+        <code value="75929-0"/>
+        <display value="Relative humidity Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16961508"/>
+      <target>
+        <code value="75930-8"/>
+        <display value="Relative humidity setting Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151832"/>
+      <display value="Ratio of durations of inspiratory and expiratory phases"/>
+      <target>
+        <code value="75931-6"/>
+        <display value="Inspiration/Expiration time Ratio"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152640"/>
+      <display value="Inspiratory time divided by the total respiratory cycle time, expressed as a percent."/>
+      <target>
+        <code value="75932-4"/>
+        <display value="Inspiratory time percent"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150066"/>
+      <display value="Diastolic pressure of the blood in the left atrium of the heart"/>
+      <target>
+        <code value="75933-2"/>
+        <display value="Left atrial pressure Diastolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152044"/>
+      <display value="Measured partial pressure of nitrogen dioxide in airway gas"/>
+      <target>
+        <code value="75934-0"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152132"/>
+      <display value="Partial pressure of nitrogen dioxide in airway gas measured during expiration"/>
+      <target>
+        <code value="75935-7"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152188"/>
+      <display value="Partial pressure of nitrogen dioxide in airway gas measured during inspiration"/>
+      <target>
+        <code value="75936-5"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152104"/>
+      <display value="Partial pressure of nitrogen dioxide in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="75937-3"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184288"/>
+      <display value="The oxygen concentration inside the incubator micro-environment."/>
+      <target>
+        <code value="75938-1"/>
+        <display value="Oxygen/Gas total Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16961504"/>
+      <target>
+        <code value="75939-9"/>
+        <display value="Oxygen gas setting Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160016"/>
+      <target>
+        <code value="75940-7"/>
+        <display value="Potassium [Mass/volume] in Blood"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154040"/>
+      <display value="Total power of spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+      <target>
+        <code value="75941-5"/>
+        <display value="Total power of power spectrum on EEG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151816"/>
+      <display value="Pressure of gas in airway during inspiration"/>
+      <target>
+        <code value="75942-3"/>
+        <display value="Airway pressure --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151788"/>
+      <display value="Pressure in airway during pause between expiration and inspiration"/>
+      <target>
+        <code value="75943-1"/>
+        <display value="Airway pressure --during respiratory pause"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153892"/>
+      <display value="Reaction of pupils to light, left eye"/>
+      <target>
+        <code value="75944-9"/>
+        <display value="Pupil reaction [Time] Left eye"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153896"/>
+      <display value="Reaction of pupils to light, right eye"/>
+      <target>
+        <code value="75945-6"/>
+        <display value="Pupil reaction [Time] Right eye"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151840"/>
+      <display value="Resistance to gas flow within the airway"/>
+      <target>
+        <code value="75946-4"/>
+        <display value="Airway resistance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151844"/>
+      <display value="Resistance to gas flow in airway during expiration"/>
+      <target>
+        <code value="75947-2"/>
+        <display value="Airway resistance --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151848"/>
+      <display value="Resistance to gas flow within the airway during inspiration"/>
+      <target>
+        <code value="75948-0"/>
+        <display value="Airway resistance --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153648"/>
+      <display value="A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the FEMG signal in the 0.8 to 47 Hz frequency band. Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy response, the probability of patient accidental awareness is low.  The overall display range for RE is 0 to 100."/>
+      <target>
+        <code value="75949-8"/>
+        <display value="Response entropy [Score] Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153636"/>
+      <display value="EEG Signal Quality Index, an indication of overall signal quality for calculating processed EEG variables such as BIS and interpreting EEG results."/>
+      <target>
+        <code value="75950-6"/>
+        <display value="Signal quality index EEG device Calculated"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16927604"/>
+      <target>
+        <code value="75951-4"/>
+        <display value="Skin temperature setting Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153656"/>
+      <display value="A computed EEG variable used to help assess the level of consciousness while under anesthesia based on the high- and low-frequency EEG.  Index values range from 0 to 100, with 0 reflecting no measurable cortical activity and 100 reflecting the awake state."/>
+      <target>
+        <code value="75952-2"/>
+        <display value="SNAP index Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="154028"/>
+      <display value="Spikes, as determined out of the EEG"/>
+      <target>
+        <code value="75953-0"/>
+        <display value="Spike count Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153652"/>
+      <display value="A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the EEG signal in the 0.8 to 32 Hz frequency band.  Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy state, the probability of patient accidental awareness is low.  The overall display range of SE is 0 to 91."/>
+      <target>
+        <code value="75954-8"/>
+        <display value="State entropy [Score] Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184296"/>
+      <display value="Compartment probe (incubator air) temperature"/>
+      <target>
+        <code value="75955-5"/>
+        <display value="Temperature Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184304"/>
+      <display value="Incubator heater heat sink and fin assembly temperature sensor resistance"/>
+      <target>
+        <code value="75956-3"/>
+        <display value="Temperature sensor [Resistance] Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16961512"/>
+      <target>
+        <code value="75957-1"/>
+        <display value="Temperature setting Infant microenvironment.incubator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152664"/>
+      <display value="Volume of expired gas for each breath, breath type(s) not specified. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_AWAY_TIDAL_EXP_BTSD_PSAZC should be used.]"/>
+      <target>
+        <code value="75958-9"/>
+        <display value="Tidal volume expired Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151884"/>
+      <display value="Volume of gas per minute leaving the patient&#39;s airway during expiratory phases. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_MINUTE_AWAY_EXP_BTSD_PSAZC should be used.]"/>
+      <target>
+        <code value="75959-7"/>
+        <display value="Volume expired per minute Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151888"/>
+      <display value="Volume of gas per minute entering the patient&#39;s airway during inspiratory phases"/>
+      <target>
+        <code value="75960-5"/>
+        <display value="Inspired minute Volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184340"/>
+      <display value="Specifies the manner in which the temperature of an infant incubator or radiant warmer is controlled.  For&#xA0;closed beds (incubators) the temperature is controlled based on patient sensor or air temperature.  For&#xA0;open beds (open incubator or warmer) the temperature is controlled based on patient sensor or manually set temperature."/>
+      <target>
+        <code value="75961-3"/>
+        <display value="Temperature control mode Infant microenvironment"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152880"/>
+      <display value="Volume (gas) of air delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="75984-5"/>
+        <display value="Air delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152884"/>
+      <display value="Total volume (gas) of air delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="75985-2"/>
+        <display value="Air delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150632"/>
+      <display value="Peak velocity of blood flow in the aorta."/>
+      <target>
+        <code value="75986-0"/>
+        <display value="Velocity index Aorta Non-invasive impedance cardiography (NI-ICG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150396"/>
+      <target>
+        <code value="75987-8"/>
+        <display value="Venous blood temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150528"/>
+      <display value="Volume of the left ventricle at the end of diastolic phase (maximum volume)"/>
+      <target>
+        <code value="75988-6"/>
+        <display value="Left ventricular End diastolic volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150532"/>
+      <display value="Volume of the left ventricle at the end of systolic phase (minimum volume)"/>
+      <target>
+        <code value="75989-4"/>
+        <display value="Left ventricular End systolic volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152812"/>
+      <display value="Expended energy measurement (or estimate) using indirect calorimetry based on O2 consumption and CO2 production by patient, measured over a period of time."/>
+      <target>
+        <code value="75990-2"/>
+        <display value="Energy expended Reporting Period by Indirect calorimetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152856"/>
+      <display value="The (estimated) ratio (fraction) of oxygen that is consumed divided by the oxygen that is delivered."/>
+      <target>
+        <code value="75991-0"/>
+        <display value="Oxygen extraction ratio"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188488"/>
+      <display value="Transcutaneous sensor heater power"/>
+      <target>
+        <code value="75992-8"/>
+        <display value="Transcutaneous monitor Heater power"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150648"/>
+      <display value="Pressure of the blood in the femoral artery."/>
+      <target>
+        <code value="75993-6"/>
+        <display value="Femoral artery Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150052"/>
+      <display value="Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery"/>
+      <target>
+        <code value="75994-4"/>
+        <display value="Pulmonary artery wedge pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150052"/>
+      <display value="Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery"/>
+      <target>
+        <code value="75994-4"/>
+        <display value="Pulmonary artery wedge pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150026"/>
+      <display value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the diastolic phase"/>
+      <target>
+        <code value="75995-1"/>
+        <display value="Diastolic blood pressure by Continuous non-invasive monitoring"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150027"/>
+      <display value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), as computed by averaging on one cycle"/>
+      <target>
+        <code value="75996-9"/>
+        <display value="Mean blood pressure by Continuous non-invasive monitoring"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150025"/>
+      <display value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the systolic phase"/>
+      <target>
+        <code value="75997-7"/>
+        <display value="Systolic blood pressure by Continuous non-invasive monitoring"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153148"/>
+      <display value="Volume (gas) of oxygen delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="75998-5"/>
+        <display value="Oxygen gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153152"/>
+      <display value="Total volume (gas) of oxygen delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="75999-3"/>
+        <display value="Oxygen gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147626"/>
+      <target>
+        <code value="76000-9"/>
+        <display value="Paced heart rate by EKG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151872"/>
+      <display value="Volume of gas in airway per breath not involved in respiratory&#xA0;gas exchange&#xA0;with no ventilator and no airway device.  It includes both alveolar and anatomical dead space."/>
+      <target>
+        <code value="76001-7"/>
+        <display value="Physiological dead space [Volume] Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151836"/>
+      <display value="Ratio of dead space in respiratory tract to tidal volume"/>
+      <target>
+        <code value="76002-5"/>
+        <display value="Physiological dead space/Tidal volume Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151972"/>
+      <display value="Airway pressure, primarily during an inspiratory phase"/>
+      <target>
+        <code value="76003-3"/>
+        <display value="Pressure Respiratory system airway --during inspiration on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151964"/>
+      <display value="The negative airway pressure generated when briefly occluded during inspiration"/>
+      <target>
+        <code value="76004-1"/>
+        <display value="Airway occlusion pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188492"/>
+      <display value="Transcutaneous sensor temperature"/>
+      <target>
+        <code value="76005-8"/>
+        <display value="Transcutaneous monitor sensor temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188440"/>
+      <display value="Difference between two temperatures, usually core temperature and peripheral temperature"/>
+      <target>
+        <code value="76006-6"/>
+        <display value="Temperature difference"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151868"/>
+      <display value="Volume of gas leaving the patient through the patient connection port during an expiratory phase."/>
+      <target>
+        <code value="76007-4"/>
+        <display value="Tidal volume expired Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152000"/>
+      <display value="Volume of gas per minute exhaled by the patient."/>
+      <target>
+        <code value="76008-2"/>
+        <display value="Expired minute Volume during Mechanical ventilation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152004"/>
+      <display value="Total volume of gas breathed in during 1 min during mechanical ventilation"/>
+      <target>
+        <code value="76009-0"/>
+        <display value="Inspired minute Volume during Mechanical ventilation"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188504"/>
+      <display value="Nasal temperature"/>
+      <target>
+        <code value="76010-8"/>
+        <display value="Nasal temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188428"/>
+      <display value="Ear temperature"/>
+      <target>
+        <code value="76011-6"/>
+        <display value="Ear temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152900"/>
+      <display value="Volume (liquid) of desflurane delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76012-4"/>
+        <display value="Desflurane liquid delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152904"/>
+      <display value="Total volume (liquid) of desflurane delivered"/>
+      <target>
+        <code value="76013-2"/>
+        <display value="Desflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152916"/>
+      <display value="Volume (liquid) of enflurane delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76014-0"/>
+        <display value="Enflurane liquid delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152920"/>
+      <display value="Total volume (liquid) of enflurane delivered"/>
+      <target>
+        <code value="76015-7"/>
+        <display value="Enflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152932"/>
+      <display value="Volume (liquid) of halothane delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76016-5"/>
+        <display value="Halothane liquid delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152936"/>
+      <display value="Total volume (liquid) of halothane delivered"/>
+      <target>
+        <code value="76017-3"/>
+        <display value="Halothane liquid delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152980"/>
+      <display value="Volume (liquid) of sevoflurane delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76018-1"/>
+        <display value="Sevoflurane liquid delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152984"/>
+      <display value="Total volume (liquid) of sevoflurane delivered"/>
+      <target>
+        <code value="76019-9"/>
+        <display value="Sevoflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131843"/>
+      <target>
+        <code value="76047-0"/>
+        <display value="ST amplitude.lead V1"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131844"/>
+      <target>
+        <code value="76048-8"/>
+        <display value="ST amplitude.lead V2"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131845"/>
+      <target>
+        <code value="76049-6"/>
+        <display value="ST amplitude.lead V3"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131846"/>
+      <target>
+        <code value="76050-4"/>
+        <display value="ST amplitude.lead V4"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131847"/>
+      <target>
+        <code value="76051-2"/>
+        <display value="ST amplitude.lead V5"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131848"/>
+      <target>
+        <code value="76052-0"/>
+        <display value="ST amplitude.lead V6"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131841"/>
+      <target>
+        <code value="76053-8"/>
+        <display value="ST amplitude.lead I"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131842"/>
+      <target>
+        <code value="76054-6"/>
+        <display value="ST amplitude.lead II"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131901"/>
+      <target>
+        <code value="76055-3"/>
+        <display value="ST amplitude.lead III"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131904"/>
+      <target>
+        <code value="76056-1"/>
+        <display value="ST amplitude.lead aVF"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131903"/>
+      <target>
+        <code value="76057-9"/>
+        <display value="ST amplitude.lead aVL"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="131902"/>
+      <target>
+        <code value="76058-7"/>
+        <display value="ST amplitude.lead aVR"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152456"/>
+      <display value="Concentration of agent in airway gas"/>
+      <target>
+        <code value="76059-5"/>
+        <display value="Anesthetic agent.XXX Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150565"/>
+      <display value="Peak blood pressure gradient across aortic valve during SEP"/>
+      <target>
+        <code value="76092-6"/>
+        <display value="Maximum gradient during systole [Pressure] Aortic valve"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153096"/>
+      <display value="Measured partial pressure of nitric oxide in airway gas"/>
+      <target>
+        <code value="76093-4"/>
+        <display value="Nitric oxide [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153172"/>
+      <display value="Measured partial pressure of xenon in airway gas"/>
+      <target>
+        <code value="76094-2"/>
+        <display value="Xenon [VFr/PPres] Airway adaptor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153024"/>
+      <display value="Concentration of carbon dioxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76095-9"/>
+        <display value="Carbon dioxide [VFr/PPres] in Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153028"/>
+      <display value="Concentration of carbon dioxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76096-7"/>
+        <display value="Carbon dioxide [VFr/PPres] in Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153060"/>
+      <display value="Concentration of helium in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76097-5"/>
+        <display value="Helium [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153064"/>
+      <display value="Concentration of helium in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76098-3"/>
+        <display value="Helium [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153116"/>
+      <display value="Concentration of nitric oxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76099-1"/>
+        <display value="Nitric oxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153120"/>
+      <display value="Concentration of nitric oxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76100-7"/>
+        <display value="Nitric oxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152160"/>
+      <display value="Concentration of nitrogen dioxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76101-5"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152220"/>
+      <display value="Concentration of nitrogen dioxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76102-3"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153084"/>
+      <display value="Concentration of nitrogen in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76103-1"/>
+        <display value="Nitrogen [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153088"/>
+      <display value="Concentration of nitrogen in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76104-9"/>
+        <display value="Nitrogen [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153140"/>
+      <display value="Concentration of oxygen in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="76105-6"/>
+        <display value="Oxygen [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153144"/>
+      <display value="Concentration of oxygen in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+      <target>
+        <code value="76106-4"/>
+        <display value="Oxygen [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152152"/>
+      <display value="Concentration of sevoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+      <target>
+        <code value="76107-2"/>
+        <display value="Sevoflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153192"/>
+      <display value="Concentration of xenon in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76108-0"/>
+        <display value="Xenon [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153196"/>
+      <display value="Concentration of xenon in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76109-8"/>
+        <display value="Xenon [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153056"/>
+      <display value="Concentration of helium in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76110-6"/>
+        <display value="Helium [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153112"/>
+      <display value="Concentration of nitric oxide in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76111-4"/>
+        <display value="Nitric oxide [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153080"/>
+      <display value="Concentration of nitrogen in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76112-2"/>
+        <display value="Nitrogen [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152072"/>
+      <display value="Concentration of nitrogen dioxide in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76113-0"/>
+        <display value="Nitrogen dioxide [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153188"/>
+      <display value="Concentration of xenon in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76114-8"/>
+        <display value="Xenon [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153100"/>
+      <display value="Partial pressure of nitric oxide in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="76115-5"/>
+        <display value="Nitric oxide [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153176"/>
+      <display value="Partial pressure of xenon in airway gas measured at the end of expiration"/>
+      <target>
+        <code value="76116-3"/>
+        <display value="Xenon [VFr/PPres] Airway adaptor --at end expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153104"/>
+      <display value="Partial pressure of nitric oxide in airway gas measured during expiration"/>
+      <target>
+        <code value="76117-1"/>
+        <display value="Nitric oxide [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153180"/>
+      <display value="Partial pressure of xenon in airway gas measured during expiration"/>
+      <target>
+        <code value="76118-9"/>
+        <display value="Xenon [VFr/PPres] Airway adaptor --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153068"/>
+      <display value="Volume of helium gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76119-7"/>
+        <display value="Helium gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153108"/>
+      <display value="Partial pressure of nitric oxide in airway gas measured during inspiration"/>
+      <target>
+        <code value="76120-5"/>
+        <display value="Nitric oxide [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153184"/>
+      <display value="Partial pressure of xenon in airway gas measured during inspiration"/>
+      <target>
+        <code value="76121-3"/>
+        <display value="Xenon [VFr/PPres] Airway adaptor --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153072"/>
+      <display value="Total of helium gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="76122-1"/>
+        <display value="Helium gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153128"/>
+      <display value="Total volume of nitric oxide gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="76123-9"/>
+        <display value="Nitric oxide gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153200"/>
+      <display value="Volume of xenon gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76124-7"/>
+        <display value="Xenon gas delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153204"/>
+      <display value="Total volume of xenon gas delivered (potentially across multiple cases)"/>
+      <target>
+        <code value="76125-4"/>
+        <display value="Xenon gas delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="148065"/>
+      <target>
+        <code value="76126-2"/>
+        <display value="Premature ventricular contractions [#]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153008"/>
+      <display value="Concentration of argon in airway gas in the system conducting gas to and from the patient"/>
+      <target>
+        <code value="76127-0"/>
+        <display value="Argon [VFr/PPres] Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153016"/>
+      <display value="Concentration of argon in airway gas measured during inspiration in the system conducting gas to the patient"/>
+      <target>
+        <code value="76128-8"/>
+        <display value="Argon [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153012"/>
+      <display value="Concentration of argon in airway gas measured during expiration in the system conducting gas from the patient"/>
+      <target>
+        <code value="76129-6"/>
+        <display value="Argon [VFr/PPres] Gas delivery system.expiratory limb --during expiration"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152948"/>
+      <display value="Volume (liquid) of isoflurane delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76130-4"/>
+        <display value="Isoflurane liquid delivered during case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152952"/>
+      <display value="Total volume (liquid) of isoflurane delivered"/>
+      <target>
+        <code value="76131-2"/>
+        <display value="Isoflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929940"/>
+      <target>
+        <code value="76151-0"/>
+        <display value="Airway pressure backup setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929936"/>
+      <target>
+        <code value="76152-8"/>
+        <display value="Airway pressure delta setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152720"/>
+      <display value="Inspiratory airway pressure relative to PEEP or BAP."/>
+      <target>
+        <code value="76154-4"/>
+        <display value="Airway pressure delta --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151956"/>
+      <display value="Airway pressure during mechanical ventilation"/>
+      <target>
+        <code value="76164-3"/>
+        <display value="Pressure Respiratory system airway --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152436"/>
+      <display value="Volume of gas exchanged per breath in alveoli; difference between tidal volume and dead space"/>
+      <target>
+        <code value="76165-0"/>
+        <display value="Alveolar ventilation [Volume] Respiratory system --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151650"/>
+      <display value="Rate of breathing; method: acoustic."/>
+      <target>
+        <code value="76170-0"/>
+        <display value="Respiratory rate by Acoustic measurement"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151570"/>
+      <display value="Rate of breathing; method: direct airway flow measurement."/>
+      <target>
+        <code value="76171-8"/>
+        <display value="Respiratory rate by Airway flow measurement"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151594"/>
+      <display value="Rate of breathing; method: carbon dioxide measurement"/>
+      <target>
+        <code value="76172-6"/>
+        <display value="Respiratory rate by Carbon dioxide measurement"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151658"/>
+      <display value="Rate of breathing; method: SpO2 plethysmography"/>
+      <target>
+        <code value="76174-2"/>
+        <display value="Respiratory rate by Pulse oximetry.plethysmograph"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152848"/>
+      <display value="Partial pressure of CO2 in the pulmonary artery"/>
+      <target>
+        <code value="76184-1"/>
+        <display value="Carbon dioxide [Partial pressure] in Pulmonary artery"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151860"/>
+      <display value="Duration of apnea - no flow and no respiratory effort"/>
+      <target>
+        <code value="76185-8"/>
+        <display value="Central apnea duration Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152636"/>
+      <display value="Duration for an expiratory hold, a ventilator function intended to temporarily maintain a constant lung volume during a set extension of the expiratory phase."/>
+      <target>
+        <code value="76186-6"/>
+        <display value="Expiratory hold time Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929852"/>
+      <target>
+        <code value="76187-4"/>
+        <display value="Expiratory hold time setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152784"/>
+      <display value="The maximum negative airway pressure generated during an occluded inspiration arising from a Negative Inspiratory Force (NIF) maneuver"/>
+      <target>
+        <code value="76203-9"/>
+        <display value="Pressure.occlusion Respiratory system airway --negative inspiratory force maneuver"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16929848"/>
+      <target>
+        <code value="76210-4"/>
+        <display value="Inspiratory hold time setting Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152632"/>
+      <display value="The duration of an inspiratory hold, a ventilator function intended to temporarily maintain a constant lung volume, or to maintain a constant airway pressure, at the end of an inspiratory or inflation phase."/>
+      <target>
+        <code value="76211-2"/>
+        <display value="Inspiratory hold time Ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150016"/>
+      <display value="Pressure of the blood"/>
+      <target>
+        <code value="76212-0"/>
+        <display value="Invasive Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150032"/>
+      <display value="Pressure of the blood in an artery"/>
+      <target>
+        <code value="76212-0"/>
+        <display value="Invasive Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150036"/>
+      <target>
+        <code value="76212-0"/>
+        <display value="Invasive Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150018"/>
+      <display value="Pressure of the blood at the diastolic phase"/>
+      <target>
+        <code value="76213-8"/>
+        <display value="Invasive Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150034"/>
+      <display value="Diastolic pressure of the blood in an artery"/>
+      <target>
+        <code value="76213-8"/>
+        <display value="Invasive Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150038"/>
+      <target>
+        <code value="76213-8"/>
+        <display value="Invasive Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150019"/>
+      <display value="Pressure of the blood as computed by averaging on one cycle"/>
+      <target>
+        <code value="76214-6"/>
+        <display value="Invasive Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150035"/>
+      <display value="Mean pressure of the blood in an artery"/>
+      <target>
+        <code value="76214-6"/>
+        <display value="Invasive Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150039"/>
+      <target>
+        <code value="76214-6"/>
+        <display value="Invasive Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150017"/>
+      <display value="Pressure of the blood at the systolic phase"/>
+      <target>
+        <code value="76215-3"/>
+        <display value="Invasive Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150033"/>
+      <display value="Systolic pressure of the blood in an artery"/>
+      <target>
+        <code value="76215-3"/>
+        <display value="Invasive Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150037"/>
+      <target>
+        <code value="76215-3"/>
+        <display value="Invasive Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151980"/>
+      <display value="Volume of gas delivered through the patient-connection port during a respiratory cycle"/>
+      <target>
+        <code value="76222-9"/>
+        <display value="Tidal volume Ventilator --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151864"/>
+      <display value="Duration of apnea with central and obstructive components"/>
+      <target>
+        <code value="76239-3"/>
+        <display value="Mixed apnea duration Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152780"/>
+      <display value="The negative airway pressure generated during the first 100 ms of an occluded inspiration"/>
+      <target>
+        <code value="76240-1"/>
+        <display value="Pressure.occlusion 100ms Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153124"/>
+      <display value="Volume of nitric oxide gas delivered during a case, to a single patient during a single procedure."/>
+      <target>
+        <code value="76241-9"/>
+        <display value="Nitric oxide gas delivered.case [Volume] from Gas delivery system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151852"/>
+      <display value="Duration of apnea due to airway obstruction"/>
+      <target>
+        <code value="76242-7"/>
+        <display value="Obstructive apnea duration Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152796"/>
+      <display value="Dynamic intrinsic PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient."/>
+      <target>
+        <code value="76246-8"/>
+        <display value="Intrinsic dynamic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151976"/>
+      <display value="Positive end expiratory pressure applied to the airway."/>
+      <target>
+        <code value="76248-4"/>
+        <display value="PEEP Respiratory system --on ventilator"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151824"/>
+      <display value="Pressure in intrapleural space during breathing"/>
+      <target>
+        <code value="76252-6"/>
+        <display value="Pressure Pleural space"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152972"/>
+      <display value="N2O cylinder pressure"/>
+      <target>
+        <code value="76253-4"/>
+        <display value="Nitrous oxide cylinder Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152968"/>
+      <display value="N2O supply (pipeline) pressure"/>
+      <target>
+        <code value="76254-2"/>
+        <display value="Nitrous oxide pipeline Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153164"/>
+      <display value="O2 cylinder pressure"/>
+      <target>
+        <code value="76255-9"/>
+        <display value="Oxygen cylinder Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153168"/>
+      <display value="O2 #2 cylinder pressure"/>
+      <target>
+        <code value="76255-9"/>
+        <display value="Oxygen cylinder Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153160"/>
+      <display value="O2 supply (pipeline) pressure"/>
+      <target>
+        <code value="76256-7"/>
+        <display value="Oxygen pipeline Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152892"/>
+      <display value="Air cylinder pressure"/>
+      <target>
+        <code value="76257-5"/>
+        <display value="Air cylinder Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152888"/>
+      <display value="Air supply (pipeline) pressure"/>
+      <target>
+        <code value="76258-3"/>
+        <display value="Air pipeline Pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152828"/>
+      <display value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by patient body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)."/>
+      <target>
+        <code value="76265-8"/>
+        <display value="Carbon dioxide production (VCO2)/Body surface area in Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152824"/>
+      <display value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+      <target>
+        <code value="76266-6"/>
+        <display value="Carbon dioxide production (VCO2)/Ideal body weight in Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152816"/>
+      <display value="The volume of oxygen a patient inhales (consumes) per minute, normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+      <target>
+        <code value="76267-4"/>
+        <display value="Oxygen consumption (VO2)/Ideal body weight [Volume Rate/Area]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152836"/>
+      <display value="Ambient (immediate patient environment) air pressure"/>
+      <target>
+        <code value="76268-2"/>
+        <display value="Pressure.ambient Room"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151828"/>
+      <display value="Ratio of carbon dioxide expired to oxygen used"/>
+      <target>
+        <code value="76269-0"/>
+        <display value="Respiratory quotient Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151578"/>
+      <display value="Rate of breathing; method: transthoracic impedance variations"/>
+      <target>
+        <code value="76270-8"/>
+        <display value="Respiratory rate by Impedance.transthoracic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151952"/>
+      <display value="Ratio of alveolar ventilation and gas component to pulmonary capillary blood flow"/>
+      <target>
+        <code value="76274-0"/>
+        <display value="Ventilation-perfusion index Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150348"/>
+      <target>
+        <code value="76278-1"/>
+        <display value="Bladder temperature via Foley"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="160320"/>
+      <display value="Intramucosal pH"/>
+      <target>
+        <code value="76280-7"/>
+        <display value="Intramucosal gastric pH"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="148496"/>
+      <display value="Irregular rhythm"/>
+      <target>
+        <code value="76281-5"/>
+        <display value="Type of arrhythmia on EKG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147850"/>
+      <target>
+        <code value="76282-3"/>
+        <display value="Heart rate.beat-to-beat"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150652"/>
+      <display value="Flow of the blood in the pulmonary capillaries."/>
+      <target>
+        <code value="76283-1"/>
+        <display value="Blood flow Pulmonary capillaries"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150044"/>
+      <display value="Pressure of the blood in the pulmonary artery"/>
+      <target>
+        <code value="76284-9"/>
+        <display value="Pulmonary artery Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150076"/>
+      <display value="Pressure of the blood in the pulmonary capillaries"/>
+      <target>
+        <code value="76285-6"/>
+        <display value="Pulmonary capillary Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150078"/>
+      <display value="Diastolic pressure of the blood in the pulmonary capillaries"/>
+      <target>
+        <code value="76286-4"/>
+        <display value="Pulmonary capillary Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150079"/>
+      <display value="Mean pressure of the blood in the pulmonary capillaries"/>
+      <target>
+        <code value="76287-2"/>
+        <display value="Pulmonary capillary Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150077"/>
+      <display value="Systolic pressure of the blood in the pulmonary capillaries"/>
+      <target>
+        <code value="76288-0"/>
+        <display value="Pulmonary capillary Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152432"/>
+      <display value="Volume of gas lost per minute by leakage in ventilation system, tubing, connectors, etc."/>
+      <target>
+        <code value="76296-3"/>
+        <display value="Ventilator airway circuit leakage volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150636"/>
+      <display value="Left-ventricular stroke volume per heart beat, normalized for body surface area."/>
+      <target>
+        <code value="76297-1"/>
+        <display value="Left ventricular Stroke volume index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188480"/>
+      <display value="Gastric pressure waveform"/>
+      <target>
+        <code value="76298-9"/>
+        <display value="Gastric pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153244"/>
+      <display value="Pressure measured in the stomach"/>
+      <target>
+        <code value="76298-9"/>
+        <display value="Gastric pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157998"/>
+      <target>
+        <code value="76299-7"/>
+        <display value="Time interval between start of doses Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157990"/>
+      <display value="Cumulative number of patient doses actually delivered (since start of operation or last cleared by clinician)"/>
+      <target>
+        <code value="76300-3"/>
+        <display value="Doses.delivered [#] in Reporting period Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157991"/>
+      <display value="Cumulative number of patient doses requested.(since start of operation or last cleared by clinician)"/>
+      <target>
+        <code value="76301-1"/>
+        <display value="Doses.requested [#] Reporting Period"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157992"/>
+      <target>
+        <code value="76302-9"/>
+        <display value="Infused volume.segment Procedure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157864"/>
+      <display value="Fluid volume infused to the patient using this syringe or bottle (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+      <target>
+        <code value="76303-7"/>
+        <display value="Infused volume.single container"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157993"/>
+      <target>
+        <code value="76304-5"/>
+        <display value="Infused volume.total Reporting Period Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157999"/>
+      <target>
+        <code value="76305-2"/>
+        <display value="Infusion dose.programmed [Mass] Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="158000"/>
+      <target>
+        <code value="76306-0"/>
+        <display value="Infusion dose.remaining [Mass] Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157996"/>
+      <target>
+        <code value="76307-8"/>
+        <display value="Infusion time.programmed Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157916"/>
+      <display value="The time calculated by the pump until time (or volume) for this step of flow elapses"/>
+      <target>
+        <code value="76308-6"/>
+        <display value="Infusion time.remaining Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157997"/>
+      <target>
+        <code value="76309-4"/>
+        <display value="Infusion time.remaining Infusion pump Based on container volume"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157884"/>
+      <display value="Volume to be infused to the patient (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+      <target>
+        <code value="76310-2"/>
+        <display value="Infusion volume.programmed Procedure Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157872"/>
+      <display value="Volume of fluid remaining to be infused in relation with the volume to be infused (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+      <target>
+        <code value="76311-0"/>
+        <display value="Infusion volume.remaining Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157988"/>
+      <target>
+        <code value="76312-8"/>
+        <display value="PCA dose number.max 1 hour Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157989"/>
+      <target>
+        <code value="76314-4"/>
+        <display value="PCA lockout time Infusion pump"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157984"/>
+      <target>
+        <code value="76315-1"/>
+        <display value="Syringe Volume.actual"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157995"/>
+      <target>
+        <code value="76316-9"/>
+        <display value="Infusion pump Volume.remaining"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="157994"/>
+      <target>
+        <code value="76317-7"/>
+        <display value="Infusion pump Volume.start"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184488"/>
+      <target>
+        <code value="76318-5"/>
+        <display value="Syringe Manufacturer name"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184508"/>
+      <display value="The operational status of the pump, e.g., Infusing, KVO, etc., (see Table A.8.7.12)"/>
+      <target>
+        <code value="76319-3"/>
+        <display value="Infusion pump Pump status"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151768"/>
+      <display value="Expiratory gas flow"/>
+      <target>
+        <code value="76320-1"/>
+        <display value="Expiratory airway gas flow"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150616"/>
+      <display value="The ratio of the electrical and mechanical systole duration (PEP/LVET)."/>
+      <target>
+        <code value="76322-7"/>
+        <display value="Systolic time ratio"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150612"/>
+      <display value="Initial acceleration of blood flow in the aorta, which occurs within the first 10 to 20 milliseconds"/>
+      <target>
+        <code value="76323-5"/>
+        <display value="Aorta acceleration index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68485"/>
+      <display value="Alert type"/>
+      <target>
+        <code value="76324-3"/>
+        <display value="Infusion pump Alert type"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188772"/>
+      <target>
+        <code value="76325-0"/>
+        <display value="Infusion pump Communication status"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68482"/>
+      <display value="Indicates the state of the underlying alert condition at the patient care device"/>
+      <target>
+        <code value="76326-8"/>
+        <display value="Infusion pump Alarm state"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68012"/>
+      <target>
+        <code value="76327-6"/>
+        <display value="Infusion pump Alarm trigger"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68484"/>
+      <display value="Alert priority"/>
+      <target>
+        <code value="76328-4"/>
+        <display value="Infusion pump Alert priority"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184504"/>
+      <display value="The operational mode of the pump (see Table A.8.7.11)"/>
+      <target>
+        <code value="76329-2"/>
+        <display value="Infusion pump Pump mode"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184512"/>
+      <target>
+        <code value="76330-0"/>
+        <display value="Infusion pump Pump mode.current"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184511"/>
+      <target>
+        <code value="76331-8"/>
+        <display value="Infusion pump Pump mode.set"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184513"/>
+      <target>
+        <code value="76332-6"/>
+        <display value="Infusion pump Reason pump stopped infusing"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149554"/>
+      <display value="Heart rate obtained from the variation of transthoracic impedance."/>
+      <target>
+        <code value="76476-1"/>
+        <display value="Heart rate by Transthoracic impedance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149546"/>
+      <display value="Rate of blood pulse in an artery, measured not invasively"/>
+      <target>
+        <code value="76477-9"/>
+        <display value="Heart rate by Noninvasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150492"/>
+      <display value="Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as continuous measurement"/>
+      <target>
+        <code value="76519-8"/>
+        <display value="Left ventricular Cardiac output by Continuous"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150576"/>
+      <target>
+        <code value="76520-6"/>
+        <display value="Transmission.infrared Arterial blood Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150572"/>
+      <target>
+        <code value="76521-4"/>
+        <display value="Transmission.red Arterial blood Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150568"/>
+      <target>
+        <code value="76522-2"/>
+        <display value="Transmission Arterial blood Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150452"/>
+      <target>
+        <code value="76523-0"/>
+        <display value="Plethysmogram Arterial blood Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150620"/>
+      <display value="The electrical conductivity of the chest cavity, which is primarily determined by the intravascular, intraalveolar and the interstitial fluids in the thorax."/>
+      <target>
+        <code value="76525-5"/>
+        <display value="Thoracic fluid conductivity [Fluid Conductance] Chest"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151610"/>
+      <display value="Rate of mechanical ventilation; method: carbon dioxide concentration measurement.  [This refers to the CO2 respiration rate measured by the ventilator and is not the set ventilator rate nor the ventilator inflation rate; it can include unassisted spontaneous breaths as well.]"/>
+      <target>
+        <code value="76526-3"/>
+        <display value="Ventilation rate by Carbon dioxide measurement"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150640"/>
+      <display value="Work performed by the left ventricle of the heart to eject the stroke volume over one minute&#39;s time, normalized for body surface area."/>
+      <target>
+        <code value="76527-1"/>
+        <display value="Left ventricular Work/Body surface area [Energy/Area] by Non-invasive impedance cardiography (NI-ICG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151792"/>
+      <display value="Pressure of gas in airway"/>
+      <target>
+        <code value="76529-7"/>
+        <display value="Pressure Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150300"/>
+      <target>
+        <code value="76532-1"/>
+        <display value="Blood pressure device Cuff pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150020"/>
+      <target>
+        <code value="76533-9"/>
+        <display value="Blood pressure by Noninvasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150021"/>
+      <display value="Pressure of the blood, obtained noninvasively (i.e., fingertip), at the systolic phase"/>
+      <target>
+        <code value="76534-7"/>
+        <display value="Systolic blood pressure by Noninvasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150022"/>
+      <display value="Pressure of the blood, obtained noninvasively (i.e., fingertip), at the diastolic phase"/>
+      <target>
+        <code value="76535-4"/>
+        <display value="Diastolic blood pressure by Noninvasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150023"/>
+      <display value="Pressure of the blood, obtained noninvasively (i.e., fingertip), as computed by averaging on one cycle"/>
+      <target>
+        <code value="76536-2"/>
+        <display value="Mean blood pressure by Noninvasive"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150303"/>
+      <display value="Pressure of the blood computed as mean value between systolic and diastolic pressures, measured discontinuously and noninvasively (cuff)"/>
+      <target>
+        <code value="76537-0"/>
+        <display value="Blood pressure device Cuff pressure.mean"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150301"/>
+      <display value="Pressure of the blood at the systolic phase, measured discontinuously and noninvasively (cuff)"/>
+      <target>
+        <code value="76538-8"/>
+        <display value="Blood pressure device Cuff pressure.systolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150302"/>
+      <display value="Pressure of the blood at the diastolic phase, measured discontinuously and noninvasively (cuff)"/>
+      <target>
+        <code value="76539-6"/>
+        <display value="Blood pressure device Cuff pressure.diastolic"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="68060"/>
+      <target>
+        <code value="8302-2"/>
+        <display value="Body height"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150344"/>
+      <target>
+        <code value="8310-5"/>
+        <display value="Body temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188452"/>
+      <display value="Axillary (armpit) temperature"/>
+      <target>
+        <code value="8328-7"/>
+        <display value="Axillary temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188496"/>
+      <display value="Axillary (armpit) temperature"/>
+      <target>
+        <code value="8328-7"/>
+        <display value="Axillary temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150368"/>
+      <target>
+        <code value="8329-5"/>
+        <display value="Body temperature - Core"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188424"/>
+      <display value="Oral temperature"/>
+      <target>
+        <code value="8331-1"/>
+        <display value="Oral temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="188420"/>
+      <display value="Rectal temperature"/>
+      <target>
+        <code value="8332-9"/>
+        <display value="Rectal temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150392"/>
+      <target>
+        <code value="8333-7"/>
+        <display value="Tympanic membrane temperature"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="156242"/>
+      <display value="Epileptic or potentially epileptogenic activity identifiers, burst rate"/>
+      <target>
+        <code value="83366-5"/>
+        <display value="Burst rate Cerebral cortex Electroencephalogram (EEG)"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930092"/>
+      <target>
+        <code value="83367-3"/>
+        <display value="Gas delivery system Fresh gas.air flow setting [Flow]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152585"/>
+      <display value="This value is determined by a healthcare professional or based on predicted average peak flow and is typically the highest peak condition.expiratory flow (PEF) reading an individual can obtain while in peak"/>
+      <target>
+        <code value="83368-1"/>
+        <display value="Personal best peak expiratory gas flow Respiratory system airway"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930308"/>
+      <target>
+        <code value="83369-9"/>
+        <display value="Gas delivery system Fresh gas.nitrous oxide flow setting [Flow]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930372"/>
+      <target>
+        <code value="83370-7"/>
+        <display value="Gas delivery system Fresh gas.oxygen flow setting [Flow]"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153360"/>
+      <display value="Number of cycles remaining, including the current cycle.  Transitions to zero when delivery completed."/>
+      <target>
+        <code value="83371-5"/>
+        <display value="Cycles.remaining [#] Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930568"/>
+      <display value="Specifies the number of nebulizer delivery cycles having a specified run time and/or volume when operating in scheduled mode."/>
+      <target>
+        <code value="83372-3"/>
+        <display value="Cycles setting [#] Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16961626"/>
+      <display value="Specifies the nebulizer operational mode, including intermittent, scheduled or continuous modes.  Selecting intermittent mode delivers a single timed delivery based on the programmed run time and/or volume, and for scheduled mode, the number of cycles and pause time between cycles.  Selecting continuous mode delivers nebulized medication until the medication runs out or delivery is stopped."/>
+      <target>
+        <code value="83373-1"/>
+        <display value="Mode setting Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="184408"/>
+      <display value="Specifies the nebulizer type, such as an aerosolizer (using a micro pump) or pneumatic (using an external air or oxygen supply)."/>
+      <target>
+        <code value="83374-9"/>
+        <display value="Type of Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153372"/>
+      <display value="Elapsed time that fluid has been nebulized for current cycle."/>
+      <target>
+        <code value="83375-6"/>
+        <display value="Current nebulization cycle time.elapsed Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153376"/>
+      <display value="Total elapsed time that fluid that has been nebulized for current set of delivery cycles."/>
+      <target>
+        <code value="83376-4"/>
+        <display value="Current set of nebulization cycles time.elapsed Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930572"/>
+      <display value="Specifies the pause (time duration) between nebulizer delivery cycles when operating in scheduled mode."/>
+      <target>
+        <code value="83377-2"/>
+        <display value="Pause time setting Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930560"/>
+      <display value="Specifies the nebulizer run time per delivery cycle."/>
+      <target>
+        <code value="83378-0"/>
+        <display value="Run time setting Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153364"/>
+      <display value="Remaining nebulization time for current cycle.  Transitions to zero at the start of the pause interval when delivery for the current cycle is completed"/>
+      <target>
+        <code value="83379-8"/>
+        <display value="Current nebulization cycle time.remaining Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153368"/>
+      <display value="Total remaining nebulization delivery time for current set of delivery cycles (does not include pause time)."/>
+      <target>
+        <code value="83380-6"/>
+        <display value="Current set of nebulization cycles time.remaining Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153388"/>
+      <display value="Estimated volume of fluid that has been nebulized for current cycle."/>
+      <target>
+        <code value="83381-4"/>
+        <display value="Current nebulization cycle volume.given Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153392"/>
+      <display value="Estimated volume of fluid that has been nebulized for current set of delivery cycles."/>
+      <target>
+        <code value="83382-2"/>
+        <display value="Current set of nebulization cycles volume.given Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="16930564"/>
+      <display value="Specifies the nebulizer volume per delivery cycle."/>
+      <target>
+        <code value="83383-0"/>
+        <display value="Cycle volume setting Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153380"/>
+      <display value="Estimated remaining volume of fluid to be nebulized for current cycle."/>
+      <target>
+        <code value="83384-8"/>
+        <display value="Current nebulization cycle volume.remaining Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153384"/>
+      <display value="Estimated total remaining volume of fluid to be nebulized for current set of delivery cycles."/>
+      <target>
+        <code value="83385-5"/>
+        <display value="Current set of nebulization cycles volume.remaining Nebulizer"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151804"/>
+      <target>
+        <code value="83386-3"/>
+        <display value="Extrinsic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151804"/>
+      <display value="Positive end expiratory pressure applied to the airway."/>
+      <target>
+        <code value="83386-3"/>
+        <display value="Extrinsic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152792"/>
+      <display value="Dynamic extrinsic PEEP, the minimum pressure at or near the end of expiration, reflecting the set PEEP from the ventilator."/>
+      <target>
+        <code value="83387-1"/>
+        <display value="Extrinsic dynamic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152800"/>
+      <display value="Dynamic total PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient."/>
+      <target>
+        <code value="83388-9"/>
+        <display value="Total dynamic PEEP Respiratory system"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150680"/>
+      <display value="Pressure of the blood in the brachial artery."/>
+      <target>
+        <code value="83389-7"/>
+        <display value="Brachial artery Blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150102"/>
+      <display value="Diastolic pressure of the blood in the left ventricle of the heart"/>
+      <target>
+        <code value="8375-8"/>
+        <display value="Left ventricular Intrachamber diastolic pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150106"/>
+      <display value="Diastolic pressure of the blood in the right ventricle of the heart"/>
+      <target>
+        <code value="8377-4"/>
+        <display value="Right ventricular Intrachamber diastolic pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150046"/>
+      <display value="Diastolic pressure of the blood in the pulmonary artery"/>
+      <target>
+        <code value="8385-7"/>
+        <display value="Pulmonary artery Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150067"/>
+      <display value="Mean pressure of the blood in the left atrium of the heart"/>
+      <target>
+        <code value="8399-8"/>
+        <display value="Left atrial Intrachamber mean pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150071"/>
+      <display value="Mean pressure of the blood in the right atrium of the heart"/>
+      <target>
+        <code value="8400-4"/>
+        <display value="Right atrial Intrachamber mean pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150103"/>
+      <display value="Mean pressure of the blood in the left ventricle of the heart"/>
+      <target>
+        <code value="8404-6"/>
+        <display value="Left ventricular Intrachamber mean pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150107"/>
+      <display value="Mean pressure of the blood in the right ventricle of the heart"/>
+      <target>
+        <code value="8406-1"/>
+        <display value="Right ventricular Intrachamber mean pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150047"/>
+      <display value="Mean pressure of the blood in the pulmonary artery"/>
+      <target>
+        <code value="8414-5"/>
+        <display value="Pulmonary artery Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150101"/>
+      <display value="Systolic pressure of the blood in the left ventricle of the heart"/>
+      <target>
+        <code value="8430-1"/>
+        <display value="Left ventricular Intrachamber systolic pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150105"/>
+      <display value="Systolic pressure of the blood in the right ventricle of the heart"/>
+      <target>
+        <code value="8432-7"/>
+        <display value="Right ventricular Intrachamber systolic pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150045"/>
+      <display value="Systolic pressure of the blood in the pulmonary artery"/>
+      <target>
+        <code value="8440-0"/>
+        <display value="Pulmonary artery Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150650"/>
+      <display value="Mean pressure of the blood in the femoral artery."/>
+      <target>
+        <code value="8498-8"/>
+        <display value="Femoral artery Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150058"/>
+      <display value="Diastolic pressure of the blood in the umbilical arteries of a fetus"/>
+      <target>
+        <code value="8501-9"/>
+        <display value="Umbilical artery Diastolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150651"/>
+      <display value="Diastolic pressure of the blood in the femoral artery."/>
+      <target>
+        <code value="8504-3"/>
+        <display value="Femoral artery Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150059"/>
+      <display value="Mean pressure of the blood in the umbilical arteries of a fetus"/>
+      <target>
+        <code value="8507-6"/>
+        <display value="Umbilical artery Mean blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150649"/>
+      <display value="Systolic pressure of the blood in the femoral artery."/>
+      <target>
+        <code value="8510-0"/>
+        <display value="Femoral artery Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150057"/>
+      <display value="Systolic pressure of the blood in the umbilical arteries of a fetus"/>
+      <target>
+        <code value="8513-4"/>
+        <display value="Umbilical artery Systolic blood pressure"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150087"/>
+      <display value="Mean pressure of the blood in the thoracic venae cavae"/>
+      <target>
+        <code value="8591-0"/>
+        <display value="Central venous pressure (CVP) Mean"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="148066"/>
+      <target>
+        <code value="8616-5"/>
+        <display value="Premature ventricular contractions"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147232"/>
+      <display value="Duration of the interval between the QRS onset and T wave offset of ECG (global)"/>
+      <target>
+        <code value="8634-8"/>
+        <display value="Q-T interval"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147236"/>
+      <display value="Duration of the interval between the QRS onset and T wave offset, related to heart rate 60 beats per minute of ECG (global), Bazett formula"/>
+      <target>
+        <code value="8636-3"/>
+        <display value="Q-T interval corrected"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147240"/>
+      <display value="Duration of the interval between two consecutive QRS complexes"/>
+      <target>
+        <code value="8637-1"/>
+        <display value="R-R interval by EKG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150276"/>
+      <display value="Quantity of blood pumped by the left ventricle into the aorta per minute"/>
+      <target>
+        <code value="8741-1"/>
+        <display value="Left ventricular Cardiac output"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150308"/>
+      <display value="Resistance to blood flow in the pulmonary vessels"/>
+      <target>
+        <code value="8828-6"/>
+        <display value="Pulmonary vascular Resistance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150312"/>
+      <display value="Resistance to blood flow in the systemic circulation"/>
+      <target>
+        <code value="8831-0"/>
+        <display value="Systemic vascular Resistance"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="152852"/>
+      <display value="Pulmonary Vascular Resistance Index, normalized with respect to body surface area"/>
+      <target>
+        <code value="8834-4"/>
+        <display value="Pulmonary vascular Resistance index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149760"/>
+      <display value="Difference between systemic and pulmonary resistance"/>
+      <target>
+        <code value="8837-7"/>
+        <display value="Systemic vascular Resistance index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150428"/>
+      <display value="Work of left ventricle of the heart in one cardiac cycle"/>
+      <target>
+        <code value="8861-7"/>
+        <display value="Left ventriclar Stroke work"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149764"/>
+      <display value="Work of left ventricle of the heart in one cardiac cycle and related to body surface area (LVSW/BSA)"/>
+      <target>
+        <code value="8863-3"/>
+        <display value="Left ventricular stroke work index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="150644"/>
+      <display value="Work of right ventricle of the heart in one cardiac cycle and related to body surface area (RVSW/BSA)"/>
+      <target>
+        <code value="8864-1"/>
+        <display value="Right ventricular Stroke work index"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="149530"/>
+      <target>
+        <code value="8889-8"/>
+        <display value="Heart rate by Pulse oximetry"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147842"/>
+      <target>
+        <code value="8897-1"/>
+        <display value="QRS complex Ventricles by EKG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="147842"/>
+      <display value="Rate of cardiac beats"/>
+      <target>
+        <code value="8897-1"/>
+        <display value="QRS complex Ventricles by EKG"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153730"/>
+      <display value="Subscore for visual reactions of score that monitors the neurologic status and probable outcome of patient"/>
+      <target>
+        <code value="9267-6"/>
+        <display value="Glasgow coma score eye opening"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153731"/>
+      <display value="Subscore for motoric reactions of score that monitors the neurologic status and probable outcome of patient"/>
+      <target>
+        <code value="9268-4"/>
+        <display value="Glasgow coma score motor"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153728"/>
+      <display value="Score that monitors the neurologic status and probable outcome of patient"/>
+      <target>
+        <code value="9269-2"/>
+        <display value="Glasgow coma score total"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153732"/>
+      <display value="Subscore for verbal reactions of score that monitors the neurologic status and probable outcome of patient"/>
+      <target>
+        <code value="9270-0"/>
+        <display value="Glasgow coma score verbal"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="151562"/>
+      <display value="Rate of breathing; method not specified"/>
+      <target>
+        <code value="9279-1"/>
+        <display value="Respiratory rate"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+    <element>
+      <code value="153856"/>
+      <display value="Circumference of the head"/>
+      <target>
+        <code value="9843-4"/>
+        <display value="Head Occipital-frontal circumference"/>
+        <equivalence value="equivalent"/>
+      </target>
+    </element>
+  </group>
+</ConceptMap>

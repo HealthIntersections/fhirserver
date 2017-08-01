@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Add turtle support, fix bug with mime type"
+        as.returnvalue = "support for GraphDefinition"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -383,7 +383,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\Libraries\\jcl
+            searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
             showhints = true
             showwarnings = true
             stackframes = false
@@ -563,7 +563,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\Libraries\\jcl
+            searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
             showhints = true
             showwarnings = true
             stackframes = false
@@ -743,7 +743,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\Libraries\\jcl
+            searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
             showhints = true
             showwarnings = true
             stackframes = false
@@ -923,7 +923,7 @@ begin
             recordfieldalign = fa8
             referenceinfo = false
             safedivide = false
-            searchpath = C:\\work\\fhirserver\\Libraries\\jcl
+            searchpath = C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\indy10\\Lib\\Protocols;C:\\work\\Components\\indy10\\Lib\\Core;C:\\work\\Components\\indy10\\Lib\\System
             showhints = true
             showwarnings = true
             stackframes = false

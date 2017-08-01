@@ -163,7 +163,7 @@ begin
   begin
     json := TJsonObject.Create;
     json.vStr['DefinitionsVersion'] := 'r3';
-    json.vStr['TerminologyServer'] := 'http://fhir3.healthintersections.com.au/open';
+    json.vStr['TerminologyServer'] := 'http://tx.fhir.org/r3';
     json.bool['BackgroundValidation'] := true;
 
     RegisterKnownServers;
@@ -527,7 +527,7 @@ begin
   server := TRegisteredFHIRServer.Create;
   try
     server.name := 'Reference Server';
-    server.fhirEndpoint := 'http://fhir3.healthintersections.com.au/open';
+    server.fhirEndpoint := 'http://test.fhir.org/r3';
     server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
     server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
     server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
@@ -536,7 +536,7 @@ begin
 
     server.clear;
     server.name := 'Secure Reference Server';
-    server.fhirEndpoint := 'https://fhir3.healthintersections.com.au/closed';
+    server.fhirEndpoint := 'https://test.fhir.org/secure/r3';
     server.SmartOnFHIR := true;
     server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
     server.redirectport := 23145;

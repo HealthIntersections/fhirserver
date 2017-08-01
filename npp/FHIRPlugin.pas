@@ -645,7 +645,7 @@ begin
   if FValidator = nil then
   begin
     if (Settings.TerminologyServer = '') then
-      Settings.TerminologyServer := 'http://fhir3.healthintersections.com.au';
+      Settings.TerminologyServer := 'http://tx.fhir.org/r3';
 
     OpMessage('Loading', 'Loading Definition Source');
     try

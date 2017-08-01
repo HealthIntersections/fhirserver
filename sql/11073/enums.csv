@@ -1,0 +1,437 @@
+_ENUM_GROUPS,TOKEN,REFID,NUM_VALUE,EPART,ECODE10,CF_ECODE10,ApplicationDescription,Tags
+_BOOL," TRUE",,,,,,"","IP_NA_CAT_15"
+_BOOL," FALSE",,,,,,"","IP_NA_CAT_15"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_STANDBY_WARN",,"3","61440","258048","Pump on Hold","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_EMPTY",,"3","26","196634","Bag Empty","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_OCCL",,"3","332","196940","Occlusion","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_AIR",,"3","592","197200","Air in Line","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_DOOR_POSN_ERR",,"3","476","197084","Door Open","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_ADVIS_SETTINGS_CHK",,"3","6668","203276","Programming Error","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_MALF",,"3","70","196678","Device Malfunction","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_POSN_PROB",,"3","160","196768","Set Loading Error","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL," ","MDC_EVT_BATT_LO",,"3","194","196802","Low Battery","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL," ","MDC_EVT_FLOW_LO",,"3","342","196950","Low Flow","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_IDLE",,"3","720","197328","Pump Idle","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_CALLBACK",,"3","722","197330","Callback","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_VOL_INFUS_COMP",,"3","724","197332","VTBI Complete","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_VOL_INFUS_NEAR_COMP",,"3","726","197334","VTBI Near Completion","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL," ","MDC_EVT_BATT_DEPL",,"3","728","197336","Depleted Battery","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL," ","MDC_EVT_BATT_SERV",,"3","730","197338","Service Battery"," ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_EMER_STOP",,"3","732","197340","Emergency Stop","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL," ","MDC_EVT_PWR_LOSS",,"3","734","197342","Power Loss","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_CHECK_IV_SET",,"3","738","197346","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_SYR," ","MDC_EVT_SYRINGE_PATIENT_PRESSURE",,"3","604","197212","IV Fluid pressure is too high.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_SYR," ","MDC_EVT_SYRINGE_PLUNGER_POSITION",,"3","606","197214","Plunger out of position.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_SYR," ","MDC_EVT_SYRINGE_FLANGE_POSITION",,"3","608","197216","Flange out of position.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_SYR," ","MDC_EVT_SYRINGE_BARREL_CAPTURE",,"3","610","197218","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND," ","MDC_EVT_SYRINGE_PRESSURE_DISC_POSITION",,"3","612","197220","Pressure disc out of position.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_SYRINGE_NUT_ENGAGED",,"3","614","197222","",
+_MDC_ATTR_AL_COND," ","MDC_EVT_SYRINGE_END_OF_TRAVEL",,"3","616","197224","End of plunger travel.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND," ","MDC_EVT_SYRINGE_EMPTY",,"3","618","197226","Syringe is empty.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_PCA," ","MDC_EVT_PCA_DOOR_UNLOCKED",,"3","650","197258","Door is unlocked.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_PCA," ","MDC_EVT_PCA_HANDSET_DETACHED",,"3","652","197260","Handset is detached from unit.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_PCA," ","MDC_EVT_PCA_MAX_LIMIT",,"3","654","197262","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_PCA," ","MDC_EVT_PCA_PAUSED",,"3","656","197264","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_PUMP_GENERAL _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_UNKNOWN",,"3","740","197348","Device is Alarming.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_DELAY_IMPOSSIBLE",,"3","742","197350","Programed start delay will not be reached.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_PUMP_CHAMBER_BLOCKED",,"3","744","197352","Blockage in the pump chamber.","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND_DELETED _MDC_ATTR_AL_COND_PUMP_SYR," ","MDC_EVT_SYRINGE_PATIENT_PRESSURE_ALARM",,"3","620","197228","",
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_SYRINGE_PLUNGER",,"3","622","197230","",
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_SYRINGE_FLANGE",,"3","624","197232","",
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_SYRINGE_LEVER",,"3","626","197234","",
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_SYRINGE_PRESSURE_DISC",,"3","628","197236","",
+_MDC_ATTR_AL_COND_DELETED," ","MDC_EVT_HANDSET_DETACHED",,"3","746","197354","",
+_MDC_INFUS_EVENT," infusion-event-start",,,,,,"","IP-NA-CAT-15"
+_MDC_INFUS_EVENT," infusion-event-stop",,,,,,"","IP-NA-CAT-15"
+_MDC_INFUS_EVENT," infusion-event-vtbi-complete",,,,,,"","IP-NA-CAT-15"
+," pump-mode-nominal",,,,,,"",
+," pump-mode-drug-dosing",," 7",,,,"",
+_MDC_PUMP_MODE," pump-mode-ramp-taper",," 9",,,,"",""
+_MDC_PUMP_MODE," pump-mode-multi-step",," 4",,,,"",""
+_MDC_PUMP_MODE," pump-mode-multi-dosing",," 8",,,,"",""
+_MDC_PUMP_MODE," pump-mode-loading-dose",," 14",,,,"",""
+," pump-mode-multi-channel",,,,,,"",
+," pump-mode-pca",,,,,,"",
+_MDC_PUMP_MODE," pump-mode-continuous",," 15",,,,"",""
+_MDC_PUMP_MODE," pump-mode-piggyback",," 16",,,,"",""
+_MDC_PUMP_MODE," pump-mode-concurrent",," 20",,,,"",""
+," pump-status-ready",,,,,,"",
+_MDC_PUMP_STAT," pump-status-infusing",,,,,,"","ds-ip-rel_2.0"
+," pump-status-paused",,,,,,"",
+," pump-status-kvo",,,,,,"",""
+," pump-status-delayed",,,,,,"",
+," pump-status-standby",,,,,,"",
+," pump-status-vtbi-complete",,,,,,"",
+," pump-status-off",,,,,,"",
+," pump-status-priming ",,,,,,"",
+_BODY_SITE_NBP_BP," ","MDC_UPEXT_ARM_UPPER_L",,"7","1781","460533","Left Upper Arm",
+_BODY_SITE_NBP_BP," ","MDC_UPEXT_ARM_UPPER_R",,"7","1782","460534","Right Upper Arm",
+_BODY_SITE_NBP_BP," ","MDC_LOEXT_LEG_L",,"7","1605","460357","Left Leg",
+_BODY_SITE_NBP_BP," ","MDC_LOEXT_LEG_R",,"7","1606","460358","Right Leg",
+_BODY_SITE_PR," ","MDC_BS_QUAL_LEFT",,"7","8194","466946","Left - General",
+_BODY_SITE_PR," ","MDC_BS_QUAL_RIGHT",,"7","8196","466948","Right - General",
+_BODY_SITE_TEMP," ","MDC_HEAD_MOUTH",,"7","1540","460292","Oral",
+_BODY_SITE_TEMP," ","MDC_UPEXT_AXILLA",,"7","1740","460492","Axillary",
+_BODY_SITE_TEMP," ","MDC_TRUNK_BUTTOCK",,"7","1668","460420","Rectal",
+_BODY_SITE_TEMP _BODY_SITE_SPO2," ","MDC_HEAD_EAR",,"7","1520","460272","Tympanic",
+_BODY_SITE_SPO2," ","MDC_UPEXT_FINGER",,"7","1748","460500","Finger",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_NASION_MID",,"7","996","459748","Nz",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_POLAR_MID",,"7","1000","459752","Fpz",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_ANT_MID",,"7","1004","459756","AFz",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_MID",,"7","1008","459760","Fz",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_MID",,"7","1012","459764","FCz",
+_BODY_SITE_EEG," ","MDC_HEAD_CENT_MID",,"7","1016","459768","Cz",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_MEDIA",,"7","1020","459772","CPz",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_MID",,"7","1024","459776","Pz",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_OCCIP_MID",,"7","1028","459780","POz",
+_BODY_SITE_EEG," ","MDC_HEAD_OCCIP_MID",,"7","1032","459784","Oz",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_INION_MID",,"7","1036","459788","Iz",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_POLAR_L",,"7","1041","459793","Fp1",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_POLAR_R",,"7","1042","459794","Fp2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_L_1",,"7","1049","459801","F1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_R_2",,"7","1054","459806","F2",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_L_3",,"7","1057","459809","F3",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_R_4",,"7","1062","459814","F4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_L_5",,"7","1065","459817","F5",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_R_6",,"7","1070","459822","F6",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_L_7",,"7","1073","459825","F7",
+_BODY_SITE_EEG," ","MDC_HEAD_FRONT_R_8",,"7","1078","459830","F8",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_L_9",,"7","1081","459833","F9",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_R_10",,"7","1086","459838","F10",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_L_1",,"7","1089","459841","FC1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_R_2",,"7","1094","459846","FC2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_L_3",,"7","1097","459849","FC3",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_R_4",,"7","1102","459854","FC4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_L_5",,"7","1105","459857","FC5",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_CENT_R_6",,"7","1110","459862","FC6",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_TEMPOR_L_7",,"7","1113","459865","FT7",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_TEMPOR_R_8",,"7","1118","459870","FT8",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_TEMPOR_L_9",,"7","1121","459873","FT9",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_TEMPOR_R_10",,"7","1126","459878","FT10",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_CENT_L_1",,"7","1129","459881","C1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_CENT_R_2",,"7","1134","459886","C2",
+_BODY_SITE_EEG," ","MDC_HEAD_CENT_L_3",,"7","1137","459889","C3",
+_BODY_SITE_EEG," ","MDC_HEAD_CENT_R_4",,"7","1142","459894","C4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_CENT_L_5",,"7","1145","459897","C5",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_CENT_R_6",,"7","1150","459902","C6",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_CENT_L_1",,"7","1153","459905","CP1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_CENT_R_2",,"7","1158","459910","CP2",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_CENT_L_3",,"7","1161","459913","CP3",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_CENT_R_4",,"7","1166","459918","CP4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_CENT_L_5",,"7","1169","459921","CP5",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_CENT_R_6",,"7","1174","459926","CP6",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_L_1",,"7","1177","459929","P1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_R_2",,"7","1182","459934","P2",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_L_3",,"7","1185","459937","P3",
+_BODY_SITE_EEG," ","MDC_HEAD_PARIET_R_4",,"7","1190","459942","P4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_L_5",,"7","1193","459945","P5",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_R_6",,"7","1198","459950","P6",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_L_9",,"7","1201","459953","P9",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_R_10",,"7","1206","459958","P10",
+_BODY_SITE_EEG," ","MDC_HEAD_OCCIP_L",,"7","1209","459961","O1",
+_BODY_SITE_EEG," ","MDC_HEAD_OCCIP_R",,"7","1214","459966","O2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_ANT_L_3",,"7","1217","459969","AF3",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_ANT_R_4",,"7","1222","459974","AF4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_ANT_L_7",,"7","1225","459977","AF7",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_FRONT_ANT_R_8",,"7","1230","459982","AF8",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_OCCIP_L_3",,"7","1233","459985","PO3",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_OCCIP_R_4",,"7","1238","459990","PO4",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_OCCIP_L_7",,"7","1241","459993","PO7",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PARIET_OCCIP_R_8",,"7","1246","459998","PO8",
+_BODY_SITE_EEG," ","MDC_HEAD_TEMPOR_L_3",,"7","1249","460001","T3",
+_BODY_SITE_EEG," ","MDC_HEAD_TEMPOR_R_4",,"7","1254","460006","T4",
+_BODY_SITE_EEG," ","MDC_HEAD_TEMPOR_L_5",,"7","1257","460009","T5",
+_BODY_SITE_EEG," ","MDC_HEAD_TEMPOR_R_6",,"7","1262","460014","T6",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_L_9",,"7","1265","460017","T9",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_R_10",,"7","1270","460022","T10",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_PARIET_L_7",,"7","1273","460025","TP7",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_PARIET_R_8",,"7","1278","460030","TP8",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_PARIET_L_9",,"7","1281","460033","TP9",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_PARIET_R_10",,"7","1286","460038","TP10",
+_BODY_SITE_SPO2," ","MDC_HEAD_EAR_L",,"7","1289","460041","A1",
+_BODY_SITE_SPO2," ","MDC_HEAD_EAR_R",,"7","1290","460042","A2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_ANT_L",,"7","1297","460049","T1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_TEMPOR_ANT_R",,"7","1308","460060","T2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PHARYNGEAL_L",,"7","1305","460057","Pg1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_PHARYNGEAL_R",,"7","1306","460058","Pg2",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_SPHENOIDAL_L",,"7","1313","460065","Sp1",
+_BODY_SITE_EEG_EX," ","MDC_HEAD_SPHENOIDAL_R",,"7","1314","460066","Sp2",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_1",,"7","1881","460633","X1",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_2",,"7","1882","460634","X2",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_3",,"7","1883","460635","X3",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_4",,"7","1884","460636","X4",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_5",,"7","1885","460637","X5",
+_BODY_SITE_EEG," ","MDC_HEAD_CUSTOM_6",,"7","1886","460638","X6",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_OCCIPITAL_L",,"7","1845","460597","LO",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_OCCIPITAL_R",,"7","1846","460598","RO",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_PARIETAL_L",,"7","1849","460601","LP",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_PARIETAL_R",,"7","1850","460602","RP",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_TEMPORAL_L",,"7","1853","460605","LT",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_TEMPORAL_R",,"7","1854","460606","RT",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_FRONTAL_L",,"7","1857","460609","LF",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_FRONTAL_R",,"7","1858","460610","RF",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_FRONTAL_POLAR_L",,"7","1861","460613","LFp",
+_BODY_SITE_EEG," ","MDC_HEAD_REGIONAL_FRONTAL_POLAR_R",,"7","1862","460614","RFp",
+_BODY_SITE_EEG," ","MDC_NERV_SPIN_CERVIC_5",,"7","1864","460616","C5S",
+_MDC_BREATH_PHASE," INSP_PHASE","MDCX_EVT_BREATH_PHASE_INSP ",,,,,"",
+_MDC_BREATH_PHASE," INSP_PAUSE_PHASE","MDCX_EVT_BREATH_PHASE_INSP_PAUSE ",,,,,"",
+_MDC_BREATH_PHASE," EXP_PHASE","MDCX_EVT_BREATH_PHASE_EXH ",,,,,"",
+_MDC_BREATH_PHASE," EXP_PAUSE_PHASE","MDCX_EVT_BREATH_PHASE_EXH_PAUSE ",,,,,"",
+_MDC_VENT_BREATH_TYPE," ALL BREATHS","MDCX_VENT_BREATH_TYPE_NOS",,,,,"",
+_MDC_VENT_BREATH_TYPE," SPONTANEOUS_BREATH","MDCX_VENT_BREATH_TYPE_SPONTANEOUS",,,,,"",
+_MDC_VENT_BREATH_TYPE," MANDATORY_BREATH","MDCX_VENT_BREATH_TYPE_MANDATORY",,,,,"",
+_MDC_VENT_BREATH_TYPE," SPECIAL_BREATH","MDCX_VENT_BREATH_TYPE_EXCEPTION",,,,,"e.g., ""sigh"", auto-zero pressure transducer, PRVC ""test breath""",
+_MDC_WAVE_SHAPE," SQUARE","MDCX_WAVE_SHAPE_SQUARE",,,,,"",
+_MDC_WAVE_SHAPE," DECELERATING","MDCX_WAVE_SHAPE_DECELERATING",,,,,"",
+_MDC_SIGNAL_QUALITY," GREEN","MDCX_SIG_QUALITY_GREEN",,,,,"Perhaps even more generic:  MDCX_QUALITY_LEVEL_; e.g., for QoS levels",
+_MDC_SIGNAL_QUALITY," YELLOW","MDCX_SIG_QUALITY_YELLOW",,,,,"",
+_MDC_SIGNAL_QUALITY," RED","MDCX_SIG_QUALITY_RED",,,,,"",
+_MDC_ILV_MODE," Off","MDCX_ILV_OFF",,,,,"Or should we use Metric-Status?",
+_MDC_ILV_MODE," Master","MDCX_ILV_MASTER",,,,,"",
+_MDC_ILV_MODE," Slave","MDCX_ILV_SLAVE",,,,,"",
+_MDC_NEB_SYNC," Continuous","MDCX_NEB_SYNC_CONTINUOUS",,,,,"",
+_MDC_NEB_SYNC," Insp Only","MDCX_NEB_SYNC_INSP_ONLY",,,,,"",
+_MDC_SPO2_ALGO_MODE," Maximum","MDCX_SPO2_ALGO_MODE_MAX",,,,,"Too vendor specific OR should we have a general bag for these enumerations?",
+_MDC_SPO2_ALGO_MODE," Normal","MDCX_SPO2_ALGO_MODE_NORM",,,,,"",
+_MDC_SPO2_ALGO_MODE," APOD","MDCX_SPO2_ALGO_MODE_APOD",,,,,"""Adaptive Probe Off Technology""",
+_MDC_PANEL_LOCK_DIFFICULTY," Easy","MDCX_DIFFICULTY_EASY",,,,,"",
+_MDC_PANEL_LOCK_DIFFICULTY," Hard","MDCX_DIFFICULTY_HARD",,,,,"",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_UNKNOWN",,,,,"Fresh Gas",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_FRESHGAS",,,,,"Fresh Gas",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_EXHAUST",,,,,"Exhaust",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_INSP",,,,,"Inspiratory Limb",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_EXP",,,,,"Expiratory Limb",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_YPIECE",,,,,"Y-Piece",
+_GAS_MEAS_SITE," ","MDC_VENT_GAS_MSMT_SITE_ENDOTRCH",,,,,"Endotracheal",
+," OPEN",,,,,,,
+," CLOSED",,,,,,,
+," COMBINATION",,,,,,,
+," RADIANT",,,,,,,
+," CONVECTIVE",,,,,,,
+," NONE",,,,,,,
+," PATIENT",,,,,,,
+," MANUAL",,,,,,,
+," BED_OPEN",,,,,,,
+," BED_PARTIALLY_OPEN",,,,,,,
+," BED_CLOSED",,,,,,,
+," AIR_CURTAIN_OFF",,,,,,,
+," AIR_CURTAIN_ON",,,,,,,
+," AIR_CURTAIN_USER_DISABLED",,,,,,,
+," FAN_SPEED_LOW",,,,,,,
+," FAN_SPEED_HIGH",,,,,,,
+_MDC_COMM_STATUS," comm-status-offline",,,,,,"","ds-ip-rel_2.0"
+_MDC_COMM_STATUS," comm-status-online",,,,,,"","ds-ip-rel_2.0"
+_MDC_PCA_DOSE_TYPE," pca-dose-type-clinician",,,,,,"","IP_NA_CAT_15"
+_MDC_PCA_DOSE_TYPE," pca-dose-type-loading",,,,,,"","IP_NA_CAT_15"
+_MDC_PCA_DOSE_TYPE," pca-dose-type-patient",,,,,,"","IP_NA_CAT_15"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_DELIV_START",,"3","680","197288","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_DELIV_STOP",,"3","682","197290","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_DELIV_COMP",,"3","684","197292","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_COMM_STATUS_CHANGE",,"3","686","197294","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_PROG_CLEARED",,"3","688","197296","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_AUTO_PROG_CLEARED",,"3","690","197298","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PATIENT_CHANGE",,"3","692","197300","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PATIENT_ID_CHANGE",,"3","694","197302","","ds-ip-rel_2.0"
+," ","MDC_EVT_PATIENT_WEIGHT_CHANGE",,"3","696","197304","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PUMP_VOL_COUNTERS_CLEARED",,"3","698","197306","","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_DEVICE_TIME_CHANGED",,"3","700","197308","","ds-ip-rel_2.0"
+_VENT_MODE," ","MDCX_VENT_MODE_MANUAL",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_ACGO",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_MANUAL_PLUS_ALM_OFF",,,,,"",
+_VENT_MODE," ","MDCX_MANUAL_PLUS_BYPASS",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_MANUAL_PLUS_MONITOR",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_PCV",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_PS",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_SIMVVC",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_SIMVVC_PLUS_PS",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_PCV_PLUS_VG",,,,,"",
+_VENT_MODE," ","MDCX_VENT_MODE_AVNF",,,,,"",
+_LOC_SCORE," ENUM_VALUE_TOKEN","MDCX_LOC_ALERT",,,,,"Alert",
+_LOC_SCORE," ENUM_VALUE_TOKEN","MDCX_LOC_Voice",,,,,"Patient can speak",
+_LOC_SCORE," ENUM_VALUE_TOKEN","MDCX_LOC_NCONF",,,,,"New confusion",
+_LOC_SCORE," ENUM_VALUE_TOKEN","MDCX_LOC_PAIN",,,,,"Patient responds to pain stimulus",
+_LOC_SCORE," ENUM_VALUE_TOKEN","MDCX_LOC_UNRESP",,,,,"Patient unresponsive",
+," ENUM_VALUE_TOKEN","MDCX_ENUM_YES",,,,,"Yes","ds-ip-rel_2.0"
+," ENUM_VALUE_TOKEN","MDCX_VALUE_YES",,,,,"Yes",
+_MDC_PUMP_MODE," pump-mode-clinician-dose",," 17",,,,"",""
+_MDC_PUMP_MODE," pump-mode-kvo",," 18",,,,"",""
+_MDC_PUMP_MODE," pump-mode-flushing",," 19",,,,"",""
+_MDC_ATTR_AL_COND," ","MDC_EVT_ADVIS_MAINT_NEEDED",,"3","6733","203341","A device has identified the need for maintenance (e.g., PM period has expired).","ds-ip-rel_2.0"
+_MDC_PUMP_STAT," pump-status-not-infusing",,,,,,"The infusion pump mechanism is stopped.","ds-ip-rel_2.0"
+_MDC_PUMP_MODE," pump-mode-patient-dose",," 10",,,,"The infusion pump is programmed to allow patient-initiated drug dosing (e.g., PCA). Replaced pump-mode-pca that has the same value.",""
+_MDC_PUMP_MODE," pump-mode-priming",," 21",,,,"The pump is currently priming the fluid line.  Though it is moving fluid, it is not intended to be delivered to the patient, but rather to fill the line, purge air, etc.",""
+_MDC_PUMP_MODE," pump-mode-other",," 22",,,,"The pump is programmed in an operational mode that does not match one of the defined modes.",""
+," pump-stopped-nos",," 1",,,,"Not Otherwise Specified.",""
+," pump-stopped-off",," 2",,,,"Pump is turned off.",""
+," pump-stopped-ready-not-started",," 3",,,,"Pump has been powered on or selected and possibly programmed but not ""started"".",""
+," pump-stopped-delayed-start",," 4",,,,"Pump has been programmed with either a future start time or a delay period after which the infusion will begin.",""
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-standby",," 5",,,,"Pump has been programmed and ""paused"" for an indeterminate period (possibly with configured max period limit).","ds-ip-rel_2.0"
+," pump-stopped-clinician-paused",," 6",,,,"Pump has been stopped by the clinician for a short time after which an alert may signal.",""
+," pump-stopped-alarm",," 7",,,,"Pump has been stopped as a result of an alarm condition.",""
+," pump-stopped-delivery-complete",," 8",,,,"Status when an infusion is complete and not followed by a KVO.",""
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-between-doses",," 9",,,,"Pump has been programmed and started but is in patient-dose mode or multi-dosing mode and not currently delivering fluid.","ds-ip-rel_2.0"
+," pump-stopped-transitioning",," 10",,,,"The pump is transitioning to a new infusing mode (e.g., piggyback to primary switchover).  Used when pump-stopped-delivery-complete is not appropriate.",""
+," ENUM_VALUE_TOKEN","MDCX_ENUM_NO",,,,,"no","ds-ip-rel_2.0"
+," pump-status-continue",,,,,,"",""
+," pump-status-flushing",,,,,,"",""
+," pump-status-transitioning",,,,,,"",""
+," pump-status-delivering",,,,,,"",""
+," pump-status-not-delivering",,,,,,"",""
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-priming",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_SOURCE_INFO," pump-source-info-primary",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_SOURCE_INFO," pump-source-info-secondary",,,,,,"","ds-ip-rel_2.0"
+," pump-source-info-primary",,,,,,"",
+_MDC_PUMP_SOURCE_INFO," pump-source-info-pca",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_SOURCE_INFO," pump-source-info-loading",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_SOURCE_INFO," pump-source-info-clinician",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_SOURCE_INFO," pump-source-info-intermittent",,,,,,"","ds-ip-rel_2.0"
+," pump-status-stop",,,,,,"",""
+," pump-status-not-started",,,,,,"",""
+," pump-status-active",,,,,,"",""
+," pump-status-complete",,,,,,"",""
+_MDC_PUMP_DELIV_STAT," pump-delivery-status-delivering",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_DELIV_STAT," pump-delivery-status-not-delivering",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_DELIV_STAT," pump-delivery-status-kvo",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_DELIV_STAT," pump-delivery-status-flushing",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_DELIV_STAT," pump-delivery-status-transitioning",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-delayed",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-alarming",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-by-clinician",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-powered-off",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-not-specified",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_COMPLETION_MODE," pump-program-completion-mode-stop",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_COMPLETION_MODE," pump-program-completion-mode-kvo",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_COMPLETION_MODE," pump-program-completion-mode-continue",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_DELIVERY_MODE," pump-program-delivery-mode-continuous",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_DELIVERY_MODE," pump-program-delivery-mode-ramp-taper",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_DELIVERY_MODE," pump-program-delivery-mode-multi-step",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_DELIVERY_MODE," pump-program-delivery-mode-multi-dosing",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_STATUS," pump-program-status-not-started",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_STATUS," pump-program-status-active",,,,,,"","ds-ip-rel_2.0"
+_MDC_PUMP_PROGRAM_STATUS," pump-program-status-complete",,,,,,"","ds-ip-rel_2.0"
+_INFUSION_PUMP_EVENT," ","MDC_EVT_PATIENT_PARAMETER_CHANGE",,"3","748","197356","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_OCCL_PROXIMAL",,"3","750","197358","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_OCCL_DISTAL",,"3","752","197360","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_AIR_PROXIMAL",,"3","754","197362","","ds-ip-rel_2.0"
+_MDC_ATTR_AL_COND _MDC_ATTR_AL_COND_DELIVERY," ","MDC_EVT_FLUID_LINE_AIR_DISTAL",,"3","756","197364","","ds-ip-rel_2.0"
+_MDC_PUMP_NOT_DELIVERING_REASON," pump-stopped-switching-source",," 11",,,,"The pump is momentarily stopped while transitioning between infusate sources.",
+," <0|1>^pulse-qual-nominal(0)",," 0",,,,,
+," <0|1>^pulse-qual-marginal(1)",," 1",,,,,
+," <0|1>^pulse-qual-minimal(2)",," 2",,,,,
+," <0|1>^pulse-qual-unacceptable(3)",," 3",,,,,
+," <0|1>^sensor-disconnected(0)",," 0",,,,,
+," <0|1>^sensor-malfunction(1)",," 1",,,,,
+," <0|1>^sensor-displaced(2)",," 2",,,,,
+," <0|1>^sensor-unsupported(3)",," 3",,,,,
+," <0|1>^sensor-off(4)",," 4",,,,,
+," <0|1>^sensor-interference(5)",," 5",,,,,
+," <0|1>^signal-searching(6)",," 6",,,,,
+," <0|1>^signal-pulse-questionable(7)",," 7",,,,,
+," <0|1>^signal-non-pulsatile(8)",," 8",,,,,
+," <0|1>^signal-erratic(9)",," 9",,,,,
+," <0|1>^signal-low-perfusion(10)",," 10",,,,,
+," <0|1>^signal-poor(11)",," 11",,,,,
+," <0|1>^signal-inadequate(12)",," 12",,,,,
+," <0|1>^signal-processing-irregularity(13)",," 13",,,,,
+," <0|1>^device-equipment-malfunction(14)",," 14",,,,,
+," <0|1>^device-extended-update(15)",," 15",,,,,
+_BODY_SITE_NBP_BP," ","MDC_LOEXT_THIGH_L",,"7","1613","460365","",
+_BODY_SITE_NBP_BP," ","MDC_LOEXT_THIGH_R",,"7","1614","460366","",
+_BODY_SITE_NBP_BP," ","MDC_UPEXT_FOREARM_L",,"7","1769","460521","",
+_BODY_SITE_NBP_BP," ","MDC_UPEXT_FOREARM_R",,"7","1770","460522","",
+," UNKNOWN",,,,,,,
+," NOAGENT",,,,,,,
+," DESFL",,,,,,,
+," ENFL",,,,,,,
+," HALOTH",,,,,,,
+," ISOFL",,,,,,,
+," SEVOFL",,,,,,,
+," N2O",,,,,,,
+," AIR",,,,,,,
+_GAS_MSMT_SITE_INSP _GAS_MSMT_SITE_EXP _GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_NOS",,"7","2048","460800",,
+_GAS_MSMT_SITE_INSP _GAS_MSMT_SITE,,"MDC_GAS_MSMT_SITE_FGF",,"7","2052","460804",,
+_GAS_MSMT_SITE_INSP _GAS_MSMT_SITE,,"MDC_GAS_MSMT_SITE_IL",,"7","2054","460806",,
+_GAS_MSMT_SITE_INSP _GAS_MSMT_SITE,,"MDC_GAS_CIRC_SITE_ABSi",,"7","2073","460825",,
+_GAS_MSMT_SITE_EXP _GAS_MSMT_SITE,,"MDC_GAS_MSMT_SITE_EXH",,"7","2053","460805",,
+_GAS_MSMT_SITE_EXP _GAS_MSMT_SITE,,"MDC_GAS_MSMT_SITE_EL",,"7","2055","460807",,
+_GAS_MSMT_SITE_EXP,,"MDC_GAS_CIRC_SITE_ABSe",,"7","2072","460824",,
+," ENDOTRACHEAL",,,,,,,
+," TRACHEAL",,,,,,,
+," INTERMITTENT",,,,,,,
+," SCHEDULED",,,,,,,
+," CONTINUOUS",,,,,,,
+," OFF",,,,,,,
+," NOT_PRESENT",,,,,,,
+," NOT_CONNECTED",,,,,,,
+," FAILURE",,,,,,,
+," ON",,,,,,,
+," AEROSOLIZER",,,,,,,
+,"  PNEUMATIC",,,,,,,
+_BODY_SITE_NBP_BP _BODY_SITE_PR _BODY_SITE_SPO2," ","MDC_BODY_SITE_NOS",,,,,"Not defined in -10101:2004, ECODE10 = 0 available, DISCUSS",
+_BODY_SITE_SPO2," Forehead, NOS [T-Y0110] (e.g., for oximetric measurement)","MDC_HEAD_FORE",,"7","1528","460280",,
+_BODY_SITE_SPO2," Forehead, NOS, Left [T-Y0110-LFT] (e.g., for oximetric measurement)","MDC_HEAD_FORE_L",,"7","1529","460281",,
+_BODY_SITE_SPO2," Forehead, NOS, Right [T-Y0110-RGT] (e.g., for oximetric measurement)","MDC_HEAD_FORE_R",,"7","1530","460282",,
+_BODY_SITE_SPO2," Head, Naris (nostril) [T-21310]","MDC_HEAD_NARIS",,"7","1544","460296",,
+_BODY_SITE_SPO2," Head, Naris (nostril), Left [T-21310-LFT]","MDC_HEAD_NARIS_L",,"7","1545","460297",,
+_BODY_SITE_SPO2," Head, Naris (nostril), Right [T-21310-RGT]","MDC_HEAD_NARIS_R",,"7","1546","460298",,
+_BODY_SITE_SPO2," Head, Nose, NOS [T-21000]","MDC_HEAD_NOSE",,"7","1552","460304",,
+_BODY_SITE_SPO2," Lower extremity, Foot [T-Y9700]","MDC_LOEXT_FOOT",,"7","1588","460340",,
+_BODY_SITE_SPO2," Lower extremity, Foot, Left [Left foot, T-Y9720]","MDC_LOEXT_FOOT_L",,"7","1589","460341",,
+_BODY_SITE_SPO2," Lower extremity, Foot, Right [Right foot, T-Y9710]","MDC_LOEXT_FOOT_R",,"7","1590","460342",,
+_BODY_SITE_SPO2," Lower extremity, Toe [T-Y9800]","MDC_LOEXT_TOE",,"7","1616","460368",,
+_BODY_SITE_SPO2," Lower extremity, Toe, Left [T-Y9800-LFT]","MDC_LOEXT_TOE_L",,"7","1617","460369",,
+_BODY_SITE_SPO2," Lower extremity, Toe, Right [T-Y9800-RGT]","MDC_LOEXT_TOE_R",,"7","1618","460370",,
+_BODY_SITE_SPO2," Lower extremity, Great toe [T-Y9810]","MDC_LOEXT_TOE_GREAT",,"7","1620","460372",,
+_BODY_SITE_SPO2," Lower extremity, Great toe, Left [T-Y9810-LFT]","MDC_LOEXT_TOE_GREAT_L",,"7","1621","460373",,
+_BODY_SITE_SPO2," Lower extremity, Great toe, Right [T-Y9810-RGT]","MDC_LOEXT_TOE_GREAT_R",,"7","1622","460374",,
+_BODY_SITE_SPO2," Upper extremity, Finger, NOS, Left [T-Y8800-LFT] (e.g., for oximetric measurement)","MDC_UPEXT_FINGER_L",,"7","1749","460501",,
+_BODY_SITE_SPO2," Upper extremity, Finger, NOS, Right [T-Y8800-RGT] (e.g., for oximetric measurement)","MDC_UPEXT_FINGER_R",,"7","1750","460502",,
+_BODY_SITE_SPO2," Upper extremity, Hand, NOS [T-Y8700]","MDC_UPEXT_HAND",,"7","1772","460524",,
+_BODY_SITE_SPO2," Upper extremity, Hand, NOS, Left [Left hand, T-Y8720]","MDC_UPEXT_HAND_L",,"7","1773","460525",,
+_BODY_SITE_SPO2," Upper extremity, Hand, NOS, Right [Right hand, T-Y8710]","MDC_UPEXT_HAND_R",,"7","1774","460526",,
+_BODY_SITE_SPO2," Upper extremity, Wrist, NOS [T-Y8600]","MDC_UPEXT_WRIST",,"7","1784","460536",,
+_BODY_SITE_SPO2," Upper extremity, Wrist, NOS, Left [Left wrist, T-Y8620]","MDC_UPEXT_WRIST_L",,"7","1785","460537",,
+_BODY_SITE_SPO2," Upper extremity, Wrist, NOS, Right [Right wrist, T-Y8610]","MDC_UPEXT_WRIST_R",,"7","1786","460538",,
+_BODY_SITE_EEG," A1","MDC_HEAD_AURIC_L",,"7","1289","460041",,
+_BODY_SITE_EEG," A2","MDC_HEAD_AURIC_R",,"7","1290","460042",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_AWAY",,"7","2049","460801",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_YPI",,"7","2050","460802",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_ETT",,"7","2051","460803",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_RB",,"7","2058","460810",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_LB",,"7","2057","460809",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_PI",,"7","2060","460812",,
+_GAS_MSMT_SITE _GAS_MSMT_SITE_AWAY,,"MDC_GAS_MSMT_SITE_ETTC",,"7","2061","460813",,
+," <0|1>^device-battery-low(0)",," 0",,,,,
+," <0|1>^sensor-sample-size-insufficient(2)",," 2",,,,,
+," <0|1>^sensor-strip-insertion(3)",," 3",,,,,
+," <0|1>^sensor-strip-type-incorrect(4)",," 4",,,,,
+," <0|1>^sensor-result-too-high(5)",," 5",,,,,
+," <0|1>^sensor-result-too-low(6)",," 6",,,,,
+," <0|1>^sensor-temp-too-high(7)",," 7",,,,,
+," <0|1>^sensor-temp-too-low(8)",," 8",,,,,
+," <0|1>^sensor-read-interrupt(9)",," 9",,,,,
+," <0|1>^device-gen-fault(10)",," 10",,,,,
+," <0|1>^inr-sensor-calibration-due(11)",," 11",,,,,
+,,"MDC_CTXT_INR_TESTER_SELF",,"128","29317","8417925",,
+,,"MDC_CTXT_INR_TESTER_HCP",,"128","29318","8417926",,
+,,"MDC_CTXT_INR_TESTER_LAB",,"128","29319","8417927",,
+,,"MDC_CTXT_GLU_HEALTH_MINOR",,"128","29216","8417824",,
+,,"MDC_CTXT_GLU_HEALTH_MAJOR",,"128","29220","8417828",,
+,,"MDC_CTXT_GLU_HEALTH_MENSES",,"128","29224","8417832",,
+,,"MDC_CTXT_GLU_HEALTH_STRESS",,"128","29228","8417836",,
+,,"MDC_CTXT_GLU_HEALTH_NONE",,"128","29232","8417840",,
+,,"MDC_CTXT_GLU_TESTER_SELF",,"128","29280","8417888",,
+,,"MDC_CTXT_GLU_TESTER_HCP",,"128","29284","8417892",,
+,,"MDC_CTXT_GLU_TESTER_LAB",,"128","29288","8417896",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_FINGER",,"128","29240","8417848",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_AST",,"128","29244","8417852",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_EARLOBE",,"128","29248","8417856",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_CTRLSOLUTION",,"128","29252","8417860",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_UNDETERMINED",,"128","29237","8417845",,
+,,"MDC_CTXT_GLU_SAMPLELOCATION_OTHER",,"128","29238","8417846",,
+,,"MDC_CTXT_GLU_MEAL_PREPRANDIAL",,"128","29260","8417868",,
+,,"MDC_CTXT_GLU_MEAL_POSTPRANDIAL",,"128","29264","8417872",,
+,,"MDC_CTXT_GLU_MEAL_FASTING",,"128","29268","8417876",,
+,,"MDC_CTXT_GLU_MEAL_CASUAL",,"128","29272","8417880",,
+,,"MDC_CTXT_GLU_MEAL_BEDTIME",,"128","29261","8417869",,
+_MDC_PUMP_SOURCE_INFO," pump-source-info-piggyback",,,,,,"",

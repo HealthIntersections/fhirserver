@@ -1,0 +1,4031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CodeSystem xmlns="http://hl7.org/fhir">
+  <id value="11073-10101"/>
+  <url value="urn:iso:std:iso:11073:10101"/>
+  <identifier>
+    <system value="urn:ietf:rfc:3986"/>
+    <value value="urn:oid:todo"/>
+  </identifier>
+  <version value="[todo]"/>
+  <name value="11073:10101 codes for the FHIR community"/>
+  <status value="active"/>
+  <experimental value="false"/>
+  <date value="2017-04-27T17:09:41+10:00"/>
+  <publisher value="HL7 (FHIR Project)"/>
+  <contact>
+    <telecom>
+      <system value="url"/>
+      <value value="http://ieee?"/>
+    </telecom>
+  </contact>
+  <description value="1073 Codes for the FHIR community (generated from the Rosetta data"/>
+  <caseSensitive value="false"/>
+  <content value="complete"/>
+  <concept>
+    <code value="150612"/>
+    <display value="Acceleration Index"/>
+    <definition value="Initial acceleration of blood flow in the aorta, which occurs within the first 10 to 20 milliseconds"/>
+  </concept>
+  <concept>
+    <code value="151650"/>
+    <display value="Acoustic Respiration Rate"/>
+    <definition value="Rate of breathing; method: acoustic."/>
+  </concept>
+  <concept>
+    <code value="158013"/>
+  </concept>
+  <concept>
+    <code value="188744"/>
+    <display value="Patient body surface area"/>
+    <definition value="The actual body surface area of the patient, calculated from patient actual weight and patient actual length."/>
+  </concept>
+  <concept>
+    <code value="68483"/>
+    <definition value="Indicates whether visual or aural indications at the patient care device are inactivated"/>
+  </concept>
+  <concept>
+    <code value="68484"/>
+    <definition value="Alert priority"/>
+  </concept>
+  <concept>
+    <code value="68482"/>
+    <definition value="Indicates the state of the underlying alert condition at the patient care device"/>
+  </concept>
+  <concept>
+    <code value="68480"/>
+    <definition value="Identifies the physiological measurement or technical source responsible for the alert"/>
+  </concept>
+  <concept>
+    <code value="68485"/>
+    <definition value="Alert type"/>
+  </concept>
+  <concept>
+    <code value="68012"/>
+  </concept>
+  <concept>
+    <code value="68481"/>
+    <definition value="Specifies whether this message is the beginning, end or other state or state transition for the alert"/>
+  </concept>
+  <concept>
+    <code value="68487"/>
+  </concept>
+  <concept>
+    <code value="68488"/>
+  </concept>
+  <concept>
+    <code value="68060"/>
+  </concept>
+  <concept>
+    <code value="68063"/>
+  </concept>
+  <concept>
+    <code value="188792"/>
+    <display value="Last Taken Weight"/>
+    <definition value="Last Taken Weight"/>
+  </concept>
+  <concept>
+    <code value="68167"/>
+  </concept>
+  <concept>
+    <code value="68185"/>
+  </concept>
+  <concept>
+    <code value="151744"/>
+    <display value="Respir. O2 pressure difference"/>
+    <definition value="Difference between inspiratory and expiratory partial pressures of oxygen in airway gas"/>
+  </concept>
+  <concept>
+    <code value="151570"/>
+    <display value="Respiration rate"/>
+    <definition value="Rate of breathing; method: direct airway flow measurement."/>
+  </concept>
+  <concept>
+    <code value="160252"/>
+    <display value="Base Excess of Arterial Blood"/>
+    <definition value="Base excess of arterial blood"/>
+  </concept>
+  <concept>
+    <code value="160216"/>
+    <display value="Base Excess of Extracellular Fluid"/>
+    <definition value="Base excess of extracellular fluid"/>
+  </concept>
+  <concept>
+    <code value="8417908"/>
+  </concept>
+  <concept>
+    <code value="150488"/>
+    <display value="Perfusion index"/>
+    <definition value="Tissue perfusion computed as milliliters per minute of blood flow per gram of tissue"/>
+  </concept>
+  <concept>
+    <code value="149522"/>
+    <display value="Invasive pulse rate"/>
+    <definition value="Rate of blood pulse in an artery, measured invasively"/>
+  </concept>
+  <concept>
+    <code value="152840"/>
+    <display value="(Estimated) Blood Shunt Fraction"/>
+    <definition value="The (estimated) fraction of cardiac output that returns to the left heart without the benefit of exposure to ventilated alveoli."/>
+  </concept>
+  <concept>
+    <code value="188748"/>
+    <display value="body fat"/>
+    <definition value="The individual&#39;s body fat in kilograms divided by the individual&#39;s weight in kilograms"/>
+  </concept>
+  <concept>
+    <code value="188764"/>
+    <display value="body water"/>
+    <definition value="The individual&#39;s body water in kilograms divided by the individual&#39;s weight"/>
+  </concept>
+  <concept>
+    <code value="151680"/>
+    <display value="Vital capacity"/>
+    <definition value="Difference in volume between maximum inspiration and maximum expiration"/>
+  </concept>
+  <concept>
+    <code value="153856"/>
+    <display value="Circum head"/>
+    <definition value="Circumference of the head"/>
+  </concept>
+  <concept>
+    <code value="151594"/>
+    <display value="Respiration rate"/>
+    <definition value="Rate of breathing; method: carbon dioxide measurement"/>
+  </concept>
+  <concept>
+    <code value="151756"/>
+  </concept>
+  <concept>
+    <code value="160276"/>
+    <display value="Control calibration of INR"/>
+    <definition value="Control Solution of INR monitor"/>
+  </concept>
+  <concept>
+    <code value="152020"/>
+    <display value="Gas transport coefficient"/>
+    <definition value="Coefficient relating partial pressures of gas between alveoli and pulmonary capillaries"/>
+  </concept>
+  <concept>
+    <code value="188772"/>
+  </concept>
+  <concept>
+    <code value="151688"/>
+    <display value="Compliance of respiratory system"/>
+    <definition value="Change of tidal volume per unit change of airway pressure"/>
+  </concept>
+  <concept>
+    <code value="151692"/>
+    <display value="Thoracic compliance"/>
+    <definition value="Change of tidal volume per unit change of transthoracic pressure"/>
+  </concept>
+  <concept>
+    <code value="152600"/>
+    <display value="Dynamic compliance"/>
+    <definition value="Change of tidal volume per unit change of airway pressure, dynamically calculated using a least squares or other curve fitting algorithm where airway resistance and lung compliance are related by the &#x201C;equation of motion&#x201D; &#x2206;P&lt;sub&gt;i&lt;/sub&gt; = R&lt;sub&gt;dyn&lt;/sub&gt;&lt;i&gt;&#xA0;&lt;/i&gt;V&#x307;&lt;sub&gt;i&lt;/sub&gt; + V&lt;sub&gt;i&lt;/sub&gt;/C&lt;sub&gt;dyn&lt;/sub&gt; + PEEP&lt;sub&gt;tot &lt;/sub&gt;,"/>
+  </concept>
+  <concept>
+    <code value="151696"/>
+    <display value="Lung compliance, static"/>
+    <definition value="Change of tidal volume per unit change in esophageal pressure measured statically at expiration end"/>
+  </concept>
+  <concept>
+    <code value="152456"/>
+    <display value="Concentration airway agent"/>
+    <definition value="Concentration of agent in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152460"/>
+    <display value="Concentration airway agent end tidal"/>
+    <definition value="Concentration of agent in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="152464"/>
+    <display value="Concentration airway agent inspiration"/>
+    <definition value="Concentration of agent in airway gas measured in inspiration"/>
+  </concept>
+  <concept>
+    <code value="152992"/>
+    <display value="Concentration (or partial pressure) of argon in airway gas"/>
+    <definition value="Measured partial pressure of argon in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152996"/>
+    <display value="End tidal argon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of argon in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="153000"/>
+    <display value="Expired argon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of argon in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="153004"/>
+    <display value="Inspiratory argon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of argon in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151700"/>
+    <display value="Concentration (or partial pressure) of carbon dioxide in airway gas"/>
+    <definition value="Measured partial pressure of carbon dioxide in airway gas"/>
+  </concept>
+  <concept>
+    <code value="151708"/>
+    <display value="End tidal carbon dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of carbon dioxide in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="151712"/>
+    <display value="Expired carbon dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of carbon dioxide in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="153320"/>
+    <display value="Slope of the alveolar plateau CO2 concentration with respect to expired volume"/>
+    <definition value="The slope of the CO2 concentration with respect to the expired gas volume during the alveolar plateau (Phase III) representing the emptying of alveoli with CO2-rich gas.  Method:  volumetric capnography."/>
+  </concept>
+  <concept>
+    <code value="151716"/>
+    <display value="Inspiratory carbon dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of carbon dioxide in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151718"/>
+  </concept>
+  <concept>
+    <code value="152024"/>
+    <display value="Concentration (or partial pressure) of desflurane in airway gas"/>
+    <definition value="Measured partial pressure of desflurane in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152084"/>
+    <display value="End tidal desflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of desflurane in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929300"/>
+  </concept>
+  <concept>
+    <code value="152112"/>
+    <display value="Expired desflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of desflurane in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152168"/>
+    <display value="Inspiratory desflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of desflurane in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152028"/>
+    <display value="Concentration (or partial pressure) of enflurane in airway gas"/>
+    <definition value="Measured partial pressure of enflurane in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152088"/>
+    <display value="End tidal enflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of enflurane in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929304"/>
+  </concept>
+  <concept>
+    <code value="152116"/>
+    <display value="Expired enflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of enflurane in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152172"/>
+    <display value="Inspiratory enflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of enflurane in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152032"/>
+    <display value="Concentration (or partial pressure) of halothane in airway gas"/>
+    <definition value="Measured partial pressure of halothane in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152092"/>
+    <display value="End tidal halothane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of halothane in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929308"/>
+  </concept>
+  <concept>
+    <code value="152120"/>
+    <display value="Expired halothane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of halothane in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152176"/>
+    <display value="Inspiratory halothane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of halothane in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="153040"/>
+    <display value="Concentration (or partial pressure) of helium in airway gas"/>
+    <definition value="Measured partial pressure of helium in airway gas"/>
+  </concept>
+  <concept>
+    <code value="153044"/>
+    <display value="End tidal helium concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of helium in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="153048"/>
+    <display value="Expired helium concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of helium in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="153052"/>
+    <display value="Inspiratory helium concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of helium in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152040"/>
+    <display value="Concentration (or partial pressure) of isoflurane in airway gas"/>
+    <definition value="Measured partial pressure of isoflurane in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152100"/>
+    <display value="End tidal isoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of isoflurane in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929316"/>
+  </concept>
+  <concept>
+    <code value="152128"/>
+    <display value="Expired isoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of isoflurane in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152184"/>
+    <display value="Inspiratory isoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of isoflurane in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152444"/>
+    <display value="Concentration (or partial pressure) of nitrogen in airway gas"/>
+    <definition value="Measured partial pressure of nitrogen in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152048"/>
+    <display value="Concentration (or partial pressure) of nitrous oxide in airway gas"/>
+    <definition value="Measured partial pressure of nitrous oxide in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152108"/>
+    <display value="End tidal nitrous oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrous oxide in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="152136"/>
+    <display value="Expired nitrous oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrous oxide in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152192"/>
+    <display value="Inspiratory nitrous oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrous oxide in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152448"/>
+    <display value="End tidal nitrogen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="153076"/>
+    <display value="Expired nitrogen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152452"/>
+    <display value="Inspiratory nitrogen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="153096"/>
+    <display value="Concentration (or partial pressure) of nitric oxide in airway gas"/>
+    <definition value="Measured partial pressure of nitric oxide in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152044"/>
+    <display value="Concentration (or partial pressure) of nitrogen dioxide in airway gas"/>
+    <definition value="Measured partial pressure of nitrogen dioxide in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152104"/>
+    <display value="End tidal nitrogen dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen dioxide in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="152132"/>
+    <display value="Expired nitrogen dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen dioxide in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152188"/>
+    <display value="Inspiratory nitrogen dioxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitrogen dioxide in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="153100"/>
+    <display value="End tidal nitric oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitric oxide in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="153104"/>
+    <display value="Expired nitric oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitric oxide in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="153108"/>
+    <display value="Inspiratory nitric oxide concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of nitric oxide in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151908"/>
+    <display value="Concentration (or partial pressure) of oxygen in airway gas"/>
+    <definition value="Measured partial pressure of oxygen in airway gas"/>
+  </concept>
+  <concept>
+    <code value="151744"/>
+    <display value="O2 pressure difference"/>
+    <definition value="Difference between inspiratory and expiratory partial pressures of oxygen in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152440"/>
+    <display value="End tidal oxygen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of oxygen in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929656"/>
+  </concept>
+  <concept>
+    <code value="153132"/>
+    <display value="Expired oxygen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of oxygen in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152196"/>
+    <display value="Inspiratory oxygen concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of oxygen in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152036"/>
+    <display value="Concentration (or partial pressure) of sevoflurane in airway gas"/>
+    <definition value="Measured partial pressure of sevoflurane in airway gas"/>
+  </concept>
+  <concept>
+    <code value="152096"/>
+    <display value="End tidal sevoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of sevoflurane in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="16929312"/>
+  </concept>
+  <concept>
+    <code value="152124"/>
+    <display value="Expired sevoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of sevoflurane in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="152180"/>
+    <display value="Inspiratory sevoflurane concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of sevoflurane in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="153172"/>
+    <display value="Concentration (or partial pressure) of xenon in airway gas"/>
+    <definition value="Measured partial pressure of xenon in airway gas"/>
+  </concept>
+  <concept>
+    <code value="153176"/>
+    <display value="End tidal xenon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of xenon in airway gas measured at the end of expiration"/>
+  </concept>
+  <concept>
+    <code value="153180"/>
+    <display value="Expired xenon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of xenon in airway gas measured during expiration"/>
+  </concept>
+  <concept>
+    <code value="153184"/>
+    <display value="Inspiratory xenon concentration (or partial pressure) in airway gas"/>
+    <definition value="Partial pressure of xenon in airway gas measured during inspiration"/>
+  </concept>
+  <concept>
+    <code value="159792"/>
+    <display value="Arterial blood calcium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="160024"/>
+    <display value="General calcium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="160256"/>
+    <display value="Ionized Calcium, Normalized to pH 7.4"/>
+    <definition value="Ionized calcium in blood fluid, normalized to pH 7.4"/>
+  </concept>
+  <concept>
+    <code value="160104"/>
+    <display value="General chloride ion concentration"/>
+  </concept>
+  <concept>
+    <code value="157760"/>
+    <display value="Drug concentration"/>
+    <definition value="Concentration of drug in fluid delivered to patient (comment: optional site attribute according to Table A.9.8.7 (miscellaneous body sites))"/>
+  </concept>
+  <concept>
+    <code value="153008"/>
+    <display value="Concentration argon (gas delivery system)"/>
+    <definition value="Concentration of argon in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="153012"/>
+    <display value="Concentration airway argon expiratory (gas delivery system)"/>
+    <definition value="Concentration of argon in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153016"/>
+    <display value="Concentration airway argon inspiratory (gas delivery system)"/>
+    <definition value="Concentration of argon in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="153020"/>
+    <display value="Concentration carbon dioxide (gas delivery system)"/>
+    <definition value="Concentration of carbon dioxide in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="153024"/>
+    <display value="Concentration airway carbon dioxide expiratory (gas delivery system)"/>
+    <definition value="Concentration of carbon dioxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153028"/>
+    <display value="Concentration airway carbon dioxide inspiratory (gas delivery system)"/>
+    <definition value="Concentration of carbon dioxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="152052"/>
+    <display value="Concentration desflurane (gas delivery system or circuit)"/>
+    <definition value="Concentration of desflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152140"/>
+    <display value="Concentration airway desflurane expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of desflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152200"/>
+    <display value="Concentration airway desflurane inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of desflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="16929416"/>
+  </concept>
+  <concept>
+    <code value="152056"/>
+    <display value="Concentration enflurane (gas delivery system or circuit)"/>
+    <definition value="Concentration of enflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152144"/>
+    <display value="Concentration airway enflurane expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of enflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152204"/>
+    <display value="Concentration airway enflurane inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of enflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient."/>
+  </concept>
+  <concept>
+    <code value="16929420"/>
+  </concept>
+  <concept>
+    <code value="152060"/>
+    <display value="Concentration halothane (gas delivery system or circuit)"/>
+    <definition value="Concentration of halothane in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152148"/>
+    <display value="Concentration airway halothane expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of halothane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152208"/>
+    <display value="Concentration airway halothane inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of halothane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="16929424"/>
+  </concept>
+  <concept>
+    <code value="153056"/>
+    <display value="Concentration helium (gas delivery system)"/>
+    <definition value="Concentration of helium in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="153060"/>
+    <display value="Concentration airway helium expiratory (gas delivery system)"/>
+    <definition value="Concentration of helium in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153064"/>
+    <display value="Concentration airway helium inspiratory (gas delivery system)"/>
+    <definition value="Concentration of helium in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="152068"/>
+    <display value="Concentration Isoflurane (gas delivery system or circuit)"/>
+    <definition value="Concentration of isoflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152156"/>
+    <display value="Concentration airway isoflurane expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of isoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152216"/>
+    <display value="Concentration airway isoflurane inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of isoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="16929432"/>
+  </concept>
+  <concept>
+    <code value="153080"/>
+    <display value="Concentration nitrogen (gas delivery system)"/>
+    <definition value="Concentration of nitrogen in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152076"/>
+    <display value="Concentration N2O (gas delivery system)"/>
+    <definition value="Concentration of nitrous oxide in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152164"/>
+    <display value="Concentration airway nitrous oxide expiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrous oxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152224"/>
+    <display value="Concentration airway nitrous oxide inspiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrous oxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="153084"/>
+    <display value="Concentration airway nitrogen expiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrogen in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153088"/>
+    <display value="Concentration airway nitrogen inspiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrogen in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="153112"/>
+    <display value="Concentration nitric oxide (gas delivery system)"/>
+    <definition value="Concentration of nitric oxide in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152072"/>
+    <display value="Concentration NO2 (gas delivery system)"/>
+    <definition value="Concentration of nitrogen dioxide in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152160"/>
+    <display value="Concentration airway nitrogen dioxide expiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrogen dioxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152220"/>
+    <display value="Concentration airway nitrogen dioxide inspiratory (gas delivery system)"/>
+    <definition value="Concentration of nitrogen dioxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="153116"/>
+    <display value="Concentration airway nitric oxide expiratory (gas delivery system)"/>
+    <definition value="Concentration of nitric oxide in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153120"/>
+    <display value="Concentration airway nitric oxide inspiratory (gas delivery system)"/>
+    <definition value="Concentration of nitric oxide in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="153136"/>
+    <display value="Concentration oxygen (gas delivery system or circuit)"/>
+    <definition value="Concentration of oxygen in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="151912"/>
+    <display value="Diff. inspired and expired oxygen conc. (ventilator)"/>
+    <definition value="Difference in oxygen concentration between inspiration and expiration during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="153140"/>
+    <display value="Concentration airway oxygen expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of oxygen in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153144"/>
+    <display value="Concentration airway oxygen inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of oxygen in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="16930360"/>
+  </concept>
+  <concept>
+    <code value="152064"/>
+    <display value="Concentration sevoflurane (gas delivery system or circuit)"/>
+    <definition value="Concentration of sevoflurane in airway gas in the system or circuit conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="152152"/>
+    <display value="Concentration airway sevoflurane expiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of sevoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="152212"/>
+    <display value="Concentration airway sevoflurane inspiratory (gas delivery system or circuit)"/>
+    <definition value="Concentration of sevoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="16929428"/>
+  </concept>
+  <concept>
+    <code value="153188"/>
+    <display value="Concentration xenon (gas delivery system)"/>
+    <definition value="Concentration of xenon in airway gas in the system conducting gas to and from the patient"/>
+  </concept>
+  <concept>
+    <code value="153192"/>
+    <display value="Concentration airway xenon expiratory (gas delivery system)"/>
+    <definition value="Concentration of xenon in airway gas measured during expiration in the system conducting gas from the patient"/>
+  </concept>
+  <concept>
+    <code value="153196"/>
+    <display value="Concentration airway xenon inspiratory (gas delivery system)"/>
+    <definition value="Concentration of xenon in airway gas measured during inspiration in the system conducting gas to the patient"/>
+  </concept>
+  <concept>
+    <code value="160204"/>
+    <display value="Arterial plasma glucose"/>
+    <definition value="Plasma glucose concentration taken from arterial"/>
+  </concept>
+  <concept>
+    <code value="160200"/>
+    <display value="Arterial whole blood glucose"/>
+    <definition value="Whole blood glucose concentration taken from arterial"/>
+  </concept>
+  <concept>
+    <code value="160188"/>
+    <display value="Capillary plasma glucose"/>
+    <definition value="Plasma glucose concentration taken from capillary"/>
+  </concept>
+  <concept>
+    <code value="160184"/>
+    <display value="Capillary whole blood glucose"/>
+    <definition value="Whole blood glucose concentration taken from capillary"/>
+  </concept>
+  <concept>
+    <code value="160208"/>
+    <display value="Control Result"/>
+    <definition value="Glucose concentration measurement produced from control solution"/>
+  </concept>
+  <concept>
+    <code value="160380"/>
+  </concept>
+  <concept>
+    <code value="160372"/>
+  </concept>
+  <concept>
+    <code value="160376"/>
+  </concept>
+  <concept>
+    <code value="160384"/>
+  </concept>
+  <concept>
+    <code value="160020"/>
+    <display value="General glucose concentration"/>
+  </concept>
+  <concept>
+    <code value="160212"/>
+    <display value="Interstitia Fluid Glucose"/>
+    <definition value="Glucose concentration measurement indirectly derived from interstitial fluid"/>
+  </concept>
+  <concept>
+    <code value="160368"/>
+    <display value="Undetermined arterial plasma glucose"/>
+    <definition value="Plasma glucose concentration taken from undetermined sample source"/>
+  </concept>
+  <concept>
+    <code value="160364"/>
+    <display value="Undetermined whole blood glucose"/>
+    <definition value="Whole blood glucose concentration taken from undetermined sample source"/>
+  </concept>
+  <concept>
+    <code value="160196"/>
+    <display value="Venous plasma glucose"/>
+    <definition value="Plasma glucose concentration taken from venous"/>
+  </concept>
+  <concept>
+    <code value="160192"/>
+    <display value="Venous whole blood glucose"/>
+    <definition value="Whole blood glucose concentration taken from venous"/>
+  </concept>
+  <concept>
+    <code value="160220"/>
+    <display value="HbA1c"/>
+    <definition value="A1c or glycated hemoglobin concentration."/>
+  </concept>
+  <concept>
+    <code value="159764"/>
+    <display value="Arterial blood haemoglobin concentration"/>
+  </concept>
+  <concept>
+    <code value="159768"/>
+    <display value="Arterial blood oxy-haemoglobin concentration"/>
+  </concept>
+  <concept>
+    <code value="159816"/>
+    <display value="Venous blood oxy-haemoglobin concentration"/>
+  </concept>
+  <concept>
+    <code value="159760"/>
+    <display value="Arterial blood bicarbonate ion concentration"/>
+  </concept>
+  <concept>
+    <code value="160008"/>
+    <display value="General bicarbonate ion concentration"/>
+  </concept>
+  <concept>
+    <code value="160068"/>
+    <display value="Arterial blood haematocrit concentration"/>
+  </concept>
+  <concept>
+    <code value="160132"/>
+    <display value="General fluid HCT"/>
+  </concept>
+  <concept>
+    <code value="160016"/>
+    <display value="General potassium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="152872"/>
+    <display value="Mean Aveolar Concentration"/>
+    <definition value="Mean Aveolar Concentration, expressed as a percentage relative to the needed to prevent movement (motor response) in 50% of subjects in response to surgical (pain) stimulus."/>
+  </concept>
+  <concept>
+    <code value="152864"/>
+    <display value="MAC sum"/>
+    <definition value="Sum of the Minimum Alveolar Concentration for anesthetic gas and N2O"/>
+  </concept>
+  <concept>
+    <code value="152868"/>
+    <display value="MAC age-corrected sum"/>
+    <definition value="Age corrected sum of the Minimum Alveolar Concentration for anesthetic gas and N2O"/>
+  </concept>
+  <concept>
+    <code value="160012"/>
+    <display value="General sodium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="159960"/>
+    <display value="Serum sodium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="159852"/>
+    <display value="Urine sodium ion concentration"/>
+  </concept>
+  <concept>
+    <code value="184288"/>
+    <display value="Oxygen Reading"/>
+    <definition value="The oxygen concentration inside the incubator micro-environment."/>
+  </concept>
+  <concept>
+    <code value="16961504"/>
+  </concept>
+  <concept>
+    <code value="159752"/>
+    <display value="Arterial blood pCO2"/>
+  </concept>
+  <concept>
+    <code value="152848"/>
+    <display value="Pulmonary Arterial pCO2"/>
+    <definition value="Partial pressure of CO2 in the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="160308"/>
+    <display value="Gastric-arterial CO2 Gap"/>
+    <definition value="Difference (gap) between gastric mucosal (PgCO2) and arterial (PaCO2) partial pressures of carbon dioxide."/>
+  </concept>
+  <concept>
+    <code value="160312"/>
+    <display value="Gastric-endtidal CO2 Gap"/>
+    <definition value="Difference (gap) between gastric mucosal (PgCO2) and end-tidal (EtCO2) partial pressures of carbon dioxide."/>
+  </concept>
+  <concept>
+    <code value="160316"/>
+    <display value="Gastric Mucosal PCO2"/>
+    <definition value="Gastric mucosal (PgCO2) partial pressure of carbon dioxide."/>
+  </concept>
+  <concept>
+    <code value="160064"/>
+    <display value="General fluid pCO2"/>
+  </concept>
+  <concept>
+    <code value="159800"/>
+    <display value="Venous blood pCO2"/>
+  </concept>
+  <concept>
+    <code value="159748"/>
+    <display value="Arterial blood fluid pH"/>
+  </concept>
+  <concept>
+    <code value="160004"/>
+    <display value="General fluid pH"/>
+  </concept>
+  <concept>
+    <code value="160320"/>
+    <display value="Intramucosal pH"/>
+    <definition value="Intramucosal pH"/>
+  </concept>
+  <concept>
+    <code value="159796"/>
+    <display value="Venous blood fluid pH"/>
+  </concept>
+  <concept>
+    <code value="159756"/>
+    <display value="Arterial blood pO2"/>
+  </concept>
+  <concept>
+    <code value="152844"/>
+    <display value="(Estimated) Arterial-Venous O2 Content Difference"/>
+    <definition value="The (estimated) difference in the oxygen content of the blood between the arterial blood and the venous blood."/>
+  </concept>
+  <concept>
+    <code value="160116"/>
+    <display value="General fluid pO2"/>
+  </concept>
+  <concept>
+    <code value="159804"/>
+    <display value="Venous blood pO2"/>
+  </concept>
+  <concept>
+    <code value="160080"/>
+    <display value="Arterial blood urea concentration"/>
+  </concept>
+  <concept>
+    <code value="8417764"/>
+  </concept>
+  <concept>
+    <code value="8417768"/>
+  </concept>
+  <concept>
+    <code value="8417792"/>
+  </concept>
+  <concept>
+    <code value="8417776"/>
+  </concept>
+  <concept>
+    <code value="8417784"/>
+  </concept>
+  <concept>
+    <code value="8417772"/>
+  </concept>
+  <concept>
+    <code value="8417767"/>
+  </concept>
+  <concept>
+    <code value="8417769"/>
+  </concept>
+  <concept>
+    <code value="8417766"/>
+  </concept>
+  <concept>
+    <code value="8417780"/>
+  </concept>
+  <concept>
+    <code value="8417788"/>
+  </concept>
+  <concept>
+    <code value="8417765"/>
+  </concept>
+  <concept>
+    <code value="8417760"/>
+  </concept>
+  <concept>
+    <code value="8417820"/>
+  </concept>
+  <concept>
+    <code value="8417864"/>
+  </concept>
+  <concept>
+    <code value="8417844"/>
+  </concept>
+  <concept>
+    <code value="8417884"/>
+  </concept>
+  <concept>
+    <code value="8417924"/>
+  </concept>
+  <concept>
+    <code value="8417796"/>
+  </concept>
+  <concept>
+    <code value="8417808"/>
+  </concept>
+  <concept>
+    <code value="8417812"/>
+  </concept>
+  <concept>
+    <code value="8417816"/>
+  </concept>
+  <concept>
+    <code value="8417800"/>
+  </concept>
+  <concept>
+    <code value="8417804"/>
+  </concept>
+  <concept>
+    <code value="150484"/>
+  </concept>
+  <concept>
+    <code value="158016"/>
+  </concept>
+  <concept>
+    <code value="70079"/>
+  </concept>
+  <concept>
+    <code value="158005"/>
+  </concept>
+  <concept>
+    <code value="70067"/>
+  </concept>
+  <concept>
+    <code value="158015"/>
+  </concept>
+  <concept>
+    <code value="158010"/>
+  </concept>
+  <concept>
+    <code value="70071"/>
+    <definition value="Contains parameters that describe the administration settings and status for the primary infusate."/>
+  </concept>
+  <concept>
+    <code value="70075"/>
+    <definition value="Contains parameters that describe the administration settings and status for the secondary infusate."/>
+  </concept>
+  <concept>
+    <code value="70048"/>
+  </concept>
+  <concept>
+    <code value="70049"/>
+    <definition value="LVP infusion pump MDS object identifier."/>
+  </concept>
+  <concept>
+    <code value="70050"/>
+  </concept>
+  <concept>
+    <code value="70056"/>
+  </concept>
+  <concept>
+    <code value="70059"/>
+  </concept>
+  <concept>
+    <code value="70057"/>
+    <definition value="PCA infusion pump MDS object identifier."/>
+  </concept>
+  <concept>
+    <code value="70060"/>
+  </concept>
+  <concept>
+    <code value="70061"/>
+  </concept>
+  <concept>
+    <code value="70062"/>
+  </concept>
+  <concept>
+    <code value="70058"/>
+  </concept>
+  <concept>
+    <code value="70052"/>
+  </concept>
+  <concept>
+    <code value="70055"/>
+  </concept>
+  <concept>
+    <code value="70053"/>
+    <definition value="Syringe infusion pump MDS object identifier."/>
+  </concept>
+  <concept>
+    <code value="70054"/>
+  </concept>
+  <concept>
+    <code value="70087"/>
+  </concept>
+  <concept>
+    <code value="70083"/>
+  </concept>
+  <concept>
+    <code value="158006"/>
+  </concept>
+  <concept>
+    <code value="70095"/>
+  </concept>
+  <concept>
+    <code value="158007"/>
+  </concept>
+  <concept>
+    <code value="158008"/>
+  </concept>
+  <concept>
+    <code value="158009"/>
+  </concept>
+  <concept>
+    <code value="158012"/>
+  </concept>
+  <concept>
+    <code value="70091"/>
+  </concept>
+  <concept>
+    <code value="158019"/>
+  </concept>
+  <concept>
+    <code value="158002"/>
+  </concept>
+  <concept>
+    <code value="158003"/>
+  </concept>
+  <concept>
+    <code value="157999"/>
+  </concept>
+  <concept>
+    <code value="158000"/>
+  </concept>
+  <concept>
+    <code value="158018"/>
+  </concept>
+  <concept>
+    <code value="157985"/>
+    <display value="Dose Limit Amount"/>
+  </concept>
+  <concept>
+    <code value="158017"/>
+  </concept>
+  <concept>
+    <code value="184515"/>
+  </concept>
+  <concept>
+    <code value="184514"/>
+  </concept>
+  <concept>
+    <code value="184330"/>
+  </concept>
+  <concept>
+    <code value="131840"/>
+    <display value="STTxx Amplitude"/>
+    <definition value="Amplitude of the ST segment at xx ms after the end of QRS complex of ECG in specified  &lt;lead&gt;. The time point xx is defined globally by item with code XXXXXX"/>
+  </concept>
+  <concept>
+    <code value="131973"/>
+  </concept>
+  <concept>
+    <code value="131972"/>
+  </concept>
+  <concept>
+    <code value="131904"/>
+  </concept>
+  <concept>
+    <code value="131903"/>
+  </concept>
+  <concept>
+    <code value="131902"/>
+  </concept>
+  <concept>
+    <code value="131873"/>
+  </concept>
+  <concept>
+    <code value="131874"/>
+  </concept>
+  <concept>
+    <code value="131875"/>
+  </concept>
+  <concept>
+    <code value="131876"/>
+  </concept>
+  <concept>
+    <code value="131877"/>
+  </concept>
+  <concept>
+    <code value="131878"/>
+  </concept>
+  <concept>
+    <code value="131971"/>
+  </concept>
+  <concept>
+    <code value="131841"/>
+  </concept>
+  <concept>
+    <code value="131842"/>
+  </concept>
+  <concept>
+    <code value="131901"/>
+  </concept>
+  <concept>
+    <code value="131931"/>
+  </concept>
+  <concept>
+    <code value="131932"/>
+  </concept>
+  <concept>
+    <code value="131937"/>
+  </concept>
+  <concept>
+    <code value="131927"/>
+  </concept>
+  <concept>
+    <code value="131843"/>
+  </concept>
+  <concept>
+    <code value="131844"/>
+  </concept>
+  <concept>
+    <code value="131845"/>
+  </concept>
+  <concept>
+    <code value="131846"/>
+  </concept>
+  <concept>
+    <code value="131847"/>
+  </concept>
+  <concept>
+    <code value="131848"/>
+  </concept>
+  <concept>
+    <code value="148496"/>
+    <definition value="Irregular rhythm"/>
+  </concept>
+  <concept>
+    <code value="147842"/>
+  </concept>
+  <concept>
+    <code value="147850"/>
+  </concept>
+  <concept>
+    <code value="147842"/>
+    <display value="heart rate"/>
+    <definition value="Rate of cardiac beats"/>
+  </concept>
+  <concept>
+    <code value="147626"/>
+  </concept>
+  <concept>
+    <code value="184326"/>
+  </concept>
+  <concept>
+    <code value="184327"/>
+  </concept>
+  <concept>
+    <code value="147236"/>
+    <display value="Q-T c"/>
+    <definition value="Duration of the interval between the QRS onset and T wave offset, related to heart rate 60 beats per minute of ECG (global), Bazett formula"/>
+  </concept>
+  <concept>
+    <code value="147232"/>
+    <display value="Q-T interval"/>
+    <definition value="Duration of the interval between the QRS onset and T wave offset of ECG (global)"/>
+  </concept>
+  <concept>
+    <code value="147240"/>
+    <display value="R-R interval"/>
+    <definition value="Duration of the interval between two consecutive QRS complexes"/>
+  </concept>
+  <concept>
+    <code value="148065"/>
+  </concept>
+  <concept>
+    <code value="148066"/>
+  </concept>
+  <concept>
+    <code value="153644"/>
+    <display value="Bispectral Index"/>
+    <definition value="The bispectral index (BIS) is a quantitative assessment of depth of anesthesia, specifically the level of consciousness.  It is an index that ranges from 0 to 100.  No&#xA0;measurable cortical activity would result in a BIS of 0 and a typical awake state is usually associated with an index of 90 to 100. Typical values for a patient undergoing general anesthesia are 40 to 60."/>
+  </concept>
+  <concept>
+    <code value="153900"/>
+    <display value="Electroencephalogram"/>
+    <definition value="Electrical potential derived bipolarly between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. The electrode at Position 1 is Number 1 in the list. Position 2 can be a combined reference, e.g., linked ear. All connected electrode sites are listed beginning with Number 2 in the list. The attribute values must be taken from the Table A.9.4.3."/>
+  </concept>
+  <concept>
+    <code value="153648"/>
+    <display value="Response Entropy"/>
+    <definition value="A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the FEMG signal in the 0.8 to 47 Hz frequency band. Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy response, the probability of patient accidental awareness is low.  The overall display range for RE is 0 to 100."/>
+  </concept>
+  <concept>
+    <code value="153652"/>
+    <display value="State Entropy"/>
+    <definition value="A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the EEG signal in the 0.8 to 32 Hz frequency band.  Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy state, the probability of patient accidental awareness is low.  The overall display range of SE is 0 to 91."/>
+  </concept>
+  <concept>
+    <code value="153980"/>
+    <display value="Mean dominant frequency of electroencephalogram"/>
+    <definition value="Mean dominant frequency of Power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="153984"/>
+    <display value="Median power frequency of electroencephalogram"/>
+    <definition value="Median power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="153988"/>
+    <display value="Peak power frequency of electroencephalogram"/>
+    <definition value="Peak power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="153992"/>
+    <display value="Spectral edge frequency of electroencephalogram"/>
+    <definition value="Spectral edge frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154032"/>
+    <display value="Seizures"/>
+    <definition value="Seizures, as determined out of the EEG, EOG, and EMG"/>
+  </concept>
+  <concept>
+    <code value="154028"/>
+    <display value="Spikes"/>
+    <definition value="Spikes, as determined out of the EEG"/>
+  </concept>
+  <concept>
+    <code value="156241"/>
+    <display value="Burst Count"/>
+    <definition value="Epileptic or potentially epileptogenic activity identifiers, burst count"/>
+  </concept>
+  <concept>
+    <code value="156242"/>
+    <display value="Burst Rate"/>
+    <definition value="Epileptic or potentially epileptogenic activity identifiers, burst rate"/>
+  </concept>
+  <concept>
+    <code value="155024"/>
+    <display value="Burst suppression"/>
+    <definition value="Epileptic or potentially epileptogenic activity identifiers, burst suppression"/>
+  </concept>
+  <concept>
+    <code value="154977"/>
+    <display value="Spike Count"/>
+    <definition value="Epileptic or potentially epileptogenic activity identifiers, spike count"/>
+  </concept>
+  <concept>
+    <code value="153660"/>
+    <display value="Patient State Index"/>
+    <definition value="A computed EEG index used to help assess the depth of sedation and anesthesia based on a multivariate combination of EEG variables."/>
+  </concept>
+  <concept>
+    <code value="154068"/>
+    <display value="Relative power of alpha band of electroencephalogram"/>
+    <definition value="Relative power of alpha band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154072"/>
+    <display value="Relative power of beta band of electroencephalogram"/>
+    <definition value="Relative power of beta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154036"/>
+    <display value="Compressed spectral array of electroencephalogram"/>
+    <definition value="Power spectrum of EEG measured between two electrodes, position 1 and 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154076"/>
+    <display value="Relative power of delta band of electroencephalogram"/>
+    <definition value="Relative power of delta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154080"/>
+    <display value="Relative power of theta band of electroencephalogram"/>
+    <definition value="Relative power of theta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="154040"/>
+    <display value="Total power of electroencephalogram"/>
+    <definition value="Total power of spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG."/>
+  </concept>
+  <concept>
+    <code value="153636"/>
+    <display value="Signal Quality Index"/>
+    <definition value="EEG Signal Quality Index, an indication of overall signal quality for calculating processed EEG variables such as BIS and interpreting EEG results."/>
+  </concept>
+  <concept>
+    <code value="153656"/>
+    <display value="SNAP Index"/>
+    <definition value="A computed EEG variable used to help assess the level of consciousness while under anesthesia based on the high- and low-frequency EEG.  Index values range from 0 to 100, with 0 reflecting no measurable cortical activity and 100 reflecting the awake state."/>
+  </concept>
+  <concept>
+    <code value="153640"/>
+    <display value="Electromyography"/>
+    <definition value="Electromyographic signal strength, predominantly representing muscle activity above 70 Hz."/>
+  </concept>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept/>
+  <concept>
+    <code value="152876"/>
+    <display value="Fresh air flow"/>
+    <definition value="Flow of Air component of Fresh Gas"/>
+  </concept>
+  <concept>
+    <code value="16930092"/>
+  </concept>
+  <concept>
+    <code value="151764"/>
+    <display value="Airway flow"/>
+    <definition value="Gas flow in airway"/>
+  </concept>
+  <concept>
+    <code value="151768"/>
+    <display value="Expiratory airway flow"/>
+    <definition value="Expiratory gas flow"/>
+  </concept>
+  <concept>
+    <code value="152584"/>
+    <display value="peak expiratory flow"/>
+    <definition value="force starting immediately after achieving maximum lung inflation"/>
+  </concept>
+  <concept>
+    <code value="152585"/>
+    <display value="Personal best"/>
+    <definition value="This value is determined by a healthcare professional or based on predicted average peak flow and is typically the highest peak condition.expiratory flow (PEF) reading an individual can obtain while in peak"/>
+  </concept>
+  <concept>
+    <code value="151769"/>
+    <display value="Expiratory maximum airway flow"/>
+    <definition value="Maximum expiratory gas flow"/>
+  </concept>
+  <concept>
+    <code value="151772"/>
+    <display value="Inspiratory airway flow"/>
+    <definition value="Inspiratory gas flow in airway"/>
+  </concept>
+  <concept>
+    <code value="151773"/>
+    <display value="Inspiratory maximum airway flow"/>
+    <definition value="Maximum inspiratory gas flow"/>
+  </concept>
+  <concept>
+    <code value="150652"/>
+    <display value="Pulmonary Capillary Blood Flow"/>
+    <definition value="Flow of the blood in the pulmonary capillaries."/>
+  </concept>
+  <concept>
+    <code value="151776"/>
+    <display value="CO2 Production"/>
+    <definition value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ /min)"/>
+  </concept>
+  <concept>
+    <code value="152828"/>
+    <display value="CO2 Production per body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)"/>
+    <definition value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by patient body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)."/>
+  </concept>
+  <concept>
+    <code value="152824"/>
+    <display value="CO2 Production per body mass (typ kg)"/>
+    <definition value="Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+  </concept>
+  <concept>
+    <code value="157804"/>
+    <display value="Drug delivery rate"/>
+    <definition value="Drug delivery rate to patient (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="157784"/>
+    <display value="Fluid delivery rate"/>
+    <definition value="Volume rate delivered by pump (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="158014"/>
+  </concept>
+  <concept>
+    <code value="153092"/>
+    <display value="Fresh gas nitrous oxide flow"/>
+    <definition value="Flow of Nitrous Oxide component of Fresh Gas"/>
+  </concept>
+  <concept>
+    <code value="16930308"/>
+  </concept>
+  <concept>
+    <code value="152420"/>
+    <display value="O2 Consumption"/>
+    <definition value="The volume of oxygen a patient inhales (consumes) per minute."/>
+  </concept>
+  <concept>
+    <code value="152820"/>
+    <display value="O2 Consumption per body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)"/>
+    <definition value="The volume of oxygen a patient inhales (consumes) per minute, normalized by patient body surface area (typ m&lt;sup&gt;2&lt;/sup&gt;)."/>
+  </concept>
+  <concept>
+    <code value="152816"/>
+    <display value="O2 Consumption per body mass (typ kg)"/>
+    <definition value="The volume of oxygen a patient inhales (consumes) per minute, normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+  </concept>
+  <concept>
+    <code value="153156"/>
+    <display value="Fresh gas oxygen flow"/>
+    <definition value="Flow of Oxygen component of Fresh Gas"/>
+  </concept>
+  <concept>
+    <code value="16930372"/>
+  </concept>
+  <concept>
+    <code value="184404"/>
+    <display value="Anesthetic agent(s)"/>
+    <definition value="The identity of volatile anesthetic agents that have been detected and/or are known to be present in airway gas during inspiration and/or inflation."/>
+  </concept>
+  <concept>
+    <code value="16961620"/>
+    <definition value="The identity of volatile anesthetic agents based on user selection of vaporizer and/or cassette."/>
+  </concept>
+  <concept>
+    <code value="184405"/>
+    <display value="Balance Gas"/>
+    <definition value="The identity of the balance (carrier) gases that have been detected and/or are known to be present in airway gas during inspiration and/or inflation."/>
+  </concept>
+  <concept>
+    <code value="16961621"/>
+    <definition value="The identity of the balance (carrier) gases based on user selection."/>
+  </concept>
+  <concept>
+    <code value="8417752"/>
+  </concept>
+  <concept>
+    <code value="150565"/>
+    <display value="Maximum aortic valve pressure gradient"/>
+    <definition value="Peak blood pressure gradient across aortic valve during SEP"/>
+  </concept>
+  <concept>
+    <code value="151780"/>
+    <display value="Transthoracic Impedance"/>
+    <definition value="Transthoracic measurement of electrical impedance (influenced by respiration and other factors)"/>
+  </concept>
+  <concept>
+    <code value="8417909"/>
+  </concept>
+  <concept>
+    <code value="160272"/>
+    <display value="International Sensitivity Index"/>
+    <definition value="Standardized calibration for a thromboplastin compared to the WHO standard."/>
+  </concept>
+  <concept>
+    <code value="188740"/>
+    <display value="Patient actual height"/>
+    <definition value="The actual height of the patient, especially for neonates, babies, and children during long-term therapy"/>
+  </concept>
+  <concept>
+    <code value="188736"/>
+    <display value="Patient actual weight"/>
+    <definition value="The measurement of the mass of patient, e.g., by a scale in bed, e.g., during therapy"/>
+  </concept>
+  <concept>
+    <code value="188800"/>
+    <display value="Adjusted Body Weight"/>
+    <definition value="Adjusted Body Weight, an estimate based on the IBW and following rule:&lt;br/&gt;&lt;i&gt;If the actual body weight is greater than 30% of the calculated IBW (all in kg), the adjusted body weight (ABW) estimate is:&lt;/i&gt;&lt;br/&gt;&lt;i&gt;ABW = IBW + 0.4 (actual weight - IBW)&lt;/i&gt;"/>
+  </concept>
+  <concept>
+    <code value="188796"/>
+    <display value="Predicted Body Weight"/>
+    <definition value="Ideal body weight (IBW), an estimate based solely on patient height using the Devine Formula (1974):&lt;br/&gt;&lt;i&gt;Male (in kg):  50.0 + 2.3 kg per inch over 5 feet&lt;/i&gt;&lt;br/&gt;&lt;i&gt;Female (in kg):  45.5 + 2.3 kg per inch over 5 fee&lt;/i&gt;t&lt;b&gt;&lt;br/&gt;&lt;/b&gt;The Devine formula can be re-expressed using other units-of-measure.  Also called the Predicted Body Weight."/>
+  </concept>
+  <concept>
+    <code value="188756"/>
+    <display value="fat free mass"/>
+    <definition value="The sum of the soft lean mass and mineral mass in the human body."/>
+  </concept>
+  <concept>
+    <code value="188760"/>
+    <display value="soft lean mass"/>
+    <definition value="The sum of the soft lean mass in the human body."/>
+  </concept>
+  <concept>
+    <code value="157820"/>
+    <display value="Delivered drug mass"/>
+    <definition value="Mass of drug delivered to the patient (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="158004"/>
+  </concept>
+  <concept>
+    <code value="8417916"/>
+  </concept>
+  <concept>
+    <code value="8417920"/>
+  </concept>
+  <concept>
+    <code value="184339"/>
+    <display value="Air Curtain Status"/>
+    <definition value="The air curtain on an incubator is a specially-designed airflow to reduce temperature fluctuation and maintain the temperature inside the incubator when its access doors are opened.  The air curtain state indicates whether the air curtain is on, off or has been disabled by the user."/>
+  </concept>
+  <concept>
+    <code value="184338"/>
+    <display value="Bed State"/>
+    <definition value="The bed state indicates whether the infant&#x2019;s incubator is closed, partially open or open, i.e. the top of the incubator is raised."/>
+  </concept>
+  <concept>
+    <code value="184341"/>
+    <display value="Fan Speed"/>
+    <definition value="The speed of the fan that controls the airflow in an infant incubator, such as low or high."/>
+  </concept>
+  <concept>
+    <code value="184300"/>
+    <display value="Heater Power"/>
+    <definition value="The heater power is the percentage of power (or actual power in watts) necessary to maintain the set temperature of the incubator or warmer."/>
+  </concept>
+  <concept>
+    <code value="184340"/>
+    <display value="Temperature Control Mode"/>
+    <definition value="Specifies the manner in which the temperature of an infant incubator or radiant warmer is controlled.  For&#xA0;closed beds (incubators) the temperature is controlled based on patient sensor or air temperature.  For&#xA0;open beds (open incubator or warmer) the temperature is controlled based on patient sensor or manually set temperature."/>
+  </concept>
+  <concept>
+    <code value="184304"/>
+    <display value="Incubator heater heat sink temperature sensor resistance"/>
+    <definition value="Incubator heater heat sink and fin assembly temperature sensor resistance"/>
+  </concept>
+  <concept>
+    <code value="184308"/>
+    <display value="Incubator heater heat sink temperature"/>
+    <definition value="Incubator heater heat sink and fin assembly temperature"/>
+  </concept>
+  <concept>
+    <code value="184337"/>
+    <display value="Incubator heater type"/>
+    <definition value="Incubator or warmer heater currently being used.  This may include radiant, convective or none (no heat)."/>
+  </concept>
+  <concept>
+    <code value="184336"/>
+    <display value="Microenvironment Bed Type"/>
+    <definition value="The type of bed used for an infant in the neonatal intensive care unit or newborn nursery. A radiant warmer is an open bed, an incubator is a closed bed, and an incubator that can serve as a radiant warmer is a combination bed."/>
+  </concept>
+  <concept>
+    <code value="150580"/>
+    <display value="SpO2 fast response"/>
+    <definition value="The modality of fast-response SpO2 measurement. Rate of sampling of peripheral oxygen saturation by device."/>
+  </concept>
+  <concept>
+    <code value="150584"/>
+    <display value="SpO2 slow response"/>
+    <definition value="The modality of slow-response SpO2 measurement. Rate of sampling of peripheral oxygen saturation by device."/>
+  </concept>
+  <concept>
+    <code value="150588"/>
+    <display value="SpO2 spot check"/>
+    <definition value="The modality of spot-check SpO2 measurement.  Peripheral oxygen saturation."/>
+  </concept>
+  <concept>
+    <code value="153360"/>
+    <display value="Remaining number of cycles"/>
+    <definition value="Number of cycles remaining, including the current cycle.  Transitions to zero when delivery completed."/>
+  </concept>
+  <concept>
+    <code value="16930568"/>
+    <display value="(set) nebulizer cycles"/>
+    <definition value="Specifies the number of nebulizer delivery cycles having a specified run time and/or volume when operating in scheduled mode."/>
+  </concept>
+  <concept>
+    <code value="16961626"/>
+    <display value="(set) nebulizer mode"/>
+    <definition value="Specifies the nebulizer operational mode, including intermittent, scheduled or continuous modes.  Selecting intermittent mode delivers a single timed delivery based on the programmed run time and/or volume, and for scheduled mode, the number of cycles and pause time between cycles.  Selecting continuous mode delivers nebulized medication until the medication runs out or delivery is stopped."/>
+  </concept>
+  <concept>
+    <code value="184409"/>
+    <display value="Nebulizer status"/>
+    <definition value="Specifies the nebulizer operational status, such as nebulizer on/off, nebulizer failure, no nebulizer, nebulizer not connected and other information."/>
+  </concept>
+  <concept>
+    <code value="184408"/>
+    <display value="Nebulizer type"/>
+    <definition value="Specifies the nebulizer type, such as an aerosolizer (using a micro pump) or pneumatic (using an external air or oxygen supply)."/>
+  </concept>
+  <concept>
+    <code value="153372"/>
+    <display value="Elapsed nebulization time for current cycle"/>
+    <definition value="Elapsed time that fluid has been nebulized for current cycle."/>
+  </concept>
+  <concept>
+    <code value="153376"/>
+    <display value="Total elapsed nebulization time for current set of delivery cycles"/>
+    <definition value="Total elapsed time that fluid that has been nebulized for current set of delivery cycles."/>
+  </concept>
+  <concept>
+    <code value="16930572"/>
+    <display value="(set) nebulizer pause time"/>
+    <definition value="Specifies the pause (time duration) between nebulizer delivery cycles when operating in scheduled mode."/>
+  </concept>
+  <concept>
+    <code value="16930560"/>
+    <display value="(set) nebulizer run time"/>
+    <definition value="Specifies the nebulizer run time per delivery cycle."/>
+  </concept>
+  <concept>
+    <code value="153364"/>
+    <display value="Remaining nebulization time for current cycle"/>
+    <definition value="Remaining nebulization time for current cycle.  Transitions to zero at the start of the pause interval when delivery for the current cycle is completed"/>
+  </concept>
+  <concept>
+    <code value="153368"/>
+    <display value="Total remaining nebulization time for current set of delivery cycles"/>
+    <definition value="Total remaining nebulization delivery time for current set of delivery cycles (does not include pause time)."/>
+  </concept>
+  <concept>
+    <code value="153388"/>
+    <display value="Volume of fluid that has been nebulized for current cycle"/>
+    <definition value="Estimated volume of fluid that has been nebulized for current cycle."/>
+  </concept>
+  <concept>
+    <code value="153392"/>
+    <display value="Total volume of fluid that has been nebulized for current set of delivery cycles"/>
+    <definition value="Estimated volume of fluid that has been nebulized for current set of delivery cycles."/>
+  </concept>
+  <concept>
+    <code value="16930564"/>
+    <display value="(set) nebulizer volume"/>
+    <definition value="Specifies the nebulizer volume per delivery cycle."/>
+  </concept>
+  <concept>
+    <code value="153380"/>
+    <display value="Remaining fluid to be nebulized for current cycle"/>
+    <definition value="Estimated remaining volume of fluid to be nebulized for current cycle."/>
+  </concept>
+  <concept>
+    <code value="153384"/>
+    <display value="Total remaining fluid to be nebulized for current set of delivery cycles"/>
+    <definition value="Estimated total remaining volume of fluid to be nebulized for current set of delivery cycles."/>
+  </concept>
+  <concept>
+    <code value="158011"/>
+  </concept>
+  <concept>
+    <code value="157991"/>
+    <definition value="Cumulative number of patient doses requested.(since start of operation or last cleared by clinician)"/>
+  </concept>
+  <concept>
+    <code value="157990"/>
+    <definition value="Cumulative number of patient doses actually delivered (since start of operation or last cleared by clinician)"/>
+  </concept>
+  <concept>
+    <code value="152856"/>
+    <display value="(Estimated) Oxygen Extraction Ratio"/>
+    <definition value="The (estimated) ratio (fraction) of oxygen that is consumed divided by the oxygen that is delivered."/>
+  </concept>
+  <concept>
+    <code value="150656"/>
+    <display value="Oxygenation Ratio"/>
+    <definition value="Oxygenation Ratio, calculated as the ratio of PaO2 (partial pressure of arterial oxygen) divided by FiO2 (the fractional of inspired oxygen, e.g. FiO2 in air = 0.21)."/>
+  </concept>
+  <concept>
+    <code value="151760"/>
+  </concept>
+  <concept>
+    <code value="150276"/>
+    <display value="Cardiac output"/>
+    <definition value="Quantity of blood pumped by the left ventricle into the aorta per minute"/>
+  </concept>
+  <concept>
+    <code value="150660"/>
+    <display value="Cardiac Output"/>
+    <definition value="Quantity of blood pumped by the left ventricle into the aorta per minute, specifically by using the Fick method"/>
+  </concept>
+  <concept>
+    <code value="150492"/>
+    <display value="Continuous cardiac output"/>
+    <definition value="Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as continuous measurement"/>
+  </concept>
+  <concept>
+    <code value="149772"/>
+    <display value="Cardiac index"/>
+    <definition value="Quantity of blood pumped by the left ventricle into the aorta per minute and divided by the body surface area (CO/BSA)"/>
+  </concept>
+  <concept>
+    <code value="150496"/>
+    <display value="Discontinuous cardiac output"/>
+    <definition value="Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as not continuous measurement"/>
+  </concept>
+  <concept>
+    <code value="149562"/>
+    <display value="Heart rate by palpation"/>
+    <definition value="Heart rate obtained from an artery that is close to the surface and a pulse can be felt.  [The most common places to measure heart rate using palpation are at the wrist (radial artery) and the neck (carotid artery).]"/>
+  </concept>
+  <concept>
+    <code value="188488"/>
+    <display value="Transcutaneous probe heater power"/>
+    <definition value="Transcutaneous sensor heater power"/>
+  </concept>
+  <concept>
+    <code value="152836"/>
+    <display value="Ambient Pressure"/>
+    <definition value="Ambient (immediate patient environment) air pressure"/>
+  </concept>
+  <concept>
+    <code value="152892"/>
+    <display value="Air cylinder pressure"/>
+    <definition value="Air cylinder pressure"/>
+  </concept>
+  <concept>
+    <code value="152888"/>
+    <display value="Air supply (pipeline) pressure"/>
+    <definition value="Air supply (pipeline) pressure"/>
+  </concept>
+  <concept>
+    <code value="151792"/>
+    <display value="Airway pressure"/>
+    <definition value="Pressure of gas in airway"/>
+  </concept>
+  <concept>
+    <code value="151796"/>
+    <display value="CPAP pressure"/>
+    <definition value="Continuous pressure in airway during spontaneous respiration"/>
+  </concept>
+  <concept>
+    <code value="151804"/>
+    <display value="Extrinsic PEEP (positive end expiratory pressure), applied"/>
+    <definition value="Positive end expiratory pressure applied to the airway."/>
+  </concept>
+  <concept>
+    <code value="151804"/>
+  </concept>
+  <concept>
+    <code value="152792"/>
+    <display value="Dynamic extrinsic PEEP"/>
+    <definition value="Dynamic extrinsic PEEP, the minimum pressure at or near the end of expiration, reflecting the set PEEP from the ventilator."/>
+  </concept>
+  <concept>
+    <code value="151808"/>
+    <display value="Intrinsic PEEP (aka&#xA0;Auto&#xA0;PEEP)"/>
+    <definition value=".The component of alveolar pressure in the lungs above extrinsic PEEP due to physiologic causes at the end of expiration."/>
+  </concept>
+  <concept>
+    <code value="152796"/>
+    <display value="Dynamic intrinsic PEEP"/>
+    <definition value="Dynamic intrinsic PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient."/>
+  </concept>
+  <concept>
+    <code value="16929020"/>
+    <definition value="Positive end expiratory pressure applied to the airway during spontaneous breathing, e.g. by an expiratory valve on the breathing circuit."/>
+  </concept>
+  <concept>
+    <code value="152788"/>
+    <display value="Total PEEP"/>
+    <definition value="The sum of the extrinsic PEEPe and intrinsic PEEPi, representing the total pressure in the lungs at the end of expiration."/>
+  </concept>
+  <concept>
+    <code value="152800"/>
+    <display value="Dynamic total PEEP"/>
+    <definition value="Dynamic total PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient."/>
+  </concept>
+  <concept>
+    <code value="151812"/>
+    <display value="Expiratory airway pressure"/>
+    <definition value="Pressure of gas in airway during expiration"/>
+  </concept>
+  <concept>
+    <code value="151813"/>
+    <display value="Maximum expiratory airway pressure"/>
+    <definition value="Maximum pressure of gas in airway during expiration"/>
+  </concept>
+  <concept>
+    <code value="151814"/>
+    <display value="Minimum expiratory airway pressure"/>
+    <definition value="Minimum airway pressure at any point during an expiratory phase before end expiration if less than end expiratory pressure"/>
+  </concept>
+  <concept>
+    <code value="151816"/>
+    <display value="Inspiratory airway pressure"/>
+    <definition value="Pressure of gas in airway during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152712"/>
+    <display value="End inspiratory pressure"/>
+    <definition value="Pressure of gas in airway measured at the end of the inspiratory phase (this may be coincident with the peak inspiratory pressure or the plateau pressure and thus may have the same value as either)."/>
+  </concept>
+  <concept>
+    <code value="151817"/>
+    <display value="Maximum inspiratory airway pressure (peak inspiratory pressure)"/>
+    <definition value="Maximum pressure of gas in airway during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151819"/>
+    <display value="Mean inspiratory airway pressure"/>
+    <definition value="Mean pressure of gas in airway during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151818"/>
+    <display value="Minimum inspiratory airway pressure"/>
+    <definition value="Minimum pressure of gas in airway during inspiration"/>
+  </concept>
+  <concept>
+    <code value="151817"/>
+  </concept>
+  <concept>
+    <code value="151793"/>
+    <display value="Maximum airway pressure"/>
+    <definition value="Peak pressure of gas in airway"/>
+  </concept>
+  <concept>
+    <code value="151795"/>
+    <display value="Mean airway pressure"/>
+    <definition value="Average pressure of gas in airway"/>
+  </concept>
+  <concept>
+    <code value="151794"/>
+  </concept>
+  <concept>
+    <code value="151801"/>
+  </concept>
+  <concept>
+    <code value="152832"/>
+    <display value="Barometric Pressure"/>
+    <definition value="Barometric (atmospheric) air pressure"/>
+  </concept>
+  <concept>
+    <code value="150016"/>
+    <display value="Blood pressure"/>
+    <definition value="Pressure of the blood"/>
+  </concept>
+  <concept>
+    <code value="150028"/>
+    <display value="Aortic pressure"/>
+    <definition value="Pressure of the blood in the aorta"/>
+  </concept>
+  <concept>
+    <code value="150030"/>
+  </concept>
+  <concept>
+    <code value="150031"/>
+    <display value="Mean aortic pressure"/>
+    <definition value="Mean pressure of the blood in the aorta"/>
+  </concept>
+  <concept>
+    <code value="150029"/>
+    <display value="Systolic aortic pressure"/>
+    <definition value="Systolic pressure of the blood in the aorta"/>
+  </concept>
+  <concept>
+    <code value="150032"/>
+    <display value="Arterial pressure"/>
+    <definition value="Pressure of the blood in an artery"/>
+  </concept>
+  <concept>
+    <code value="150036"/>
+  </concept>
+  <concept>
+    <code value="150038"/>
+  </concept>
+  <concept>
+    <code value="150039"/>
+  </concept>
+  <concept>
+    <code value="150037"/>
+  </concept>
+  <concept>
+    <code value="150680"/>
+    <display value="Brachial Arterial Pressure"/>
+    <definition value="Pressure of the blood in the brachial artery."/>
+  </concept>
+  <concept>
+    <code value="150034"/>
+    <display value="Diastolic arterial pressure"/>
+    <definition value="Diastolic pressure of the blood in an artery"/>
+  </concept>
+  <concept>
+    <code value="150648"/>
+    <display value="Femoral Artery Pressure"/>
+    <definition value="Pressure of the blood in the femoral artery."/>
+  </concept>
+  <concept>
+    <code value="150650"/>
+    <display value="Diastolic Femoral Arterial Catheter Pressure"/>
+    <definition value="Mean pressure of the blood in the femoral artery."/>
+  </concept>
+  <concept>
+    <code value="150651"/>
+    <display value="Mean Femoral Arterial Catheter Pressure"/>
+    <definition value="Diastolic pressure of the blood in the femoral artery."/>
+  </concept>
+  <concept>
+    <code value="150649"/>
+    <display value="Systolic Femoral Arterial Catheter Pressure"/>
+    <definition value="Systolic pressure of the blood in the femoral artery."/>
+  </concept>
+  <concept>
+    <code value="150035"/>
+    <display value="Mean arterial pressure"/>
+    <definition value="Mean pressure of the blood in an artery"/>
+  </concept>
+  <concept>
+    <code value="150044"/>
+    <display value="Pulmonary arterial pressure"/>
+    <definition value="Pressure of the blood in the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150046"/>
+    <display value="Diastolic pulmonary arterial pressure"/>
+    <definition value="Diastolic pressure of the blood in the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150047"/>
+    <display value="Mean pulmonary arterial pressure"/>
+    <definition value="Mean pressure of the blood in the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150052"/>
+    <display value="Pulmonary artery wedge pressure"/>
+    <definition value="Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150045"/>
+    <display value="Systolic pulmonary arterial pressure"/>
+    <definition value="Systolic pressure of the blood in the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150052"/>
+    <display value="Pulmonary artery wedge pressure"/>
+    <definition value="Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery"/>
+  </concept>
+  <concept>
+    <code value="150033"/>
+    <display value="Systolic arterial pressure"/>
+    <definition value="Systolic pressure of the blood in an artery"/>
+  </concept>
+  <concept>
+    <code value="150056"/>
+    <display value="Umbilical pressure"/>
+    <definition value="Pressure of the blood in the umbilical arteries of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150058"/>
+    <display value="Diastolic umbilical arterial pressure"/>
+    <definition value="Diastolic pressure of the blood in the umbilical arteries of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150059"/>
+    <display value="Mean umbilical arterial pressure"/>
+    <definition value="Mean pressure of the blood in the umbilical arteries of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150057"/>
+    <display value="Systolic umbilical arterial pressure"/>
+    <definition value="Systolic pressure of the blood in the umbilical arteries of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150064"/>
+    <display value="Left atrial pressure"/>
+    <definition value="Pressure of the blood in the left atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150066"/>
+    <display value="Diastolic left atrial pressure"/>
+    <definition value="Diastolic pressure of the blood in the left atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150067"/>
+    <display value="Mean left atrial pressure"/>
+    <definition value="Mean pressure of the blood in the left atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150065"/>
+    <display value="Systolic left atrial pressure"/>
+    <definition value="Systolic pressure of the blood in the left atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150068"/>
+    <display value="Right atrial pressure"/>
+    <definition value="Pressure of the blood in the right atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150070"/>
+    <display value="Diastolic right atrial pressure"/>
+    <definition value="Diastolic pressure of the blood in the right atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150071"/>
+    <display value="Mean right atrial pressure"/>
+    <definition value="Mean pressure of the blood in the right atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150069"/>
+    <display value="Systolic right atrial pressure"/>
+    <definition value="Systolic pressure of the blood in the right atrium of the heart"/>
+  </concept>
+  <concept>
+    <code value="150018"/>
+    <display value="Diastolic blood pressure"/>
+    <definition value="Pressure of the blood at the diastolic phase"/>
+  </concept>
+  <concept>
+    <code value="150019"/>
+    <display value="Mean blood pressure"/>
+    <definition value="Pressure of the blood as computed by averaging on one cycle"/>
+  </concept>
+  <concept>
+    <code value="150020"/>
+  </concept>
+  <concept>
+    <code value="150022"/>
+    <display value="Noninvasive diastolic blood pressure"/>
+    <definition value="Pressure of the blood, obtained noninvasively (i.e., fingertip), at the diastolic phase"/>
+  </concept>
+  <concept>
+    <code value="150026"/>
+    <display value="Continuous, noninvasive diastolic blood pressure"/>
+    <definition value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the diastolic phase"/>
+  </concept>
+  <concept>
+    <code value="150023"/>
+    <display value="Noninvasive mean blood pressure"/>
+    <definition value="Pressure of the blood, obtained noninvasively (i.e., fingertip), as computed by averaging on one cycle"/>
+  </concept>
+  <concept>
+    <code value="150027"/>
+    <display value="Continuous, noninvasive mean blood pressure"/>
+    <definition value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), as computed by averaging on one cycle"/>
+  </concept>
+  <concept>
+    <code value="150021"/>
+    <display value="Noninvasive systolic blood pressure"/>
+    <definition value="Pressure of the blood, obtained noninvasively (i.e., fingertip), at the systolic phase"/>
+  </concept>
+  <concept>
+    <code value="150025"/>
+    <display value="Continuous, noninvasive systolic blood pressure"/>
+    <definition value="Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the systolic phase"/>
+  </concept>
+  <concept>
+    <code value="150076"/>
+    <display value="Pulmonary capillary blood pressure"/>
+    <definition value="Pressure of the blood in the pulmonary capillaries"/>
+  </concept>
+  <concept>
+    <code value="150078"/>
+    <display value="Diastolic pulmonary capillary pressure"/>
+    <definition value="Diastolic pressure of the blood in the pulmonary capillaries"/>
+  </concept>
+  <concept>
+    <code value="150079"/>
+    <display value="Mean pulmonary capillary pressure"/>
+    <definition value="Mean pressure of the blood in the pulmonary capillaries"/>
+  </concept>
+  <concept>
+    <code value="150077"/>
+    <display value="Systolic pulmonary capillary pressure"/>
+    <definition value="Systolic pressure of the blood in the pulmonary capillaries"/>
+  </concept>
+  <concept>
+    <code value="150017"/>
+    <display value="Systolic blood pressure"/>
+    <definition value="Pressure of the blood at the systolic phase"/>
+  </concept>
+  <concept>
+    <code value="150102"/>
+    <display value="Diastolic left ventricular pressure"/>
+    <definition value="Diastolic pressure of the blood in the left ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150103"/>
+    <display value="Mean left ventricular pressure"/>
+    <definition value="Mean pressure of the blood in the left ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150101"/>
+    <display value="Systolic left ventricular pressure"/>
+    <definition value="Systolic pressure of the blood in the left ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150106"/>
+    <display value="Diastolic right ventricular pressure"/>
+    <definition value="Diastolic pressure of the blood in the right ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150107"/>
+    <display value="Mean right ventricular pressure"/>
+    <definition value="Mean pressure of the blood in the right ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150105"/>
+    <display value="Systolic right ventricular pressure"/>
+    <definition value="Systolic pressure of the blood in the right ventricle of the heart"/>
+  </concept>
+  <concept>
+    <code value="150084"/>
+    <display value="Central venous pressure"/>
+    <definition value="Pressure of the blood in the thoracic venae cavae"/>
+  </concept>
+  <concept>
+    <code value="150086"/>
+    <display value="Diastolic central venous pressure"/>
+    <definition value="Diastolic pressure of the blood in the thoracic venae cavae"/>
+  </concept>
+  <concept>
+    <code value="150087"/>
+    <display value="Mean central venous pressure"/>
+    <definition value="Mean pressure of the blood in the thoracic venae cavae"/>
+  </concept>
+  <concept>
+    <code value="150085"/>
+    <display value="Systolic central venous pressure"/>
+    <definition value="Systolic pressure of the blood in the thoracic venae cavae"/>
+  </concept>
+  <concept>
+    <code value="150676"/>
+    <display value="Femoral Venous Pressure"/>
+    <definition value="Pressure of the blood in the femoral vein."/>
+  </concept>
+  <concept>
+    <code value="150088"/>
+    <display value="Umbilical venous blood pressure"/>
+    <definition value="Pressure of the blood in the umbilical veins of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150090"/>
+    <display value="Diastolic umbilical venous pressure"/>
+    <definition value="Diastolic pressure of the blood in the umbilical veins of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150091"/>
+    <display value="Mean umbilical venous pressure"/>
+    <definition value="Mean pressure of the blood in the umbilical veins of a fetus"/>
+  </concept>
+  <concept>
+    <code value="150089"/>
+    <display value="Systolic umbilical venous pressure"/>
+    <definition value="Systolic pressure of the blood in the umbilical veins of a fetus"/>
+  </concept>
+  <concept>
+    <code value="153604"/>
+    <display value="Cerebral perfusion pressure"/>
+    <definition value="Pressure difference between mean arterial pressure and mean pressure inside skull"/>
+  </concept>
+  <concept>
+    <code value="150300"/>
+  </concept>
+  <concept>
+    <code value="150302"/>
+    <display value="Discontinuous, noninvasive diastolic blood pressure"/>
+    <definition value="Pressure of the blood at the diastolic phase, measured discontinuously and noninvasively (cuff)"/>
+  </concept>
+  <concept>
+    <code value="150303"/>
+    <display value="Discontinuous, noninvasive mean blood pressure"/>
+    <definition value="Pressure of the blood computed as mean value between systolic and diastolic pressures, measured discontinuously and noninvasively (cuff)"/>
+  </concept>
+  <concept>
+    <code value="150301"/>
+    <display value="Discontinuous, noninvasive systolic blood pressure"/>
+    <definition value="Pressure of the blood at the systolic phase, measured discontinuously and noninvasively (cuff)"/>
+  </concept>
+  <concept>
+    <code value="151820"/>
+    <display value="Esophageal pressure"/>
+    <definition value="Pressure measured in the esophagus"/>
+  </concept>
+  <concept>
+    <code value="153252"/>
+    <display value="Endotracheal cuff pressure"/>
+    <definition value="The pressure of the balloon that seals the endotracheal tube."/>
+  </concept>
+  <concept>
+    <code value="153256"/>
+    <display value="Endotracheal cuff pressure at the end of exhalation"/>
+    <definition value="The pressure of the balloon that seals the endotracheal tube at the end of exhalation."/>
+  </concept>
+  <concept>
+    <code value="153244"/>
+    <display value="Gastric pressure"/>
+    <definition value="Pressure measured in the stomach"/>
+  </concept>
+  <concept>
+    <code value="188480"/>
+    <display value="Gastric pressure"/>
+    <definition value="Gastric pressure waveform"/>
+  </concept>
+  <concept>
+    <code value="151824"/>
+    <display value="Intrapleural Respiratory Pressure"/>
+    <definition value="Pressure in intrapleural space during breathing"/>
+  </concept>
+  <concept>
+    <code value="153608"/>
+    <display value="Intracranial pressure"/>
+    <definition value="Pressure inside skull"/>
+  </concept>
+  <concept>
+    <code value="153610"/>
+    <display value="Diastolic intracranial pressure"/>
+    <definition value="Minimum pressure inside skull, caused by emptying of vessels during diastolic phase of blood pressure"/>
+  </concept>
+  <concept>
+    <code value="153611"/>
+    <display value="Mean intracranial pressure"/>
+    <definition value="Mean pressure inside skull"/>
+  </concept>
+  <concept>
+    <code value="153609"/>
+    <display value="Systolic intracranial pressure"/>
+    <definition value="Maximum pressure inside skull, caused by filling of vessels during systolic phase of blood pressure"/>
+  </concept>
+  <concept>
+    <code value="152972"/>
+    <display value="N2O cylinder pressure"/>
+    <definition value="N2O cylinder pressure"/>
+  </concept>
+  <concept>
+    <code value="152968"/>
+    <display value="N2O supply (pipeline) pressure"/>
+    <definition value="N2O supply (pipeline) pressure"/>
+  </concept>
+  <concept>
+    <code value="153164"/>
+    <display value="O2 cylinder pressure"/>
+    <definition value="O2 cylinder pressure"/>
+  </concept>
+  <concept>
+    <code value="153168"/>
+    <display value="O2 cylinder #2 pressure"/>
+    <definition value="O2 #2 cylinder pressure"/>
+  </concept>
+  <concept>
+    <code value="153160"/>
+    <display value="O2 supply (pipeline) pressure"/>
+    <definition value="O2 supply (pipeline) pressure"/>
+  </concept>
+  <concept>
+    <code value="151788"/>
+    <display value="Respiratory Pause pressure"/>
+    <definition value="Pressure in airway during pause between expiration and inspiration"/>
+  </concept>
+  <concept>
+    <code value="151784"/>
+    <display value="Plateau pressure"/>
+    <definition value="Airway pressure during an inspiratory-hold procedure or during a flow pause in a pressure control inflation"/>
+  </concept>
+  <concept>
+    <code value="152776"/>
+    <display value="Dynamic Plateau Pressure"/>
+    <definition value="The estimated airway pressure that would have occurred during an inspiratory-hold or during a flow pause in a pressure control inflation."/>
+  </concept>
+  <concept/>
+  <concept>
+    <code value="151602"/>
+    <display value="Respiration rate"/>
+    <definition value="Rate of breathing; method: non-airway pressure measurement, e.g. central venous blood pressure (CVP)."/>
+  </concept>
+  <concept>
+    <code value="153296"/>
+    <display value="Inspiratory pressure-time product"/>
+    <definition value="The integral of the transdiaphragmatic pressure (Peso &#x2013; Pga) over the time interval between the start of the inspiratory effort and the end of the inspiratory phase of a respiratory cycle.  Reflects the exertion of the respiratory muscles during inspiration.  PTP can be expressed per breath or per unit time for multiple breaths."/>
+  </concept>
+  <concept>
+    <code value="153248"/>
+    <display value="Transpulmonary pressure (difference)"/>
+    <definition value="The measured or estimated difference between the alveolar pressure and the intrapleural pressure."/>
+  </concept>
+  <concept>
+    <code value="160280"/>
+    <display value="(Estimated) Arterial Oxygen Content"/>
+    <definition value="An estimate of the amount of oxygen bound to hemoglobin plus the amount of oxygen dissolved in arterial blood (not bound to hemoglobin)."/>
+  </concept>
+  <concept>
+    <code value="150604"/>
+    <display value="Pulse Oximeter Device Status"/>
+    <definition value="Object containing sensor or pulse oximeter-specific status flags"/>
+  </concept>
+  <concept>
+    <code value="160284"/>
+    <display value="Arterial blood carboxyhemoglobin concentration"/>
+    <definition value="Carboxyhemoglobin concentration in the arterial blood, measured by pulse oximetry."/>
+  </concept>
+  <concept>
+    <code value="160288"/>
+    <display value="Arterial blood methemoglobin concentration"/>
+    <definition value="Methemoglobin concentration in the arterial blood, measured by pulse oximetry."/>
+  </concept>
+  <concept>
+    <code value="160292"/>
+    <display value="Arterial blood hemoglobin concentration"/>
+    <definition value="Total Hemoglobin concentration in the arterial blood, measured by pulse oximetry."/>
+  </concept>
+  <concept>
+    <code value="150448"/>
+  </concept>
+  <concept>
+    <code value="150452"/>
+  </concept>
+  <concept>
+    <code value="151658"/>
+    <display value="Plethysmographic Respiration Rate"/>
+    <definition value="Rate of breathing; method: SpO2 plethysmography"/>
+  </concept>
+  <concept>
+    <code value="150605"/>
+    <display value="Pulse characteristic status"/>
+    <definition value="Object containing status flags representing several characteristics of the pulse event"/>
+  </concept>
+  <concept>
+    <code value="149530"/>
+  </concept>
+  <concept>
+    <code value="150456"/>
+  </concept>
+  <concept>
+    <code value="150472"/>
+  </concept>
+  <concept>
+    <code value="160300"/>
+    <display value="Postductal SpO2"/>
+    <definition value="Postductal oxygen saturation is measured at a site that receives blood flow from the aorta after the level of the ductus arteriosus (see&#xA0;Note 2)."/>
+  </concept>
+  <concept>
+    <code value="160296"/>
+    <display value="Preductal SpO2"/>
+    <definition value="Preductal oxygen saturation measured at a site that receives blood flow from the aorta before the level of the ductus arteriosus (see&#xA0;Note 1)."/>
+  </concept>
+  <concept>
+    <code value="160304"/>
+    <display value="Pre-postductal SpO2 difference"/>
+    <definition value="The difference between preductal and postductal oxygen saturation measurement (see Note 3)."/>
+  </concept>
+  <concept>
+    <code value="150476"/>
+  </concept>
+  <concept>
+    <code value="150468"/>
+  </concept>
+  <concept>
+    <code value="149514"/>
+    <display value="Pulse rate"/>
+    <definition value="Rate of blood pulse in an artery"/>
+  </concept>
+  <concept>
+    <code value="149546"/>
+    <display value="Noninvasive pulse rate"/>
+    <definition value="Rate of blood pulse in an artery, measured not invasively"/>
+  </concept>
+  <concept>
+    <code value="184516"/>
+  </concept>
+  <concept>
+    <code value="184517"/>
+  </concept>
+  <concept>
+    <code value="184519"/>
+    <definition value="Note:  This may be used in place of MDC_PUMP_STAT."/>
+  </concept>
+  <concept>
+    <code value="184504"/>
+    <display value="Operational mode"/>
+    <definition value="The operational mode of the pump (see Table A.8.7.11)"/>
+  </concept>
+  <concept>
+    <code value="184518"/>
+  </concept>
+  <concept>
+    <code value="184512"/>
+  </concept>
+  <concept>
+    <code value="184511"/>
+  </concept>
+  <concept>
+    <code value="184513"/>
+  </concept>
+  <concept>
+    <code value="184508"/>
+    <display value="Operational status of the pump"/>
+    <definition value="The operational status of the pump, e.g., Infusing, KVO, etc., (see Table A.8.7.12)"/>
+  </concept>
+  <concept>
+    <code value="160268"/>
+    <display value="Coagulation quick value"/>
+    <definition value="The measured prothrombin time is expressed in relation to the coagulation time of a healthy person, i.e., the &#x201C;percentage of the standard value.&#x201D;"/>
+  </concept>
+  <concept>
+    <code value="151828"/>
+    <display value="Respiratory quotient"/>
+    <definition value="Ratio of carbon dioxide expired to oxygen used"/>
+  </concept>
+  <concept>
+    <code value="157924"/>
+    <display value="Dose rate"/>
+    <definition value="The dose rate normalized to body mass (weight) and time unit"/>
+  </concept>
+  <concept>
+    <code value="157988"/>
+  </concept>
+  <concept>
+    <code value="151836"/>
+    <display value="Dead space tidal volume ratio"/>
+    <definition value="Ratio of dead space in respiratory tract to tidal volume"/>
+  </concept>
+  <concept>
+    <code value="151832"/>
+    <display value="Ratio inspiration expiration time"/>
+    <definition value="Ratio of durations of inspiratory and expiratory phases"/>
+  </concept>
+  <concept>
+    <code value="16929048"/>
+  </concept>
+  <concept>
+    <code value="160260"/>
+    <display value="Coagulation ratio &#x2013; INR"/>
+    <definition value="The globally recommended normalized unit for measuring prothrombin time"/>
+  </concept>
+  <concept>
+    <code value="152640"/>
+    <display value="Inspiratory Percent"/>
+    <definition value="Inspiratory time divided by the total respiratory cycle time, expressed as a percent."/>
+  </concept>
+  <concept>
+    <code value="188752"/>
+    <display value="body mass index"/>
+    <definition value="The individual&#39;s body weight, in kilograms, divided by the square of height, in meters"/>
+  </concept>
+  <concept>
+    <code value="184292"/>
+    <display value="Measured Relative Humidity"/>
+    <definition value="Measured relative humidity inside the infant incubator"/>
+  </concept>
+  <concept>
+    <code value="16961508"/>
+  </concept>
+  <concept>
+    <code value="151674"/>
+    <display value="Spontaneous respiration rate (preferred)"/>
+    <definition value="Spontaneous respiration rate, the rate of breaths or inspiratory gas flow initiated by the patient where flow and/or volume is determined by the patient and are delivered with the intention that the breath will be terminated by the patient."/>
+  </concept>
+  <concept>
+    <code value="152812"/>
+    <display value="Expended Energy"/>
+    <definition value="Expended energy measurement (or estimate) using indirect calorimetry based on O2 consumption and CO2 production by patient, measured over a period of time."/>
+  </concept>
+  <concept>
+    <code value="152860"/>
+    <display value="Rapid Shallow Breathing Index"/>
+    <definition value="The rapid shallow breathing index (RSBI) is calculated by dividing the spontaneous breath rate by the tidal volume, averaged over one minute."/>
+  </concept>
+  <concept>
+    <code value="151562"/>
+    <display value="Respiration rate"/>
+    <definition value="Rate of breathing; method not specified"/>
+  </concept>
+  <concept>
+    <code value="151666"/>
+    <display value="Spontaneous respiration rate (legacy devices and systems)"/>
+    <definition value="Spontaneous respiration rate, the rate of breaths initiated and terminated by the patient where pressure and flow/volume delivery are determined by the patient without support or assistance by a ventilator.  [This term may be used with legacy devices and systems where the precise definition of &#x2018;spontaneous&#x2019; is unknown; otherwise, the  more precise term MDC_RESP_BTSD_PS_RATE should be used.]"/>
+  </concept>
+  <concept>
+    <code value="153316"/>
+    <display value="Expiratory time constant"/>
+    <definition value="4 x RCexp: 98% of volume to be exhaled."/>
+  </concept>
+  <concept>
+    <code value="153312"/>
+    <display value="Inspiratory time constant"/>
+    <definition value="The product of the inspiratory airway resistance and static compliance."/>
+  </concept>
+  <concept>
+    <code value="151840"/>
+    <display value="Airway Resistance"/>
+    <definition value="Resistance to gas flow within the airway"/>
+  </concept>
+  <concept>
+    <code value="152596"/>
+    <display value="Dynamic airway resistance"/>
+    <definition value="Resistance to gas flow within the airway, dynamically calculated using a least squares or other curve fitting algorithm where airway resistance and lung compliance are related by the &#x201C;equation of motion&#x201D; &#x2206;P&lt;sub&gt;i&lt;/sub&gt; = R&lt;sub&gt;dyn&lt;/sub&gt;&lt;i&gt;&#xA0;&lt;/i&gt;V&#x307;&lt;sub&gt;i&lt;/sub&gt; + V&lt;sub&gt;i&lt;/sub&gt;/C&lt;sub&gt;dyn&lt;/sub&gt; + PEEP&lt;sub&gt;tot &lt;/sub&gt;,"/>
+  </concept>
+  <concept>
+    <code value="151844"/>
+    <display value="Expiratory Airway Resistance"/>
+    <definition value="Resistance to gas flow in airway during expiration"/>
+  </concept>
+  <concept>
+    <code value="151848"/>
+    <display value="Inspiratory Airway Resistance"/>
+    <definition value="Resistance to gas flow within the airway during inspiration"/>
+  </concept>
+  <concept>
+    <code value="150304"/>
+    <display value="Vascular resistance"/>
+    <definition value="Resistance to blood flow within circulation"/>
+  </concept>
+  <concept>
+    <code value="150308"/>
+    <display value="Pulmonary vascular resistance"/>
+    <definition value="Resistance to blood flow in the pulmonary vessels"/>
+  </concept>
+  <concept>
+    <code value="152852"/>
+    <display value="Pulmonary Vascular Resistance Index"/>
+    <definition value="Pulmonary Vascular Resistance Index, normalized with respect to body surface area"/>
+  </concept>
+  <concept>
+    <code value="150312"/>
+    <display value="Systemic vascular resistance"/>
+    <definition value="Resistance to blood flow in the systemic circulation"/>
+  </concept>
+  <concept>
+    <code value="149760"/>
+    <display value="Systemic vascular resistance indexed"/>
+    <definition value="Difference between systemic and pulmonary resistance"/>
+  </concept>
+  <concept>
+    <code value="150336"/>
+  </concept>
+  <concept>
+    <code value="150324"/>
+    <display value="Arterial oxygen saturation"/>
+  </concept>
+  <concept>
+    <code value="150272"/>
+    <display value="Oxygen consumption"/>
+    <definition value="Oxygen consumption of the body"/>
+  </concept>
+  <concept>
+    <code value="150664"/>
+    <display value="(Estimated) O2 Consumption Index"/>
+    <definition value="Estimated O2 Consumption, normalized by body surface area"/>
+  </concept>
+  <concept>
+    <code value="150668"/>
+    <display value="(Estimated) O2 Delivery Index"/>
+    <definition value="Estimated O2 Delivery, normalized by body surface area"/>
+  </concept>
+  <concept>
+    <code value="150320"/>
+  </concept>
+  <concept>
+    <code value="150332"/>
+    <display value="Venous oxygen saturation"/>
+  </concept>
+  <concept>
+    <code value="153730"/>
+    <display value="Glasgow coma score, eye"/>
+    <definition value="Subscore for visual reactions of score that monitors the neurologic status and probable outcome of patient"/>
+  </concept>
+  <concept>
+    <code value="153728"/>
+    <display value="Glasgow coma score"/>
+    <definition value="Score that monitors the neurologic status and probable outcome of patient"/>
+  </concept>
+  <concept>
+    <code value="153731"/>
+    <display value="Glasgow coma score, motoric"/>
+    <definition value="Subscore for motoric reactions of score that monitors the neurologic status and probable outcome of patient"/>
+  </concept>
+  <concept>
+    <code value="153732"/>
+    <display value="Glasgow coma score, verbal"/>
+    <definition value="Subscore for verbal reactions of score that monitors the neurologic status and probable outcome of patient"/>
+  </concept>
+  <concept>
+    <code value="150672"/>
+    <display value="SPO2 Oxygenation Ratio"/>
+    <definition value="Note:  this calculated value may be considered invalid under certain conditions, e.g. SpO2 is not sufficiently correlated with PaO2."/>
+  </concept>
+  <concept>
+    <code value="160324"/>
+    <display value="SPO2 Signal Quality Index"/>
+    <definition value="SpO2 Signal Quality Index, an indication of overall signal quality for calculating SpO2 and other values using pulse oximetry."/>
+  </concept>
+  <concept>
+    <code value="184488"/>
+  </concept>
+  <concept>
+    <code value="150616"/>
+    <display value="Systolic Time Ratio"/>
+    <definition value="The ratio of the electrical and mechanical systole duration (PEP/LVET)."/>
+  </concept>
+  <concept>
+    <code value="8417912"/>
+  </concept>
+  <concept>
+    <code value="150344"/>
+  </concept>
+  <concept>
+    <code value="150352"/>
+  </concept>
+  <concept>
+    <code value="150356"/>
+  </concept>
+  <concept>
+    <code value="188496"/>
+    <display value="Axillary temperature"/>
+    <definition value="Axillary (armpit) temperature"/>
+  </concept>
+  <concept>
+    <code value="188452"/>
+    <display value="Axillary (armpit) temperature"/>
+    <definition value="Axillary (armpit) temperature"/>
+  </concept>
+  <concept>
+    <code value="188436"/>
+    <display value="Blood temperature"/>
+    <definition value="Blood temperature"/>
+  </concept>
+  <concept>
+    <code value="150364"/>
+  </concept>
+  <concept>
+    <code value="150368"/>
+  </concept>
+  <concept>
+    <code value="188440"/>
+    <display value="Temperature difference"/>
+    <definition value="Difference between two temperatures, usually core temperature and peripheral temperature"/>
+  </concept>
+  <concept>
+    <code value="188428"/>
+    <display value="Ear temperature"/>
+    <definition value="Ear temperature"/>
+  </concept>
+  <concept>
+    <code value="150372"/>
+  </concept>
+  <concept>
+    <code value="188432"/>
+    <display value="Finger temperature"/>
+    <definition value="Finger temperature"/>
+  </concept>
+  <concept>
+    <code value="150348"/>
+  </concept>
+  <concept>
+    <code value="188456"/>
+    <display value="Gastro-intestinal tract temperature"/>
+    <definition value="Gastro-intestinal tract temperature"/>
+  </concept>
+  <concept>
+    <code value="150376"/>
+    <display value="Temperature of injectate"/>
+    <definition value="Temperature of an indicator injectate (cold indicator) used to calculate cardiac output"/>
+  </concept>
+  <concept>
+    <code value="184296"/>
+    <display value="Compartment Probe Temperature"/>
+    <definition value="Compartment probe (incubator air) temperature"/>
+  </concept>
+  <concept>
+    <code value="16961512"/>
+  </concept>
+  <concept>
+    <code value="188500"/>
+    <display value="Myocardial temperature"/>
+    <definition value="Myocardial temperature"/>
+  </concept>
+  <concept>
+    <code value="188504"/>
+    <display value="Nasal temperature"/>
+    <definition value="Nasal temperature"/>
+  </concept>
+  <concept>
+    <code value="150380"/>
+  </concept>
+  <concept>
+    <code value="188424"/>
+    <display value="Oral temperature"/>
+    <definition value="Oral temperature"/>
+  </concept>
+  <concept>
+    <code value="188420"/>
+    <display value="Rectal temperature"/>
+    <definition value="Rectal temperature"/>
+  </concept>
+  <concept>
+    <code value="188508"/>
+    <display value="Room temperature"/>
+    <definition value="Room temperature"/>
+  </concept>
+  <concept>
+    <code value="150388"/>
+  </concept>
+  <concept>
+    <code value="16927604"/>
+  </concept>
+  <concept>
+    <code value="188492"/>
+    <display value="Transcutaneous probe temperature"/>
+    <definition value="Transcutaneous sensor temperature"/>
+  </concept>
+  <concept>
+    <code value="188448"/>
+    <display value="Toe surface temperature"/>
+    <definition value="Surface temperature measured at toe (reflects blood circulation)"/>
+  </concept>
+  <concept>
+    <code value="150392"/>
+  </concept>
+  <concept>
+    <code value="150396"/>
+  </concept>
+  <concept>
+    <code value="150620"/>
+    <display value="Thoracic Fluid Content"/>
+    <definition value="The electrical conductivity of the chest cavity, which is primarily determined by the intravascular, intraalveolar and the interstitial fluids in the thorax."/>
+  </concept>
+  <concept>
+    <code value="157989"/>
+  </concept>
+  <concept>
+    <code value="151856"/>
+    <display value="Apnea Duration"/>
+    <definition value="Duration of apnea - no flow measured"/>
+  </concept>
+  <concept>
+    <code value="151860"/>
+    <display value="Central Apnea Duration"/>
+    <definition value="Duration of apnea - no flow and no respiratory effort"/>
+  </concept>
+  <concept>
+    <code value="151864"/>
+    <display value="Mixed Apnea Duration"/>
+    <definition value="Duration of apnea with central and obstructive components"/>
+  </concept>
+  <concept>
+    <code value="151852"/>
+    <display value="Obstructive Apnea Duration"/>
+    <definition value="Duration of apnea due to airway obstruction"/>
+  </concept>
+  <concept>
+    <code value="16929072"/>
+    <display value="Apnea alarm duration setting"/>
+  </concept>
+  <concept>
+    <code value="160264"/>
+    <display value="Coagulation time &#x2013; prothrombin time"/>
+    <definition value="The time taken for a clot to form on the addition of a thromboplastin to a sample of venous or capillary blood"/>
+  </concept>
+  <concept>
+    <code value="157998"/>
+  </concept>
+  <concept>
+    <code value="152612"/>
+    <display value="Expiratory time"/>
+    <definition value="Duration of an expiratory phase"/>
+  </concept>
+  <concept>
+    <code value="152608"/>
+    <display value="Inspiratory time"/>
+    <definition value="Duration of an inspiratory phase"/>
+  </concept>
+  <concept>
+    <code value="157987"/>
+  </concept>
+  <concept>
+    <code value="157996"/>
+  </concept>
+  <concept>
+    <code value="153892"/>
+    <definition value="Reaction of pupils to light, left eye"/>
+  </concept>
+  <concept>
+    <code value="153896"/>
+    <definition value="Reaction of pupils to light, right eye"/>
+  </concept>
+  <concept>
+    <code value="157916"/>
+    <display value="Infusion time remaining"/>
+    <definition value="The time calculated by the pump until time (or volume) for this step of flow elapses"/>
+  </concept>
+  <concept>
+    <code value="157997"/>
+  </concept>
+  <concept>
+    <code value="150624"/>
+    <display value="Left Ventricular Ejection Time"/>
+    <definition value="The time interval from opening to the closing of the aortic valve (mechanical systole)."/>
+  </concept>
+  <concept>
+    <code value="150628"/>
+    <display value="Pre-Ejection Period"/>
+    <definition value="The time interval from the beginning of electrical stimulation of the ventricles to the opening of the aortic valve (electrical systole)."/>
+  </concept>
+  <concept>
+    <code value="150520"/>
+    <display value="Systolic ejection period"/>
+    <definition value="Period between opening and closing aortic valve"/>
+  </concept>
+  <concept>
+    <code value="150568"/>
+  </concept>
+  <concept>
+    <code value="150576"/>
+  </concept>
+  <concept>
+    <code value="150572"/>
+  </concept>
+  <concept>
+    <code value="184331"/>
+    <display value="SpO2 precise pulse"/>
+    <definition value="An enumeration that indicates the maximal inrush of the pulsatile wave has occurred"/>
+  </concept>
+  <concept>
+    <code value="149554"/>
+    <display value="Heart rate by transthoracic impedance"/>
+    <definition value="Heart rate obtained from the variation of transthoracic impedance."/>
+  </concept>
+  <concept>
+    <code value="151578"/>
+    <display value="Respiration rate"/>
+    <definition value="Rate of breathing; method: transthoracic impedance variations"/>
+  </concept>
+  <concept>
+    <code value="150632"/>
+    <display value="Velocity Index"/>
+    <definition value="Peak velocity of blood flow in the aorta."/>
+  </concept>
+  <concept>
+    <code value="151610"/>
+    <display value="Ventilation rate"/>
+    <definition value="Rate of mechanical ventilation; method: carbon dioxide concentration measurement.  [This refers to the CO2 respiration rate measured by the ventilator and is not the set ventilator rate nor the ventilator inflation rate; it can include unassisted spontaneous breaths as well.]"/>
+  </concept>
+  <concept>
+    <code value="151912"/>
+    <display value="Diff. inspired and expired oxygen conc. (ventilator)"/>
+    <definition value="Difference in oxygen concentration between inspiration and expiration during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="152080"/>
+    <display value="Diff. inspired and expired substance conc. (ventilator)"/>
+    <definition value="Difference in substance concentration between inspiration and expiration during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151940"/>
+    <display value="Ventilator airway flow"/>
+    <definition value="Airway flow measured at the ventilator"/>
+  </concept>
+  <concept>
+    <code value="152652"/>
+    <display value="Bias flow"/>
+    <definition value="The continuous flow that is circulated through the patient circuit but is not intended to contribute to the work of ventilation. Generally refers to a low-level flow that improves the responsiveness and accuracy of the ventilator&#x2019;s control and detection systems and to minimize rebreathing of expired gas."/>
+  </concept>
+  <concept>
+    <code value="16929868"/>
+  </concept>
+  <concept>
+    <code value="152656"/>
+    <display value="Continuous flow"/>
+    <definition value="A continuous flow that passes through the ventilator breathing system, with a proportion intermittently passing to the patient&#x2019;s lung (e.g. whenever the airway pressure is raised by a pressure-controlled occlusion of the expiratory valve)."/>
+  </concept>
+  <concept>
+    <code value="16929872"/>
+  </concept>
+  <concept>
+    <code value="151944"/>
+    <display value="Ventilation expiratory flow"/>
+    <definition value="Expiratory gas flow during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151945"/>
+    <display value="Ventilation expiratory maximum flow"/>
+    <definition value="Maximum expiratory gas flow during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151948"/>
+    <display value="Ventilation inspiratory flow"/>
+    <definition value="Inspiratory gas flow in airway during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151949"/>
+    <display value="Ventilation inspiratory maximum flow"/>
+    <definition value="Maximum inspiratory gas flow during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="16929164"/>
+    <display value="Inspiratory flow setting"/>
+  </concept>
+  <concept>
+    <code value="153396"/>
+    <display value="Nebulizer Flow"/>
+    <definition value="Additional inspiratory gas flow due to pneumatic nebulizer, externally indicated by a wall flow meter or other sensor.  This information can be manually or automatically entered and typically requires compensation by the ventilator."/>
+  </concept>
+  <concept>
+    <code value="151952"/>
+    <display value="Ventilation-perfusion index"/>
+    <definition value="Ratio of alveolar ventilation and gas component to pulmonary capillary blood flow"/>
+  </concept>
+  <concept>
+    <code value="151626"/>
+    <display value="Ventilation rate"/>
+    <definition value="Rate of mechanical ventilation, method: volume/flow relation (comment: pediatric)"/>
+  </concept>
+  <concept>
+    <code value="152808"/>
+    <display value="Ventilator end-inspiratory flow threshold"/>
+    <definition value="Flow threshold in ventilator to end the inspiratory phase, expressed as a flow value."/>
+  </concept>
+  <concept>
+    <code value="153272"/>
+    <display value="% Ventilator end-inspiratory flow threshold"/>
+    <definition value="Flow threshold in ventilator to end the inspiratory phase, expressed as a percentage of peak inspiratory flow."/>
+  </concept>
+  <concept>
+    <code value="16930488"/>
+  </concept>
+  <concept>
+    <code value="16930024"/>
+  </concept>
+  <concept>
+    <code value="152804"/>
+    <display value="Ventilator flow trigger sensitivity"/>
+    <definition value="Sensitivity of trigger in ventilator; a flow value, for triggering an inflation."/>
+  </concept>
+  <concept>
+    <code value="16930020"/>
+  </concept>
+  <concept>
+    <code value="184352"/>
+    <display value="Ventilation mode"/>
+    <definition value="Selected mode of ventilator"/>
+  </concept>
+  <concept>
+    <code value="184400"/>
+    <display value="Backup ventilation mode"/>
+    <definition value="Selected backup mode of ventilator"/>
+  </concept>
+  <concept>
+    <code value="184353"/>
+    <display value="Respiration mode"/>
+    <definition value="Selected mode of respirator"/>
+  </concept>
+  <concept>
+    <code value="151956"/>
+    <display value="Ventilator pressure"/>
+    <definition value="Airway pressure during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151972"/>
+    <display value="Inspiratory airway pressure"/>
+    <definition value="Airway pressure, primarily during an inspiratory phase"/>
+  </concept>
+  <concept>
+    <code value="152724"/>
+    <display value="Backup inspiratory airway pressure"/>
+    <definition value="The inspiratory airway pressure for controlled (primary) inflations when a backup inflation is delivered."/>
+  </concept>
+  <concept>
+    <code value="16929940"/>
+  </concept>
+  <concept>
+    <code value="152716"/>
+    <display value="Baseline airway pressure"/>
+    <definition value="Baseline airway pressure"/>
+  </concept>
+  <concept>
+    <code value="16929932"/>
+  </concept>
+  <concept>
+    <code value="152720"/>
+    <display value="Inspiratory airway pressure relative to PEEP or BAP"/>
+    <definition value="Inspiratory airway pressure relative to PEEP or BAP."/>
+  </concept>
+  <concept>
+    <code value="152728"/>
+    <display value="Backup inspiratory airway pressure relative to PEEP or BAP"/>
+    <definition value="The inspiratory airway pressure relative to PEEP or BAP for controlled (primary) inflations when a backup inflation is delivered."/>
+  </concept>
+  <concept>
+    <code value="16929944"/>
+  </concept>
+  <concept>
+    <code value="152764"/>
+    <display value="Minimum delta pressure"/>
+    <definition value="The minimum target pressure limit relative to PEEP or BAP."/>
+  </concept>
+  <concept>
+    <code value="16929980"/>
+  </concept>
+  <concept>
+    <code value="16929936"/>
+  </concept>
+  <concept>
+    <code value="152736"/>
+    <display value="Delta pressure for support inflations"/>
+    <definition value="The inspiratory airway pressure relative to PEEP or BAP for pressure support inflations."/>
+  </concept>
+  <concept>
+    <code value="16929952"/>
+  </concept>
+  <concept>
+    <code value="151976"/>
+    <display value="Applied PEEP"/>
+    <definition value="Positive end expiratory pressure applied to the airway."/>
+  </concept>
+  <concept>
+    <code value="16929192"/>
+    <display value="Set PEEP"/>
+    <definition value="Positive end expiratory pressure applied to the airway by the ventilator during expiratory phase."/>
+  </concept>
+  <concept>
+    <code value="152744"/>
+    <display value="Low pressure"/>
+    <definition value="The low (expiratory) pressure level for APRV or Bi-Level modes."/>
+  </concept>
+  <concept>
+    <code value="16929960"/>
+  </concept>
+  <concept>
+    <code value="152740"/>
+    <display value="High pressure"/>
+    <definition value="The high (inspiratory) pressure level for APRV or Bi-Level modes."/>
+  </concept>
+  <concept>
+    <code value="16929956"/>
+  </concept>
+  <concept>
+    <code value="152748"/>
+    <display value="Pressure limit"/>
+    <definition value="The pressure at which the breath is limited and held for the remaining inspiratory time in a volume-controlled breath."/>
+  </concept>
+  <concept>
+    <code value="152752"/>
+    <display value="High pressure limit"/>
+    <definition value="The maximum pressure allowed in the patient breathing circuit. Once reached, the inspiratory phase ends, and the ventilator immediately begins the expiratory phase."/>
+  </concept>
+  <concept>
+    <code value="16929968"/>
+  </concept>
+  <concept>
+    <code value="152760"/>
+    <display value="Minimum pressure"/>
+    <definition value="The minimum target pressure limit."/>
+  </concept>
+  <concept>
+    <code value="16929976"/>
+  </concept>
+  <concept>
+    <code value="152756"/>
+    <display value="High pressure relief limit"/>
+    <definition value="Threshold value at which a protection device prevents any further rise in the airway pressure"/>
+  </concept>
+  <concept>
+    <code value="16929972"/>
+  </concept>
+  <concept>
+    <code value="16929964"/>
+  </concept>
+  <concept>
+    <code value="151973"/>
+    <definition value="Maximum inspiratory airway pressure"/>
+  </concept>
+  <concept>
+    <code value="151975"/>
+    <definition value="Mean inspiratory airway pressure"/>
+  </concept>
+  <concept>
+    <code value="151974"/>
+    <definition value="Minimum inspiratory airway pressure"/>
+  </concept>
+  <concept>
+    <code value="152768"/>
+    <display value="Rise time"/>
+    <definition value="The time for pressure to reach a preset fraction of the set inspiratory pressure for controlled inflations."/>
+  </concept>
+  <concept>
+    <code value="153260"/>
+    <display value="Rise time percent"/>
+    <definition value="The time for pressure to reach a preset fraction of the set inspiratory pressure for controlled inflations, expressed as a percentage of the duration of the inspiratory phase."/>
+  </concept>
+  <concept>
+    <code value="16930476"/>
+  </concept>
+  <concept>
+    <code value="16929984"/>
+  </concept>
+  <concept>
+    <code value="152772"/>
+    <display value="Pressure support rise time"/>
+    <definition value="The time for pressure to reach a preset fraction of the set inspiratory pressure for support breaths."/>
+  </concept>
+  <concept>
+    <code value="153264"/>
+    <display value="Pressure support rise time percent"/>
+    <definition value="The time for pressure to reach a preset fraction of the set inspiratory pressure for support breaths, expressed as a percentage of the duration of the inspiratory phase"/>
+  </concept>
+  <concept>
+    <code value="16930484"/>
+  </concept>
+  <concept>
+    <code value="16929988"/>
+  </concept>
+  <concept>
+    <code value="16929188"/>
+    <definition value="Inspiratory airway pressure setting."/>
+  </concept>
+  <concept>
+    <code value="152732"/>
+    <display value="Pressure for support inflations"/>
+    <definition value="The inspiratory airway pressure for pressure support inflations."/>
+  </concept>
+  <concept>
+    <code value="16929948"/>
+  </concept>
+  <concept>
+    <code value="151957"/>
+    <display value="Maximum ventilation pressure"/>
+    <definition value="Maximum airway pressure  during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151958"/>
+    <display value="Minimum ventilation pressure"/>
+    <definition value="Minimum airway pressure  during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151964"/>
+    <display value="Ventilation occlusion pressure"/>
+    <definition value="The negative airway pressure generated when briefly occluded during inspiration"/>
+  </concept>
+  <concept>
+    <code value="152784"/>
+    <display value="Negative Inspiratory Force (NIF)"/>
+    <definition value="The maximum negative airway pressure generated during an occluded inspiration arising from a Negative Inspiratory Force (NIF) maneuver"/>
+  </concept>
+  <concept>
+    <code value="152780"/>
+    <display value="Ventilation occlusion pressure, P0.1  (100 ms)"/>
+    <definition value="The negative airway pressure generated during the first 100 ms of an occluded inspiration"/>
+  </concept>
+  <concept>
+    <code value="152424"/>
+    <display value="Ventilation plateau pressure"/>
+    <definition value="Pressure in airway in plateau phase during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151618"/>
+    <display value="Ventilation rate"/>
+    <definition value="Rate of mechanical ventilation; method: pressure measurement"/>
+  </concept>
+  <concept>
+    <code value="152428"/>
+    <display value="Ventilator pressure trigger sensitivity"/>
+    <definition value="Sensitivity of trigger in ventilator; a pressure value, for triggering an inflation."/>
+  </concept>
+  <concept>
+    <code value="16929644"/>
+  </concept>
+  <concept>
+    <code value="152482"/>
+    <display value="Backup ventilation rate"/>
+    <definition value="Minimum assured ventilation rate in modes that support spontaneous breaths"/>
+  </concept>
+  <concept>
+    <code value="16929698"/>
+    <display value="Backup ventilation rate setting"/>
+    <definition value="Apnea (backup) rate, e.g. in CSV mode."/>
+  </concept>
+  <concept>
+    <code value="152546"/>
+    <display value="Mandatory respiration rate (traditional)"/>
+    <definition value="Rate of breaths or inspiratory gas flow that are delivered as assisted, synchronized assisted or controlled breaths by the ventilator, at an average or&#xA0;minimum rate set by the ventilator."/>
+  </concept>
+  <concept>
+    <code value="152514"/>
+    <display value="Assisted breath rate"/>
+    <definition value="Rate of primary inflations initiated by the patient at greater than the set rate.  The associated breaths are classified as having been &lt;b&gt;assisted&lt;/b&gt; by the inflation."/>
+  </concept>
+  <concept>
+    <code value="152530"/>
+    <display value="Controlled breath rate"/>
+    <definition value="Rate of primary inflations that are initiated by the ventilator at the set rate.  These breaths are classified as being &lt;b&gt;controlled&lt;/b&gt; by the inflation.  This&#xA0;includes backup safety breaths, apnea ventilation breaths and APRV and bilevel baseline pressure changes."/>
+  </concept>
+  <concept>
+    <code value="152490"/>
+    <display value="Total respiratory rate; total&#xA0;breath rate"/>
+    <definition value="Total rate of breaths or inspiratory gas flow comprised of unassisted&#xA0;(P), supported&#xA0;(S), assisted&#xA0;(A), synchronized assisted (Z) and controlled&#xA0;(C) breath types."/>
+  </concept>
+  <concept>
+    <code value="152554"/>
+    <display value="Patient-initiated breath rate"/>
+    <definition value="Rate of breaths or inspiratory gas flow initiated by the patient that are unassisted or delivered as supported, assisted or synchronized assisted breaths."/>
+  </concept>
+  <concept>
+    <code value="152538"/>
+    <display value="Spontaneous respiration rate (traditional)"/>
+    <definition value="Rate of breaths or inspiratory gas flow initiated by the patient where flow and/or volume is determined by the patient and is delivered with the intention that the breath will be terminated by the patient.  Includes unassisted and supported breaths that are superimposed on the intermittently elevated baseline pressure with APRV, bilevel or spontaneous-only modes."/>
+  </concept>
+  <concept>
+    <code value="152498"/>
+    <display value="Unassisted spontaneous breath rate; respiration rate"/>
+    <definition value="Rate of breaths or inspiratory gas flow initiated and terminated by the patient where pressure and flow/volume delivery are determined by the &lt;b&gt;patient&lt;/b&gt; without support or assistance by the ventilator.  Includes unassisted breaths that are superimposed on the intermittently elevated baseline pressure with APRV, bilevel or spontaneous-only modes."/>
+  </concept>
+  <concept>
+    <code value="152506"/>
+    <display value="Supported breath rate"/>
+    <definition value="Rate of inflations or inspiratory gas flow initiated by the patient and that are intended to be terminated by the patient where the inspiratory pressure is raised above baseline to &lt;b&gt;support&lt;/b&gt; some portion of the work of breathing (WOB).  Includes proportional assist ventilation (PAV) where the ventilator provides a level of support proportional to patient effort.  Includes supported breaths that are superimposed on the intermittently elevated baseline pressure with APRV, bilevel or spontaneous-only modes."/>
+  </concept>
+  <concept>
+    <code value="152522"/>
+    <display value="Synchronized assisted breath rate"/>
+    <definition value="Rate of primary inflations that have been assured to be delivered at the average set rate but are initiated by the patient within a timed synchronization window. The associated breaths are classified as having had &lt;b&gt;synchronized assistance&lt;/b&gt; by the inflation."/>
+  </concept>
+  <concept>
+    <code value="151586"/>
+    <display value="Ventilation rate"/>
+    <definition value="Rate of mechanical ventilation; method not specified"/>
+  </concept>
+  <concept>
+    <code value="16928805"/>
+    <display value="Average ventilation rate setting"/>
+    <definition value="Average ventilator-initiated inflation rate, e.g. in Synchronized Intermittent Mandatory Ventilation (SIMV) ventilation mode."/>
+  </concept>
+  <concept>
+    <code value="16928805"/>
+    <display value="Average ventilation rate setting"/>
+    <definition value="Average ventilator-initiated inflation rate, e.g. in Synchronized Intermittent Mandatory Ventilation (SIMV) ventilation mode."/>
+  </concept>
+  <concept>
+    <code value="16928804"/>
+    <display value="Minimum assured ventilation inflation rate setting"/>
+    <definition value="Minimum assured ventilator-initiated inflation rate, e.g. in continuous mandatory ventilation or assist/mandatory ventilation mode."/>
+  </concept>
+  <concept>
+    <code value="16928802"/>
+    <display value="Set inflation rate"/>
+    <definition value="Displayed minimum and/or actual ventilator rate setting, may be mode dependent."/>
+  </concept>
+  <concept>
+    <code value="152562"/>
+    <display value="Target respiratory rate"/>
+    <definition value="The ventilator calculated target respiratory rate, typically used to achieve a desired minute volume or other objective."/>
+  </concept>
+  <concept>
+    <code value="151642"/>
+    <display value="Ventilation multiple sigh number"/>
+    <definition value="Number of multiple sighs delivered per minute during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="151634"/>
+    <display value="Ventilation sigh number"/>
+    <definition value="Number of sighs delivered per minute during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="152636"/>
+    <definition value="Duration for an expiratory hold, a ventilator function intended to temporarily maintain a constant lung volume during a set extension of the expiratory phase."/>
+  </concept>
+  <concept>
+    <code value="16929852"/>
+  </concept>
+  <concept>
+    <code value="151684"/>
+    <definition value="Duration of the expiratory phase from the end of expiratory flow to the start of inspiratory flow"/>
+  </concept>
+  <concept>
+    <code value="152648"/>
+    <display value="Tlow"/>
+    <definition value="The time duration that the ventilator holds the low (expiratory) baseline pressure level in APRV or Bi-Level modes."/>
+  </concept>
+  <concept>
+    <code value="16929864"/>
+  </concept>
+  <concept>
+    <code value="152416"/>
+    <display value="Inspiratory time"/>
+    <definition value="Duration of the inflation phase if time-terminated"/>
+  </concept>
+  <concept>
+    <code value="152616"/>
+    <display value="Backup inspiratory time"/>
+    <definition value="The duration of the inspiratory phase for controlled (primary) inflations when a backup inflation is delivered."/>
+  </concept>
+  <concept>
+    <code value="16929832"/>
+    <display value="Backup inspiratory time setting"/>
+  </concept>
+  <concept>
+    <code value="152632"/>
+    <definition value="The duration of an inspiratory hold, a ventilator function intended to temporarily maintain a constant lung volume, or to maintain a constant airway pressure, at the end of an inspiratory or inflation phase."/>
+  </concept>
+  <concept>
+    <code value="16929848"/>
+  </concept>
+  <concept>
+    <code value="16929633"/>
+    <display value="Maximum inspiratory time setting"/>
+    <definition value="The maximum inspiratory time to deliver a pressure-controlled or operator-set tidal volume inflation."/>
+  </concept>
+  <concept>
+    <code value="152624"/>
+    <definition value="Interval from the end of inspiratory flow to the start of expiratory flow during unassisted spontaneous breathing and pressure-regulated inflations, expressed as a time duration."/>
+  </concept>
+  <concept>
+    <code value="152628"/>
+    <definition value="Interval from the end of inspiratory flow to the start of expiratory flow during unassisted spontaneous breathing and pressure-regulated inflations, expressed as a percentage of the duration of the inspiratory phase."/>
+  </concept>
+  <concept>
+    <code value="16929844"/>
+    <definition value="Interval from the end of inspiratory flow to the start of expiratory flow during volume-control (VC) inflations, expressed as a percentage of the duration of the inspiratory phase."/>
+  </concept>
+  <concept>
+    <code value="16929840"/>
+    <definition value="Interval from the end of inspiratory flow to the start of expiratory flow during volume-control (VC) inflations, expressed as a time duration."/>
+  </concept>
+  <concept>
+    <code value="152604"/>
+    <display value="Inspiratory time percent"/>
+    <definition value="Duration of the inflation phase if time-terminated, expressed as a percent-ratio of the total respiratory period"/>
+  </concept>
+  <concept>
+    <code value="16929820"/>
+    <display value="Inspiratory time percent setting"/>
+  </concept>
+  <concept>
+    <code value="16929632"/>
+    <display value="Inspiratory time setting"/>
+  </concept>
+  <concept>
+    <code value="152644"/>
+    <display value="Thigh"/>
+    <definition value="The time duration that the ventilator holds the high  (inspiratory) baseline pressure level in APRV or Bi-Level modes."/>
+  </concept>
+  <concept>
+    <code value="16929860"/>
+  </concept>
+  <concept>
+    <code value="152416"/>
+    <display value="Positive Pressure Duration"/>
+    <definition value="Duration of positive pressure phase in positive pressure ventilation modes"/>
+  </concept>
+  <concept>
+    <code value="152621"/>
+    <display value="Maximum pressure support time"/>
+    <definition value="The maximum inspiratory time for a pressure-supported breath."/>
+  </concept>
+  <concept>
+    <code value="16929837"/>
+  </concept>
+  <concept>
+    <code value="153300"/>
+    <display value="Tube compensation, Automatic tube compensation"/>
+    <definition value="Endotracheal or tracheal tube compensation level, expressed as a percent from 0 (off) to 100 (full compensation) relative to level estimated by the ventilator based on tube type and size.  Compensation method not specified."/>
+  </concept>
+  <concept>
+    <code value="153308"/>
+    <display value="Tube size"/>
+    <definition value="Tube size (inside diameter) in millimeters."/>
+  </concept>
+  <concept>
+    <code value="153304"/>
+    <display value="Tube type"/>
+    <definition value="Tube type, endotracheal or tracheal."/>
+  </concept>
+  <concept>
+    <code value="151984"/>
+    <display value="Ventilation dead space"/>
+    <definition value="Volume of gas in airway per breath during mechanical ventilation not involved in respiratory exchange"/>
+  </concept>
+  <concept>
+    <code value="151988"/>
+    <display value="Ventilation relative dead space"/>
+    <definition value="Ratio of dead space to tidal volume during mechanical ventilation."/>
+  </concept>
+  <concept>
+    <code value="152432"/>
+    <display value="Leakage volume"/>
+    <definition value="Volume of gas lost per minute by leakage in ventilation system, tubing, connectors, etc."/>
+  </concept>
+  <concept>
+    <code value="153224"/>
+    <display value="Leakage volume, percent"/>
+    <definition value="Relative volume of gas lost per minute by leakage in ventilation system, tubing, connectors, etc. calculated as the difference between inspired and expired volume, relative to inspired volume, expressed as a percentage."/>
+  </concept>
+  <concept>
+    <code value="152436"/>
+    <display value="Alveolar ventilation"/>
+    <definition value="Volume of gas exchanged per breath in alveoli; difference between tidal volume and dead space"/>
+  </concept>
+  <concept>
+    <code value="151992"/>
+    <display value="Trapped volume"/>
+    <definition value="Volume of gas remaining in lung at end of expiration"/>
+  </concept>
+  <concept>
+    <code value="151996"/>
+    <display value="Inspiratory or expiratory minute volume."/>
+    <definition value="Volume of gas per minute passing in to or out of the patient&#39;s airway during inspiratory or expiratory phases, respectively."/>
+  </concept>
+  <concept>
+    <code value="152008"/>
+    <display value="Ventilation minute volume"/>
+    <definition value="Total volume of gas delivered by ventilator during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="152016"/>
+    <display value="Inspiratory minute volume"/>
+    <definition value="Volume of gas per minute passing in to the patient&#39;s airway during inspiratory phases."/>
+  </concept>
+  <concept>
+    <code value="152012"/>
+    <display value="Mandatory . Minute volume"/>
+    <definition value="Minimum volume of gas delivered in 1 min during mechanical and spontaneous respiration"/>
+  </concept>
+  <concept>
+    <code value="16929228"/>
+  </concept>
+  <concept>
+    <code value="16929224"/>
+  </concept>
+  <concept>
+    <code value="152000"/>
+    <display value="Expired minute volume"/>
+    <definition value="Volume of gas per minute exhaled by the patient."/>
+  </concept>
+  <concept>
+    <code value="152004"/>
+    <display value="Ventilation inspiratory minute volume"/>
+    <definition value="Total volume of gas breathed in during 1 min during mechanical ventilation"/>
+  </concept>
+  <concept>
+    <code value="153240"/>
+    <display value="Alveolar minute ventilation"/>
+    <definition value="Volume of gas exchanged per minute in alveoli; difference between tidal volume and dead space"/>
+  </concept>
+  <concept>
+    <code value="151980"/>
+    <display value="Ventilation tidal volume"/>
+    <definition value="Volume of gas delivered through the patient-connection port during a respiratory cycle"/>
+  </concept>
+  <concept>
+    <code value="153216"/>
+    <display value="Backup tidal volume"/>
+    <definition value="The volume of gas delivered to the patient when a backup inflation is delivered."/>
+  </concept>
+  <concept>
+    <code value="16930432"/>
+    <display value="Backup tidal volume setting"/>
+  </concept>
+  <concept>
+    <code value="153220"/>
+    <display value="Inspired tidal volume (vent)"/>
+    <definition value="Volume of inspired gas during ventilator inflations."/>
+  </concept>
+  <concept>
+    <code value="16930438"/>
+    <display value="Minimum inspired tidal volume setting"/>
+    <definition value="Minimum volume of inspired gas during ventilator inflations."/>
+  </concept>
+  <concept>
+    <code value="16930436"/>
+    <display value="Inspired tidal volume setting"/>
+  </concept>
+  <concept>
+    <code value="16929196"/>
+    <display value="Tidal volume setting"/>
+  </concept>
+  <concept>
+    <code value="153212"/>
+    <display value="Target tidal volume"/>
+    <definition value="The ventilator calculated target volume of gas delivered to the patient."/>
+  </concept>
+  <concept>
+    <code value="152708"/>
+    <definition value="Integral flow of gas in airway, typically as a waveform or spirometry waveform segment"/>
+  </concept>
+  <concept>
+    <code value="151872"/>
+    <display value="Airway dead space"/>
+    <definition value="Volume of gas in airway per breath not involved in respiratory&#xA0;gas exchange&#xA0;with no ventilator and no airway device.  It includes both alveolar and anatomical dead space."/>
+  </concept>
+  <concept>
+    <code value="152586"/>
+    <display value="forced expiratory volume at 1s"/>
+    <definition value="It is a measure of expiratory volume of a subject under forced conditions at 1 s, measured from time zero (time at which subject starts the expiration)."/>
+  </concept>
+  <concept>
+    <code value="152587"/>
+    <display value="forced expiratory volume at 6s"/>
+    <definition value="It is a measure of expiratory volume of a subject under forced conditions at 6 s, measured from time zero (time at which subject starts the expiration)."/>
+  </concept>
+  <concept>
+    <code value="151868"/>
+    <display value="Respiratory tidal volume"/>
+    <definition value="Volume of gas leaving the patient through the patient connection port during an expiratory phase."/>
+  </concept>
+  <concept>
+    <code value="153324"/>
+    <display value="Expired CO2 volume"/>
+    <definition value="Volume of expired CO2 during each breath, breath type(s) not specified."/>
+  </concept>
+  <concept>
+    <code value="153328"/>
+    <display value="Inspired CO2 volume"/>
+    <definition value="Volume of inspired CO2 during each breath, breath type(s) not specified."/>
+  </concept>
+  <concept>
+    <code value="152664"/>
+    <display value="Expired Tidal Volume"/>
+    <definition value="Volume of expired gas for each breath, breath type(s) not specified. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_AWAY_TIDAL_EXP_BTSD_PSAZC should be used.]"/>
+  </concept>
+  <concept>
+    <code value="152680"/>
+    <display value="Expired Tidal Volume for assisted, synchronized assisted or controlled (aka mandatory) breaths"/>
+    <definition value="Volume of expired gas for assisted, synchronized assisted or controlled (aka mandatory) breaths."/>
+  </concept>
+  <concept>
+    <code value="152676"/>
+    <display value="Expired Tidal Volume for unassisted or supported (aka spontaneous) breaths"/>
+    <definition value="Volume of expired gas for unassisted or supported (aka spontaneous) breaths."/>
+  </concept>
+  <concept>
+    <code value="152672"/>
+    <display value="(for all breath types)"/>
+    <definition value="Volume of expired gas for all breath and inflation types, reported individually or as an average."/>
+  </concept>
+  <concept>
+    <code value="152668"/>
+    <display value="(for all breath types)"/>
+    <definition value="Volume of expired gas for all breath and inflation types, normalized by the patient&#x2019;s ideal body weight (typ kg), reported individually or as an average."/>
+  </concept>
+  <concept>
+    <code value="152684"/>
+    <display value="Expired Tidal Volume for unassisted or supported (aka spontaneous) breaths per body mass"/>
+    <definition value="Volume of expired gas for unassisted or supported (aka spontaneous) breaths, normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+  </concept>
+  <concept>
+    <code value="152668"/>
+  </concept>
+  <concept>
+    <code value="152660"/>
+    <display value="Inspired Tidal Volume"/>
+    <definition value="Volume of inspired gas during each breath, breath type(s) not specified."/>
+  </concept>
+  <concept>
+    <code value="153332"/>
+    <display value="Expired O2 volume"/>
+    <definition value="Volume of expired O2 during each breath, breath type(s) not specified."/>
+  </concept>
+  <concept>
+    <code value="153336"/>
+    <display value="Inspired O2 volume"/>
+    <definition value="Volume of inspired O2 during each breath, breath type(s) not specified."/>
+  </concept>
+  <concept>
+    <code value="153208"/>
+    <display value="Tidal volume per body mass"/>
+    <definition value="Volume of gas leaving the patient through the patient connection port, normalized by the patient&#x2019;s ideal body weight (typ kg), reported individually or as an average for all breath types."/>
+  </concept>
+  <concept>
+    <code value="16930604"/>
+  </concept>
+  <concept>
+    <code value="150404"/>
+    <display value="Stroke volume"/>
+    <definition value="Volume of blood ejected per beat"/>
+  </concept>
+  <concept>
+    <code value="150636"/>
+    <display value="Stroke Volume Index"/>
+    <definition value="Left-ventricular stroke volume per heart beat, normalized for body surface area."/>
+  </concept>
+  <concept>
+    <code value="152880"/>
+    <display value="Air delivered during a case"/>
+    <definition value="Volume (gas) of air delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152884"/>
+    <display value="Total air delivered"/>
+    <definition value="Total volume (gas) of air delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="153032"/>
+    <display value="Carbon dioxide gas delivered during a case"/>
+    <definition value="Volume (gas) of carbon dioxide delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="153036"/>
+    <display value="Total carbon dioxide gas delivered"/>
+    <definition value="Total volume (gas) of carbon dioxide delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152896"/>
+    <display value="Desflurane gas delivered during a case"/>
+    <definition value="Volume of desflurane gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152900"/>
+    <display value="Desflurane liquid delivered during a case"/>
+    <definition value="Volume (liquid) of desflurane delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152904"/>
+    <display value="Total desflurane liquid delivered"/>
+    <definition value="Total volume (liquid) of desflurane delivered"/>
+  </concept>
+  <concept>
+    <code value="152908"/>
+    <display value="Total desflurane gas delivered"/>
+    <definition value="Total volume of desflurane gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152912"/>
+    <display value="Enflurane gas delivered during a case"/>
+    <definition value="Volume of enflurane gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152916"/>
+    <display value="Enflurane liquid delivered during a case"/>
+    <definition value="Volume (liquid) of enflurane delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152920"/>
+    <display value="Total enflurane liquid delivered"/>
+    <definition value="Total volume (liquid) of enflurane delivered"/>
+  </concept>
+  <concept>
+    <code value="152924"/>
+    <display value="Total enflurane gas delivered"/>
+    <definition value="Total volume of enflurane gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152928"/>
+    <display value="Halothane gas delivered during a case"/>
+    <definition value="Volume of halothane gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152932"/>
+    <display value="Halothane liquid delivered during a case"/>
+    <definition value="Volume (liquid) of halothane delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152936"/>
+    <display value="Total halothane liquid delivered"/>
+    <definition value="Total volume (liquid) of halothane delivered"/>
+  </concept>
+  <concept>
+    <code value="152940"/>
+    <display value="Total halothane gas delivered"/>
+    <definition value="Total volume of halothane gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="153068"/>
+    <display value="Helium gas delivered during a case"/>
+    <definition value="Volume of helium gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="153072"/>
+    <display value="Total helium gas delivered"/>
+    <definition value="Total of helium gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152944"/>
+    <display value="Isoflurane gas delivered during a case"/>
+    <definition value="Volume of isoflurane gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152948"/>
+    <display value="Isoflurane liquid delivered during a case"/>
+    <definition value="Volume (liquid) of isoflurane delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152952"/>
+    <display value="Total isoflurane liquid delivered"/>
+    <definition value="Total volume (liquid) of isoflurane delivered"/>
+  </concept>
+  <concept>
+    <code value="152956"/>
+    <display value="Total isoflurane gas delivered"/>
+    <definition value="Total volume of isoflurane gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152960"/>
+    <display value="Nitrous oxide gas delivered during a case"/>
+    <definition value="Volume (gas) of nitrous oxide delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152964"/>
+    <display value="Total nitrous oxide gas delivered"/>
+    <definition value="Total volume (gas) of nitrous oxide delivered"/>
+  </concept>
+  <concept>
+    <code value="153124"/>
+    <display value="Nitric oxide gas delivered during a case"/>
+    <definition value="Volume of nitric oxide gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="153128"/>
+    <display value="Total nitric oxide gas delivered"/>
+    <definition value="Total volume of nitric oxide gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="153148"/>
+    <display value="Oxygen gas delivered during a case"/>
+    <definition value="Volume (gas) of oxygen delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="153152"/>
+    <display value="Total oxygen gas delivered"/>
+    <definition value="Total volume (gas) of oxygen delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="152976"/>
+    <display value="Sevoflurane gas delivered during a case"/>
+    <definition value="Volume of sevoflurane gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152980"/>
+    <display value="Sevoflurane liquid delivered during a case"/>
+    <definition value="Volume (liquid) of sevoflurane delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="152984"/>
+    <display value="Total sevoflurane liquid delivered"/>
+    <definition value="Total volume (liquid) of sevoflurane delivered"/>
+  </concept>
+  <concept>
+    <code value="152988"/>
+    <display value="Total sevoflurane gas delivered"/>
+    <definition value="Total volume of sevoflurane gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="153200"/>
+    <display value="Xenon gas delivered during a case"/>
+    <definition value="Volume of xenon gas delivered during a case, to a single patient during a single procedure."/>
+  </concept>
+  <concept>
+    <code value="153204"/>
+    <display value="Total xenon gas delivered"/>
+    <definition value="Total volume of xenon gas delivered (potentially across multiple cases)"/>
+  </concept>
+  <concept>
+    <code value="157994"/>
+  </concept>
+  <concept>
+    <code value="157864"/>
+    <display value="Infused volume"/>
+    <definition value="Fluid volume infused to the patient using this syringe or bottle (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="157992"/>
+  </concept>
+  <concept>
+    <code value="157993"/>
+    <definition value="The cumulative volume delivered to the patient across all infusate sources."/>
+  </concept>
+  <concept>
+    <code value="157888"/>
+    <display value="Total delivered fluid volume"/>
+    <definition value="Total (accumulated) volume delivered to this patient by this pump (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="157884"/>
+    <display value="Volume to be infused"/>
+    <definition value="Volume to be infused to the patient (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="157872"/>
+    <display value="Volume remaining to be infused"/>
+    <definition value="Volume of fluid remaining to be infused in relation with the volume to be infused (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites])"/>
+  </concept>
+  <concept>
+    <code value="151876"/>
+    <display value="Volume since start inspiration"/>
+    <definition value="Ventilated gas volume since start of inspiration (waveform)"/>
+  </concept>
+  <concept>
+    <code value="151880"/>
+    <display value="Minute volume"/>
+    <definition value="Total volume of gas breathed in 1 min"/>
+  </concept>
+  <concept>
+    <code value="151884"/>
+    <display value="Expired Minute volume"/>
+    <definition value="Volume of gas per minute leaving the patient&#39;s airway during expiratory phases. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_MINUTE_AWAY_EXP_BTSD_PSAZC should be used.]"/>
+  </concept>
+  <concept>
+    <code value="152700"/>
+    <display value="Expired Minute volume for assisted or controlled (aka mandatory) inflations"/>
+    <definition value="Volume of expired gas per minute for assisted, synchronized assisted or controlled (aka mandatory) breaths."/>
+  </concept>
+  <concept>
+    <code value="152696"/>
+    <display value="Expired Minute volume for unassisted or supported (aka spontaneous) breaths"/>
+    <definition value="Volume of expired gas per minute for unassisted or supported (aka spontaneous) breaths."/>
+  </concept>
+  <concept>
+    <code value="152692"/>
+    <display value="Expired minute volume (total for all breath types)"/>
+    <definition value="Volume of expired gas per minute for all breath and inflation types (total)."/>
+  </concept>
+  <concept>
+    <code value="152688"/>
+    <display value="Expired minute volume per body mass"/>
+    <definition value="Volume of expired gas per minute leaving the patient&#39;s airway, normalized by the patient&#x2019;s ideal body weight (typ kg), all breath and inflation types."/>
+  </concept>
+  <concept>
+    <code value="152704"/>
+    <display value="Expired Minute volume for unassisted or supported (aka spontaneous) breaths per body mass"/>
+    <definition value="Volume of expired gas per minute for unassisted or supported (aka spontaneous) breaths, normalized by the patient&#x2019;s ideal body weight (typ kg)."/>
+  </concept>
+  <concept>
+    <code value="152688"/>
+  </concept>
+  <concept>
+    <code value="16930448"/>
+    <display value="Percentage of the reference minute volume calculated for the patient&#x2019;s ideal body mass"/>
+    <definition value="The percentage of the reference minute volume (calculated for the patient based on the patient&#x2019;s ideal body weight) set by the clinician.&lt;br/&gt;&lt;i&gt;Example:  80% (of reference)&lt;/i&gt;"/>
+  </concept>
+  <concept>
+    <code value="153228"/>
+    <display value="Reference minute volume calculated for the patient&#x2019;s ideal body mass"/>
+    <definition value="The reference minute volume calculated for the patient, based on the patient&#x2019;s ideal body weight&lt;br/&gt;&lt;i&gt;Example:  5 L/min&lt;/i&gt;"/>
+  </concept>
+  <concept>
+    <code value="153236"/>
+    <display value="Target Minute Volume"/>
+    <definition value="The calculated target minute volume, the product of reference minute volume and the percentage set by the clinician.&lt;br/&gt;&lt;i&gt;Example:  80% * 5 L/min = 4 L/min&lt;/i&gt;"/>
+  </concept>
+  <concept>
+    <code value="151888"/>
+    <display value="Inspiratory&#xA0;Minute volume"/>
+    <definition value="Volume of gas per minute entering the patient&#39;s airway during inspiratory phases"/>
+  </concept>
+  <concept>
+    <code value="157995"/>
+  </concept>
+  <concept>
+    <code value="157984"/>
+  </concept>
+  <concept>
+    <code value="157744"/>
+    <display value="Urine volume in bag"/>
+    <definition value="Urine collected in bag (comment: site attribute according to table Miscellaneous body sites... optional)"/>
+  </concept>
+  <concept>
+    <code value="150528"/>
+    <display value="Left ventricular enddiastolic volume"/>
+    <definition value="Volume of the left ventricle at the end of diastolic phase (maximum volume)"/>
+  </concept>
+  <concept>
+    <code value="150532"/>
+    <display value="Left ventricular end systolic volume"/>
+    <definition value="Volume of the left ventricle at the end of systolic phase (minimum volume)"/>
+  </concept>
+  <concept>
+    <code value="150416"/>
+    <display value="Left side ventricular stroke"/>
+    <definition value="Ventricular stroke - work of left side of the heart in one cardiac cycle"/>
+  </concept>
+  <concept>
+    <code value="150420"/>
+    <display value="Right side ventricular stroke"/>
+    <definition value="Ventricular stroke - work of right side of the heart in one cardiac cycle"/>
+  </concept>
+  <concept>
+    <code value="150428"/>
+    <display value="Ventricular stroke"/>
+    <definition value="Work of left ventricle of the heart in one cardiac cycle"/>
+  </concept>
+  <concept>
+    <code value="149764"/>
+    <display value="Left Ventricular Stroke Work Index"/>
+    <definition value="Work of left ventricle of the heart in one cardiac cycle and related to body surface area (LVSW/BSA)"/>
+  </concept>
+  <concept>
+    <code value="150640"/>
+    <display value="(per minute)"/>
+    <definition value="Work performed by the left ventricle of the heart to eject the stroke volume over one minute&#39;s time, normalized for body surface area."/>
+  </concept>
+  <concept>
+    <code value="150644"/>
+    <display value="Right Ventricular Stroke Work Index"/>
+    <definition value="Work of right ventricle of the heart in one cardiac cycle and related to body surface area (RVSW/BSA)"/>
+  </concept>
+  <concept>
+    <code value="153292"/>
+    <display value="Imposed work of breathing (extrinsic)"/>
+    <definition value="The additional resistive work imposed on the patient by the breathing apparatus (endotracheal tube, breathing circuit, humidifier, demand valves and exhalation valves) &lt;i&gt;including&lt;/i&gt; reductions due to tube compensation, calculated or estimated relative to the patient airway adaptor, endotracheal tube, endotracheal tube tip near the carina or other measurement site."/>
+  </concept>
+  <concept>
+    <code value="153276"/>
+    <display value="Work of breathing (intrinsic)"/>
+    <definition value="The work expended by the patient over one or more inspiratory and expiratory cycles.  Includes the physiologic resistive and elastic components of work and may exclude the work done by stored potential energy of the lung compliance overcoming airway resistance and tissue movement resistance during expiration.  The preferred calculation method is based on the Campbell diagram in which lung volume on the ordinate is plotted against the pleural or esophageal pressure on the abscissa and does not include the additional work WOBi imposed on the patient by the breathing apparatus.  Can be expressed as work per breath, work per unit volume, work per unit time (power) or work per unit volume per body mass.[1]"/>
+  </concept>
+  <concept>
+    <code value="153284"/>
+    <display value="Work of breathing - elastic"/>
+    <definition value="The elastic component of the work of breathing by the patient, using principles based on Campbell diagram."/>
+  </concept>
+  <concept>
+    <code value="153280"/>
+    <display value="Work of breathing - resistive"/>
+    <definition value="The resistive component of the work of breathing by the patient, using principles based on the Campbell diagram."/>
+  </concept>
+  <concept>
+    <code value="153288"/>
+    <display value="Work of breathing - ventilator"/>
+    <definition value="The work of breathing expended by the ventilator and applied to the patient over one or more inspiratory/inflation and expiratory cycles, calculated or estimated relative to the patient airway adaptor, endotracheal tube, endotracheal tube tip near the carina or other measurement site.[2]"/>
+  </concept>
+</CodeSystem>

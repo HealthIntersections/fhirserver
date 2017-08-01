@@ -1,0 +1,591 @@
+LOINC_NUM,LOINC_LONG_COMMON_NAME,IEEE_CF_CODE10,IEEE_REFID,IEEE_DESCRIPTION,IEEE_DIM,IEEE_UOM_UCUM
+11556-8,Oxygen [Partial pressure] in Blood,160116,MDC_CONC_PO2_GEN,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+11557-6,Carbon dioxide [Partial pressure] in Blood,160064,MDC_CONC_PCO2_GEN,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+11558-4,pH of Blood,160004,MDC_CONC_PH_GEN,,[pH],[pH]
+12961-9,Urea nitrogen [Mass/volume] in Arterial blood,160080,MDC_CONC_UREA_ART,,ML-3,mg/dL
+14749-6,Glucose [Moles/volume] in Serum or Plasma,160196,MDC_CONC_GLU_VENOUS_PLASMA,Plasma glucose concentration taken from venous,NL-3  ,mmol/L
+14749-6,Glucose [Moles/volume] in Serum or Plasma,160368,MDC_CONC_GLU_UNDETERMINED_PLASMA,Plasma glucose concentration taken from undetermined sample source,NL-3  ,mmol/L
+15074-8,Glucose [Moles/volume] in Blood,160020,MDC_CONC_GLU_GEN,,NL-3,mmol/L
+15074-8,Glucose [Moles/volume] in Blood,160364,MDC_CONC_GLU_UNDETERMINED_WHOLEBLOOD,Whole blood glucose concentration taken from undetermined sample source,NL-3  ,mmol/L
+17861-6,Calcium [Mass/volume] in Serum or Plasma,160024,MDC_CONC_CA_GEN,,ML-3,mg/dL
+19153-6,Volume in Urine collected for unspecified duration,157744,MDC_VOL_URINE_COL,"Urine collected in bag (comment: site attribute according to table ""Miscellaneous body sites..."" optional)",L3 ,mL L
+1925-7,Base excess in Arterial blood by calculation,160252,MDC_BASE_EXCESS_BLD_ART,Base excess of arterial blood,NL-3 NL-3,mmol/L meq/L
+1959-6,Bicarbonate [Moles/volume] in Blood,160008,MDC_CONC_HCO3_GEN,,NL-3 NL-3,mmol/L meq/L
+1960-4,Bicarbonate [Moles/volume] in Arterial blood,159760,MDC_CONC_HCO3_ART,,NL-3,mmol/L
+19834-1,Breath rate setting Ventilator,16928802,MDC_VENT_RESP_RATE_SETTING,"Displayed minimum and/or actual ventilator rate setting, may be mode dependent.",T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+19867-1,Vital capacity [Volume] Respiratory system,151680,MDC_CAPAC_VITAL,Difference in volume between maximum inspiration and maximum expiration,L3 ,mL L
+19930-7,Gas flow Respiratory system airway,151764,MDC_FLOW_AWAY,Gas flow in airway,L3T-1 ,mL/min L/min
+19974-5,Inspiration/Expiration setting Ventilator,16929048,MDC_RATIO_IE_SETTING,,1,{unitless} 1
+19991-9,Alveolar-arterial oxygen Partial pressure difference,150336,MDC_SAT_DIFF_O2_ART_ALV,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+2000-8,Calcium [Moles/volume] in Serum or Plasma,160024,MDC_CONC_CA_GEN,,NL-3,mmol/L
+20053-5,Atmospheric pressure,152832,MDC_PRESS_BAROMETRIC,Barometric (atmospheric) air pressure,LMT-2L-2,mm[Hg]
+20077-4,Positive end expiratory pressure setting Ventilator,16929192,MDC_VENT_PRESS_AWAY_END_EXP_POS_SETTING,Positive end expiratory pressure applied to the airway by the ventilator during expiratory phase.,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+20112-9,Tidal volume setting Ventilator,16929196,MDC_VENT_VOL_TIDAL_SETTING,,L3 ,mL L
+2019-8,Carbon dioxide [Partial pressure] in Arterial blood,159752,MDC_CONC_PCO2_ART,,LMT-2L-2 LMT-2L-2 NL-3,kPa mm[Hg] mmol/L
+2021-4,Carbon dioxide [Partial pressure] in Venous blood,159800,MDC_CONC_PCO2_VEN,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+20562-5,Left ventricular Stroke volume,150404,MDC_VOL_BLD_STROKE,Volume of blood ejected per beat,L3 L3,mL mL/{beat}
+20570-8,Hematocrit [Volume Fraction] of Blood,160132,MDC_CONC_HCT_GEN,,1 1,% %{pcv}
+2075-0,Chloride [Moles/volume] in Serum or Plasma,160104,MDC_CONC_CHLOR_GEN,,NL-3 NL-3,mmol/L meq/L
+2339-0,Glucose [Mass/volume] in Blood,160020,MDC_CONC_GLU_GEN,,ML-3,mg/dL
+2339-0,Glucose [Mass/volume] in Blood,160365,MDC_CONC_GLU_UNDETERMINED_WHOLEBLOOD,Whole blood glucose concentration taken from undetermined sample source,ML-3,mg/dL  g/L
+2345-7,Glucose [Mass/volume] in Serum or Plasma,160197,MDC_CONC_GLU_VENOUS_PLASMA,Plasma glucose concentration taken from venous,ML-3,mg/dL g/L
+2345-7,Glucose [Mass/volume] in Serum or Plasma,160369,MDC_CONC_GLU_UNDETERMINED_PLASMA,Plasma glucose concentration taken from undetermined sample source,ML-3,mg/dL g/L
+2703-7,Oxygen [Partial pressure] in Arterial blood,159756,MDC_CONC_PO2_ART,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+2705-2,Oxygen [Partial pressure] in Venous blood,159804,MDC_CONC_PO2_VEN,,LMT-2L-2 LMT-2L-2 L3L-3,kPa mm[Hg] mL/dL
+2708-6,Oxygen saturation in Arterial blood,150324,MDC_SAT_O2_ART,,1,%
+2711-0,Oxygen saturation in Venous blood,150332,MDC_SAT_O2_VEN,,1,%
+2744-1,pH of Arterial blood,159748,MDC_CONC_PH_ART,,[pH],[pH]
+2746-6,pH of Venous blood,159796,MDC_CONC_PH_VEN,,[pH],[pH]
+29463-7,Body weight,68063,MDC_ATTR_PT_WEIGHT,,M   ,kg g [lb_av] [oz_av]
+2947-0,Sodium [Moles/volume] in Blood,160012,MDC_CONC_NA_GEN,,NL-3 NL-3,mmol/L meq/L
+2951-2,Sodium [Moles/volume] in Serum or Plasma,159960,MDC_CONC_NA_SERUM,,NL-3 NL-3,mmol/L meq/L
+2955-3,Sodium [Moles/volume] in Urine,159852,MDC_CONC_NA_URINE,,NL-3 NL-3,mmol/L meq/L
+30313-1,Hemoglobin [Mass/volume] in Arterial blood,159764,MDC_CONC_HB_ART,,ML-3,g/dL g/L g/cL
+3137-7,Body height Measured,188740,MDC_LEN_BODY_ACTUAL,"The actual height of the patient, especially for neonates, babies, and children during long-term therapy", L,[in_i] cm
+3140-1,Body surface area Derived from formula,188744,MDC_AREA_BODY_SURF_ACTUAL,"The actual body surface area of the patient, calculated from patient actual weight and patient actual length.",L2,m2
+3141-9,Body weight Measured,188736,MDC_MASS_BODY_ACTUAL,"The measurement of the mass of patient, e.g., by a scale in bed, e.g., during therapy", M  ,[lb_av] kg g [oz_av]
+3141-9,Body weight Measured,188792,MDC_ATTR_PT_WEIGHT_LAST,Last Taken Weight,,g
+32016-8,Glucose [Mass/volume] in Capillary blood,160184,MDC_CONC_GLU_CAPILLARY_WHOLEBLOOD,Whole blood glucose concentration taken from capillary,ML-3,mg/dL g/L
+32354-3,Hematocrit [Volume Fraction] of Arterial blood,160068,MDC_CONC_HCT_ART,,1,%
+33022-5,Carbon dioxide [Partial pressure] in Capillary blood by Transcutaneous CO2 monitor,151756,MDC_CO2_TCUT,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+33437-5,Oxygen [Partial pressure] in Capillary blood by Transcutaneous O2 monitor,151760,MDC_O2_TCUT,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+33438-3,Breath rate mechanical --on ventilator,151586,MDC_VENT_RESP_RATE,Rate of mechanical ventilation; method not specified,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+33452-4,Maximum expiratory gas flow Respiratory system airway,151769,MDC_FLOW_AWAY_EXP_MAX,Maximum expiratory gas flow,L3T-1 ,mL/min L/min
+34581-9,Calcium.ionized [Moles/volume] in Arterial blood,159792,MDC_CONC_CA_ART,,NL-3 NL-3,mmol/L meq/L
+35410-0,Continuous positive airway pressure Respiratory system,151796,MDC_PRESS_AWAY_CTS_POS,Continuous pressure in airway during spontaneous respiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+38199-6,Intrinsic PEEP Respiratory system,151808,MDC_PRESS_AWAY_END_EXP_POS_INTRINSIC,.The component of alveolar pressure in the lungs above extrinsic PEEP due to physiologic causes at the end of expiration.,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+39156-5,Body mass index (BMI) [Ratio],188752,MDC_RATIO_MASS_BODY_LEN_SQ,"The individual's body weight, in kilograms, divided by the square of height, in meters",ML-2,kg/m2
+39480-9,Glucose [Moles/volume] in Venous blood,160192,MDC_CONC_GLU_VENOUS_WHOLEBLOOD,Whole blood glucose concentration taken from venous,NL-3  ,mmol/L
+39481-7,Glucose [Moles/volume] in Arterial blood,160200,MDC_CONC_GLU_ARTERIAL_WHOLEBLOOD,Whole blood glucose concentration taken from arterial,NL-3  ,mmol/L
+41651-1,Glucose [Mass/volume] in Arterial blood,160200,MDC_CONC_GLU_ARTERIAL_WHOLEBLOOD,Whole blood glucose concentration taken from arterial,ML-3,mg/dL g/L
+41652-9,Glucose [Mass/volume] in Venous blood,160192,MDC_CONC_GLU_VENOUS_WHOLEBLOOD,Whole blood glucose concentration taken from venous,ML-3,mg/dL g/L
+41982-0,Percentage of body fat Measured,188748,MDC_BODY_FAT,The individual's body fat in kilograms divided by the individual's weight in kilograms,1,%
+4548-4,Hemoglobin A1c/Hemoglobin.total in Blood,160220,MDC_CONC_HBA1C,A1c or glycated hemoglobin concentration.,1 NN-1,% mmol/mol
+50064-5,Ideal body weight,188796,MDC_MASS_BODY_EST_IBW,"Ideal body weight (IBW), an estimate based solely on patient height using the Devine Formula (1974):<br/><i>Male (in kg):  50.0 + 2.3 kg per inch over 5 feet</i><br/><i>Female (in kg):  45.5 + 2.3 kg per inch over 5 fee</i>t<b><br/></b>The Devine formula can be re-expressed using other units-of-measure.  Also called the Predicted Body Weight.",M   ,kg g [lb_av] [oz_av]
+51596-5,Glucose [Moles/volume] in Capillary blood,160184,MDC_CONC_GLU_CAPILLARY_WHOLEBLOOD,Whole blood glucose concentration taken from capillary,NL-3  ,mmol/L
+53138-4,Calcium.ionized [Moles/volume] adjusted to pH 7.4 in Arterial blood,160256,MDC_CONC_CA_PH_NORMALIZED_ART,"Ionized calcium in blood fluid, normalized to pH 7.4",NL-3,mmol/L
+59274-1,Oxygen content in Arterial blood by calculation,159768,MDC_CONC_HB_O2_ART,,L3L-3,mL/dL
+59407-7,Oxygen saturation in Blood Preductal by Pulse oximetry,160296,MDC_PULS_OXIM_SAT_O2_ART_PREDUCTAL,Preductal oxygen saturation measured at a site that receives blood flow from the aorta before the level of the ductus arteriosus (see Note 1).,1,%
+59408-5,Oxygen saturation in Arterial blood by Pulse oximetry,150456,MDC_PULS_OXIM_SAT_O2,,1,%
+59418-4,Oxygen saturation in Blood Postductal by Pulse oximetry,160300,MDC_PULS_OXIM_SAT_O2_ART_POSTDUCTAL,Postductal oxygen saturation is measured at a site that receives blood flow from the aorta after the level of the ductus arteriosus (see Note 2).,1,%
+59470-5,Calcium.ionized [Mass/volume] in Arterial blood,159792,MDC_CONC_CA_ART,,ML-3,mg/dL
+60738-2,Intraluminal [Pressure] Esophagus,151820,MDC_PRESS_ESOPH,Pressure measured in the esophagus,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60739-0,Expiration [Time] Respiratory system,152612,MDC_TIME_PD_EXP,Duration of an expiratory phase,T ,ms s
+60740-8,Inspiration [Time] Respiratory system,152608,MDC_TIME_PD_INSP,Duration of an inspiratory phase,T ,ms s
+60741-6,Desflurane target [VFr/PPres] Airway adaptor --at end expiration,16929300,MDC_CONC_AWAY_DESFL_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60744-0,Gas delivery system inspiratory Desflurane setting [VFr/PPres],16929416,MDC_CONC_GASDLV_DESFL_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60746-5,Desflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152140,MDC_CONC_GASDLV_DESFL_EXP,Concentration of desflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60747-3,Desflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152200,MDC_CONC_GASDLV_DESFL_INSP,Concentration of desflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60748-1,Desflurane gas delivered during case [Volume] from Gas delivery system,152896,MDC_VOL_DELIV_DESFL_CASE,"Volume of desflurane gas delivered during a case, to a single patient during a single procedure.",L3,mL
+60749-9,Target enflurane [VFr/PPres] Airway adaptor --at end expiration,16929304,MDC_CONC_AWAY_ENFL_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60752-3,Gas delivery system inspiratory Enflurane setting [VFr/PPres],16929420,MDC_CONC_GASDLV_ENFL_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60754-9,Enflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152144,MDC_CONC_GASDLV_ENFL_EXP,Concentration of enflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60755-6,Enflurane gas delivered during case [Volume] from Gas delivery system,152912,MDC_VOL_DELIV_ENFL_CASE,"Volume of enflurane gas delivered during a case, to a single patient during a single procedure.",L3,mL
+60756-4,Target halothane [VFr/PPres] Airway adaptor --at end expiration,16929308,MDC_CONC_AWAY_HALOTH_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60759-8,Gas delivery system inspiratory Halothane setting [VFr/PPres],16929424,MDC_CONC_GASDLV_HALOTH_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60761-4,Halothane [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152148,MDC_CONC_GASDLV_HALOTH_EXP,Concentration of halothane in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60762-2,Halothane gas delivered during case [Volume] from Gas delivery system,152928,MDC_VOL_DELIV_HALOTH_CASE,"Volume of halothane gas delivered during a case, to a single patient during a single procedure.",L3,mL
+60763-0,Target isoflurane [VFr/PPres] Airway adaptor --at end expiration,16929316,MDC_CONC_AWAY_ISOFL_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60766-3,Gas delivery system inspiratory Isoflurane setting [VFr/PPres],16929432,MDC_CONC_GASDLV_ISOFL_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60768-9,Isoflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152156,MDC_CONC_GASDLV_ISOFL_EXP,Concentration of isoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60769-7,Isoflurane gas delivered during case [Volume] from Gas delivery system,152944,MDC_VOL_DELIV_ISOFL_CASE,"Volume of isoflurane gas delivered during a case, to a single patient during a single procedure.",L3,mL
+60775-4,Nitrous oxide gas delivered during case [Volume] from Gas delivery system,152960,MDC_VOL_DELIV_N2O_CASE,"Volume (gas) of nitrous oxide delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+60776-2,Target sevoflurane [VFr/PPres] Airway adaptor --at end expiration,16929312,MDC_CONC_AWAY_SEVOFL_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60779-6,Gas delivery system inspiratory Sevoflurane setting [VFr/PPres],16929428,MDC_CONC_GASDLV_SEVOFL_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60781-2,Sevoflurane [VFr/PPres] Gas delivery system,152064,MDC_CONC_GASDLV_SEVOFL,Concentration of sevoflurane in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60782-0,Sevoflurane gas delivered during case [Volume] from Gas delivery system,152976,MDC_VOL_DELIV_SEVOFL_CASE,"Volume of sevoflurane gas delivered during a case, to a single patient during a single procedure.",L3,mL
+60789-5,Carbon dioxide gas delivered during case [Volume] from Gas delivery system,153032,MDC_VOL_DELIV_CO2_CASE,"Volume (gas) of carbon dioxide delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+60790-3,Carbon dioxide gas delivered.total [Volume] in Reporting period from Gas delivery system,153036,MDC_VOL_DELIV_CO2_TOTAL,Total volume (gas) of carbon dioxide delivered (potentially across multiple cases),L3 ,mL L
+60791-1,Gas flow Respiratory system airway --on ventilator,151940,MDC_VENT_FLOW,Airway flow measured at the ventilator,L3T-1 ,mL/min L/min
+60792-9,Expiratory gas flow Respiratory system airway --on ventilator,151944,MDC_VENT_FLOW_EXP,Expiratory gas flow during mechanical ventilation,L3T-1 ,mL/min L/min
+60793-7,Maximum expiratory gas flow Respiratory system airway --on ventilator,151945,MDC_VENT_FLOW_EXP_MAX,Maximum expiratory gas flow during mechanical ventilation,L3T-1 ,mL/min L/min
+60794-5,Inspiratory gas flow Respiratory system airway --on ventilator,151948,MDC_VENT_FLOW_INSP,Inspiratory gas flow in airway during mechanical ventilation,L3T-1 ,mL/min L/min
+60795-2,Inspiratory gas flow.max Respiratory system airway --on ventilator,151949,MDC_VENT_FLOW_INSP_MAX,Maximum inspiratory gas flow during mechanical ventilation,L3T-1 ,mL/min L/min
+60796-0,Target oxygen [VFr/PPres] Airway adaptor --at end expiration,16929656,MDC_CONC_AWAY_O2_ET_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60799-4,Gas delivery system inspiratory Oxygen setting [VFr/PPres],16930360,MDC_CONC_GASDLV_O2_INSP_SETTING,,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60801-8,Trapped lung volume --at end expiration,151992,MDC_VENT_VOL_LUNG_TRAPD,Volume of gas remaining in lung at end of expiration,L3 ,mL L
+60802-6,Dynamic plateau pressure,152776,MDC_PRESS_RESP_PLAT_DYNAMIC,The estimated airway pressure that would have occurred during an inspiratory-hold or during a flow pause in a pressure control inflation.,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60804-2,Minimum alveolar concentration (MAC) for anesthesia.XXX Anesthetic agent.XXX,152872,MDC_CONC_MAC,"Mean Aveolar Concentration, expressed as a percentage relative to the needed to prevent movement (motor response) in 50% of subjects in response to surgical (pain) stimulus.",1,%
+60805-9,Desflurane [VFr/PPres] Airway adaptor --during inspiration,152168,MDC_CONC_AWAY_DESFL_INSP,Partial pressure of desflurane in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60807-5,Sevoflurane [VFr/PPres] Airway adaptor --during expiration,152124,MDC_CONC_AWAY_SEVOFL_EXP,Partial pressure of sevoflurane in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60808-3,Carbon dioxide [VFr/PPres] in Airway adaptor --at end expiration,151708,MDC_CONC_AWAY_CO2_ET,Partial pressure of carbon dioxide in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60809-1,Carbon dioxide [VFr/PPres] in Airway adaptor --during expiration,151712,MDC_CONC_AWAY_CO2_EXP,Partial pressure of carbon dioxide in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60812-5,Helium [VFr/PPres] Airway adaptor --at end expiration,153044,MDC_CONC_AWAY_HE_ET,Partial pressure of helium in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60813-3,Helium [VFr/PPres] Airway adaptor --during expiration,153048,MDC_CONC_AWAY_HE_EXP,Partial pressure of helium in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60815-8,Minimum alveolar concentration (MAC) sum Anesthetic agent.XXX+Nitrous oxide,152864,MDC_CONC_MAC_SUM,Sum of the Minimum Alveolar Concentration for anesthetic gas and N2O,1,{unitless} 1
+60816-6,Minimum alveolar concentration (MAC) sum corrected for age Anesthetic agent.XXX+Nitrous oxide,152868,MDC_CONC_MAC_SUM_AGE_CORR,Age corrected sum of the Minimum Alveolar Concentration for anesthetic gas and N2O,1,{unitless} 1
+60817-4,Gastric-arterial pCO2 gap,160308,MDC_CONC_PCO2_GASTRIC_ART_DIFF,Difference (gap) between gastric mucosal (PgCO2) and arterial (PaCO2) partial pressures of carbon dioxide.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60818-2,Gastric-end tidal pCO2 gap,160312,MDC_CONC_PCO2_GASTRIC_ET_DIFF,Difference (gap) between gastric mucosal (PgCO2) and end-tidal (EtCO2) partial pressures of carbon dioxide.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60819-0,Gastric mucosal pCO2,160316,MDC_CONC_PCO2_GASTRIC_MUCOSAL,Gastric mucosal (PgCO2) partial pressure of carbon dioxide.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60821-6,Apnea duration,151856,MDC_TIME_PD_APNEA,Duration of apnea - no flow measured,,s
+60822-4,Estimated pulmonary Shunt fraction,152840,MDC_BLD_SHUNT_FRACTION,The (estimated) fraction of cardiac output that returns to the left heart without the benefit of exposure to ventilated alveoli.,1,%
+60823-2,Oxygen consumption (VO2)/Body surface area [Volume Rate/Area],152820,MDC_FLOW_O2_CONSUMP_PER_BSA,"The volume of oxygen a patient inhales (consumes) per minute, normalized by patient body surface area (typ m<sup>2</sup>).",L3T-1L-2,mL/min/m2
+60825-7,Carbon dioxide production (VCO2) in Respiratory system,151776,MDC_FLOW_CO2_PROD_RESP,"Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ /min)",L3T-1 ,mL/min L/min
+60826-5,Lung compliance,151688,MDC_COMPL_LUNG,Change of tidal volume per unit change of airway pressure,L4M-1T2 L4M-1T2 L4M-1T2,mL/cm[H2O] mL/mbar L/bar
+60827-3,Dynamic lung compliance,151692,MDC_COMPL_LUNG_DYN,Change of tidal volume per unit change of transthoracic pressure,L4M-1T2 L4M-1T2 L4M-1T2,mL/cm[H2O] mL/mbar L/bar
+60828-1,Compliance.static Lung,151696,MDC_COMPL_LUNG_STATIC,Change of tidal volume per unit change in esophageal pressure measured statically at expiration end,L4M-1T2 L4M-1T2 L4M-1T2,mL/cm[H2O] mL/mbar L/bar
+60830-7,Finger temperature,188432,MDC_TEMP_FINGER,Finger temperature,Q Q,Cel [degF]
+60832-3,Room temperature,188508,MDC_TEMP_ROOM,Room temperature,Q Q,Cel [degF]
+60833-1,Toe temperature,188448,MDC_TEMP_TOE,Surface temperature measured at toe (reflects blood circulation),Q Q,Cel [degF]
+60834-9,Blood temperature,188436,MDC_TEMP_BLD,Blood temperature,Q Q,Cel [degF]
+60835-6,Arterial blood temperature,150352,MDC_TEMP_ART,,Q Q,Cel [degF]
+60836-4,Esophageal temperature,150372,MDC_TEMP_ESOPH,,Q Q,Cel [degF]
+60837-2,Injectate temperature,150376,MDC_TEMP_INJ,Temperature of an indicator injectate (cold indicator) used to calculate cardiac output,Q Q,Cel [degF]
+60838-0,Nasopharyngeal temperature,150380,MDC_TEMP_NASOPH,,Q Q,Cel [degF]
+60839-8,Skin temperature --in microenvironment,150388,MDC_TEMP_SKIN,,Q Q,Cel [degF]
+60840-6,Base excess in Extracellular fluid by calculation,160216,MDC_BASE_EXCESS_FLUID_EXTRACELLULAR,Base excess of extracellular fluid,NL-3,mmol/L
+60841-4,Oxygen content in Venous blood by calculation,159816,MDC_CONC_HB_O2_VEN,,L3L-3,mL/dL
+60842-2,Oxygen consumption (VO2),150272,MDC_SAT_O2_CONSUMP,Oxygen consumption of the body,L3T-1,mL/min
+60842-2,Oxygen consumption (VO2),152420,MDC_FLOW_O2_CONSUMP,The volume of oxygen a patient inhales (consumes) per minute.,L3T-1,mL/min
+60843-0,Mean dominant power frequency on EEG,153980,MDC_EEG_FREQ_PWR_SPEC_CRTX_DOM_MEAN,"Mean dominant frequency of Power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG.",T-1,Hz
+60844-8,Median power frequency on EEG,153984,MDC_EEG_FREQ_PWR_SPEC_CRTX_MEDIAN,"Median power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG.",T-1,Hz
+60845-5,Peak power frequency on EEG,153988,MDC_EEG_FREQ_PWR_SPEC_CRTX_PEAK,"Peak power frequency of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. See also EEG.",T-1,Hz
+60846-3,Burst count Cerebral cortex Electroencephalogram (EEG),156241,MDC_EEG_PAROX_CRTX_BURST_CNT,"Epileptic or potentially epileptogenic activity identifiers, burst count",1,{unitless} 1 {count}
+60847-1,Seizure count Cerebral cortex Electroencephalogram (EEG),154032,MDC_EEG_NUM_SEIZ,"Seizures, as determined out of the EEG, EOG, and EMG",1,{unitless} 1 {count}
+60848-9,Alpha frequency relative power on EEG,154068,MDC_EEG_PWR_SPEC_ALPHA_REL,"Relative power of alpha band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG.",1,%
+60849-7,Beta frequency relative power on EEG,154072,MDC_EEG_PWR_SPEC_BETA_REL,"Relative power of beta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG.",1,%
+60850-5,Delta frequency relative power on EEG,154076,MDC_EEG_PWR_SPEC_DELTA_REL,"Relative power of delta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG.",1,%
+60851-3,Theta frequency relative power on EEG,154080,MDC_EEG_PWR_SPEC_THETA_REL,"Relative power of theta band of power spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG.",1,%
+60852-1,Electrical potential Muscle on EMG,153640,MDC_EMG_ELEC_POTL_MUSCL,"Electromyographic signal strength, predominantly representing muscle activity above 70 Hz.",[Bel] ML2I-1T-3 ML2I-1T-3 [Bel],dB dB[10.nV] uV nV dB[10.nV]
+60853-9,Desflurane [VFr/PPres] Gas delivery system,152052,MDC_CONC_GASDLV_DESFL,Concentration of desflurane in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60854-7,Enflurane [VFr/PPres] Gas delivery system,152056,MDC_CONC_GASDLV_ENFL,Concentration of enflurane in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60855-4,Enflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152204,MDC_CONC_GASDLV_ENFL_INSP,Concentration of enflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient.,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60856-2,Halothane [VFr/PPres] Gas delivery system,152060,MDC_CONC_GASDLV_HALOTH,Concentration of halothane in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60857-0,Halothane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152208,MDC_CONC_GASDLV_HALOTH_INSP,Concentration of halothane in airway gas measured during inspiration in the system or circuit conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60858-8,Isoflurane [VFr/PPres] Gas delivery system,152068,MDC_CONC_GASDLV_ISOFL,Concentration of isoflurane in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60859-6,Isoflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152216,MDC_CONC_GASDLV_ISOFL_INSP,Concentration of isoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60860-4,Nitrous oxide [VFr/PPres] Gas delivery system,152076,MDC_CONC_GASDLV_N2O,Concentration of nitrous oxide in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60861-2,Nitrous oxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152164,MDC_CONC_GASDLV_N2O_EXP,Concentration of nitrous oxide in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60862-0,Nitrous oxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152224,MDC_CONC_GASDLV_N2O_INSP,Concentration of nitrous oxide in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60863-8,Sevoflurane [VFr/PPres] Airway adaptor,152036,MDC_CONC_AWAY_SEVOFL,Measured partial pressure of sevoflurane in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60864-6,Sevoflurane [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152212,MDC_CONC_GASDLV_SEVOFL_INSP,Concentration of sevoflurane in airway gas measured during inspiration in the system or circuit conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60866-1,Oxygen [VFr/PPres] Airway adaptor,151908,MDC_CONC_AWAY_O2,Measured partial pressure of oxygen in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60867-9,Oxygen [VFr/PPres] Airway adaptor --during expiration,153132,MDC_CONC_AWAY_O2_EXP,Partial pressure of oxygen in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60869-5,Physiological dead space [Volume] Respiratory system --on ventilator,151984,MDC_VENT_VOL_AWAY_DEADSP,Volume of gas in airway per breath during mechanical ventilation not involved in respiratory exchange,L3,mL
+60870-3,Physiological dead space/Tidal volume Respiratory system --on ventilator,151988,MDC_VENT_VOL_AWAY_DEADSP_REL,Ratio of dead space to tidal volume during mechanical ventilation.,1,{unitless} 1
+60873-7,Anesthetic agent.XXX Airway adaptor --at end expiration,152460,MDC_CONC_AWAY_AGENT_ET,Concentration of agent in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60874-5,Anesthetic agent.XXX Airway adaptor --during inspiration,152464,MDC_CONC_AWAY_AGENT_INSP,Concentration of agent in airway gas measured in inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60876-0,Desflurane [VFr/PPres] Airway adaptor,152024,MDC_CONC_AWAY_DESFL,Measured partial pressure of desflurane in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60877-8,Desflurane [VFr/PPres] Airway adaptor --at end expiration,152084,MDC_CONC_AWAY_DESFL_ET,Partial pressure of desflurane in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60884-4,Enflurane [VFr/PPres] Airway adaptor --at end expiration,152088,MDC_CONC_AWAY_ENFL_ET,Partial pressure of enflurane in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60885-1,Enflurane [VFr/PPres] Airway adaptor --during inspiration,152172,MDC_CONC_AWAY_ENFL_INSP,Partial pressure of enflurane in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60889-3,Halothane [VFr/PPres] Airway adaptor --at end expiration,152092,MDC_CONC_AWAY_HALOTH_ET,Partial pressure of halothane in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60895-0,Isoflurane [VFr/PPres] Airway adaptor --at end expiration,152100,MDC_CONC_AWAY_ISOFL_ET,Partial pressure of isoflurane in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60901-6,Nitrous oxide [VFr/PPres] Airway adaptor --at end expiration,152108,MDC_CONC_AWAY_N2O_ET,Partial pressure of nitrous oxide in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60907-3,Sevoflurane [VFr/PPres] Airway adaptor --during inspiration,152180,MDC_CONC_AWAY_SEVOFL_INSP,Partial pressure of sevoflurane in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60908-1,Sevoflurane [VFr/PPres] Airway adaptor --at end expiration,152096,MDC_CONC_AWAY_SEVOFL_ET,Partial pressure of sevoflurane in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60914-9,Argon [VFr/PPres] Airway adaptor,152992,MDC_CONC_AWAY_AR,Measured partial pressure of argon in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60915-6,Argon [VFr/PPres] Airway adaptor --during expiration,153000,MDC_CONC_AWAY_AR_EXP,Partial pressure of argon in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60916-4,Argon [VFr/PPres] Airway adaptor --during inspiration,153004,MDC_CONC_AWAY_AR_INSP,Partial pressure of argon in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60918-0,Argon [VFr/PPres] Airway adaptor --at end expiration,152996,MDC_CONC_AWAY_AR_ET,Partial pressure of argon in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60919-8,Nitrogen [VFr/PPres] Airway adaptor,152444,MDC_CONC_AWAY_N2,Measured partial pressure of nitrogen in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60920-6,Nitrogen [VFr/PPres] Airway adaptor --at end expiration,152448,MDC_CONC_AWAY_N2_ET,Partial pressure of nitrogen in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60921-4,Nitrogen [VFr/PPres] Airway adaptor --during inspiration,152452,MDC_CONC_AWAY_N2_INSP,Partial pressure of nitrogen in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60924-8,Carbon dioxide [VFr/PPres] in Airway adaptor --during inspiration,151716,MDC_CONC_AWAY_CO2_INSP,Partial pressure of carbon dioxide in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60926-3,Carbon dioxide [VFr/PPres] in Airway adaptor,151700,MDC_CONC_AWAY_CO2,Measured partial pressure of carbon dioxide in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60932-1,Helium [VFr/PPres] Airway adaptor,153040,MDC_CONC_AWAY_HE,Measured partial pressure of helium in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60934-7,Helium [VFr/PPres] Airway adaptor --during inspiration,153052,MDC_CONC_AWAY_HE_INSP,Partial pressure of helium in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60935-4,Nitrogen [VFr/PPres] Airway adaptor --during expiration,153076,MDC_CONC_AWAY_N2_EXP,Partial pressure of nitrogen in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60939-6,Nitrous oxide [VFr/PPres] Airway adaptor --during expiration,152136,MDC_CONC_AWAY_N2O_EXP,Partial pressure of nitrous oxide in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60943-8,Oxygen [VFr/PPres] Airway adaptor --at end expiration,152440,MDC_CONC_AWAY_O2_ET,Partial pressure of oxygen in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+60948-7,Peak inspiratory flow Respiratory system airway,151773,MDC_FLOW_AWAY_INSP_MAX,Maximum inspiratory gas flow,L3T-1 ,mL/min L/min
+60949-5,Mean airway pressure,151795,MDC_PRESS_AWAY_MEAN,Average pressure of gas in airway,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60951-1,Pressure max Respiratory system airway --during inspiration,151817,MDC_PRESS_AWAY_INSP_PEAK,,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60951-1,Pressure max Respiratory system airway --during inspiration,151817,MDC_PRESS_AWAY_INSP_MAX,Maximum pressure of gas in airway during inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60952-9,Mean airway pressure --during inspiration,151819,MDC_PRESS_AWAY_INSP_MEAN,Mean pressure of gas in airway during inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+60955-2,Airway temperature,150356,MDC_TEMP_AWAY,,Q Q,Cel [degF]
+60956-0,Intracranial pressure (ICP),153608,MDC_PRESS_INTRA_CRAN,Pressure inside skull,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60957-8,Intracranial pressure (ICP) Diastolic,153610,MDC_PRESS_INTRA_CRAN_DIA,"Minimum pressure inside skull, caused by emptying of vessels during diastolic phase of blood pressure",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60958-6,Intracranial pressure (ICP) Mean,153611,MDC_PRESS_INTRA_CRAN_MEAN,Mean pressure inside skull,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60959-4,Intracranial pressure (ICP) Systolic,153609,MDC_PRESS_INTRA_CRAN_SYS,"Maximum pressure inside skull, caused by filling of vessels during systolic phase of blood pressure",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60960-2,ST amplitude.lead AI,131973,MDC_ECG_AMPL_ST_AI,,ML2I-1T-3 ML2I-1T-3,mV uV
+60961-0,ST amplitude.lead AS,131972,MDC_ECG_AMPL_ST_AS,,ML2I-1T-3 ML2I-1T-3,mV uV
+60962-8,ST amplitude.derived lead V1,131873,MDC_ECG_AMPL_ST_dV1,,ML2I-1T-3 ML2I-1T-3,mV uV
+60963-6,ST amplitude.derived lead V2,131874,MDC_ECG_AMPL_ST_dV2,,ML2I-1T-3 ML2I-1T-3,mV uV
+60964-4,ST amplitude.derived lead V3,131875,MDC_ECG_AMPL_ST_dV3,,ML2I-1T-3 ML2I-1T-3,mV uV
+60965-1,ST amplitude.derived lead V4,131876,MDC_ECG_AMPL_ST_dV4,,ML2I-1T-3 ML2I-1T-3,mV uV
+60966-9,ST amplitude.derived lead V5,131877,MDC_ECG_AMPL_ST_dV5,,ML2I-1T-3 ML2I-1T-3,mV uV
+60967-7,ST amplitude.derived lead V6,131878,MDC_ECG_AMPL_ST_dV6,,ML2I-1T-3 ML2I-1T-3,mV uV
+60968-5,ST amplitude.lead ES,131971,MDC_ECG_AMPL_ST_ES,,ML2I-1T-3 ML2I-1T-3,mV uV
+60969-3,ST amplitude.lead MCL,131931,MDC_ECG_AMPL_ST_MCL,,ML2I-1T-3 ML2I-1T-3,mV uV
+60970-1,ST amplitude.lead MCL1,131932,MDC_ECG_AMPL_ST_MCL1,,ML2I-1T-3 ML2I-1T-3,mV uV
+60971-9,ST amplitude.lead MCL6,131937,MDC_ECG_AMPL_ST_MCL6,,ML2I-1T-3 ML2I-1T-3,mV uV
+60972-7,ST amplitude.precordial lead,131927,MDC_ECG_AMPL_ST_V,,ML2I-1T-3 ML2I-1T-3,mV uV
+60973-5,Left ventricular Pre ejection Time,150628,MDC_TIME_PD_VENT_L_AORT_PRE_EJCT,The time interval from the beginning of electrical stimulation of the ventricles to the opening of the aortic valve (electrical systole).,T,ms
+60974-3,Left ventricular Ejection Time,150520,MDC_TIME_PD_VENT_L_AORT_VALV,Period between opening and closing aortic valve,T,ms
+60975-0,Vascular resistance,150304,MDC_RES_VASC,Resistance to blood flow within circulation,L-4MT-1 L-4MT-1 L-4MT-1,dyn.s/cm5 [PRU] mm[Hg].s/mL [wood'U] mm[Hg].min/L
+60976-8,Right ventricular Work [Energy],150420,MDC_WK_CARD_RIGHT,Ventricular stroke - work of right side of the heart in one cardiac cycle,L2MT-2,gf.m
+60977-6,Left ventricular Work [Energy],150416,MDC_WK_CARD_LEFT,Ventricular stroke - work of left side of the heart in one cardiac cycle,L2MT-2,gf.m
+60978-4,Heart rate Intra arterial line by Invasive,149514,MDC_PULS_RATE,Rate of blood pulse in an artery,T-1 T-1 T-1,/min 1/min {count}/min /min 1/min {beat}/min {beats}/min /min 1/min {pulse}/min {pulses}/min
+60978-4,Heart rate Intra arterial line by Invasive,149522,MDC_BLD_PULS_RATE_INV,"Rate of blood pulse in an artery, measured invasively",T-1 T-1 T-1,/min 1/min {count}/min /min 1/min {beat}/min {beats}/min /min 1/min {pulse}/min {pulses}/min
+60981-8,Aorta blood pressure,150028,MDC_PRESS_BLD_AORT,Pressure of the blood in the aorta,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60982-6,Aorta Diastolic blood pressure,150030,MDC_PRESS_BLD_AORT_DIA,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60983-4,Aorta Mean blood pressure,150031,MDC_PRESS_BLD_AORT_MEAN,Mean pressure of the blood in the aorta,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60984-2,Aorta Systolic blood pressure,150029,MDC_PRESS_BLD_AORT_SYS,Systolic pressure of the blood in the aorta,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60985-9,Central venous pressure (CVP),150084,MDC_PRESS_BLD_VEN_CENT,Pressure of the blood in the thoracic venae cavae,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60986-7,Central venous pressure (CVP) Diastolic,150086,MDC_PRESS_BLD_VEN_CENT_DIA,Diastolic pressure of the blood in the thoracic venae cavae,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60987-5,Central venous pressure (CVP) Systolic,150085,MDC_PRESS_BLD_VEN_CENT_SYS,Systolic pressure of the blood in the thoracic venae cavae,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60988-3,Left atrial pressure,150064,MDC_PRESS_BLD_ATR_LEFT,Pressure of the blood in the left atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60989-1,Left atrial pressure Systolic,150065,MDC_PRESS_BLD_ATR_LEFT_SYS,Systolic pressure of the blood in the left atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60996-6,Right atrial pressure,150068,MDC_PRESS_BLD_ATR_RIGHT,Pressure of the blood in the right atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60997-4,Right atrial pressure Diastolic,150070,MDC_PRESS_BLD_ATR_RIGHT_DIA,Diastolic pressure of the blood in the right atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+60998-2,Right atrial pressure Systolic,150069,MDC_PRESS_BLD_ATR_RIGHT_SYS,Systolic pressure of the blood in the right atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61002-2,Umbilical artery blood pressure,150056,MDC_PRESS_BLD_ART_UMB,Pressure of the blood in the umbilical arteries of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61003-0,Umbilical vein Diastolic blood pressure,150090,MDC_PRESS_BLD_VEN_UMB_DIA,Diastolic pressure of the blood in the umbilical veins of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61004-8,Umbilical vein Mean blood pressure,150091,MDC_PRESS_BLD_VEN_UMB_MEAN,Mean pressure of the blood in the umbilical veins of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61005-5,Umbilical vein Systolic blood pressure,150089,MDC_PRESS_BLD_VEN_UMB_SYS,Systolic pressure of the blood in the umbilical veins of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61006-3,Perfusion index Tissue by Pulse oximetry,150488,MDC_BLD_PERF_INDEX,Tissue perfusion computed as milliliters per minute of blood flow per gram of tissue,1,%
+61007-1,Oxygen arterial - venous [Volume Fraction Difference] in Blood arterial + Blood venous by Estimated,152844,MDC_CONC_PO2_ART_VEN_DIFF,The (estimated) difference in the oxygen content of the blood between the arterial blood and the venous blood.,L3L-3 LMT-2L-2 LMT-2L-2,mL/dL kPa mm[Hg]
+61008-9,Body surface temperature,150364,MDC_TEMP_BODY,,Q Q,Cel [degF]
+61009-7,Myocardial temperature,188500,MDC_TEMP_MYO,Myocardial temperature,Q Q,Cel [degF]
+61010-5,Burst suppression ratio [Ratio] Cerebral cortex Electroencephalogram (EEG),155024,MDC_EEG_PAROX_CRTX_BURST_SUPPRN,"Epileptic or potentially epileptogenic activity identifiers, burst suppression ",1,%
+61011-3,Umbilical vein blood pressure,150088,MDC_PRESS_BLD_VEN_UMB,Pressure of the blood in the umbilical veins of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61014-7,Left ventricular Cardiac output by Intermitent measure,150496,MDC_OUTPUT_CARD_NONCTS,"Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as not continuous measurement",,L/min
+61017-0,Cerebral perfusion pressure,153604,MDC_PRESS_CEREB_PERF,Pressure difference between mean arterial pressure and mean pressure inside skull,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+61018-8,Oxygen [VFr/PPres] Gas delivery system,153136,MDC_CONC_GASDLV_O2,Concentration of oxygen in airway gas in the system or circuit conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+61019-6,Enflurane [VFr/PPres] Airway adaptor --during expiration,152116,MDC_CONC_AWAY_ENFL_EXP,Partial pressure of enflurane in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+61020-4,Halothane [VFr/PPres] Airway adaptor --during expiration,152120,MDC_CONC_AWAY_HALOTH_EXP,Partial pressure of halothane in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+61021-2,Halothane [VFr/PPres] Airway adaptor --during inspiration,152176,MDC_CONC_AWAY_HALOTH_INSP,Partial pressure of halothane in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+61022-0,Desflurane gas delivered.total [Volume] in Reporting period from Gas delivery system,152908,MDC_VOL_DELIV_DESFL_TOTAL,Total volume of desflurane gas delivered (potentially across multiple cases),L3,mL
+61023-8,Enflurane gas delivered.total [Volume] in Reporting period from Gas delivery system,152924,MDC_VOL_DELIV_ENFL_TOTAL,Total volume of enflurane gas delivered (potentially across multiple cases),L3,mL
+61024-6,Halothane gas delivered.total [Volume] in Reporting period from Gas delivery system,152940,MDC_VOL_DELIV_HALOTH_TOTAL,Total volume of halothane gas delivered (potentially across multiple cases),L3,mL
+61025-3,Isoflurane gas delivered.total [Volume] in Reporting period from Gas delivery system,152956,MDC_VOL_DELIV_ISOFL_TOTAL,Total volume of isoflurane gas delivered (potentially across multiple cases),L3,mL
+61026-1,Nitrous oxide gas delivered.total [Volume] in Reporting period from Gas delivery system,152964,MDC_VOL_DELIV_N2O_TOTAL,Total volume (gas) of nitrous oxide delivered,L3 ,mL L
+61027-9,Sevoflurane gas delivered.total [Volume] in Reporting period from Gas delivery system,152988,MDC_VOL_DELIV_SEVOFL_TOTAL,Total volume of sevoflurane gas delivered (potentially across multiple cases),L3,mL
+62264-7,Carbon dioxide [VFr/PPres] in Gas delivery system,153020,MDC_CONC_GASDLV_CO2,Concentration of carbon dioxide in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62265-4,Desflurane [VFr/PPres] Airway adaptor --during expiration,152112,MDC_CONC_AWAY_DESFL_EXP,Partial pressure of desflurane in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62266-2,Enflurane [VFr/PPres] Airway adaptor,152028,MDC_CONC_AWAY_ENFL,Measured partial pressure of enflurane in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62267-0,Halothane [VFr/PPres] Airway adaptor,152032,MDC_CONC_AWAY_HALOTH,Measured partial pressure of halothane in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62268-8,Isoflurane [VFr/PPres] Airway adaptor,152040,MDC_CONC_AWAY_ISOFL,Measured partial pressure of isoflurane in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62269-6,Isoflurane [VFr/PPres] Airway adaptor --during expiration,152128,MDC_CONC_AWAY_ISOFL_EXP,Partial pressure of isoflurane in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62270-4,Isoflurane [VFr/PPres] Airway adaptor --during inspiration,152184,MDC_CONC_AWAY_ISOFL_INSP,Partial pressure of isoflurane in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62271-2,Nitrous oxide [VFr/PPres] Airway adaptor,152048,MDC_CONC_AWAY_N2O,Measured partial pressure of nitrous oxide in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62272-0,Nitrous oxide [VFr/PPres] Airway adaptor --during inspiration,152192,MDC_CONC_AWAY_N2O_INSP,Partial pressure of nitrous oxide in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+62274-6,Oxygen [VFr/PPres] Airway adaptor --during inspiration,152196,MDC_CONC_AWAY_O2_INSP,Partial pressure of oxygen in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+6298-4,Potassium [Moles/volume] in Blood,160016,MDC_CONC_K_GEN,,NL-3 NL-3,mmol/L meq/L
+6301-6,INR in Platelet poor plasma by Coagulation assay,160260,MDC_RATIO_INR_COAG,The globally recommended normalized unit for measuring prothrombin time, ,{INR}
+73696-7,Oxygen saturation.preductal-oxygen saturation.postductal [Mass fraction difference] in Bld.preductal and Bld.postductal,160304,MDC_PULS_OXIM_SAT_O2_ART_PRE_POST_DIFF,The difference between preductal and postductal oxygen saturation measurement (see Note 3).,1,%
+75915-9,Air curtain status Infant microenvironment.incubator,184339,MDC_MICROENV_AIR_CURTAIN_STATE,"The air curtain on an incubator is a specially-designed airflow to reduce temperature fluctuation and maintain the temperature inside the incubator when its access doors are opened.  The air curtain state indicates whether the air curtain is on, off or has been disabled by the user.",,
+75916-7,Bed type Infant microenvironment,184336,MDC_MICROENV_TYPE,"The type of bed used for an infant in the neonatal intensive care unit or newborn nursery. A radiant warmer is an open bed, an incubator is a closed bed, and an incubator that can serve as a radiant warmer is a combination bed.",,
+75917-5,Bed state Infant microenvironment.incubator,184338,MDC_MICROENV_BED_STATE,"The bed state indicates whether the infant’s incubator is closed, partially open or open, i.e. the top of the incubator is raised.",,
+75918-3,Bispectral index Cerebral cortex Electroencephalogram (EEG),153644,MDC_EEG_BISPECTRAL_INDEX,"The bispectral index (BIS) is a quantitative assessment of depth of anesthesia, specifically the level of consciousness.  It is an index that ranges from 0 to 100.  No measurable cortical activity would result in a BIS of 0 and a typical awake state is usually associated with an index of 90 to 100. Typical values for a patient undergoing general anesthesia are 40 to 60.",1,{unitless} 1
+75919-1,Left ventricular Cardiac index,149772,MDC_OUTPUT_CARD_INDEX,Quantity of blood pumped by the left ventricle into the aorta per minute and divided by the body surface area (CO/BSA),,L/min/m2
+75920-9,Transthoracic impedance,151780,MDC_IMPED_TTHOR,Transthoracic measurement of electrical impedance (influenced by respiration and other factors),ML2I-2T-3 ,mOhm Ohm
+75921-7,Electrical potential Cerebral cortex Electroencephalogram (EEG),153900,MDC_EEG_ELEC_POTL_CRTX,"Electrical potential derived bipolarly between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. The electrode at Position 1 is Number 1 in the list. Position 2 can be a combined reference, e.g., linked ear. All connected electrode sites are listed beginning with Number 2 in the list. The attribute values must be taken from the Table A.9.4.3.",ML2I-1T-3 ML2I-1T-3,uV nV
+75922-5,Fan speed Infant microenvironment.incubator,184341,MDC_MICROENV_FAN_SPEED,"The speed of the fan that controls the airflow in an infant incubator, such as low or high.",,
+75923-3,Fresh gas.air flow Gas delivery system,152876,MDC_FLOW_AIR_FG,Flow of Air component of Fresh Gas,,L/min
+75924-1,Fresh gas.nitrous oxide flow Gas delivery system,153092,MDC_FLOW_N2O_FG,Flow of Nitrous Oxide component of Fresh Gas,,L/min
+75925-8,Fresh gas.oxygen flow Gas delivery system,153156,MDC_FLOW_O2_FG,Flow of Oxygen component of Fresh Gas,,L/min
+75926-6,Heater type Infant microenvironment,184337,MDC_MICROENV_HEATER_TYPE,"Incubator or warmer heater currently being used.  This may include radiant, convective or none (no heat).",,
+75927-4,Heater power Infant microenvironment,184300,MDC_MICROENV_HEATER_APPLIED_PWR,The heater power is the percentage of power (or actual power in watts) necessary to maintain the set temperature of the incubator or warmer.,1 L2MT-3,% W
+75928-2,Hemoglobin [Moles/volume] in Arterial blood,159764,MDC_CONC_HB_ART,,NL-3,mmol/L
+75929-0,Relative humidity Infant microenvironment.incubator,184292,MDC_REL_HUMIDITY_MICROENV,Measured relative humidity inside the infant incubator,1,%
+75930-8,Relative humidity setting Infant microenvironment.incubator,16961508,MDC_REL_HUMIDITY_MICROENV_SETTING,,1,%
+75931-6,Inspiration/Expiration time Ratio,151832,MDC_RATIO_IE,Ratio of durations of inspiratory and expiratory phases,1,{unitless} 1
+75932-4,Inspiratory time percent,152640,MDC_RATIO_INSP,"Inspiratory time divided by the total respiratory cycle time, expressed as a percent.",1,%
+75933-2,Left atrial pressure Diastolic,150066,MDC_PRESS_BLD_ATR_LEFT_DIA,Diastolic pressure of the blood in the left atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75934-0,Nitrogen dioxide [VFr/PPres] Airway adaptor,152044,MDC_CONC_AWAY_NO2,Measured partial pressure of nitrogen dioxide in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+75935-7,Nitrogen dioxide [VFr/PPres] Airway adaptor --during expiration,152132,MDC_CONC_AWAY_NO2_EXP,Partial pressure of nitrogen dioxide in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+75936-5,Nitrogen dioxide [VFr/PPres] Airway adaptor --during inspiration,152188,MDC_CONC_AWAY_NO2_INSP,Partial pressure of nitrogen dioxide in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+75937-3,Nitrogen dioxide [VFr/PPres] Airway adaptor --at end expiration,152104,MDC_CONC_AWAY_NO2_ET,Partial pressure of nitrogen dioxide in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+75938-1,Oxygen/Gas total Infant microenvironment.incubator,184288,MDC_CONC_O2_MICROENV,The oxygen concentration inside the incubator micro-environment.,1,%
+75939-9,Oxygen gas setting Infant microenvironment.incubator,16961504,MDC_CONC_O2_MICROENV_SETTING,,1,%
+75940-7,Potassium [Mass/volume] in Blood,160016,MDC_CONC_K_GEN,,ML-3,mg/dL
+75941-5,Total power of power spectrum on EEG,154040,MDC_EEG_PWR_SPEC_TOT,"Total power of spectrum of EEG measured between two electrodes, Position 1 and Position 2 at head surface. A list attribute is used. See also EEG.",L2MT-3 [Bel] L2MT-3 [Bel],nW dB[10.nV] pW dB dB[10.nV]
+75942-3,Airway pressure --during inspiration,151816,MDC_PRESS_AWAY_INSP,Pressure of gas in airway during inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+75943-1,Airway pressure --during respiratory pause,151788,MDC_PRESS_RESP_PAUSE,Pressure in airway during pause between expiration and inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+75944-9,Pupil reaction [Time] Left eye,153892,MDC_TIME_PD_PUPIL_REACT_LEFT,"Reaction of pupils to light, left eye",,s
+75945-6,Pupil reaction [Time] Right eye,153896,MDC_TIME_PD_PUPIL_REACT_RIGHT,"Reaction of pupils to light, right eye",,s
+75946-4,Airway resistance,151840,MDC_RES_AWAY,Resistance to gas flow within the airway,L-4MT-3 L-4MT-1,cm[H2O].s/L cm[H2O]/(L/s) mbar.s/L mbar/(L/s)
+75947-2,Airway resistance --during expiration,151844,MDC_RES_AWAY_EXP,Resistance to gas flow in airway during expiration,L-4MT-3 L-4MT-1,cm[H2O].s/L cm[H2O]/(L/s) mbar.s/L mbar/(L/s)
+75948-0,Airway resistance --during inspiration,151848,MDC_RES_AWAY_INSP,Resistance to gas flow within the airway during inspiration,L-4MT-3 L-4MT-1,cm[H2O].s/L cm[H2O]/(L/s) mbar.s/L mbar/(L/s)
+75949-8,Response entropy [Score] Cerebral cortex Electroencephalogram (EEG),153648,MDC_EEG_ENTROPY_RESPONSE,"A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the FEMG signal in the 0.8 to 47 Hz frequency band. Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy response, the probability of patient accidental awareness is low.  The overall display range for RE is 0 to 100.",1,{unitless} 1
+75950-6,Signal quality index EEG device Calculated,153636,MDC_EEG_SIGNAL_QUALITY_INDEX,"EEG Signal Quality Index, an indication of overall signal quality for calculating processed EEG variables such as BIS and interpreting EEG results.",1,%
+75951-4,Skin temperature setting Infant microenvironment,16927604,MDC_TEMP_SKIN_SETTING,,Q Q,Cel [degF]
+75952-2,SNAP index Cerebral cortex Electroencephalogram (EEG),153656,MDC_EEG_SNAP_INDEX,"A computed EEG variable used to help assess the level of consciousness while under anesthesia based on the high- and low-frequency EEG.  Index values range from 0 to 100, with 0 reflecting no measurable cortical activity and 100 reflecting the awake state.",1,{unitless} 1
+75953-0,Spike count Cerebral cortex Electroencephalogram (EEG),154028,MDC_EEG_NUM_SPK,"Spikes, as determined out of the EEG",1,{unitless} 1 {count}
+75954-8,State entropy [Score] Cerebral cortex Electroencephalogram (EEG),153652,MDC_EEG_ENTROPY_STATE,"A computed EEG variable used for assessing the depth of anesthesia based on the irregularity of the EEG signal in the 0.8 to 32 Hz frequency band.  Typical values for patients undergoing general anesthesia are between 40 and 60, and at these levels of entropy state, the probability of patient accidental awareness is low.  The overall display range of SE is 0 to 91.",1,{unitless} 1
+75955-5,Temperature Infant microenvironment.incubator,184296,MDC_TEMP_MICROENV,Compartment probe (incubator air) temperature,Q Q,Cel [degF]
+75956-3,Temperature sensor [Resistance] Infant microenvironment,184304,MDC_MICROENV_HEATER_HEAT_SINK_RESIST,Incubator heater heat sink and fin assembly temperature sensor resistance,,Ohm
+75957-1,Temperature setting Infant microenvironment.incubator,16961512,MDC_TEMP_MICROENV_SETTING,,Q Q,Cel [degF]
+75958-9,Tidal volume expired Respiratory system airway,152664,MDC_VOL_AWAY_TIDAL_EXP,"Volume of expired gas for each breath, breath type(s) not specified. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_AWAY_TIDAL_EXP_BTSD_PSAZC should be used.]",L3,mL
+75959-7,Volume expired per minute Respiratory system,151884,MDC_VOL_MINUTE_AWAY_EXP,"Volume of gas per minute leaving the patient's airway during expiratory phases. [This term may be used with legacy devices and systems where the breath types are unknown; otherwise, the more precise term MDC_VOL_MINUTE_AWAY_EXP_BTSD_PSAZC should be used.]",L3T-1 ,mL/min L/min
+75960-5,Inspired minute Volume,151888,MDC_VOL_MINUTE_AWAY_INSP,Volume of gas per minute entering the patient's airway during inspiratory phases,L3T-1 ,mL/min L/min
+75961-3,Temperature control mode Infant microenvironment,184340,MDC_MICROENV_HEATER_CNTRL_MODE,Specifies the manner in which the temperature of an infant incubator or radiant warmer is controlled.  For closed beds (incubators) the temperature is controlled based on patient sensor or air temperature.  For open beds (open incubator or warmer) the temperature is controlled based on patient sensor or manually set temperature.,,
+75984-5,Air delivered during case [Volume] from Gas delivery system,152880,MDC_VOL_DELIV_AIR_CASE,"Volume (gas) of air delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+75985-2,Air delivered.total [Volume] in Reporting period from Gas delivery system,152884,MDC_VOL_DELIV_AIR_TOTAL,Total volume (gas) of air delivered (potentially across multiple cases),L3 ,mL L
+75986-0,Velocity index Aorta Non-invasive impedance cardiography (NI-ICG),150632,MDC_VELOCITY_INDEX,Peak velocity of blood flow in the aorta.,T-1,/(1000.s)
+75987-8,Venous blood temperature,150396,MDC_TEMP_VEN,,Q Q,Cel [degF]
+75988-6,Left ventricular End diastolic volume,150528,MDC_VOL_VENT_L_END_DIA,Volume of the left ventricle at the end of diastolic phase (maximum volume),L3,mL
+75989-4,Left ventricular End systolic volume,150532,MDC_VOL_VENT_L_END_SYS,Volume of the left ventricle at the end of systolic phase (minimum volume),L3,mL
+75990-2,Energy expended Reporting Period by Indirect calorimetry,152812,MDC_RESP_EXPENDED_ENERGY,"Expended energy measurement (or estimate) using indirect calorimetry based on O2 consumption and CO2 production by patient, measured over a period of time.",L2MT-3,kcal/d
+75991-0,Oxygen extraction ratio,152856,MDC_O2_EXTRACTION_RATIO,The (estimated) ratio (fraction) of oxygen that is consumed divided by the oxygen that is delivered.,1,%
+75992-8,Transcutaneous monitor Heater power,188488,MDC_POWER_TCUT,Transcutaneous sensor heater power,L2MT-3,mW
+75993-6,Femoral artery Blood pressure,150648,MDC_PRESS_BLD_ART_FEMORAL,Pressure of the blood in the femoral artery.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75994-4,Pulmonary artery wedge pressure,150052,MDC_PRESS_BLD_ART_PULM_OCCL,Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75994-4,Pulmonary artery wedge pressure,150052,MDC_PRESS_BLD_ART_PULM_WEDGE,Pressure of the blood measured by a catheter wedged into a small branch of the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75995-1,Diastolic blood pressure by Continuous non-invasive monitoring,150026,MDC_PRESS_BLD_NONINV_DIA_CTS,"Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the diastolic phase",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75996-9,Mean blood pressure by Continuous non-invasive monitoring,150027,MDC_PRESS_BLD_NONINV_MEAN_CTS,"Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), as computed by averaging on one cycle",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75997-7,Systolic blood pressure by Continuous non-invasive monitoring,150025,MDC_PRESS_BLD_NONINV_SYS_CTS,"Pressure of the blood, obtained continuously and noninvasively (i.e., fingertip), at the systolic phase",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+75998-5,Oxygen gas delivered during case [Volume] from Gas delivery system,153148,MDC_VOL_DELIV_O2_CASE,"Volume (gas) of oxygen delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+75999-3,Oxygen gas delivered.total [Volume] in Reporting period from Gas delivery system,153152,MDC_VOL_DELIV_O2_TOTAL,Total volume (gas) of oxygen delivered (potentially across multiple cases),L3 ,mL L
+76000-9,Paced heart rate by EKG,147626,MDC_ECG_PACED_BEAT_RATE,,T-1,/min 1/min {beat}/min {beats}/min
+76001-7,Physiological dead space [Volume] Respiratory system,151872,MDC_VOL_AWAY_DEADSP,Volume of gas in airway per breath not involved in respiratory gas exchange with no ventilator and no airway device.  It includes both alveolar and anatomical dead space.,L3,mL
+76002-5,Physiological dead space/Tidal volume Respiratory system,151836,MDC_RATIO_AWAY_DEADSP_TIDAL,Ratio of dead space in respiratory tract to tidal volume,1 1,{unitless} 1 %
+76003-3,Pressure Respiratory system airway --during inspiration on ventilator,151972,MDC_VENT_PRESS_AWAY,"Airway pressure, primarily during an inspiratory phase",LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76004-1,Airway occlusion pressure,151964,MDC_VENT_PRESS_OCCL, The negative airway pressure generated when briefly occluded during inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76005-8,Transcutaneous monitor sensor temperature,188492,MDC_TEMP_TCUT,Transcutaneous sensor temperature,Q Q,Cel [degF]
+76006-6,Temperature difference,188440,MDC_TEMP_DIFF,"Difference between two temperatures, usually core temperature and peripheral temperature",Q Q,Cel {delta}Cel [degF] {delta}[degF]
+76007-4,Tidal volume expired Respiratory system airway --on ventilator,151868,MDC_VOL_AWAY_TIDAL,Volume of gas leaving the patient through the patient connection port during an expiratory phase.,L3 ,mL L
+76008-2,Expired minute Volume during Mechanical ventilation,152000,MDC_VENT_VOL_MINUTE_EXP,Volume of gas per minute exhaled by the patient.,L3T-1 ,mL/min L/min
+76009-0,Inspired minute Volume during Mechanical ventilation,152004,MDC_VENT_VOL_MINUTE_INSP,Total volume of gas breathed in during 1 min during mechanical ventilation,L3T-1 ,mL/min L/min
+76010-8,Nasal temperature,188504,MDC_TEMP_NASAL,Nasal temperature,Q Q,Cel [degF]
+76011-6,Ear temperature,188428,MDC_TEMP_EAR,Ear temperature,Q Q,Cel [degF]
+76012-4,Desflurane liquid delivered during case [Volume] from Gas delivery system,152900,MDC_VOL_DELIV_DESFL_LIQUID_CASE,"Volume (liquid) of desflurane delivered during a case, to a single patient during a single procedure.",L3,mL {liquid}mL
+76013-2,Desflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system,152904,MDC_VOL_DELIV_DESFL_LIQUID_TOTAL,Total volume (liquid) of desflurane delivered,L3,mL {liquid}mL
+76014-0,Enflurane liquid delivered during case [Volume] from Gas delivery system,152916,MDC_VOL_DELIV_ENFL_LIQUID_CASE,"Volume (liquid) of enflurane delivered during a case, to a single patient during a single procedure.",L3,mL {liquid}mL
+76015-7,Enflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system,152920,MDC_VOL_DELIV_ENFL_LIQUID_TOTAL,Total volume (liquid) of enflurane delivered,L3,mL {liquid}mL
+76016-5,Halothane liquid delivered during case [Volume] from Gas delivery system,152932,MDC_VOL_DELIV_HALOTH_LIQUID_CASE,"Volume (liquid) of halothane delivered during a case, to a single patient during a single procedure.",L3,mL {liquid}mL
+76017-3,Halothane liquid delivered.total [Volume] in Reporting period from Gas delivery system,152936,MDC_VOL_DELIV_HALOTH_LIQUID_TOTAL,Total volume (liquid) of halothane delivered,L3,mL {liquid}mL
+76018-1,Sevoflurane liquid delivered during case [Volume] from Gas delivery system,152980,MDC_VOL_DELIV_SEVOFL_LIQUID_CASE,"Volume (liquid) of sevoflurane delivered during a case, to a single patient during a single procedure.",L3,mL {liquid}mL
+76019-9,Sevoflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system,152984,MDC_VOL_DELIV_SEVOFL_LIQUID_TOTAL,Total volume (liquid) of sevoflurane delivered,L3,mL {liquid}mL
+76047-0,ST amplitude.lead V1,131843,MDC_ECG_AMPL_ST_V1,,ML2I-1T-3 ML2I-1T-3,mV uV
+76048-8,ST amplitude.lead V2,131844,MDC_ECG_AMPL_ST_V2,,ML2I-1T-3 ML2I-1T-3,mV uV
+76049-6,ST amplitude.lead V3,131845,MDC_ECG_AMPL_ST_V3,,ML2I-1T-3 ML2I-1T-3,mV uV
+76050-4,ST amplitude.lead V4,131846,MDC_ECG_AMPL_ST_V4,,ML2I-1T-3 ML2I-1T-3,mV uV
+76051-2,ST amplitude.lead V5,131847,MDC_ECG_AMPL_ST_V5,,ML2I-1T-3 ML2I-1T-3,mV uV
+76052-0,ST amplitude.lead V6,131848,MDC_ECG_AMPL_ST_V6,,ML2I-1T-3 ML2I-1T-3,mV uV
+76053-8,ST amplitude.lead I,131841,MDC_ECG_AMPL_ST_I,,ML2I-1T-3 ML2I-1T-3,mV uV
+76054-6,ST amplitude.lead II,131842,MDC_ECG_AMPL_ST_II,,ML2I-1T-3 ML2I-1T-3,mV uV
+76055-3,ST amplitude.lead III,131901,MDC_ECG_AMPL_ST_III,,ML2I-1T-3 ML2I-1T-3,mV uV
+76056-1,ST amplitude.lead aVF,131904,MDC_ECG_AMPL_ST_AVF,,ML2I-1T-3 ML2I-1T-3,mV uV
+76057-9,ST amplitude.lead aVL,131903,MDC_ECG_AMPL_ST_AVL,,ML2I-1T-3 ML2I-1T-3,mV uV
+76058-7,ST amplitude.lead aVR,131902,MDC_ECG_AMPL_ST_AVR,,ML2I-1T-3 ML2I-1T-3,mV uV
+76059-5,Anesthetic agent.XXX Airway adaptor,152456,MDC_CONC_AWAY_AGENT,Concentration of agent in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76092-6,Maximum gradient during systole [Pressure] Aortic valve,150565,MDC_GRAD_PRESS_BLD_AORT_POS_MAX,Peak blood pressure gradient across aortic valve during SEP,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76093-4,Nitric oxide [VFr/PPres] Airway adaptor,153096,MDC_CONC_AWAY_NO,Measured partial pressure of nitric oxide in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76094-2,Xenon [VFr/PPres] Airway adaptor,153172,MDC_CONC_AWAY_XE,Measured partial pressure of xenon in airway gas,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76095-9,Carbon dioxide [VFr/PPres] in Gas delivery system.expiratory limb --during expiration,153024,MDC_CONC_GASDLV_CO2_EXP,Concentration of carbon dioxide in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76096-7,Carbon dioxide [VFr/PPres] in Gas delivery system.inspiratory limb --during inspiration,153028,MDC_CONC_GASDLV_CO2_INSP,Concentration of carbon dioxide in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76097-5,Helium [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153060,MDC_CONC_GASDLV_HE_EXP,Concentration of helium in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76098-3,Helium [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153064,MDC_CONC_GASDLV_HE_INSP,Concentration of helium in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76099-1,Nitric oxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153116,MDC_CONC_GASDLV_NO_EXP,Concentration of nitric oxide in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76100-7,Nitric oxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153120,MDC_CONC_GASDLV_NO_INSP,Concentration of nitric oxide in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76101-5,Nitrogen dioxide [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152160,MDC_CONC_GASDLV_NO2_EXP,Concentration of nitrogen dioxide in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76102-3,Nitrogen dioxide [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,152220,MDC_CONC_GASDLV_NO2_INSP,Concentration of nitrogen dioxide in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76103-1,Nitrogen [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153084,MDC_CONC_GASDLV_N2_EXP,Concentration of nitrogen in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76104-9,Nitrogen [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153088,MDC_CONC_GASDLV_N2_INSP,Concentration of nitrogen in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76105-6,Oxygen [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153140,MDC_CONC_GASDLV_O2_EXP,Concentration of oxygen in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76106-4,Oxygen [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153144,MDC_CONC_GASDLV_O2_INSP,Concentration of oxygen in airway gas measured during inspiration in the system or circuit conducting gas to the patient,1 LMT-2L-2 LMT-2L-2 L3L-3 LMT-2L-2,% kPa mm[Hg] %{vol} mbar
+76107-2,Sevoflurane [VFr/PPres] Gas delivery system.expiratory limb --during expiration,152152,MDC_CONC_GASDLV_SEVOFL_EXP,Concentration of sevoflurane in airway gas measured during expiration in the system or circuit conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76108-0,Xenon [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153192,MDC_CONC_GASDLV_XE_EXP,Concentration of xenon in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76109-8,Xenon [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153196,MDC_CONC_GASDLV_XE_INSP,Concentration of xenon in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76110-6,Helium [VFr/PPres] Gas delivery system,153056,MDC_CONC_GASDLV_HE,Concentration of helium in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76111-4,Nitric oxide [VFr/PPres] Gas delivery system,153112,MDC_CONC_GASDLV_NO,Concentration of nitric oxide in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76112-2,Nitrogen [VFr/PPres] Gas delivery system,153080,MDC_CONC_GASDLV_N2,Concentration of nitrogen in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76113-0,Nitrogen dioxide [VFr/PPres] Gas delivery system,152072,MDC_CONC_GASDLV_NO2,Concentration of nitrogen dioxide in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76114-8,Xenon [VFr/PPres] Gas delivery system,153188,MDC_CONC_GASDLV_XE,Concentration of xenon in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76115-5,Nitric oxide [VFr/PPres] Airway adaptor --at end expiration,153100,MDC_CONC_AWAY_NO_ET,Partial pressure of nitric oxide in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76116-3,Xenon [VFr/PPres] Airway adaptor --at end expiration,153176,MDC_CONC_AWAY_XE_ET,Partial pressure of xenon in airway gas measured at the end of expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76117-1,Nitric oxide [VFr/PPres] Airway adaptor --during expiration,153104,MDC_CONC_AWAY_NO_EXP,Partial pressure of nitric oxide in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76118-9,Xenon [VFr/PPres] Airway adaptor --during expiration,153180,MDC_CONC_AWAY_XE_EXP,Partial pressure of xenon in airway gas measured during expiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76119-7,Helium gas delivered during case [Volume] from Gas delivery system,153068,MDC_VOL_DELIV_HE_CASE,"Volume of helium gas delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+76120-5,Nitric oxide [VFr/PPres] Airway adaptor --during inspiration,153108,MDC_CONC_AWAY_NO_INSP,Partial pressure of nitric oxide in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76121-3,Xenon [VFr/PPres] Airway adaptor --during inspiration,153184,MDC_CONC_AWAY_XE_INSP,Partial pressure of xenon in airway gas measured during inspiration,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76122-1,Helium gas delivered.total [Volume] in Reporting period from Gas delivery system,153072,MDC_VOL_DELIV_HE_TOTAL,Total of helium gas delivered (potentially across multiple cases),L3 ,mL L
+76123-9,Nitric oxide gas delivered.total [Volume] in Reporting period from Gas delivery system,153128,MDC_VOL_DELIV_NO_TOTAL,Total volume of nitric oxide gas delivered (potentially across multiple cases),L3 ,mL L
+76124-7,Xenon gas delivered during case [Volume] from Gas delivery system,153200,MDC_VOL_DELIV_XE_CASE,"Volume of xenon gas delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+76125-4,Xenon gas delivered.total [Volume] in Reporting period from Gas delivery system,153204,MDC_VOL_DELIV_XE_TOTAL,Total volume of xenon gas delivered (potentially across multiple cases),L3 ,mL L
+76126-2,Premature ventricular contractions [#],148065,MDC_ECG_V_P_C_CNT,,1,{beat} 1 {beats}
+76127-0,Argon [VFr/PPres] Gas delivery system,153008,MDC_CONC_GASDLV_AR,Concentration of argon in airway gas in the system conducting gas to and from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76128-8,Argon [VFr/PPres] Gas delivery system.inspiratory limb --during inspiration,153016,MDC_CONC_GASDLV_AR_INSP,Concentration of argon in airway gas measured during inspiration in the system conducting gas to the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76129-6,Argon [VFr/PPres] Gas delivery system.expiratory limb --during expiration,153012,MDC_CONC_GASDLV_AR_EXP,Concentration of argon in airway gas measured during expiration in the system conducting gas from the patient,1 L3L-3 LMT-2L-2 LMT-2L-2 LMT-2L-2,% %{vol} kPa mm[Hg] mbar
+76130-4,Isoflurane liquid delivered during case [Volume] from Gas delivery system,152948,MDC_VOL_DELIV_ISOFL_LIQUID_CASE,"Volume (liquid) of isoflurane delivered during a case, to a single patient during a single procedure.",L3,mL {liquid}mL
+76131-2,Isoflurane liquid delivered.total [Volume] in Reporting period from Gas delivery system,152952,MDC_VOL_DELIV_ISOFL_LIQUID_TOTAL,Total volume (liquid) of isoflurane delivered,L3,mL {liquid}mL
+76151-0,Airway pressure backup setting Ventilator,16929940,MDC_VENT_PRESS_AWAY_BACKUP_SETTING,,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76152-8,Airway pressure delta setting Ventilator,16929936,MDC_VENT_PRESS_AWAY_DELTA_SETTING,,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76154-4,Airway pressure delta --on ventilator,152720,MDC_VENT_PRESS_AWAY_DELTA,Inspiratory airway pressure relative to PEEP or BAP.,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76164-3,Pressure Respiratory system airway --on ventilator,151956,MDC_VENT_PRESS,Airway pressure during mechanical ventilation,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76165-0,Alveolar ventilation [Volume] Respiratory system --on ventilator,152436,MDC_VENT_VOL_LUNG_ALV,Volume of gas exchanged per breath in alveoli; difference between tidal volume and dead space,L3 ,mL L
+76170-0,Respiratory rate by Acoustic measurement,151650,MDC_ACOUSTIC_RESP_RATE,Rate of breathing; method: acoustic.,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76171-8,Respiratory rate by Airway flow measurement,151570,MDC_AWAY_RESP_RATE,Rate of breathing; method: direct airway flow measurement.,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76172-6,Respiratory rate by Carbon dioxide measurement,151594,MDC_CO2_RESP_RATE,Rate of breathing; method: carbon dioxide measurement,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76174-2,Respiratory rate by Pulse oximetry.plethysmograph,151658,MDC_PULS_OXIM_PLETH_RESP_RATE,Rate of breathing; method: SpO2 plethysmography,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76184-1,Carbon dioxide [Partial pressure] in Pulmonary artery,152848,MDC_CONC_PCO2_ART_PULM,Partial pressure of CO2 in the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76185-8,Central apnea duration Respiratory system,151860,MDC_TIME_PD_APNEA_CENT,Duration of apnea - no flow and no respiratory effort,,s
+76186-6,Expiratory hold time Ventilator,152636,MDC_VENT_TIME_PD_EXP_HOLD,"Duration for an expiratory hold, a ventilator function intended to temporarily maintain a constant lung volume during a set extension of the expiratory phase.",,s
+76187-4,Expiratory hold time setting Ventilator,16929852,MDC_VENT_TIME_PD_EXP_HOLD_SETTING,,,s
+76203-9,Pressure.occlusion Respiratory system airway --negative inspiratory force maneuver,152784,MDC_VENT_PRESS_OCCL_NIF,The maximum negative airway pressure generated during an occluded inspiration arising from a Negative Inspiratory Force (NIF) maneuver,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76210-4,Inspiratory hold time setting Ventilator,16929848,MDC_VENT_TIME_PD_INSP_HOLD_SETTING,,,s
+76211-2,Inspiratory hold time Ventilator,152632,MDC_VENT_TIME_PD_INSP_HOLD,"The duration of an inspiratory hold, a ventilator function intended to temporarily maintain a constant lung volume, or to maintain a constant airway pressure, at the end of an inspiratory or inflation phase.",,s
+76212-0,Invasive Blood pressure,150016,MDC_PRESS_BLD,Pressure of the blood,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76212-0,Invasive Blood pressure,150032,MDC_PRESS_BLD_ART,Pressure of the blood in an artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76212-0,Invasive Blood pressure,150036,MDC_PRESS_BLD_ART_ABP,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76213-8,Invasive Diastolic blood pressure,150018,MDC_PRESS_BLD_DIA,Pressure of the blood at the diastolic phase,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76213-8,Invasive Diastolic blood pressure,150034,MDC_PRESS_BLD_ART_DIA,Diastolic pressure of the blood in an artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76213-8,Invasive Diastolic blood pressure,150038,MDC_PRESS_BLD_ART_ABP_DIA,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76214-6,Invasive Mean blood pressure,150019,MDC_PRESS_BLD_MEAN,Pressure of the blood as computed by averaging on one cycle,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76214-6,Invasive Mean blood pressure,150035,MDC_PRESS_BLD_ART_MEAN,Mean pressure of the blood in an artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76214-6,Invasive Mean blood pressure,150039,MDC_PRESS_BLD_ART_ABP_MEAN,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76215-3,Invasive Systolic blood pressure,150017,MDC_PRESS_BLD_SYS,Pressure of the blood at the systolic phase,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76215-3,Invasive Systolic blood pressure,150033,MDC_PRESS_BLD_ART_SYS,Systolic pressure of the blood in an artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76215-3,Invasive Systolic blood pressure,150037,MDC_PRESS_BLD_ART_ABP_SYS,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76222-9,Tidal volume Ventilator --on ventilator,151980,MDC_VENT_VOL_TIDAL,Volume of gas delivered through the patient-connection port during a respiratory cycle,L3 ,mL L
+76239-3,Mixed apnea duration Respiratory system,151864,MDC_TIME_PD_APNEA_MIX,Duration of apnea with central and obstructive components,,s
+76240-1,Pressure.occlusion 100ms Respiratory system airway,152780,MDC_VENT_PRESS_OCCL_P100MS,The negative airway pressure generated during the first 100 ms of an occluded inspiration,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76241-9,Nitric oxide gas delivered.case [Volume] from Gas delivery system,153124,MDC_VOL_DELIV_NO_CASE,"Volume of nitric oxide gas delivered during a case, to a single patient during a single procedure.",L3 ,mL L
+76242-7,Obstructive apnea duration Respiratory system,151852,MDC_TIME_PD_APNEA_OBSTRUC,Duration of apnea due to airway obstruction,,s
+76246-8,Intrinsic dynamic PEEP Respiratory system,152796,MDC_PRESS_AWAY_END_EXP_POS_INTRINSIC_DYNAMIC,"Dynamic intrinsic PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient.",LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76248-4,PEEP Respiratory system --on ventilator,151976,MDC_VENT_PRESS_AWAY_END_EXP_POS,Positive end expiratory pressure applied to the airway.,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76252-6,Pressure Pleural space,151824,MDC_PRESS_INTRAPL,Pressure in intrapleural space during breathing,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76253-4,Nitrous oxide cylinder Pressure,152972,MDC_PRESS_N2O_CYL,N2O cylinder pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76254-2,Nitrous oxide pipeline Pressure,152968,MDC_PRESS_N2O_SUPPLY,N2O supply (pipeline) pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76255-9,Oxygen cylinder Pressure,153164,MDC_PRESS_O2_CYL,O2 cylinder pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76255-9,Oxygen cylinder Pressure,153168,MDC_PRESS_O2_CYL_2,O2 #2 cylinder pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76256-7,Oxygen pipeline Pressure,153160,MDC_PRESS_O2_SUPPLY,O2 supply (pipeline) pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76257-5,Air cylinder Pressure,152892,MDC_PRESS_AIR_CYL,Air cylinder pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76258-3,Air pipeline Pressure,152888,MDC_PRESS_AIR_SUPPLY,Air supply (pipeline) pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa [psi] mbar
+76265-8,Carbon dioxide production (VCO2)/Body surface area in Respiratory system,152828,MDC_FLOW_CO2_PROD_RESP_PER_BSA,"Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by patient body surface area (typ m<sup>2</sup>).",L3T-1L-2,mL/min/m2
+76266-6,Carbon dioxide production (VCO2)/Ideal body weight in Respiratory system,152824,MDC_FLOW_CO2_PROD_RESP_PER_IBW,"Rate of production of carbon dioxide, measured by expired carbon dioxide in airway per unit time (typ  /min), normalized by the patient’s ideal body weight (typ kg).",L3T-1M-1,mL/min/kg
+76267-4,Oxygen consumption (VO2)/Ideal body weight [Volume Rate/Area],152816,MDC_FLOW_O2_CONSUMP_PER_IBW,"The volume of oxygen a patient inhales (consumes) per minute, normalized by the patient’s ideal body weight (typ kg).",L3T-1M-1,mL/min/kg
+76268-2,Pressure.ambient Room,152836,MDC_PRESS_AIR_AMBIENT,Ambient (immediate patient environment) air pressure,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76269-0,Respiratory quotient Respiratory system,151828,MDC_QUO_RESP,Ratio of carbon dioxide expired to oxygen used,1,{unitless} 1
+76270-8,Respiratory rate by Impedance.transthoracic,151578,MDC_TTHOR_RESP_RATE,Rate of breathing; method: transthoracic impedance variations,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76274-0,Ventilation-perfusion index Respiratory system,151952,MDC_VENT_FLOW_RATIO_PERF_ALV_INDEX,Ratio of alveolar ventilation and gas component to pulmonary capillary blood flow,L3T-1 ,mL/min L/min
+76278-1,Bladder temperature via Foley,150348,MDC_TEMP_FOLEY,,Q Q,Cel [degF]
+76280-7,Intramucosal gastric pH,160320,MDC_CONC_PH_INTRAMUCOSAL,Intramucosal pH,[pH],[pH]
+76281-5,Type of arrhythmia on EKG,148496,MDC_ECG_ARRHY,Irregular rhythm,,
+76282-3,Heart rate.beat-to-beat,147850,MDC_ECG_CARD_BEAT_RATE_BTB,,T-1,/min 1/min {beat}/min {beats}/min
+76283-1,Blood flow Pulmonary capillaries,150652,MDC_FLOW_BLD_PULM_CAP,Flow of the blood in the pulmonary capillaries.,,L/min
+76284-9,Pulmonary artery Blood pressure,150044,MDC_PRESS_BLD_ART_PULM,Pressure of the blood in the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76285-6,Pulmonary capillary Blood pressure,150076,MDC_PRESS_BLD_PULM_CAP,Pressure of the blood in the pulmonary capillaries,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76286-4,Pulmonary capillary Diastolic blood pressure,150078,MDC_PRESS_BLD_PULM_CAP_DIA,Diastolic pressure of the blood in the pulmonary capillaries,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76287-2,Pulmonary capillary Mean blood pressure,150079,MDC_PRESS_BLD_PULM_CAP_MEAN,Mean pressure of the blood in the pulmonary capillaries,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76288-0,Pulmonary capillary Systolic blood pressure,150077,MDC_PRESS_BLD_PULM_CAP_SYS,Systolic pressure of the blood in the pulmonary capillaries,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76296-3,Ventilator airway circuit leakage volume,152432,MDC_VENT_VOL_LEAK,"Volume of gas lost per minute by leakage in ventilation system, tubing, connectors, etc.",1,% L/min
+76297-1,Left ventricular Stroke volume index,150636,MDC_VOL_BLD_STROKE_INDEX,"Left-ventricular stroke volume per heart beat, normalized for body surface area.",L,mL/m2
+76298-9,Gastric pressure,188480,MDC_PRESS_GI,Gastric pressure waveform,LMT-2L-2,kPa
+76298-9,Gastric pressure,153244,MDC_PRESS_GASTRIC,Pressure measured in the stomach,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76299-7,Time interval between start of doses Infusion pump,157998,MDC_TIME_PD_DOSE_START_INTERVAL,,T T,min h
+76300-3,Doses.delivered [#] in Reporting period Infusion pump,157990,MDC_NUM_PATIENT_DOSES_GIVEN_TOTAL,Cumulative number of patient doses actually delivered (since start of operation or last cleared by clinician),1,{unitless} 1
+76301-1,Doses.requested [#] Reporting Period,157991,MDC_NUM_PATIENT_DOSES_ATTEMPTED_TOTAL,Cumulative number of patient doses requested.(since start of operation or last cleared by clinician),1,{unitless} 1
+76302-9,Infused volume.segment Procedure,157992,MDC_VOL_FLUID_DELIV_SEGMENT,,L3,mL
+76303-7,Infused volume.single container,157864,MDC_VOL_FLUID_DELIV,Fluid volume infused to the patient using this syringe or bottle (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites]),L3,mL
+76304-5,Infused volume.total Reporting Period Infusion pump,157993,MDC_VOL_FLUID_DELIV_TOTAL,,L3,mL
+76305-2,Infusion dose.programmed [Mass] Infusion pump,157999,MDC_DOSE_DRUG_TBI,,MM-1 MM-1 MM-1 MM-1 L3 M M M M ML-2 ML-2 ML-2 ML-2 ML-2 L3M-1 N N N N NM-1 NM-1 NL-2 NL-2 NM-1 NM-1 NL-2 NL-2 [iU] [iU] [iU] [iU]M-1 [iU]M-1 [iU]M-1 [iU]L-2 [iU]L-2 [iU]L-2 [iU] [iU]M-1 arb.u  arb.u  arb.u [arb.u]M-1 [arb.u]L-2 [arb.u] [arb.u]M-1 [arb.u] [arb.u]M-1 [arb.u]L-2,g/kg mg/kg ug/kg ng/kg mL g mg ug ng g/m2 kg/m2 mg/m2 ug/m2 ng/m2 mL/kg mol mmol eq meq mol/kg mmol/kg mol/m2 mmol/m2 eq/kg meq/kg eq/m2 meq/m2 [iU] m[iU] M[iU] [iU]/kg m[iU]/kg M[iU]/kg [iU]/m2 m[iU]/m2 M[iU]/m2 k[iU] k[iU]/kg [arb'U] [arb'U]/kg [arb'U]/m2 M[arb'U] M[arb'U]/kg M[arb'U]/m2 k[arb'U] k[arb'U]/kg m[arb'U] m[arb'U]/kg m[arb'U]/m2
+76306-0,Infusion dose.remaining [Mass] Infusion pump,158000,MDC_DOSE_DRUG_TBI_REMAIN,,MM-1 MM-1 MM-1 MM-1 L3 M M M M ML-2 ML-2 ML-2 ML-2 ML-2 L3M-1 N N N N NM-1 NM-1 NL-2 NL-2 NM-1 NM-1 NL-2 NL-2 [iU] [iU] [iU] [iU]M-1 [iU]M-1 [iU]M-1 [iU]L-2 [iU]L-2 [iU]L-2 [iU] [iU]M-1 arb.u  arb.u  arb.u [arb.u]M-1 [arb.u]L-2 [arb.u] [arb.u]M-1 [arb.u] [arb.u]M-1 [arb.u]L-2,g/kg mg/kg ug/kg ng/kg mL g mg ug ng g/m2 kg/m2 mg/m2 ug/m2 ng/m2 mL/kg mol mmol eq meq mol/kg mmol/kg mol/m2 mmol/m2 eq/kg meq/kg eq/m2 meq/m2 [iU] m[iU] M[iU] [iU]/kg m[iU]/kg M[iU]/kg [iU]/m2 m[iU]/m2 M[iU]/m2 k[iU] k[iU]/kg [arb'U] [arb'U]/kg [arb'U]/m2 M[arb'U] M[arb'U]/kg M[arb'U]/m2 k[arb'U] k[arb'U]/kg m[arb'U] m[arb'U]/kg m[arb'U]/m2
+76307-8,Infusion time.programmed Infusion pump,157996,MDC_TIME_PD_PROG,,T T T,s min h
+76308-6,Infusion time.remaining Infusion pump,157916,MDC_TIME_PD_REMAIN,The time calculated by the pump until time (or volume) for this step of flow elapses,T,min
+76309-4,Infusion time.remaining Infusion pump Based on container volume,157997,MDC_TIME_PD_REMAIN_CONTAINER,,T T T,s min h
+76310-2,Infusion volume.programmed Procedure Infusion pump,157884,MDC_VOL_FLUID_TBI,Volume to be infused to the patient (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites]),L3,mL
+76311-0,Infusion volume.remaining Infusion pump,157872,MDC_VOL_FLUID_TBI_REMAIN,Volume of fluid remaining to be infused in relation with the volume to be infused (comment: optional site attribute according to Table A.9.8.7 [miscellaneous body sites]),L3,mL
+76312-8,PCA dose number.max 1 hour Infusion pump,157988,MDC_RATE_PCA_MAX_DOSES_PER_HOUR,,T-1,/h
+76314-4,PCA lockout time Infusion pump,157989,MDC_TIME_PCA_LOCKOUT,,T,min
+76315-1,Syringe Volume.actual,157984,MDC_VOL_SYRINGE_ACTUAL,,L3,mL
+76316-9,Infusion pump Volume.remaining,157995,MDC_VOL_REMAIN_CONTAINER,,L3,mL
+76317-7,Infusion pump Volume.start,157994,MDC_VOL_FLUID_CONTAINER_START,,L3,mL
+76318-5,Syringe Manufacturer name,184488,MDC_SYRINGE_MANUFACTURER,,1,{unitless} 1
+76319-3,Infusion pump Pump status,184508,MDC_PUMP_STAT,"The operational status of the pump, e.g., Infusing, KVO, etc., (see Table A.8.7.12)",,
+76320-1,Expiratory airway gas flow,151768,MDC_FLOW_AWAY_EXP,Expiratory gas flow,L3T-1 ,mL/min L/min
+76322-7,Systolic time ratio,150616,MDC_SYSTOLIC_TIME_RATIO,The ratio of the electrical and mechanical systole duration (PEP/LVET).,1,{unitless} 1
+76323-5,Aorta acceleration index,150612,MDC_ACCELERATION_INDEX,"Initial acceleration of blood flow in the aorta, which occurs within the first 10 to 20 milliseconds",T-2,/(100.s2)
+76324-3,Infusion pump Alert type,68485,MDC_ATTR_ALERT_TYPE,Alert type,,{unknown}
+76325-0,Infusion pump Communication status,188772,MDC_COMM_STATUS,,,
+76326-8,Infusion pump Alarm state,68482,MDC_ATTR_ALARM_STATE,Indicates the state of the underlying alert condition at the patient care device,,{unknown}
+76327-6,Infusion pump Alarm trigger,68012,MDC_ATTR_AL_COND,,,
+76328-4,Infusion pump Alert priority,68484,MDC_ATTR_ALARM_PRIORITY,Alert priority,,{unknown}
+76329-2,Infusion pump Pump mode,184504,MDC_PUMP_MODE,The operational mode of the pump (see Table A.8.7.11),,
+76330-0,Infusion pump Pump mode.current,184512,MDC_PUMP_MODE_CURRENT,,,
+76331-8,Infusion pump Pump mode.set,184511,MDC_PUMP_MODE_SET,,,
+76332-6,Infusion pump Reason pump stopped infusing,184513,MDC_PUMP_NOT_INFUSING_REASON,,,
+76476-1,Heart rate by Transthoracic impedance,149554,MDC_TTHOR_HEART_RATE,Heart rate obtained from the variation of transthoracic impedance.,T-1,/min 1/min {beat}/min {beats}/min
+76477-9,Heart rate by Noninvasive,149546,MDC_PULS_RATE_NON_INV,"Rate of blood pulse in an artery, measured not invasively",T-1 T-1 T-1,/min 1/min {count}/min /min 1/min {beat}/min {beats}/min /min 1/min {pulse}/min {pulses}/min
+76519-8,Left ventricular Cardiac output by Continuous,150492,MDC_OUTPUT_CARD_CTS,"Quantity of blood pumped by the left ventricle into the aorta per minute, obtained as continuous measurement",,L/min
+76520-6,Transmission.infrared Arterial blood Pulse oximetry,150576,MDC_TRANSMISSION_INFRARED,,,
+76521-4,Transmission.red Arterial blood Pulse oximetry,150572,MDC_TRANSMISSION_RED,,,
+76522-2,Transmission Arterial blood Pulse oximetry,150568,MDC_TRANSMISSION,,,
+76523-0,Plethysmogram Arterial blood Pulse oximetry,150452,MDC_PULS_OXIM_PLETH,,1,%
+76525-5,Thoracic fluid conductivity [Fluid Conductance] Chest,150620,MDC_THORACIC_FLUID_CONTENT,"The electrical conductivity of the chest cavity, which is primarily determined by the intravascular, intraalveolar and the interstitial fluids in the thorax.",M-1L-2I2T3,1/kOhm /kOhm
+76526-3,Ventilation rate by Carbon dioxide measurement,151610,MDC_VENT_CO2_RESP_RATE,Rate of mechanical ventilation; method: carbon dioxide concentration measurement.  [This refers to the CO2 respiration rate measured by the ventilator and is not the set ventilator rate nor the ventilator inflation rate; it can include unassisted spontaneous breaths as well.],T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+76527-1,Left ventricular Work/Body surface area [Energy/Area] by Non-invasive impedance cardiography (NI-ICG),150640,MDC_WK_LV_WORK_INDEX,"Work performed by the left ventricle of the heart to eject the stroke volume over one minute's time, normalized for body surface area.",L2MT-3L-2 L2MT-3L-2,kgf.m/min/m2 gf.m/min/m2
+76529-7,Pressure Respiratory system airway,151792,MDC_PRESS_AWAY,Pressure of gas in airway,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+76532-1,Blood pressure device Cuff pressure,150300,MDC_PRESS_CUFF,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76533-9,Blood pressure by Noninvasive,150020,MDC_PRESS_BLD_NONINV,,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76534-7,Systolic blood pressure by Noninvasive,150021,MDC_PRESS_BLD_NONINV_SYS,"Pressure of the blood, obtained noninvasively (i.e., fingertip), at the systolic phase",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76535-4,Diastolic blood pressure by Noninvasive,150022,MDC_PRESS_BLD_NONINV_DIA,"Pressure of the blood, obtained noninvasively (i.e., fingertip), at the diastolic phase",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76536-2,Mean blood pressure by Noninvasive,150023,MDC_PRESS_BLD_NONINV_MEAN,"Pressure of the blood, obtained noninvasively (i.e., fingertip), as computed by averaging on one cycle",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76537-0,Blood pressure device Cuff pressure.mean,150303,MDC_PRESS_CUFF_MEAN,"Pressure of the blood computed as mean value between systolic and diastolic pressures, measured discontinuously and noninvasively (cuff)",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76538-8,Blood pressure device Cuff pressure.systolic,150301,MDC_PRESS_CUFF_SYS,"Pressure of the blood at the systolic phase, measured discontinuously and noninvasively (cuff)",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+76539-6,Blood pressure device Cuff pressure.diastolic,150302,MDC_PRESS_CUFF_DIA,"Pressure of the blood at the diastolic phase, measured discontinuously and noninvasively (cuff)",LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8302-2,Body height,68060,MDC_ATTR_PT_HEIGHT,,L ,cm [in_i]
+8310-5,Body temperature,150344,MDC_TEMP,,Q Q,Cel {delta}Cel [degF] {delta}[degF]
+8328-7,Axillary temperature,188452,MDC_TEMP_AXILLA,Axillary (armpit) temperature,Q Q,Cel [degF]
+8328-7,Axillary temperature,188496,MDC_TEMP_AXIL,Axillary (armpit) temperature,Q Q,Cel [degF]
+8329-5,Body temperature - Core,150368,MDC_TEMP_CORE,,Q Q,Cel [degF]
+8331-1,Oral temperature,188424,MDC_TEMP_ORAL,Oral temperature,Q Q,Cel [degF]
+8332-9,Rectal temperature,188420,MDC_TEMP_RECT,Rectal temperature,Q Q,Cel [degF]
+8333-7,Tympanic membrane temperature,150392,MDC_TEMP_TYMP,,Q Q,Cel [degF]
+83366-5,Burst rate Cerebral cortex Electroencephalogram (EEG),156242,MDC_EEG_PAROX_CRTX_BURST_RATE,"Epileptic or potentially epileptogenic activity identifiers, burst rate",T-1,/min 1/min {count}/min
+83367-3,Gas delivery system Fresh gas.air flow setting [Flow],16930092,MDC_FLOW_AIR_FG_SETTING,,,L/min
+83368-1,Personal best peak expiratory gas flow Respiratory system airway,152585,MDC_FLOW_AWAY_EXP_FORCED_PEAK_PB,This value is determined by a healthcare professional or based on predicted average peak flow and is typically the highest peak condition.expiratory flow (PEF) reading an individual can obtain while in peak,,L/min
+83369-9,Gas delivery system Fresh gas.nitrous oxide flow setting [Flow],16930308,MDC_FLOW_N2O_FG_SETTING,,,L/min
+83370-7,Gas delivery system Fresh gas.oxygen flow setting [Flow],16930372,MDC_FLOW_O2_FG_SETTING,,,L/min
+83371-5,Cycles.remaining [#] Nebulizer,153360,MDC_NEB_CYCLES_REMAIN,"Number of cycles remaining, including the current cycle.  Transitions to zero when delivery completed.",1,{unitless} 1 {count}
+83372-3,Cycles setting [#] Nebulizer,16930568,MDC_NEB_CYCLES_SETTING,Specifies the number of nebulizer delivery cycles having a specified run time and/or volume when operating in scheduled mode.,1,{unitless} 1 {count}
+83373-1,Mode setting Nebulizer,16961626,MDC_NEB_DEV_MODE_SETTING,"Specifies the nebulizer operational mode, including intermittent, scheduled or continuous modes.  Selecting intermittent mode delivers a single timed delivery based on the programmed run time and/or volume, and for scheduled mode, the number of cycles and pause time between cycles.  Selecting continuous mode delivers nebulized medication until the medication runs out or delivery is stopped. ",,
+83374-9,Type of Nebulizer,184408,MDC_NEB_DEV_TYPE,"Specifies the nebulizer type, such as an aerosolizer (using a micro pump) or pneumatic (using an external air or oxygen supply).",,
+83375-6,Current nebulization cycle time.elapsed Nebulizer,153372,MDC_NEB_TIME_PD_ELAPSED_CURR_CYCLE,Elapsed time that fluid has been nebulized for current cycle.,T,min
+83376-4,Current set of nebulization cycles time.elapsed Nebulizer,153376,MDC_NEB_TIME_PD_ELAPSED_TOTAL,Total elapsed time that fluid that has been nebulized for current set of delivery cycles.,T,min
+83377-2,Pause time setting Nebulizer,16930572,MDC_NEB_TIME_PD_PAUSE_SETTING,Specifies the pause (time duration) between nebulizer delivery cycles when operating in scheduled mode.,T,min
+83378-0,Run time setting Nebulizer,16930560,MDC_NEB_TIME_PD_PER_CYCLE_SETTING,Specifies the nebulizer run time per delivery cycle.,T,min
+83379-8,Current nebulization cycle time.remaining Nebulizer,153364,MDC_NEB_TIME_PD_REMAIN_CURR_CYCLE,Remaining nebulization time for current cycle.  Transitions to zero at the start of the pause interval when delivery for the current cycle is completed,T,min
+83380-6,Current set of nebulization cycles time.remaining Nebulizer,153368,MDC_NEB_TIME_PD_REMAIN_TOTAL,Total remaining nebulization delivery time for current set of delivery cycles (does not include pause time).,T,min
+83381-4,Current nebulization cycle volume.given Nebulizer,153388,MDC_NEB_VOL_FLUID_DELIV_CURR_CYCLE,Estimated volume of fluid that has been nebulized for current cycle.,L3,mL
+83382-2,Current set of nebulization cycles volume.given Nebulizer,153392,MDC_NEB_VOL_FLUID_DELIV_TOTAL,Estimated volume of fluid that has been nebulized for current set of delivery cycles.,L3,mL
+83383-0,Cycle volume setting Nebulizer,16930564,MDC_NEB_VOL_FLUID_PER_CYCLE_SETTING,Specifies the nebulizer volume per delivery cycle.,L3,mL
+83384-8,Current nebulization cycle volume.remaining Nebulizer,153380,MDC_NEB_VOL_FLUID_REMAIN_CURR_CYCLE,Estimated remaining volume of fluid to be nebulized for current cycle.,L3,mL
+83385-5,Current set of nebulization cycles volume.remaining Nebulizer,153384,MDC_NEB_VOL_FLUID_REMAIN_TOTAL,Estimated total remaining volume of fluid to be nebulized for current set of delivery cycles.,L3,mL
+83386-3,Extrinsic PEEP Respiratory system,151804,MDC_PRESS_AWAY_END_EXP_POS_EXTRINSIC,,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+83386-3,Extrinsic PEEP Respiratory system,151804,MDC_PRESS_AWAY_END_EXP_POS,Positive end expiratory pressure applied to the airway. ,LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+83387-1,Extrinsic dynamic PEEP Respiratory system,152792,MDC_PRESS_AWAY_END_EXP_POS_EXTRINSIC_DYNAMIC,"Dynamic extrinsic PEEP, the minimum pressure at or near the end of expiration, reflecting the set PEEP from the ventilator.",LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+83388-9,Total dynamic PEEP Respiratory system,152800,MDC_PRESS_AWAY_END_EXP_POS_TOTAL_DYNAMIC,"Dynamic total PEEP, obtained during the short period between expiratory valve closure and flow arriving at the patient.",LMT-2L-2 LMT-2L-2 LMT-2L-2 LMT-2L-2,kPa mm[Hg] cm[H2O] mbar
+83389-7,Brachial artery Blood pressure,150680,MDC_PRESS_BLD_ART_BRACHIAL,Pressure of the blood in the brachial artery.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8375-8,Left ventricular Intrachamber diastolic pressure,150102,MDC_PRESS_BLD_VENT_LEFT_DIA,Diastolic pressure of the blood in the left ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8377-4,Right ventricular Intrachamber diastolic pressure,150106,MDC_PRESS_BLD_VENT_RIGHT_DIA,Diastolic pressure of the blood in the right ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8385-7,Pulmonary artery Diastolic blood pressure,150046,MDC_PRESS_BLD_ART_PULM_DIA,Diastolic pressure of the blood in the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8399-8,Left atrial Intrachamber mean pressure,150067,MDC_PRESS_BLD_ATR_LEFT_MEAN,Mean pressure of the blood in the left atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8400-4,Right atrial Intrachamber mean pressure,150071,MDC_PRESS_BLD_ATR_RIGHT_MEAN,Mean pressure of the blood in the right atrium of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8404-6,Left ventricular Intrachamber mean pressure,150103,MDC_PRESS_BLD_VENT_LEFT_MEAN,Mean pressure of the blood in the left ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8406-1,Right ventricular Intrachamber mean pressure,150107,MDC_PRESS_BLD_VENT_RIGHT_MEAN,Mean pressure of the blood in the right ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8414-5,Pulmonary artery Mean blood pressure,150047,MDC_PRESS_BLD_ART_PULM_MEAN,Mean pressure of the blood in the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8430-1,Left ventricular Intrachamber systolic pressure,150101,MDC_PRESS_BLD_VENT_LEFT_SYS,Systolic pressure of the blood in the left ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8432-7,Right ventricular Intrachamber systolic pressure,150105,MDC_PRESS_BLD_VENT_RIGHT_SYS,Systolic pressure of the blood in the right ventricle of the heart,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8440-0,Pulmonary artery Systolic blood pressure,150045,MDC_PRESS_BLD_ART_PULM_SYS,Systolic pressure of the blood in the pulmonary artery,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8498-8,Femoral artery Diastolic blood pressure,150650,MDC_PRESS_BLD_ART_FEMORAL_DIA,Mean pressure of the blood in the femoral artery.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8501-9,Umbilical artery Diastolic blood pressure,150058,MDC_PRESS_BLD_ART_UMB_DIA,Diastolic pressure of the blood in the umbilical arteries of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8504-3,Femoral artery Mean blood pressure,150651,MDC_PRESS_BLD_ART_FEMORAL_MEAN,Diastolic pressure of the blood in the femoral artery.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8507-6,Umbilical artery Mean blood pressure,150059,MDC_PRESS_BLD_ART_UMB_MEAN,Mean pressure of the blood in the umbilical arteries of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8510-0,Femoral artery Systolic blood pressure,150649,MDC_PRESS_BLD_ART_FEMORAL_SYS,Systolic pressure of the blood in the femoral artery.,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8513-4,Umbilical artery Systolic blood pressure,150057,MDC_PRESS_BLD_ART_UMB_SYS,Systolic pressure of the blood in the umbilical arteries of a fetus,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8591-0,Central venous pressure (CVP) Mean,150087,MDC_PRESS_BLD_VEN_CENT_MEAN,Mean pressure of the blood in the thoracic venae cavae,LMT-2L-2 LMT-2L-2,kPa mm[Hg]
+8616-5,Premature ventricular contractions,148066,MDC_ECG_V_P_C_RATE,,T-1,/min 1/min {beat}/min {beats}/min
+8634-8,Q-T interval,147232,MDC_ECG_TIME_PD_QT_GL,Duration of the interval between the QRS onset and T wave offset of ECG (global),T,ms
+8636-3,Q-T interval corrected,147236,MDC_ECG_TIME_PD_QTc,"Duration of the interval between the QRS onset and T wave offset, related to heart rate 60 beats per minute of ECG (global), Bazett formula",T,ms
+8637-1,R-R interval by EKG,147240,MDC_ECG_TIME_PD_RR_GL,Duration of the interval between two consecutive QRS complexes,T,ms
+8741-1,Left ventricular Cardiac output,150276,MDC_OUTPUT_CARD,Quantity of blood pumped by the left ventricle into the aorta per minute,,L/min
+8828-6,Pulmonary vascular Resistance,150308,MDC_RES_VASC_PULM,Resistance to blood flow in the pulmonary vessels,L-4MT-1 L-4MT-1 L-4MT-1,dyn.s/cm5 [PRU] mm[Hg].s/mL [wood'U] mm[Hg].min/L
+8831-0,Systemic vascular Resistance,150312,MDC_RES_VASC_SYS,Resistance to blood flow in the systemic circulation,L-4MT-1 L-4MT-1 L-4MT-1,dyn.s/cm5 [PRU] mm[Hg].s/mL [wood'U] mm[Hg].min/L
+8834-4,Pulmonary vascular Resistance index,152852,MDC_RES_VASC_PULM_INDEX,"Pulmonary Vascular Resistance Index, normalized with respect to body surface area",L-2MT-1,dyn.s.m2/cm5 dyn.s.cm-5.m2
+8837-7,Systemic vascular Resistance index,149760,MDC_RES_VASC_SYS_INDEX,Difference between systemic and pulmonary resistance,L-2MT-1,dyn.s.m2/cm5 dyn.s.cm-5.m2
+8861-7,Left ventriclar Stroke work,150428,MDC_WK_LV_STROKE,Work of left ventricle of the heart in one cardiac cycle,L2MT-2,gf.m
+8863-3,Left ventricular stroke work index,149764,MDC_WK_LV_STROKE_INDEX,Work of left ventricle of the heart in one cardiac cycle and related to body surface area (LVSW/BSA),L2MT-2L-2 L2MT-2L-2,kgf.m/m2 gf.m/m2
+8864-1,Right ventricular Stroke work index,150644,MDC_WK_RV_STROKE_INDEX,Work of right ventricle of the heart in one cardiac cycle and related to body surface area (RVSW/BSA),L2MT-2L-2 L2MT-2L-2,kgf.m/m2 gf.m/m2
+8889-8,Heart rate by Pulse oximetry,149530,MDC_PULS_OXIM_PULS_RATE,,T-1 T-1 T-1,/min 1/min {count}/min /min 1/min {beat}/min {beats}/min /min 1/min {pulse}/min {pulses}/min
+8897-1,QRS complex Ventricles by EKG,147842,MDC_ECG_CARD_BEAT_RATE,,T-1,/min 1/min {beat}/min {beats}/min
+8897-1,QRS complex Ventricles by EKG,147842,MDC_ECG_HEART_RATE,Rate of cardiac beats,T-1,/min 1/min {beat}/min {beats}/min
+9267-6,Glasgow coma score eye opening,153730,MDC_SCORE_EYE_SUBSC_GLAS_COMA,Subscore for visual reactions of score that monitors the neurologic status and probable outcome of patient,,
+9268-4,Glasgow coma score motor,153731,MDC_SCORE_MOTOR_SUBSC_GLAS_COMA,Subscore for motoric reactions of score that monitors the neurologic status and probable outcome of patient,,
+9269-2,Glasgow coma score total,153728,MDC_SCORE_GLAS_COMA,Score that monitors the neurologic status and probable outcome of patient,,
+9270-0,Glasgow coma score verbal,153732,MDC_SCORE_SUBSC_VERBAL_GLAS_COMA,Subscore for verbal reactions of score that monitors the neurologic status and probable outcome of patient,,
+9279-1,Respiratory rate,151562,MDC_RESP_RATE,Rate of breathing; method not specified,T-1,/min 1/min {breath}/min {breaths}/min {resp}/min
+9843-4,Head Occipital-frontal circumference,153856,MDC_CIRCUM_HEAD,Circumference of the head,L ,cm [in_i]
