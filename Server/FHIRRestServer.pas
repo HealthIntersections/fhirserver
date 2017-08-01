@@ -180,56 +180,65 @@ Type
     FIni : TFHIRServerIniFile;
     FLock : TCriticalSection;
 
-    // sated vs actual: to allow for a reverse proxy
+    // base web server configuration
+    FActive : boolean; // can start without actually making the web servers available - for internal use e.g. loading...
+    FName : String; // name of this server
+    FOwnerName : String; // name of the org that adminsiters the service
+    FSourcePath : String; // where to find web content
+    FHomePage : String;
+    FAdminEmail : String;  // stated administrator
+    FFacebookLike : boolean;
+    FHostSms : String;  // for status update messages
+
+    // web configuration
+    FHost : String;
     FActualPort : Integer;
-    FStatedPort : Integer;
+    FBasePath : String;
     FActualSSLPort : Integer;
-    FStatedSSLPort : Integer;
-    FSecureToken : String;
+    FSecurePath : String;
     FCertFile : String;
     FRootCertFile : String;
     FSSLPassword : String;
-//    FBaseURL : String;
-//    FProxy : String;
-    FBasePath : String;
-    FSecurePath : String;
-    FHost : String;
-    HostSms : String;
-    FSourcePath : String;
-    FName : String;
+
+    // security admin
+    FUseOAuth : boolean;
+    FOWinSecurityPlain : boolean;
+    FOWinSecuritySecure : boolean;
+    FServeMissingCertificate: boolean;
+    FServeUnknownCertificate : boolean;
+    FCertificateIdList : TStringList;
+    FServeMissingJWT : boolean;
+    FServeUnverifiedJWT : boolean;
+    FJWTAuthorities : TDictionary<String, String>;
+
+    // Reverse proxy support. stated vs actual: to allow for a reverse proxy
+    FStatedPort : Integer;
+    FStatedSSLPort : Integer;
+    FSecureToken : String;
+
+    // operational fields
     FPlainServer : TIdHTTPServer;
     FSSLServer : TIdHTTPServer;
     FIOHandler: TIdServerIOHandlerSSLOpenSSL;
-    FOwnerName : String;
-    FAdminEmail : String;
     FTotalCount : cardinal;
     FRestCount : cardinal;
     FStartTime : cardinal;
     FTotalTime : cardinal;
     FRestTime : cardinal;
-    FHomePage : String;
-
     FClients : TAdvList<TFHIRWebServerClientInfo>;
     FServerContext : TFHIRServerContext;
-    FFacebookLike : boolean;
     FTerminologyWebServer : TTerminologyWebServer;
     FMaintenanceThread : TFhirServerMaintenanceThread;
     FSubscriptionThread : TFhirServerSubscriptionThread;
     FEmailThread : TFhirServerEmailThread;
-    FActive : boolean;
     FAuthServer : TAuth2Server;
     FAdaptors : TAdvMap<TFHIRFormatAdaptor>;
-
-    carry : TAdvZipReader;
+    carry : TAdvZipReader; // for uploading support
     carryName : String;
     FPatientViewServers : TDictionary<String, String>;
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
-    FOWinSecurityPlain : boolean;
-    FOWinSecuritySecure : boolean;
     FCDSHooksServer : TCDSHooksServer;
-    FRequireClientCertificate: boolean;
-    FCertificateIdList : TStringList;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -296,6 +305,7 @@ Type
     Procedure ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure : Boolean; path : String);
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
+    procedure loadConfiguration;
   Public
     Constructor Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
@@ -309,11 +319,17 @@ Type
     property AuthServer : TAuth2Server read FAuthServer;
     Property SourcePath : String read FSourcePath;
     property Host : String read FHost;
+    property CDSHooksServer : TCDSHooksServer read FCDSHooksServer;
+
+    property UseOAuth : boolean read FUseOAuth write FUseOAuth;
     property OWinSecurityPlain : boolean read FOWinSecurityPlain write FOWinSecurityPlain;
     property OWinSecuritySecure : boolean read FOWinSecuritySecure write FOWinSecuritySecure;
-    property RequireClientCertificate : boolean read FRequireClientCertificate write FRequireClientCertificate;
+    property ServeMissingCertificate: boolean read FServeMissingCertificate write FServeMissingCertificate;
+    property ServeUnknownCertificate : boolean read FServeUnknownCertificate write FServeUnknownCertificate;
     property CertificateIdList : TStringList read FCertificateIdList;
-    property CDSHooksServer : TCDSHooksServer read FCDSHooksServer;
+    property ServeMissingJWT : boolean read FServeMissingJWT write FServeMissingJWT;
+    property ServeUnverifiedJWT : boolean read FServeUnverifiedJWT write FServeUnverifiedJWT;
+    property JWTAuthorities : TDictionary<String, String> read FJWTAuthorities;
 
     function ClientAddress(secure : boolean) : String;
   End;
@@ -391,47 +407,30 @@ begin
     result := IncludeTrailingPathDelimiter(path);
 end;
 
-Constructor TFhirWebServer.Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+procedure TFhirWebServer.loadConfiguration;
 var
-  s, txu : String;
+  s : String;
   ts : TStringList;
-Begin
-  Inherited Create;
-  FLock := TCriticalSection.Create('fhir-rest');
-  FCertificateIdList := TStringList.create;
-  FName := Name;
-  FIni := ini;
+begin
+  logt('Load Configuration');
+
+  // web identity / configuration
+  FHomePage := FIni.ReadString(voMaybeVersioned, 'web', 'homepage', 'homepage.html');
+  FFacebookLike := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'like', '') = '1';
   FHost := FIni.ReadString(voVersioningNotApplicable, 'web', 'host', '');
-  HostSms := FIni.ReadString(voVersioningNotApplicable, 'sms', 'owner', '');
-  FClients := TAdvList<TFHIRWebServerClientInfo>.create;
-  FPatientViewServers := TDictionary<String, String>.create;
-  FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
-  FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
-  FSecureToken := FIni.ReadString(voVersioningNotApplicable, 'web', 'secure-token', '');
 
-  FSourcePath := ProcessPath(ExtractFilePath(ini.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
-  logt('Load User Sub-system');
-
-  logt('Load & Cache Store: ');
-  FOwnerName := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
-  if FOwnerName = '' then
-    FOwnerName := 'Health Intersections';
-  FAdminEmail := Fini.readString(voVersioningNotApplicable, 'admin', 'email', '');
-  if FAdminEmail = '' then
-    raise Exception.Create('Ad admin email is required');
-
-  // Base Web server configuration
-  FBasePath := FIni.ReadString(voMaybeVersioned, 'web', 'base', '');
-  FSecurePath := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
+  // web server configuration
   FActualPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'http', 0);
-  FStatedPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-http', FActualPort);
+  FBasePath := FIni.ReadString(voMaybeVersioned, 'web', 'base', '');
   FActualSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'https', 0);
-  FStatedSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-https', FActualSSLPort);
+  FSecurePath := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
   FCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'certname', '');
   FRootCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'cacertname', '');
   FSSLPassword := FIni.ReadString(voMaybeVersioned, 'web', 'certpword', '');
-  FHomePage := FIni.ReadString(voMaybeVersioned, 'web', 'homepage', 'homepage.html');
-  FFacebookLike := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'like', '') = '1';
+
+  FStatedPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-http', FActualPort);
+  FStatedSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'stated-https', FActualSSLPort);
+  FSecureToken := FIni.ReadString(voVersioningNotApplicable, 'web', 'secure-token', '');
   ts := TStringList.Create;
   try
     FIni.ReadSection(voMaybeVersioned, 'reverse-proxy', ts);
@@ -441,22 +440,6 @@ Begin
     ts.Free;
   end;
 
-
-  FServerContext := context; 
-  if FIni.ReadString(voMaybeVersioned, 'web', 'host', '') <> '' then
-  begin
-    if FIni.ReadString(voMaybeVersioned, 'web', 'base', '') <> '' then
-      s := FIni.ReadString(voMaybeVersioned, 'web', 'base', '')
-    else
-      s := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
-  end;
-  logt(inttostr(FServerContext.Storage.TotalResourceCount)+' resources');
-  FServerContext.FormalURLPlain := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort);
-  FServerContext.FormalURLSecure := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort);
-  FServerContext.FormalURLPlainOpen := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
-  FServerContext.FormalURLSecureOpen := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
-  FServerContext.FormalURLSecureClosed := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
-
   if FIni.ReadString(voMaybeVersioned, 'web', 'insecure', '') = 'conformance' then
     FServerContext.ValidatorContext.setNonSecureTypes(['Conformance', 'StructureDefinition', 'ValueSet', 'ConceptMap', 'DataElement', 'OperationDefinition', 'SearchParameter', 'NamingSystem'])
   else if FIni.ReadString(voMaybeVersioned, 'web', 'insecure', '') = 'conformance+patient' then
@@ -464,12 +447,15 @@ Begin
   else
     FServerContext.ValidatorContext.setNonSecureTypes([]);
 
-  if FStatedPort = 80 then
-    txu := 'http://'+FHost
-  else
-    txu := 'http://'+FHost+':'+inttostr(FStatedPort);
-  if terminologyServer <> nil then
-    FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
+  FSourcePath := ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
+
+  FUseOAuth := FIni.ReadBool(voMaybeVersioned, 'security', 'oauth', true);
+  FOWinSecuritySecure := FIni.ReadBool(voMaybeVersioned, 'security', 'owin', false);
+  FOWinSecurityPlain := FIni.ReadBool(voMaybeVersioned, 'security', 'owin-http', false);
+  FServeMissingCertificate := FIni.ReadBool(voMaybeVersioned, 'security', 'no-cert', false);
+  FServeUnknownCertificate := FIni.ReadBool(voMaybeVersioned, 'security', 'unknown-cert', false);
+  FServeMissingJWT := FIni.ReadBool(voMaybeVersioned, 'security', 'no-jwt', false);
+  FServeUnverifiedJWT := FIni.ReadBool(voMaybeVersioned, 'security', 'unverified-jwt', false);
 
   if FIni.SectionExists(voVersioningNotApplicable, 'patient-view') then
   begin
@@ -482,6 +468,53 @@ Begin
       ts.free;
     end;
   end;
+
+  FOwnerName := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
+  if FOwnerName = '' then
+    FOwnerName := 'Health Intersections';
+  FAdminEmail := Fini.readString(voVersioningNotApplicable, 'admin', 'email', '');
+  if FAdminEmail = '' then
+    raise Exception.Create('Ad admin email is required');
+
+  FHostSms := FIni.ReadString(voVersioningNotApplicable, 'sms', 'owner', '');
+end;
+
+Constructor TFhirWebServer.Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
+var
+  txu : String;
+Begin
+  Inherited Create;
+  FLock := TCriticalSection.Create('fhir-rest');
+  FCertificateIdList := TStringList.create;
+  FName := Name;
+  FIni := ini;
+
+  FClients := TAdvList<TFHIRWebServerClientInfo>.create;
+  FPatientViewServers := TDictionary<String, String>.create;
+  FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
+  FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
+  FServerContext := context;
+
+  loadConfiguration;
+
+  FServerContext.FormalURLPlain := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort);
+  FServerContext.FormalURLSecure := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort);
+  FServerContext.FormalURLPlainOpen := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
+  FServerContext.FormalURLSecureOpen := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
+  FServerContext.FormalURLSecureClosed := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
+
+  logt('Load & Cache Store: ');
+
+  // Base Web server configuration
+  logt(inttostr(FServerContext.Storage.TotalResourceCount)+' resources');
+
+  if FStatedPort = 80 then
+    txu := 'http://'+FHost
+  else
+    txu := 'http://'+FHost+':'+inttostr(FStatedPort);
+  if terminologyServer <> nil then
+    FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
+
   if FIni.readString(voVersioningNotApplicable, 'web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
   FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort));
@@ -494,6 +527,7 @@ Begin
   FAuthServer.SSLPassword := FSSLPassword;
   FAuthServer.AdminEmail := FAdminEmail;
   FAuthServer.EndPoint := OAuthPath(true);
+  FAuthServer.Active := FUseOAuth;
 
   FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
   {$IFDEF FHIR3}
@@ -606,7 +640,7 @@ function TFhirWebServer.DoVerifyPeer(Certificate: TIdX509; AOk: Boolean; ADepth,
 var
   i : integer;
 begin
-  result := (FCertificateIdList.Count = 0) or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
+  result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
 end;
 
 function port(port, default : integer): String;
@@ -658,11 +692,11 @@ begin
     client := TTwilioClient.Create;
     try
       client.Account := ServerContext.SubscriptionManager.SMSAccount;
-      if (client.Account <> '') and (HostSms <> '') then
+      if (client.Account <> '') and (FHostSms <> '') then
       begin
         client.Token := ServerContext.SubscriptionManager.SMSToken;
         client.From := ServerContext.SubscriptionManager.SMSFrom;
-        client.dest := HostSms;
+        client.dest := FHostSms;
         client.Body := msg;
         client.send;
       end;
@@ -759,10 +793,10 @@ Begin
     FIOHandler.SSLOptions.CertFile := FCertFile;
     FIOHandler.SSLOptions.KeyFile := ChangeFileExt(FCertFile, '.key');
     FIOHandler.SSLOptions.RootCertFile := FRootCertFile;
-    if RequireClientCertificate then
+    if not FServeMissingCertificate then
       FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfFailIfNoPeerCert, sslvrfClientOnce]
     else
-      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, {sslvrfFailIfNoPeerCert, }sslvrfClientOnce];
+      FIOHandler.SSLOptions.VerifyMode := [sslvrfPeer, sslvrfClientOnce];
     FIOHandler.SSLOptions.VerifyDepth := 2;
     FIOHandler.OnVerifyPeer := DoVerifyPeer;
 //    FIOHandler.SSLOptions.
@@ -1253,6 +1287,7 @@ Begin
   noErrCode := false;
   upload := false;
 
+  session := nil;
   try
     if ssl then
       sHost := 'https://'+request.Host

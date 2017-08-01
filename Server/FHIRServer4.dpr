@@ -311,7 +311,8 @@ uses
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
-  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
+  GraphDefinitionEngine in 'GraphDefinitionEngine.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
@@ -323,7 +324,7 @@ begin
   JclStartExceptionTracking;
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
-    SetConsoleTitle('FHIR Server STU3');
+    SetConsoleTitle('FHIR Server R4');
     ExecuteFhirServer;
   except
     on E: Exception do

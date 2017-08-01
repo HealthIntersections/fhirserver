@@ -116,7 +116,7 @@ Type
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
-    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
+    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
   end;
@@ -494,7 +494,7 @@ begin
   raise Exception.Create('This server does not implement the "VersionRead" function');
 end;
 
-function TFHIROperationEngine.FindResource(aType, sId: String; bAllowDeleted: boolean; var resourceKey: integer; request: TFHIRRequest; response: TFHIRResponse; compartments: String): boolean;
+function TFHIROperationEngine.FindResource(aType, sId: String; bAllowDeleted: boolean; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; compartments: String): boolean;
 begin
   raise Exception.Create('This server does not implement the "FindResource" function');
 end;

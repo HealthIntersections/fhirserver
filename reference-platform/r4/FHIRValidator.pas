@@ -144,7 +144,7 @@ Type
     // configuration items
     FContext: TWorkerContext;
     FExtensionDomains: TStringList;
-    FPathEngine : TFHIRExpressionEngine;
+    FPathEngine : TFHIRPathExpressionEngine;
 
 //    function LoadDoc(name: String; isFree: boolean = false): TMXmlDocument2;
 
@@ -447,7 +447,7 @@ constructor TFHIRValidator.Create(context: TWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRExpressionEngine.create(FContext.link);
+  FPathEngine := TFHIRPathExpressionEngine.create(FContext.link);
 end;
 
 destructor TFHIRValidator.Destroy;
@@ -3222,12 +3222,12 @@ var
   inv : TFhirElementDefinitionConstraint;
   ok : boolean;
   msg : String;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
 begin
   for inv in ed.constraintList do
     if inv.expression <> '' then
     begin
-      expr := inv.Tag as TFHIRExpressionNode;
+      expr := inv.Tag as TFHIRPathExpressionNode;
       if (expr = nil) then
       begin
         expr := FPathEngine.parse(inv.expression);

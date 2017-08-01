@@ -332,7 +332,7 @@ begin
   JclStartExceptionTracking;
   IdOpenSSLSetLibPath(ExtractFilePath(Paramstr(0)));
   try
-    SetConsoleTitle('FHIR Server STU3');
+    SetConsoleTitle('FHIR Server R3');
     ExecuteFhirServer;
   except
     on E: Exception do

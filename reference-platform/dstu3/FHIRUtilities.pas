@@ -258,6 +258,7 @@ type
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
+    function getExtensionValue(url : String) : TFHIRType;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
@@ -661,8 +662,8 @@ begin
     result := DetectFormat(oContent).create(oWorker.Link, lang)
   else if aFormat = ffText then
     result := TFHIRTextParser.create(oWorker.Link, lang)
-//  else if aFormat = ffTurtle then
-//    result := TFHIRTurtleParser.create(oWorker.Link, lang)
+  else if aFormat = ffTurtle then
+    result := TFHIRTurtleParser.create(oWorker.Link, lang)
   else
     result := TFHIRXmlParser.Create(oWorker.Link, lang);
   try
@@ -1797,7 +1798,7 @@ begin
     frtCodeSystem: result := TFHIRCodeSystem(res).url;
     frtConceptMap: result := TFHIRConceptMap(res).url;
     frtCapabilityStatement: result := TFHIRCapabilityStatement(res).url;
-    frtDataElement: result := TFHIRDataElement(res).url;
+   frtDataElement: result := TFHIRDataElement(res).url;
     frtExpansionProfile: result := TFHIRExpansionProfile(res).url;
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
     frtOperationDefinition: result := TFHIROperationDefinition(res).url;
@@ -2120,6 +2121,17 @@ begin
       end;
     end;
   end;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionValue(url: String): TFHIRType;
+var
+  index : integer;
+begin
+  index := getExtension(url);
+  if index = -1 then
+    result := nil
+  else
+    result := extensionList[index].value;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionString(url: String): String;

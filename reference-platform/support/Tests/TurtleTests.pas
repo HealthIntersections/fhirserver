@@ -50,7 +50,7 @@ Type
     [TestCase] procedure test_empty_collection1();
     [TestCase] procedure test_empty_collection2();
     [TestCase] procedure test_first1();
-    [TestCase] procedure test_first2();
+//    procedure test_first2();
     [TestCase] procedure test_HYPHEN_MINUS_in_localNameNT();
     [TestCase] procedure test_HYPHEN_MINUS_in_localName();
     [TestCase] procedure test_IRI_spoNT();
@@ -111,7 +111,7 @@ Type
     [TestCase] procedure test_literal_with_escaped_CHARACTER_TABULATION();
     [TestCase] procedure test_literal_with_escaped_FORM_FEED();
     [TestCase] procedure test_literal_with_escaped_LINE_FEED();
-    [TestCase] procedure test_literal_with_FORM_FEEDNT();
+//    procedure test_literal_with_FORM_FEEDNT();
     [TestCase] procedure test_literal_with_FORM_FEED();
     [TestCase] procedure test_literal_with_LINE_FEEDNT();
     [TestCase] procedure test_literal_with_LINE_FEED();
@@ -127,7 +127,7 @@ Type
     [TestCase] procedure test_LITERAL1_all_controls();
     [TestCase] procedure test_LITERAL1_all_punctuationNT();
     [TestCase] procedure test_LITERAL1_all_punctuation();
-    [TestCase] procedure test_LITERAL1_ascii_boundariesNT();
+//    procedure test_LITERAL1_ascii_boundariesNT();
     [TestCase] procedure test_LITERAL1_ascii_boundaries();
     [TestCase] procedure test_LITERAL1_with_UTF8_boundaries();
     [TestCase] procedure test_LITERAL2();
@@ -138,8 +138,8 @@ Type
     [TestCase] procedure test_localName_with_assigned_nfc_bmp_PN_CHARS_BASE_character_boundaries();
     [TestCase] procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundariesNT();
     [TestCase] procedure test_localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries();
-    [TestCase] procedure test_localname_with_COLONNT();
-    [TestCase] procedure test_localname_with_COLON();
+//    procedure test_localname_with_COLONNT();
+//    procedure test_localname_with_COLON();
     [TestCase] procedure test_localName_with_leading_digitNT();
     [TestCase] procedure test_localName_with_leading_digit();
     [TestCase] procedure test_localName_with_leading_underscoreNT();
@@ -155,9 +155,9 @@ Type
     [TestCase] procedure test_nested_collectionNT();
     [TestCase] procedure test_nested_collection();
     [TestCase] procedure test_number_sign_following_localNameNT();
-    [TestCase] procedure test_number_sign_following_localName();
+//    procedure test_number_sign_following_localName();
     [TestCase] procedure test_number_sign_following_PNAME_NSNT();
-    [TestCase] procedure test_number_sign_following_PNAME_NS();
+//    procedure test_number_sign_following_PNAME_NS();
     [TestCase] procedure test_numeric_with_leading_0NT();
     [TestCase] procedure test_numeric_with_leading_0();
     [TestCase] procedure test_objectList_with_two_objectsNT();
@@ -165,12 +165,12 @@ Type
     [TestCase] procedure test_old_style_base();
     [TestCase] procedure test_old_style_prefix();
     [TestCase] procedure test_percent_escaped_localNameNT();
-    [TestCase] procedure test_percent_escaped_localName();
+//    procedure test_percent_escaped_localName();
     [TestCase] procedure test_positive_numericNT();
     [TestCase] procedure test_positive_numeric();
     [TestCase] procedure test_predicateObjectList_with_two_objectListsNT();
     [TestCase] procedure test_predicateObjectList_with_two_objectLists();
-    [TestCase] procedure test_prefix_only_IRI();
+//    procedure test_prefix_only_IRI();
     [TestCase] procedure test_prefix_reassigned_and_usedNT();
     [TestCase] procedure test_prefix_reassigned_and_used();
     [TestCase] procedure test_prefix_with_non_leading_extras();
@@ -182,14 +182,14 @@ Type
     [TestCase] procedure test_repeated_semis_not_at_endNT();
     [TestCase] procedure test_repeated_semis_not_at_end();
     [TestCase] procedure test_reserved_escaped_localNameNT();
-    [TestCase] procedure test_reserved_escaped_localName();
+//    procedure test_reserved_escaped_localName();
     [TestCase] procedure test_sole_blankNodePropertyList();
     [TestCase] procedure test_SPARQL_style_base();
     [TestCase] procedure test_SPARQL_style_prefix();
     [TestCase] procedure test_turtle_eval_bad_01();
     [TestCase] procedure test_turtle_eval_bad_02();
     [TestCase] procedure test_turtle_eval_bad_03();
-    [TestCase] procedure test_turtle_eval_bad_04();
+//    procedure test_turtle_eval_bad_04();
     [TestCase] procedure test_turtle_eval_struct_01NT();
     [TestCase] procedure test_turtle_eval_struct_01();
     [TestCase] procedure test_turtle_eval_struct_02NT();
@@ -803,11 +803,11 @@ procedure TTurtleTests.test_first1();
 begin
   parseTtl('first.nt', true);
 end;
-//
-procedure TTurtleTests.test_first2();
-begin
-//     parseTtl('first.ttl', true);
-end;
+
+//procedure TTurtleTests.test_first2();
+//begin
+////     parseTtl('first.ttl', true);
+//end;
 
 procedure TTurtleTests.test_HYPHEN_MINUS_in_localNameNT();
 begin
@@ -1108,11 +1108,11 @@ procedure TTurtleTests.test_literal_with_escaped_LINE_FEED();
 begin
   parseTtl('literal_with_escaped_LINE_FEED.ttl', true);
 end;
-//
-procedure TTurtleTests.test_literal_with_FORM_FEEDNT();
-begin
-//     parseTtl('literal_with_FORM_FEED.nt', true);
-end;
+
+//procedure TTurtleTests.test_literal_with_FORM_FEEDNT();
+//begin
+////     parseTtl('literal_with_FORM_FEED.nt', true);
+//end;
 
 procedure TTurtleTests.test_literal_with_FORM_FEED();
 begin
@@ -1188,11 +1188,11 @@ procedure TTurtleTests.test_LITERAL1_all_punctuation();
 begin
   parseTtl('LITERAL1_all_punctuation.ttl', true);
 end;
-//
-procedure TTurtleTests.test_LITERAL1_ascii_boundariesNT();
-begin
-//     parseTtl('LITERAL1_ascii_boundaries.nt', true);
-end;
+
+//procedure TTurtleTests.test_LITERAL1_ascii_boundariesNT();
+//begin
+////     parseTtl('LITERAL1_ascii_boundaries.nt', true);
+//end;
 
 procedure TTurtleTests.test_LITERAL1_ascii_boundaries();
 begin
@@ -1244,16 +1244,16 @@ begin
   parseTtl('localName_with_assigned_nfc_PN_CHARS_BASE_character_boundaries.ttl', false);
 end;
 // don't need to support property names with ':'
-//
-procedure TTurtleTests.test_localname_with_COLONNT();
-begin
-//     parseTtl('localname_with_COLON.nt', true);
- end;
-//
-procedure TTurtleTests.test_localname_with_COLON();
-begin
-//     parseTtl('localname_with_COLON.ttl', true);
- end;
+
+//procedure TTurtleTests.test_localname_with_COLONNT();
+//begin
+////     parseTtl('localname_with_COLON.nt', true);
+//end;
+
+//procedure TTurtleTests.test_localname_with_COLON();
+//begin
+////     parseTtl('localname_with_COLON.ttl', true);
+//end;
 
 procedure TTurtleTests.test_localName_with_leading_digitNT();
 begin
@@ -1330,20 +1330,20 @@ begin
   parseTtl('number_sign_following_localName.nt', true);
 end;
 
-procedure TTurtleTests.test_number_sign_following_localName();
-begin
-//     parseTtl('number_sign_following_localName.ttl', true);
-end;
+//procedure TTurtleTests.test_number_sign_following_localName();
+//begin
+////     parseTtl('number_sign_following_localName.ttl', true);
+//end;
 
 procedure TTurtleTests.test_number_sign_following_PNAME_NSNT();
 begin
   parseTtl('number_sign_following_PNAME_NS.nt', true);
 end;
-//
-procedure TTurtleTests.test_number_sign_following_PNAME_NS();
-begin
-//     parseTtl('number_sign_following_PNAME_NS.ttl', true);
- end;
+
+//procedure TTurtleTests.test_number_sign_following_PNAME_NS();
+//begin
+////     parseTtl('number_sign_following_PNAME_NS.ttl', true);
+//end;
 
 procedure TTurtleTests.test_numeric_with_leading_0NT();
 begin
@@ -1379,11 +1379,11 @@ procedure TTurtleTests.test_percent_escaped_localNameNT();
 begin
   parseTtl('percent_escaped_localName.nt', true);
 end;
-//
-procedure TTurtleTests.test_percent_escaped_localName();
-begin
-//     parseTtl('percent_escaped_localName.ttl', true);
- end;
+
+//procedure TTurtleTests.test_percent_escaped_localName();
+//begin
+////     parseTtl('percent_escaped_localName.ttl', true);
+//end;
 
 procedure TTurtleTests.test_positive_numericNT();
 begin
@@ -1404,11 +1404,11 @@ procedure TTurtleTests.test_predicateObjectList_with_two_objectLists();
 begin
   parseTtl('predicateObjectList_with_two_objectLists.ttl', true);
 end;
-//
-procedure TTurtleTests.test_prefix_only_IRI();
-begin
-//     parseTtl('prefix_only_IRI.ttl', true);
- end;
+
+//procedure TTurtleTests.test_prefix_only_IRI();
+//begin
+////     parseTtl('prefix_only_IRI.ttl', true);
+//end;
 
 procedure TTurtleTests.test_prefix_reassigned_and_usedNT();
 begin
@@ -1464,11 +1464,11 @@ procedure TTurtleTests.test_reserved_escaped_localNameNT();
 begin
   parseTtl('reserved_escaped_localName.nt', true);
 end;
-//
-procedure TTurtleTests.test_reserved_escaped_localName();
-begin
-//     parseTtl('reserved_escaped_localName.ttl', true);
- end;
+
+//procedure TTurtleTests.test_reserved_escaped_localName();
+//begin
+////     parseTtl('reserved_escaped_localName.ttl', true);
+//end;
 
 procedure TTurtleTests.test_sole_blankNodePropertyList();
 begin
@@ -1499,11 +1499,11 @@ procedure TTurtleTests.test_turtle_eval_bad_03();
 begin
   parseTtl('turtle-eval-bad-03.ttl', false);
 end;
-//
-procedure TTurtleTests.test_turtle_eval_bad_04();
-begin
-//     parseTtl('turtle-eval-bad-04.ttl', false);
- end;
+
+//procedure TTurtleTests.test_turtle_eval_bad_04();
+//begin
+////     parseTtl('turtle-eval-bad-04.ttl', false);
+//end;
 
 procedure TTurtleTests.test_turtle_eval_struct_01NT();
 begin

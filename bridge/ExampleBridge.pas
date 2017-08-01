@@ -554,6 +554,7 @@ function TExampleFHIROperationEngine.patientRead(request: TFHIRRequest; response
 var
   data : TAdvStringList;
 begin
+  result := false;
   data := FData.FPatients.GetById(request.Id);
   if data <> nil then
   begin
@@ -561,6 +562,7 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Resource := patientFromData(data);
+      result := true;
     finally
       data.Free;
     end;

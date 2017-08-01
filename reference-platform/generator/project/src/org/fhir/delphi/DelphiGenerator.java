@@ -107,6 +107,7 @@ public class DelphiGenerator {
   private List<String> constants = new ArrayList<String>();
   private List<String> opNames = new ArrayList<String>();
   private String destDir;
+  private String pubVersion;
 
 
   public DelphiGenerator(String destDir) {
@@ -116,6 +117,7 @@ public class DelphiGenerator {
 
   public void generate(Definitions definitions, String version, DateTimeType dateTimeType, int dstuID)  throws Exception {
     simpleTypes.put("TFhirId", "String");
+    this.pubVersion = Integer.toString(dstuID);
 
     start(destDir, version, dateTimeType, dstuID);
     initParser(version, dateTimeType);
@@ -220,6 +222,7 @@ public class DelphiGenerator {
     finishIndexer();
 
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_VERSION = '"+version+"';\r\n");
+    defCodeConstGen.enumConsts.add("  FHIR_GENERATED_PUBLICATION = '"+pubVersion+"';\r\n");
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_DATE = '"+dateTimeType.asStringValue()+"';\r\n");
     defCodeRes.classDefs.add("  {@Class TFhirResourceFactory : TFHIRObjectFactory\r\n");
     defCodeRes.classDefs.add("     FHIR factory: class constructors and general useful builders\r\n");

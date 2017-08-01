@@ -319,8 +319,8 @@ var
   arg : TGraphQLArgument;
   p : TFHIRProperty;
   v : TFHIRObject;
-  fpe : TFHIRExpressionEngine;
-  node: TFHIRExpressionNode;
+  fpe : TFHIRPathExpressionEngine;
+  node: TFHIRPathExpressionNode;
   vl : TAdvList<TGraphQLValue>;
 begin
   result := TAdvList<TFHIRObject>.create;
@@ -359,7 +359,7 @@ begin
           end
         else
         begin
-          fpe := TFHIRExpressionEngine.Create(nil);
+          fpe := TFHIRPathExpressionEngine.Create(nil);
           try
             node := fpe.parse(fp.ToString.Substring(5));
             try
@@ -386,8 +386,8 @@ end;
 function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; bnd : TFHIRBundle): TAdvList<TFHIRResource>;
 var
   be : TFhirBundleEntry;
-  fpe : TFHIRExpressionEngine;
-  node : TFHIRExpressionNode;
+  fpe : TFHIRPathExpressionEngine;
+  node : TFHIRPathExpressionNode;
 begin
   result := TAdvList<TFHIRResource>.create;
   try
@@ -398,7 +398,7 @@ begin
           result.Add(be.resource.Link)
       else
       begin
-        fpe := TFHIRExpressionEngine.Create(nil);
+        fpe := TFHIRPathExpressionEngine.Create(nil);
         try
           node := fpe.parse(getSingleValue(fhirpath));
           try
@@ -422,8 +422,8 @@ end;
 function TFHIRGraphQLEngine.filterResources(fhirpath : TGraphQLArgument; list : TAdvList<TFhirResource>): TAdvList<TFHIRResource>;
 var
   v : TFHIRResource;
-  fpe : TFHIRExpressionEngine;
-  node : TFHIRExpressionNode;
+  fpe : TFHIRPathExpressionEngine;
+  node : TFHIRPathExpressionNode;
 begin
   result := TAdvList<TFHIRResource>.create;
   try
@@ -434,7 +434,7 @@ begin
           result.Add(v.Link)
       else
       begin
-        fpe := TFHIRExpressionEngine.Create(nil);
+        fpe := TFHIRPathExpressionEngine.Create(nil);
         try
           node := fpe.parse(getSingleValue(fhirpath));
           try

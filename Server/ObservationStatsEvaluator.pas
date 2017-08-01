@@ -1,6 +1,6 @@
 {
 
-spec to od:
+spec to do:
 - clarify the name of the statistics parameter
 - security on observations
 }
@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Generics.Defaults, Generics.Collections,
+  SysUtils, Classes, Generics.Defaults, Generics.Collections,
   AdvObjects, AdvGenerics, StringSupport,
   KDBManager, DateSupport,
   FHIRTypes, FHIRResources, FHIROperations;
@@ -61,7 +61,6 @@ Type
   private
     Key : integer;
     ConceptKey : integer;
-    SubConceptKey : Integer;
     dateTime : TDateTime;
     value : Double;
     vunit : Integer;
@@ -112,6 +111,7 @@ Type
 
     procedure init;
     procedure executeConcept(c : TFHIRCoding);
+    function lookupConcept(c : TFHIRCoding) : integer;
     procedure loadData(c : TFHIRCoding);
     function genStat(p : TObservationStatsParameter) : TFhirQuantity;
     function genAverage() : Double;
@@ -152,6 +152,37 @@ Type
     property Resp : TFHIRStatsOpResponse read FResp;
     property Observations : TList<Integer> read FObservations;
 
+  end;
+
+  TObservationLastNEvaluator = class (TAdvObject)
+  private
+    FConn : TKDBConnection;
+
+    FCount: integer;
+    FObservations : TStringList;
+    FSubjectKey: integer;
+    FConcepts: TAdvList<TFHIRCoding>;
+    FCategory: TFHIRCoding;
+    procedure SetCategory(const Value: TFHIRCoding);
+    function GetObservations: String;
+
+    procedure listConcepts(cks : TStringList);
+    procedure addMostRecentObservations(ck : integer);
+    function lookupConcept(c : TFHIRCoding) : integer;
+  public
+    Constructor Create(conn : TKDBConnection);
+    Destructor Destroy; override;
+
+    // in
+    property subjectKey : integer read FSubjectKey write FSubjectKey;
+    property category : TFHIRCoding read FCategory write SetCategory;
+    property concepts : TAdvList<TFHIRCoding> read FConcepts;
+    property count : integer read FCount write FCount;
+
+    procedure execute;
+
+    // out
+    property Observations : String read GetObservations;
   end;
 
 implementation
@@ -225,12 +256,12 @@ begin
       comp.code := TFhirCodeableConcept.Create;
       comp.code.codingList.Append.system := 'http://hl7.org/fhir/observation-paramcode';
       comp.code.codingList[0].code := 'totalcount';
-      comp.value := qty(FAllData.Count, '', '1');
+      comp.value := qty(FAllData.Count, '', '{count}');
       comp := obs.componentList.Append;
       comp.code := TFhirCodeableConcept.Create;
       comp.code.codingList.Append.system := 'http://hl7.org/fhir/observation-paramcode';
       comp.code.codingList[0].code := 'count';
-      comp.value := qty(FValidData.Count, '', '1');
+      comp.value := qty(FValidData.Count, '', '{count}');
       if FValidData.count > 0 then
       begin
         for p in FParameters do
@@ -259,12 +290,15 @@ end;
 procedure TObservationStatsEvaluator.loadData(c: TFHIRCoding);
 var
   obs : TObservation;
-  u, cu : integer;
+  ck, u, cu : integer;
   AllSameUnit, AllSameCanonicalUnit : boolean;
 begin
-  FConn.sql := 'Select ObservationKey, ResourceKey, SubjectKey, Observations.ConceptKey, SubConceptKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit, ValueConcept ' +
-               'from Observations, Concepts where SubjectKey = '+inttostr(FSubjectKey)+' and Observations.ConceptKey = Concepts.ConceptKey and Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+''' '+
-               'and Observations.DateTimeMax >= :d1 and Observations.DateTimeMin <= :d2 order by ObservationKey asc';
+  ck := lookupConcept(c);
+  if ck = 0 then
+    exit;
+
+  FConn.sql := 'Select ObservationKey, ResourceKey, SubjectKey, DateTime, DateTimeMin, DateTimeMax, Value, ValueUnit, Canonical, CanonicalUnit, ValueConcept ' +
+               'from Observations where SubjectKey = '+inttostr(FSubjectKey)+' and ObservationKey in (select ObservationKey from ObservationCodes where ConceptKey = '+inttostr(ck)+' and Source != 1) and Observations.DateTimeMax >= :d1 and Observations.DateTimeMin <= :d2 order by ObservationKey asc';
   FConn.prepare;
   FConn.BindTimeStamp('d1', DateTimeToTS(FStart));
   FConn.BindTimeStamp('d2', DateTimeToTS(FFinish));
@@ -274,8 +308,7 @@ begin
     obs := TObservation.Create;
     FAllData.Add(obs);
     obs.Key := FConn.ColIntegerByName['ResourceKey'];
-    obs.ConceptKey := FConn.ColIntegerByName['ConceptKey'];
-    obs.SubConceptKey := FConn.ColIntegerByName['SubConceptKey'];
+    obs.ConceptKey := ck;
     obs.dateTime := TSToDateTime(FConn.ColTimeStampByName['DateTime']);
     obs.value := FConn.ColDoubleByName['Value'];
     obs.vunit := FConn.ColIntegerByName['ValueUnit'];
@@ -317,6 +350,18 @@ begin
   end;
 end;
 
+
+function TObservationStatsEvaluator.lookupConcept(c: TFHIRCoding): integer;
+begin
+  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
+  FConn.prepare;
+  FConn.Execute;
+  if FConn.FetchNext then
+    result := FConn.ColIntegerByName['ConceptKey']
+  else
+    result := 0;
+  FConn.terminate;
+end;
 
 function TObservationStatsEvaluator.qty(value: double; humanUnits, ucumUnits: String): TFhirQuantity;
 begin
@@ -729,5 +774,96 @@ begin
   else
     result := value;
 end;
+
+{ TObservationLastNEvaluator }
+
+constructor TObservationLastNEvaluator.Create(conn: TKDBConnection);
+begin
+  inherited create;
+  FConn := conn;
+  FCount := 1;
+  FObservations := TStringList.create;
+  FObservations.Sorted := true;
+  FObservations.Duplicates := dupIgnore;
+  FSubjectKey := 0;
+  FConcepts := TAdvList<TFHIRCoding>.create;
+end;
+
+destructor TObservationLastNEvaluator.Destroy;
+begin
+  FObservations.Free;
+  FConcepts.Free;
+  FCategory.Free;
+  inherited;
+end;
+
+procedure TObservationLastNEvaluator.SetCategory(const Value: TFHIRCoding);
+begin
+  FCategory.Free;
+  FCategory := Value;
+end;
+
+function TObservationLastNEvaluator.GetObservations: String;
+begin
+  result := FObservations.CommaText;
+end;
+
+procedure TObservationLastNEvaluator.execute;
+var
+  cks : TStringList;
+  i : integer;
+begin
+  FObservations.Clear;
+  cks := TStringList.create;
+  try
+    listConcepts(cks);
+    cks.Sort;
+    for i := 0 to cks.Count - 1 do
+      addMostRecentObservations(integer(cks.Objects[i]));
+  finally
+    cks.Free;
+  end;
+end;
+
+procedure TObservationLastNEvaluator.listConcepts(cks: TStringList);
+var
+  c : TFHIRCoding;
+begin
+  if FCategory <> nil then
+  begin
+    FConn.SQL := 'Select distinct ObservationCodes.ConceptKey, URL, Code from ObservationCodes, Concepts where ObservationCodes.ConceptKey = Concepts.ConceptKey and source = 2 and ObservationKey in (Select ObservationKey from ObservationCodes where ConceptKey = '+inttostr(lookupConcept(FCategory))+' and source = 1)';
+    FConn.Prepare;
+    FConn.Execute;
+    while FConn.FetchNext do
+      cks.AddObject(FConn.ColStringByName['URL']+'::'+FConn.ColStringByName['Code'], TObject(FConn.ColIntegerByName['ConceptKey']));
+    FConn.Terminate;
+  end
+  else
+    for c in FConcepts do
+      cks.AddObject(c.system+'::'+c.code, TObject(lookupConcept(c)));
+end;
+
+function TObservationLastNEvaluator.lookupConcept(c: TFHIRCoding): integer;
+begin
+  FConn.sql := 'Select ConceptKey from Concepts where Concepts.Code = '''+SQLWrapString(c.code)+''' and Concepts.URL = '''+sqlwrapString(c.system)+'''';
+  FConn.prepare;
+  FConn.Execute;
+  if FConn.FetchNext then
+    result := FConn.ColIntegerByName['ConceptKey']
+  else
+    result := 0;
+  FConn.terminate;
+end;
+
+procedure TObservationLastNEvaluator.addMostRecentObservations(ck: integer);
+begin
+  FConn.SQL := 'select top '+inttostr(FCount)+' ResourceKey from Observations where subject = '+inttostr(subjectKey)+' and ObservationKey in (select ObservationKey ObservationCodes where Source = 2 and ConceptKey = '+inttostr(ck)+') from sort by DateTime desc';
+  FConn.prepare;
+  FConn.Execute;
+  while FConn.FetchNext do
+    FObservations.Add(FConn.ColStringByName['ResourceKey']);
+  FConn.Terminate;
+end;
+
 
 end.

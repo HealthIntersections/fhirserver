@@ -432,7 +432,7 @@ end;
 
 function TCDAHooksPatientViewService.identifyPatient( engine: TFHIROperationEngine; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest; var needSecure: boolean): TFHIRPatient;
 var
-  key : integer;
+  key, versionKey : integer;
   res : TFHIRResource;
   pat : TFhirPatient;
   be : TFhirBundleEntry;
@@ -441,7 +441,7 @@ var
 begin
   result := nil;
   // do we know that patient?
-  if engine.FindResource('Patient', request.patient, false, key, nil,  nil, session.BuildCompartmentList) then
+  if engine.FindResource('Patient', request.patient, false, key, versionKey, nil,  nil, session.BuildCompartmentList) then
     result := engine.GetResourceByKey(key, needSecure) as TFhirPatient
   else
   begin

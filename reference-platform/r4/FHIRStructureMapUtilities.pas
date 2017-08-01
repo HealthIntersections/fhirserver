@@ -85,7 +85,7 @@ type
   private
 	  FWorker : TWorkerContext;
    	fpp : TFHIRPathParser;
-   	fpe : TFHIRExpressionEngine;
+   	fpe : TFHIRPathExpressionEngine;
   	FLib : TAdvMap<TFHIRStructureMap>;
   	FServices : TTransformerServices;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
@@ -151,7 +151,7 @@ begin
 	FWorker := context;
   FLib := lib;
   FServices := services;
-  fpe := TFHIRExpressionEngine.Create(context.link);
+  fpe := TFHIRPathExpressionEngine.Create(context.link);
   fpp := TFHIRPathParser.create;
 end;
 
@@ -913,7 +913,7 @@ end;
 procedure TFHIRStructureMapUtilities.parseSource(rule : TFHIRStructureMapGroupRule; lexer : TFHIRPathLexer);
 var
   source : TFHIRStructureMapGroupRuleSource;
-  node : TFHIRExpressionNode;
+  node : TFHIRPathExpressionNode;
 begin
   source := rule.sourceList.Append;
   source.Context := lexer.take();
@@ -956,7 +956,7 @@ var
   target : TFHIRStructureMapGroupRuleTarget;
   isConstant : boolean;
   name, id : String;
-  node : TFHIRExpressionNode;
+  node : TFHIRPathExpressionNode;
   p : TFhirStructureMapGroupRuleTargetParameter;
 begin
   target := rule.targetList.Append;
@@ -1232,7 +1232,7 @@ end;
 function TFHIRStructureMapUtilities.analyseSource(appInfo : TAdvObject; vars : TVariables; src : TFHIRStructureMapGroupRuleSource) : TAdvList<TVariables>;
 var
   b, r : TFHIRObject;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
   items : TAdvList<TFHIRObject>;
   v : TVariables;
 begin
@@ -1242,7 +1242,7 @@ begin
 
   if (src.Condition <> '') then
   begin
-    expr := TFHIRExpressionNode(src.conditionElement.tag);
+    expr := TFHIRPathExpressionNode(src.conditionElement.tag);
     if (expr = nil) then
     begin
       expr := fpe.parse(src.condition);
@@ -1255,7 +1255,7 @@ begin
 
   if (src.check <> '') then
   begin
-    expr := TFHIRExpressionNode(src.checkElement.tag);
+    expr := TFHIRPathExpressionNode(src.checkElement.tag);
     if (expr = nil) then
     begin
       expr := fpe.parse(src.check);
@@ -1327,7 +1327,7 @@ end;
 function TFHIRStructureMapUtilities.runTransform(appInfo : TAdvObject; map : TFHIRStructureMap; tgt : TFHIRStructureMapGroupRuleTarget; vars : TVariables) : TFHIRObject;
 var
   factory : TFhirResourceFactory;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
   v : TFHIRSelectionList;
   src, len : String;
   l : integer;
@@ -1349,7 +1349,7 @@ begin
       end;
     MapTransformEVALUATE :
       begin
-        expr := tgt.Tag as TFHIRExpressionNode;
+        expr := tgt.Tag as TFHIRPathExpressionNode;
         if (expr = nil) then
         begin
           expr := fpe.parse(getParamString(vars, tgt.ParameterList[1]));

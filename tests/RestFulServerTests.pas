@@ -112,6 +112,7 @@ type
     [TestCase] Procedure TestPatientExampleSmartOnFhir;
     [TestCase] Procedure TestConformanceCertificateNone;
     [TestCase] Procedure TestConformanceCertificate;
+    [TestCase] Procedure TestConformanceCertificateNotOk;
     [TestCase] Procedure TestConformanceCertificateSpecified;
     [TestCase] Procedure TestConformanceCertificateWrong;
     [TestCase] Procedure TestConformanceCertificateOptionalNone;
@@ -366,6 +367,8 @@ begin
   FContext.userProvider.OnProcessFile := FServer.ReturnProcessedFile;
   FServer.AuthServer.UserProvider := FContext.userProvider.Link;
   FServer.OWinSecuritySecure := true;
+  FServer.ServeMissingCertificate := true;
+  FServer.ServeUnknownCertificate := true;
   FServer.Start(true);
 
   FClientXml := TFhirClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
@@ -465,7 +468,8 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := true;
+  FServer.ServeMissingCertificate := false;
+  FServer.ServeUnknownCertificate := true;
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -485,13 +489,44 @@ begin
   Assert.IsTrue(FStore.FLastSystemEvidence = systemFromCertificate, 'SystemEvidence should be "'+CODES_SystemIdEvidence[systemFromCertificate]+'" not "'+CODES_SystemIdEvidence[FStore.FLastSystemEvidence]+'"');
 end;
 
+procedure TRestFulServerTests.TestConformanceCertificateNotOk;
+var
+  cs : TFHIRCapabilityStatement;
+begin
+  FStore.reset;
+  FServer.Stop;
+  FServer.ServeMissingCertificate := false;
+  FServer.ServeUnknownCertificate := false;
+  FServer.CertificateIdList.clear;
+  FServer.Start(true);
+  FClientSSL.smartToken := nil;
+  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  FClientSSL.certPWord := 'test';
+
+  try
+    cs := FClientSSL.conformance(false);
+    try
+      Assert.IsFalse(true);
+    finally
+      cs.Free;
+    end;
+  except
+    on e:exception do
+      Assert.IsTrue(e.message.contains('SSL')); // all good - access should be refused
+  end;
+  Assert.IsTrue(FStore.FLastReadSystem  = '', 'SystemName should be "" not "'+FStore.FLastReadSystem+'"');
+  Assert.IsTrue(FStore.FLastReadUser  = '', 'Username should be "", not "'+FStore.FLastReadUser+'"');
+  Assert.IsTrue(FStore.FLastUserEvidence  = userNoInformation, 'UserEvidence should be "'+CODES_UserIdEvidence[userNoInformation]+'" not "'+CODES_UserIdEvidence[FStore.FLastUserEvidence]+'"');
+  Assert.IsTrue(FStore.FLastSystemEvidence = systemNoInformation, 'SystemEvidence should be "'+CODES_SystemIdEvidence[systemNoInformation]+'" not "'+CODES_SystemIdEvidence[FStore.FLastSystemEvidence]+'"');
+end;
+
 procedure TRestFulServerTests.TestConformanceCertificateNone;
 var
   cs : TFHIRCapabilityStatement;
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := true;
+  FServer.ServeMissingCertificate := false;
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -522,7 +557,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -548,7 +583,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -573,7 +608,8 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
+  FServer.ServeUnknownCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -603,7 +639,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := true;
+  FServer.ServeMissingCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -629,7 +665,8 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := true;
+  FServer.ServeMissingCertificate := false;
+  FServer.ServeUnknownCertificate := false;
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -659,7 +696,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := true;
+  FServer.ServeMissingCertificate := false;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
   FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
@@ -690,7 +727,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.Start(true);
   FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
   FClientSSL.certPWord := 'test';
@@ -719,7 +756,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.Start(true);
   FClientSSL.smartToken := TSmartOnFhirAccessToken.create;
   FClientSSL.smartToken.accessToken := JWT;
@@ -766,7 +803,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -795,7 +832,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
@@ -839,7 +876,7 @@ var
 begin
   FStore.reset;
   FServer.Stop;
-  FServer.RequireClientCertificate := false;
+  FServer.ServeMissingCertificate := true;
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;

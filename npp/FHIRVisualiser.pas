@@ -104,7 +104,7 @@ type
     FLastHtml : String;
     FValList : TAdvList<TFHIRAnnotation>;
     FMatchList : TAdvList<TFHIRAnnotation>;
-    FExpression : TFHIRExpressionNode;
+    FExpression : TFHIRPathExpressionNode;
     FFocusPath : String;
     FFocusObjects : TAdvList<TFHIRObject>;
     FCDSManager : TCDSHooksManager;
@@ -132,7 +132,7 @@ type
     { Public declarations }
     procedure setNarrative(s : String);
     procedure setValidationOutcomes(errors : TAdvList<TFHIRAnnotation>);
-    procedure setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRExpressionNode);
+    procedure setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
     procedure setFocusInfo(path : String; focus : Array of TFHIRObject);
 
     property CDSManager : TCDSHooksManager read FCDSManager;
@@ -567,7 +567,7 @@ begin
   end;
 end;
 
-procedure TFHIRVisualizer.setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRExpressionNode);
+procedure TFHIRVisualizer.setPathOutcomes(matches : TAdvList<TFHIRAnnotation>; expression : TFHIRPathExpressionNode);
 var
   a : TFHIRAnnotation;
   li : TListItem;
@@ -671,7 +671,7 @@ procedure TFHIRVisualizer.vtExpressionsInitNode(Sender: TBaseVirtualTree;
   ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   p, pp : PTreeDataPointer;
-  pe : TFHIRExpressionNode;
+  pe : TFHIRPathExpressionNode;
   i : integer;
 begin
   p := vtExpressions.GetNodeData(Node);

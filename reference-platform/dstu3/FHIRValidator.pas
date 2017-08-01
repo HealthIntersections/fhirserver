@@ -144,7 +144,7 @@ Type
     // configuration items
     FContext: TWorkerContext;
     FExtensionDomains: TStringList;
-    FPathEngine : TFHIRExpressionEngine;
+    FPathEngine : TFHIRPathExpressionEngine;
     FEntryElement : TFHIRMMElement;
 
 //    function LoadDoc(name: String; isFree: boolean = false): IXMLDomDocument2;
@@ -237,7 +237,7 @@ Type
     procedure validateResource(ctxt : TFHIRValidatorContext; resource, element: TFHIRMMElement; defn: TFHIRStructureDefinition; profiles : TValidationProfileSet; idRule: TResourceIdStatus; stack: TNodeStack);
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
-    function FHIRPathResolveReference(source : TFHIRExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject;
+    function FHIRPathResolveReference(source : TFHIRPathExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject;
   public
     Constructor Create(context: TWorkerContext);
     Destructor Destroy; Override;
@@ -458,7 +458,7 @@ constructor TFHIRValidator.Create(context: TWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRExpressionEngine.create(FContext.link);
+  FPathEngine := TFHIRPathExpressionEngine.create(FContext.link);
   FPathEngine.OnResolveReference := FHIRPathResolveReference;
 end;
 
@@ -504,7 +504,7 @@ begin
   end;
 end;
 
-function TFHIRValidator.FHIRPathResolveReference(source: TFHIRExpressionEngine; appInfo: TAdvObject; url: String): TFHIRObject;
+function TFHIRValidator.FHIRPathResolveReference(source: TFHIRPathExpressionEngine; appInfo: TAdvObject; url: String): TFHIRObject;
 begin
   if not (appInfo is TFHIRObject) then
     exit(nil);
@@ -3280,13 +3280,13 @@ var
   inv : TFhirElementDefinitionConstraint;
   ok : boolean;
   msg : String;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
 begin
   ok := false;
   for inv in ed.constraintList do
     if inv.expression <> '' then
     begin
-      expr := inv.Tag as TFHIRExpressionNode;
+      expr := inv.Tag as TFHIRPathExpressionNode;
       if (expr = nil) then
       begin
         expr := FPathEngine.parse(inv.expression);

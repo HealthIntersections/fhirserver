@@ -240,7 +240,8 @@ uses
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
   FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
-  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
+  GraphDefinitionEngine in '..\Server\GraphDefinitionEngine.pas';
 
 {$R *.res}
 

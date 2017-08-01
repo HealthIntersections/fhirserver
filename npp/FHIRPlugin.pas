@@ -144,8 +144,8 @@ type
     function parse(cnt : String; fmt : TFHIRFormat) : TFHIRResource; overload;
     function compose(cnt : TFHIRResource; fmt : TFHIRFormat) : String; overload;
 
-    procedure evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRExpressionNode; out types : TFHIRTypeDetails);
-    function showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRExpressionNode; types : TAdvStringSet) : string;
+    procedure evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRPathExpressionNode; out types : TFHIRTypeDetails);
+    function showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TAdvStringSet) : string;
 
     // smart on fhir stuff
     function DoSmartOnFHIR(server : TRegisteredFHIRServer) : boolean;
@@ -918,14 +918,14 @@ var
   fmt : TFHIRFormat;
   res : TFHIRResource;
   items : TFHIRSelectionList;
-  expr : TFHIRExpressionNode;
-  engine : TFHIRExpressionEngine;
+  expr : TFHIRPathExpressionNode;
+  engine : TFHIRPathExpressionEngine;
   sp, ep : integer;
 begin
   if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and parse(0, fmt, res) then
   try
     loadValidator;
-    engine := TFHIRExpressionEngine.Create(FWorker.Link);
+    engine := TFHIRPathExpressionEngine.Create(FWorker.Link);
     try
       expr := engine.parse(FHIRToolbox.mPath.Text);
       try
@@ -1066,14 +1066,14 @@ var
   fmt : TFHIRFormat;
   s : TStringStream;
   res : TFHIRResource;
-  query : TFHIRExpressionEngine;
+  query : TFHIRPathExpressionEngine;
   item : TFHIRSelection;
   allSource : boolean;
   sp, ep : integer;
   annot : TFHIRAnnotation;
   types : TFHIRTypeDetails;
   items : TFHIRSelectionList;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
   ok : boolean;
 begin
   FuncMatchesClear;
@@ -1394,7 +1394,7 @@ begin
   squiggle(INDIC_MATCH, 11, 3); }
 end;
 
-function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRExpressionNode; types : TAdvStringSet): string;
+function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TAdvStringSet): string;
 var
   comp : TFHIRComposer;
 begin
@@ -1557,12 +1557,12 @@ begin
   nonFHIRFiles.Clear;
 end;
 
-procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRExpressionNode; out types : TFHIRTypeDetails);
+procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRPathExpressionNode; out types : TFHIRTypeDetails);
 var
-  engine : TFHIRExpressionEngine;
+  engine : TFHIRPathExpressionEngine;
 begin
   loadValidator;
-  engine := TFHIRExpressionEngine.Create(FWorker.Link);
+  engine := TFHIRPathExpressionEngine.Create(FWorker.Link);
   try
     expr := engine.parse(FHIRToolbox.mPath.Text);
     try
@@ -1611,7 +1611,7 @@ var
   s : TStringStream;
   res : TFHIRResource;
   items : TFHIRSelectionList;
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
   types : TFHIRTypeDetails;
   item : TFHIRSelection;
   focus : TArray<TFHIRObject>;

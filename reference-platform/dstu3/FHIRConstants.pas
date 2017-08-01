@@ -3515,6 +3515,7 @@ Const
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
   FHIR_GENERATED_VERSION = '3.0.1';
+  FHIR_GENERATED_PUBLICATION = '3';
 
   FHIR_GENERATED_DATE = '2017-04-27T17:09:41+10:00';
 

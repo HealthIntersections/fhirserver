@@ -168,9 +168,9 @@ end;
 function TFHIRServerIniFile.ReadBool(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Boolean): Boolean;
 begin
   if (versioning = voMustBeVersioned) then
-    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_VERSION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_VERSION, ident) then
-    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_VERSION, ident, default)
+    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
+  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
+    result := FIni.ReadBool(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
   else
     result := FIni.ReadBool(section, ident, default);
 end;
@@ -178,9 +178,9 @@ end;
 function TFHIRServerIniFile.ReadInteger(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string; Default: Integer): Integer;
 begin
   if (versioning = voMustBeVersioned) then
-    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_VERSION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_VERSION, ident) then
-    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_VERSION, ident, default)
+    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
+  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
+    result := FIni.ReadInteger(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
   else
     result := FIni.ReadInteger(section, ident, default);
 end;
@@ -188,9 +188,9 @@ end;
 function TFHIRServerIniFile.ReadString(versioning: TFHIRServerIniFileVersionOption; const Section, Ident, Default: string): string;
 begin
   if (versioning = voMustBeVersioned) then
-    result := FIni.ReadString(section+'-'+FHIR_GENERATED_VERSION, ident, default)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_VERSION, ident) then
-    result := FIni.ReadString(section+'-'+FHIR_GENERATED_VERSION, ident, default)
+    result := FIni.ReadString(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
+  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, ident) then
+    result := FIni.ReadString(section+'-'+FHIR_GENERATED_PUBLICATION, ident, default)
   else
     result := FIni.ReadString(section, ident, default);
 end;
@@ -198,9 +198,9 @@ end;
 procedure TFHIRServerIniFile.ReadSection(versioning: TFHIRServerIniFileVersionOption; const Section: string; Strings: TStrings);
 begin
   if (versioning = voMustBeVersioned) then
-    FIni.ReadSection(section+'-'+FHIR_GENERATED_VERSION, Strings)
-  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_VERSION) then
-    FIni.ReadSection(section+'-'+FHIR_GENERATED_VERSION, Strings)
+    FIni.ReadSection(section+'-'+FHIR_GENERATED_PUBLICATION, Strings)
+  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION) then
+    FIni.ReadSection(section+'-'+FHIR_GENERATED_PUBLICATION, Strings)
   else
     FIni.ReadSection(section, Strings);
 end;
@@ -208,8 +208,8 @@ end;
 function TFHIRServerIniFile.SectionExists(versioning: TFHIRServerIniFileVersionOption; const Section: string): Boolean;
 begin
   if (versioning = voMustBeVersioned) then
-    result := FIni.SectionExists(section+'-'+FHIR_GENERATED_VERSION)
-  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_VERSION) then
+    result := FIni.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION)
+  else if (versioning = voMaybeVersioned) and Fini.SectionExists(section+'-'+FHIR_GENERATED_PUBLICATION) then
     result := true
   else
     result := FIni.SectionExists(section);
@@ -218,8 +218,8 @@ end;
 function TFHIRServerIniFile.ValueExists(versioning: TFHIRServerIniFileVersionOption; const Section, Ident: string): Boolean;
 begin
   if (versioning = voMustBeVersioned) then
-    result := FIni.ValueExists(section+'-'+FHIR_GENERATED_VERSION, Ident)
-  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_VERSION, Ident) then
+    result := FIni.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, Ident)
+  else if (versioning = voMaybeVersioned) and Fini.ValueExists(section+'-'+FHIR_GENERATED_PUBLICATION, Ident) then
     result := true
   else
     result := FIni.ValueExists(section, Ident);

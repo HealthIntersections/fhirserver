@@ -110,15 +110,15 @@ type
     FResource : TFHIRResource;
     FContext : TFHIRObject;
     FFormat : TFHIRFormat;
-    FExpression : TFHIRExpressionNode;
-    FEngine : TFHIRExpressionEngine;
+    FExpression : TFHIRPathExpressionNode;
+    FEngine : TFHIRPathExpressionEngine;
     FServices : TWorkerContext;
     FLog : String;
     FLayoutInProgress : boolean;
     FMode : TExecutionMode;
     FSkip : TStringList;
     FDone : TStringList;
-    FCurrent : TFHIRExpressionNode;
+    FCurrent : TFHIRPathExpressionNode;
     FCurrentIsOp : boolean;
     FFreq : Int64;
     FStartLast : Int64;
@@ -139,7 +139,7 @@ type
     procedure Go;
     procedure Init(var Msg: TMessage); message UMSG;
     function WantStop(package : TFHIRPathDebugPackage) : boolean;
-    procedure DoDebug(source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage);
+    procedure DoDebug(source : TFHIRPathExpressionEngine; package : TFHIRPathDebugPackage);
 
   public
     { Public declarations }
@@ -162,7 +162,7 @@ uses
   FHIRPluginSettings, textUtilities;
 
 
-function getId(expr : TFHIRExpressionNode; op : boolean) : String;
+function getId(expr : TFHIRPathExpressionNode; op : boolean) : String;
 begin
   if (op) then
     result := inttostr(expr.uniqueId)+'.op'
@@ -311,7 +311,7 @@ begin
   mInput2.Text := '';
   mOutcome.Text := '';
   mConsole.Text := '';
-  FEngine := TFHIRExpressionEngine.create(FServices.link);
+  FEngine := TFHIRPathExpressionEngine.create(FServices.link);
   FEngine.OnDebug := DoDebug;
   try
     FExpression := FEngine.parse(mSource.Text);
@@ -353,9 +353,9 @@ begin
     Settings.DebuggerBreaksWidth := Panel4.Width;
 end;
 
-procedure UpdateMarks(expr : TFHIRExpressionNode; marks : TStringList);
+procedure UpdateMarks(expr : TFHIRPathExpressionNode; marks : TStringList);
 var
-  c : TFHIRExpressionNode;
+  c : TFHIRPathExpressionNode;
 begin
   if expr = nil then
     exit;
@@ -372,9 +372,9 @@ begin
   UpdateMarks(expr.OpNext, marks);
 end;
 
-procedure GetMarks(expr : TFHIRExpressionNode; marks : TStringList);
+procedure GetMarks(expr : TFHIRPathExpressionNode; marks : TStringList);
 var
-  c : TFHIRExpressionNode;
+  c : TFHIRPathExpressionNode;
 begin
   if expr = nil then
     exit;
@@ -497,7 +497,7 @@ begin
   end;
 end;
 
-procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage);
+procedure TFHIRPathDebuggerForm.DoDebug(source : TFHIRPathExpressionEngine; package : TFHIRPathDebugPackage);
 var
   id : string;
   tc : Int64;
@@ -609,7 +609,7 @@ end;
 procedure TFHIRPathDebuggerForm.vtExpressionsInitNode(Sender: TBaseVirtualTree; ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 var
   p, pp : PTreeDataPointer;
-  pe : TFHIRExpressionNode;
+  pe : TFHIRPathExpressionNode;
   i : integer;
 begin
   p := vtExpressions.GetNodeData(Node);

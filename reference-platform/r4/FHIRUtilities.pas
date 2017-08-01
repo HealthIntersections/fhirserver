@@ -250,6 +250,7 @@ type
     function addExtension(url : String; v : String) : TFhirExtension; overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
+    function getExtensionValue(url : String) : TFHIRType;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
@@ -653,6 +654,8 @@ begin
     result := DetectFormat(oContent).create(oWorker.Link, lang)
   else if aFormat = ffText then
     result := TFHIRTextParser.create(oWorker.Link, lang)
+  else if aFormat = ffTurtle then
+    result := TFHIRTurtleParser.create(oWorker.Link, lang)
   else
     result := TFHIRXmlParser.Create(oWorker.Link, lang);
   try
@@ -2109,6 +2112,17 @@ begin
       end;
     end;
   end;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionValue(url: String): TFHIRType;
+var
+  index : integer;
+begin
+  index := getExtension(url);
+  if index = -1 then
+    result := nil
+  else
+    result := extensionList[index].value;
 end;
 
 function TFHIRDomainResourceHelper.getExtensionString(url: String): String;

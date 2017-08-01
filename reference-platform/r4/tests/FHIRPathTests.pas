@@ -52,7 +52,7 @@ Type
   [TextFixture]
   TFHIRPathTest = Class (TObject)
   private
-    engine : TFHIRExpressionEngine;
+    engine : TFHIRPathExpressionEngine;
     tests : TMXmlElement;
     function findTest(path : String) : TMXmlElement;
   Published
@@ -151,7 +151,7 @@ var
   fail, ok : boolean;
   res : TFHIRResource;
   outcome : TFHIRSelectionList;
-  node : TFHIRExpressionNode;
+  node : TFHIRPathExpressionNode;
   p : TFHIRXmlParser;
   f :  TFileStream;
   expected : TAdvList<TMXmlElement>;
@@ -238,7 +238,7 @@ end;
 procedure TFHIRPathTest.setup;
 begin
   tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
-  engine := TFHIRExpressionEngine.Create(TTestingWorkerContext.Use);
+  engine := TFHIRPathExpressionEngine.Create(TTestingWorkerContext.Use);
 end;
 
 procedure TFHIRPathTest.teardown;

@@ -49,7 +49,9 @@ const
 //  ServerDBVersion = 7; // changed compartment table. breaking change
 //  ServerDBVersion = 8; // added ImplementationGuide column to Types table
 //  ServerDBVersion = 9; // added Observations Table
-  ServerDBVersion = 10; // added ForTesting flag
+//  ServerDBVersion = 10; // added ForTesting flag
+//  ServerDBVersion = 11; // added ResourcePreviousVersion field to SubscriptionQueue
+  ServerDBVersion = 12; // rework Observations Table (can't do this as an upgrade)
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -102,6 +104,7 @@ Type
     procedure DoPostTransactionUnInstall;
     procedure CreateCodeSystems;
     procedure CreateObservations;
+    procedure CreateObservationCodes;
     procedure CreateObservationQueue;
     procedure runScript(s : String);
   public
@@ -348,8 +351,6 @@ begin
        ' ObservationKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  // internal primary key
        ' ResourceKey    '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource this came from
        ' SubjectKey     '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // id of resource this observation is about
-       ' ConceptKey     '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // observation.code
-       ' SubConceptKey  '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+      // observation.code
        ' DateTime       '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+        // observation.effectiveTime Stated (null = range)
        ' DateTimeMin    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // observation.effectiveTime Min
        ' DateTimeMax    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // observation.effectiveTime Max
@@ -361,16 +362,29 @@ begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_Observations', 'ObservationKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Observations_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'SubjectKey', 'Ids', 'ResourceKey', 'FK_Observations_SubjKey'));
-  FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_Observations_ConceptKey'));
-  FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'SubConceptKey', 'Concepts', 'ConceptKey', 'FK_Observations_SubConceptKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ValueUnit', 'Concepts', 'ConceptKey', 'FK_Observations_ValueUnitKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'CanonicalUnit', 'Concepts', 'ConceptKey', 'FK_Observations_CanonicalUnitKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ValueConcept', 'Concepts', 'ConceptKey', 'FK_Observations_ValueConceptKey'));
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON Observations (SubjectKey, ConceptKey, SubConceptKey, DateTimeMin)');
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON Observations (SubjectKey, ConceptKey, SubConceptKey, DateTimeMax)');
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt3 ON Observations (ConceptKey, SubConceptKey, DateTimeMin)');
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt4 ON Observations (ConceptKey, SubConceptKey, DateTimeMax)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON Observations (SubjectKey, DateTimeMin)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON Observations (SubjectKey, DateTimeMax)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt3 ON Observations (DateTimeMin)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt4 ON Observations (DateTimeMax)');
 end;
+
+procedure TFHIRDatabaseInstaller.CreateObservationCodes;
+begin
+  FConn.ExecSQL('CREATE TABLE ObservationCodes( '+#13#10+
+       ' ObservationCodeKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // internal primary key
+       ' ObservationKey     '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // primary key from Observations Table
+       ' ConceptKey         '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // primary key from concept table
+       ' Source             int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // 1 = Observation.category, 2 = Observation.code, 3= Observation.component.code
+       PrimaryKeyType(FConn.owner.Platform, 'PK_ObservationCodes', 'ObservationCodeKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ObservationCodes', 'ObservationKey', 'Observations', 'ObservationKey', 'FK_ObservationCodes_ObsKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ObservationCodes', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_ObservationCodes_ConceptKey'));
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON ObservationCodes (ObservationKey, Source, ConceptKey)');
+  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON ObservationCodes (Source, ConceptKey, ObservationKey)');
+end;
+
 
 procedure TFHIRDatabaseInstaller.CreateObservationQueue;
 begin
@@ -520,12 +534,14 @@ begin
        ' SubscriptionQueueKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceKey '+        DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ResourceVersionKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' ResourcePreviousKey '+ DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Operation                  int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_SubscriptionQueue', 'SubscriptionQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceKey',        'Ids', 'ResourceKey',             'FK_SubscriptionQ_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResVerKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourcePreviousKey','Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResPrevKey'));
   FConn.ExecSQL('Create INDEX SK_SubscriptionsQueue_Reload ON SubscriptionQueue (Handled)');
 end;
 
@@ -777,9 +793,11 @@ begin
     DefineIndexes;
     if assigned(CallBack) then Callback(67, 'Create Observations');
     CreateObservations;
-    if assigned(CallBack) then Callback(68, 'Create ObservationQueue');
+    if assigned(CallBack) then Callback(68, 'Create ObservationCodes');
+    CreateObservationCodes;
+    if assigned(CallBack) then Callback(69, 'Create ObservationQueue');
     CreateObservationQueue;
-    if assigned(CallBack) then Callback(69, 'Commit');
+    if assigned(CallBack) then Callback(70, 'Commit');
     FConn.Commit;
   except
     on e:exception do
@@ -832,6 +850,9 @@ begin
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
+      if assigned(CallBack) then Callback(5, 'Check Delete ObservationCodes');
+      if meta.hasTable('ObservationCodes') then
+        FConn.DropTable('ObservationCodes');
       if assigned(CallBack) then Callback(5, 'Check Delete Observations');
       if meta.hasTable('Observations') then
         FConn.DropTable('Observations');
@@ -957,24 +978,8 @@ procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
 begin
   if version > ServerDBVersion then
     raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
-
-  if version < 7 then
-    raise Exception.Create('Database must be recreated due to a breaking change to the database schema (-mount or -remount)');  // 7 was a breaking change
-  if version < 8 then
-    Fconn.ExecSQL('ALTER TABLE Types ADD ImplementationGuide char(64) NULL');
-  if (version < 9) then
-  begin
-    CreateObservations;
-    CreateObservationQueue;
-  end;
-  if (version < 10) then
-  begin
-    Fconn.ExecSQL('ALTER TABLE Versions ADD ForTesting int NULL');
-    Fconn.ExecSQL('ALTER TABLE Ids ADD ForTesting int NULL');
-    Fconn.ExecSQL('ALTER TABLE IndexEntries ADD SrcTesting int NULL');
-    Fconn.ExecSQL('ALTER TABLE IndexEntries ADD TgtTesting int NULL');
-  end;
-
+  if (version < 12) then
+    raise Exception.Create('Database must be rebuilt');
   Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
 end;
 

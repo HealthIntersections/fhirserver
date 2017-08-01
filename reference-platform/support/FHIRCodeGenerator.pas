@@ -429,7 +429,7 @@ begin
       vn := varName(path+'.'+prop.Name, sd, defn, inScope, vt, vdef);
       line(indent, vdef+vn +' = new '+vt+'();');
       line(indent, '  '+variableName+'.set'+capitalize(prop.Name.Replace('[x]', ''))+'('+vn+');');
-      processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
+      processObject(indent+2, vn, path+'.'+prop.Name, sd, value, addVar(inScope, vn));
     end;
   end;
 end;

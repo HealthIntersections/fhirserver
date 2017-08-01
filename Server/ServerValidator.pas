@@ -258,7 +258,7 @@ var
 begin
   result := TValidationResult.Create;
   try
-    p := FTerminologyServer.validate(vs, code, nil, false);
+    p := FTerminologyServer.validate(vs, code, FProfile, false);
     try
       result.Message := p.str['message'];
       if p.bool['result'] then

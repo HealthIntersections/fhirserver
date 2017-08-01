@@ -114,7 +114,7 @@ type
   end;
 
   // expressions - build un underlying FHIR Path library
-  TCqlExpressionNode = class (TFHIRExpressionNode)
+  TCqlExpressionNode = class (TFHIRPathExpressionNode)
   private
     FCqlFunctionId: TCqlFunctionDefinitionId;
     FCqlOperation: TCqlOperationId;

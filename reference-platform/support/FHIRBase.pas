@@ -637,7 +637,7 @@ type
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfAllFalse, pfAnyFalse, pfCombine, pfType, pfOfType,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfCustom);
 
-  TFHIRExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure); // structure is not used in FHIRPath, but is in CQL
+  TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure); // structure is not used in FHIRPath, but is in CQL
   TFHIRCollectionStatus = (csNULL, csSINGLETON, csORDERED, csUNORDERED);
 
 const
@@ -681,30 +681,30 @@ type
     function type_ : String;
   end;
 
-  TFHIRExpressionNode = class (TAdvObject)
+  TFHIRPathExpressionNode = class (TAdvObject)
   private
     FTag : integer;
     FName: String;
     FConstant : string;
     FFunctionId : TFHIRPathFunction;
-    FParameters : TAdvList<TFHIRExpressionNode>;
-    FInner: TFHIRExpressionNode;
-    FGroup: TFHIRExpressionNode;
+    FParameters : TAdvList<TFHIRPathExpressionNode>;
+    FInner: TFHIRPathExpressionNode;
+    FGroup: TFHIRPathExpressionNode;
     FOperation : TFHIRPathOperation;
     FProximal : boolean;
-    FOpNext: TFHIRExpressionNode;
+    FOpNext: TFHIRPathExpressionNode;
     FTypes : TFHIRTypeDetails;
     FOpTypes : TFHIRTypeDetails;
-    FKind: TFHIRExpressionNodeKind;
+    FKind: TFHIRPathExpressionNodeKind;
     FUniqueId : integer;
     FSourceLocationStart : TSourceLocation;
     FSourceLocationEnd : TSourceLocation;
     FOpSourceLocationStart : TSourceLocation;
     FOpSourceLocationEnd : TSourceLocation;
 
-    procedure SetOpNext(const Value: TFHIRExpressionNode);
-    procedure SetInner(const Value: TFHIRExpressionNode);
-    procedure SetGroup(const Value: TFHIRExpressionNode);
+    procedure SetOpNext(const Value: TFHIRPathExpressionNode);
+    procedure SetInner(const Value: TFHIRPathExpressionNode);
+    procedure SetGroup(const Value: TFHIRPathExpressionNode);
     procedure SetFunctionId(const Value: TFHIRPathFunction);
     procedure SetTypes(const Value: TFHIRTypeDetails);
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
@@ -714,7 +714,7 @@ type
     Destructor Destroy; override;
 
     function ToString : String; override;
-    function Link : TFHIRExpressionNode; overload;
+    function Link : TFHIRPathExpressionNode; overload;
     function checkName : boolean;
 
     property uniqueId : integer read FUniqueId;
@@ -731,16 +731,16 @@ type
     function opLocation : String;
 
     property tag : integer read FTag write FTag;
-    property kind : TFHIRExpressionNodeKind read FKind write FKind;
+    property kind : TFHIRPathExpressionNodeKind read FKind write FKind;
     property name : String read FName write FName;
     property constant : String read FConstant write FConstant;
     property FunctionId : TFHIRPathFunction read FFunctionId write SetFunctionId;
-    property Parameters : TAdvList<TFHIRExpressionNode> read FParameters;
-    property Inner : TFHIRExpressionNode read FInner write SetInner;
-    property Group : TFHIRExpressionNode read FGroup write SetGroup;
+    property Parameters : TAdvList<TFHIRPathExpressionNode> read FParameters;
+    property Inner : TFHIRPathExpressionNode read FInner write SetInner;
+    property Group : TFHIRPathExpressionNode read FGroup write SetGroup;
     property Operation : TFHIRPathOperation read FOperation write FOperation;
     property Proximal : boolean read FProximal write FProximal;
-    property OpNext : TFHIRExpressionNode read FOpNext write SetOpNext;
+    property OpNext : TFHIRPathExpressionNode read FOpNext write SetOpNext;
     property Types : TFHIRTypeDetails read FTypes write SetTypes;
     property OpTypes : TFHIRTypeDetails read FOpTypes write SetOpTypes;
   end;
@@ -2168,10 +2168,10 @@ end;
 
 function TFHIRObject.PerformQuery(path: String): TFHIRObjectList;
 var
-  qry : TFHIRExpressionEngine;
+  qry : TFHIRPathExpressionEngine;
   list : TFHIRSelectionList;
 begin
-  qry := TFHIRExpressionEngine.create(nil);
+  qry := TFHIRPathExpressionEngine.create(nil);
   try
     list := qry.evaluate(nil, self, path);
     try
@@ -2217,9 +2217,9 @@ begin
     result := fhirType;
 end;
 
-{ TFHIRExpressionNode }
+{ TFHIRPathExpressionNode }
 
-function TFHIRExpressionNode.Canonical: String;
+function TFHIRPathExpressionNode.Canonical: String;
 var
   b : TStringBuilder;
 begin
@@ -2232,9 +2232,9 @@ begin
   end;
 end;
 
-function TFHIRExpressionNode.check(out msg: String; refCount : integer): boolean;
+function TFHIRPathExpressionNode.check(out msg: String; refCount : integer): boolean;
 var
-  n : TFHIRExpressionNode;
+  n : TFHIRPathExpressionNode;
 begin
   msg := '';
   if refCount <> AdvObjectReferenceCount then
@@ -2279,7 +2279,7 @@ begin
   result := msg = '';
 end;
 
-function TFHIRExpressionNode.checkName: boolean;
+function TFHIRPathExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
     result := StringArrayExistsSensitive(['$this', '$resource'], name)
@@ -2287,13 +2287,13 @@ begin
     result := true;
 end;
 
-constructor TFHIRExpressionNode.Create;
+constructor TFHIRPathExpressionNode.Create;
 begin
   inherited Create;
   FUniqueId := uniqueId
 end;
 
-destructor TFHIRExpressionNode.Destroy;
+destructor TFHIRPathExpressionNode.Destroy;
 begin
   FParameters.free;
   FOpNext.Free;
@@ -2304,22 +2304,22 @@ begin
   inherited;
 end;
 
-function TFHIRExpressionNode.Link: TFHIRExpressionNode;
+function TFHIRPathExpressionNode.Link: TFHIRPathExpressionNode;
 begin
-  result := TFHIRExpressionNode(inherited Link);
+  result := TFHIRPathExpressionNode(inherited Link);
 end;
 
-function TFHIRExpressionNode.location: String;
+function TFHIRPathExpressionNode.location: String;
 begin
   result := inttostr(SourceLocationStart.line)+', '+inttostr(SourceLocationStart.col);
 end;
 
-function TFHIRExpressionNode.opLocation: String;
+function TFHIRPathExpressionNode.opLocation: String;
 begin
   result := inttostr(OpSourceLocationStart.line)+', '+inttostr(OpSourceLocationStart.col);
 end;
 
-function TFHIRExpressionNode.ParameterCount: integer;
+function TFHIRPathExpressionNode.ParameterCount: integer;
 begin
   if FParameters = nil then
     result := 0
@@ -2327,26 +2327,26 @@ begin
     result := FParameters.Count;
 end;
 
-procedure TFHIRExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
+procedure TFHIRPathExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
 begin
   FFunctionId := Value;
   if FParameters = nil then
-    FParameters := TAdvList<TFHIRExpressionNode>.create;
+    FParameters := TAdvList<TFHIRPathExpressionNode>.create;
 end;
 
-procedure TFHIRExpressionNode.SetOpNext(const Value: TFHIRExpressionNode);
+procedure TFHIRPathExpressionNode.SetOpNext(const Value: TFHIRPathExpressionNode);
 begin
   FOpNext.Free;
   FOpNext := Value;
 end;
 
-procedure TFHIRExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
+procedure TFHIRPathExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
 begin
   FTypes.Free;
   FTypes := Value;
 end;
 
-function TFHIRExpressionNode.summary: String;
+function TFHIRPathExpressionNode.summary: String;
 begin
   case FKind of
     enkName: result := inttostr(uniqueId)+': '+FName;
@@ -2356,11 +2356,11 @@ begin
   end;
 end;
 
-function TFHIRExpressionNode.toString: String;
+function TFHIRPathExpressionNode.toString: String;
 var
   b : TStringBuilder;
   first : boolean;
-  n : TFHIRExpressionNode;
+  n : TFHIRPathExpressionNode;
 begin
   b := TStringBuilder.create();
   try
@@ -2423,10 +2423,10 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNode.write(b: TStringBuilder);
+procedure TFHIRPathExpressionNode.write(b: TStringBuilder);
 var
   f : boolean;
-  n : TFHIRExpressionNode;
+  n : TFHIRPathExpressionNode;
 begin
   case fKind of
     enkName:
@@ -2469,19 +2469,19 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
+procedure TFHIRPathExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
 begin
   FOpTypes.Free;
   FOpTypes := Value;
 end;
 
-procedure TFHIRExpressionNode.SetInner(const Value: TFHIRExpressionNode);
+procedure TFHIRPathExpressionNode.SetInner(const Value: TFHIRPathExpressionNode);
 begin
   FInner.free;
   FInner := Value;
 end;
 
-procedure TFHIRExpressionNode.SetGroup(const Value: TFHIRExpressionNode);
+procedure TFHIRPathExpressionNode.SetGroup(const Value: TFHIRPathExpressionNode);
 begin
   FGroup.Free;
   FGroup := Value;

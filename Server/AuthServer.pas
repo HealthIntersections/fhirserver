@@ -94,6 +94,7 @@ type
     FEndPoint: String;
     FOnDoSearch : TDoSearchEvent;
     FPath: String;
+    FActive : boolean;
     function GetPatientListAsOptions : String;
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -144,6 +145,7 @@ type
     Property Ini : TFHIRServerIniFile read FIni;
     property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
+    property Active : boolean read FActive write FActive;
   end;
 
 
@@ -531,30 +533,37 @@ procedure TAuth2Server.HandleDiscovery(AContext: TIdContext; request: TIdHTTPReq
 var
   obj :  TJsonObject;
 begin
-  obj := TJsonObject.create;
-  try
-    obj['issuer'] := FHost;
-    obj['authorization_endpoint'] := BasePath+'/auth';
-    obj['token_endpoint'] := BasePath+'/token';
-    obj['jwks_uri'] :=  BasePath+'/auth_key';
-    obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
-    obj.arr['scopes_supported'] := TJsonArray.create.add('read').add('write').add('user');
+  if not FActive then
+  begin
+    response.ResponseNo := 401;
+    response.ResponseText := 'Not Found';
+  end
+  else
+  begin
+    obj := TJsonObject.create;
+    try
+      obj['issuer'] := FHost;
+      obj['authorization_endpoint'] := BasePath+'/auth';
+      obj['token_endpoint'] := BasePath+'/token';
+      obj['jwks_uri'] :=  BasePath+'/auth_key';
+      obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
+      obj.arr['scopes_supported'] := TJsonArray.create.add('read').add('write').add('user');
 
-    obj['subject_types_supported'] := 'public';
-    obj.arr['id_token_signing_alg_values_supported'] := TJsonArray.create.add('RS256');
-    obj.arr['response_types_supported'] := TJsonArray.create.add('id_token');
-    if FSSLPort = '443' then
-      obj['service_documentation'] :=  'https://'+FHost+'/local.hts'
-    else
-      obj['service_documentation'] :=  'https://'+FHost+':'+FSSLPort+'/local.hts';
-    response.ResponseNo := 200;
-    response.ResponseText := 'OK';
-    response.ContentType := 'application/json';
-    response.ContentText := TJSONWriter.writeObjectStr(obj, true);
-  finally
-    obj.free;
+      obj['subject_types_supported'] := 'public';
+      obj.arr['id_token_signing_alg_values_supported'] := TJsonArray.create.add('RS256');
+      obj.arr['response_types_supported'] := TJsonArray.create.add('id_token');
+      if FSSLPort = '443' then
+        obj['service_documentation'] :=  'https://'+FHost+'/local.hts'
+      else
+        obj['service_documentation'] :=  'https://'+FHost+':'+FSSLPort+'/local.hts';
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      response.ContentType := 'application/json';
+      response.ContentText := TJSONWriter.writeObjectStr(obj, true);
+    finally
+      obj.free;
+    end;
   end;
-
 end;
 
 procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
@@ -682,47 +691,55 @@ procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPReque
 var
   params : TParseMap;
 begin
-  logt('Auth: '+request.Document);
-  try
-    // cors
-    response.CustomHeaders.add('Access-Control-Allow-Origin: *');
-    response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
-    response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-      response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
-    response.ContentType := 'application/json';
-
-    params := TParseMap.create(request.UnparsedParams);
+  if not FActive then
+  begin
+    response.ResponseNo := 401;
+    response.ResponseText := 'Not Found';
+  end
+  else
+  begin
+    logt('Auth: '+request.Document);
     try
-      if (request.Document = FPath+'/auth') then
-        HandleAuth(AContext, request, session, params, response)
-      else if (request.Document.startsWith(FPath+'/auth_dest')) then
-        HandleLogin(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/auth_choice') then
-        HandleChoice(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/token') then
-        HandleToken(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/token_data') then
-        HandleTokenData(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/auth_skype') then
-        HandleSkype(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/auth_key') then
-        HandleKey(AContext, request, session, params, response)
-      else if (request.Document = FPath+'/discovery') then
-        HandleDiscovery(AContext, request, response)
-      else if (request.Document = FPath+'/userdetails') then
-        HandleUserDetails(AContext, request, session, params, response)
-      else
-        raise Exception.Create('Invalid URL');
-    finally
-      params.Free;
-    end;
-  except
-    on e : Exception do
-    begin
-      logt('Auth Exception: '+e.Message);
-      recordStack(e);
-      raise;
+      // cors
+      response.CustomHeaders.add('Access-Control-Allow-Origin: *');
+      response.CustomHeaders.add('Access-Control-Expose-Headers: Content-Location, Location');
+      response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+      if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+        response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
+      response.ContentType := 'application/json';
+
+      params := TParseMap.create(request.UnparsedParams);
+      try
+        if (request.Document = FPath+'/auth') then
+          HandleAuth(AContext, request, session, params, response)
+        else if (request.Document.startsWith(FPath+'/auth_dest')) then
+          HandleLogin(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/auth_choice') then
+          HandleChoice(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/token') then
+          HandleToken(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/token_data') then
+          HandleTokenData(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/auth_skype') then
+          HandleSkype(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/auth_key') then
+          HandleKey(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/discovery') then
+          HandleDiscovery(AContext, request, response)
+        else if (request.Document = FPath+'/userdetails') then
+          HandleUserDetails(AContext, request, session, params, response)
+        else
+          raise Exception.Create('Invalid URL');
+      finally
+        params.Free;
+      end;
+    except
+      on e : Exception do
+      begin
+        logt('Auth Exception: '+e.Message);
+        recordStack(e);
+        raise;
+      end;
     end;
   end;
 end;

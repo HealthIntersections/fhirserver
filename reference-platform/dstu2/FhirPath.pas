@@ -127,12 +127,12 @@ type
     Fcontext: TFHIRPathExecutionContext;
     Finput2: TFHIRSelectionList;
     Finput1: TFHIRSelectionList;
-    FExpression: TFHIRExpressionNode;
+    FExpression: TFHIRPathExpressionNode;
     FSourceStart: TSourceLocation;
     Foutcome: TFHIRSelectionList;
     FIsOperation: boolean;
     procedure Setcontext(const Value: TFHIRPathExecutionContext);
-    procedure SetExpression(const Value: TFHIRExpressionNode);
+    procedure SetExpression(const Value: TFHIRPathExpressionNode);
     procedure Setinput1(const Value: TFHIRSelectionList);
     procedure Setinput2(const Value: TFHIRSelectionList);
     procedure Setoutcome(const Value: TFHIRSelectionList);
@@ -141,7 +141,7 @@ type
     function Link : TFHIRPathDebugPackage; overload;
     property SourceStart : TSourceLocation read FSourceStart write FSourceStart;
     property SourceEnd : TSourceLocation read FSourceEnd write FSourceEnd;
-    property Expression : TFHIRExpressionNode read FExpression write SetExpression;
+    property Expression : TFHIRPathExpressionNode read FExpression write SetExpression;
     property IsOperation : boolean read FIsOperation write FIsOperation;
     property context : TFHIRPathExecutionContext read Fcontext write Setcontext;
     property input1 : TFHIRSelectionList read Finput1 write Setinput1;
@@ -149,12 +149,12 @@ type
     property outcome : TFHIRSelectionList read Foutcome write Setoutcome;
   end;
 
-  TFHIRExpressionEngine = class;
+  TFHIRPathExpressionEngine = class;
 
-  TFHIRPathDebugEvent = procedure (source : TFHIRExpressionEngine; package : TFHIRPathDebugPackage) of object;
-  TFHIRResolveReferenceEvent = function (source : TFHIRExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject of object;
+  TFHIRPathDebugEvent = procedure (source : TFHIRPathExpressionEngine; package : TFHIRPathDebugPackage) of object;
+  TFHIRResolveReferenceEvent = function (source : TFHIRPathExpressionEngine; appInfo : TAdvObject; url : String) : TFHIRObject of object;
 
-  TFHIRExpressionEngine = class (TAdvObject)
+  TFHIRPathExpressionEngine = class (TAdvObject)
   private
     worker : TWorkerContext;
     FOndebug : TFHIRPathDebugEvent;
@@ -163,20 +163,20 @@ type
     FOnResolveReference: TFHIRResolveReferenceEvent;
 
     procedure log(name, value : String);
-    function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
-    procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TFHIRExpressionNode);
-    procedure gatherPrecedence(lexer : TFHIRPathLexer; var start: TFHIRExpressionNode; ops: TFHIRPathOperationSet);
-    function newGroup(lexer : TFHIRPathLexer; next: TFHIRExpressionNode): TFHIRExpressionNode;
-    procedure checkParameters(lexer : TFHIRPathLexer; location : TSourceLocation; offset : Integer; exp : TFHIRExpressionNode);
-    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer); overload;
-    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer); overload;
+    function parseExpression(lexer: TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
+    procedure organisePrecedence(lexer : TFHIRPathLexer; var node: TFHIRPathExpressionNode);
+    procedure gatherPrecedence(lexer : TFHIRPathLexer; var start: TFHIRPathExpressionNode; ops: TFHIRPathOperationSet);
+    function newGroup(lexer : TFHIRPathLexer; next: TFHIRPathExpressionNode): TFHIRPathExpressionNode;
+    procedure checkParameters(lexer : TFHIRPathLexer; location : TSourceLocation; offset : Integer; exp : TFHIRPathExpressionNode);
+    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; count : integer); overload;
+    procedure checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; countMin, countMax : integer); overload;
 
-    function execute(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
-    function execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
-    procedure debug(context : TFHIRPathExecutionContext; exp : TFHIRExpressionNode; op : boolean; input1, input2, outcome : TFHIRSelectionList);
+    function execute(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
+    function execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNode; atEntry : boolean) : TFHIRSelectionList; overload;
+    procedure debug(context : TFHIRPathExecutionContext; exp : TFHIRPathExpressionNode; op : boolean; input1, input2, outcome : TFHIRSelectionList);
     function replaceFixedConstant(context : TFHIRPathExecutionContext; const s : String) : TFHIRObject;
 
-    function evaluateFunction(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+    function evaluateFunction(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
     function preOperate(left : TFHIRSelectionList; op : TFHIRPathOperation) : TFHIRSelectionList;
     function operate(left : TFHIRSelectionList; op : TFHIRPathOperation; right : TFHIRSelectionList) : TFHIRSelectionList;
     function readConstant(context : TFHIRPathExecutionContext; constant : String) : TFHIRObject;
@@ -185,9 +185,9 @@ type
 
     function childTypes(focus : TFHIRTypeDetails; mask : string) : TFHIRTypeDetails;
     procedure checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
-    function executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
-    function executeType(focus: String; exp: TFHIRExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
-    function evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode): TFHIRTypeDetails;
+    function executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
+    function executeType(focus: String; exp: TFHIRPathExpressionNode; atEntry : boolean) : TFHIRTypeDetails; overload;
+    function evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails;
     function operateTypes(left : TFHIRTypeDetails; op : TFHIRPathOperation; right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function readConstantType(ctxt: TFHIRPathExecutionTypeContext; constant : String) : string;
 
@@ -197,57 +197,57 @@ type
     function getElementDefinitionByName(sd : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;
     function hasDataType(ed : TFhirElementDefinition) : boolean;
 
-    function funcEmpty(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcItem(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcWhere(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcAll(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcFirst(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcLast(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcTail(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcCount(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcLength(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcContains(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcExists(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSubsetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSupersetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcIsDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSelect(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcRepeat(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcAs(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcIs(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSingle(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSkip(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcTake(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcIif(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcToInteger(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcToDecimal(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcToString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcEndsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcReplaceMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcReplace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcChildren(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcDescendants(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcMemberOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcToday(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcNow(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
-    function funcHasValue(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+    function funcEmpty(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcItem(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcWhere(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcAll(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcFirst(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcLast(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcTail(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcCount(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcLength(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcContains(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcExists(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSubsetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSupersetOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcIsDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSelect(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcRepeat(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcAs(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcIs(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSingle(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSkip(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcTake(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcIif(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcToInteger(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcToDecimal(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcToString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcEndsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcReplaceMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcReplace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcChildren(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcDescendants(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcMemberOf(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcToday(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcNow(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
+    function funcHasValue(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 
 
     function equal(left, right : TFHIRObject) : boolean;  overload;
@@ -288,21 +288,21 @@ type
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
 
     // Parse a path for later use using execute
-    function parse(path : String) : TFHIRExpressionNode; overload;
-    function parse(lexer : TFHIRPathLexer) : TFHIRExpressionNode; overload;
+    function parse(path : String) : TFHIRPathExpressionNode; overload;
+    function parse(lexer : TFHIRPathLexer) : TFHIRPathExpressionNode; overload;
 
     // check that paths referred to in the expression are valid
-    function check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
+    function check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
 
     // evaluate a path and return the matching elements
     function evaluate(appInfo : TAdvObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TAdvObject; base : TFHIRObject; expr : TFHIRExpressionNode) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TAdvObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
     function evaluate(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; path : String) : TFHIRSelectionList; overload;
-    function evaluate(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRExpressionNode) : TFHIRSelectionList; overload;
+    function evaluate(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : TFHIRSelectionList; overload;
 
     // evaluate a path and return true or false
     function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; path : String) : boolean; overload;
-    function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRExpressionNode) : boolean; overload;
+    function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : boolean; overload;
 
     // evaluate a path and return a string describing the outcome
     function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; path : String) : string;
@@ -322,7 +322,7 @@ implementation
 
 { TFHIRPathEvaluator }
 
-function TFHIRExpressionEngine.check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.check(appInfo : TAdvObject; resourceType, context, path : String; expr : TFHIRPathExpressionNode; xPathStartsWithValueRef : boolean) : TFHIRTypeDetails;
 var
   types : TFHIRTypeDetails;
   ctxt : TFHIRPathExecutionTypeContext;
@@ -372,19 +372,19 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; count : integer);
+procedure TFHIRPathExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; count : integer);
 begin
   if (exp.Parameters.count <> count) then
     lexer.error('The function "'+exp.name+'" requires '+inttostr(count)+' parameters', location);
 end;
 
-procedure TFHIRExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRExpressionNode; countMin, countMax : integer);
+procedure TFHIRPathExpressionEngine.checkParamCount(lexer: TFHIRPathLexer; location : TSourceLocation; exp : TFHIRPathExpressionNode; countMin, countMax : integer);
 begin
     if (exp.Parameters.count < countMin) or (exp.Parameters.count > countMax) then
       lexer.error('The function "'+exp.name+'" requires between '+inttostr(countMin)+' and '+inttostr(countMax)+' parameters', location);
 end;
 
-procedure TFHIRExpressionEngine.checkParameters(lexer: TFHIRPathLexer; location : TSourceLocation; offset: Integer; exp: TFHIRExpressionNode);
+procedure TFHIRPathExpressionEngine.checkParameters(lexer: TFHIRPathLexer; location : TSourceLocation; offset: Integer; exp: TFHIRPathExpressionNode);
 begin
   case exp.FunctionId of
     pfEmpty: checkParamCount(lexer, location, exp, 0);
@@ -441,7 +441,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.convertToBoolean(items: TFHIRSelectionList): boolean;
+function TFHIRPathExpressionEngine.convertToBoolean(items: TFHIRSelectionList): boolean;
 begin
   if (items = nil) then
     result := false
@@ -451,7 +451,7 @@ begin
     result := items.count > 0;
 end;
 
-function TFHIRExpressionEngine.convertToString(item: TFHIRObject): String;
+function TFHIRPathExpressionEngine.convertToString(item: TFHIRObject): String;
 begin
   if item = nil then
     result := ''
@@ -464,7 +464,7 @@ begin
 end;
 
 
-constructor TFHIRExpressionEngine.create(context: TWorkerContext);
+constructor TFHIRPathExpressionEngine.create(context: TWorkerContext);
 var
   sd : TFhirStructureDefinition;
 begin
@@ -492,7 +492,7 @@ begin
     end;
 end;
 
-procedure TFHIRExpressionEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRExpressionNode; op : boolean; input1, input2, outcome: TFHIRSelectionList);
+procedure TFHIRPathExpressionEngine.debug(context : TFHIRPathExecutionContext; exp: TFHIRPathExpressionNode; op : boolean; input1, input2, outcome: TFHIRSelectionList);
 var
   pack : TFHIRPathDebugPackage;
 begin
@@ -533,7 +533,7 @@ begin
   end;
 end;
 
-destructor TFHIRExpressionEngine.destroy;
+destructor TFHIRPathExpressionEngine.destroy;
 begin
   FLog.Free;
   worker.Free;
@@ -543,7 +543,7 @@ begin
   inherited;
 end;
 
-function TFHIRExpressionEngine.convertToString(items: TFHIRSelectionList): String;
+function TFHIRPathExpressionEngine.convertToString(items: TFHIRSelectionList): String;
 var
   b : TStringBuilder;
   first : boolean;
@@ -566,9 +566,9 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; path: String): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; path: String): TFHIRSelectionList;
 var
-  exp : TFHIRExpressionNode;
+  exp : TFHIRPathExpressionNode;
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
 begin
@@ -591,7 +591,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; expr : TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.evaluate(appInfo : TAdvObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -610,9 +610,9 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): TFHIRSelectionList;
 var
-  exp : TFHIRExpressionNode;
+  exp : TFHIRPathExpressionNode;
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
 begin
@@ -635,7 +635,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.equal(left, right: TFHIRObject): boolean;
+function TFHIRPathExpressionEngine.equal(left, right: TFHIRObject): boolean;
 begin
   if (left.isPrimitive and right.isPrimitive) then
     result := left.primitiveValue = right.primitiveValue
@@ -657,7 +657,7 @@ begin
   end
 end;
 
-function TFHIRExpressionEngine.equivalent(left, right: TFHIRObject): boolean;
+function TFHIRPathExpressionEngine.equivalent(left, right: TFHIRObject): boolean;
 begin
   if (left.hasType('integer') and right.hasType('integer')) then
     result := equal(left, right)
@@ -673,7 +673,7 @@ begin
     raise EFHIRPath.create(StringFormat('Unable to determine equivalence between %s and %s', [left.fhirType(), right.fhirType()]));
 end;
 
-function TFHIRExpressionEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.evaluate(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; expr : TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   list : TFHIRSelectionList;
   ctxt : TFHIRPathExecutionContext;
@@ -692,7 +692,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
+function TFHIRPathExpressionEngine.evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base: TFHIRObject; path: String): boolean;
 var
   res : TFHIRSelectionList;
 begin
@@ -704,7 +704,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluateToBoolean(appInfo: TAdvObject; resource, base: TFHIRObject; expr: TFHIRExpressionNode): boolean;
+function TFHIRPathExpressionEngine.evaluateToBoolean(appInfo: TAdvObject; resource, base: TFHIRObject; expr: TFHIRPathExpressionNode): boolean;
 var
   res : TFHIRSelectionList;
 begin
@@ -716,7 +716,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluateToString(appInfo : TAdvObject; base: TFHIRObject; path: String): string;
+function TFHIRPathExpressionEngine.evaluateToString(appInfo : TAdvObject; base: TFHIRObject; path: String): string;
 var
   res : TFHIRSelectionList;
 begin
@@ -728,7 +728,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRExpressionNode; atEntry : boolean): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.execute(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNode; atEntry : boolean): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -745,7 +745,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.ListAllChildren(item : TFHIRObject; results : TFHIRSelectionList; recurse : boolean);
+procedure TFHIRPathExpressionEngine.ListAllChildren(item : TFHIRObject; results : TFHIRSelectionList; recurse : boolean);
 var
   pi : TFHIRPropertyIterator;
   b : TFHIRObject;
@@ -772,11 +772,11 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode; atEntry : boolean): TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode; atEntry : boolean): TFHIRTypeDetails;
 var
   s : String;
   work, work2 : TFHIRTypeDetails;
-  next, last : TFHIRExpressionNode;
+  next, last : TFHIRPathExpressionNode;
 begin
   result := TFHIRTypeDetails.Create(csNULL, []);
   try
@@ -857,7 +857,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcAll(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcAll(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
   pc, res : TFHIRSelectionList;
@@ -914,7 +914,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcAs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcAs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   tn : String;
   b : TFHIRSelection;
@@ -931,7 +931,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcChildren(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcChildren(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
 begin
@@ -945,7 +945,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcContains(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcContains(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   res : TFHIRSelectionList;
   sw : String;
@@ -970,12 +970,12 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcCount(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcCount(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFhirInteger.Create(inttostr(focus.Count)));
 end;
 
-function TFHIRExpressionEngine.funcDescendants(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcDescendants(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
 begin
@@ -989,7 +989,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcDistinct(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   i, j : integer;
   found : boolean;
@@ -1019,12 +1019,12 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcEmpty(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcEmpty(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFhirBoolean.Create(focus.Count = 0));
 end;
 
-function TFHIRExpressionEngine.funcEndsWith(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcEndsWith(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   res : TFHIRSelectionList;
   sw : String;
@@ -1049,14 +1049,14 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcFirst(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcFirst(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   if focus.Count > 0 then
     result.Add(focus[0].Link);
 end;
 
-function TFHIRExpressionEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcHasValue(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -1070,7 +1070,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcIif(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcIif(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   n1 : TFHIRSelectionList;
   v : boolean;
@@ -1090,7 +1090,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcIs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcIs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   tn : string;
 begin
@@ -1109,7 +1109,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcIsDistinct( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcIsDistinct( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   distinct : boolean;
   i , j : integer;
@@ -1136,7 +1136,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcItem(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcItem(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   s : String;
   res : TFHIRSelectionList;
@@ -1152,14 +1152,14 @@ begin
     result.Add(focus[StrToInt(s)].Link);
 end;
 
-function TFHIRExpressionEngine.funcLast(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcLast(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   if focus.Count > 0 then
     result.Add(focus[focus.Count - 1].Link);
 end;
 
-function TFHIRExpressionEngine.funcLength(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcLength(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   s : String;
 begin
@@ -1176,7 +1176,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcTrace(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   n1 : TFHIRSelectionList;
   name : String;
@@ -1191,7 +1191,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcMatches(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
@@ -1219,22 +1219,22 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcMemberOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcMemberOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   raise EFHIRPath.create('Not Done Yet');
 end;
 
-function TFHIRExpressionEngine.funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFhirBoolean.Create(not convertToBoolean(focus)));
 end;
 
-function TFHIRExpressionEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcNow(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFhirDateTime.Create(TDateTimeEx.makeLocal));
 end;
 
-function TFHIRExpressionEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcRepeat(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   current, added, pc, work : TFHIRSelectionList;
   item : TFHIRSelection;
@@ -1284,17 +1284,17 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcReplace(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcReplace(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   raise EFHIRPath.create('Not Done Yet');
 end;
 
-function TFHIRExpressionEngine.funcReplaceMatches( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcReplaceMatches( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   raise EFHIRPath.create('Not Done Yet');
 end;
 
-function TFHIRExpressionEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcResolve(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
   s, id : String;
@@ -1349,7 +1349,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcSelect(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSelect(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   pc, work : TFHIRSelectionList;
   item : TFHIRSelection;
@@ -1384,14 +1384,14 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcSingle(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSingle(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   if (focus.count <> 1) then
     raise EFHIRPath.create(StringFormat('Single() : checking for 1 item but found %d items', [focus.count]));
   result := focus.link;
 end;
 
-function TFHIRExpressionEngine.funcSkip(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSkip(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   bl : TFHIRSelectionList;
   i, i1 : integer;
@@ -1407,7 +1407,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcStartsWith(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   res : TFHIRSelectionList;
   sw : String;
@@ -1432,7 +1432,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcSubsetOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSubsetOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   target : TFHIRSelectionList;
   valid, found : boolean;
@@ -1464,7 +1464,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSubString(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   s, sw : String;
   n1, n2 : TFHIRSelectionList;
@@ -1505,13 +1505,13 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcExists(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcExists(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   result.add(TFHIRBoolean.create(focus.count > 0));
 end;
 
-function TFHIRExpressionEngine.funcSupersetOf( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSupersetOf( context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   target : TFHIRSelectionList;
   valid, found : boolean;
@@ -1543,7 +1543,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcExtension(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item, ex : TFHIRSelection;
   vl : TFHIRSelectionList;
@@ -1585,7 +1585,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcTail(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcTail(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
    i : integer;
 begin
@@ -1594,7 +1594,7 @@ begin
     result.Add(focus[i].Link);
 end;
 
-function TFHIRExpressionEngine.funcTake(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcTake(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   n1 : TFHIRSelectionList;
   i, i1 : integer;
@@ -1611,7 +1611,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcToday(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFhirDate.Create(TDateTimeEx.makeToday));
 end;
@@ -1628,7 +1628,7 @@ begin
 end;
 
 
-function TFHIRExpressionEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcToDecimal(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   s : string;
 begin
@@ -1638,7 +1638,7 @@ begin
     result.add(TFHIRDecimal.Create(s));
 end;
 
-function TFHIRExpressionEngine.funcToInteger(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcToInteger(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   s : string;
 begin
@@ -1648,13 +1648,13 @@ begin
     result.add(TFHIRInteger.Create(s));
 end;
 
-function TFHIRExpressionEngine.funcToString(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcToString(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   result.add(TFHIRString.Create(convertToString(focus)));
 end;
 
-function TFHIRExpressionEngine.funcWhere(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcWhere(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 var
   item : TFHIRSelection;
   pc, res : TFHIRSelectionList;
@@ -1691,7 +1691,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcAllFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   item : TFHIRSelection;
   pc, res : TFHIRSelectionList;
@@ -1748,7 +1748,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcAnyFalse(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   item : TFHIRSelection;
   pc, res : TFHIRSelectionList;
@@ -1805,7 +1805,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcCombine(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
@@ -1827,12 +1827,12 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFHIRExpressionEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   n1 : TFHIRSelectionList;
   tn : String;
@@ -1855,17 +1855,17 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFHIRExpressionEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFHIRExpressionEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcCheckModifiers(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 var
   n1, me, u : TFHIRSelectionList;
   item, e, b : TFHIRSelection;
@@ -1910,7 +1910,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRExpressionNode) : TFHIRSelectionList;
+function TFHIRPathExpressionEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
   raise Exception.Create('Not done yet');
 end;
@@ -1921,7 +1921,7 @@ begin
   result := (list.count = 1) and (list[0].value is TFHIRBoolean) and (TFHIRBoolean(list[0].value).value = b);
 end;
 
-function TFHIRExpressionEngine.preOperate(left: TFHIRSelectionList; op: TFHIRPathOperation): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.preOperate(left: TFHIRSelectionList; op: TFHIRPathOperation): TFHIRSelectionList;
 begin
   result := nil;
   case op of
@@ -1934,7 +1934,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.operate(left: TFHIRSelectionList; op: TFHIRPathOperation; right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.operate(left: TFHIRSelectionList; op: TFHIRPathOperation; right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   case op of
     popNull: raise EFHIRPath.create('An internal error has occurred');
@@ -1968,7 +1968,7 @@ begin
 end;
 
 
-function TFHIRExpressionEngine.operateTypes(left: TFHIRTypeDetails; op: TFHIRPathOperation; right: TFHIRTypeDetails): TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.operateTypes(left: TFHIRTypeDetails; op: TFHIRPathOperation; right: TFHIRTypeDetails): TFHIRTypeDetails;
 begin
   case op of
     popEquals: result := TFHIRTypeDetails.create(csSINGLETON, ['boolean']);
@@ -2031,7 +2031,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opAnd(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opAnd(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   try
@@ -2051,7 +2051,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opAs(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opAs(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   tn : String;
   b : TFHIRSelection;
@@ -2068,7 +2068,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opContains(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opContains(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   ans, f : boolean;
   l, r : TFHIRSelection;
@@ -2093,7 +2093,7 @@ begin
   result.Add(TFhirBoolean.Create(ans));
 end;
 
-function TFHIRExpressionEngine.opDiv(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opDiv(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TSmartDecimal;
@@ -2133,7 +2133,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opDivideBy(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opDivideBy(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TSmartDecimal;
@@ -2172,7 +2172,7 @@ begin
 
 end;
 
-function TFHIRExpressionEngine.opequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res : boolean;
   i : integer;
@@ -2193,7 +2193,7 @@ begin
   result.Add(TFhirBoolean.Create(res));
 end;
 
-function TFHIRExpressionEngine.opEquivalent(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opEquivalent(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res, found : boolean;
   i, j : integer;
@@ -2225,7 +2225,7 @@ begin
   result.Add(TFhirBoolean.Create(res));
 end;
 
-function TFHIRExpressionEngine.opGreater(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opGreater(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
@@ -2273,7 +2273,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opGreaterOrEqual(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opGreaterOrEqual(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
@@ -2321,7 +2321,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opIn(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opIn(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   ans, f : boolean;
   l, r : TFHIRSelection;
@@ -2346,7 +2346,7 @@ begin
   result.Add(TFhirBoolean.Create(ans));
 end;
 
-function TFHIRExpressionEngine.opIs(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opIs(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   tn : string;
 begin
@@ -2365,7 +2365,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opLessOrEqual(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opLessOrEqual(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
@@ -2413,7 +2413,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opLessThan(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opLessThan(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
@@ -2461,7 +2461,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opMinus(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opMinus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1,d2,d3 : TSmartDecimal;
@@ -2502,7 +2502,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opMod(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opMod(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TSmartDecimal;
@@ -2543,7 +2543,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opNotequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opNotequal(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res : boolean;
   i : integer;
@@ -2564,7 +2564,7 @@ begin
   result.Add(TFhirBoolean.Create(res));
 end;
 
-function TFHIRExpressionEngine.opNotEquivalent(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opNotEquivalent(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   res, found : boolean;
   i, j : integer;
@@ -2596,7 +2596,7 @@ begin
   result.Add(TFhirBoolean.Create(not res));
 end;
 
-function TFHIRExpressionEngine.opOr(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opOr(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   if (left.Empty) and (right.Empty) then
@@ -2609,12 +2609,12 @@ begin
     result.Add(TFhirBoolean.Create(false));
 end;
 
-function TFHIRExpressionEngine.opConcatenate(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opConcatenate(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create(TFHIRString.create(convertToString(left) + convertToString(right)));
 end;
 
-function TFHIRExpressionEngine.opPlus(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opPlus(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1,d2,d3 : TSmartDecimal;
@@ -2656,7 +2656,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opTimes(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opTimes(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   l, r : TFHIRObject;
   d1, d2, d3 : TSmartDecimal;
@@ -2696,7 +2696,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.contains(list : TFHIRSelectionList; item : TFHIRObject) : boolean;
+function TFHIRPathExpressionEngine.contains(list : TFHIRSelectionList; item : TFHIRObject) : boolean;
 var
   test : TFHIRSelection;
 begin
@@ -2706,7 +2706,7 @@ begin
         exit(true);
 end;
 
-function TFHIRExpressionEngine.opUnion(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opUnion(left, right: TFHIRSelectionList): TFHIRSelectionList;
 var
   item : TFHIRSelection;
 begin
@@ -2724,7 +2724,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.opXor(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opXor(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   if (left.Empty) or (right.Empty) then
@@ -2733,7 +2733,7 @@ begin
     result.Add(TFhirBoolean.Create(convertToBoolean(left) xor convertToBoolean(right)));
 end;
 
-function TFHIRExpressionEngine.opImplies(left, right: TFHIRSelectionList): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.opImplies(left, right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   result := TFHIRSelectionList.Create;
   if (not convertToBoolean(left)) then
@@ -2744,12 +2744,12 @@ begin
     result.Add(TFhirBoolean.Create(convertToBoolean(right)));
 end;
 
-function TFHIRExpressionEngine.execute(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode; atEntry : boolean): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.execute(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode; atEntry : boolean): TFHIRSelectionList;
 var
   work, work2 : TFHIRSelectionList;
   item, base : TFHIRSelection;
   outcome : TFHIRSelectionList;
-  next, last : TFHIRExpressionNode;
+  next, last : TFHIRPathExpressionNode;
 begin
   work := TFHIRSelectionList.Create;
   try
@@ -2848,7 +2848,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.executeType(focus: String; exp: TFHIRExpressionNode; atEntry : boolean): TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.executeType(focus: String; exp: TFHIRPathExpressionNode; atEntry : boolean): TFHIRTypeDetails;
 begin
   if (atEntry and exp.Name[1].IsUpper) and (focus = exp.Name) then
     result := TFHIRTypeDetails.create(csSINGLETON, [focus])
@@ -2864,7 +2864,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluateFunction(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRExpressionNode): TFHIRSelectionList;
+function TFHIRPathExpressionEngine.evaluateFunction(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   case exp.FunctionId of
     pfEmpty : result := funcEmpty(context, focus, exp);
@@ -2923,7 +2923,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
+procedure TFHIRPathExpressionEngine.checkParamTypes(funcId : TFHIRPathFunction; paramTypes : TAdvList<TFHIRTypeDetails>; typeSet : array of TFHIRTypeDetails);
 var
   i : integer;
   pt, actual : TFHIRTypeDetails;
@@ -2947,7 +2947,7 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.childTypes(focus : TFHIRTypeDetails; mask : string) : TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.childTypes(focus : TFHIRTypeDetails; mask : string) : TFHIRTypeDetails;
 var
   f : String;
 begin
@@ -2961,9 +2961,9 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRExpressionNode): TFHIRTypeDetails;
+function TFHIRPathExpressionEngine.evaluateFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails;
 var
-  expr : TFHIRExpressionNode;
+  expr : TFHIRPathExpressionNode;
   paramTypes : TAdvList<TFHIRTypeDetails>;
   nc : TFHIRPathExecutionTypeContext;
 begin
@@ -3278,7 +3278,7 @@ begin
 end;
 
 
-function TFHIRExpressionEngine.parse(lexer: TFHIRPathLexer): TFHIRExpressionNode;
+function TFHIRPathExpressionEngine.parse(lexer: TFHIRPathLexer): TFHIRPathExpressionNode;
 var
   msg : String;
 begin
@@ -3294,12 +3294,12 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRExpressionNode;
+function TFHIRPathExpressionEngine.parseExpression(lexer : TFHIRPathLexer; proximal : boolean): TFHIRPathExpressionNode;
 var
   c : Integer;
-  focus, item : TFHIRExpressionNode;
+  focus, item : TFHIRPathExpressionNode;
 begin
-  result := TFHIRExpressionNode.Create(lexer.nextId);
+  result := TFHIRPathExpressionNode.Create(lexer.nextId);
   try
     result.SourceLocationStart := lexer.FCurrentStartLocation;
     c := lexer.CurrentStart;
@@ -3372,7 +3372,7 @@ begin
     if (lexer.current = '[') then
     begin
       lexer.next();
-      item := TFHIRExpressionNode.Create(lexer.nextId);
+      item := TFHIRPathExpressionNode.Create(lexer.nextId);
       item.Kind := enkFunction;
       item.Functionid := pfItem;
       item.Parameters.add(parseExpression(lexer, true));
@@ -3407,9 +3407,9 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.newGroup(lexer : TFHIRPathLexer; next : TFHIRExpressionNode) : TFHIRExpressionNode;
+function TFHIRPathExpressionEngine.newGroup(lexer : TFHIRPathLexer; next : TFHIRPathExpressionNode) : TFHIRPathExpressionNode;
 begin
-  result := TFHIRExpressionNode.Create(lexer.nextId);
+  result := TFHIRPathExpressionNode.Create(lexer.nextId);
   try
     result.kind := enkGroup;
     result.Group := next.Link;
@@ -3420,10 +3420,10 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.gatherPrecedence(lexer : TFHIRPathLexer; var start : TFHIRExpressionNode; ops : TFHIRPathOperationSet);
+procedure TFHIRPathExpressionEngine.gatherPrecedence(lexer : TFHIRPathLexer; var start : TFHIRPathExpressionNode; ops : TFHIRPathOperationSet);
 var
   work : boolean;
-  focus, node, group : TFHIRExpressionNode;
+  focus, node, group : TFHIRPathExpressionNode;
 begin
   assert(start.Proximal);
 
@@ -3500,7 +3500,7 @@ begin
   until (focus = nil) or (focus.Operation = popNull);
 end;
 
-procedure TFHIRExpressionEngine.organisePrecedence(lexer : TFHIRPathLexer; var node : TFHIRExpressionNode);
+procedure TFHIRPathExpressionEngine.organisePrecedence(lexer : TFHIRPathLexer; var node : TFHIRPathExpressionNode);
 begin
   gatherPrecedence(lexer, node, [popTimes, popDivideBy, popDiv, popMod]);
   gatherPrecedence(lexer, node, [popPlus, popMinus, popConcatenate]);
@@ -3540,7 +3540,7 @@ begin
     result := TFHIRDate.create(TDateTimeEx.fromXML(s));
 end;
 
-function TFHIRExpressionEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
+function TFHIRPathExpressionEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
 begin
   if (constant = 'true') then
     result := TFhirBoolean.Create(true)
@@ -3562,7 +3562,7 @@ begin
     result := TFhirString.Create(constant);
 end;
 
-function TFHIRExpressionEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
+function TFHIRPathExpressionEngine.replaceFixedConstant(context : TFHIRPathExecutionContext; const s: String): TFHIRObject;
 begin
   if s = '%sct' then
     result := TFhirString.Create('http://snomed.info/sct')
@@ -3589,7 +3589,7 @@ begin
 end;
 
 
-function TFHIRExpressionEngine.UseLog: String;
+function TFHIRPathExpressionEngine.UseLog: String;
 begin
   if (FLog <> nil) and (FLog.Length > 0) then
   begin
@@ -3600,7 +3600,7 @@ begin
     result := '';
 end;
 
-function TFHIRExpressionEngine.readConstantType(ctxt: TFHIRPathExecutionTypeContext; constant: String): string;
+function TFHIRPathExpressionEngine.readConstantType(ctxt: TFHIRPathExecutionTypeContext; constant: String): string;
 begin
   if (constant = 'true') then
     result := 'boolean'
@@ -3620,7 +3620,7 @@ begin
     result := 'string';
 end;
 
-function TFHIRExpressionEngine.parse(path: String): TFHIRExpressionNode;
+function TFHIRPathExpressionEngine.parse(path: String): TFHIRPathExpressionNode;
 var
   lexer : TFHIRPathLexer;
   msg : String;
@@ -3645,12 +3645,12 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.ListChildrenByName(focus: TFHIRObject; name: String; results: TFHIRSelectionList);
+procedure TFHIRPathExpressionEngine.ListChildrenByName(focus: TFHIRObject; name: String; results: TFHIRSelectionList);
 begin
   focus.ListChildrenByName(name, results);
 end;
 
-procedure TFHIRExpressionEngine.ListChildTypesByName(item, name : String; result : TFHIRTypeDetails);
+procedure TFHIRPathExpressionEngine.ListChildTypesByName(item, name : String; result : TFHIRTypeDetails);
 var
   url, tail, specifiedType, path, tn, r, rn : String;
   sd, dt, sdi : TFhirStructureDefinition;
@@ -3804,7 +3804,7 @@ begin
   end;
 end;
 
-procedure TFHIRExpressionEngine.log(name, value: String);
+procedure TFHIRPathExpressionEngine.log(name, value: String);
 begin
   if (Flog.length > 0) then
     Flog.append('; ');
@@ -3823,7 +3823,7 @@ begin
 			exit(true);
 end;
 
-function TFHIRExpressionEngine.isAbstractType(list : TFHIRElementDefinitionTypeList) : boolean;
+function TFHIRPathExpressionEngine.isAbstractType(list : TFHIRElementDefinitionTypeList) : boolean;
 var
   s : string;
 begin
@@ -3833,7 +3833,7 @@ begin
   result := (s = 'Element') or (s = 'BackboneElement') or (s = 'Resource') or (s = 'DomainResource');
 end;
 
-function TFHIRExpressionEngine.getElementDefinition(sd : TFHIRStructureDefinition; path : String; allowPM : boolean; var specifiedType : String) : TFHIRElementDefinition;
+function TFHIRPathExpressionEngine.getElementDefinition(sd : TFHIRStructureDefinition; path : String; allowPM : boolean; var specifiedType : String) : TFHIRElementDefinition;
 var
   ed, m : TFhirElementDefinition;
 begin
@@ -3885,12 +3885,12 @@ begin
   end;
 end;
 
-function TFHIRExpressionEngine.hasDataType(ed : TFhirElementDefinition) : boolean;
+function TFHIRPathExpressionEngine.hasDataType(ed : TFhirElementDefinition) : boolean;
 begin
   result := (ed.type_List.Count > 0) and not ((ed.type_list[0].code = 'Element') or (ed.type_list[0].code = 'BackboneElement'));
 end;
 
-function TFHIRExpressionEngine.getElementDefinitionByName(sd : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;
+function TFHIRPathExpressionEngine.getElementDefinitionByName(sd : TFHIRStructureDefinition; name : String) : TFHIRElementDefinition;
 var
   ed : TFhirElementDefinition;
 begin
@@ -4297,7 +4297,7 @@ begin
   Fcontext := Value;
 end;
 
-procedure TFHIRPathDebugPackage.SetExpression(const Value: TFHIRExpressionNode);
+procedure TFHIRPathDebugPackage.SetExpression(const Value: TFHIRPathExpressionNode);
 begin
   FExpression.Free;
   FExpression := Value;

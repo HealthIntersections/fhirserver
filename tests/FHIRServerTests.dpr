@@ -268,7 +268,10 @@ uses
   CqlTests in '..\Libraries\cql\CqlTests.pas',
   RestFulServerTests in 'RestFulServerTests.pas',
   SmartOnFhirTestingLogin in 'SmartOnFhirTestingLogin.pas',
-  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
+  GraphDefinitionEngine in '..\Server\GraphDefinitionEngine.pas',
+  GraphDefinitionTests in 'GraphDefinitionTests.pas',
+  UcumTests in '..\Libraries\ucum\UcumTests.pas';
 
 var
   runner : ITestRunner;

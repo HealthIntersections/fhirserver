@@ -575,9 +575,9 @@ End;
 
 Function TUcumLexer.isValidSymbolChar(ch : Char; allowDigits, inSquares : boolean): boolean;
 Begin
-        result := ((allowDigits) and (ch >= '0') and (ch <= '9')) or (inSquares or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or
-             (ch = '[') or (ch = ']') or (ch = '%') or (ch = '*') or (ch = '^') or (ch = '''') or
-             (ch = '"') or (ch = '_'));
+  result := ((allowDigits) and (ch >= '0') and (ch <= '9')) or (inSquares or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or
+       (ch = '[') or (ch = ']') or (ch = '%') or (ch = '*') or (ch = '^') or (ch = '''') or
+       (ch = '"') or (ch = '_')) or (inSquares and (ch = '.'));
 End;
 
 Function TUcumLexer.checkAnnotation(ch : Char) : boolean;
@@ -590,6 +590,8 @@ Begin
     while (ch <> '}') Do
     Begin
       ch := nextChar();
+      if ord(ch) > 255 then
+        raise Exception.Create('Error processing Unit_"'+FSource+'": annotation contains non-ascii characters');
       if (ch = #0) Then
         raise Exception.Create('Error processing Unit_"'+FSource+'": unterminated annotation');
       if (ch <> '}') then
@@ -1159,7 +1161,6 @@ begin
   FUnit.Free;
   FUnit := Value;
 end;
-
 
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;

@@ -36,7 +36,7 @@ uses
 
 type
   TTreeDataPointer = record
-    expr : TFHIRExpressionNode;
+    expr : TFHIRPathExpressionNode;
     op : boolean;
   end;
   PTreeDataPointer = ^TTreeDataPointer;
