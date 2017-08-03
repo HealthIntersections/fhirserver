@@ -144,7 +144,7 @@ Type
     // configuration items
     FContext: TWorkerContext;
     FExtensionDomains: TStringList;
-    FPathEngine : TFHIRPathExpressionEngine;
+    FPathEngine : TFHIRPathEngine;
 
 //    function LoadDoc(name: String; isFree: boolean = false): TMXmlDocument2;
 
@@ -447,7 +447,7 @@ constructor TFHIRValidator.Create(context: TWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRPathExpressionEngine.create(FContext.link);
+  FPathEngine := TFHIRPathEngine.create(FContext.link);
 end;
 
 destructor TFHIRValidator.Destroy;

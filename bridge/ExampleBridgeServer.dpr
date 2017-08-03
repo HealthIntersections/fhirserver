@@ -215,7 +215,9 @@ uses
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   CDSHooksServer in '..\Server\CDSHooksServer.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
-  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
+  ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
+  JWTService in '..\Server\JWTService.pas';
 
 var
   gsrv : TExampleFhirServer;

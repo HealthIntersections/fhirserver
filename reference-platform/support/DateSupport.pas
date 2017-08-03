@@ -482,6 +482,8 @@ end;
 function TDateTimeEx.ToString(format: String): String;
 begin
   check;
+  if (format = 'c') then
+    format := FormatSettings.shortDateFormat+' '+FormatSettings.LongTimeFormat;
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));

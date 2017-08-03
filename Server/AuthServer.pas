@@ -34,23 +34,17 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, System.Generics.Collections,
-
-  IniFiles,
-
+  SysUtils, Classes, System.Generics.Collections, IniFiles,
   IdContext, IdCustomHTTPServer, IdCookie,
-
-  ParseMap, KDBManager, KDBDialects, KCritSct,
-
-  StringSupport, EncodeSupport, GUIDSupport, DateSupport, AdvObjects, AdvMemories, AdvJSON, JWT, AdvExceptions, AdvGenerics,
-
-  FacebookSupport, SCIMServer, SCIMObjects,
-
+  ParseMap, KDBManager, KDBDialects, KCritSct, HashSupport, StringSupport, EncodeSupport, GUIDSupport, DateSupport,
+  AdvObjects, AdvMemories, AdvJSON, AdvExceptions, AdvGenerics,
+  FacebookSupport, SCIMServer, SCIMObjects, JWT,
   FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
-  FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService;
+  FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, ClientApplicationVerifier, JWTService;
 
 Const
   FHIR_COOKIE_NAME = 'fhir-session-idx';
+  INTERNAL_SECRET = '\8u8J*O{a0Y78.}o%ql9';
 
 type
   TDoSearchEvent = function (session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle of object;
@@ -76,9 +70,6 @@ type
     FFilePath : String;
     FSSLPort : String;
     FHost : String;
-    FRootCert : String;
-    FSSLCert : String;
-    FSSLPassword : String;
 
     FFacebookAppid : String;
     FFacebookAppSecret : String;
@@ -95,15 +86,22 @@ type
     FOnDoSearch : TDoSearchEvent;
     FPath: String;
     FActive : boolean;
+    FClientApplicationVerifier: TClientApplicationVerifier;
+    FJWTServices: TJWTServices;
     function GetPatientListAsOptions : String;
+    procedure populateFromConsent(consentKey : integer; session : TFhirSession);
+
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleUserDetails(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    procedure HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+    procedure HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
     Procedure HandleSkype(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     function checkNotEmpty(v, n: String): String;
     function isAllowedRedirect(client_id, redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
@@ -114,6 +112,8 @@ type
     procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
     procedure readScopes(scopes: TStringList; params: TParseMap);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
+    procedure SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
+    procedure SetJWTServices(const Value: TJWTServices);
 
   public
     Constructor Create(ini : String; filePath, Host, SSLPort : String);
@@ -132,9 +132,6 @@ type
     property GoogleAppKey : String read FGoogleAppKey;
     property HL7Appid : String read FHL7Appid;
     function MakeLoginToken(path: String; provider: TFHIRAuthProvider): String;
-    property RootCert : String read FRootCert write FRootCert;
-    property SSLCert : String read FSSLCert write FSSLCert;
-    property SSLPassword : String read FSSLPassword write FSSLPassword;
     property AdminEmail : String read FAdminEmail write FAdminEmail;
     property path : String read FPath write FPath;
 
@@ -145,7 +142,10 @@ type
     Property Ini : TFHIRServerIniFile read FIni;
     property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
+    property clientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
+    property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
     property Active : boolean read FActive write FActive;
+    property Host : String read FHost write FHost;
   end;
 
 
@@ -179,6 +179,8 @@ end;
 
 destructor TAuth2Server.Destroy;
 begin
+  FJWTServices.Free;
+  FClientApplicationVerifier.Free;
   FLoginTokens.Free;;
   FLock.Free;
   FServerContext.Free;
@@ -266,6 +268,11 @@ end;
 
 
 
+procedure TAuth2Server.populateFromConsent(consentKey: integer; session: TFhirSession);
+begin
+  raise Exception.Create('to do');
+end;
+
 function TAuth2Server.checkNotEmpty(v , n : String) : String;
 begin
   if (v = '') then
@@ -315,8 +322,11 @@ begin
   cookie.Secure := secure;
 end;
 
-
-
+procedure TAuth2Server.SetJWTServices(const Value: TJWTServices);
+begin
+  FJWTServices.Free;
+  FJWTServices := Value;
+end;
 
 procedure TAuth2Server.SetServerContext(const Value: TFHIRServerContext);
 begin
@@ -343,6 +353,9 @@ var
   state : String;
   aud : String;
   id : String;
+  jwts : String;
+  jwt : TJWT;
+  notes : String;
   variables : TDictionary<String,String>;
 begin
   if params.GetVar('response_type') <> 'code' then
@@ -351,6 +364,7 @@ begin
   if FIni.ReadString(voVersioningNotApplicable, client_id, 'name', '') = '' then
     raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
   redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
+  jwts := FIni.ReadString(voVersioningNotApplicable, client_id, 'jwt', '');
   if not isAllowedRedirect(client_id, redirect_uri) then
     raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
   scope := checkNotEmpty(params.GetVar('scope'), 'scope');
@@ -362,11 +376,24 @@ begin
   id := newguidid;
   ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
 
+  if (jwts <> '') and (FClientApplicationVerifier <> nil) then
+  begin
+    jwt := TJWTUtils.unpack(jwts, false, nil);
+    try
+      notes := FClientApplicationVerifier.check(jwt, nil);
+    finally
+      jwt.Free;
+    end;
+  end
+  else
+    notes := ' <li>The Client Application Service has not checked this client</li>';
+
   variables := TDictionary<String,String>.create;
   try
     variables.Add('/oauth2', FPath);
     variables.Add('idmethods', BuildLoginList(id));
     variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
+    variables.Add('client-notes', notes);
     OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
   finally
     variables.free;
@@ -461,6 +488,12 @@ begin
   end;
 end;
 
+procedure TAuth2Server.SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
+begin
+  FClientApplicationVerifier.Free;
+  FClientApplicationVerifier := Value;
+end;
+
 procedure TAuth2Server.HandleChoice(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
   client_id, name, authurl: String;
@@ -500,7 +533,7 @@ begin
         if session.Email <> '' then
           session.jwt.email := session.Email;
       end;
-      session.JWTPacked := TJWTUtils.rsa_pack(session.jwt, jwt_hmac_rsa256, ChangeFileExt(FSSLCert, '.key'), FSSLPassword);
+      session.JWTPacked := JWTServices.pack(session.JWT);
 
       ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
       if params.GetVar('patient') <> '' then
@@ -566,27 +599,16 @@ begin
   end;
 end;
 
-procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
-var
-  jwk : TJWK;
-  authurl : String;
+procedure TAuth2Server.HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 begin
-  if FSSLPort = '443' then
-    authurl := 'https://'+FHost+FPath
-  else
-    authurl := 'https://'+FHost+':'+FSSLPort+FPath;
+  response.ContentType := 'application/jwt';
+  response.ContentText := JWTServices.makeJWT;
+end;
 
-  jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(FSSLCert));
-  try
-    jwk.obj['alg'] := 'RS256';
-    jwk.obj['use'] := 'sig';
-    jwk.obj['kid'] := authurl+'/auth_key';
-
-    response.ContentType := 'application/json';
-    response.ContentText := TJSONWriter.writeObjectStr(jwk.obj, true);
-  finally
-    jwk.free;
-  end;
+procedure TAuth2Server.HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+begin
+  response.ContentType := 'application/json';
+  response.ContentText := JWTServices.makeJWK;
 end;
 
 procedure TAuth2Server.HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
@@ -724,6 +746,8 @@ begin
           HandleSkype(AContext, request, session, params, response)
         else if (request.Document = FPath+'/auth_key') then
           HandleKey(AContext, request, session, params, response)
+        else if (request.Document = FPath+'/auth_jwt') then
+          HandleKeyToken(AContext, request, session, params, response)
         else if (request.Document = FPath+'/discovery') then
           HandleDiscovery(AContext, request, response)
         else if (request.Document = FPath+'/userdetails') then
@@ -820,6 +844,112 @@ end;
 
 procedure TAuth2Server.HandleToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 var
+  json : TJSONWriter;
+begin
+  if params.getVar('grant_type') = 'authorization_code' then
+    HandleTokenOAuth(AContext, request, session, params, response)
+  else if params.getVar('grant_type') = 'client_credentials' then
+     HandleTokenBearer(AContext, request, params, response)
+  else
+  begin
+    response.ResponseNo := 500;
+    response.ContentType := 'application/json';
+    json := TJsonWriter.create;
+    try
+      json.Start;
+      json.Value('error', 'unsupported_grant_type');
+      json.Value('error_description', 'Unknown Grant Type '+params.getVar('grant_type'));
+      json.Finish;
+      response.ContentText := json.ToString;
+    finally
+      json.Free;
+    end;
+  end;
+end;
+
+procedure TAuth2Server.HandleTokenBearer(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+var
+  errCode, jwtStored, domain : string;
+  json : TJsonWriter;
+  jwt : TJWT;
+  expiry : TDateTime;
+  PatientKey, ConsentKey, SessionKey : integer;
+  hash : integer;
+  session : TFhirSession;
+begin
+  domain := request.Host;
+  if domain.Contains(':') then
+    domain := domain.Substring(0, domain.IndexOf(':'));
+
+  response.ContentType := 'application/json';
+  try
+    errCode := 'invalid_request';
+    if not (request.AuthUsername = INTERNAL_SECRET) then
+      raise Exception.Create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
+    try
+      jwt := TJWTUtils.unpack(request.AuthPassword, false, nil); // todo:
+    except
+      on e : exception do
+        raise Exception.Create('Error reading JWT: '+e.message);
+    end;
+    try
+      hash := HashStringToCode32(request.AuthPassword);
+      if not ServerContext.Storage.FetchAuthorization(hash, PatientKey, ConsentKey, SessionKey, Expiry, jwtStored) then
+        raise Exception.Create('Unrecognised Token');
+      if (jwtStored <> request.AuthPassword) then
+        raise Exception.Create('Token mismatch'); // the hashes collided!
+      if (expiry < now) then
+        raise Exception.Create('The authorization has expired');
+
+      session := ServerContext.SessionManager.RegisterSessionFromPastSession(userBearerJWT, sessionKey, expiry, AContext.Binding.PeerIP);
+      try
+        session.SystemName := jwt.subject;
+        session.SystemEvidence := systemFromJWT;
+        setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+        populateFromConsent(consentKey, session);
+
+        json := TJsonWriter.create;
+        try
+          json.Start;
+          json.Value('access_token', session.Cookie);
+          json.Value('token_type', 'Bearer');
+          json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+          json.Value('id_token', session.JWTPacked);
+          json.Value('scope', session.scopes);
+          json.Value('patient', session.PatientList[0]);
+          json.Finish;
+          response.ContentText := json.ToString;
+        finally
+          json.Free;
+        end;
+      finally
+        session.Free;
+      end;
+    finally
+      jwt.Free;
+    end;
+    response.ResponseNo := 200;
+  except
+    on e : Exception do
+    begin
+      response.ResponseNo := 500;
+      json := TJsonWriter.create;
+      try
+        json.Start;
+        json.Value('error', errCode);
+        json.Value('error_description', e.Message);
+        json.Finish;
+        response.ContentText := json.ToString;
+      finally
+        json.Free;
+      end;
+    end;
+  end;
+end;
+
+procedure TAuth2Server.HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
+
+var
   code, clientId, clientSecret, uri, errCode, client_id : string;
   psecret, pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
@@ -830,9 +960,6 @@ begin
   try
     try
       // first, we check the fixed value
-      errCode := 'unsupported_grant_type';
-      if params.getVar('grant_type') <> 'authorization_code' then
-        raise Exception.Create('Invalid grant_type - must be authorization_code');
 
       // now, check the code
       errCode := 'invalid_request';
@@ -911,6 +1038,7 @@ begin
         end;
       end;
     end;
+    response.ContentType := 'application/json';
     response.ContentText := buffer.Buffer.AsUnicode;
     response.WriteContent;
   finally

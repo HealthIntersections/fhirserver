@@ -884,7 +884,7 @@ end;
 
 procedure TFhirIndexManager.evaluateByFHIRPath(key : integer; context, resource: TFhirResource);
 var
-  path : TFHIRPathExpressionEngine;
+  path : TFHIRPathEngine;
   i : integer;
   ndx : TFhirIndex;
   matches : TFHIRSelectionList;
@@ -894,7 +894,7 @@ var
   s : string;
   ie : TFhirIndexEntry;
 begin
-  path := TFHIRPathExpressionEngine.Create(FValidationInfo.link);
+  path := TFHIRPathEngine.Create(FValidationInfo.link);
   try
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin

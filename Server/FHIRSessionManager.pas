@@ -63,6 +63,7 @@ Type
     function GetSession(sCookie: String; var session: TFhirSession; var check: Boolean): Boolean;
     function GetSessionByToken(outerToken: String; var session: TFhirSession): Boolean;
     function RegisterSession(userEvidence : TFHIRUserIdEvidence; provider: TFHIRAuthProvider; innerToken, outerToken, id, name, email, original, expires, ip, rights: String): TFhirSession;
+    function RegisterSessionFromPastSession(userEvidence : TFHIRUserIdEvidence; pastSessionKey : integer; expires : TDateTime; ip : String) : TFhirSession;
     procedure MarkSessionChecked(sCookie: String);
     function isOkBearer(token, clientInfo: String; var session: TFhirSession): Boolean;
     function isOkSession(session: TFhirSession): Boolean;
@@ -643,6 +644,57 @@ begin
 
     session.scopes := rights;
     // empty, mostly - user will assign them later when they submit their choice
+
+    FLock.Lock('RegisterSession');
+    try
+      inc(FLastSessionKey);
+      session.key := FLastSessionKey;
+      FSessions.Add(session.Cookie, session.Link);
+    finally
+      FLock.Unlock;
+    end;
+
+    TFHIRServerContext(serverContext).Storage.RegisterAuditEvent(session, ip);
+
+    result := session.Link as TFhirSession;
+  finally
+    session.free;
+  end;
+  TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
+end;
+
+function TFHIRSessionManager.RegisterSessionFromPastSession(userEvidence: TFHIRUserIdEvidence; pastSessionKey: integer; expires: TDateTime; ip: String): TFhirSession;
+var
+  session: TFhirSession;
+  key : integer;
+  UserKey, Provider: integer;
+  Id, Name, Email: String;
+begin
+  if not TFHIRServerContext(serverContext).Storage.RetrieveSession(pastSessionKey, UserKey, Provider, Id, Name, Email) then
+    raise Exception.Create('Unable to retrieve past session '+inttostr(pastSessionKey));
+
+  session := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.Link, true);
+  try
+    session.innerToken := NewGuidURN;
+    session.outerToken := NewGuidURN;
+    session.id := id; // same id?
+    session.expires := expires;
+    session.Cookie := OAUTH_SESSION_PREFIX + NewGuidId;
+    session.providerCode := TFHIRAuthProvider(provider);
+    session.providerName := Names_TFHIRAuthProvider[session.providerCode];
+    session.email := email;
+    session.NextTokenCheck := TDateTimeEx.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE;
+    session.User := TFHIRServerContext(serverContext).UserProvider.loadUser(UserKey);
+    session.UserEvidence := userEvidence;
+    session.UserKey := key;
+    session.UserName := name;
+    if session.UserName = '' then
+      session.UserName := session.User.userName;
+    session.SystemName := 'unknown';
+    session.SessionName := session.UserName+' ('+session.SystemName+')';
+    session.email := email;
+    if (session.email = '') and (session.User.emails.Count > 0) then
+      session.email := session.User.emails[0].value;
 
     FLock.Lock('RegisterSession');
     try

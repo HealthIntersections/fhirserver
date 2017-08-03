@@ -312,7 +312,9 @@ uses
   FHIRParserTurtle in '..\reference-platform\r4\FHIRParserTurtle.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
-  GraphDefinitionEngine in 'GraphDefinitionEngine.pas';
+  GraphDefinitionEngine in 'GraphDefinitionEngine.pas',
+  ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
+  JWTService in 'JWTService.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

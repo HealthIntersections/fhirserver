@@ -507,9 +507,9 @@ end;
 
 function TFetchResourceFrm.GetCell(res: TFhirResource; path: String): String;
 var
-  query : TFHIRPathExpressionEngine;
+  query : TFHIRPathEngine;
 begin
-  query := TFHIRPathExpressionEngine.create(nil);
+  query := TFHIRPathEngine.create(nil);
   try
     result := query.evaluateToString(nil, res, path);
   finally

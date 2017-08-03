@@ -324,6 +324,7 @@ var
   dbi : TFHIRDatabaseInstaller;
   meta : TKDBMetaData;
 begin
+  logt('Config file = '+FIni.FileName);
   dbn := FIni.ReadString(voMaybeVersioned, 'database', 'database', '');
   ddr := FIni.ReadString(voMaybeVersioned, 'database', 'driver', 'SQL Server Native Client 11.0');
   if TestMode then

@@ -176,6 +176,9 @@ Type
 
     FCloseAll : boolean;
     FSemaphores : TAdvMap<TWebSocketQueueInfo>;
+
+    fpp : TFHIRPathParser;
+    fpe : TFHIRPathEngine;
     function wsWait(id : String) : boolean;
     function wsConnect(id : String; persistent : boolean) : boolean;
     procedure wsDisconnect(id : String);
@@ -283,6 +286,8 @@ begin
   FSubscriptions := TSubscriptionEntryList.Create;
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
+  fpp := TFHIRPathParser.create;
+  fpe := TFHIRPathEngine.Create(TFHIRServerContext(ServerContext).ValidatorContext.Link);
   FCloseAll := false;
   FLastPopCheck := 0;
   {$IFDEF FHIR4}
@@ -292,6 +297,8 @@ end;
 
 destructor TSubscriptionManager.Destroy;
 begin
+  fpe.Free;
+  fpp.Free;
   wsWakeAll;
   {$IFDEF FHIR4}
   FEventDefinitions.Free;
@@ -340,7 +347,8 @@ var
       ts.Add(message);
     result := test;
   end;
-
+var
+  expr : TFHIRPathExpressionNode;
 begin
   ts := TStringList.Create;
   try
@@ -377,18 +385,23 @@ begin
           rule(evd.trigger.name = '', 'Topic has named trigger, which is not supported');
           rule(evd.trigger.timing = nil, 'Topic has event timing on trigger, which is not supported');
           rule((evd.trigger.data = nil) or (evd.trigger.condition = nil), 'Topic has both data and condition on trigger, which is not supported');
-          if evd.trigger.condition <> nil then
-          begin
-            rule(evd.trigger.condition.language = 'text\fhirpath', 'Condition language must be FHIRPath');
-            rule(evd.trigger.condition.expression <> '', 'Condition FHIRPath must not be blank');
-            // todo: compile....
-          end;
           if evd.trigger.data <> nil then
           begin
             rule(evd.trigger.data.type_ <> AllTypesNull, 'DataRequirement type must not be present');
             rule(evd.trigger.data.profileList.IsEmpty, 'DataRequirement profile must be absent');
-  //          rule(evd.trigger.eventData. <> '', 'Condition FHIRPath must not be blank');
-            // todo: compile....
+            if evd.trigger.condition <> nil then
+            begin
+              rule(evd.trigger.condition.language = 'text\fhirpath', 'Condition language must be FHIRPath');
+              rule(evd.trigger.condition.expression <> '', 'Condition FHIRPath must not be blank');
+              try
+                expr := fpp.parse(evd.trigger.condition.expression);
+                evd.trigger.condition.expressionElement.Tag := expr;
+                fpe.check(nil, CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], CODES_TFhirAllTypesEnum[evd.trigger.data.type_], expr, false);
+              except
+                on e : exception do
+                  rule(false, 'Error parsing expression: '+e.Message);
+              end;
+            end;
           end;
         end;
       finally
@@ -1321,7 +1334,7 @@ function processUrlTemplate(url : String; resource : TFhirResource) : String;
 var
   b, e : integer;
   code, value : String;
-  qry : TFHIRPathExpressionEngine;
+  qry : TFHIRPathEngine;
   o : TFHIRSelection;
   results : TFHIRSelectionList;
 begin
@@ -1334,7 +1347,7 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRPathExpressionEngine.create(nil);
+      qry := TFHIRPathEngine.create(nil);
       try
         results := qry.evaluate(nil, resource, code);
         try
@@ -1544,8 +1557,38 @@ end;
 
 {$IFDEF FHIR4}
 function TSubscriptionManager.MeetsCriteriaEvent(evd : TFHIREventDefinition; subscription : TFhirSubscription; typekey, key, ResourceVersionKey, ResourcePreviousKey: integer; conn: TKDBConnection): boolean;
+var
+  old : TFhirResource;
+  new : TFhirResource;
+  oldId, newId : string;
 begin
-  result := false; // todo
+  new := LoadResourceFromDBByVer(conn, ResourceVersionKey, newId);
+  try
+    old := nil;
+    if ResourcePreviousKey <> 0 then
+    begin
+      old := LoadResourceFromDBByVer(conn, ResourcePreviousKey, oldId);
+      assert(newId = oldId);
+    end;
+    try
+      // todo: code and date requirements from DataRequirement
+      if evd.trigger.condition <> nil then
+      begin
+
+      end
+      else
+        result := false;
+    finally
+      old.Free;
+    end;
+  finally
+    new.Free;
+  end;
+
+//  is the date criteria met?
+//  is the code criteria met?
+//  is the expression criteria met?
+//  result := false; // todo
 end;
 {$ENDIF}
 

@@ -85,7 +85,7 @@ type
   private
 	  FWorker : TWorkerContext;
    	fpp : TFHIRPathParser;
-   	fpe : TFHIRPathExpressionEngine;
+   	fpe : TFHIRPathEngine;
   	FLib : TAdvMap<TFHIRStructureMap>;
   	FServices : TTransformerServices;
     procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
@@ -151,7 +151,7 @@ begin
 	FWorker := context;
   FLib := lib;
   FServices := services;
-  fpe := TFHIRPathExpressionEngine.Create(context.link);
+  fpe := TFHIRPathEngine.Create(context.link);
   fpp := TFHIRPathParser.create;
 end;
 

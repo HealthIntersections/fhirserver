@@ -3,7 +3,7 @@ object Form4: TForm4
   Top = 0
   Caption = 'FhirServer Tools'
   ClientHeight = 395
-  ClientWidth = 711
+  ClientWidth = 724
   Color = clBtnFace
   Constraints.MinHeight = 400
   Constraints.MinWidth = 720
@@ -675,23 +675,21 @@ object Form4: TForm4
   object PageControl1: TPageControl
     Left = 115
     Top = 0
-    Width = 596
+    Width = 609
     Height = 395
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     Style = tsButtons
     TabOrder = 1
     StyleElements = [seFont, seClient]
+    ExplicitWidth = 596
     object TabSheet1: TTabSheet
       Caption = 'SNOMED Import'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 588
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 588
+        Width = 601
         Height = 41
         Align = alTop
         Alignment = taLeftJustify
@@ -704,20 +702,22 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
+        ExplicitWidth = 588
       end
       object Panel3: TPanel
         Left = 0
         Top = 323
-        Width = 588
+        Width = 601
         Height = 41
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           41)
         object btnSnomedImportClose: TBitBtn
-          Left = 501
+          Left = 514
           Top = 9
           Width = 82
           Height = 25
@@ -752,9 +752,10 @@ object Form4: TForm4
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0C9E76C9BD2709DD2}
           TabOrder = 0
           OnClick = btnCloseClick
+          ExplicitLeft = 501
         end
         object btnImportSnomed: TBitBtn
-          Left = 413
+          Left = 426
           Top = 9
           Width = 82
           Height = 25
@@ -789,6 +790,7 @@ object Form4: TForm4
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           TabOrder = 1
           OnClick = btnImportSnomedClick
+          ExplicitLeft = 413
         end
         object btnSnomedImportStop: TBitBtn
           Left = 2
@@ -831,18 +833,19 @@ object Form4: TForm4
       object Panel4: TPanel
         Left = 0
         Top = 272
-        Width = 588
+        Width = 601
         Height = 51
         Align = alBottom
         BevelInner = bvLowered
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 2
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           51)
         object lblSCTAmount: TLabel
-          Left = 550
+          Left = 563
           Top = 10
           Width = 29
           Height = 13
@@ -859,24 +862,26 @@ object Form4: TForm4
         object prgSnomedImport: TProgressBar
           Left = 10
           Top = 10
-          Width = 535
+          Width = 548
           Height = 17
           Anchors = [akLeft, akTop, akRight]
           MarqueeInterval = 1
           Step = 1
           TabOrder = 0
+          ExplicitWidth = 535
         end
       end
       object Panel5: TPanel
         Left = 0
         Top = 101
-        Width = 588
+        Width = 601
         Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 3
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           171)
         object Label2: TLabel
           Left = 10
@@ -907,7 +912,7 @@ object Form4: TForm4
           Caption = 'Destination'
         end
         object btnSource: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 4
           Width = 27
           Height = 28
@@ -943,7 +948,7 @@ object Form4: TForm4
           ExplicitLeft = 498
         end
         object btnDestination: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 100
           Width = 27
           Height = 28
@@ -981,15 +986,16 @@ object Form4: TForm4
         object edtSource: TEdit
           Left = 80
           Top = 6
-          Width = 473
+          Width = 486
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
+          ExplicitWidth = 473
         end
         object cbxEdition: TComboBox
           Left = 80
           Top = 38
-          Width = 502
+          Width = 515
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -1005,30 +1011,33 @@ object Form4: TForm4
             'Sweden'
             'UK'
             'Custom Combined')
+          ExplicitWidth = 502
         end
         object edtDate: TDateTimePicker
           Left = 80
           Top = 71
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           Date = 42643.695417002320000000
           Time = 42643.695417002320000000
           TabOrder = 2
+          ExplicitWidth = 502
         end
         object edtDestination: TEdit
           Left = 80
           Top = 104
-          Width = 473
+          Width = 486
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
+          ExplicitWidth = 473
         end
       end
       object Panel6: TPanel
         Left = 0
         Top = 41
-        Width = 588
+        Width = 601
         Height = 60
         Align = alTop
         BevelInner = bvLowered
@@ -1036,23 +1045,25 @@ object Form4: TForm4
         BorderWidth = 4
         ParentBackground = False
         TabOrder = 4
+        ExplicitWidth = 588
         object Panel7: TPanel
           Left = 5
           Top = 5
-          Width = 578
+          Width = 591
           Height = 50
           Align = alClient
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 578
           DesignSize = (
-            578
+            591
             50)
           object Label6: TLabel
             Left = 4
             Top = 4
-            Width = 596
+            Width = 609
             Height = 45
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -1072,23 +1083,21 @@ object Form4: TForm4
     object TabSheet4: TTabSheet
       Caption = 'Snomed Combination'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 588
       object Panel20: TPanel
         Left = 0
         Top = 323
-        Width = 588
+        Width = 601
         Height = 41
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           41)
         object btnCloseCombine: TBitBtn
-          Left = 501
+          Left = 514
           Top = 9
           Width = 82
           Height = 25
@@ -1123,9 +1132,10 @@ object Form4: TForm4
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0C9E76C9BD2709DD2}
           TabOrder = 0
           OnClick = btnCloseClick
+          ExplicitLeft = 501
         end
         object btnCombineGo: TBitBtn
-          Left = 405
+          Left = 418
           Top = 9
           Width = 82
           Height = 25
@@ -1160,6 +1170,7 @@ object Form4: TForm4
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           TabOrder = 1
           OnClick = btnCombineGoClick
+          ExplicitLeft = 405
         end
         object btnStopCombine: TBitBtn
           Left = 2
@@ -1202,18 +1213,19 @@ object Form4: TForm4
       object Panel21: TPanel
         Left = 0
         Top = 272
-        Width = 588
+        Width = 601
         Height = 51
         Align = alBottom
         BevelInner = bvLowered
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 1
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           51)
         object lblCombineAmount: TLabel
-          Left = 550
+          Left = 563
           Top = 10
           Width = 29
           Height = 13
@@ -1230,18 +1242,19 @@ object Form4: TForm4
         object prgCombine: TProgressBar
           Left = 10
           Top = 10
-          Width = 535
+          Width = 548
           Height = 17
           Anchors = [akLeft, akTop, akRight]
           MarqueeInterval = 1
           Step = 1
           TabOrder = 0
+          ExplicitWidth = 535
         end
       end
       object Panel22: TPanel
         Left = 0
         Top = 41
-        Width = 588
+        Width = 601
         Height = 60
         Align = alTop
         BevelInner = bvLowered
@@ -1249,23 +1262,25 @@ object Form4: TForm4
         BorderWidth = 4
         ParentBackground = False
         TabOrder = 2
+        ExplicitWidth = 588
         object Panel23: TPanel
           Left = 5
           Top = 5
-          Width = 578
+          Width = 591
           Height = 50
           Align = alClient
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 578
           DesignSize = (
-            578
+            591
             50)
           object Label17: TLabel
             Left = 4
             Top = 4
-            Width = 596
+            Width = 609
             Height = 45
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -1284,7 +1299,7 @@ object Form4: TForm4
       object Panel24: TPanel
         Left = 0
         Top = 0
-        Width = 588
+        Width = 601
         Height = 41
         Align = alTop
         Alignment = taLeftJustify
@@ -1297,17 +1312,19 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 3
+        ExplicitWidth = 588
       end
       object Panel25: TPanel
         Left = 0
         Top = 101
-        Width = 588
+        Width = 601
         Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           171)
         object Label18: TLabel
           Left = 10
@@ -1324,7 +1341,7 @@ object Form4: TForm4
           Caption = 'Other Editions:'
         end
         object btnInternational: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 4
           Width = 27
           Height = 28
@@ -1360,7 +1377,7 @@ object Form4: TForm4
           ExplicitLeft = 498
         end
         object btnAddEdition: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 38
           Width = 27
           Height = 28
@@ -1396,7 +1413,7 @@ object Form4: TForm4
           ExplicitLeft = 549
         end
         object btnDeleteEdition: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 72
           Width = 27
           Height = 28
@@ -1439,7 +1456,7 @@ object Form4: TForm4
           Caption = 'Destination:'
         end
         object btnCombinedDestination: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 109
           Width = 27
           Height = 28
@@ -1472,6 +1489,7 @@ object Form4: TForm4
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnCombinedDestinationClick
+          ExplicitLeft = 555
         end
         object Label15: TLabel
           Left = 10
@@ -1481,7 +1499,7 @@ object Form4: TForm4
           Caption = 'Store:'
         end
         object btnCombinedStore: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 141
           Width = 27
           Height = 28
@@ -1514,14 +1532,16 @@ object Form4: TForm4
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnCombinedStoreClick
+          ExplicitLeft = 555
         end
         object edtInternational: TEdit
           Left = 88
           Top = 6
-          Width = 461
+          Width = 474
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
+          ExplicitWidth = 461
         end
         object lbEditions: TListBox
           Left = 88
@@ -1535,32 +1555,31 @@ object Form4: TForm4
         object edtCombinedDestination: TEdit
           Left = 88
           Top = 112
-          Width = 461
+          Width = 474
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
+          ExplicitWidth = 461
         end
         object edtCombinedStore: TEdit
           Left = 88
           Top = 144
-          Width = 461
+          Width = 474
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
+          ExplicitWidth = 461
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'LOINC Import'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 588
       object Panel8: TPanel
         Left = 0
         Top = 41
-        Width = 588
+        Width = 601
         Height = 79
         Align = alTop
         BevelInner = bvLowered
@@ -1568,26 +1587,27 @@ object Form4: TForm4
         BorderWidth = 4
         ParentBackground = False
         TabOrder = 0
+        ExplicitWidth = 588
         object Panel9: TPanel
           Left = 5
           Top = 5
-          Width = 578
+          Width = 591
           Height = 69
           Align = alClient
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          ExplicitHeight = 50
+          ExplicitWidth = 578
           DesignSize = (
-            578
+            591
             69)
           object Label7: TLabel
             Left = 4
             Top = 4
-            Width = 596
+            Width = 581
             Height = 64
-            Anchors = [akLeft, akTop, akRight]
+            Anchors = [akLeft, akTop, akRight, akBottom]
             AutoSize = False
             Caption = 
               'This pane allows you to import LOINC to a pre-processed file. Ch' +
@@ -1604,7 +1624,7 @@ object Form4: TForm4
       object Panel10: TPanel
         Left = 0
         Top = 0
-        Width = 588
+        Width = 601
         Height = 41
         Align = alTop
         Alignment = taLeftJustify
@@ -1617,22 +1637,24 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
+        ExplicitWidth = 588
       end
       object Panel11: TPanel
         Left = 0
         Top = 272
-        Width = 588
+        Width = 601
         Height = 51
         Align = alBottom
         BevelInner = bvLowered
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 2
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           51)
         object lblLoincAmount: TLabel
-          Left = 550
+          Left = 563
           Top = 10
           Width = 29
           Height = 13
@@ -1649,27 +1671,29 @@ object Form4: TForm4
         object prgLoincImport: TProgressBar
           Left = 10
           Top = 10
-          Width = 535
+          Width = 548
           Height = 17
           Anchors = [akLeft, akTop, akRight]
           MarqueeInterval = 1
           Step = 1
           TabOrder = 0
+          ExplicitWidth = 535
         end
       end
       object Panel12: TPanel
         Left = 0
         Top = 323
-        Width = 588
+        Width = 601
         Height = 41
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 3
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           41)
         object btnCloseLoinc: TBitBtn
-          Left = 501
+          Left = 514
           Top = 9
           Width = 82
           Height = 25
@@ -1704,9 +1728,10 @@ object Form4: TForm4
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0C9E76C9BD2709DD2}
           TabOrder = 0
           OnClick = btnCloseClick
+          ExplicitLeft = 501
         end
         object btnImportLoinc: TBitBtn
-          Left = 405
+          Left = 418
           Top = 9
           Width = 82
           Height = 25
@@ -1741,6 +1766,7 @@ object Form4: TForm4
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           TabOrder = 1
           OnClick = btnImportLoincClick
+          ExplicitLeft = 405
         end
         object btnLoincImportStop: TBitBtn
           Left = 2
@@ -1783,15 +1809,14 @@ object Form4: TForm4
       object Panel13: TPanel
         Left = 0
         Top = 120
-        Width = 588
+        Width = 601
         Height = 152
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitTop = 101
-        ExplicitHeight = 171
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           152)
         object Label10: TLabel
           Left = 10
@@ -1815,7 +1840,7 @@ object Form4: TForm4
           Caption = 'Destination'
         end
         object btnLoincSource: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 4
           Width = 27
           Height = 28
@@ -1851,7 +1876,7 @@ object Form4: TForm4
           ExplicitLeft = 498
         end
         object btnLoincDest: TSpeedButton
-          Left = 555
+          Left = 568
           Top = 67
           Width = 27
           Height = 28
@@ -1889,41 +1914,41 @@ object Form4: TForm4
         object edtLoincSource: TEdit
           Left = 80
           Top = 6
-          Width = 473
+          Width = 486
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
+          ExplicitWidth = 473
         end
         object edtLoincDest: TEdit
           Left = 80
           Top = 71
-          Width = 473
+          Width = 486
           Height = 21
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 1
+          TabOrder = 2
+          ExplicitWidth = 473
         end
         object edtLoincVersion: TEdit
           Left = 80
           Top = 38
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 2
+          TabOrder = 1
           TextHint = '2.56'
+          ExplicitWidth = 502
         end
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Process UMLS'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 588
       object Panel14: TPanel
         Left = 0
         Top = 0
-        Width = 588
+        Width = 601
         Height = 41
         Align = alTop
         Alignment = taLeftJustify
@@ -1936,11 +1961,12 @@ object Form4: TForm4
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
+        ExplicitWidth = 588
       end
       object Panel15: TPanel
         Left = 0
         Top = 41
-        Width = 588
+        Width = 601
         Height = 60
         Align = alTop
         BevelInner = bvLowered
@@ -1948,23 +1974,25 @@ object Form4: TForm4
         BorderWidth = 4
         ParentBackground = False
         TabOrder = 1
+        ExplicitWidth = 588
         object Panel16: TPanel
           Left = 5
           Top = 5
-          Width = 578
+          Width = 591
           Height = 50
           Align = alClient
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 578
           DesignSize = (
-            578
+            591
             50)
           object Label1: TLabel
             Left = 4
             Top = 4
-            Width = 596
+            Width = 609
             Height = 45
             Anchors = [akLeft, akTop, akRight]
             AutoSize = False
@@ -1980,13 +2008,14 @@ object Form4: TForm4
       object Panel17: TPanel
         Left = 0
         Top = 101
-        Width = 588
+        Width = 601
         Height = 171
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 2
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           171)
         object Label8: TLabel
           Left = 10
@@ -2019,51 +2048,56 @@ object Form4: TForm4
         object edtUMLSServer: TEdit
           Left = 80
           Top = 6
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
+          ExplicitWidth = 502
         end
         object edtUMLSUsername: TEdit
           Left = 80
           Top = 71
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 1
+          TabOrder = 2
+          ExplicitWidth = 502
         end
         object edtUMLSDatabase: TEdit
           Left = 80
           Top = 38
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 2
+          TabOrder = 1
+          ExplicitWidth = 502
         end
         object edtUMLSPassword: TEdit
           Left = 80
           Top = 103
-          Width = 502
+          Width = 515
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
+          ExplicitWidth = 502
         end
       end
       object Panel18: TPanel
         Left = 0
         Top = 272
-        Width = 588
+        Width = 601
         Height = 51
         Align = alBottom
         BevelInner = bvLowered
         BevelOuter = bvNone
         BorderWidth = 4
         TabOrder = 3
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           51)
         object lblUMLSAmount: TLabel
-          Left = 550
+          Left = 563
           Top = 10
           Width = 29
           Height = 13
@@ -2080,27 +2114,29 @@ object Form4: TForm4
         object prgUMLSImport: TProgressBar
           Left = 10
           Top = 10
-          Width = 535
+          Width = 548
           Height = 17
           Anchors = [akLeft, akTop, akRight]
           MarqueeInterval = 1
           Step = 1
           TabOrder = 0
+          ExplicitWidth = 535
         end
       end
       object Panel19: TPanel
         Left = 0
         Top = 323
-        Width = 588
+        Width = 601
         Height = 41
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 4
+        ExplicitWidth = 588
         DesignSize = (
-          588
+          601
           41)
         object btnUMLSClose: TBitBtn
-          Left = 501
+          Left = 514
           Top = 9
           Width = 82
           Height = 25
@@ -2135,9 +2171,10 @@ object Form4: TForm4
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0C9E76C9BD2709DD2}
           TabOrder = 0
           OnClick = btnCloseClick
+          ExplicitLeft = 501
         end
         object btnProcessUMLS: TBitBtn
-          Left = 405
+          Left = 418
           Top = 9
           Width = 82
           Height = 25
@@ -2172,6 +2209,7 @@ object Form4: TForm4
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           TabOrder = 1
           OnClick = btnProcessUMLSClick
+          ExplicitLeft = 405
         end
         object btnUMLSStop: TBitBtn
           Left = 2

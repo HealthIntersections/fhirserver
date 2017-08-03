@@ -282,6 +282,7 @@ Type
     Procedure WriteObjectInner(obj : TJsonObject);
     Procedure WriteArray(name : String; arr : TJsonArray);
 
+    function ToString : String; override;
     class Function writeObject(obj : TJsonObject; pretty : boolean = false) : TBytes; overload;
     class Function writeObjectStr(obj : TJsonObject; pretty : boolean = false) : String; overload;
     class Procedure writeObject(stream : TStream; obj : TJsonObject; pretty : boolean = false); overload;
@@ -400,6 +401,8 @@ function JsonStringToBool(s : String; def : boolean = false) : boolean;
 
 Implementation
 
+uses
+  AdvStringStreams;
 
 { TJSONWriter }
 
@@ -417,8 +420,18 @@ End;
 
 procedure TJSONWriter.Start;
 begin
+  if not HasStream then
+    Stream := TAdvStringStream.create;
   ProduceLine('{');
   LevelDown;
+end;
+
+function TJSONWriter.toString: String;
+begin
+  if (Stream <> nil) and (Stream is TAdvStringStream) then
+    result := TAdvStringStream(Stream).Data
+  else
+    result := inherited toString;
 end;
 
 procedure TJSONWriter.Finish;

@@ -43,7 +43,7 @@ type
   TFHIRGraphDefinitionEngine = class (TAdvObject)
   private
     FContext : TWorkerContext;
-    FPathEngine : TFHIRPathExpressionEngine;
+    FPathEngine : TFHIRPathEngine;
 
     FOnFollowReference : TFHIRGraphQLEngineDereferenceEvent;
     FOnListResources : TFHIRGraphQLEngineListResourcesEvent;
@@ -85,7 +85,7 @@ type
     property OnListResources : TFHIRGraphQLEngineListResourcesEvent read FOnListResources write FOnListResources;
     property OnLookup : TFHIRGraphQLEngineLookupEvent read FOnLookup write FOnLookup;
 
-    property PathEngine : TFHIRPathExpressionEngine read FPathEngine;
+    property PathEngine : TFHIRPathEngine read FPathEngine;
     procedure execute;
   end;
 
@@ -97,7 +97,7 @@ constructor TFHIRGraphDefinitionEngine.Create(context : TWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRPathExpressionEngine.Create(context.link);
+  FPathEngine := TFHIRPathEngine.Create(context.link);
 end;
 
 destructor TFHIRGraphDefinitionEngine.Destroy;

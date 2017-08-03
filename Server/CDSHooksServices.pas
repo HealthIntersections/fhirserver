@@ -184,30 +184,37 @@ begin
 
     if check(issues, request.prefetch.ContainsKey('patient'), 'A patient must be present in the prefetch data') then
     begin
-      check(issues, request.preFetch['patient'].ResourceType = frtPatient, 'Patient resource must be a patient');
-      check(issues, request.patient = 'Patient/'+request.preFetch['patient'].id, 'Patient resource id must match patient in request');
+      if check(issues, request.preFetch['patient'].resource <> nil, 'Patient resource must be present on the entry') then
+      begin
+        check(issues, request.preFetch['patient'].resource.ResourceType = frtPatient, 'Patient resource must be a patient');
+        check(issues, request.patient = 'Patient/'+request.preFetch['patient'].id, 'Patient resource id must match patient in request');
+      end;
     end;
     if check(issues, request.prefetch.ContainsKey('encounter'), 'An encounter must be present in the prefetch data') then
     begin
-      if check(issues, request.preFetch['encounter'].ResourceType = frtEncounter, 'Patient encounter must be an encounter') then
+      if check(issues, request.preFetch['encounter'].resource <> nil, 'Patient Encounter resource must be present on the entry') then
       begin
-        check(issues, request.encounter = 'Encounter/'+request.preFetch['encounter'].id, 'Encounter resource id must match encounter in request');
-        e := TFhirEncounter(request.preFetch['encounter']);
-        if check(issues, (e.subject <> nil) and (e.subject.reference <> ''), 'Encounter must have a subject') then
-          check(issues, e.subject.reference = request.patient, 'Encounter subject must match request.subject');
+        if check(issues, request.preFetch['encounter'].resource.ResourceType = frtEncounter, 'Patient encounter must be an encounter') then
+        begin
+          check(issues, request.encounter = 'Encounter/'+request.preFetch['encounter'].id, 'Encounter resource id must match encounter in request');
+          e := TFhirEncounter(request.preFetch['encounter'].resource);
+          if check(issues, (e.subject <> nil) and (e.subject.reference <> ''), 'Encounter must have a subject') then
+            check(issues, e.subject.reference = request.patient, 'Encounter subject must match request.subject');
+        end;
       end;
     end;
     if check(issues, request.prefetch.ContainsKey('problems'), 'A problems list must be present in the prefetch data') then
-      if check(issues, request.preFetch['problems'].ResourceType = frtBundle, 'Problems List must be a bundle') then
-        for be in TFHIRBundle(request.preFetch['problems']).entryList do
-          if check(issues, be.resource <> nil, 'Problem List Bundle Entries must have a resource') and
-            check(issues, be.resource is TFhirCondition, 'problems must be a condition') then
-          begin
-            c := be.resource as TFhirCondition;
-            if check(issues, (c.subject <> nil) and (c.subject.reference <> ''), 'Condition must have a subject') then
-              check(issues, c.subject.reference = request.patient, 'Condition subject must match request.subject');
-            check(issues, c.code <> nil, 'Condition must have a code');
-          end;
+      if check(issues, request.preFetch['problems'].resource <> nil, 'Problems List must have a resource in the entry') then
+        if check(issues, request.preFetch['problems'].resource.ResourceType = frtBundle, 'Problems List must be a bundle') then
+          for be in TFHIRBundle(request.preFetch['problems'].resource).entryList do
+            if check(issues, be.resource <> nil, 'Problem List Bundle Entries must have a resource') and
+              check(issues, be.resource is TFhirCondition, 'problems must be a condition') then
+            begin
+              c := be.resource as TFhirCondition;
+              if check(issues, (c.subject <> nil) and (c.subject.reference <> ''), 'Condition must have a subject') then
+                check(issues, c.subject.reference = request.patient, 'Condition subject must match request.subject');
+              check(issues, c.code <> nil, 'Condition must have a code');
+            end;
     {$ENDIF}
     result := TCDSHookResponse.Create;
     card := Result.addCard;
@@ -433,6 +440,7 @@ end;
 function TCDAHooksPatientViewService.identifyPatient( engine: TFHIROperationEngine; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest; var needSecure: boolean): TFHIRPatient;
 var
   key, versionKey : integer;
+  be1 : TFhirBundleEntry;
   res : TFHIRResource;
   pat : TFhirPatient;
   be : TFhirBundleEntry;
@@ -447,13 +455,16 @@ begin
   begin
     // is a matching resource located amongst the pre-fetch?
     pat := nil;
-    for res in request.preFetch.Values do
+    for be1 in request.preFetch.Values do
+    begin
+      res := be1.resource;
       if (res.fhirType = 'Patient') and (res.id = request.patient) then
         pat := res as TFhirPatient
       else if res is TFhirBundle then
         for be in TFhirBundle(res).entryList do
           if (be.resource <> nil) and (be.resource.fhirType = 'Patient') and (be.resource.id = request.patient) then
             pat := be.resource as TFhirPatient;
+    end;
     if pat <> nil then
     begin
       matches := TMatchingResourceList.create;

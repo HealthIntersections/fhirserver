@@ -196,6 +196,12 @@ type
     property object_List : TFhirAuditEventEntityList read GetObjectList;
   end;
 
+  TFHIRTFhirDurationHelper = class helper for TFhirDuration
+  private
+  public
+    function ToDateTime : TDateTime;
+  end;
+
   TFHIRElementHelper = class helper for TFHIRElement
   public
     function addExtension(url : String) : TFHIRExtension; overload;
@@ -4672,6 +4678,31 @@ begin
   finally
     c.Free;
   end;
+end;
+
+{ TFHIRTFhirDurationHelper }
+
+function TFHIRTFhirDurationHelper.ToDateTime: TDateTime;
+var
+  b : TDateTime;
+begin
+  if system <> 'http://unitsofmeasure.org' then
+    raise Exception.Create('Unknown system (must be UCUM)');
+  if code = 'a' then
+    b := 365.25
+  else if (code = 'mo') then
+    b := 29.53059
+  else if (code = 'wk') then
+    b := 7
+  else if (code = 'd') then
+    b := 1
+  else if (code = 'h') then
+    b := DATETIME_DAY_HOURS
+  else if (code = 'min') then
+    b := DATETIME_DAY_MINUTES
+  else
+    raise Exception.Create('Unknown UCUM unit for time: '+code);
+  result := b * TSmartDecimal.ValueOf(value).AsDouble;
 end;
 
 end.

@@ -18,7 +18,7 @@
   </contact>
   <description value="A Cross Map between the LOINC and MDC Code systems"/>
   <purpose value="To implementers map between medical device codes and LOINC codes"/>
-  <copyright value="This content LOINC&#xAE; is copyright &#xA9; 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at http://loinc.org/terms-of-use"/>
+  <copyright value="This content LOINC &#xAE; is copyright &#xA9; 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at http://loinc.org/terms-of-use"/>
   <sourceUri value="http://loinc.org/vs"/>
   <targetUri value="http://????"/>
   <group>

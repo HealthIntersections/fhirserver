@@ -277,7 +277,7 @@ end;
 
 procedure TFHIRToolbox.mPathChange(Sender: TObject);
 var
-  qry : TFHIRPathExpressionEngine;
+  qry : TFHIRPathEngine;
 begin
   Settings.Path := mPath.Text;
   if mPath.text = '' then
@@ -288,7 +288,7 @@ begin
   else
   begin
     try
-      qry := TFHIRPathExpressionEngine.create(nil);
+      qry := TFHIRPathEngine.create(nil);
       try
         qry.parse(mPath.Text).free;
         mPath.Color := clWindow;

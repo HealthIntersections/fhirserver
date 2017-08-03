@@ -173,6 +173,7 @@ Type
   private
     FHeader : TJsonObject;
     FPayLoad : TJsonObject;
+    FOriginalSource: String;
 
     procedure setHeader(const Value: TJsonObject);
     procedure setPayload(const Value: TJsonObject);
@@ -244,6 +245,8 @@ Type
     constructor Create(header, payload : TJsonObject); overload;
     destructor Destroy; override;
 
+    property originalSource : String read FOriginalSource write FOriginalSource;
+
     // the header is provided to get/set extra properties beyond those used in packing/unpacking.
     // you don't need to do anything with it if you don't use extra properties
     Property header : TJsonObject read FHeader write setHeader;
@@ -308,6 +311,7 @@ Type
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
     class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK) : String; overload;
+    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : AnsiString) : String; overload;
 
     // special use - use an existing PEM to sign the JWT
     class function rsa_pack(jwt : TJWT; method : TJWTAlgorithm; pem_file, pem_password : String) : String; overload;
@@ -1137,6 +1141,32 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
+class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : AnsiString): String;
+var
+  input, sig : TBytes;
+begin
+  jwt.header['typ'] := 'JWT';
+  case method of
+    jwt_none : jwt.header['alg'] := 'none';
+    jwt_hmac_sha256 : jwt.header['alg'] := 'HS256';
+    jwt_hmac_rsa256 : jwt.header['alg'] := 'RS256';
+  else
+    raise Exception.Create('Unsupported Message Encryption Format');
+  end;
+  if (key <> nil) and (method <> jwt_none) and (key.id <> '') then
+    jwt.header['kid'] := key.id;
+
+  input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
+  input := BytesAdd(input, Byte('.'));
+  input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
+  case method of
+    jwt_none: SetLength(sig, 0);
+    jwt_hmac_sha256: sig := Sign_Hmac_SHA256(input, key);
+    jwt_hmac_rsa256: sig := Sign_Hmac_RSA256(input, pemfile, pempassword);
+  end;
+  result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
+end;
+
 
 class function TJWTUtils.loadKeyFromRSACert(filename: AnsiString): TJWK;
 var
@@ -1316,6 +1346,7 @@ begin
           raise Exception.Create('Unknown Algorithm '+h['alg']);
       end;
       result := TJWT.create(h.Link, p.Link);
+      result.originalSource := token;
     finally
       p.free;
     end;

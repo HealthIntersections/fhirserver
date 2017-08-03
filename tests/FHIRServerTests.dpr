@@ -271,7 +271,9 @@ uses
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   GraphDefinitionEngine in '..\Server\GraphDefinitionEngine.pas',
   GraphDefinitionTests in 'GraphDefinitionTests.pas',
-  UcumTests in '..\Libraries\ucum\UcumTests.pas';
+  UcumTests in '..\Libraries\ucum\UcumTests.pas',
+  ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
+  JWTService in '..\Server\JWTService.pas';
 
 var
   runner : ITestRunner;

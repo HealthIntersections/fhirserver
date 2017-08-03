@@ -76,7 +76,7 @@ type
     Fencounter: String;
     FLang : String;
     FContext: TAdvList<TFHIRResource>;
-    FPreFetch : TAdvMap<TFHIRResource>;
+    FPreFetch : TAdvMap<TFhirBundleEntry>;
     FBaseUrl: String;
 
   public
@@ -98,7 +98,7 @@ type
     property patient : String read Fpatient write Fpatient;
     property encounter : String read Fencounter write Fencounter;
     property context : TAdvList<TFHIRResource> read FContext;
-    property preFetch : TAdvMap<TFHIRResource> read FPreFetch;
+    property preFetch : TAdvMap<TFhirBundleEntry> read FPreFetch;
     property lang : String read FLang write FLang;
     property baseURL : String read FBaseUrl write FBaseUrl;
   end;
@@ -570,6 +570,7 @@ var
   c : TFhirResource;
   comp : TFHIRJsonComposer;
   s : String;
+  be : TFhirBundleEntry;
 begin
   ss := TAdvStringStream.Create;
   try
@@ -608,12 +609,24 @@ begin
         writer.ValueObject('prefetch');
         for s in prefetch.SortedKeys do
         begin
+          be := prefetch[s];
           writer.ValueObject(s);
-          comp := TFHIRJsonComposer.create(nil, 'en');
-          try
-            comp.Compose(writer, prefetch[s]);
-          finally
-            comp.Free;
+          if (be.response <> nil) then
+          begin
+            writer.ValueObject('response');
+            writer.Value('status', be.response.status);
+            writer.FinishObject;
+          end;
+          if be.resource <> nil then
+          begin
+            writer.ValueObject('resource');
+            comp := TFHIRJsonComposer.create(nil, 'en');
+            try
+              comp.Compose(writer, be.resource);
+            finally
+              comp.Free;
+            end;
+            writer.FinishObject;
           end;
           writer.FinishObject;
         end;
@@ -632,16 +645,17 @@ constructor TCDSHookRequest.Create;
 begin
   inherited Create;
   FContext := TAdvList<TFHIRResource>.create;
-  FPreFetch := TAdvMap<TFHIRResource>.create;
+  FPreFetch := TAdvMap<TFhirBundleEntry>.create;
 end;
 
 constructor TCDSHookRequest.Create(json: TJsonObject);
 var
   a : TJsonArray;
-  o : TJsonObject;
+  o, e : TJsonObject;
   n : TJsonNode;
   p : TFHIRJsonParser;
   s : String;
+  be : TFhirBundleEntry;
 begin
   Create;
   Fencounter := json.str['encounter'];
@@ -675,12 +689,27 @@ begin
   begin
     for s in o.properties.Keys do
     begin
-      p := TFHIRJsonParser.Create(nil, 'en');
+      be := TFhirBundleEntry.Create;
       try
-        p.Parse(o.properties[s] as TJsonObject);
-        prefetch.add(s, p.resource.Link);
+        e := o.properties[s] as TJsonObject;
+        if e.has('response') then
+        begin
+          be.response := TFhirBundleEntryResponse.Create;
+          be.response.status := e.obj['response'].str['status'];
+        end;
+        if e.has('resource') then
+        begin
+          p := TFHIRJsonParser.Create(nil, 'en');
+          try
+            p.Parse(e.obj['resource']);
+            be.resource := p.resource.Link;
+          finally
+            p.Free;
+          end;
+        end;
+        prefetch.add(s, be.Link);
       finally
-        p.Free;
+        be.Free;
       end;
     end;
   end;
@@ -920,7 +949,11 @@ begin
       writer.Start;
       writer.ValueArray('cards');
       for card in FCards do
+      begin
+        writer.ValueObject;
         card.AsJson(writer);
+        writer.FinishObject;
+      end;
       writer.FinishArray;
       writer.Finish;
     finally

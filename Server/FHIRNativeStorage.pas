@@ -32,11 +32,11 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
+  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport, HashSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
-  KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL,
+  KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL,
@@ -116,6 +116,7 @@ type
 
   TFhirOperation = {abstract} class (TAdvObject)
   protected
+    function resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinition;
     function isWrite : boolean; virtual;
     function owningResource : TFhirResourceType; virtual; // for security purposes
@@ -279,6 +280,18 @@ type
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
+  TFhirGenerateJWTOperation = class (TFHIROperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function HandlesRequest(request : TFHIRRequest) : boolean; override;
+  end;
+
   {$IFDEF FHIR4}
   TFhirGraphFetchOperation = class (TFHIROperation)
   protected
@@ -375,6 +388,24 @@ type
     procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
+
+  TFhirConsentAuthorizeOperation = class (TFHIROperation)
+  private
+    function checkConsentOk(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; consent : TFhirConsent; expiry : TDateTime) : integer;
+    function checkDuration(params : TFhirParameters) : TDateTime;
+    function loadToken(params : TFhirParameters) : TJWT;
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
+
 {$ENDIF}
 
   TFhirValueSetValidationOperation = class (TFHIROperation)
@@ -610,7 +641,6 @@ type
 
   TFhirObservationStatsOperation = class (TFHIROperation)
   private
-    function resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref : String) : integer;
     function resolveParameter(code : String): TObservationStatsParameter;
   protected
     function isWrite : boolean; override;
@@ -625,7 +655,6 @@ type
 
   TFhirObservationLastNOperation = class (TFHIROperation)
   protected
-    function resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref : String) : integer;
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
   public
@@ -650,6 +679,7 @@ type
     FLastObservationKey : integer;
     FLastObservationCodeKey : integer;
     FLastObservationQueueKey : integer;
+    FLastAuthorizationKey : integer;
 
     FTotalResourceCount: integer;
     FNextSearchSweep: TDateTime;
@@ -683,6 +713,8 @@ type
     procedure ProcessObservationValueQty(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRQuantity);
     procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
     procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
+    procedure Authorize(conn :  TKDBConnection; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime);
+
   protected
     function GetTotalResourceCount: integer; override;
   public
@@ -702,6 +734,7 @@ type
     function NextCompartmentKey: integer;
     function nextObservationKey : integer;
     function nextObservationCodeKey : integer;
+    function NextAuthorizationKey : integer;
     Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
@@ -785,6 +818,7 @@ begin
   FOperations.add(TFhirGenerateDocumentOperation.create);
   FOperations.add(TFhirPatientEverythingOperation.create);
   FOperations.add(TFhirGenerateQAOperation.create);
+  FOperations.add(TFhirGenerateJWTOperation.create);
   FOperations.add(TFhirGenerateCodeOperation.create);
   FOperations.add(TFhirHandleQAPostOperation.create);
   FOperations.add(TFhirQuestionnaireGenerationOperation.create);
@@ -807,6 +841,7 @@ begin
   FOperations.add(TFhirCodeSystemComposeOperation.create);
   FOperations.add(TFhirObservationStatsOperation.create);
   FOperations.add(TFhirObservationLastNOperation.create);
+  FOperations.add(TFhirConsentAuthorizeOperation.create);
   {$ENDIF}
   {$IFDEF FHIR4}
   FOperations.add(TFhirGraphFetchOperation.create);
@@ -6192,6 +6227,18 @@ begin
     raise Exception.Create('No types for operation');
 end;
 
+function TFhirOperation.resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref: String): integer;
+var
+  parts : TArray<String>;
+  versionKey : integer;
+begin
+  parts := ref.Split(['/']);
+  if length(parts) <> 2 then
+    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
+  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
+    result := 0;
+end;
+
 function TFhirOperation.Types: TFhirResourceTypeSet;
 begin
   result := [];
@@ -6379,6 +6426,77 @@ end;
 procedure TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
 end;
+
+{ TFhirJWTOperation }
+
+function TFhirGenerateJWTOperation.Name: String;
+begin
+  result := 'jwt';
+end;
+
+function TFhirGenerateJWTOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirGenerateJWTOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtNull];
+end;
+
+function TFhirGenerateJWTOperation.HandlesRequest(request: TFHIRRequest): boolean;
+begin
+  result := inherited HandlesRequest(request); // and (request.secure);
+end;
+
+function TFhirGenerateJWTOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirGenerateJWTOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirGenerateJWTOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  jwt : String;
+  pIn, pOut : TFHIRParameters;
+begin
+  try
+    pIn := makeParams(request);
+    try
+      if not pIn.hasParameter('source') then
+        raise Exception.Create('No Source System specified');
+      jwt := manager.ServerContext.JWTServices.makeJWT;
+      response.HTTPCode := 200;
+      response.Message := 'OK';
+      if request.PostFormat <> ffUnspecified then
+      begin
+        pOut := TFhirParameters.Create;
+        response.Resource := pOut;
+        pOut.AddParameter('jwt', jwt);
+      end
+      else
+      begin
+        response.ContentType := 'application/jwt';
+        response.Body := jwt;
+      end;
+    finally
+      pIn.Free;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
 
 { TFhirGenerateCodeOperation }
 
@@ -7093,18 +7211,6 @@ begin
   result := frtObservation;
 end;
 
-function TFhirObservationStatsOperation.resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref: String): integer;
-var
-  parts : TArray<String>;
-  versionKey : integer;
-begin
-  parts := ref.Split(['/']);
-  if length(parts) <> 2 then
-    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
-  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
-    result := 0;
-end;
-
 
 function TFhirObservationStatsOperation.resolveParameter(code: String): TObservationStatsParameter;
 var
@@ -7230,18 +7336,6 @@ begin
   result := frtObservation;
 end;
 
-function TFhirObservationLastNOperation.resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref: String): integer;
-var
-  parts : TArray<String>;
-  versionKey : integer;
-begin
-  parts := ref.Split(['/']);
-  if length(parts) <> 2 then
-    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
-  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
-    result := 0;
-end;
-
 function TFhirObservationLastNOperation.Types: TFhirResourceTypeSet;
 begin
   result := [frtObservation];
@@ -7255,9 +7349,6 @@ end;
 procedure TFhirObservationLastNOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   sp : TSearchProcessor;
-  p : TParseMap;
-  key : integer;
-  item : TMatchingResource;
   conn : TKDBConnection;
   base, field, type_ : String;
   bundle : TFHIRBundle;
@@ -7302,35 +7393,26 @@ begin
           comp := nil;
 
         conn.SQL :=
-//            'Select '+
-//              'Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, Tags, '+field+' '+
-//            'from '+
-//              'Versions, Ids, Types '+
-//            'where '+
-//              'Ids.MostRecent = Versions.ResourceVersionKey and '+
-//              'Ids.resourceKey in (select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+')';
-//
-
-'Select '+#13#10+
-'  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, JsonContent '+#13#10+
-'from ( '+#13#10+
-'Select '+#13#10+
-'  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, JsonContent, '+#13#10+
-'  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
-'                              ORDER BY StatedDate DESC '+#13#10+
-'                             ) '+#13#10+
-'             AS rn '+#13#10+
-'from '+#13#10+
-'  Versions, Ids, Types, Observations '+#13#10+
-'where '+#13#10+
-'  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#13#10+
-'  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#13#10+
-'    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#13#10+
-'   ) '+#13#10+
-') tmp '+#13#10+
-'WHERE rn <= 3 '+#13#10+
-'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
-
+          'Select '+#13#10+
+          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, JsonContent '+#13#10+
+          'from ( '+#13#10+
+          'Select '+#13#10+
+          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, JsonContent, '+#13#10+
+          '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
+          '                              ORDER BY StatedDate DESC '+#13#10+
+          '                             ) '+#13#10+
+          '             AS rn '+#13#10+
+          'from '+#13#10+
+          '  Versions, Ids, Types, Observations '+#13#10+
+          'where '+#13#10+
+          '  Observations.ResourceKey = Ids.ResourceKey and Observations.isComponent = 0 and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+#13#10+
+          '  Ids.MostRecent = Versions.ResourceVersionKey and Ids.resourceKey in ( '+#13#10+
+          '    select ResourceKey from Ids where Ids.Deleted = 0 and '+sp.filter+#13#10+
+          '   ) '+#13#10+
+          ') tmp '+#13#10+
+          'WHERE rn <= 3 '+#13#10+
+          'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
+        bundle.Tags['sql'] := conn.SQL;
         conn.Prepare;
         try
           conn.Execute;
@@ -7387,6 +7469,148 @@ function TFhirObservationLastNOperation.isWrite: boolean;
 begin
   result := false;
 end;
+
+
+{ TFhirConsentAuthorizeOperation }
+
+function TFhirConsentAuthorizeOperation.Name: String;
+begin
+  result := 'authorize';
+end;
+
+function TFhirConsentAuthorizeOperation.owningResource: TFhirResourceType;
+begin
+  result := frtObservation;
+end;
+
+function TFhirConsentAuthorizeOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtConsent];
+end;
+
+function TFhirConsentAuthorizeOperation.checkConsentOk(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; consent: TFhirConsent; expiry : TDateTime): integer;
+var
+  ok : boolean;
+  c : TFHIRCodING;
+begin
+  if consent.status <> ConsentStateCodesActive then
+    raise Exception.Create('Consent must be active');
+  if consent.patient = nil then
+    raise Exception.Create('Consent has no identified patient');
+  result := resolvePatient(manager, request, consent.patient.reference);
+  if result = 0 then
+    raise Exception.Create('Consent Patient unknown');
+  {$IFDEF FHIR3}
+  if (consent.period <> nil) and (consent.period.end_.DateTime < expiry) then
+    raise Exception.Create('Consent expires ('+consent.period.end_.toString('c')+') before the end of the nominated duration');
+  if (consent.policyRule <> 'http://hl7.org/fhir/ConsentDefinition/simple-oauth') then
+    raise Exception.Create('Consent must have policy "http://hl7.org/fhir/ConsentDefinition/simple-oauth" as it''s policy');
+  if (consent.except_List.Count <> 1) then
+    raise Exception.Create('Consent must have a single exception');
+  ok := false;
+  for c in consent.except_List[0].class_List do
+    ok := ok or (c.System = 'http://smarthealthit.org/fhir/scopes');
+  if not ok then
+    raise Exception.Create('Consent must have at least one smart on fhir scope');
+  {$ELSE}
+  raise Exception.Create('This operation is only supported in R3 for now');
+  {$ENDIF}
+end;
+
+function TFhirConsentAuthorizeOperation.checkDuration(params: TFhirParameters): TDateTime;
+var
+  p : TFhirParametersParameter;
+  q : TFhirDuration;
+begin
+  P := params.param['duration'];
+  if p = nil then
+    raise Exception.Create('Parameter duration not found');
+  if (p.value = nil) or not (p.value is TFhirDuration) then
+    raise Exception.Create('Parameter duration must have a value of type Duration');
+  q := p.value as TFhirDuration;
+  result := TDateTimeEx.makeLocal.add(q.ToDateTime).DateTime;
+end;
+
+function TFhirConsentAuthorizeOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirConsentAuthorizeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  rkey, versionKey, patientKey : integer;
+  params : TFhirParameters;
+  consent : TFHIRConsent;
+  needSecure : boolean;
+  expiry : TDateTime;
+  jwt : TJWT;
+  op : TFHIROperationOutcome;
+begin
+  try
+    manager.NotFound(request, response);
+    if manager.FindResource('Consent', request.Id, false, rkey, versionKey, request, response, '') then
+    begin
+      consent := manager.GetResourceById(request, 'Consent', request.Id, request.baseUrl, needSecure) as TFHIRConsent;
+      try
+        params := makeParams(request);
+        try
+          expiry := checkDuration(params);
+          patientKey := checkConsentOk(manager, request, consent, expiry);
+          jwt := loadToken(params);
+          try
+            op := TFHIROperationOutcome.create;
+            try
+              manager.ServerContext.clientApplicationVerifier.check(Jwt, op);
+              manager.FRepository.Authorize(manager.Connection, patientKey, rKey, request.Session.Key, JWT.originalSource, expiry);
+              response.HTTPCode := 200;
+              response.Message := 'OK';
+              response.Resource := op.Link;
+            finally
+              op.Free;
+            end;
+          finally
+            jwt.free;
+          end;
+        finally
+          params.free;
+        end;
+      finally
+        consent.free;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirConsentAuthorizeOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Consent-authorize';
+end;
+
+function TFhirConsentAuthorizeOperation.isWrite: boolean;
+begin
+  result := true;
+end;
+
+function TFhirConsentAuthorizeOperation.loadToken(params: TFhirParameters): TJWT;
+var
+  p : TFhirParametersParameter;
+begin
+  P := params.param['jwt'];
+  if p = nil then
+    raise Exception.Create('Parameter "jwt" not found');
+  if (p.value = nil) or not (p.value is TFhirString) then
+    raise Exception.Create('Parameter duration must have a value of type String');
+  result := TJWTUtils.unpack(p.value.primitiveValue, false, nil); // todo
+end;
+
 {$ENDIF}
 
 { TFhirValidationOperation }
@@ -9825,6 +10049,7 @@ begin
       FLastObservationKey := conn.CountSQL('select max(ObservationKey) from Observations');
       FLastObservationCodeKey := conn.CountSQL('select max(ObservationCodeKey) from ObservationCodes');
       FLastObservationQueueKey := conn.CountSQL('select max(ObservationQueueKey) from ObservationQueue');
+      FLastAuthorizationKey := conn.CountSQL('select max(AuthorizationKey) from Authorizations');
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
       conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
@@ -10511,11 +10736,28 @@ begin
   tag.TransactionId := conn.transactionId;
 end;
 
+procedure TFHIRNativeStorageService.Authorize(conn :  TKDBConnection; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime);
+begin
+  conn.SQL := 'Insert into Authorizations (AuthorizationKey, PatientKey, ConsentKey, SessionKey, Status, Expiry, Hash, JWT) values (:k, :pk, :ck, :sk, 1, :e, :h, :j)';
+  conn.Prepare;
+  conn.BindInteger('k', NextAuthorizationKey);
+  conn.BindInteger('pk', patientKey);
+  conn.BindInteger('ck', consentKey);
+  conn.BindInteger('sk', sessionKey);
+  conn.BindTimeStamp('e', DateTimeToTS(expiry));
+  conn.BindInteger('h', HashStringToCode32(jwt));
+  conn.BindBlobFromString('j', jwt);
+  conn.Execute;
+  conn.Terminate;
+end;
+
+
+
 procedure TFHIRNativeStorageService.checkDefinitions;
 var
   s, sx : string;
   c, t : integer;
-  fpe : TFHIRPathExpressionEngine;
+  fpe : TFHIRPathEngine;
   sd : TFhirStructureDefinition;
   ed: TFhirElementDefinition;
   inv : TFhirElementDefinitionConstraint;
@@ -10525,7 +10767,7 @@ begin
   s := '';
   c := 0;
   t := 0;
-  fpe:= TFHIRPathExpressionEngine.create(ServerContext.ValidatorContext.Link);
+  fpe:= TFHIRPathEngine.create(ServerContext.ValidatorContext.Link);
   try
     for sd in ServerContext.ValidatorContext.Profiles.ProfilesByURL.Values do
       {$IFDEF FHIR2}
@@ -11387,6 +11629,17 @@ begin
   try
     inc(FLastObservationCodeKey);
     result := FLastObservationCodeKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRNativeStorageService.NextAuthorizationKey: integer;
+begin
+  FLock.Lock('NextAuthorizationKey');
+  try
+    inc(FLastAuthorizationKey);
+    result := FLastAuthorizationKey;
   finally
     FLock.Unlock;
   end;

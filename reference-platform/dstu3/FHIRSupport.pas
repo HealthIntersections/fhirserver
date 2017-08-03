@@ -76,11 +76,11 @@ Type
   TCreateIdState = (idNoNew, idMaybeNew, idIsNew, idCheckNew);
   TFHIRCacheControl = (cacheNotAtAll, cacheAsException, cacheNormal, cacheLong);
   TFHIRUserIdEvidence = (userNoInformation, userAnonymous, userInternal, userLogin, userExternalOAuth, userBearerJWT);
-  TFHIRSystemIdEvidence = (systemNoInformation, systemUnknown, systemInternal, systemFromOAuth, systemFromOWin, systemFromCertificate);
+  TFHIRSystemIdEvidence = (systemNoInformation, systemUnknown, systemInternal, systemFromOAuth, systemFromOWin, systemFromCertificate, systemFromJWT);
 
 Const
   CODES_UserIdEvidence : array [TFHIRUserIdEvidence] of string = ('?', 'Anonymous', 'Internal' ,'Login', 'External AOuth', 'JWT Bearer Token');
-  CODES_SystemIdEvidence : array [TFHIRSystemIdEvidence] of String = ('?', 'Unknown', 'This Server', 'by OAuth', 'By OWin', 'By Certificate');
+  CODES_SystemIdEvidence : array [TFHIRSystemIdEvidence] of String = ('?', 'Unknown', 'This Server', 'by OAuth', 'By OWin', 'By Certificate', 'By JWT');
 
 Type
   {$M+}

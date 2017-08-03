@@ -106,7 +106,7 @@ type
 
   TDifferenceEngine = class (TAdvObject)
   private
-    fpe : TFHIRPathExpressionEngine;
+    fpe : TFHIRPathEngine;
 
     function matchRating(obj1, obj2 : TFHIRObject) : Double;
     procedure findCertainMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
@@ -749,7 +749,7 @@ end;
 constructor TDifferenceEngine.Create(context: TWorkerContext);
 begin
   inherited create;
-  fpe := TFHIRPathExpressionEngine.Create(context);
+  fpe := TFHIRPathEngine.Create(context);
 end;
 
 destructor TDifferenceEngine.Destroy;

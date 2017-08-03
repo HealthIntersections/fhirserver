@@ -52,7 +52,7 @@ Type
   [TextFixture]
   TFluentPathTest = Class (TObject)
   private
-    engine : TFHIRPathExpressionEngine;
+    engine : TFHIRPathEngine;
 
     function findTest(path : String) : IXMLDOMElement;
   Published
@@ -278,7 +278,7 @@ end;
   *)
 procedure TFluentPathTest.setup;
 begin
-  engine := TFHIRPathExpressionEngine.Create(TTestingWorkerContext.Use);
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use);
 end;
 
 procedure TFluentPathTest.teardown;

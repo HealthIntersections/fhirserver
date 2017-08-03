@@ -919,13 +919,13 @@ var
   res : TFHIRResource;
   items : TFHIRSelectionList;
   expr : TFHIRPathExpressionNode;
-  engine : TFHIRPathExpressionEngine;
+  engine : TFHIRPathEngine;
   sp, ep : integer;
 begin
   if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and parse(0, fmt, res) then
   try
     loadValidator;
-    engine := TFHIRPathExpressionEngine.Create(FWorker.Link);
+    engine := TFHIRPathEngine.Create(FWorker.Link);
     try
       expr := engine.parse(FHIRToolbox.mPath.Text);
       try
@@ -1066,7 +1066,7 @@ var
   fmt : TFHIRFormat;
   s : TStringStream;
   res : TFHIRResource;
-  query : TFHIRPathExpressionEngine;
+  query : TFHIRPathEngine;
   item : TFHIRSelection;
   allSource : boolean;
   sp, ep : integer;
@@ -1559,10 +1559,10 @@ end;
 
 procedure TFHIRPlugin.evaluatePath(r : TFHIRResource; out items : TFHIRSelectionList; out expr : TFHIRPathExpressionNode; out types : TFHIRTypeDetails);
 var
-  engine : TFHIRPathExpressionEngine;
+  engine : TFHIRPathEngine;
 begin
   loadValidator;
-  engine := TFHIRPathExpressionEngine.Create(FWorker.Link);
+  engine := TFHIRPathEngine.Create(FWorker.Link);
   try
     expr := engine.parse(FHIRToolbox.mPath.Text);
     try

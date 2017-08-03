@@ -320,7 +320,9 @@ uses
   CDSHooksServer in 'CDSHooksServer.pas',
   CDSHooksServices in 'CDSHooksServices.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
-  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas';
+  CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
+  ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
+  JWTService in 'JWTService.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

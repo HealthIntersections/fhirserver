@@ -34,8 +34,8 @@ interface
 {
 [settings]
 } const
-BuildCount='157';
-BuildDate='2017-08-01';
+BuildCount='159';
+BuildDate='2017-08-03';
 
 
   SERVER_VERSION = '1.0.'+buildCount;

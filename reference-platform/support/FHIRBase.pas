@@ -2168,10 +2168,10 @@ end;
 
 function TFHIRObject.PerformQuery(path: String): TFHIRObjectList;
 var
-  qry : TFHIRPathExpressionEngine;
+  qry : TFHIRPathEngine;
   list : TFHIRSelectionList;
 begin
-  qry := TFHIRPathExpressionEngine.create(nil);
+  qry := TFHIRPathEngine.create(nil);
   try
     list := qry.evaluate(nil, self, path);
     try

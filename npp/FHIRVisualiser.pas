@@ -425,7 +425,9 @@ begin
     req.hookInstance := 'notepad++.fhirgplugin.instance';  // arbitrary global
     req.redirect := 'http://localhost:45654/redirect';
     req.patient := patient.id;
-    req.preFetch.add('patient', patient.Link);
+    entry := TFhirBundleEntry.Create;
+    req.preFetch.add('patient', entry);
+    entry.resource := patient.Link;
     FCDSManager.makeRequest(req, OnCDSResponse, nil);
   finally
     req.Free;

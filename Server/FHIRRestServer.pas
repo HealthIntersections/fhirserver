@@ -100,11 +100,10 @@ Uses
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
 
-  FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
+  FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
-  INTERNAL_SECRET = '\8u8J*O{a0Y78.}o%ql9';
 
 Type
   ERestfulAuthenticationNeeded = class (ERestfulException)
@@ -502,6 +501,11 @@ Begin
   FServerContext.FormalURLPlainOpen := 'http://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedPort)+ FBasePath;
   FServerContext.FormalURLSecureOpen := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FBasePath;
   FServerContext.FormalURLSecureClosed := 'https://'+FIni.ReadString(voMaybeVersioned, 'web', 'host', '')+':'+inttostr(FStatedSSLPort) + FSecurePath;
+  FServerContext.ClientApplicationVerifier := TClientApplicationVerifier.create;
+  ServerContext.JWTServices := TJWTServices.Create;
+  ServerContext.JWTServices.Host := FHost;
+  ServerContext.JWTServices.Cert := FCertFile;
+  ServerContext.JWTServices.Password := FSSLPassword;
 
   logt('Load & Cache Store: ');
 
@@ -522,11 +526,11 @@ Begin
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
   FAuthServer.Path := FIni.ReadString(voMaybeVersioned, 'web', 'auth-path', '/oauth2');
-  FAuthServer.RootCert := FRootCertFile;
-  FAuthServer.SSLCert := FCertFile;
-  FAuthServer.SSLPassword := FSSLPassword;
   FAuthServer.AdminEmail := FAdminEmail;
   FAuthServer.EndPoint := OAuthPath(true);
+  FAuthServer.host := host;
+  FAuthServer.clientApplicationVerifier := ServerContext.ClientApplicationVerifier.Link;
+  FAuthServer.JWTServices := ServerContext.JWTServices.Link;
   FAuthServer.Active := FUseOAuth;
 
   FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
@@ -713,6 +717,7 @@ var
   server : TRegisteredFHIRServer;
   req : TCDSHookRequest;
   s : String;
+  be : TFHIRBundleEntry;
 begin
   for s in FPatientViewServers.Keys do
   begin
@@ -732,7 +737,9 @@ begin
     req.hook := TCDSHooks.patientView;
     req.hookInstance := FServerContext.FormalURLPlain;  // arbitrary global
     req.patient := patient.id;
-    req.preFetch.Add('patient', patient.Link);
+    be := TFhirBundleEntry.create;
+    req.preFetch.Add('patient',  be);
+    be.resource := patient.Link;
     ctxt.manager.makeRequest(req, OnCDSResponse, ctxt);
   finally
     req.Free;

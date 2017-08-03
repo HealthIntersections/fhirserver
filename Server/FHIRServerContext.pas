@@ -35,7 +35,7 @@ uses
   SysUtils, Classes, Generics.Collections, kCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches, OIDSupport,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
-  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager;
+  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -96,10 +96,14 @@ Type
     FDoAudit: Boolean;
     FSupportSystemHistory: Boolean;
     FValidate: Boolean;
+    FClientApplicationVerifier: TClientApplicationVerifier;
+    FJWTServices: TJWTServices;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
+    procedure SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
+    procedure SetJWTServices(const Value: TJWTServices);
   public
     Constructor Create(storage : TFHIRStorageService);
     Destructor Destroy; override;
@@ -117,6 +121,8 @@ Type
     property SessionManager : TFHIRSessionManager read FSessionManager;
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
+    property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
+    property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
     property FormalURLSecure: String read FFormalURLSecure write FFormalURLSecure;
@@ -326,6 +332,8 @@ begin
   {$IFNDEF FHIR2}
   FMaps.Free;
   {$ENDIF}
+  FJWTServices.Free;
+  FClientApplicationVerifier.Free;
   FNamingSystems.Free;
   FTagManager.Free;
   FSessionManager.CloseAll;
@@ -382,6 +390,18 @@ begin
   FUserProvider := Value;
 end;
 
+
+procedure TFHIRServerContext.SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
+begin
+  FClientApplicationVerifier.Free;
+  FClientApplicationVerifier := Value;
+end;
+
+procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
+begin
+  FJWTServices.Free;
+  FJWTServices := Value;
+end;
 
 procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionManager);
 begin
