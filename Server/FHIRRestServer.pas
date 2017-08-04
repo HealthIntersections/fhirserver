@@ -506,6 +506,7 @@ Begin
   ServerContext.JWTServices.Host := FHost;
   ServerContext.JWTServices.Cert := FCertFile;
   ServerContext.JWTServices.Password := FSSLPassword;
+  ServerContext.JWTServices.DatabaseId := ServerContext.SystemId;
 
   logt('Load & Cache Store: ');
 
@@ -2302,6 +2303,10 @@ Begin
             else if (oRequest.CommandType = fcmdPatch) and (sContentType = 'application/xml-patch+xml') then
             begin
               oRequest.patchXml := TMXmlParser.parse(oPostStream, [xpResolveNamespaces]);
+            end
+            else if (oRequest.CommandType = fcmdOperation) and (sContentType = 'application/x-www-form-urlencoded') then
+            begin
+              oRequest.Resource := parseParamsFromForm(oPostStream);
             end
             else if (oRequest.CommandType = fcmdOperation) and (sContentType = 'application/graphql') then
             begin

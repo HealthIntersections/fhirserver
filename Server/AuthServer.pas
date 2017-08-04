@@ -39,7 +39,7 @@ uses
   ParseMap, KDBManager, KDBDialects, KCritSct, HashSupport, StringSupport, EncodeSupport, GUIDSupport, DateSupport,
   AdvObjects, AdvMemories, AdvJSON, AdvExceptions, AdvGenerics,
   FacebookSupport, SCIMServer, SCIMObjects, JWT,
-  FHIRSupport, FHIRBase, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
+  FHIRSupport, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
   FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, ClientApplicationVerifier, JWTService;
 
 Const
@@ -89,7 +89,9 @@ type
     FClientApplicationVerifier: TClientApplicationVerifier;
     FJWTServices: TJWTServices;
     function GetPatientListAsOptions : String;
+    {$IFNDEF FHIR2}
     procedure populateFromConsent(consentKey : integer; session : TFhirSession);
+    {$ENDIF}
 
     Procedure HandleAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleLogin(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
@@ -266,12 +268,29 @@ begin
 end;
 
 
-
-
+{$IFNDEF FHIR2}
 procedure TAuth2Server.populateFromConsent(consentKey: integer; session: TFhirSession);
+var
+  consent : TFhirConsent;
+  c : TFhirCoding;
+  s : String;
 begin
-  raise Exception.Create('to do');
+  consent := ServerContext.Storage.FetchResource(consentKey) as TFhirConsent;
+  try
+    s := '';
+    {$IFDEF FHIR3}
+    for c in consent.except_List[0].class_List do
+      if (c.System = 'http://smarthealthit.org/fhir/scopes') then
+        s := s +' '+c.code;
+    {$ELSE}
+    raise Exception.Create('This operation is only supported in R3 for now');
+    {$ENDIF}
+    session.scopes := s.Trim;
+  finally
+    consent.Free;
+  end;
 end;
+{$ENDIF}
 
 function TAuth2Server.checkNotEmpty(v , n : String) : String;
 begin
@@ -873,8 +892,9 @@ var
   json : TJsonWriter;
   jwt : TJWT;
   expiry : TDateTime;
-  PatientKey, ConsentKey, SessionKey : integer;
-  hash : integer;
+  PatientId : String;
+  ConsentKey, SessionKey : integer;
+  uuid : string;
   session : TFhirSession;
 begin
   domain := request.Host;
@@ -893,11 +913,11 @@ begin
         raise Exception.Create('Error reading JWT: '+e.message);
     end;
     try
-      hash := HashStringToCode32(request.AuthPassword);
-      if not ServerContext.Storage.FetchAuthorization(hash, PatientKey, ConsentKey, SessionKey, Expiry, jwtStored) then
+      uuid := params.getVar('scope');
+      if not ServerContext.Storage.FetchAuthorization(uuid, PatientId, ConsentKey, SessionKey, Expiry, jwtStored) then
         raise Exception.Create('Unrecognised Token');
       if (jwtStored <> request.AuthPassword) then
-        raise Exception.Create('Token mismatch'); // the hashes collided!
+        raise Exception.Create('JWT mismatch');
       if (expiry < now) then
         raise Exception.Create('The authorization has expired');
 
@@ -905,16 +925,18 @@ begin
       try
         session.SystemName := jwt.subject;
         session.SystemEvidence := systemFromJWT;
+        session.PatientList.Add(PatientId);
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
+        {$IFNDEF FHIR2}
         populateFromConsent(consentKey, session);
-
+        {$ENDIF}
         json := TJsonWriter.create;
         try
           json.Start;
           json.Value('access_token', session.Cookie);
           json.Value('token_type', 'Bearer');
           json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
-          json.Value('id_token', session.JWTPacked);
+//          json.Value('id_token', session.JWTPacked);
           json.Value('scope', session.scopes);
           json.Value('patient', session.PatientList[0]);
           json.Finish;

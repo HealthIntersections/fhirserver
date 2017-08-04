@@ -54,7 +54,9 @@ const
 //  ServerDBVersion = 12; // rework Observations Table (can't do this as an upgrade)
 //  ServerDBVersion = 13; // add Observations.ConceptList
 //  ServerDBVersion = 14; // add Authorizations
-  ServerDBVersion = 15; // add Uuid to Authorizations
+//   ServerDBVersion = 15; // add Uuid to Authorizations
+//  ServerDBVersion = 16; // add PatientId to Authorizations
+  ServerDBVersion = 17; // add AuthorizationSessions and Connections
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -110,6 +112,8 @@ Type
     procedure CreateObservationCodes;
     procedure CreateObservationQueue;
     procedure CreateAuthorizations;
+    procedure CreateAuthorizationSessions;
+    procedure CreateConnections;
     procedure runScript(s : String);
   public
     Constructor create(conn : TKDBConnection; txpath : String);
@@ -268,6 +272,7 @@ begin
        ' AuthorizationKey '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  // internal primary key
        ' Uuid             char(36)                              '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  // GUID used externally
        ' PatientKey       '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
+       ' PatientId        char(64)                              '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
        ' ConsentKey       '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
        ' SessionKey       '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
        ' Status           int                                   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // whether added or deleted
@@ -278,6 +283,20 @@ begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'Authorizations', 'ConsentKey', 'Ids', 'ResourceKey', 'FK_Authorizations_ConsKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Authorizations', 'SessionKey', 'Sessions', 'SessionKey', 'FK_Authorizations_SessionKey'));
   FConn.ExecSQL('Create INDEX SK_Authorizations_Uuid ON Authorizations (Uuid)');
+end;
+
+procedure TFHIRDatabaseInstaller.CreateAuthorizationSessions;
+begin
+  FConn.ExecSQL('CREATE TABLE AuthorizationSessions( '+#13#10+
+       ' AuthorizationSessionKey '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' AuthorizationKey        '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' DateTime                '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Message                 nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' SessionKey              '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+   //
+       PrimaryKeyType(FConn.owner.Platform, 'PK_AuthorizationSessions', 'AuthorizationSessionKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'AuthorizationKey', 'Authorizations', 'AuthorizationKey', 'FK_AuthorizationSessions_AuthKey'));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'SessionKey', 'Sessions', 'SessionKey', 'FK_AuthorizationSessions_SessKey'));
+  FConn.ExecSQL('Create INDEX SK_Authorizations_AKey ON AuthorizationSessions (AuthorizationKey)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
@@ -326,6 +345,22 @@ begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_Concepts', 'ConceptKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Concepts_Name ON Concepts (URL, Code)');
 end;
+
+procedure TFHIRDatabaseInstaller.CreateConnections;
+begin
+  FConn.ExecSQL('CREATE TABLE Connections( '+#13#10+
+       ' ConnectionKey   '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' SourceUrl          nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Expiry          '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Status          int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Consent         char(64)                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
+       ' AuthToken       char(64)                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
+       ' Patient         char(64)                                 '+ColCanBeNull(FConn.owner.platform, True)+ ', '+#13#10+   //
+       ' JWT             image                                    '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Connections', 'ConnectionKey')+') '+CreateTableInfo(FConn.owner.platform));
+end;
+
+
 
 procedure TFHIRDatabaseInstaller.CreateNotificationQueue;
 begin
@@ -822,9 +857,13 @@ begin
     CreateObservationCodes;
     if assigned(CallBack) then Callback(69, 'Create ObservationQueue');
     CreateObservationQueue;
-    if assigned(CallBack) then Callback(69, 'Create Authorizations');
+    if assigned(CallBack) then Callback(70, 'Create Authorizations');
     CreateAuthorizations;
-    if assigned(CallBack) then Callback(70, 'Commit');
+    if assigned(CallBack) then Callback(71, 'Create AuthorizationSessions');
+    CreateAuthorizationSessions;
+    if assigned(CallBack) then Callback(72, 'Create Connections');
+    CreateConnections;
+    if assigned(CallBack) then Callback(73, 'Commit');
     FConn.Commit;
   except
     on e:exception do
@@ -877,9 +916,16 @@ begin
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
 
-      if assigned(CallBack) then Callback(5, 'Check Delete ObservationCodes');
+      if assigned(CallBack) then Callback(5, 'Check Delete Connections');
+      if meta.hasTable('Connections') then
+        FConn.DropTable('Connections');
+      if assigned(CallBack) then Callback(5, 'Check Delete AuthorizationSessions');
+      if meta.hasTable('AuthorizationSessions') then
+        FConn.DropTable('AuthorizationSessions');
+      if assigned(CallBack) then Callback(5, 'Check Delete Authorizations');
       if meta.hasTable('Authorizations') then
         FConn.DropTable('Authorizations');
+      if assigned(CallBack) then Callback(5, 'Check Delete ObservationCodes');
       if meta.hasTable('ObservationCodes') then
         FConn.DropTable('ObservationCodes');
       if assigned(CallBack) then Callback(5, 'Check Delete Observations');
@@ -1005,26 +1051,43 @@ end;
 
 procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
 begin
-  if version > ServerDBVersion then
-    raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
-  if (version < 12) then
-    raise Exception.Create('Database must be rebuilt');
-  if (version < 13) then
-  begin
-    Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	IsComponent int NULL');
-    Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	CodeList nchar(30) NULL');
-  end;
+  FConn.StartTransact;
+  try
+    if version > ServerDBVersion then
+      raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+    if (version < 12) then
+      raise Exception.Create('Database must be rebuilt');
+    if (version < 13) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	IsComponent int NULL');
+      Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD	CodeList nchar(30) NULL');
+    end;
 
-  if (version < 14) then
-    CreateAuthorizations
-  else if (version < 15) then
-  begin
-    Fconn.ExecSQL('Drop index SK_Authorizations_Hash on Authorizations');
-    Fconn.ExecSQL('ALTER TABLE dbo.Authorizations Drop Column Hash');
-    Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD	Uuid char(36) NULL');
-  end;
+    if (version < 14) then
+      CreateAuthorizations
+    else
+    begin
+      if (version < 15) then
+      begin
+        Fconn.ExecSQL('Drop index SK_Authorizations_Hash on Authorizations');
+        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations Drop Column Hash');
+        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD	Uuid char(36) NULL');
+      end;
+      if (version < 16) then
+        Fconn.ExecSQL('ALTER TABLE dbo.Authorizations ADD	PatientId char(64) NULL');
+    end;
+    if (version < 17) then
+    begin
+     CreateAuthorizationSessions;
+     CreateConnections;
+    end;
 
-  Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
+    Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
+    FConn.commit;
+  except
+    FConn.rollback;
+    raise;
+  end;
 end;
 
 end.

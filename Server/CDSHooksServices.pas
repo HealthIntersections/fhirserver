@@ -175,9 +175,9 @@ begin
       begin
         pr := res as TFhirProcedureRequest;
         if check(issues, (pr.subject <> nil) and (pr.subject.reference <> ''), 'ProcedureRequest must have a subject') then
-          check(issues, pr.subject.reference = request.patient, 'ProcedureRequest subject must match request.subject');
+          check(issues, pr.subject.reference = 'Patient/'+request.patient, 'ProcedureRequest subject ('+pr.subject.reference+') must match request.subject ('+request.patient+')');
         if check(issues, (pr.context <> nil) and (pr.context.reference <> ''), 'ProcedureRequest must have a context') then
-          check(issues, pr.context.reference = request.encounter, 'ProcedureRequest context must match request.encounter');
+          check(issues, pr.context.reference = 'Encounter/'+request.encounter, 'ProcedureRequest context ('+pr.context.reference+') must match request.encounter ('+request.encounter+')');
         check(issues, pr.code <> nil, 'ProcedureRequest must have a code');
       end;
     end;
@@ -187,7 +187,7 @@ begin
       if check(issues, request.preFetch['patient'].resource <> nil, 'Patient resource must be present on the entry') then
       begin
         check(issues, request.preFetch['patient'].resource.ResourceType = frtPatient, 'Patient resource must be a patient');
-        check(issues, request.patient = 'Patient/'+request.preFetch['patient'].id, 'Patient resource id must match patient in request');
+        check(issues, request.patient = request.preFetch['patient'].resource.id, 'Patient resource id ('+request.patient+') must match patient in request ('+request.preFetch['patient'].resource.id+')');
       end;
     end;
     if check(issues, request.prefetch.ContainsKey('encounter'), 'An encounter must be present in the prefetch data') then
@@ -196,10 +196,10 @@ begin
       begin
         if check(issues, request.preFetch['encounter'].resource.ResourceType = frtEncounter, 'Patient encounter must be an encounter') then
         begin
-          check(issues, request.encounter = 'Encounter/'+request.preFetch['encounter'].id, 'Encounter resource id must match encounter in request');
+          check(issues, request.encounter = request.preFetch['encounter'].resource.id, 'Encounter resource id ('+request.encounter+') must match encounter in request ('+request.preFetch['encounter'].resource.id+')');
           e := TFhirEncounter(request.preFetch['encounter'].resource);
           if check(issues, (e.subject <> nil) and (e.subject.reference <> ''), 'Encounter must have a subject') then
-            check(issues, e.subject.reference = request.patient, 'Encounter subject must match request.subject');
+            check(issues, e.subject.reference = 'Patient/'+request.patient, 'Encounter subject ('+e.subject.reference+') must match request.subject ('+request.patient+')');
         end;
       end;
     end;
@@ -212,7 +212,7 @@ begin
             begin
               c := be.resource as TFhirCondition;
               if check(issues, (c.subject <> nil) and (c.subject.reference <> ''), 'Condition must have a subject') then
-                check(issues, c.subject.reference = request.patient, 'Condition subject must match request.subject');
+                check(issues, c.subject.reference = 'Patient/'+request.patient, 'Condition subject ('+c.subject.reference+') must match request.subject ('+request.patient+')');
               check(issues, c.code <> nil, 'Condition must have a code');
             end;
     {$ENDIF}

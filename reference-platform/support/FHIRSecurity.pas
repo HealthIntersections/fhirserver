@@ -304,7 +304,7 @@ begin
   if FAdministerUsers then
     s := s + ' '+ SCIM_ADMINISTRATOR;
   if writeall and FReadAll then
-    s := s +' User/*.*'
+    s := s +' user/*.*'
   else
   begin
     for rn in FWorker.allResourceNames do

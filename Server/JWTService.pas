@@ -14,6 +14,7 @@ type
     FPassword: String;
     FHost: String;
     FServerPath: String;
+    FDatabaseId : String;
   public
     function Link : TJWTServices; overload;
 
@@ -21,6 +22,8 @@ type
     property ServerPath : String read FServerPath write FServerPath;
     property Cert : String read FCert write FCert;
     property Password : String read FPassword write FPassword;
+    property DatabaseId : String read FDatabaseId write FDatabaseId;
+
 
     function makeJWK : String;
     function makeJWT : String;
@@ -47,6 +50,7 @@ begin
     jwk.obj['use'] := 'sig';
     jwk.obj['kid'] := authurl+'/auth_key';
     jwk.obj['sub'] := Host;
+    jwk.obj['iss'] := FDatabaseId;
 
     result := TJSONWriter.writeObjectStr(jwk.obj, true);
   finally
@@ -66,12 +70,13 @@ begin
     jwk.obj['use'] := 'sig';
     jwk.obj['kid'] := authurl+'/auth_key';
     jwk.obj['sub'] := Host;
+    jwk.obj['iss'] := FDatabaseId;
 
     jwt := TJWT.Create;
     try
       jwt.subject := host;
       jwt.expires := now + 1;
-      jwt.issuer := Host;
+      jwt.issuer := FDatabaseId;
       jwt.issuedAt := now;
 
       result := TJWTUtils.pack(jwt, jwt_hmac_rsa256, jwk, ChangeFileExt(FCert, '.key'), FPassword);

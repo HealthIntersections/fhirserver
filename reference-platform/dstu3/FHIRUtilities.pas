@@ -39,7 +39,7 @@ uses
   {$IFNDEF MACOS} Windows, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
-  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport,
+  StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts,
 
@@ -151,6 +151,8 @@ function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
 function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+
+function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
@@ -4739,6 +4741,35 @@ begin
   else
     raise Exception.Create('Unknown UCUM unit for time: '+code);
   result := b * TSmartDecimal.ValueOf(value).AsDouble;
+end;
+
+function parseParamsFromForm(stream : TStream) : TFHIRParameters;
+var
+  pm : TParseMap;
+  i, j : integer;
+  n, v : String;
+  p : TFhirParametersParameter;
+begin
+  result := TFhirParameters.Create;
+  try
+    pm := TParseMap.create(StreamToString(stream, TEncoding.ASCII));
+    try
+      for i := 0 to pm.getItemCount - 1 do
+      begin
+        n := pm.VarName(i);
+        for j := 0 to pm.getValueCount(i) - 1 do
+        begin
+          pm.retrieveNumberedItem(i,j, v);
+          result.AddParameter(n, TFHIRString.Create(v));
+        end;
+      end;
+    finally
+      pm.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 end.

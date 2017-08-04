@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.159
+AppVerName=1.0.160
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.159
+OutputBaseFilename=fhirserver3-1.0.160
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -118,7 +118,7 @@ Source: "C:\work\fhirserver\install\load.ini";                                  
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
-Source: "C:\ProgramData\FHIRServer\loinc_259.cache";                  DestDir: "{commonappdata}\FHIRServer"
+Source: "C:\ProgramData\FHIRServer\loinc_261.cache";                  DestDir: "{commonappdata}\FHIRServer"
 Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "{app}\sql"
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
@@ -129,7 +129,7 @@ Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    Des
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"
-Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc_259.cache"
+Filename: "{app}\fhirserver.ini"; Section: "loinc"; Key: "cache";  String: "{commonappdata}\FHIRServer\loinc_261.cache"
 Filename: "{app}\fhirserver.ini"; Section: "ucum";  Key: "source";  String: "{commonappdata}\FHIRServer\ucum-essence.xml"
 Filename: "{app}\fhirserver.ini"; Section: "dicom"; Key: "cache";  String: "{commonappdata}\FHIRServer\dicom.cache"
 Filename: "{app}\fhirserver.ini"; Section: "web";   Key: "clients";  String: "{app}\auth.ini"

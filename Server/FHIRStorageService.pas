@@ -137,7 +137,7 @@ Type
     function hasOAuthSessionByKey(key, status : integer) : boolean; virtual;
     procedure updateOAuthSession(id : String; state, key : integer; var client_id : String); virtual;
     procedure RegisterConsentRecord(session: TFhirSession); virtual;
-    function FetchAuthorization(hash : integer; var PatientKey, ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
+    function FetchAuthorization(hash : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
 
     // server total counts:
     function FetchResourceCounts(comps : String) : TStringList; virtual; // comps = comma delimited list of patient compartments
@@ -150,7 +150,7 @@ Type
     procedure QueueResource(r: TFhirResource); overload; virtual;
     procedure QueueResource(r: TFhirResource; dateTime: TDateTimeEx); overload; virtual;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); virtual;
-    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean;
+    function RetrieveSession(key : integer; var UserKey, Provider : integer; var Id, Name, Email : String) : boolean; virtual;
 
     function ProfilesAsOptionList : String; virtual;
 
@@ -159,10 +159,12 @@ Type
     procedure ProcessObservations; virtual;
     procedure RunValidation; virtual;
 
+
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
+    function FetchResource(key : integer) : TFHIRResource; virtual;
   end;
 
 
@@ -196,7 +198,7 @@ begin
 end;
 
 
-function TFHIRStorageService.FetchAuthorization(hash: integer; var PatientKey, ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
+function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
 begin
   raise Exception.Create('This server does not support OAuth');
 end;
@@ -204,6 +206,11 @@ end;
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
 begin
   raise Exception.Create('This server does not support OAuth');
+end;
+
+function TFHIRStorageService.FetchResource(key: integer): TFHIRResource;
+begin
+  raise Exception.Create('The function "FetchResource()" must be overridden in '+className);
 end;
 
 function TFHIRStorageService.FetchResourceCounts(comps : String): TStringList;
