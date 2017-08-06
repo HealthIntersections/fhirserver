@@ -152,7 +152,6 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="FHIRServerApplicationCore.pas"/>
-        <DCCReference Include="FHIRRestServer.pas"/>
         <DCCReference Include="..\reference-platform\Support\EncodeSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\StringSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\MathSupport.pas"/>
@@ -376,6 +375,9 @@
         <DCCReference Include="GraphDefinitionEngine.pas"/>
         <DCCReference Include="..\Libraries\security\ClientApplicationVerifier.pas"/>
         <DCCReference Include="JWTService.pas"/>
+        <DCCReference Include="FHIRRestServer.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
+        <DCCReference Include="Modules\HackingHealthLogic.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -460,16 +462,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -811,7 +804,16 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

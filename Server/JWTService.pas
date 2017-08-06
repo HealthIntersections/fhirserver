@@ -26,7 +26,7 @@ type
 
 
     function makeJWK : String;
-    function makeJWT : String;
+    function makeJWT(name : string = '') : String;
     function pack(jwt : TJWT) : String;
   end;
 
@@ -58,7 +58,7 @@ begin
   end;
 end;
 
-function TJWTServices.makeJWT: String;
+function TJWTServices.makeJWT(name : String) : String;
 var
   jwk : TJWK;
   jwt :  TJWT;
@@ -69,7 +69,10 @@ begin
     jwk.obj['alg'] := 'RS256';
     jwk.obj['use'] := 'sig';
     jwk.obj['kid'] := authurl+'/auth_key';
-    jwk.obj['sub'] := Host;
+    if name = '' then
+      jwk.obj['sub'] := Host
+    else
+      jwk.obj['sub'] := name;
     jwk.obj['iss'] := FDatabaseId;
 
     jwt := TJWT.Create;

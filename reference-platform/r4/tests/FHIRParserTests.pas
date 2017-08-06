@@ -65,7 +65,7 @@ var
   b : boolean;
   msg : String;
   re : TFHIRMMElement;
-  ctxt : TWorkerContext;
+  ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
   r := TFHIRXmlParser.parseFile(nil, 'en', filename);

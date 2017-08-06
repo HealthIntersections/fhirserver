@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, XmlBuilder, MXml;
@@ -3615,14 +3615,10 @@ begin
         element.pathElement := ParseString(child, path+'/path') {b}
       else if (child.localName = 'valueSetReference') then
         element.valueSet := ParseReference(child, path+'/valueSetReference') {a}
-      else if (child.localName = 'valueSetString') then
-        element.valueSet := ParseString(child, path+'/valueSetString'){x.3}
-      else if (child.localName = 'valueCode') then
-        element.valueCodeList.Add(ParseCode(child, path+'/valueCode')){y.2}
-      else if (child.localName = 'valueCoding') then
-        element.valueCodingList.Add(ParseCoding(child, path+'/valueCoding')){y.2}
-      else if (child.localName = 'valueCodeableConcept') then
-        element.valueCodeableConceptList.Add(ParseCodeableConcept(child, path+'/valueCodeableConcept')){y.2}
+      else if (child.localName = 'valueSetUri') then
+        element.valueSet := ParseUri(child, path+'/valueSetUri'){x.3}
+      else if (child.localName = 'code') then
+        element.codeList.Add(ParseCoding(child, path+'/code')){y.2}
       else if Not ParseElementChild(element, path, child) then
     result := false;
 end;
@@ -3647,17 +3643,11 @@ begin
     ComposeString(xml, 'path', elem.pathElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) {2} then
     ComposeReference(xml, 'valueSetReference', TFhirReference(elem.valueSet))
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirString) {6} then
-    ComposeString(xml, 'valueSetString', TFhirString(elem.valueSet));
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) {6} then
+    ComposeUri(xml, 'valueSetUri', TFhirUri(elem.valueSet));
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodeList.Count - 1 do
-      ComposeCode(xml, 'valueCode', elem.valueCodeList[i]);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodingList.Count - 1 do
-      ComposeCoding(xml, 'valueCoding', elem.valueCodingList[i]);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodeableConceptList.Count - 1 do
-      ComposeCodeableConcept(xml, 'valueCodeableConcept', elem.valueCodeableConceptList[i]);
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCoding(xml, 'code', elem.codeList[i]);
 end;
 
 function TFHIRXmlParser.ParseDataRequirementDateFilter(element : TMXmlElement; path : string) : TFhirDataRequirementDateFilter;
@@ -31364,8 +31354,8 @@ end;
 function TFHIRXmlParser.ParsePlanDefinitionActionChild(element : TFhirPlanDefinitionAction; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'label') then
-        element.label_Element := ParseString(child, path+'/label') {b}
+      if (child.localName = 'prefix') then
+        element.prefixElement := ParseString(child, path+'/prefix') {b}
       else if (child.localName = 'title') then
         element.titleElement := ParseString(child, path+'/title') {b}
       else if (child.localName = 'description') then
@@ -31443,7 +31433,7 @@ var
 begin
   composeBackboneElementChildren(xml, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'label', elem.label_Element);{x.2b}
+    ComposeString(xml, 'prefix', elem.prefixElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'title', elem.titleElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then

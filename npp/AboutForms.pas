@@ -60,11 +60,11 @@ type
     procedure lnkUpdatesClick(Sender: TObject);
   private
     { Private declarations }
-    FServices : TWorkerContext;
-    procedure SetServices(const Value: TWorkerContext);
+    FServices : TFHIRWorkerContext;
+    procedure SetServices(const Value: TFHIRWorkerContext);
   public
     { Public declarations }
-    property Services : TWorkerContext read FServices write SetServices;
+    property Services : TFHIRWorkerContext read FServices write SetServices;
   end;
 
 var
@@ -112,7 +112,7 @@ begin
   ShellExecute(0, 'OPEN', 'http://www.healthintersections.com.au/FhirServer/fhirnpp.htm', '', '', SW_SHOWNORMAL);
 end;
 
-procedure TAboutForm.SetServices(const Value: TWorkerContext);
+procedure TAboutForm.SetServices(const Value: TFHIRWorkerContext);
 begin
   FServices.Free;
   FServices := Value;

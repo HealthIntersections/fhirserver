@@ -53,9 +53,9 @@ uses
 
 Type
   [TextFixture]
-  TFHIRClientTests = class (TObject)
+  TFhirHTTPClientTests = class (TObject)
   private
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
 
   public
     [SetupFixture] procedure setup;
@@ -66,9 +66,9 @@ Type
 implementation
 
 
-{ TFHIRClientTests }
+{ TFhirHTTPClientTests }
 (*
-class function TFHIRClientTests.LoadResource(filename: String): TFHIRResource;
+class function TFhirHTTPClientTests.LoadResource(filename: String): TFHIRResource;
 var
   f : TFileStream;
   prsr : TFHIRJsonParser;
@@ -88,7 +88,7 @@ begin
   end;
 end;
 
-class procedure TFHIRClientTests.testClient(client: TFhirClient);
+class procedure TFhirHTTPClientTests.testClient(client: TFhirHTTPClient);
 var
   conf : TFHIRConformance;
   patient : TFhirPatient;
@@ -121,32 +121,32 @@ begin
     raise Exception.Create('test failed');
 end;
 
-class procedure TFHIRClientTests.tests(url: String);
+class procedure TFhirHTTPClientTests.tests(url: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
 begin
-  client := TFhirClient.Create(nil, url, true);
+  client := TFhirHTTPClient.Create(nil, url, true);
   try
     client.UseIndy := true;
     testClient(client);
   finally
     client.free;
   end;
-  client := TFhirClient.Create(nil, url, false);
+  client := TFhirHTTPClient.Create(nil, url, false);
   try
     client.UseIndy := true;
     testClient(client);
   finally
     client.free;
   end;
-  client := TFhirClient.Create(nil, url, true);
+  client := TFhirHTTPClient.Create(nil, url, true);
   try
     client.UseIndy := false;
     testClient(client);
   finally
     client.free;
   end;
-  client := TFhirClient.Create(nil, url, false);
+  client := TFhirHTTPClient.Create(nil, url, false);
   try
     client.UseIndy := false;
     testClient(client);
@@ -157,19 +157,19 @@ end;
 
  *)
 
-{ TFHIRClientTests }
+{ TFhirHTTPClientTests }
 
-procedure TFHIRClientTests.setup;
+procedure TFhirHTTPClientTests.setup;
 begin
   FWorker := TTestingWorkerContext.Use;
 end;
 
-procedure TFHIRClientTests.teardown;
+procedure TFhirHTTPClientTests.teardown;
 begin
   FWorker.Free;
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TFHIRClientTests);
+  TDUnitX.RegisterTestFixture(TFhirHTTPClientTests);
 end.
 

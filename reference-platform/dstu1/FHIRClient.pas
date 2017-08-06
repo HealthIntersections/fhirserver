@@ -53,10 +53,10 @@ Type
     property issue : TFhirOperationOutcome read FIssue;
   end;
 
-  TFHIRClientHTTPVerb = (get, post, put, delete);
+  TFhirHTTPClientHTTPVerb = (get, post, put, delete);
 
   // this is meant ot be used once, and then disposed of
-  TFhirClient = class (TAdvObject)
+  TFhirHTTPClient = class (TAdvObject)
   private
     FUrl : String;
     FJson : Boolean;
@@ -67,9 +67,9 @@ Type
     function makeUrl(tail : String) : String;
     function makeUrlPath(tail : String) : String;
     function CreateParser(stream : TStream) : TFHIRParser;
-    function exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
-    function fetchFeed(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TFHIRAtomFeed;
-    function fetchResource(url : String; verb : TFHIRClientHTTPVerb; source : TStream) : TFhirResource;
+    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
+    function fetchFeed(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TFHIRAtomFeed;
+    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream) : TFhirResource;
     procedure parseCategories(categories : TFHIRAtomCategoryList);
     procedure encodeTags(tags : TFHIRAtomCategoryList);
     function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
@@ -95,14 +95,14 @@ Type
 
 implementation
 
-{ TFhirClient }
+{ TFhirHTTPClient }
 
-function TFhirClient.conformance: TFhirConformance;
+function TFhirHTTPClient.conformance: TFhirConformance;
 begin
   result := FetchResource(MakeUrl('metadata'), get, nil) as TFhirConformance;
 end;
 
-constructor TFhirClient.create(url: String; json : boolean);
+constructor TFhirHTTPClient.create(url: String; json : boolean);
 begin
   Create;
   FUrl := URL;
@@ -113,7 +113,7 @@ begin
   ssl.SSLOptions.Mode := sslmClient;
 end;
 
-destructor TFhirClient.destroy;
+destructor TFhirHTTPClient.destroy;
 begin
   ssl.Free;
   client.free;
@@ -122,7 +122,7 @@ end;
 
 
 
-function TFhirClient.transaction(bundle : TFHIRAtomFeed) : TFHIRAtomFeed;
+function TFhirHTTPClient.transaction(bundle : TFHIRAtomFeed) : TFHIRAtomFeed;
 Var
   src : TStream;
 begin
@@ -135,7 +135,7 @@ begin
 end;
 
 
-function TFhirClient.createResource(resource: TFhirResource; tags : TFHIRAtomCategoryList): TFHIRAtomEntry;
+function TFhirHTTPClient.createResource(resource: TFhirResource; tags : TFHIRAtomCategoryList): TFHIRAtomEntry;
 Var
   src : TStream;
 begin
@@ -157,13 +157,13 @@ begin
   end;
 end;
 
-function TFhirClient.updateResource(id : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry;
+function TFhirHTTPClient.updateResource(id : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry;
 begin
   result := updateResource(id, '', resource, tags);
 end;
 
 
-function TFhirClient.updateResource(id, ver : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry;
+function TFhirHTTPClient.updateResource(id, ver : String; resource : TFhirResource; tags : TFHIRAtomCategoryList) : TFHIRAtomEntry;
 Var
   src : TStream;
 begin
@@ -188,7 +188,7 @@ begin
   end;
 end;
 
-procedure TFhirClient.deleteResource(atype : TFhirResourceType; id : String; tags : TFHIRAtomCategoryList);
+procedure TFhirHTTPClient.deleteResource(atype : TFhirResourceType; id : String; tags : TFHIRAtomCategoryList);
 begin
   encodeTags(tags);
   exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), delete, nil).free;
@@ -197,7 +197,7 @@ end;
 //-- Worker Routines -----------------------------------------------------------
 
 
-function TFhirClient.serialise(resource: TFhirResource): TStream;
+function TFhirHTTPClient.serialise(resource: TFhirResource): TStream;
 var
   ok : boolean;
   comp : TFHIRComposer;
@@ -230,7 +230,7 @@ begin
     result := result + params.KeyByIndex[i]+'='+EncodeMIME(params.ValueByIndex[i])+'&';
 end;
 
-function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRAtomFeed;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRAtomFeed;
 var
   s : String;
   feed : TFHIRAtomFeed;
@@ -258,7 +258,7 @@ begin
 
 end;
 
-function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRAtomFeed;
+function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRAtomFeed;
 Var
   src, frm : TStream;
   ct : String;
@@ -286,7 +286,7 @@ begin
 
 end;
 
-function TFhirClient.serialise(batch: TFhirAtomFeed): TStream;
+function TFhirHTTPClient.serialise(batch: TFhirAtomFeed): TStream;
 var
   ok : boolean;
   xml : TFHIRXmlComposer;
@@ -307,7 +307,7 @@ begin
   end;
 end;
 
-function TFhirClient.exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
+function TFhirHTTPClient.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
 var
   comp : TFHIRParser;
   ok : boolean;
@@ -377,7 +377,7 @@ begin
 end;
 
 
-procedure TFhirClient.doRequest(request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirHTTPClient.doRequest(request: TFHIRRequest; response: TFHIRResponse);
 var
   entry : TFHIRAtomEntry;
 begin
@@ -434,7 +434,7 @@ begin
   end;
 end;
 
-function TFhirClient.fetchFeed(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct : String = ''): TFHIRAtomFeed;
+function TFhirHTTPClient.fetchFeed(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct : String = ''): TFHIRAtomFeed;
 var
   ret : TStream;
   p : TFHIRParser;
@@ -455,7 +455,7 @@ begin
   end;
 end;
 
-function TFhirClient.fetchResource(url: String; verb: TFHIRClientHTTPVerb; source: TStream): TFhirResource;
+function TFhirHTTPClient.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream): TFhirResource;
 var
   ret : TStream;
   p : TFHIRParser;
@@ -481,7 +481,7 @@ begin
   end;
 end;
 
-function TFhirClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
 var
   m : TIdSoapMimeMessage;
   p : TIdSoapMimePart;
@@ -510,7 +510,7 @@ begin
   end;
 end;
 
-function TFhirClient.makeUrl(tail: String): String;
+function TFhirHTTPClient.makeUrl(tail: String): String;
 begin
   result := FURL;
   if not result.EndsWith('/') then
@@ -518,7 +518,7 @@ begin
   result := result + tail;
 end;
 
-function TFhirClient.makeUrlPath(tail: String): String;
+function TFhirHTTPClient.makeUrlPath(tail: String): String;
 var
   s : String;
 begin
@@ -536,7 +536,7 @@ begin
   sRight := trim(sRight);
 end;
 
-procedure TFhirClient.parseCategories(categories: TFHIRAtomCategoryList);
+procedure TFhirHTTPClient.parseCategories(categories: TFHIRAtomCategoryList);
 var
   s, l, n, v : String;
   url, scheme, lbl : String;
@@ -566,7 +566,7 @@ begin
 end;
 
 
-function TFhirClient.readResource(atype: TFhirResourceType; id: String; tags: TFHIRAtomCategoryList): TFHIRAtomEntry;
+function TFhirHTTPClient.readResource(atype: TFhirResourceType; id: String; tags: TFHIRAtomCategoryList): TFHIRAtomEntry;
 begin
   encodeTags(tags);
 
@@ -582,7 +582,7 @@ begin
   end;
 end;
 
-function TFhirClient.CreateParser(stream: TStream): TFHIRParser;
+function TFhirHTTPClient.CreateParser(stream: TStream): TFHIRParser;
 begin
   if FJSon then
     result := TFHIRJsonParser.create('en')
@@ -591,12 +591,12 @@ begin
   result.source := stream;
 end;
 
-procedure TFhirClient.cancelOperation;
+procedure TFhirHTTPClient.cancelOperation;
 begin
   client.Disconnect;
 end;
 
-procedure TFhirClient.encodeTags(tags: TFHIRAtomCategoryList);
+procedure TFhirHTTPClient.encodeTags(tags: TFHIRAtomCategoryList);
 begin
   if (tags <> nil) and (tags.Count > 0) then
     client.Request.RawHeaders.Values['Category'] := tags.AsHeader;

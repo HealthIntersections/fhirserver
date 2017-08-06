@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, TurtleParser;
@@ -2862,14 +2862,10 @@ begin
     result.pathElement := ParseString(obj.complex('http://hl7.org/fhir/DataRequirement.codeFilter.path'));{q1}
     if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetReference', item) {a3} then
       result.valueSet := ParseReference(item);
-    if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetString', item) then
-      result.valueSet := parseString(item);
-    for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter.valueCode') do
-      result.valueCodeList.Add(parseCode(item));
-    for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter.valueCoding') do
-      result.valueCodingList.Add(parseCoding(item));
-    for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter.valueCodeableConcept') do
-      result.valueCodeableConceptList.Add(parseCodeableConcept(item));
+    if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetUri', item) then
+      result.valueSet := parseUri(item);
+    for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter.code') do
+      result.codeList.Add(parseCoding(item));
 end;
 
 procedure TFHIRTurtleComposer.ComposeDataRequirementCodeFilter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirementCodeFilter; useType : boolean; index : integer);
@@ -2892,17 +2888,11 @@ begin
     ComposeString(this, 'DataRequirement.codeFilter', 'path', elem.pathElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) {2} then
     ComposeReference(this, 'DataRequirement.codeFilter', 'valueSetReference', TFhirReference(elem.valueSet), false,-1){x.d8}
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirString) {6} then
-    ComposeString(this, 'DataRequirement.codeFilter', 'valueSetString', TFhirString(elem.valueSet), false, -1);{x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) {6} then
+    ComposeUri(this, 'DataRequirement.codeFilter', 'valueSetUri', TFhirUri(elem.valueSet), false, -1);{x.d9}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodeList.Count - 1 do
-      ComposeCode(this, 'DataRequirement.codeFilter', 'valueCode', elem.valueCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodingList.Count - 1 do
-      ComposeCoding(this, 'DataRequirement.codeFilter', 'valueCoding', elem.valueCodingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.valueCodeableConceptList.Count - 1 do
-      ComposeCodeableConcept(this, 'DataRequirement.codeFilter', 'valueCodeableConcept', elem.valueCodeableConceptList[i], false, i);{x.d3}
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCoding(this, 'DataRequirement.codeFilter', 'code', elem.codeList[i], false, i);{x.d3}
 end;
 
 function TFHIRTurtleParser.ParseDataRequirementDateFilter(obj : TTurtleComplex) : TFhirDataRequirementDateFilter;
@@ -25758,7 +25748,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
-    result.label_Element := ParseString(obj.complex('http://hl7.org/fhir/PlanDefinition.action.label'));{q1}
+    result.prefixElement := ParseString(obj.complex('http://hl7.org/fhir/PlanDefinition.action.prefix'));{q1}
     result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/PlanDefinition.action.title'));{q1}
     result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/PlanDefinition.action.description'));{q1}
     result.textEquivalentElement := ParseString(obj.complex('http://hl7.org/fhir/PlanDefinition.action.textEquivalent'));{q1}
@@ -25823,7 +25813,7 @@ begin
   end;
   composeBackboneElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'PlanDefinition.action', 'label', elem.label_Element, false, -1);{x.2ea}
+    ComposeString(this, 'PlanDefinition.action', 'prefix', elem.prefixElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'PlanDefinition.action', 'title', elem.titleElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then

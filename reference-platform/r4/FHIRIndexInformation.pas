@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -764,8 +764,8 @@ begin
   indexes.add('Composition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Composition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Composition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Composition', 'attester', 'Who attested the composition', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient'], 'Composition.attester.party', SearchXpathUsageNormal);
-  indexes.add('Composition', 'author', 'Who and/or what authored the composition', SearchParamTypeREFERENCE, ['Practitioner', 'Device', 'Patient', 'RelatedPerson'], 'Composition.author', SearchXpathUsageNormal);
+  indexes.add('Composition', 'attester', 'Who attested the composition', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole'], 'Composition.attester.party', SearchXpathUsageNormal);
+  indexes.add('Composition', 'author', 'Who and/or what authored the composition', SearchParamTypeREFERENCE, ['Practitioner', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Composition.author', SearchXpathUsageNormal);
   indexes.add('Composition', 'class', 'Categorization of Composition', SearchParamTypeTOKEN, [], 'Composition.class', SearchXpathUsageNormal);
   indexes.add('Composition', 'confidentiality', 'As defined by affinity domain', SearchParamTypeTOKEN, [], 'Composition.confidentiality', SearchXpathUsageNormal);
   indexes.add('Composition', 'context', 'Code(s) that apply to the event being documented', SearchParamTypeTOKEN, [], 'Composition.event.code', SearchXpathUsageNormal);

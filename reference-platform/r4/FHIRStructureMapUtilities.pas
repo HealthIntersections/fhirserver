@@ -83,7 +83,7 @@ type
 
   TFHIRStructureMapUtilities = class (TAdvObject)
   private
-	  FWorker : TWorkerContext;
+	  FWorker : TFHIRWorkerContext;
    	fpp : TFHIRPathParser;
    	fpe : TFHIRPathEngine;
   	FLib : TAdvMap<TFHIRStructureMap>;
@@ -128,7 +128,7 @@ type
     function translate(appInfo : TAdvObject; map : TFHIRStructureMap; vars : TVariables; parameter : TFHIRStructureMapGroupRuleTargetParameterList) : TFHIRObject; overload;
     function translate(appInfo : TAdvObject; map : TFHIRStructureMap; source : TFHIRObject; conceptMapUrl : String; fieldToReturn : String): TFHIRObject; overload;
   public
-    constructor Create(context : TWorkerContext; lib : TAdvMap<TFHIRStructureMap>; services : TTransformerServices);
+    constructor Create(context : TFHIRWorkerContext; lib : TAdvMap<TFHIRStructureMap>; services : TTransformerServices);
     destructor Destroy; override;
 
   	property Lib : TAdvMap<TFHIRStructureMap> read FLib;
@@ -144,7 +144,7 @@ implementation
 
 { TFHIRStructureMapUtilities }
 
-constructor TFHIRStructureMapUtilities.Create(context: TWorkerContext;
+constructor TFHIRStructureMapUtilities.Create(context: TFHIRWorkerContext;
   lib: TAdvMap<TFHIRStructureMap>; services: TTransformerServices);
 begin
   inherited Create;

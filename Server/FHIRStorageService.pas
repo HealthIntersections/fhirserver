@@ -37,7 +37,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, ThreadSupport,
   KDBDialects, DateSupport,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
 
 
@@ -121,6 +121,33 @@ Type
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
   end;
 
+  TFHIRInternalClient = class (TFHIRClient)
+  private
+    FEngine : TFHIROperationEngine;
+    FContext: TFHIRWorkerContext;
+    FSession: TFHIRSession;
+    procedure SetContext(const Value: TFHIRWorkerContext);
+    procedure SetSession(const Value: TFHIRSession);
+  public
+    Destructor Destroy; override;
+
+    property Session : TFHIRSession read FSession write SetSession;
+    property Context : TFHIRWorkerContext read FContext write SetContext;
+
+
+    function conformance(summary : boolean) : TFhirCapabilityStatement; override;
+    function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
+    function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
+    function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
+    function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
+    procedure deleteResource(atype : TFhirResourceType; id : String); override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; override;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; override;
+  end;
+
   TFHIRStorageService = class (TAdvObject)
   protected
     function GetTotalResourceCount: integer; virtual;
@@ -161,7 +188,9 @@ Type
 
 
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
-    Procedure Yield(op : TFHIROperationEngine; exception : Exception); virtual;
+    Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual;
+    function createClient(lang : String; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
+    Procedure Yield(client : TFHIRClient; exception : Exception); overload; virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResource; virtual;
@@ -548,6 +577,27 @@ begin
   raise Exception.Create('The function "StartTransaction" must be overridden in '+className);
 end;
 
+function TFHIRStorageService.createClient(lang: String; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
+var
+  engine : TFHIROperationEngine;
+begin
+  result := TFHIRInternalClient.Create;
+  try
+    TFHIRInternalClient(result).FEngine := createOperationContext(lang);
+    TFHIRInternalClient(result).Context := context.link;
+    TFHIRInternalClient(result).session := session.link;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+procedure TFHIRStorageService.Yield(client: TFHIRClient; exception: Exception);
+begin
+  yield(TFHIRInternalClient(client).FEngine, exception);
+  client.Free;
+end;
+
 { TMatchingResourceList }
 
 function TMatchingResourceList.GetEntry(iIndex: Integer): TMatchingResource;
@@ -555,6 +605,130 @@ begin
   result := TMatchingResource(ObjectByIndex[iIndex]);
 end;
 
+
+{ TFHIRInternalClient }
+
+function TFHIRInternalClient.conformance(summary: boolean): TFhirCapabilityStatement;
+var
+  comp : TFHIRCompartmentList;
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+begin
+  comp := TFHIRCompartmentList.Create;
+  try
+    comp.register(frtPatient, '', session.BuildCompartmentList);
+    req := TFHIRRequest.Create(context, roOperation, comp.Link);
+    try
+      req.CommandType := fcmdConformanceStmt;
+      resp := TFHIRResponse.Create;
+      try
+        FEngine.ExecuteConformanceStmt(req, resp);
+        if resp.HTTPCode >= 300 then
+          if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
+            raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
+          else
+            raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
+        result := resp.Resource.Link as TFhirCapabilityStatement;
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    comp.Free;
+  end;
+
+end;
+
+function TFHIRInternalClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+procedure TFHIRInternalClient.deleteResource(atype: TFhirResourceType;
+  id: String);
+begin
+  inherited;
+  raise Exception.Create('Not done yet');
+
+end;
+
+destructor TFHIRInternalClient.Destroy;
+begin
+  FEngine.Free;
+  FContext.Free;
+  FSession.Free;
+  inherited;
+end;
+
+function TFHIRInternalClient.historyType(atype: TFhirResourceType;
+  allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.operation(atype: TFhirResourceType; opName: String;
+  params: TFhirParameters): TFHIRResource;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.readResource(atype: TFhirResourceType;
+  id: String): TFHIRResource;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.search(atype: TFhirResourceType;
+  allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.search(atype: TFhirResourceType;
+  allRecords: boolean; params: string): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.searchPost(atype: TFhirResourceType;
+  allRecords: boolean; params: TAdvStringMatch;
+  resource: TFhirResource): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+procedure TFHIRInternalClient.SetContext(const Value: TFHIRWorkerContext);
+begin
+  FContext.Free;
+  FContext := Value;
+end;
+
+procedure TFHIRInternalClient.SetSession(const Value: TFHIRSession);
+begin
+  FSession.Free;
+  FSession := Value;
+end;
+
+function TFHIRInternalClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
+
+function TFHIRInternalClient.updateResource(
+  resource: TFhirResource): TFHIRResource;
+begin
+  raise Exception.Create('Not done yet');
+
+end;
 
 end.
 

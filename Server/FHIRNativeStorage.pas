@@ -6487,9 +6487,16 @@ begin
   try
     pIn := makeParams(request);
     try
-      if not pIn.hasParameter('source') then
-        raise Exception.Create('No Source System specified');
-      jwt := manager.ServerContext.JWTServices.makeJWT;
+      if pIn.hasParameter('for') then
+      begin
+        jwt := manager.ServerContext.JWTServices.makeJWT(pIn.str['for']);
+      end
+      else
+      begin
+        if not pIn.hasParameter('source') then
+          raise Exception.Create('No Source System specified');
+        jwt := manager.ServerContext.JWTServices.makeJWT;
+      end;
       response.HTTPCode := 200;
       response.Message := 'OK';
       if request.PostFormat <> ffUnspecified then

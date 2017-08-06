@@ -43,7 +43,7 @@ Type
   TFHIRPluginValidatorContext = class (TBaseWorkerContext)
   private
     FUrl : String;
-    FServer : TFHIRClient;
+    FServer : TFhirHTTPClient;
     FCapabilityStatement : TFHIRCapabilityStatement;
     FValueSets : TAdvMap<TFHIRValueSet>;
     FCodeSystems : TAdvMap<TFHIRCodeSystem>;
@@ -78,7 +78,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := TFhirClient.Create(self.link, FUrl, true);
+    FServer := TFhirHTTPClient.Create(self.link, FUrl, true);
     FServer.timeout := 5000;
     FServer.allowR2 := true;
     FCapabilityStatement := FServer.conformance(true);

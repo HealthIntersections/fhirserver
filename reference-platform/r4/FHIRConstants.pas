@@ -39,7 +39,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -3501,7 +3501,7 @@ Const
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2017-07-31T17:15:43+10:00';
+  FHIR_GENERATED_DATE = '2017-08-04T12:35:50+10:00';
 
 
 

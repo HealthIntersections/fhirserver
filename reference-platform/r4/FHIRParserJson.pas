@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -3954,21 +3954,15 @@ begin
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
     if jsn.has('valueSetReference') {a3} then
       result.valueSet := ParseReference(jsn.vObj['valueSetReference']);
-    if jsn.has('valueSetString') or jsn.has('_valueSetString') then
-      result.valueSet := parseString(jsn['valueSetString'], jsn.vObj['_valueSetString']);
-      if jsn.has('valueCode') or jsn.has('_valueCode') then
-      iteratePrimitiveArray(jsn.vArr['valueCode'], jsn.vArr['_valueCode'], result.valueCodeList, parseCode);
-    if jsn.has('valueCoding') then
-      iterateArray(jsn.vArr['valueCoding'], result.valueCodingList, parseCoding);
-    if jsn.has('valueCodeableConcept') then
-      iterateArray(jsn.vArr['valueCodeableConcept'], result.valueCodeableConceptList, parseCodeableConcept);
+    if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
+      result.valueSet := parseUri(jsn['valueSetUri'], jsn.vObj['_valueSetUri']);
+    if jsn.has('code') then
+      iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
 end;
 
 procedure TFHIRJsonComposer.ComposeDataRequirementCodeFilter(json : TJSONWriter; name : string; elem : TFhirDataRequirementCodeFilter; noObj : boolean = false);
 var
   i : integer;
-  ext : boolean;
-  val : boolean;
 begin
   if (elem = nil) then
     exit;
@@ -3980,47 +3974,16 @@ begin
     ComposeStringProps(json, 'path', elem.pathElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) then
     ComposeReference(json, 'valueSetReference', TFhirReference(elem.valueSet))
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirString) then 
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) then 
   begin
-    ComposeStringValue(json, 'valueSetString', TFhirString(elem.valueSet), false);
-    ComposeStringProps(json, 'valueSetString', TFhirString(elem.valueSet), false);
+    ComposeUriValue(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
+    ComposeUriProps(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueCodeList.Count > 0) then
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
   begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.valueCodeList.Count - 1 do
-    begin
-      ext := ext or ((elem.valueCodeList[i].id <> '') or (elem.valueCodeList[i].hasExtensionList) {no-comments or (elem.valueCodeList[i].hasComments)});
-      val := val or (elem.valueCodeList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('valueCode');
-      for i := 0 to elem.valueCodeList.Count - 1 do
-        ComposeCodeValue(json, '',elem.valueCodeList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_valueCode');
-      for i := 0 to elem.valueCodeList.Count - 1 do
-        ComposeCodeProps(json, '',elem.valueCodeList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueCodingList.Count > 0) then
-  begin
-    json.valueArray('valueCoding');
-    for i := 0 to elem.valueCodingList.Count - 1 do
-      ComposeCoding(json, '', elem.valueCodingList[i]); {z - Coding}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueCodeableConceptList.Count > 0) then
-  begin
-    json.valueArray('valueCodeableConcept');
-    for i := 0 to elem.valueCodeableConceptList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.valueCodeableConceptList[i]); {z - CodeableConcept}
+    json.valueArray('code');
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCoding(json, '', elem.codeList[i]); {z - Coding}
     json.FinishArray;
   end;
   if not noObj then json.finishObject;
@@ -15815,7 +15778,7 @@ begin
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Practitioner|Device|Patient|RelatedPerson)}
+      ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Practitioner|PractitionerRole|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -32700,8 +32663,8 @@ end;
 procedure TFHIRJsonParser.ParsePlanDefinitionActionProperties(jsn : TJsonObject; result : TFhirPlanDefinitionAction);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('label') or jsn.has('_label') then
-        result.label_Element := ParseString(jsn['label'], jsn.vObj['_label']);{q}
+    if jsn.has('prefix') or jsn.has('_prefix') then
+        result.prefixElement := ParseString(jsn['prefix'], jsn.vObj['_prefix']);{q}
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -32771,9 +32734,9 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'label', elem.label_Element, false);
+    ComposeStringValue(json, 'prefix', elem.prefixElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'label', elem.label_Element, false);
+    ComposeStringProps(json, 'prefix', elem.prefixElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then

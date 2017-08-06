@@ -142,7 +142,7 @@ Type
   TFHIRValidator = class(TAdvObject)
   private
     // configuration items
-    FContext: TWorkerContext;
+    FContext: TFHIRWorkerContext;
     FExtensionDomains: TStringList;
     FPathEngine : TFHIRPathEngine;
 
@@ -236,10 +236,10 @@ Type
     procedure checkInnerNS(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
     procedure checkInnerNames(ctxt: TFHIRValidatorContext; e: TFHIRMMElement; path: String; list: TFhirXHtmlNodeList);
   public
-    Constructor Create(context: TWorkerContext);
+    Constructor Create(context: TFHIRWorkerContext);
     Destructor Destroy; Override;
 
-    Property Context : TWorkerContext read FContext;
+    Property Context : TFHIRWorkerContext read FContext;
 
     procedure validate(ctxt : TFHIRValidatorContext; element : TFHIRMMElement); overload;
     procedure validate(ctxt : TFHIRValidatorContext; element : TFHIRMMElement; profiles: TValidationProfileSet); overload;
@@ -443,7 +443,7 @@ end;
 
 { TFHIRValidator }
 
-constructor TFHIRValidator.Create(context: TWorkerContext);
+constructor TFHIRValidator.Create(context: TFHIRWorkerContext);
 begin
   inherited Create;
   FContext := context;

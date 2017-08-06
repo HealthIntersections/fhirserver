@@ -39,10 +39,10 @@ uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
   StringSupport, EncodeSupport, GuidSupport, DateSupport,
   IdHTTP, IdSSLOpenSSL, MimeMessage,
-  AdvObjects, AdvBuffers, AdvWinInetClients, AdvStringMatches, AdvJson,
+  AdvObjects, AdvBuffers, {$IFNDEF OSX}AdvWinInetClients, {$ENDIF}AdvStringMatches, AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
-  SmartOnFhirUtilities, CDSHooksUtilities;
+  SmartOnFhirUtilities, CdsHooksUtilities;
 
 Type
   EFHIRClientException = class (Exception)
@@ -55,23 +55,43 @@ Type
     property issue : TFhirOperationOutcome read FIssue;
   end;
 
-  TFHIRClientHTTPVerb = (get, post, put, delete, options, patch);
+  TFhirClient = {abstract} class (TAdvObject)
+  private
+  public
+    function link : TFhirClient; overload;
 
-  TFHIRClientStatusEvent = procedure (client : TObject; details : String) of Object;
+    function conformance(summary : boolean) : TFhirCapabilityStatement; virtual;
+    function transaction(bundle : TFHIRBundle) : TFHIRBundle; virtual;
+    function createResource(resource : TFhirResource; var id : String) : TFHIRResource; virtual;
+    function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; virtual;
+    function updateResource(resource : TFhirResource) : TFHIRResource; overload; virtual;
+    procedure deleteResource(atype : TFhirResourceType; id : String); virtual;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; virtual;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; virtual;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; virtual;
+  end;
+
+  TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
+
+  TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
 
   // this is meant ot be used once, and then disposed of
-  TFhirClient = class (TAdvObject)
+  TFhirHTTPClient = class (TFhirClient)
   private
     FUrl : String;
     FJson : Boolean;
+    {$IFNDEF OSX}
     http : TAdvWinInetClient;
+    {$ENDIF}
     indy : TIdHTTP;
     ssl : TIdSSLIOHandlerSocketOpenSSL;
-    FOnClientStatus : TFHIRClientStatusEvent;
+    FOnClientStatus : TFhirHTTPClientStatusEvent;
     FSmartToken: TSmartOnFhirAccessToken;
     FTimeout: cardinal;
     FUseIndy: boolean;
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
     FAllowR2: boolean;
     FCertPWord: String;
 
@@ -83,33 +103,36 @@ Type
     function makeUrl(tail : String; params : TAdvStringMatch = nil) : String;
     function makeUrlPath(tail : String) : String;
     function CreateParser(stream : TStream) : TFHIRParser;
-    function exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
-    function fetchResource(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
+    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
+    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
     function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
     procedure SetTimeout(const Value: cardinal);
     procedure createClient;
     procedure setHeader(name, value : String);
     function GetHeader(name : String) : String;
-    function exchangeIndy(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
-    function exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
+    function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
+    {$IFNDEF OSX}
+    function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
+    {$ENDIF}
 
     function authoriseByOWinIndy(server, username, password : String): TJsonObject;
     function authoriseByOWinHttp(server, username, password : String): TJsonObject;
     procedure SetCertFile(const Value: String);
-    procedure SetCertPWord(const Value: String);  protected
+    procedure SetCertPWord(const Value: String);
+    procedure SetUseIndy(const Value: boolean);  protected
     function Convert(stream : TStream) : TStream; virtual;
   public
-    constructor Create(worker : TWorkerContext; url : String; json : boolean); overload;
+    constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
     property url : String read FUrl;
 
     property Json : boolean read FJson write FJson;
 
-    function link : TFHIRClient; overload;
+    function link : TFhirHTTPClient; overload;
     property smartToken : TSmartOnFhirAccessToken read FSmartToken write SetSmartToken;
     property timeout : cardinal read FTimeout write SetTimeout;
-    property UseIndy : boolean read FUseIndy write FUseIndy; // set this to true for a service, but you may have problems with SSL
+    property UseIndy : boolean read FUseIndy write SetUseIndy; // set this to true for a service, but you may have problems with SSL
     property allowR2 : boolean read FAllowR2 write FAllowR2;
     property certFile : String read FCertFile write SetCertFile;
     property certPWord : String read FCertPWord write SetCertPWord;
@@ -117,23 +140,23 @@ Type
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
 
-    function conformance(summary : boolean) : TFhirCapabilityStatement;
-    function transaction(bundle : TFHIRBundle) : TFHIRBundle;
-    function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
-    function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
-    function updateResource(resource : TFhirResource) : TFHIRResource; overload;
-    procedure deleteResource(atype : TFhirResourceType; id : String);
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle;
-    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle;
+    function conformance(summary : boolean) : TFhirCapabilityStatement; override;
+    function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
+    function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
+    function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
+    function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
+    procedure deleteResource(atype : TFhirResourceType; id : String); override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; override;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
     //authorization support
     procedure authoriseByOWin(server, username, password : String);
 
-    property OnClientStatus : TFHIRClientStatusEvent read FOnClientStatus write FOnClientStatus;
+    property OnClientStatus : TFhirHTTPClientStatusEvent read FOnClientStatus write FOnClientStatus;
 
   end;
 
@@ -156,9 +179,9 @@ begin
   inherited;
 end;
 
-{ TFhirClient }
+{ TFhirHTTPClient }
 
-function TFhirClient.Convert(stream: TStream): TStream;
+function TFhirHTTPClient.Convert(stream: TStream): TStream;
 var
   s : String;
 begin
@@ -178,32 +201,36 @@ begin
     result := stream;
 end;
 
-constructor TFhirClient.create(worker : TWorkerContext; url: String; json : boolean);
+constructor TFhirHTTPClient.create(worker : TFHIRWorkerContext; url: String; json : boolean);
 begin
   Create;
   FWorker := worker;
   FUrl := URL;
   FJson := json;
-
+  {$IFNDEF WINDOWS}
+  FUseIndy := true;
+  {$ENDIF}
 end;
 
-destructor TFhirClient.destroy;
+destructor TFhirHTTPClient.destroy;
 begin
   FWorker.Free;
   FSmartToken.Free;
   ssl.Free;
   indy.free;
+  {$IFNDEF OSX}
   http.Free;
+  {$ENDIF}
   inherited;
 end;
 
 
-function TFhirClient.link: TFHIRClient;
+function TFhirHTTPClient.link: TFhirHTTPClient;
 begin
-  result := TFHIRClient(inherited Link);
+  result := TFhirHTTPClient(inherited Link);
 end;
 
-function TFhirClient.conformance(summary : boolean): TFhirCapabilityStatement;
+function TFhirHTTPClient.conformance(summary : boolean): TFhirCapabilityStatement;
 var
   params : TAdvStringMatch;
 begin
@@ -218,7 +245,7 @@ begin
 end;
 
 
-function TFhirClient.transaction(bundle : TFHIRBundle) : TFHIRBundle;
+function TFhirHTTPClient.transaction(bundle : TFHIRBundle) : TFHIRBundle;
 Var
   src : TStream;
 begin
@@ -251,7 +278,7 @@ begin
   result := a[length(a)-1];
 end;
 
-function TFhirClient.createResource(resource: TFhirResource; var id : String): TFHIRResource;
+function TFhirHTTPClient.createResource(resource: TFhirResource; var id : String): TFHIRResource;
 Var
   src : TStream;
 begin
@@ -270,7 +297,7 @@ begin
   end;
 end;
 
-function TFhirClient.updateResource(resource : TFhirResource) : TFHIRResource;
+function TFhirHTTPClient.updateResource(resource : TFhirResource) : TFHIRResource;
 Var
   src : TStream;
 begin
@@ -285,7 +312,7 @@ begin
   end;
 end;
 
-procedure TFhirClient.deleteResource(atype : TFhirResourceType; id : String);
+procedure TFhirHTTPClient.deleteResource(atype : TFhirResourceType; id : String);
 begin
   exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), delete, nil).free;
 end;
@@ -293,7 +320,7 @@ end;
 //-- Worker Routines -----------------------------------------------------------
 
 
-function TFhirClient.serialise(resource: TFhirResource): TStream;
+function TFhirHTTPClient.serialise(resource: TFhirResource): TStream;
 var
   ok : boolean;
   comp : TFHIRComposer;
@@ -318,32 +345,36 @@ begin
   end;
 end;
 
-procedure TFhirClient.SetCertFile(const Value: String);
+procedure TFhirHTTPClient.SetCertFile(const Value: String);
 begin
   FCertFile := Value;
   indy.free;
   indy := nil;
+  {$IFNDEF OSX}
   http.Free;
   http := nil;
+  {$ENDIF}
 end;
 
-procedure TFhirClient.SetCertPWord(const Value: String);
+procedure TFhirHTTPClient.SetCertPWord(const Value: String);
 begin
   FCertPWord := Value;
   indy.free;
   indy := nil;
+  {$IFNDEF OSX}
   http.Free;
   http := nil;
+  {$ENDIF}
 end;
 
-procedure TFhirClient.SetSmartToken(const Value: TSmartOnFhirAccessToken);
+procedure TFhirHTTPClient.SetSmartToken(const Value: TSmartOnFhirAccessToken);
 begin
   FSmartToken.Free;
   FSmartToken := Value;
   // todo: set the header for the access token
 end;
 
-procedure TFhirClient.status(msg: String);
+procedure TFhirHTTPClient.status(msg: String);
 begin
   if assigned(FOnClientStatus) then
     FOnClientStatus(self, msg);
@@ -358,12 +389,12 @@ begin
     result := result + params.KeyByIndex[i]+'='+EncodeMIME(params.ValueByIndex[i])+'&';
 end;
 
-function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
 begin
   result := search(atype, allrecords, encodeParams(params));
 end;
 
-function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
 var
   s : String;
   feed : TFHIRBundle;
@@ -390,7 +421,7 @@ begin
   end;
 end;
 
-function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
+function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
 var
   src, frm : TStream;
   ct : String;
@@ -410,7 +441,7 @@ begin
 end;
 
 
-function TFhirClient.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
+function TFhirHTTPClient.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
 Var
   src : TStream;
 begin
@@ -426,7 +457,7 @@ begin
   end;
 end;
 
-function TFhirClient.fetchResource(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct : String = ''): TFhirResource;
+function TFhirHTTPClient.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct : String = ''): TFhirResource;
 var
   ret, conv : TStream;
   p : TFHIRParser;
@@ -458,7 +489,7 @@ begin
   end;
 end;
 
-function TFhirClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
 var
   m : TMimeMessage;
   p : TMimePart;
@@ -485,7 +516,7 @@ begin
   end;
 end;
 
-function TFhirClient.makeUrl(tail: String; params : TAdvStringMatch = nil): String;
+function TFhirHTTPClient.makeUrl(tail: String; params : TAdvStringMatch = nil): String;
 begin
   result := FURL;
   if not result.EndsWith('/') then
@@ -495,7 +526,7 @@ begin
     result := result + '?' + encodeParams(params);
 end;
 
-function TFhirClient.makeUrlPath(tail: String): String;
+function TFhirHTTPClient.makeUrlPath(tail: String): String;
 var
   s : String;
 begin
@@ -513,7 +544,7 @@ begin
   sRight := trim(sRight);
 end;
 
-function TFhirClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
+function TFhirHTTPClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
 begin
 
   result := nil;
@@ -525,7 +556,7 @@ begin
   end;
 end;
 
-function TFhirClient.CreateParser(stream: TStream): TFHIRParser;
+function TFhirHTTPClient.CreateParser(stream: TStream): TFHIRParser;
 begin
   if FJSon then
     result := TFHIRJsonParser.create(FWorker.Link, 'en')
@@ -534,7 +565,7 @@ begin
   result.source := stream;
 end;
 
-function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirHTTPClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
 var
   s : String;
   feed : TFHIRBundle;
@@ -566,7 +597,7 @@ begin
   end;
 end;
 
-procedure TFhirClient.createClient;
+procedure TFhirHTTPClient.createClient;
 begin
   if FUseIndy then
   begin
@@ -586,6 +617,7 @@ begin
       end;
     end;
   end
+  {$IFNDEF OSX}
   else if http = nil then
   begin
     if certFile <> '' then
@@ -594,42 +626,50 @@ begin
     http.UseWindowsProxySettings := true;
     http.UserAgent := 'FHIR Client';
   end;
+  {$ENDIF}
 end;
 
-procedure TFhirClient.setHeader(name, value: String);
+procedure TFhirHTTPClient.setHeader(name, value: String);
 begin
   createClient;
   if FUseIndy then
     indy.Request.RawHeaders.Values[name] := value
+  {$IFNDEF OSX}
   else
     http.Headers.AddOrSetValue(name, value);
+  {$ENDIF}
 end;
 
-function TFhirClient.GetHeader(name: String): String;
+function TFhirHTTPClient.GetHeader(name: String): String;
 begin
   createClient;
   if FUseIndy then
     result := indy.Response.RawHeaders.Values[name]
+  {$IFNDEF OSX}
   else
     result := http.getResponseHeader(name);
+  {$ENDIF}
 end;
 
 
-procedure TFhirClient.getSSLpassword(var Password: String);
+procedure TFhirHTTPClient.getSSLpassword(var Password: String);
 begin
   Password := FCertPWord;
 end;
 
-function TFhirClient.exchange(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String = '') : TStream;
+function TFhirHTTPClient.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
 begin
   createClient;
   if FUseIndy then
     result := exchangeIndy(url, verb, source, ct)
+  {$IFNDEF OSX}
   else
     result := exchangeHTTP(url, verb, source, ct)
+  {$ENDIF}
 end;
 
-function TFhirClient.exchangeHTTP(url: String; verb: TFHIRClientHTTPVerb; source: TStream; ct: String): TStream;
+{$IFNDEF OSX}
+function TFhirHTTPClient.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
 var
   ok : boolean;
   op : TFHIROperationOutcome;
@@ -734,8 +774,10 @@ begin
       http.Response.SaveToStream(result);
       result.Position := 0;
   end;
+{$ENDIF}
 
-function TFhirClient.exchangeIndy(url : String; verb : TFHIRClientHTTPVerb; source : TStream; ct : String) : TStream;
+
+function TFhirHTTPClient.exchangeIndy(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String) : TStream;
 var
   comp : TFHIRParser;
   ok : boolean;
@@ -820,7 +862,7 @@ begin
   end;
 end;
 
-procedure TFhirClient.SetTimeout(const Value: cardinal);
+procedure TFhirHTTPClient.SetTimeout(const Value: cardinal);
 begin
   FTimeout := Value;
   createClient;
@@ -831,7 +873,16 @@ begin
   end;
 end;
 
-procedure TFhirClient.authoriseByOWin(server, username, password: String);
+procedure TFhirHTTPClient.SetUseIndy(const Value: boolean);
+begin
+  {$IFNDEF OSX}
+  FUseIndy := Value;
+  {$ELSE}
+  // ignore...?
+  {$ENDIF}
+end;
+
+procedure TFhirHTTPClient.authoriseByOWin(server, username, password: String);
 var
   token : TJsonObject;
 begin
@@ -848,12 +899,12 @@ begin
   end;
 end;
 
-function TFhirClient.authoriseByOWinHttp(server, username, password: String): TJsonObject;
+function TFhirHTTPClient.authoriseByOWinHttp(server, username, password: String): TJsonObject;
 begin
   raise Exception.Create('Not done yet');
 end;
 
-function TFhirClient.authoriseByOWinIndy(server, username, password: String): TJsonObject;
+function TFhirHTTPClient.authoriseByOWinIndy(server, username, password: String): TJsonObject;
 var
   ss : TStringStream;
   resp : TMemoryStream;
@@ -878,7 +929,7 @@ begin
   end;
 end;
 
-procedure TFhirClient.cancelOperation;
+procedure TFhirHTTPClient.cancelOperation;
 begin
   if not FUseIndy then
     raise Exception.Create('Cancel not supported')
@@ -887,9 +938,71 @@ begin
 end;
 
 
-function TFhirClient.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
+function TFhirHTTPClient.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
 begin
   result := nil;
+end;
+
+{ TFhirClient }
+
+function TFhirClient.link: TFhirClient;
+begin
+  result := TFhirClient(inherited Link);
+end;
+
+function TFhirClient.conformance(summary: boolean): TFhirCapabilityStatement;
+begin
+  raise Exception.Create('Must override conformance() in '+className);
+end;
+
+function TFhirClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
+begin
+  raise Exception.Create('Must override createResource() in '+className);
+end;
+
+procedure TFhirClient.deleteResource(atype: TFhirResourceType; id: String);
+begin
+  raise Exception.Create('Must override deleteResource() in '+className);
+end;
+
+function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+begin
+  raise Exception.Create('Must override historyType() in '+className);
+end;
+
+function TFhirClient.operation(atype: TFhirResourceType; opName: String; params: TFhirParameters): TFHIRResource;
+begin
+  raise Exception.Create('Must override operation() in '+className);
+end;
+
+function TFhirClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
+begin
+  raise Exception.Create('Must override readResource() in '+className);
+end;
+
+function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+begin
+  raise Exception.Create('Must override search() in '+className);
+end;
+
+function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+begin
+  raise Exception.Create('Must override search() in '+className);
+end;
+
+function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
+begin
+  raise Exception.Create('Must override searchPost() in '+className);
+end;
+
+function TFhirClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
+begin
+  raise Exception.Create('Must override transaction() in '+className);
+end;
+
+function TFhirClient.updateResource(resource: TFhirResource): TFHIRResource;
+begin
+  raise Exception.Create('Must override updateResource() in '+className);
 end;
 
 end.

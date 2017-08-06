@@ -95,7 +95,7 @@ Uses
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, FHIRXhtml, FHIRGraphQL,
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager, FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
@@ -3454,9 +3454,9 @@ end;
 
 //procedure TFhirWebServer.DoSendFHIR(iMsgKey, SrcID: Integer; request: TFHIRRequest; response: TFHIRResponse);
 //var
-//  client : TFHIRClient;
+//  client : TFhirHTTPClient;
 //begin
-//  client := TFhirClient.create(FBaseURL, false);
+//  client := TFhirHTTPClient.create(FBaseURL, false);
 //  try
 //    FClientLock.Lock('MakeClient');
 //    Try

@@ -201,7 +201,7 @@ type
 
   TFHIRPathEngine = class (TAdvObject)
   private
-    worker : TWorkerContext;
+    worker : TFHIRWorkerContext;
     FOndebug : TFHIRPathDebugEvent;
     FLog : TStringBuilder;
     primitiveTypes, allTypes : TStringList;
@@ -325,7 +325,7 @@ type
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
 
   public
-    constructor Create(context : TWorkerContext);
+    constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
@@ -357,7 +357,7 @@ type
     function convertToBoolean(items : TFHIRSelectionList) : boolean;
 
     function UseLog : String;
-    property context : TWorkerContext read worker;
+    property context : TFHIRWorkerContext read worker;
   end;
 
 implementation
@@ -437,7 +437,7 @@ begin
 end;
 
 
-constructor TFHIRPathEngine.create(context: TWorkerContext);
+constructor TFHIRPathEngine.create(context: TFHIRWorkerContext);
 var
   sd : TFhirStructureDefinition;
 begin

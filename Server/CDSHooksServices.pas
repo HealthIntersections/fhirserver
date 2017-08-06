@@ -48,6 +48,7 @@ type
   private
     function check(issues : TStringList; condition : boolean; message : String) : boolean;
   public
+    Constructor Create; override;
     function hook : string; override;
     function name : String; override;
     function id : String; override;
@@ -58,6 +59,11 @@ type
   end;
 
 implementation
+
+{$IFNDEF FHIR2}
+uses
+  HackingHealthLogic;
+{$ENDIF}
 
 { TCDAHooksCodeViewService }
 
@@ -113,6 +119,14 @@ begin
   if not condition then
     issues.Add(message);
   result := condition;
+end;
+
+constructor TCDAHackingHealthOrderService.Create;
+begin
+  inherited;
+  {$IFNDEF FHIR2}
+  FEngines.add(THackingHealthBNPLogic);
+  {$ENDIF}
 end;
 
 function TCDAHackingHealthOrderService.description: String;
@@ -223,6 +237,7 @@ begin
       card.summary := 'order-review request is ok';
       card.detail := 'All tests passed';
       card.indicator := 'success';
+      ProcessRequestEngines(server, secure, session, context, request, result);
     end
     else
     begin

@@ -66,7 +66,7 @@ type
   [TextFixture]
   TMapTransformTests = class (TObject)
   private
-    ctxt : TWorkerContext;
+    ctxt : TFHIRWorkerContext;
     utils : TFHIRStructureMapUtilities;
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
@@ -90,7 +90,7 @@ end;
 
 procedure TMapParserTests.MapParserTest(filename: String);
 var
-  ctxt : TWorkerContext;
+  ctxt : TFHIRWorkerContext;
   utils : TFHIRStructureMapUtilities;
   map : TFHIRStructureMap;
   source, output : String;

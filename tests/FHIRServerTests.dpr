@@ -273,7 +273,9 @@ uses
   GraphDefinitionTests in 'GraphDefinitionTests.pas',
   UcumTests in '..\Libraries\ucum\UcumTests.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
-  JWTService in '..\Server\JWTService.pas';
+  JWTService in '..\Server\JWTService.pas',
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
+  HackingHealthLogic in '..\Server\Modules\HackingHealthLogic.pas';
 
 var
   runner : ITestRunner;

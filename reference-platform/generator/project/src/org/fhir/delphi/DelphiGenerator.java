@@ -2591,7 +2591,7 @@ public class DelphiGenerator {
           assign.append("  end\r\n");
           assign.append("  else\r\n");
           assign.append("  begin\r\n");
-          assign.append("    F"+getTitle(s)+" := "+tnl+".Create;\r\n");
+          assign.append("    if F"+getTitle(s)+" = nil then\r\n      F"+getTitle(s)+" := "+tnl+".Create;\r\n");
           assign.append("    F"+getTitle(s)+".Assign("+cn+"(oSource).F"+getTitle(s)+");\r\n");
           assign.append("  end;\r\n");
           if (generics) {

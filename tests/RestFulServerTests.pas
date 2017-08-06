@@ -90,10 +90,10 @@ type
     FStore : TTestStorageService;
     FContext : TFHIRServerContext;
     FServer : TFhirWebServer;
-    FClientXml : TFhirClient;
-    FClientJson : TFhirClient;
-    FClientSSL : TFhirClient;
-    FClientSSLCert : TFhirClient;
+    FClientXml : TFhirHTTPClient;
+    FClientJson : TFhirHTTPClient;
+    FClientSSL : TFhirHTTPClient;
+    FClientSSLCert : TFhirHTTPClient;
   public
     [Setup] procedure Setup;
     [TearDown] procedure TearDown;
@@ -371,13 +371,13 @@ begin
   FServer.ServeUnknownCertificate := true;
   FServer.Start(true);
 
-  FClientXml := TFhirClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
+  FClientXml := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
   FClientXml.UseIndy := true;
-  FClientJson := TFhirClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
+  FClientJson := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
   FClientJson.UseIndy := true;
-  FClientSSL := TFhirClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
+  FClientSSL := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
   FClientSSL.UseIndy := true;
-  FClientSSLCert := TFhirClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
+  FClientSSLCert := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
   FClientSSLCert.UseIndy := true;
 end;
 

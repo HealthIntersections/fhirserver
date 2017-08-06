@@ -194,7 +194,7 @@ type
     function link : TSmartOnFhirAccessToken; overload;
 
     // the bearer access token to add to the HTTP calls. If you assign the
-    // access token to a TFHIRClient, it will do this
+    // access token to a TFhirHTTPClient, it will do this
     property accessToken : String read FaccessToken write FaccessToken;
 
     // when this token expires (or 0 if expiry is unknown) (in local time)

@@ -128,7 +128,7 @@ type
     function applyOperation(res : TFHIRObject; op : TFhirParametersParameter) : boolean;
 
   public
-    constructor Create(context : TWorkerContext);
+    constructor Create(context : TFHIRWorkerContext);
     destructor Destroy; override;
     function generateDifference(base, modified : TFHIRObject; var html : String) : TFHIRParameters;
     function applyDifference(base : TFHIRObject; delta : TFHIRParameters) : TFHIRObject;
@@ -746,7 +746,7 @@ begin
 
 end;
 
-constructor TDifferenceEngine.Create(context: TWorkerContext);
+constructor TDifferenceEngine.Create(context: TFHIRWorkerContext);
 begin
   inherited create;
   fpe := TFHIRPathEngine.Create(context);

@@ -70,7 +70,7 @@ var
   b : boolean;
   msg : String;
   re : TFHIRMMElement;
-  ctxt : TWorkerContext;
+  ctxt : TFHIRWorkerContext;
 begin
   r := TFHIRXmlParser.parseFile(nil, 'en', filename);
   try
@@ -169,7 +169,7 @@ var
   b : boolean;
   msg : String;
   re : TFHIRMMElement;
-  ctxt : TWorkerContext;
+  ctxt : TFHIRWorkerContext;
 begin
   r := TFHIRJsonParser.parseFile(nil, 'en', filename);
   try

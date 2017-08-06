@@ -138,7 +138,7 @@ Type
   TFHIRNarrativeGenerator = class(TAdvObject)
   private
     FPrefix: String; // for links
-    context: TWorkerContext;
+    context: TFHIRWorkerContext;
     FBasePath: String;
     FTooCostlyNote: String;
     function describeSystem(system: TFHIRContactPointSystemEnum): String; overload;
@@ -208,7 +208,7 @@ Type
     procedure generateByProfile(r: TFHIRDomainResource; profile: TFHIRStructureDefinition; showCodeDetails: boolean); overload;
     procedure inject(r: TFHIRDomainResource; x: TFHIRXhtmlNode; status: TFhirNarrativeStatusEnum);
   public
-    Constructor Create(cc: TWorkerContext);
+    Constructor Create(cc: TFHIRWorkerContext);
     Destructor Destroy; override;
     procedure generate(r: TFHIRDomainResource); overload;
 
@@ -835,7 +835,7 @@ begin
   end;
 end;
 
-constructor TFHIRNarrativeGenerator.create(cc: TWorkerContext);
+constructor TFHIRNarrativeGenerator.create(cc: TFHIRWorkerContext);
 begin
   inherited create;
   context := cc;

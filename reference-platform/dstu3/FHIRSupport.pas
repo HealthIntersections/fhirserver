@@ -137,7 +137,7 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFhirSession = class (TAdvObject)
   private
-    Fworker : TWorkerContext;
+    Fworker : TFHIRWorkerContext;
     FProviderCode : TFHIRAuthProvider;
     FProviderName : String;
     FId : String;
@@ -173,7 +173,7 @@ Type
     procedure setScopes(scopes: String);
     procedure SetTestScript(const Value: TFhirTestScript);
   public
-    Constructor Create(worker : TWorkerContext; secure : boolean);
+    Constructor Create(worker : TFHIRWorkerContext; secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
     procedure describe(b : TStringBuilder);
@@ -308,7 +308,7 @@ Type
   {!.Net HL7Connect.Fhir.Request}
   TFHIRRequest = class (TAdvObject)
   Private
-    Fworker: TWorkerContext;
+    Fworker: TFHIRWorkerContext;
     FCompartmentInformation : TFHIRCompartmentList;
     FId: String;
     FSubId: String;
@@ -364,7 +364,7 @@ Type
     procedure SetParams(const Value: TParseMap);
     procedure SetPatchXml(const Value: TMXmlElement);
   Public
-    Constructor Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+    Constructor Create(worker: TFHIRWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
     Function Link : TFHIRRequest; Overload;
 
@@ -385,7 +385,7 @@ Type
     function canGetUser : boolean;
     function NewIdStatus : TCreateIdState;
     procedure reset;
-    property Context : TWorkerContext read FWorker;
+    property Context : TFHIRWorkerContext read FWorker;
     property Adaptor : TFHIRFormatAdaptor read FAdaptor write SetAdaptor;
 
     // main rest function. Set the following things before calling this:
@@ -706,9 +706,9 @@ Type
   TFHIRFactory = class (TFhirResourceFactory)
   private
     FLang : String;
-    FWorker: TWorkerContext;
+    FWorker: TFHIRWorkerContext;
   public
-    Constructor Create(worker: TWorkerContext; lang : String);
+    Constructor Create(worker: TFHIRWorkerContext; lang : String);
     Destructor Destroy; override;
     {@member makeAttachmentFromFile
       make a new Attachment, and load the contents from the file. The mime type will be filled out based on the systems interpretation of the file extension
@@ -1259,7 +1259,7 @@ begin
   FSource.AsBytes := b;
 end;
 
-constructor TFHIRRequest.Create(worker: TWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
+constructor TFHIRRequest.Create(worker: TFHIRWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
 begin
   inherited Create;
   FWorker := worker;
@@ -1822,7 +1822,7 @@ begin
     result := '';
 end;
 
-constructor TFHIRFactory.Create(worker: TWorkerContext; lang: String);
+constructor TFHIRFactory.Create(worker: TFHIRWorkerContext; lang: String);
 begin
   Inherited Create;
   FLang := lang;
@@ -1942,7 +1942,7 @@ begin
   result := FSecurity.canWrite(resourceName);
 end;
 
-constructor TFhirSession.Create(worker : TWorkerContext; secure : boolean);
+constructor TFhirSession.Create(worker : TFHIRWorkerContext; secure : boolean);
 begin
   inherited Create;
   FWOrker := worker;

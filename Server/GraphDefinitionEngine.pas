@@ -42,7 +42,7 @@ type
 
   TFHIRGraphDefinitionEngine = class (TAdvObject)
   private
-    FContext : TWorkerContext;
+    FContext : TFHIRWorkerContext;
     FPathEngine : TFHIRPathEngine;
 
     FOnFollowReference : TFHIRGraphQLEngineDereferenceEvent;
@@ -70,7 +70,7 @@ type
 
     procedure SetAppInfo(const Value: TAdvObject);
   public
-    constructor Create(context : TWorkerContext); virtual;
+    constructor Create(context : TFHIRWorkerContext); virtual;
     destructor Destroy; override;
 
     property appInfo : TAdvObject read FAppinfo write SetAppInfo;
@@ -93,7 +93,7 @@ implementation
 
 { TFHIRGraphDefinitionEngine }
 
-constructor TFHIRGraphDefinitionEngine.Create(context : TWorkerContext);
+constructor TFHIRGraphDefinitionEngine.Create(context : TFHIRWorkerContext);
 begin
   inherited Create;
   FContext := context;

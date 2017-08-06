@@ -66,9 +66,9 @@ type
   end;
 
 
-  TWorkerContext = class abstract (TAdvObject)
+  TFHIRWorkerContext = class abstract (TAdvObject)
   public
-    function link : TWorkerContext; overload;
+    function link : TFHIRWorkerContext; overload;
 
     function allStructures : TAdvMap<TFHIRStructureDefinition>.TValueCollection; virtual; abstract;
     function getResourceNames : TAdvStringSet; virtual; abstract;
@@ -115,11 +115,11 @@ begin
   result := not (Severity in [IssueSeverityError, IssueSeverityFatal]);
 end;
 
-{ TWorkerContext }
+{ TFHIRWorkerContext }
 
-function TWorkerContext.link: TWorkerContext;
+function TFHIRWorkerContext.link: TFHIRWorkerContext;
 begin
-  result := TWorkerContext(inherited link);
+  result := TFHIRWorkerContext(inherited link);
 end;
 
 { TFHIRCustomResourceInformation }

@@ -263,7 +263,8 @@ uses
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
-  JWTService in 'JWTService.pas';
+  JWTService in 'JWTService.pas',
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

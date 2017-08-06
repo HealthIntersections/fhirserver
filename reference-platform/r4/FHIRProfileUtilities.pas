@@ -107,7 +107,7 @@ Type
   end;
 
 
-  TBaseWorkerContext = class abstract (TWorkerContext)
+  TBaseWorkerContext = class abstract (TFHIRWorkerContext)
   protected
     FLock : TCriticalSection;
     FProfiles : TProfileManager;
@@ -147,7 +147,7 @@ Type
 
   TProfileUtilities = class (TAdvObject)
   private
-    context : TWorkerContext;
+    context : TFHIRWorkerContext;
     messages : TFhirOperationOutcomeIssueList;
     procedure log(message : String);
     function fixedPath(contextPath, pathSimple : String) : String;
@@ -179,7 +179,7 @@ Type
     function overWriteWithCurrent(profile,
       usage: TFHIRElementDefinition): TFHIRElementDefinition;
   public
-    Constructor create(context : TWorkerContext; messages : TFhirOperationOutcomeIssueList);
+    Constructor create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
     Destructor Destroy; override;
     {
        * Given a base (snapshot) profile structure, and a differential profile, generate a snapshot profile
@@ -202,7 +202,7 @@ implementation
 
 { TProfileUtilities }
 
-constructor TProfileUtilities.create(context : TWorkerContext; messages : TFhirOperationOutcomeIssueList);
+constructor TProfileUtilities.create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
 begin
   inherited Create;
   self.context := context;

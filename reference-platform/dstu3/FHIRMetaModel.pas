@@ -45,18 +45,18 @@ type
 
   TFHIRMMProperty = class (TAdvObject)
   private
-    FContext : TWorkerContext;
+    FContext : TFHIRWorkerContext;
     FDefinition : TFHIRElementDefinition;
     FStructure : TFHIRStructureDefinition;
     FCanBePrimitive : integer;
 
     function GetName: string;
   public
-    Constructor create(context : TWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
+    Constructor create(context : TFHIRWorkerContext; definition : TFHIRElementDefinition; structure : TFHIRStructureDefinition);
     Destructor Destroy; override;
     function link : TFHIRMMProperty; overload;
 
-    property context : TWorkerContext read FContext;
+    property context : TFHIRWorkerContext read FContext;
     property definition : TFHIRElementDefinition read FDefinition;
     property structure : TFHIRStructureDefinition read FStructure;
     property name : string read GetName;
@@ -196,14 +196,14 @@ type
 
   TFHIRMMParserBase = class (TAdvObject)
 	protected
-    FContext : TWorkerContext;
+    FContext : TFHIRWorkerContext;
    	FPolicy : TFHIRValidationPolicy;
     FErrors : TFhirOperationOutcomeIssueList;
 	  function getChildProperties(prop : TFHIRMMProperty; elementName, statedType : String) : TAdvList<TFHIRMMProperty>;
     function getDefinition(line, col : integer; ns, name : String) : TFHIRStructureDefinition; overload;
     function getDefinition(line, col : integer; name : String) : TFHIRStructureDefinition; overload;
   public
-    constructor create(context : TWorkerContext);
+    constructor create(context : TFHIRWorkerContext);
     destructor Destroy; override;
 
     procedure setupValidation(policy : TFHIRValidationPolicy; errors : TFhirOperationOutcomeIssueList);
@@ -217,11 +217,11 @@ type
 
   TFHIRMMManager = class (TAdvObject)
   public
-    class function parseFile(context : TWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
-    class function parse(context : TWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
-    class procedure compose(context : TWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
-    class procedure composeFile(context : TWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
-    class function makeParser(context : TWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
+    class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
+    class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
+    class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
+    class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
+    class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
   end;
 
   TFHIRMMXmlParser = class (TFHIRMMParserBase)
@@ -307,7 +307,7 @@ type
     Destructor Destroy; override;
 
     function isMetaDataBased : boolean; override;
-    class function CreateFromBase(context : TWorkerContext; base : TFHIRObject) : TFHIRCustomResource;
+    class function CreateFromBase(context : TFHIRWorkerContext; base : TFHIRObject) : TFHIRCustomResource;
 
     property Root : TFHIRMMElement read FRoot write SetRoot;
     procedure Assign(oSource : TAdvObject); override;
@@ -346,7 +346,7 @@ end;
 
 { TFHIRMMProperty }
 
-constructor TFHIRMMProperty.create(context : TWorkerContext; definition: TFHIRElementDefinition; structure: TFHIRStructureDefinition);
+constructor TFHIRMMProperty.create(context : TFHIRWorkerContext; definition: TFHIRElementDefinition; structure: TFHIRStructureDefinition);
 begin
   inherited create;
   FContext := context;
@@ -1098,7 +1098,7 @@ end;
 
 { TFHIRMMParserBase }
 
-constructor TFHIRMMParserBase.create(context: TWorkerContext);
+constructor TFHIRMMParserBase.create(context: TFHIRWorkerContext);
 begin
   inherited create;
   self.FContext := context;
@@ -1280,7 +1280,7 @@ end;
 
 { TFHIRMMManager }
 
-class procedure TFHIRMMManager.composeFile(context: TWorkerContext; e: TFHIRMMElement; filename: String; outputFormat: TFhirFormat; pretty: boolean; base: String);
+class procedure TFHIRMMManager.composeFile(context: TFHIRWorkerContext; e: TFHIRMMElement; filename: String; outputFormat: TFhirFormat; pretty: boolean; base: String);
 var
   f : TFileStream;
 begin
@@ -1292,7 +1292,7 @@ begin
   end;
 end;
 
-class function TFHIRMMManager.makeParser(context: TWorkerContext; format: TFhirFormat): TFHIRMMParserBase;
+class function TFHIRMMManager.makeParser(context: TFHIRWorkerContext; format: TFhirFormat): TFHIRMMParserBase;
 begin
   case format of
     ffXML : result := TFHIRMMXmlParser.create(context.Link);
@@ -1304,7 +1304,7 @@ begin
   end;
 end;
 
-class procedure TFHIRMMManager.compose(context: TWorkerContext; e: TFHIRMMElement; destination: TStream; outputFormat: TFhirFormat; pretty: boolean; base: String);
+class procedure TFHIRMMManager.compose(context: TFHIRWorkerContext; e: TFHIRMMElement; destination: TStream; outputFormat: TFhirFormat; pretty: boolean; base: String);
 var
   p : TFHIRMMParserBase;
 begin
@@ -1316,7 +1316,7 @@ begin
   end;
 end;
 
-class function TFHIRMMManager.parse(context: TWorkerContext; source: TStream; inputFormat: TFhirFormat): TFHIRMMElement;
+class function TFHIRMMManager.parse(context: TFHIRWorkerContext; source: TStream; inputFormat: TFhirFormat): TFHIRMMElement;
 var
   p : TFHIRMMParserBase;
 begin
@@ -1328,7 +1328,7 @@ begin
   end;
 end;
 
-class function TFHIRMMManager.parseFile(context: TWorkerContext; filename: string; inputFormat: TFhirFormat): TFHIRMMElement;
+class function TFHIRMMManager.parseFile(context: TFHIRWorkerContext; filename: string; inputFormat: TFhirFormat): TFHIRMMElement;
 var
   f : TFileStream;
 begin
@@ -2436,7 +2436,7 @@ begin
   FRoot := root;
 end;
 
-class function TFHIRCustomResource.CreateFromBase(context : TWorkerContext; base: TFHIRObject): TFHIRCustomResource;
+class function TFHIRCustomResource.CreateFromBase(context : TFHIRWorkerContext; base: TFHIRObject): TFHIRCustomResource;
 var
   e : TFHIRMMElement;
   l : TFHIRMMResourceLoader;

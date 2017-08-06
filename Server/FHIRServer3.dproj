@@ -384,6 +384,8 @@
         <DCCReference Include="..\reference-platform\support\CertificateSupport.pas"/>
         <DCCReference Include="..\Libraries\security\ClientApplicationVerifier.pas"/>
         <DCCReference Include="JWTService.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
+        <DCCReference Include="Modules\HackingHealthLogic.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

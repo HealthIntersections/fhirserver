@@ -117,7 +117,7 @@ type
     procedure vtMatchesDblClick(Sender: TObject);
   private
     { Private declarations }
-    FClient : TFHIRClient;
+    FClient : TFhirHTTPClient;
     FCapabilityStatement : TFHIRCapabilityStatement;
     FProfiles : TProfileManager;
 
@@ -129,7 +129,7 @@ type
     FSelectedId: String;
     FSelectedType: TFhirResourceType;
 
-    procedure SetClient(const Value: TFHIRClient);
+    procedure SetClient(const Value: TFhirHTTPClient);
     procedure SetCapabilityStatement(const Value: TFHIRCapabilityStatement);
 
     // choosing type
@@ -159,7 +159,7 @@ type
     function GetCell(res : TFhirResource; path : String ) : String;
   public
     { Public declarations }
-    property Client : TFHIRClient read FClient write SetClient;
+    property Client : TFhirHTTPClient read FClient write SetClient;
     property Conformance : TFHIRCapabilityStatement read FCapabilityStatement write SetCapabilityStatement;
     property Profiles : TProfileManager read FProfiles write SetProfiles;
 
@@ -618,7 +618,7 @@ begin
     edtPageCount.Value := StrToIntDef(pm.GetVar('_count'), 20);
 end;
 
-procedure TFetchResourceFrm.SetClient(const Value: TFHIRClient);
+procedure TFetchResourceFrm.SetClient(const Value: TFhirHTTPClient);
 begin
   FClient.Free;
   FClient := Value;

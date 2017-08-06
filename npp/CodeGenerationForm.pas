@@ -25,13 +25,13 @@ type
     procedure Button2Click(Sender: TObject);
   private
     FResource : TFHIRResource;
-    FContext: TWorkerContext;
+    FContext: TFHIRWorkerContext;
     procedure SetResource(const Value: TFHIRResource);
-    procedure SetContext(const Value: TWorkerContext);
+    procedure SetContext(const Value: TFHIRWorkerContext);
     { Private declarations }
   public
     { Public declarations }
-    property Context : TWorkerContext read FContext write SetContext;
+    property Context : TFHIRWorkerContext read FContext write SetContext;
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
@@ -88,7 +88,7 @@ begin
   cbxLanguageChange(nil);
 end;
 
-procedure TCodeGeneratorForm.SetContext(const Value: TWorkerContext);
+procedure TCodeGeneratorForm.SetContext(const Value: TFHIRWorkerContext);
 begin
   FContext.Free;
   FContext := Value;

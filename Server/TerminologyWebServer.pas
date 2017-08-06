@@ -46,7 +46,7 @@ Type
 
   TTerminologyWebServer = class (TAdvObject)
   private
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
     FServer : TTerminologyServer;
     FFHIRPath : String;
     FWebDir : String;
@@ -102,7 +102,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; Worker : TWorkerContext; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -148,7 +148,7 @@ begin
   end;
 end;
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TWorkerContext; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;

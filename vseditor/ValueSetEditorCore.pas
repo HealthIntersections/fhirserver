@@ -261,7 +261,7 @@ Type
   TServerCodeSystem = class (TValueSetEditorCodeSystem)
   private
     FSystem : String;
-    FClient : TFhirClient;
+    FClient : TFhirHTTPClient;
     FCache : TAdvStringObjectMatch;
     FFilename : String;
 
@@ -302,15 +302,15 @@ Type
     procedure SeeValueset(vs : TFhirValueSet; isSummary, loading : boolean);
     function LoadFullCodeSystem(uri : String) : TFhirValueSet;
     procedure CheckConnection;
-    procedure SynchroniseServer(event : TFHIRClientStatusEvent);
-    procedure UpdateFromServer(event : TFHIRClientStatusEvent);
+    procedure SynchroniseServer(event : TFhirHTTPClientStatusEvent);
+    procedure UpdateFromServer(event : TFhirHTTPClientStatusEvent);
   public
     Constructor Create(name, url, username, password : String; doesSearch : boolean; key : integer);
     destructor Destroy; override;
     Function Link : TValueSetEditorServerCache; overload;
-    procedure checkLoad(event : TFHIRClientStatusEvent; null : String);
-    procedure load(event : TFHIRClientStatusEvent = nil);
-    procedure update(event : TFHIRClientStatusEvent; null : String);
+    procedure checkLoad(event : TFhirHTTPClientStatusEvent; null : String);
+    procedure load(event : TFhirHTTPClientStatusEvent = nil);
+    procedure update(event : TFhirHTTPClientStatusEvent; null : String);
     procedure save;
     function base : String;
     Property URL : string read FUrl write FUrl;
@@ -388,9 +388,9 @@ Type
 
     // opening a value set
     procedure NewValueset;
-    procedure openFromFile(event : TFHIRClientStatusEvent; fn : String);
-    procedure openFromServer(event : TFHIRClientStatusEvent; id : String);
-    procedure openFromURL(event : TFHIRClientStatusEvent; url : String);
+    procedure openFromFile(event : TFhirHTTPClientStatusEvent; fn : String);
+    procedure openFromServer(event : TFhirHTTPClientStatusEvent; id : String);
+    procedure openFromURL(event : TFhirHTTPClientStatusEvent; url : String);
 
 
     // editing value set
@@ -419,7 +419,7 @@ Type
 
     // expansion
     property Expansion : TFhirValueSetExpansion read FExpansion;
-    procedure Expand(event : TFHIRClientStatusEvent; text : String);
+    procedure Expand(event : TFhirHTTPClientStatusEvent; text : String);
     procedure GetPreview(uri : String);
     property Preview : TFhirValueSetExpansion read FPreview;
     property OnPreview : TNotifyEvent read FOnPreview write FOnPreview;
@@ -489,12 +489,12 @@ end;
 
 function TValueSetEditorContext.CheckServer(url: String; var msg: String; var doesSearch : boolean): boolean;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   conf : TFhirConformance;
   rest : TFhirConformanceRestResource;
 begin
   result := false;
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -697,7 +697,7 @@ procedure TValueSetEditorContext.Save;
 var
   c : TFHIRComposer;
   f : TFileStream;
-  client : TFhirClient;
+  client : TFhirHTTPClient;
 begin
   FValueSet.date := NowLocal;
   if (Settings.valueSetFilename <> '') then
@@ -722,7 +722,7 @@ begin
     if (Settings.valueSetId = '') then
       raise Exception.Create('Cannot save to server as value set id has been lost');
 
-    client := TFhirClient.create(nil, Settings.valueSetServer, true);
+    client := TFhirHTTPClient.create(nil, Settings.valueSetServer, true);
     try
       client.UseIndy := true;
       client.OnClientStatus := nil;
@@ -746,12 +746,12 @@ end;
 
 procedure TValueSetEditorContext.SaveAsServerNew;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   vs : TFHIRValueSet;
   id : String;
 begin
   FValueSet.date := NowLocal;
-  client := TFhirClient.create(nil, Settings.WorkingServer, true);
+  client := TFhirHTTPClient.create(nil, Settings.WorkingServer, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -768,15 +768,15 @@ begin
   end;
 end;
 
-procedure TValueSetEditorServerCache.UpdateFromServer(event : TFHIRClientStatusEvent);
+procedure TValueSetEditorServerCache.UpdateFromServer(event : TFhirHTTPClientStatusEvent);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   list : TFHIRBundle;
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := Event;
@@ -806,15 +806,15 @@ begin
 end;
 
 
-procedure TValueSetEditorServerCache.SynchroniseServer(event : TFHIRClientStatusEvent);
+procedure TValueSetEditorServerCache.SynchroniseServer(event : TFhirHTTPClientStatusEvent);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   list : TFHIRBundle;
   i : integer;
   vs : TFhirValueSet;
 begin
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := event;
@@ -843,7 +843,7 @@ begin
   end;
 end;
 
-procedure TValueSetEditorServerCache.update(event: TFHIRClientStatusEvent; null: String);
+procedure TValueSetEditorServerCache.update(event: TFhirHTTPClientStatusEvent; null: String);
 begin
   if not FLoaded then
     load(event);
@@ -855,13 +855,13 @@ end;
 
 procedure TValueSetEditorServerCache.updateClosure(name: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pin : TFhirParameters;
   pout : TFhirResource;
   ct : TClosureTableRecord;
 begin
   ct := closures[name];
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -1065,14 +1065,14 @@ begin
     result := 'New Value Set';
 end;
 
-procedure TValueSetEditorContext.Expand(event : TFHIRClientStatusEvent; text : String);
+procedure TValueSetEditorContext.Expand(event : TFhirHTTPClientStatusEvent; text : String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pIn, pOut : TFhirParameters;
   rOut : TFHIRResource;
   feed : TFHIRBundle;
 begin
-  client := TFhirClient.create(nil, FWorkingServer.FUrl, true);
+  client := TFhirHTTPClient.create(nil, FWorkingServer.FUrl, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1110,12 +1110,12 @@ end;
 
 function TValueSetEditorContext.FetchValueSetBySystem(uri: String): TFhirValueSet;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   feed : TFHIRBundle;
 begin
   result := nil;
-  client := TFhirClient.create(nil, FWorkingServer.url, true);
+  client := TFhirHTTPClient.create(nil, FWorkingServer.url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1312,7 +1312,7 @@ end;
 
 procedure TValueSetEditorContext.GetPreview(uri: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   feed : TFHIRBundle;
 begin
@@ -1327,7 +1327,7 @@ begin
   else
   begin
     // todo: make this a thread that waits
-    client := TFhirClient.create(nil, FWorkingServer.FUrl, true);
+    client := TFhirHTTPClient.create(nil, FWorkingServer.FUrl, true);
     try
       client.UseIndy := true;
       client.OnClientStatus := nil;
@@ -1423,7 +1423,7 @@ end;
 
 function TValueSetEditorContext.NameCodeSystem(uri: String): String;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   list : TFHIRBundle;
 begin
@@ -1454,7 +1454,7 @@ begin
   else
   begin
     try
-      client := TFhirClient.create(nil, FWorkingServer.URL, true);
+      client := TFhirHTTPClient.create(nil, FWorkingServer.URL, true);
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
@@ -1489,7 +1489,7 @@ end;
 
 function TValueSetEditorContext.NameValueSet(uri: String): String;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   list : TFHIRBundle;
 begin
@@ -1502,7 +1502,7 @@ begin
   else
   begin
     try
-      client := TFhirClient.create(nil, FWorkingServer.URL, true);
+      client := TFhirHTTPClient.create(nil, FWorkingServer.URL, true);
       try
         client.UseIndy := true;
         client.OnClientStatus := nil;
@@ -1551,7 +1551,7 @@ begin
 end;
 
 
-procedure TValueSetEditorContext.openFromFile(event : TFHIRClientStatusEvent; fn: String);
+procedure TValueSetEditorContext.openFromFile(event : TFhirHTTPClientStatusEvent; fn: String);
 var
   p : TFHIRParser;
   s : AnsiString;
@@ -1585,14 +1585,14 @@ begin
   end;
 end;
 
-procedure TValueSetEditorContext.openFromServer(event : TFHIRClientStatusEvent; id: String);
+procedure TValueSetEditorContext.openFromServer(event : TFhirHTTPClientStatusEvent; id: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   vs : TFhirValueSet;
 begin
   Settings.mru('id:'+id+':'+FWorkingServer.URL);
   Settings.valueSetId := id;
-  client := TFhirClient.create(nil, FWorkingServer.URL, true);
+  client := TFhirHTTPClient.create(nil, FWorkingServer.URL, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -1607,7 +1607,7 @@ begin
   end;
 end;
 
-procedure TValueSetEditorContext.openFromURL(event : TFHIRClientStatusEvent; url: String);
+procedure TValueSetEditorContext.openFromURL(event : TFhirHTTPClientStatusEvent; url: String);
 var
   web : TIdHTTP;
   vs : TFhirValueSet;
@@ -2293,7 +2293,7 @@ end;
 
 procedure TValueSetEditorServerCache.addClosure(s: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pin : TFhirParameters;
   pout : TFhirResource;
   ct : TClosureTableRecord;
@@ -2304,7 +2304,7 @@ begin
     ct.Name := s;
     ct.version := '0';
     ct.FFilename := IncludeTrailingBackslash(base)+'ct-'+ct.id+'.json';
-    client := TFhirClient.create(nil, url, true);
+    client := TFhirHTTPClient.create(nil, url, true);
     try
       client.UseIndy := true;
       pin := TFhirParameters.Create;
@@ -2334,14 +2334,14 @@ end;
 procedure TValueSetEditorServerCache.AddToClosure(name: String; coding: TFhirCoding);
 var
   ct : TClosureTableRecord;
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pin : TFhirParameters;
   pout : TFhirResource;
   fn : String;
 begin
   ct := closures[name];
   ct.FConcepts.Add(coding.link);
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -2373,7 +2373,7 @@ end;
 
 procedure TValueSetEditorServerCache.CheckConnection;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   conf : TFhirConformance;
   rest : TFhirConformanceRestResource;
   i, id : integer;
@@ -2381,7 +2381,7 @@ var
   ini : TIniFile;
   fn : String;
 begin
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -2418,7 +2418,7 @@ begin
   end;
 end;
 
-procedure TValueSetEditorServerCache.checkLoad(event: TFHIRClientStatusEvent; null : String);
+procedure TValueSetEditorServerCache.checkLoad(event: TFhirHTTPClientStatusEvent; null : String);
 begin
   if not FLoaded then
   begin
@@ -2469,12 +2469,12 @@ end;
 
 function TValueSetEditorServerCache.expand(url, filter: String; count: integer; allowIncomplete : boolean): TFHIRValueSet;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pIn, pOut : TFhirParameters;
   rOut : TFHIRResource;
   feed : TFHIRBundle;
 begin
-  client := TFhirClient.create(nil, FUrl, true);
+  client := TFhirHTTPClient.create(nil, FUrl, true);
   try
     client.UseIndy := true;
     client.OnClientStatus := nil;
@@ -2518,7 +2518,7 @@ begin
   result := TValueSetEditorServerCache(inherited Link);
 end;
 
-procedure TValueSetEditorServerCache.load(event : TFHIRClientStatusEvent);
+procedure TValueSetEditorServerCache.load(event : TFhirHTTPClientStatusEvent);
 var
   json : TFHIRJsonParser;
   f : TFileStream;
@@ -2643,13 +2643,13 @@ end;
 
 procedure TValueSetEditorServerCache.ResetClosure(name: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   pin : TFhirParameters;
   pout : TFhirResource;
   ct : TClosureTableRecord;
 begin
   ct := closures[name];
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     pin := TFhirParameters.Create;
@@ -2744,7 +2744,7 @@ constructor TServerCodeSystem.create(uri, url, filename: String);
 begin
   Create;
   FSystem := uri;
-  FClient := TFhirClient.create(nil, url, true);
+  FClient := TFhirHTTPClient.create(nil, url, true);
   Fclient.UseIndy := true;
   FCache := TAdvStringObjectMatch.create;
   FFilename := filename;
@@ -3277,7 +3277,7 @@ end.
 
 procedure TValueSetEditorContext.listServerValuesets(url: String);
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
   params : TAdvStringMatch;
   c : TFHIRJsonComposer;
   f : TFileStream;
@@ -3286,7 +3286,7 @@ var
 begin
   Settings.ServerURL := url;
 
-  client := TFhirClient.create(nil, url, true);
+  client := TFhirHTTPClient.create(nil, url, true);
   try
     client.UseIndy := true;
     params := TAdvStringMatch.Create;

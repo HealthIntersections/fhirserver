@@ -3,25 +3,53 @@ unit CDSHooksServer;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
   AdvObjects, AdvGenerics, AdvJson,
-  FHIRSupport,
+  FHIRSupport, FHIRClient,
   CDSHooksUtilities, ServerUtilities, FHIRServerContext;
 
 type
+  TCDSHooksProcessor = class (TAdvObject)
+  private
+    Frequest: TCDSHookRequest;
+    Fresponse: TCDSHookResponse;
+    FClient: TFhirClient;
+    procedure SetClient(const Value: TFhirClient);
+    procedure Setrequest(const Value: TCDSHookRequest);
+    procedure Setresponse(const Value: TCDSHookResponse);
+  public
+    destructor Destroy; override;
+    function Link : TCDSHooksProcessor; overload;
+
+    property request : TCDSHookRequest read Frequest write Setrequest;
+    property response : TCDSHookResponse read Fresponse write Setresponse;
+    property Client : TFhirClient read FClient write SetClient;
+
+    function execute : boolean; virtual;
+
+    function addCard(summary, detail, indicator, sourceLabel, sourceUrl : String) : TCDSHookCard;
+  end;
+
+  TCDSHooksProcessorClass = class of TCDSHooksProcessor;
+
   TCDSHooksService = class (TAdvObject)
   private
     Procedure HandleRequest(base : String; server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
   protected
+    FEngines : TList<TCDSHooksProcessorClass>;
     Procedure require(test : boolean; msg : String);
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual;
+    function ProcessRequestEngines(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; response : TCDSHookResponse) : boolean;
   public
+    Constructor Create; override;
+    Destructor Destroy; override;
     function hook : string; virtual; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
     function name : String; virtual;
     function description : String; virtual;
     function id : String; virtual; // must be unique across this server
     procedure registerPreFetch(json : TJsonObject); virtual;
+
   end;
 
   TCDSHooksServer = class (TFHIRServerWorker)
@@ -118,6 +146,12 @@ end;
 
 { TCDSHooksService }
 
+constructor TCDSHooksService.Create;
+begin
+  inherited;
+  FEngines := TList<TCDSHooksProcessorClass>.create;
+end;
+
 function TCDSHooksService.description: String;
 begin
   raise Exception.Create('Must override description() in '+className);
@@ -166,6 +200,12 @@ begin
   end;
 end;
 
+destructor TCDSHooksService.Destroy;
+begin
+  FEngines.Free;
+  inherited;
+end;
+
 function TCDSHooksService.HandleRequest(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest): TCDSHookResponse;
 begin
   raise Exception.Create('Must override HandleRequest in '+className);
@@ -186,6 +226,39 @@ begin
   raise Exception.Create('Must override name() in '+className);
 end;
 
+function TCDSHooksService.ProcessRequestEngines(server: TFHIRServerContext; secure: boolean; session: TFHIRSession; context: TIdContext; request: TCDSHookRequest; response: TCDSHookResponse): boolean;
+var
+  client : TFhirClient;
+  t : TCDSHooksProcessorClass;
+  p : TCDSHooksProcessor;
+begin
+  if FEngines.Count = 0 then
+    exit(false);
+  client := server.Storage.createClient('en', server.ValidatorContext, session);
+  try
+    for t in FEngines do
+    begin
+      p := t.Create;
+      try
+        p.request := request.Link;
+        p.response := response.Link;
+        p.Client := client.link;
+        if p.execute then
+          exit(true);
+      finally
+        p.Free;
+      end;
+    end;
+    server.Storage.Yield(client, nil);
+  except
+    on e : Exception do
+    begin
+      server.Storage.Yield(client, e);
+      raise;
+    end;
+  end;
+end;
+
 procedure TCDSHooksService.registerPreFetch(json: TJsonObject);
 begin
 
@@ -197,5 +270,60 @@ begin
     raise Exception.Create(msg);
 end;
 
+
+{ TCDSHooksProcessor }
+
+function TCDSHooksProcessor.addCard(summary, detail, indicator, sourceLabel, sourceUrl : String): TCDSHookCard;
+begin
+  result := TCDSHookCard.Create;
+  try
+    result.summary := summary;
+    result.detail := detail;
+    result.indicator := indicator;
+    result.sourceLabel := sourceLabel;
+    result.sourceURL := sourceUrl;
+
+    response.cards.Add(result.Link);
+  finally
+    result.free;
+  end;
+end;
+
+destructor TCDSHooksProcessor.Destroy;
+begin
+  Frequest.Free;
+  Fresponse.Free;
+  FClient.Free;
+
+  inherited;
+end;
+
+function TCDSHooksProcessor.execute: boolean;
+begin
+  result := false;
+end;
+
+function TCDSHooksProcessor.Link: TCDSHooksProcessor;
+begin
+  result := TCDSHooksProcessor(inherited Link);
+end;
+
+procedure TCDSHooksProcessor.SetClient(const Value: TFhirClient);
+begin
+  FClient.Free;
+  FClient := Value;
+end;
+
+procedure TCDSHooksProcessor.Setrequest(const Value: TCDSHookRequest);
+begin
+  Frequest.Free;
+  Frequest := Value;
+end;
+
+procedure TCDSHooksProcessor.Setresponse(const Value: TCDSHookResponse);
+begin
+  Fresponse.Free;
+  Fresponse := Value;
+end;
 
 end.

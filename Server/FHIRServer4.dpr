@@ -91,7 +91,6 @@ uses
   IdSSLOpenSSLHeaders,
   JclDebug,
   FHIRServerApplicationCore in 'FHIRServerApplicationCore.pas',
-  FHIRRestServer in 'FHIRRestServer.pas',
   EncodeSupport in '..\reference-platform\Support\EncodeSupport.pas',
   StringSupport in '..\reference-platform\Support\StringSupport.pas',
   MathSupport in '..\reference-platform\Support\MathSupport.pas',
@@ -314,7 +313,10 @@ uses
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   GraphDefinitionEngine in 'GraphDefinitionEngine.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
-  JWTService in 'JWTService.pas';
+  JWTService in 'JWTService.pas',
+  FHIRRestServer in 'FHIRRestServer.pas',
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
+  HackingHealthLogic in 'Modules\HackingHealthLogic.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

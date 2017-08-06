@@ -248,7 +248,7 @@ Type
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
     FBases : TStringList;
-    FValidationInfo : TWorkerContext;
+    FValidationInfo : TFHIRWorkerContext;
     FTerminologyServer : TTerminologyServer;
     FResConfig: TAdvMap<TFHIRResourceConfig>;
     FforTesting : boolean;
@@ -410,7 +410,7 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -670,7 +670,7 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
 begin
   inherited Create;
   FCompartments := TFhirCompartmentEntryList.create;

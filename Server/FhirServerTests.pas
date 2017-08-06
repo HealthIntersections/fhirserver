@@ -154,9 +154,9 @@ begin
 //////  {$ENDIF}
 //////  TAdvXmlBuilderCanonicalizationTests.test;
 //////  {$IFDEF FHIR2}
-//////  TFHIRClientTests.tests('http://local.healthintersections.com.au:960/open');
+//////  TFhirHTTPClientTests.tests('http://local.healthintersections.com.au:960/open');
 //////  {$ELSE}
-//////  TFHIRClientTests.tests('http://fhir21.healthintersections.com.au');
+//////  TFhirHTTPClientTests.tests('http://fhir21.healthintersections.com.au');
 //
 //    WriteLn('All Library tests Passed');
 //  except

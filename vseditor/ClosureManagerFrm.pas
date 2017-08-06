@@ -118,17 +118,17 @@ type
     procedure btnResetClick(Sender: TObject);
     procedure btnupdateClick(Sender: TObject);
   private
-    FWorker: TWorkerContext;
-    FClient: TFHIRClient;
+    FWorker: TFHIRWorkerContext;
+    FClient: TFhirHTTPClient;
     procedure generateClosureSummary;
     procedure addClosure(s: String);
-    procedure SetClient(const Value: TFHIRClient);
-    procedure SetWorker(const Value: TWorkerContext);
+    procedure SetClient(const Value: TFhirHTTPClient);
+    procedure SetWorker(const Value: TFHIRWorkerContext);
     { Private declarations }
   public
     { Public declarations }
-    Property Worker : TWorkerContext read FWorker write SetWorker;
-    Property Client : TFHIRClient read FClient write SetClient;
+    Property Worker : TFHIRWorkerContext read FWorker write SetWorker;
+    Property Client : TFhirHTTPClient read FClient write SetClient;
   end;
 
 var
@@ -339,13 +339,13 @@ begin
 end;
 
 
-procedure TClosureManagerForm.SetClient(const Value: TFHIRClient);
+procedure TClosureManagerForm.SetClient(const Value: TFhirHTTPClient);
 begin
   FCLient.Free;
   FClient := Value;
 end;
 
-procedure TClosureManagerForm.SetWorker(const Value: TWorkerContext);
+procedure TClosureManagerForm.SetWorker(const Value: TFHIRWorkerContext);
 begin
   FWorker.Free;
   FWorker := Value;

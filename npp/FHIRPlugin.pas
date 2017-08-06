@@ -107,9 +107,9 @@ type
     errors : TAdvList<TFHIRAnnotation>;
     matches : TAdvList<TFHIRAnnotation>;
     errorSorter : TFHIRAnnotationComparer;
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
     FValidator : TFHIRValidator;
-    FClient : TFHIRClient;
+    FClient : TFhirHTTPClient;
     FCapabilityStatement : TFhirCapabilityStatement;
     init : boolean;
     FLastSrc : String;
@@ -755,7 +755,7 @@ begin
     try
       try
         OpMessage('Connecting to Server', 'Connecting to Server '+server.fhirEndpoint);
-        FClient := TFhirClient.Create(FWorker.link, server.fhirEndpoint, false);
+        FClient := TFhirHTTPClient.Create(FWorker.link, server.fhirEndpoint, false);
         FClient.timeout := 5000;
         FClient.allowR2 := true;
         ok := true;

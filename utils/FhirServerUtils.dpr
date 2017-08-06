@@ -243,7 +243,9 @@ uses
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   GraphDefinitionEngine in '..\Server\GraphDefinitionEngine.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
-  JWTService in '..\Server\JWTService.pas';
+  JWTService in '..\Server\JWTService.pas',
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
+  HackingHealthLogic in '..\Server\Modules\HackingHealthLogic.pas';
 
 {$R *.res}
 

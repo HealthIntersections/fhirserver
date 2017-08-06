@@ -12,7 +12,7 @@ type
   TFHIRCodeGenerator = class (TAdvObject)
   private
     FResource: TFHIRResource;
-    FContext: TWorkerContext;
+    FContext: TFHIRWorkerContext;
     FVersion: TFHIRVersion;
 
     lines : TStringList;
@@ -22,7 +22,7 @@ type
     function addVar(inScope : TArray<String>; varName : String) : TArray<String>;
 
     procedure SetResource(const Value: TFHIRResource);
-    procedure SetContext(const Value: TWorkerContext);
+    procedure SetContext(const Value: TFHIRWorkerContext);
   protected
     function getElementDefinition(sd : TFhirStructureDefinition; path : String) : TFhirElementDefinition;
     function enumify(code : String) : String;
@@ -30,7 +30,7 @@ type
     Constructor Create; Override;
     destructor Destroy; override;
     property Resource : TFHIRResource read FResource write SetResource;
-    property Context : TWorkerContext read FContext write SetContext;
+    property Context : TFHIRWorkerContext read FContext write SetContext;
     property Version : TFHIRVersion read FVersion write FVersion;
 
     function generate : String; virtual;
@@ -234,7 +234,7 @@ begin
   result := 'Unknown';
 end;
 
-procedure TFHIRCodeGenerator.SetContext(const Value: TWorkerContext);
+procedure TFHIRCodeGenerator.SetContext(const Value: TFHIRWorkerContext);
 begin
   FContext.Free;
   FContext := Value;

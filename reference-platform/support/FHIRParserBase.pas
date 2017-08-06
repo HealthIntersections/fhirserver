@@ -78,7 +78,7 @@ Type
     FKeepLineNumbers : boolean;
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
     FIgnoreHtml: Boolean;
     procedure SetResource(const Value: TFhirResource);
     procedure start;
@@ -90,7 +90,7 @@ Type
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
   public
-    Constructor Create(worker : TWorkerContext; lang : String); Virtual;
+    Constructor Create(worker : TFHIRWorkerContext; lang : String); Virtual;
     Destructor Destroy; Override;
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
@@ -146,8 +146,8 @@ Type
     procedure Parse; Override;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
     property Element : TMXmlElement read FElement write SeTFhirElement;
-    class function ParseFragment(worker : TWorkerContext; fragment, lang : String) : TFHIRObject; overload;
-    class function ParseFile(worker : TWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    class function ParseFragment(worker : TFHIRWorkerContext; fragment, lang : String) : TFHIRObject; overload;
+    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   End;
 
 
@@ -176,8 +176,8 @@ Type
     procedure Parse; Overload; Override;
     procedure Parse(obj : TJsonObject); Reintroduce; Overload; Virtual;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFragment(worker : TWorkerContext; fragment, type_, lang : String) : TFHIRObject; overload;
-    class function ParseFile(worker : TWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    class function ParseFragment(worker : TFHIRWorkerContext; fragment, type_, lang : String) : TFHIRObject; overload;
+    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   End;
 
   {$IFNDEF FHIR2}
@@ -194,7 +194,7 @@ Type
   public
     procedure Parse; Overload; Override;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFile(worker : TWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   end;
   {$ENDIF}
 
@@ -204,7 +204,7 @@ Type
   Public
     procedure Parse; Overload; Override;
     function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFile(worker : TWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   End;
 
   TFHIRComposer = {abstract} class (TFHIRObject)
@@ -213,7 +213,7 @@ Type
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
   protected
-    FWorker : TWorkerContext;
+    FWorker : TFHIRWorkerContext;
 
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); overload; virtual;
 //    Procedure ComposeBinary(xml : TXmlBuilder; binary : TFhirBinary);
@@ -230,7 +230,7 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList; isPretty : Boolean); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject; isPretty : Boolean); Virtual;
   public
-    Constructor Create(worker : TWorkerContext; lang : String); Virtual;
+    Constructor Create(worker : TFHIRWorkerContext; lang : String); Virtual;
     Destructor Destroy; override;
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Overload; Virtual;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Overload; Virtual; Abstract;
@@ -275,7 +275,7 @@ Type
     Function MimeType : String; Override;
     function Extension : String; Override;
     Property Comment : String read FComment write FComment;
-    class procedure composeFile(worker : TWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
+    class procedure composeFile(worker : TFHIRWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
   End;
 
   TFHIRJsonComposerBase = class (TFHIRComposer)
@@ -307,7 +307,7 @@ Type
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
     Procedure Compose(json: TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Override;
-    class procedure composeFile(worker : TWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
+    class procedure composeFile(worker : TFHIRWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
     Property Comments : Boolean read FComments write FComments;
@@ -360,7 +360,7 @@ Type
   protected
     function ResourceMediaType: String; override;
   public
-    Constructor Create(worker: TWorkerContext; lang, BaseURL : String); reintroduce; overload;
+    Constructor Create(worker: TFHIRWorkerContext; lang, BaseURL : String); reintroduce; overload;
     Destructor Destroy; override;
     property BaseURL : String read FBaseURL write FBaseURL;
     Property Session : TFhirSession read FSession write SetSession;
@@ -803,7 +803,7 @@ begin
   end;
 end;
 
-class procedure TFHIRXmlComposerBase.composeFile(worker : TWorkerContext; r: TFHIRResource; lang, filename: String; isPretty: Boolean);
+class procedure TFHIRXmlComposerBase.composeFile(worker : TFHIRWorkerContext; r: TFHIRResource; lang, filename: String; isPretty: Boolean);
 var
   x: TFHIRXmlComposer;
   f : TFileStream;
@@ -1013,7 +1013,7 @@ begin
     json.value('op-types', expr.optypes.ToString);
 end;
 
-class procedure TFHIRJsonComposerBase.composeFile(worker: TWorkerContext; r: TFHIRResource; lang, filename: String; isPretty: Boolean);
+class procedure TFHIRJsonComposerBase.composeFile(worker: TFHIRWorkerContext; r: TFHIRResource; lang, filename: String; isPretty: Boolean);
 var
   j: TFHIRJsonComposer;
   f : TFileStream;
@@ -1225,7 +1225,7 @@ begin
     abort;
 end;
 
-constructor TFHIRParser.Create(worker : TWorkerContext; lang: String);
+constructor TFHIRParser.Create(worker : TFHIRWorkerContext; lang: String);
 begin
   Inherited Create;
   FLang := lang;
@@ -1240,7 +1240,7 @@ begin
 end;
 
 
-class function TFHIRXmlParserBase.ParseFile(worker : TWorkerContext; lang : String; filename: String): TFHIRResource;
+class function TFHIRXmlParserBase.ParseFile(worker : TFHIRWorkerContext; lang : String; filename: String): TFHIRResource;
 var
   x : TFHIRXmlParser;
 begin
@@ -1266,7 +1266,7 @@ begin
   end;
 end;
 
-class function TFHIRJsonParserBase.ParseFile(worker: TWorkerContext; lang, filename: String): TFHIRResource;
+class function TFHIRJsonParserBase.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
 var
   j : TFHIRJsonParser;
 begin
@@ -1279,7 +1279,7 @@ begin
   end;
 end;
 
-class function TFHIRJsonParserBase.ParseFragment(worker: TWorkerContext; fragment, type_, lang: String): TFHIRObject;
+class function TFHIRJsonParserBase.ParseFragment(worker: TFHIRWorkerContext; fragment, type_, lang: String): TFHIRObject;
 var
   ss : TBytesStream;
   p : TFHIRJsonParser;
@@ -1313,7 +1313,7 @@ begin
   result := ParseResource(jsn);
 end;
 
-class function TFHIRXmlParserBase.ParseFragment(worker: TWorkerContext; fragment, lang: String): TFHIRObject;
+class function TFHIRXmlParserBase.ParseFragment(worker: TFHIRWorkerContext; fragment, lang: String): TFHIRObject;
 var
   ss : TBytesStream;
   p : TFHIRXmlParser;
@@ -2205,7 +2205,7 @@ begin
   end;
 end;
 
-constructor TFHIRXhtmlComposer.Create(worker: TWorkerContext; lang, BaseURL: String);
+constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContext; lang, BaseURL: String);
 begin
   Create(worker, lang);
   FBaseURL := BaseURL;
@@ -2665,7 +2665,7 @@ begin
     result := value.ToXML;
 end;
 
-constructor TFHIRComposer.Create(worker: TWorkerContext; lang: String);
+constructor TFHIRComposer.Create(worker: TFHIRWorkerContext; lang: String);
 begin
   inherited Create;
   FWorker := worker;
@@ -2840,7 +2840,7 @@ begin
   raise Exception.Create('Not supported');
 end;
 
-class function TFHIRTextParser.ParseFile(worker: TWorkerContext; lang, filename: String): TFHIRResource;
+class function TFHIRTextParser.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
 var
   t : TFHIRTextParser;
 begin
@@ -2981,7 +2981,7 @@ begin
   raise Exception.Create('not supported');
 end;
 
-class function TFHIRTurtleParserBase.ParseFile(worker: TWorkerContext; lang, filename: String): TFHIRResource;
+class function TFHIRTurtleParserBase.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
 var
   j : TFHIRTurtleParser;
 begin

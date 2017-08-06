@@ -219,6 +219,7 @@ type
   private
     FTags : TDictionary<String,String>;
     FTag : TAdvObject;
+    FTagObject : TObject;
     FLocationStart : TSourceLocation;
     FLocationEnd : TSourceLocation;
     FCommentsStart: TAdvStringList;
@@ -269,6 +270,7 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean;
     property Tag : TAdvObject read FTag write SetTag;
+    property TagObject : TObject read FTagObject write FTagObject; // no ownership....
 
     // populated by some parsers when parsing
     property LocationStart : TSourceLocation read FLocationStart write FLocationStart;

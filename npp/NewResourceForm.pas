@@ -60,14 +60,14 @@ type
     procedure lbProfilesClick(Sender: TObject);
   private
     { Private declarations }
-    FContext : TWorkerContext;
+    FContext : TFHIRWorkerContext;
     procedure loadLists;
-    procedure SetContext(const Value: TWorkerContext);
+    procedure SetContext(const Value: TFHIRWorkerContext);
   public
     { Public declarations }
     destructor Destroy; override;
 
-    property Context : TWorkerContext read FContext write SetContext;
+    property Context : TFHIRWorkerContext read FContext write SetContext;
   end;
 
 var
@@ -126,7 +126,7 @@ begin
   inherited;
 end;
 
-procedure TResourceNewForm.SetContext(const Value: TWorkerContext);
+procedure TResourceNewForm.SetContext(const Value: TFHIRWorkerContext);
 begin
   FContext.Free;
   FContext := Value;

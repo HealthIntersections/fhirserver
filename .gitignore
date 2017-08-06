@@ -99,3 +99,7 @@ Server/Entitlement\.TemplateOSX32\.xml
 reference-platform/support/Tests/backup/
 
 Exec/certificates/
+*.tmp
+utils/AppEndorserUI/OSX32/Debug/AppEndorser.info.plist
+utils/AppEndorserUI/OSX32/Debug/AppEndorser.entitlements
+utils/AppEndorserUI/OSX32/Debug/AppEndorser

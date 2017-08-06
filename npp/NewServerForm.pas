@@ -150,11 +150,11 @@ end;
 
 procedure TRegisterServerForm.loadCapabilityStatement;
 var
-  client : TFhirClient;
+  client : TFhirHTTPClient;
 begin
   try
     clHooks.items.Clear;
-    client := TFhirClient.Create(nil, edtServer.text, true);
+    client := TFhirHTTPClient.Create(nil, edtServer.text, true);
     try
       client.timeout := 5000;
       client.allowR2 := true;
@@ -164,7 +164,7 @@ begin
     end;
     loadHooks;
   except
-    client := TFhirClient.Create(nil, edtServer.text, false);
+    client := TFhirHTTPClient.Create(nil, edtServer.text, false);
     try
       client.timeout := 5000;
       client.allowR2 := true;

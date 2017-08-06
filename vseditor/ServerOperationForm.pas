@@ -38,7 +38,7 @@ uses
   ValueSetEditorCore, FHIRClient;
 
 type
-  TServerOperationEvent = procedure (event : TFHIRClientStatusEvent; details : String) of Object;
+  TServerOperationEvent = procedure (event : TFhirHTTPClientStatusEvent; details : String) of Object;
 
   TForm2 = class;
 

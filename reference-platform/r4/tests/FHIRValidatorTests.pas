@@ -41,7 +41,7 @@ type
   [TextFixture]
   TFHIRValidatorTests = class (TObject)
   private
-    FServices : TWorkerContext;
+    FServices : TFHIRWorkerContext;
 
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
     procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);

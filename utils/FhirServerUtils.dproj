@@ -372,6 +372,8 @@
         <DCCReference Include="..\Server\GraphDefinitionEngine.pas"/>
         <DCCReference Include="..\Libraries\security\ClientApplicationVerifier.pas"/>
         <DCCReference Include="..\Server\JWTService.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
+        <DCCReference Include="..\Server\Modules\HackingHealthLogic.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

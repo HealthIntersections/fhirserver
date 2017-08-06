@@ -35,7 +35,7 @@ interface
 // FHIR v3.1.0 generated 2017-07-09T00:15:31+10:00
 
 uses
-  FHIRParserXml, FHIRParserJson{$IFNDEF FHIR2}, FHIRParserTurtle{$ENDIF};
+  FHIRParserBase, FHIRParserXml, FHIRParserJson{$IFNDEF FHIR2}, FHIRParserTurtle{$ENDIF};
 
 Type
   TFHIRXmlParser = FHIRParserXml.TFHIRXmlParser;

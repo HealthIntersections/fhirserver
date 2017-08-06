@@ -68,7 +68,7 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
 
-    class function Use : TWorkerContext;
+    class function Use : TFHIRWorkerContext;
     class procedure closeUp;
   end;
 
@@ -101,7 +101,7 @@ begin
 end;
 
 
-class function TTestingWorkerContext.Use: TWorkerContext;
+class function TTestingWorkerContext.Use: TFHIRWorkerContext;
 begin
   if GWorkerContext = nil then
   begin

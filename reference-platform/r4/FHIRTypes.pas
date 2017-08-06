@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-07-31T17:15:43+10:00
+// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
@@ -6353,19 +6353,13 @@ Type
   protected
     FPath : TFhirString;
     FValueSet : TFhirType;
-    FvalueCodeList : TFhirCodeList;
-    FvalueCodingList : TFhirCodingList;
-    FvalueCodeableConceptList : TFhirCodeableConceptList;
+    FcodeList : TFhirCodingList;
     Procedure SetPath(value : TFhirString);
     Function GetPathST : String;
     Procedure SetPathST(value : String);
     Procedure SetValueSet(value : TFhirType);
-    function GetValueCodeList : TFhirCodeList;
-    function GetHasValueCodeList : Boolean;
-    function GetValueCodingList : TFhirCodingList;
-    function GetHasValueCodingList : Boolean;
-    function GetValueCodeableConceptList : TFhirCodeableConceptList;
-    function GetHasValueCodeableConceptList : Boolean;
+    function GetCodeList : TFhirCodingList;
+    function GetHasCodeList : Boolean;
   
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
@@ -6398,31 +6392,19 @@ Type
     property pathElement : TFhirString read FPath write SetPath;
 
     {@member valueSet
-      Typed access to The valueset for the code filter. The valueSet and value elements are exclusive. If valueSet is specified, the filter will return only those data items for which the value of the code-valued element specified in the path is a member of the specified valueset. (defined for API consistency)
+      Typed access to The valueset for the code filter. The valueSet and code elements are additive. If valueSet is specified, the filter will return only those data items for which the value of the code-valued element specified in the path is a member of the specified valueset. (defined for API consistency)
     }
     property valueSet : TFhirType read FValueSet write SetValueSet;
     {@member valueSetElement
-      The valueset for the code filter. The valueSet and value elements are exclusive. If valueSet is specified, the filter will return only those data items for which the value of the code-valued element specified in the path is a member of the specified valueset.
+      The valueset for the code filter. The valueSet and code elements are additive. If valueSet is specified, the filter will return only those data items for which the value of the code-valued element specified in the path is a member of the specified valueset.
     }
     property valueSetElement : TFhirType read FValueSet write SetValueSet;
 
-    {@member valueCodeList
-      The codes for the code filter. Only one of valueSet, valueCode, valueCoding, or valueCodeableConcept may be specified. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified codes.
+    {@member codeList
+      The codes for the code filter. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified codes. If codes are specified in addition to a value set, the filter returns items matching a code in the value set or one of the specified codes.
     }
-    property valueCodeList : TFhirCodeList read GetValueCodeList;
-    property hasValueCodeList : boolean read GetHasValueCodeList;
-
-    {@member valueCodingList
-      The Codings for the code filter. Only one of valueSet, valueCode, valueConding, or valueCodeableConcept may be specified. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified Codings.
-    }
-    property valueCodingList : TFhirCodingList read GetValueCodingList;
-    property hasValueCodingList : boolean read GetHasValueCodingList;
-
-    {@member valueCodeableConceptList
-      The CodeableConcepts for the code filter. Only one of valueSet, valueCode, valueConding, or valueCodeableConcept may be specified. If values are given, the filter will return only those data items for which the code-valued attribute specified by the path has a value that is one of the specified CodeableConcepts.
-    }
-    property valueCodeableConceptList : TFhirCodeableConceptList read GetValueCodeableConceptList;
-    property hasValueCodeableConceptList : boolean read GetHasValueCodeableConceptList;
+    property codeList : TFhirCodingList read GetCodeList;
+    property hasCodeList : boolean read GetHasCodeList;
 
   end;
 
@@ -14726,7 +14708,8 @@ begin
   end
   else
   begin
-    FExtensionList := TFhirExtensionList.Create;
+    if FExtensionList = nil then
+      FExtensionList := TFhirExtensionList.Create;
     FExtensionList.Assign(TFhirElement(oSource).FExtensionList);
   end;
 end;
@@ -15028,7 +15011,8 @@ begin
   end
   else
   begin
-    FModifierExtensionList := TFhirExtensionList.Create;
+    if FModifierExtensionList = nil then
+      FModifierExtensionList := TFhirExtensionList.Create;
     FModifierExtensionList.Assign(TFhirBackboneElement(oSource).FModifierExtensionList);
   end;
 end;
@@ -19847,7 +19831,8 @@ begin
   end
   else
   begin
-    FContactList := TFhirContactDetailList.Create;
+    if FContactList = nil then
+      FContactList := TFhirContactDetailList.Create;
     FContactList.Assign(TFhirContributor(oSource).FContactList);
   end;
 end;
@@ -20703,9 +20688,7 @@ destructor TFhirDataRequirementCodeFilter.Destroy;
 begin
   FPath.free;
   FValueSet.free;
-  FValueCodeList.Free;
-  FValueCodingList.Free;
-  FValueCodeableConceptList.Free;
+  FCodeList.Free;
   inherited;
 end;
 
@@ -20714,35 +20697,16 @@ begin
   inherited;
   pathElement := TFhirDataRequirementCodeFilter(oSource).pathElement.Clone;
   valueSet := TFhirDataRequirementCodeFilter(oSource).valueSet.Clone;
-  if (TFhirDataRequirementCodeFilter(oSource).FValueCodeList = nil) then
+  if (TFhirDataRequirementCodeFilter(oSource).FCodeList = nil) then
   begin
-    FValueCodeList.free;
-    FValueCodeList := nil;
+    FCodeList.free;
+    FCodeList := nil;
   end
   else
   begin
-    FValueCodeList := TFhirCodeList.Create;
-    FValueCodeList.Assign(TFhirDataRequirementCodeFilter(oSource).FValueCodeList);
-  end;
-  if (TFhirDataRequirementCodeFilter(oSource).FValueCodingList = nil) then
-  begin
-    FValueCodingList.free;
-    FValueCodingList := nil;
-  end
-  else
-  begin
-    FValueCodingList := TFhirCodingList.Create;
-    FValueCodingList.Assign(TFhirDataRequirementCodeFilter(oSource).FValueCodingList);
-  end;
-  if (TFhirDataRequirementCodeFilter(oSource).FValueCodeableConceptList = nil) then
-  begin
-    FValueCodeableConceptList.free;
-    FValueCodeableConceptList := nil;
-  end
-  else
-  begin
-    FValueCodeableConceptList := TFhirCodeableConceptList.Create;
-    FValueCodeableConceptList.Assign(TFhirDataRequirementCodeFilter(oSource).FValueCodeableConceptList);
+    if FCodeList = nil then
+      FCodeList := TFhirCodingList.Create;
+    FCodeList.Assign(TFhirDataRequirementCodeFilter(oSource).FCodeList);
   end;
 end;
 
@@ -20753,56 +20717,42 @@ begin
      list.add(self.link, 'path', FPath.Link);
   if (child_name = 'valueSet[x]') or (child_name = 'valueSet') Then
      list.add(self.link, 'valueSet[x]', FValueSet.Link);
-  if (child_name = 'valueCode') Then
-    list.addAll(self, 'valueCode', FValueCodeList);
-  if (child_name = 'valueCoding') Then
-    list.addAll(self, 'valueCoding', FValueCodingList);
-  if (child_name = 'valueCodeableConcept') Then
-    list.addAll(self, 'valueCodeableConcept', FValueCodeableConceptList);
+  if (child_name = 'code') Then
+    list.addAll(self, 'code', FCodeList);
 end;
 
 procedure TFhirDataRequirementCodeFilter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
   oList.add(TFHIRProperty.create(self, 'path', 'string', false, TFhirString, FPath.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'valueSet[x]', 'string|Reference(ValueSet)', false, TFhirType, FValueSet.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'valueCode', 'code', true, TFhirCode, FValueCodeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'valueCoding', 'Coding', true, TFhirCoding, FValueCodingList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'valueCodeableConcept', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeableConceptList.Link)){3};
+  oList.add(TFHIRProperty.create(self, 'valueSet[x]', 'uri|Reference(ValueSet)', false, TFhirType, FValueSet.Link));{2}
+  oList.add(TFHIRProperty.create(self, 'code', 'Coding', true, TFhirCoding, FCodeList.Link)){3};
 end;
 
 procedure TFhirDataRequirementCodeFilter.setProperty(propName : string; propValue: TFHIRObject);
 begin
   if (propName = 'path') then PathElement := asString(propValue){5a}
   else if (propName.startsWith('valueSet')) then ValueSet := propValue as TFhirType{4}
-  else if (propName = 'valueCode') then ValueCodeList.add(asCode(propValue)){2}
-  else if (propName = 'valueCoding') then ValueCodingList.add(propValue as TFhirCoding){2a}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.add(propValue as TFhirCodeableConcept){2a}
+  else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2a}
   else inherited;
 end;
 
 procedure TFhirDataRequirementCodeFilter.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'valueCode') then ValueCodeList.insertItem(index, asCode(propValue)){2}
-  else if (propName = 'valueCoding') then ValueCodingList.insertItem(index, propValue as TFhirCoding){2a}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.insertItem(index, propValue as TFhirCodeableConcept){2a}
+  if (propName = 'code') then CodeList.insertItem(index, propValue as TFhirCoding){2a}
   else inherited;
 end;
 
 function TFhirDataRequirementCodeFilter.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'valueCode') then result := ValueCodeList.new(){2}
-  else if (propName = 'valueCoding') then result := ValueCodingList.new(){2}
-  else if (propName = 'valueCodeableConcept') then result := ValueCodeableConceptList.new(){2}
+  if (propName = 'code') then result := CodeList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
 
 procedure TFhirDataRequirementCodeFilter.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'path') then PathElement := nil
-  else if (propName = 'valueCode') then deletePropertyValue('valueCode', ValueCodeList, value) {2}
-  else if (propName = 'valueCoding') then deletePropertyValue('valueCoding', ValueCodingList, value) {2}
-  else if (propName = 'valueCodeableConcept') then deletePropertyValue('valueCodeableConcept', ValueCodeableConceptList, value) {2}
+  else if (propName = 'code') then deletePropertyValue('code', CodeList, value) {2}
   else
     inherited deleteProperty(propName, value);
 end;
@@ -20810,18 +20760,14 @@ end;
 procedure TFhirDataRequirementCodeFilter.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
   if (propName = 'path') then PathElement := asString(new){5b}
-  else if (propName = 'valueCode') then replacePropertyValue('valueCode', ValueCodeList, existing, new) {2}
-  else if (propName = 'valueCoding') then replacePropertyValue('valueCoding', ValueCodingList, existing, new) {2}
-  else if (propName = 'valueCodeableConcept') then replacePropertyValue('valueCodeableConcept', ValueCodeableConceptList, existing, new) {2}
+  else if (propName = 'code') then replacePropertyValue('code', CodeList, existing, new) {2}
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDataRequirementCodeFilter.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'valueCode') then ValueCodeList.move(source, destination){2}
-  else if (propName = 'valueCoding') then ValueCodingList.move(source, destination){2a}
-  else if (propName = 'valueCodeableConcept') then ValueCodeableConceptList.move(source, destination){2a}
+  if (propName = 'code') then CodeList.move(source, destination){2a}
   else
     inherited reorderProperty(propName, source, destination);
 end;
@@ -20853,8 +20799,7 @@ begin
   begin
     o := TFhirDataRequirementCodeFilter(other);
     result := compareDeep(pathElement, o.pathElement, true) and compareDeep(valueSetElement, o.valueSetElement, true) and 
-      compareDeep(valueCodeList, o.valueCodeList, true) and compareDeep(valueCodingList, o.valueCodingList, true) and 
-      compareDeep(valueCodeableConceptList, o.valueCodeableConceptList, true);
+      compareDeep(codeList, o.codeList, true);
   end;
 end;
 
@@ -20869,13 +20814,13 @@ begin
   else
   begin
     o := TFhirDataRequirementCodeFilter(other);
-    result := compareValues(pathElement, o.pathElement, true) and compareValues(valueCodeList, o.valueCodeList, true);
+    result := compareValues(pathElement, o.pathElement, true);
   end;
 end;
 
 function TFhirDataRequirementCodeFilter.isEmpty : boolean;
 begin
-  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FValueSet) and isEmptyProp(FvalueCodeList) and isEmptyProp(FvalueCodingList) and isEmptyProp(FvalueCodeableConceptList);
+  result := inherited isEmpty  and isEmptyProp(FPath) and isEmptyProp(FValueSet) and isEmptyProp(FcodeList);
 end;
 
 { TFhirDataRequirementCodeFilter }
@@ -20912,40 +20857,16 @@ begin
   FValueSet := value;
 end;
 
-Function TFhirDataRequirementCodeFilter.GetValueCodeList : TFhirCodeList;
+Function TFhirDataRequirementCodeFilter.GetCodeList : TFhirCodingList;
 begin
-  if FValueCodeList = nil then
-    FValueCodeList := TFhirCodeList.Create;
-  result := FValueCodeList;
+  if FCodeList = nil then
+    FCodeList := TFhirCodingList.Create;
+  result := FCodeList;
 end;
 
-Function TFhirDataRequirementCodeFilter.GetHasValueCodeList : boolean;
+Function TFhirDataRequirementCodeFilter.GetHasCodeList : boolean;
 begin
-  result := (FValueCodeList <> nil) and (FValueCodeList.count > 0);
-end;
-
-Function TFhirDataRequirementCodeFilter.GetValueCodingList : TFhirCodingList;
-begin
-  if FValueCodingList = nil then
-    FValueCodingList := TFhirCodingList.Create;
-  result := FValueCodingList;
-end;
-
-Function TFhirDataRequirementCodeFilter.GetHasValueCodingList : boolean;
-begin
-  result := (FValueCodingList <> nil) and (FValueCodingList.count > 0);
-end;
-
-Function TFhirDataRequirementCodeFilter.GetValueCodeableConceptList : TFhirCodeableConceptList;
-begin
-  if FValueCodeableConceptList = nil then
-    FValueCodeableConceptList := TFhirCodeableConceptList.Create;
-  result := FValueCodeableConceptList;
-end;
-
-Function TFhirDataRequirementCodeFilter.GetHasValueCodeableConceptList : boolean;
-begin
-  result := (FValueCodeableConceptList <> nil) and (FValueCodeableConceptList.count > 0);
+  result := (FCodeList <> nil) and (FCodeList.count > 0);
 end;
 
 
@@ -21385,7 +21306,8 @@ begin
   end
   else
   begin
-    FProfileList := TFhirUriList.Create;
+    if FProfileList = nil then
+      FProfileList := TFhirUriList.Create;
     FProfileList.Assign(TFhirDataRequirement(oSource).FProfileList);
   end;
   if (TFhirDataRequirement(oSource).FMustSupportList = nil) then
@@ -21395,7 +21317,8 @@ begin
   end
   else
   begin
-    FMustSupportList := TFhirStringList.Create;
+    if FMustSupportList = nil then
+      FMustSupportList := TFhirStringList.Create;
     FMustSupportList.Assign(TFhirDataRequirement(oSource).FMustSupportList);
   end;
   if (TFhirDataRequirement(oSource).FCodeFilterList = nil) then
@@ -21405,7 +21328,8 @@ begin
   end
   else
   begin
-    FCodeFilterList := TFhirDataRequirementCodeFilterList.Create;
+    if FCodeFilterList = nil then
+      FCodeFilterList := TFhirDataRequirementCodeFilterList.Create;
     FCodeFilterList.Assign(TFhirDataRequirement(oSource).FCodeFilterList);
   end;
   if (TFhirDataRequirement(oSource).FDateFilterList = nil) then
@@ -21415,7 +21339,8 @@ begin
   end
   else
   begin
-    FDateFilterList := TFhirDataRequirementDateFilterList.Create;
+    if FDateFilterList = nil then
+      FDateFilterList := TFhirDataRequirementDateFilterList.Create;
     FDateFilterList.Assign(TFhirDataRequirement(oSource).FDateFilterList);
   end;
 end;
@@ -21794,7 +21719,8 @@ begin
   end
   else
   begin
-    FAdditionalInstructionList := TFhirCodeableConceptList.Create;
+    if FAdditionalInstructionList = nil then
+      FAdditionalInstructionList := TFhirCodeableConceptList.Create;
     FAdditionalInstructionList.Assign(TFhirDosage(oSource).FAdditionalInstructionList);
   end;
   patientInstructionElement := TFhirDosage(oSource).patientInstructionElement.Clone;
@@ -26619,7 +26545,8 @@ begin
   end
   else
   begin
-    FTelecomList := TFhirContactPointList.Create;
+    if FTelecomList = nil then
+      FTelecomList := TFhirContactPointList.Create;
     FTelecomList.Assign(TFhirContactDetail(oSource).FTelecomList);
   end;
 end;
@@ -27190,7 +27117,8 @@ begin
   end
   else
   begin
-    FType_List := TFhirCodingList.Create;
+    if FType_List = nil then
+      FType_List := TFhirCodingList.Create;
     FType_List.Assign(TFhirSignature(oSource).FType_List);
   end;
   whenElement := TFhirSignature(oSource).whenElement.Clone;
@@ -27580,7 +27508,8 @@ begin
   end
   else
   begin
-    FCodingList := TFhirCodingList.Create;
+    if FCodingList = nil then
+      FCodingList := TFhirCodingList.Create;
     FCodingList.Assign(TFhirCodeableConcept(oSource).FCodingList);
   end;
   textElement := TFhirCodeableConcept(oSource).textElement.Clone;
@@ -28836,7 +28765,8 @@ begin
   end
   else
   begin
-    FGivenList := TFhirStringList.Create;
+    if FGivenList = nil then
+      FGivenList := TFhirStringList.Create;
     FGivenList.Assign(TFhirHumanName(oSource).FGivenList);
   end;
   if (TFhirHumanName(oSource).FPrefixList = nil) then
@@ -28846,7 +28776,8 @@ begin
   end
   else
   begin
-    FPrefixList := TFhirStringList.Create;
+    if FPrefixList = nil then
+      FPrefixList := TFhirStringList.Create;
     FPrefixList.Assign(TFhirHumanName(oSource).FPrefixList);
   end;
   if (TFhirHumanName(oSource).FSuffixList = nil) then
@@ -28856,7 +28787,8 @@ begin
   end
   else
   begin
-    FSuffixList := TFhirStringList.Create;
+    if FSuffixList = nil then
+      FSuffixList := TFhirStringList.Create;
     FSuffixList.Assign(TFhirHumanName(oSource).FSuffixList);
   end;
   period := TFhirHumanName(oSource).period.Clone;
@@ -29285,7 +29217,8 @@ begin
   end
   else
   begin
-    FProfileList := TFhirUriList.Create;
+    if FProfileList = nil then
+      FProfileList := TFhirUriList.Create;
     FProfileList.Assign(TFhirMeta(oSource).FProfileList);
   end;
   if (TFhirMeta(oSource).FSecurityList = nil) then
@@ -29295,7 +29228,8 @@ begin
   end
   else
   begin
-    FSecurityList := TFhirCodingList.Create;
+    if FSecurityList = nil then
+      FSecurityList := TFhirCodingList.Create;
     FSecurityList.Assign(TFhirMeta(oSource).FSecurityList);
   end;
   if (TFhirMeta(oSource).FTagList = nil) then
@@ -29305,7 +29239,8 @@ begin
   end
   else
   begin
-    FTagList := TFhirCodingList.Create;
+    if FTagList = nil then
+      FTagList := TFhirCodingList.Create;
     FTagList.Assign(TFhirMeta(oSource).FTagList);
   end;
 end;
@@ -29745,7 +29680,8 @@ begin
   end
   else
   begin
-    FLineList := TFhirStringList.Create;
+    if FLineList = nil then
+      FLineList := TFhirStringList.Create;
     FLineList.Assign(TFhirAddress(oSource).FLineList);
   end;
   cityElement := TFhirAddress(oSource).cityElement.Clone;
@@ -30482,7 +30418,8 @@ begin
   end
   else
   begin
-    FDiscriminatorList := TFhirElementDefinitionSlicingDiscriminatorList.Create;
+    if FDiscriminatorList = nil then
+      FDiscriminatorList := TFhirElementDefinitionSlicingDiscriminatorList.Create;
     FDiscriminatorList.Assign(TFhirElementDefinitionSlicing(oSource).FDiscriminatorList);
   end;
   descriptionElement := TFhirElementDefinitionSlicing(oSource).descriptionElement.Clone;
@@ -33406,7 +33343,8 @@ begin
   end
   else
   begin
-    FCodeList := TFhirCodingList.Create;
+    if FCodeList = nil then
+      FCodeList := TFhirCodingList.Create;
     FCodeList.Assign(TFhirElementDefinition(oSource).FCodeList);
   end;
   slicing := TFhirElementDefinition(oSource).slicing.Clone;
@@ -33421,7 +33359,8 @@ begin
   end
   else
   begin
-    FAliasList := TFhirStringList.Create;
+    if FAliasList = nil then
+      FAliasList := TFhirStringList.Create;
     FAliasList.Assign(TFhirElementDefinition(oSource).FAliasList);
   end;
   minElement := TFhirElementDefinition(oSource).minElement.Clone;
@@ -33435,7 +33374,8 @@ begin
   end
   else
   begin
-    FType_List := TFhirElementDefinitionTypeList.Create;
+    if FType_List = nil then
+      FType_List := TFhirElementDefinitionTypeList.Create;
     FType_List.Assign(TFhirElementDefinition(oSource).FType_List);
   end;
   defaultValue := TFhirElementDefinition(oSource).defaultValue.Clone;
@@ -33450,7 +33390,8 @@ begin
   end
   else
   begin
-    FExampleList := TFhirElementDefinitionExampleList.Create;
+    if FExampleList = nil then
+      FExampleList := TFhirElementDefinitionExampleList.Create;
     FExampleList.Assign(TFhirElementDefinition(oSource).FExampleList);
   end;
   minValue := TFhirElementDefinition(oSource).minValue.Clone;
@@ -33463,7 +33404,8 @@ begin
   end
   else
   begin
-    FConditionList := TFhirIdList.Create;
+    if FConditionList = nil then
+      FConditionList := TFhirIdList.Create;
     FConditionList.Assign(TFhirElementDefinition(oSource).FConditionList);
   end;
   if (TFhirElementDefinition(oSource).FConstraintList = nil) then
@@ -33473,7 +33415,8 @@ begin
   end
   else
   begin
-    FConstraintList := TFhirElementDefinitionConstraintList.Create;
+    if FConstraintList = nil then
+      FConstraintList := TFhirElementDefinitionConstraintList.Create;
     FConstraintList.Assign(TFhirElementDefinition(oSource).FConstraintList);
   end;
   mustSupportElement := TFhirElementDefinition(oSource).mustSupportElement.Clone;
@@ -33487,7 +33430,8 @@ begin
   end
   else
   begin
-    FMappingList := TFhirElementDefinitionMappingList.Create;
+    if FMappingList = nil then
+      FMappingList := TFhirElementDefinitionMappingList.Create;
     FMappingList.Assign(TFhirElementDefinition(oSource).FMappingList);
   end;
 end;
@@ -34651,7 +34595,8 @@ begin
   end
   else
   begin
-    FTimeOfDayList := TFhirTimeList.Create;
+    if FTimeOfDayList = nil then
+      FTimeOfDayList := TFhirTimeList.Create;
     FTimeOfDayList.Assign(TFhirTimingRepeat(oSource).FTimeOfDayList);
   end;
   if (TFhirTimingRepeat(oSource).FWhen = nil) then
@@ -35385,7 +35330,8 @@ begin
   end
   else
   begin
-    FEventList := TFhirDateTimeList.Create;
+    if FEventList = nil then
+      FEventList := TFhirDateTimeList.Create;
     FEventList.Assign(TFhirTiming(oSource).FEventList);
   end;
   repeat_ := TFhirTiming(oSource).repeat_.Clone;
