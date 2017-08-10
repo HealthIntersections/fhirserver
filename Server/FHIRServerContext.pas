@@ -35,7 +35,8 @@ uses
   SysUtils, Classes, Generics.Collections, kCritSct,
   AdvObjects, AdvGenerics, AdvStringMatches, OIDSupport,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
-  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer, FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier;
+  FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
+  FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier, ApplicationCache;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -79,6 +80,7 @@ Type
     FSessionManager : TFHIRSessionManager;
     FTagManager : TFHIRTagManager;
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
+    FApplicationCache : TApplicationCache;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
@@ -122,6 +124,8 @@ Type
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
+    property ApplicationCache : TApplicationCache read FApplicationCache;
+
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
     property FormalURLPlain: String read FFormalURLPlain write FFormalURLPlain;
@@ -322,6 +326,7 @@ begin
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
+  FApplicationCache := TApplicationCache.create;
   {$IFNDEF FHIR2}
   FMaps := TAdvMap<TFHIRStructureMap>.create;
   {$ENDIF}
@@ -332,6 +337,7 @@ begin
   {$IFNDEF FHIR2}
   FMaps.Free;
   {$ENDIF}
+  FApplicationCache.Free;
   FJWTServices.Free;
   FClientApplicationVerifier.Free;
   FNamingSystems.Free;
@@ -389,6 +395,7 @@ begin
   FUserProvider.Free;
   FUserProvider := Value;
 end;
+
 
 
 procedure TFHIRServerContext.SetClientApplicationVerifier(const Value: TClientApplicationVerifier);

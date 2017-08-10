@@ -1,0 +1,38 @@
+inherited AppEndorsementForm_Macintosh: TAppEndorsementForm_Macintosh
+  DesignerMasterStyle = 0
+  inherited Panel2: TPanel
+    inherited tvEntities: TTreeView
+      Viewport.Width = 149.000000000000000000
+      Viewport.Height = 350.000000000000000000
+    end
+  end
+  inherited Panel4: TPanel
+    inherited tabPages: TTabControl
+      Sizes = (
+        479s
+        382s
+        479s
+        382s
+        479s
+        382s
+        479s
+        382s)
+      inherited tabNull: TTabItem
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+      inherited tabOrganization: TTabItem
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+      inherited tabApplication: TTabItem
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+      inherited tabObservation: TTabItem
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+    end
+  end
+end

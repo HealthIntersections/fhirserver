@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  DCPsha256, ParseMap, TextUtilities,
+  SCrypt, ParseMap, TextUtilities,
   KDBManager, AdvJSON, KCritSct, DateSupport,
   StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists, AdvExceptions,
@@ -397,21 +397,8 @@ begin
 end;
 
 function TSCIMServer.HashPassword(uk : integer; pw: String): String;
-var
-  hash : TDCP_sha256;
-  res : TBytes;
 begin
-  result := '';
-  hash := TDCP_sha256.Create(nil);
-  try
-    hash.Init;
-    hash.UpdateStr(inttostr(uk)+salt+pw);
-    SetLength(res, hash.GetHashSize div 8);
-    hash.Final(res[0]);
-  finally
-    hash.free;
-  end;
-  result := String(EncodeHexadecimal(res));
+  result := TSCrypt.HashPassword(inttostr(uk)+':'+pw);
 end;
 
 

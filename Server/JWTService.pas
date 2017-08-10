@@ -4,6 +4,7 @@ interface
 
 uses
   SysUtils,
+  FileSupport,
   AdvObjects, AdvJson,
   JWT;
 
@@ -12,19 +13,20 @@ type
   private
     FCert: String;
     FPassword: String;
-    FHost: String;
-    FServerPath: String;
+    FJWKAddress : String;
     FDatabaseId : String;
+    FHost: String;
+    function jwk : TJWK;
   public
     function Link : TJWTServices; overload;
 
-    property Host : String read FHost write FHost;
-    property ServerPath : String read FServerPath write FServerPath;
+    property JWKAddress : String read FJWKAddress write FJWKAddress;
     property Cert : String read FCert write FCert;
     property Password : String read FPassword write FPassword;
     property DatabaseId : String read FDatabaseId write FDatabaseId;
+    property Host : String read FHost write FHost;
 
-
+    function jwkList : TJWKList;
     function makeJWK : String;
     function makeJWT(name : string = '') : String;
     function pack(jwt : TJWT) : String;
@@ -34,24 +36,38 @@ implementation
 
 { TJWTServices }
 
+function TJWTServices.jwkList: TJWKList;
+begin
+  result := TJWKList.create;
+  try
+    result.Add(jwk);
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 function TJWTServices.Link: TJWTServices;
 begin
   result := TJWTServices(inherited Link);
 end;
 
+function TJWTServices.JWK : TJWK;
+begin
+  result := TJWTUtils.loadKeyFromRSACert(AnsiString(FCert));
+  result.obj['alg'] := 'RS256';
+  result.obj['use'] := 'sig';
+  result.obj['kid'] := JWKAddress;
+  result.obj['sub'] := Host;
+  result.obj['iss'] := FDatabaseId;
+end;
+
 function TJWTServices.makeJWK : String;
 var
   jwk : TJWK;
-  authurl : String;
 begin
-  jwk := TJWTUtils.loadKeyFromRSACert(AnsiString(FCert));
+  jwk := self.jwk;
   try
-    jwk.obj['alg'] := 'RS256';
-    jwk.obj['use'] := 'sig';
-    jwk.obj['kid'] := authurl+'/auth_key';
-    jwk.obj['sub'] := Host;
-    jwk.obj['iss'] := FDatabaseId;
-
     result := TJSONWriter.writeObjectStr(jwk.obj, true);
   finally
     jwk.free;
@@ -68,7 +84,7 @@ begin
   try
     jwk.obj['alg'] := 'RS256';
     jwk.obj['use'] := 'sig';
-    jwk.obj['kid'] := authurl+'/auth_key';
+    jwk.obj['kid'] := JWKAddress;
     if name = '' then
       jwk.obj['sub'] := Host
     else

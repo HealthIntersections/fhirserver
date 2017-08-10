@@ -102,12 +102,14 @@ uses
   MarkdownCommonMark in '..\..\..\markdown\source\MarkdownCommonMark.pas',
   HashSupport in '..\..\reference-platform\support\HashSupport.pas',
   CDSHooksUtilities in '..\..\reference-platform\support\CDSHooksUtilities.pas',
-  AfsResourceVolumes in '..\..\reference-platform\support\AfsResourceVolumes.pas',
+  {$IFNDEF OSX}
   AfsStreamManagers in '..\..\reference-platform\support\AfsStreamManagers.pas',
   AfsVolumes in '..\..\reference-platform\support\AfsVolumes.pas',
+  AfsResourceVolumes in '..\..\reference-platform\support\AfsResourceVolumes.pas',
+  AdvWinInetClients in '..\..\reference-platform\support\AdvWinInetClients.pas',
+  {$ENDIF}
   AdvStringHashes in '..\..\reference-platform\support\AdvStringHashes.pas',
   AdvHashes in '..\..\reference-platform\support\AdvHashes.pas',
-  AdvWinInetClients in '..\..\reference-platform\support\AdvWinInetClients.pas',
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   OrganizationChooser in 'OrganizationChooser.pas' {OrganizationSelectionForm};
 

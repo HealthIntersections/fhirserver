@@ -137,10 +137,6 @@ uses
   SnomedServices in '..\Libraries\Snomed\SnomedServices.pas',
   InternetFetcher in '..\reference-platform\Support\InternetFetcher.pas',
   FacebookSupport in '..\reference-platform\Support\FacebookSupport.pas',
-  DCPsha256 in '..\Libraries\DCP\DCPsha256.pas',
-  DCPcrypt2 in '..\Libraries\DCP\DCPcrypt2.pas',
-  DCPconst in '..\Libraries\DCP\DCPconst.pas',
-  DCPbase64 in '..\Libraries\DCP\DCPbase64.pas',
   SystemService in '..\reference-platform\Support\SystemService.pas',
   ServiceController in '..\reference-platform\Support\ServiceController.pas',
   AdvIntegerLists in '..\reference-platform\Support\AdvIntegerLists.pas',
@@ -264,7 +260,8 @@ uses
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
   JWTService in 'JWTService.pas',
-  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas';
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
+  SCrypt in '..\Libraries\security\SCrypt.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

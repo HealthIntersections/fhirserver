@@ -229,10 +229,6 @@
         <DCCReference Include="..\Libraries\db\OdbcExtras.pas"/>
         <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
         <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
-        <DCCReference Include="..\Libraries\dcp\DCPbase64.pas"/>
-        <DCCReference Include="..\Libraries\dcp\DCPconst.pas"/>
-        <DCCReference Include="..\Libraries\dcp\DCPcrypt2.pas"/>
-        <DCCReference Include="..\Libraries\dcp\DCPsha256.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincServices.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
@@ -294,6 +290,9 @@
         <DCCReference Include="..\reference-platform\support\CertificateSupport.pas"/>
         <DCCReference Include="..\Libraries\security\ClientApplicationVerifier.pas"/>
         <DCCReference Include="..\Server\JWTService.pas"/>
+        <DCCReference Include="..\Libraries\security\SCrypt.pas"/>
+        <DCCReference Include="..\Server\ApplicationCache.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -396,12 +395,27 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
@@ -780,27 +794,12 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS</RemoteDir>
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
                     </Platform>
                 </DeployClass>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>

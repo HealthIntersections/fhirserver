@@ -219,7 +219,7 @@ object AppEndorsementForm: TAppEndorsementForm
         object edtOrgName: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 1
+          TabOrder = 2
           Position.X = 60.000000000000000000
           Position.Y = 16.000000000000000000
           Size.Width = 409.000000000000000000
@@ -235,9 +235,29 @@ object AppEndorsementForm: TAppEndorsementForm
           Size.Width = 457.000000000000000000
           Size.Height = 19.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 2
+          TabOrder = 3
           Text = 'Active'
           OnChange = editorGeneralChange
+        end
+        object Label13: TLabel
+          Position.X = 16.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 41.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'URL:'
+        end
+        object edtOrgURL: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 1
+          Position.X = 60.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 409.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
         end
       end
       object tabApplication: TTabItem
@@ -477,6 +497,22 @@ object AppEndorsementForm: TAppEndorsementForm
       Text = 'Save'
       OnClick = btnSaveClick
     end
+    object btnDownload: TButton
+      Enabled = False
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 3
+      Text = 'Download'
+      OnClick = btnDownloadClick
+    end
+    object btnUpload: TButton
+      Enabled = False
+      Position.X = 90.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 2
+      Text = 'Upload'
+      OnClick = btnUploadClick
+    end
   end
   object Splitter1: TSplitter
     Align = Left
@@ -491,5 +527,19 @@ object AppEndorsementForm: TAppEndorsementForm
   object ComboBox2: TComboBox
     Position.X = 776.000000000000000000
     Position.Y = 344.000000000000000000
+  end
+  object sdPack: TSaveDialog
+    DefaultExt = '.json'
+    Filter = '*.json|*.*'
+    Title = 'Save Download Package'
+    Left = 24
+    Top = 456
+  end
+  object odUpload: TOpenDialog
+    DefaultExt = 'json'
+    Filter = '*.json|*.*'
+    Title = 'Upload Previously Saved Package'
+    Left = 120
+    Top = 456
   end
 end

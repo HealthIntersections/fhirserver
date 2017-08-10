@@ -161,7 +161,8 @@ uses
   CodeGenerationForm in 'CodeGenerationForm.pas' {CodeGeneratorForm},
   FHIRCodeGenerator in '..\reference-platform\support\FHIRCodeGenerator.pas',
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
-  SmartOnFhirLogin in '..\reference-platform\support\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm};
+  SmartOnFhirLogin in '..\reference-platform\support\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas';
 
 {$R *.res}
 

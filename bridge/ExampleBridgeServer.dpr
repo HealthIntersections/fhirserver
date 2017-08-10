@@ -153,10 +153,6 @@ uses
   OdbcExtras in '..\Libraries\db\OdbcExtras.pas',
   OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas',
   OdbcImplementation in '..\Libraries\db\OdbcImplementation.pas',
-  DCPbase64 in '..\Libraries\dcp\DCPbase64.pas',
-  DCPconst in '..\Libraries\dcp\DCPconst.pas',
-  DCPcrypt2 in '..\Libraries\dcp\DCPcrypt2.pas',
-  DCPsha256 in '..\Libraries\dcp\DCPsha256.pas',
   LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas',
   LoincServices in '..\Libraries\loinc\LoincServices.pas',
   TwilioClient in '..\Libraries\security\TwilioClient.pas',
@@ -217,7 +213,10 @@ uses
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   CertificateSupport in '..\reference-platform\support\CertificateSupport.pas',
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
-  JWTService in '..\Server\JWTService.pas';
+  JWTService in '..\Server\JWTService.pas',
+  SCrypt in '..\Libraries\security\SCrypt.pas',
+  ApplicationCache in '..\Server\ApplicationCache.pas',
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas';
 
 var
   gsrv : TExampleFhirServer;

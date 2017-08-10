@@ -246,10 +246,6 @@
         <DCCReference Include="..\Libraries\Snomed\SnomedServices.pas"/>
         <DCCReference Include="..\reference-platform\Support\InternetFetcher.pas"/>
         <DCCReference Include="..\reference-platform\Support\FacebookSupport.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPsha256.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPcrypt2.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPconst.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPbase64.pas"/>
         <DCCReference Include="..\reference-platform\Support\SystemService.pas"/>
         <DCCReference Include="..\reference-platform\Support\ServiceController.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvIntegerLists.pas"/>
@@ -378,6 +374,7 @@
         <DCCReference Include="FHIRRestServer.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="Modules\HackingHealthLogic.pas"/>
+        <DCCReference Include="..\Libraries\security\SCrypt.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -462,7 +459,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -804,16 +810,7 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

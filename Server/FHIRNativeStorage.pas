@@ -32,7 +32,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport, HashSupport,
+  kCritSct, DateSupport,   StringSupport, GuidSupport, OidSupport, DecimalSupport, BytesSupport, EncodeSupport,
   ParseMap, TextUtilities,
   AdvNames, AdvObjects, AdvObjectLists, AdvStringMatches, AdvExclusiveCriticalSections, AdvMemories, AdvVclStreams,
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
@@ -11252,6 +11252,7 @@ begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
 
+  ServerContext.ApplicationCache.seeResource(resource);
   FLock.Lock('SeeResource');
   try
     if resource.ResourceType in [frtValueSet, frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
@@ -11892,7 +11893,7 @@ begin
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
-    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''CodeSystem'' or Types.ResourceName = ''ConceptMap'' or '+
+    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Organization'' or Types.ResourceName = ''Device'' or Types.ResourceName = ''Observation'' or Types.ResourceName = ''CodeSystem'' or Types.ResourceName = ''ConceptMap'' or '+
     'Types.ResourceName = ''StructureDefinition'' or Types.ResourceName = ''Questionnaire'' or Types.ResourceName = ''StructureMap'' or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
   conn.Prepare;
   try

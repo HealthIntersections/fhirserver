@@ -4,8 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, IniFiles,
-  SystemSupport, DateSupport,
-  FHIRClient, FHIRTypes, FHIRResources, FHIRUtilities,
+  SystemSupport, DateSupport, GuidSupport, FileSupport, StringSupport,
+  FHIRClient, FHIRTypes, FHIRResources, FHIRUtilities, FHIRParser,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
   FMX.StdCtrls, FMX.ListView, FMX.Layouts, FMX.TreeView, FMX.Platform,
@@ -63,6 +63,12 @@ type
     edtEndorsementText: TEdit;
     Label12: TLabel;
     cbxEndorsementStatus: TComboBox;
+    btnDownload: TButton;
+    sdPack: TSaveDialog;
+    btnUpload: TButton;
+    odUpload: TOpenDialog;
+    Label13: TLabel;
+    edtOrgURL: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnConnectClick(Sender: TObject);
@@ -78,6 +84,8 @@ type
     procedure btnNewOrganizationClick(Sender: TObject);
     procedure btnAppNewEndorsementClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure btnDownloadClick(Sender: TObject);
+    procedure btnUploadClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -124,33 +132,24 @@ var
 implementation
 
 {$R *.fmx}
+{$R *.Surface.fmx MSWINDOWS}
+{$R *.Windows.fmx MSWINDOWS}
+{$R *.Macintosh.fmx MACOS}
 
 const
-  MAGIC_JWT = 'http://healthintersections.com.au/fhir/identifiers/jwt';
   MAGIC_OBS = 'http://healthintersections.com.au/fhir/codes/obs';
+  EXT_JWT = 'http://www.healthintersections.com.au/fhir/StructureDefinition/JWT';
 
 procedure TAppEndorsementForm.btnConnectClick(Sender: TObject);
-var
-  cs : IFMXCursorService;
-begin
-  ClearEndorsements;
-  ClearApplications;
-  ClearOrganizations;
-  if edtServer.ReadOnly then
+  procedure connected;
+  var
+    cs : IFMXCursorService;
   begin
-    FClient.Free;
-    FClient := nil;
-    btnConnect.Text := 'Connect';
-    edtServer.ReadOnly := false;
-    edtServer.Enabled := true;
-    disableTreeView;
-  end
-  else
-  begin
-    FClient := TFhirHTTPClient.create(nil, edtServer.Text, true);
     btnConnect.Text := 'Disconnect';
     edtServer.ReadOnly := true;
     edtServer.Enabled := false;
+    btnDownload.Enabled := true;
+    btnUpload.Enabled := true;
     if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
       cs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
     else
@@ -168,8 +167,37 @@ begin
       if Assigned(CS) then
         cs.setCursor(Cursor);
     end;
+    EnableTreeView;
   end;
-  EnableTreeView;
+
+  procedure disconnected;
+  begin
+    btnConnect.Text := 'Connect';
+    edtServer.ReadOnly := false;
+    edtServer.Enabled := true;
+    btnDownload.Enabled := false;
+    btnUpload.Enabled := false;
+    disableTreeView;
+  end;
+begin
+  ClearEndorsements;
+  ClearApplications;
+  ClearOrganizations;
+  if edtServer.ReadOnly then
+  begin
+    FClient.Free;
+    FClient := nil;
+  end
+  else
+  begin
+    try
+      FClient := TFhirHTTPClient.create(nil, edtServer.Text, true);
+      connected;
+    except
+      disconnected;
+      raise;
+    end;
+  end;
   tvEntitiesClick(nil);
 end;
 
@@ -183,6 +211,38 @@ begin
     saveApplication
   else if FActive is TFhirObservation then
     saveEndorsement;
+end;
+
+function localPathFromURL(url : String) : String;
+var
+  l, r : String;
+begin
+  StringSplit(url, '//', l, r);
+  StringSplit(r, '/', l, r);
+  result := '/'+r;
+end;
+
+procedure TAppEndorsementForm.btnUploadClick(Sender: TObject);
+var
+  bnd : TFhirBundle;
+  be : TFhirBundleEntry;
+begin
+  if odUpload.Execute then
+  begin
+    bnd := TFHIRJsonParser.ParseFile(nil, 'en', odUpload.filename) as TFhirBundle;
+    try
+      bnd.type_ := BundleTypeTransaction;
+      for be in bnd.entryList do
+      begin
+        be.request := TFhirBundleEntryRequest.Create;
+        be.request.method := HttpVerbPUT;
+        be.request.url := localPathFromURL(be.fullUrl);
+      end;
+      FClient.transaction(bnd);
+    finally
+      bnd.free;
+    end;
+  end;
 end;
 
 procedure TAppEndorsementForm.Button1Click(Sender: TObject);
@@ -472,10 +532,8 @@ var
   id : TFhirIdentifier;
 begin
   edtAppName.text := app.model;
-  cbxAppStatus.ItemIndex := ord(app.status);
-  for id in app.identifierList do
-    if (id.system = MAGIC_JWT) then
-      edtAppJWT.text := id.value;
+  cbxAppStatus.ItemIndex := ord(app.status)-1;
+  edtAppJWT.text := app.getExtensionString(EXT_JWT);
   FActive := app.clone;
   SetNotDirty;
 end;
@@ -568,7 +626,13 @@ begin
 end;
 
 procedure TAppEndorsementForm.LoadOrganization(org: TFhirOrganization);
+var
+  c : TFhirContactPoint;
 begin
+  edtOrgName.text := org.name;
+  for c in org.telecomList do
+    if c.system = ContactPointSystemUrl then
+      edtOrgURL.text := c.value;
   edtOrgName.text := org.name;
   cbOrgActive.IsChecked := org.active;
   FActive := org.clone;
@@ -611,8 +675,6 @@ end;
 procedure TAppEndorsementForm.saveApplication;
 var
   app, upd, res : TFhirDevice;
-  i : integer;
-  b : boolean;
   id : String;
 begin
   if edtAppName.Text = '' then
@@ -622,32 +684,11 @@ begin
 
   app := FActive as TFhirDevice;
   app.model := edtAppName.Text;
-  app.status := TFhirDeviceStatusEnum(cbxAppStatus.ItemIndex);
+  app.status := TFhirDeviceStatusEnum(cbxAppStatus.ItemIndex+1);
   if edtAppJWT.Text <> '' then
-  begin
-    b := false;
-    for i := app.identifierList.Count - 1 downto 0 do
-      if app.identifierList[i].system = MAGIC_JWT then
-        if b then
-          app.identifierList.Remove(i)
-        else
-        begin
-          b := true;
-          app.identifierList[i].value := edtAppJWT.Text;
-        end;
-    if not b then
-      with app.identifierList.Append do
-      begin
-        system := MAGIC_JWT;
-        value := edtAppJWT.Text;
-      end;
-  end
+    app.setExtensionString(EXT_JWT, edtAppJWT.Text)
   else
-  begin
-    for i := app.identifierList.Count - 1 downto 0 do
-      if app.identifierList[i].system = MAGIC_JWT then
-        app.identifierList.Remove(i);
-  end;
+    app.removeExtension(EXT_JWT);
 
   if (app.id <> '') then
     upd := FClient.updateResource(app) as TFhirDevice
@@ -712,6 +753,9 @@ procedure TAppEndorsementForm.saveOrganization;
 var
   org, upd, res : TFhirOrganization;
   id : String;
+  i : integer;
+  c : TFhirContactPoint;
+  b : boolean;
 begin
   if edtOrgName.Text = '' then
     raise Exception.Create('An Application Organization is required');
@@ -719,6 +763,27 @@ begin
   org := FActive as TFhirOrganization;
   org.name := edtOrgName.Text;
   org.active := cbOrgActive.IsChecked;
+  b := false;
+  if edtOrgURL.text <> '' then
+  begin
+    for c in org.telecomList do
+      if c.system = ContactPointSystemUrl then
+      begin
+        b := true;
+        c.value := edtOrgURL.text;
+      end;
+    if not b then
+      with org.telecomList.Append do
+      begin
+        system := ContactPointSystemUrl;
+        value := edtOrgURL.text;
+      end;
+  end
+  else
+    for i := org.telecomList.Count - 1 downto 0 do
+      if org.telecomList[i].system = ContactPointSystemUrl then
+        org.telecomList.Remove(i);
+
   if (org.id <> '') then
     upd := FClient.updateResource(org) as TFhirOrganization
   else
@@ -817,6 +882,43 @@ end;
 procedure TAppEndorsementForm.btnNewOrganizationClick(Sender: TObject);
 begin
   addOrganization;
+end;
+
+procedure TAppEndorsementForm.btnDownloadClick(Sender: TObject);
+var
+  bnd : TFhirBundle;
+  app : TFhirDevice;
+  org : TFhirOrganization;
+  endorsement : TFhirObservation;
+begin
+  if sdPack.execute then
+  begin
+    bnd := TFhirBundle.Create(BundleTypeCollection);
+    try
+      bnd.id := NewGuidId;
+      for app in FApplications do
+        with bnd.entryList.Append do
+        begin
+          resource := app.Link;
+          fullUrl := URLPath([edtServer.Text, 'Device', app.id]);
+        end;
+      for org in FOrganizations do
+        with bnd.entryList.Append do
+        begin
+          resource := org.Link;
+          fullUrl := URLPath([edtServer.Text, 'Organization', org.id]);
+        end;
+      for endorsement in FEndorsements do
+        with bnd.entryList.Append do
+        begin
+          resource := endorsement.Link;
+          fullUrl := URLPath([edtServer.Text, 'Observation', endorsement.id]);
+        end;
+      TFHIRJsonComposer.composeFile(nil, bnd, 'en', sdPack.FileName, true);
+    finally
+      bnd.Free;
+    end;
+  end;
 end;
 
 procedure TAppEndorsementForm.btnLeftNewApplicationClick(Sender: TObject);

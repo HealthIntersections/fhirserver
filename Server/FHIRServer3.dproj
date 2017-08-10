@@ -108,7 +108,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-noload -xremount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -load &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g -no-text-index</Debugger_RunParams>
+        <Debugger_RunParams>-xnoload -xremount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -load &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g -no-text-index</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_3\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
@@ -248,10 +248,6 @@
         <DCCReference Include="..\Libraries\Snomed\SnomedServices.pas"/>
         <DCCReference Include="..\reference-platform\Support\InternetFetcher.pas"/>
         <DCCReference Include="..\reference-platform\Support\FacebookSupport.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPsha256.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPcrypt2.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPconst.pas"/>
-        <DCCReference Include="..\Libraries\DCP\DCPbase64.pas"/>
         <DCCReference Include="..\reference-platform\Support\SystemService.pas"/>
         <DCCReference Include="..\reference-platform\Support\ServiceController.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvIntegerLists.pas"/>
@@ -386,6 +382,8 @@
         <DCCReference Include="JWTService.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="Modules\HackingHealthLogic.pas"/>
+        <DCCReference Include="ApplicationCache.pas"/>
+        <DCCReference Include="..\Libraries\security\SCrypt.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

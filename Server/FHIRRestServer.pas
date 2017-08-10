@@ -81,7 +81,7 @@ Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
-  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie, IdHashSHA,
+  IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie,
   IdZLibCompressorBase, IdCompressorZLib, IdZLib, IdSSLOpenSSLHeaders, IdGlobalProtocols, IdWebSocket,
 
   EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport, ThreadSupport, CertificateSupport,
@@ -89,7 +89,7 @@ Uses
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders, AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions, AdvGenerics,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
-  DCPsha256, AdvJSON, libeay32, RDFUtilities, JWT,
+  AdvJSON, libeay32, RDFUtilities, JWT,
 
   MXML, GraphQL, MsXml, MsXmlParser,
 
@@ -530,9 +530,11 @@ Begin
   FAuthServer.AdminEmail := FAdminEmail;
   FAuthServer.EndPoint := OAuthPath(true);
   FAuthServer.host := host;
-  FAuthServer.clientApplicationVerifier := ServerContext.ClientApplicationVerifier.Link;
-  FAuthServer.JWTServices := ServerContext.JWTServices.Link;
   FAuthServer.Active := FUseOAuth;
+
+  ServerContext.JWTServices.JWKAddress := FAuthServer.KeyPath;
+  ServerContext.ClientApplicationVerifier.Server := FIni.ReadString(voMaybeVersioned, 'web', 'cavs', FAuthServer.CavsPath);
+
 
   FAdaptors := TAdvMap<TFHIRFormatAdaptor>.create;
   {$IFDEF FHIR3}
@@ -3243,25 +3245,6 @@ begin
   finally
     FLock.Unlock;
   end;
-
-end;
-
-function HashPword(s : String): AnsiString;
-var
-  hash : TDCP_sha256;
-  res : TBytes;
-begin
-  result := '';
-  hash := TDCP_sha256.Create(nil);
-  try
-    hash.Init;
-    hash.UpdateStr(s);
-    SetLength(res, hash.GetHashSize div 8);
-    hash.Final(res[0]);
-  finally
-    hash.free;
-  end;
-  result := EncodeHexadecimal(res);
 end;
 
 constructor ERestfulAuthenticationNeeded.Create(const sSender, sMethod, sReason, sMsg: String; aStatus : Word);

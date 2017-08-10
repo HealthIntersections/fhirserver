@@ -294,6 +294,11 @@ type
     function hasCode(System, Code : String) : boolean;
   end;
 
+  TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
+  public
+    function hasCode(System, Code : String) : boolean;
+  end;
+
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
     function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
@@ -4733,6 +4738,18 @@ begin
   finally
     result.free;
   end;
+end;
+
+{ TFHIRCodeableConceptListHelper }
+
+function TFHIRCodeableConceptListHelper.hasCode(System, Code: String): boolean;
+var
+  cc : TFHIRCodeableConcept;
+begin
+  result := false;
+  for cc in self do
+    if cc.hasCode(system, code) then
+      exit(true);
 end;
 
 end.

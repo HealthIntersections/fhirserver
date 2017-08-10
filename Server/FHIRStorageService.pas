@@ -583,7 +583,7 @@ var
 begin
   result := TFHIRInternalClient.Create;
   try
-    TFHIRInternalClient(result).FEngine := createOperationContext(lang);
+    TFHIRInternalClient(result).FEngine := createOperationContext(lang).link as TFHIROperationEngine; // will be freed twice later
     TFHIRInternalClient(result).Context := context.link;
     TFHIRInternalClient(result).session := session.link;
     result.link;

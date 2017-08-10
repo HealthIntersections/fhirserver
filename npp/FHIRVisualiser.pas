@@ -39,7 +39,7 @@ uses
   FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIRBase,
   AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers, ShellSupport,
   IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities,
-  GUIDSupport, CDSBrowserForm;
+  GUIDSupport, CDSBrowserForm, CDSHooksClientManager;
 
 const
   UMSG = WM_USER + 1;

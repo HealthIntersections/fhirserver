@@ -306,12 +306,12 @@ Type
     class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
     class procedure Verify_Hmac_RSA256(input : TBytes; sig : TBytes; header : TJsonObject; keys: TJWKList);
   public
-    class function Sign_Hmac_RSA256(input : TBytes; pemfile, pempassword : AnsiString) : TBytes; overload;
+    class function Sign_Hmac_RSA256(input : TBytes; pemfile, pempassword : String) : TBytes; overload;
 
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
     class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK) : String; overload;
-    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : AnsiString) : String; overload;
+    class function pack(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; pemfile, pempassword : String) : String; overload;
 
     // special use - use an existing PEM to sign the JWT
     class function rsa_pack(jwt : TJWT; method : TJWTAlgorithm; pem_file, pem_password : String) : String; overload;
@@ -1141,7 +1141,7 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : AnsiString): String;
+class function TJWTUtils.pack(jwt: TJWT; method: TJWTAlgorithm; key: TJWK; pemfile, pempassword : String): String;
 var
   input, sig : TBytes;
 begin
@@ -1308,7 +1308,7 @@ begin
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
   input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
-  sig := Sign_Hmac_RSA256(input, AnsiString(pem_file), AnsiString(pem_password));
+  sig := Sign_Hmac_RSA256(input, pem_file, pem_password);
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
@@ -1355,7 +1355,7 @@ begin
   end;
 end;
 
-class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; pemfile, pempassword: AnsiString): TBytes;
+class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; pemfile, pempassword: String): TBytes;
 var
   ctx : EVP_MD_CTX;
   keysize : integer;
@@ -1369,7 +1369,7 @@ begin
   keys := TJWKList.create;
   try
     // 1. Load the RSA private Key from FKey
-    rkey := loadRSAPrivateKey(pemfile, pempassword);
+    rkey := loadRSAPrivateKey(AnsiString(pemfile), AnsiString(pempassword));
     try
       pkey := EVP_PKEY_new;
       try
