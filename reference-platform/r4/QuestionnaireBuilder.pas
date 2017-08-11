@@ -39,7 +39,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  GUIDSupport, DateSupport, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
+  GUIDSupport, DateSupport, AdvObjects, StringSupport, AdvStringMatches, AdvExceptions,
   FHIRResources, FHIRTypes, FHIRConstants, FHIRBase, FHIRParser,
   FHIRUtilities, FHIRSupport, FHIRProfileUtilities;
 

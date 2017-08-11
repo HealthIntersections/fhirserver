@@ -23,8 +23,7 @@ CREATE TABLE [UniiDesc](
 
 GO
 
-ALTER TABLE [UniiDesc]  WITH CHECK ADD  CONSTRAINT [FK_ValueSetMembers_UniiKey] FOREIGN KEY([UniiKey])
-REFERENCES [Unii] ([UniiKey])
+ALTER TABLE [UniiDesc]  WITH CHECK ADD  CONSTRAINT [FK_ValueSetMembers_UniiKey] FOREIGN KEY([UniiKey]) REFERENCES [Unii] ([UniiKey])
 GO
 
 ALTER TABLE [UniiDesc] CHECK CONSTRAINT [FK_ValueSetMembers_UniiKey]
