@@ -124,7 +124,8 @@ begin
   self.db := db;
   FList := TAdvList<TCvxConcept>.create;
   FMap := TAdvMap<TCvxConcept>.create;
-  Load;
+  if db <> nil then
+    Load;
 end;
 
 

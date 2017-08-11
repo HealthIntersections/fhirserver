@@ -91,20 +91,23 @@ begin
   inherited Create;
   FCodes := TAdvStringMatch.Create;
 
-  qry := db.GetConnection('CountryCodes');
-  try
-    qry.SQL := 'Select Code, Display from CountryCodes';
-    qry.prepare;
-    qry.execute;
-    while qry.FetchNext do
-      Fcodes.Add(qry.ColStringByName['Code'], qry.ColStringByName['Display']);
-    qry.Terminate;
-    qry.Release;
-  except
-    on e : Exception do
-    begin
-      qry.Error(e);
-      raise;
+  if (db <> nil) then
+  begin
+    qry := db.GetConnection('CountryCodes');
+    try
+      qry.SQL := 'Select Code, Display from CountryCodes';
+      qry.prepare;
+      qry.execute;
+      while qry.FetchNext do
+        Fcodes.Add(qry.ColStringByName['Code'], qry.ColStringByName['Display']);
+      qry.Terminate;
+      qry.Release;
+    except
+      on e : Exception do
+      begin
+        qry.Error(e);
+        raise;
+      end;
     end;
   end;
 end;

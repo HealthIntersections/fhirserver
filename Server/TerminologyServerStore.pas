@@ -38,7 +38,7 @@ uses
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
   TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, ACIRServices, UriServices,
-  USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
+  USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
   YuStemmer;
 
 const
@@ -770,7 +770,10 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
     for c in list do
     begin
       stems(c).parent := parent;
-      map.Add(c.code, c.Link);
+      if map.ContainsKey(c.code) then
+        logt('Duplicate code '+c.code+' in '+cs.url)
+      else
+        map.Add(c.code, c.Link);
       processConcepts(c, c.conceptList, map);
     end;
   end;
@@ -866,20 +869,23 @@ begin
 
   FStem := GetStemmer_8('english');
 
-  conn := db.GetConnection('loadTerminologyKeys');
-  try
-    FLastConceptKey := conn.CountSQL('select Max(ConceptKey) from Concepts');
-    FLastClosureKey := conn.CountSQL('select Max(ClosureKey) from Closures');
-    FLastClosureEntryKey := conn.CountSQL('select Max(ClosureEntryKey) from ClosureEntries');
-    FLastValueSetKey := conn.CountSQL('select Max(ValueSetKey) from ValueSets');
-    FLastValueSetMemberKey := conn.CountSQL('select Max(ValueSetMemberKey) from ValueSetMembers');
-    conn.Release;
-  except
-    on e:exception do
-    begin
-      conn.Error(e);
-      recordStack(e);
-      raise;
+  if (Fdb <> nil) then
+  begin
+    conn := db.GetConnection('loadTerminologyKeys');
+    try
+      FLastConceptKey := conn.CountSQL('select Max(ConceptKey) from Concepts');
+      FLastClosureKey := conn.CountSQL('select Max(ClosureKey) from Closures');
+      FLastClosureEntryKey := conn.CountSQL('select Max(ClosureEntryKey) from ClosureEntries');
+      FLastValueSetKey := conn.CountSQL('select Max(ValueSetKey) from ValueSets');
+      FLastValueSetMemberKey := conn.CountSQL('select Max(ValueSetMemberKey) from ValueSetMembers');
+      conn.Release;
+    except
+      on e:exception do
+      begin
+        conn.Error(e);
+        recordStack(e);
+        raise;
+      end;
     end;
   end;
 end;
@@ -1199,6 +1205,9 @@ function TTerminologyServerStore.TrackValueSet(id: String; bOnlyIfNew : boolean)
 var
   conn : TKDBConnection;
 begin
+   if FDB = nil then
+     exit(0);
+
   conn := FDB.GetConnection('TrackValueSet');
   try
     result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
@@ -1258,7 +1267,8 @@ begin
       begin
         FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
         FCodeSystemsById.AddOrSetValue(vs.id, vs.Link);
-        BuildStems(vs.codeSystem);
+        if (FDB <> nil) then // don't build stems in this case
+          BuildStems(vs.codeSystem);
       end;
       {$ENDIF}
       UpdateConceptMaps;
@@ -1272,7 +1282,8 @@ begin
       FBaseCodeSystems.AddOrSetValue(cs.url, cs.Link);
       if cs.valueSet <> '' then
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
-      BuildStems(cs);
+      if (FDB <> nil) then // don't build stems in this case
+        BuildStems(cs);
     end
     {$ENDIF}
     else if (resource.ResourceType = frtConceptMap) then
@@ -1319,7 +1330,8 @@ begin
       begin
         FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
         FCodeSystemsByid.AddOrSetValue(vs.id, vs.Link);
-        BuildStems(vs.codeSystem);
+        if (FDB <> nil) then // don't build stems in this case
+          BuildStems(vs.codeSystem);
       end;
       {$ENDIF}
       UpdateConceptMaps;
@@ -1332,7 +1344,8 @@ begin
       FCodeSystemsByUrl.AddOrSetValue(cs.url, cs.Link);
       if cs.valueSet <> '' then
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
-      BuildStems(cs);
+      if (FDB <> nil) then // don't build stems in this case
+        BuildStems(cs);
     end
     {$ENDIF}
     else if (resource.ResourceType = frtConceptMap) then

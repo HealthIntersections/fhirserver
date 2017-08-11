@@ -34,10 +34,14 @@ interface
 uses
   SysUtils;
 
+Type
+  TLogEvent = procedure (msg : String) of object;
+
 var
   filelog : boolean = false;
   consolelog : boolean = false;
   logfile : String = '';
+  logevent : TLogEvent;
 
 procedure logt(s : String);
 procedure logtn(s : String);
@@ -87,6 +91,8 @@ begin
     log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s+#13#10);
   if consolelog then
     System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
+  if (assigned(logEvent)) then
+    logEvent(s);
 end;
 
 procedure logtn(s : String);
@@ -108,6 +114,8 @@ begin
     log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+s+#13#10);
   if consolelog then
     System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+  if (assigned(logEvent)) then
+    logEvent(s);
 end;
 
 Initialization

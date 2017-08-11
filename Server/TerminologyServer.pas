@@ -215,7 +215,8 @@ begin
   Ucum := TUcumServices.Create;
   Ucum.Import(fn);
   logt(' - done');
-  LoadClosures;
+  if (DB <> nil) then
+    LoadClosures;
 end;
 
 procedure TTerminologyServer.LoadClosures;

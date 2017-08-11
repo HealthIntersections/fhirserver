@@ -42,6 +42,9 @@
         <Projects Include="utils\AppEndorserUI\AppEndorser.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="utils\VocabTxServer\VocabTxServer.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -167,14 +170,23 @@
     <Target Name="AppEndorser:Make">
         <MSBuild Projects="utils\AppEndorserUI\AppEndorser.dproj" Targets="Make"/>
     </Target>
+    <Target Name="VocabTxServer">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj"/>
+    </Target>
+    <Target Name="VocabTxServer:Clean">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VocabTxServer:Make">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirserverOSX4;fhirnpp;AppEndorser"/>
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirserverOSX4;fhirnpp;AppEndorser;VocabTxServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirserverOSX4:Clean;fhirnpp:Clean;AppEndorser:Clean"/>
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirserverOSX4:Clean;fhirnpp:Clean;AppEndorser:Clean;VocabTxServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirserverOSX4:Make;fhirnpp:Make;AppEndorser:Make"/>
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirserverOSX4:Make;fhirnpp:Make;AppEndorser:Make;VocabTxServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
