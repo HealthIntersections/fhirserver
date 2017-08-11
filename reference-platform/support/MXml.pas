@@ -163,7 +163,7 @@ Type
     property attributeNS[ns, name : String] : String read GetAttributeNS write SetAttributeNS;
     function element(name : String) : TMXmlElement;
     procedure listElements(name : String; list : TAdvList<TMXmlElement>);
-    procedure addC(node : TMXmlElement);
+    procedure addChild(node : TMXmlElement; fix : boolean);
     function ToXml(pretty : boolean = false) : String;
     function equal(other : TMXmlNode) : boolean; override;
     function ToString : String; override;
@@ -792,11 +792,12 @@ begin
   end;
 end;
 
-procedure TMXmlElement.addC(node: TMXmlElement);
+procedure TMXmlElement.addChild(node: TMXmlElement; fix : boolean);
 begin
   Children.Add(node);
   node.Parent := self;
-  fixChildren;
+  if fix then
+    fixChildren;
 end;
 
 constructor TMXmlElement.Create(nodeType: TMXmlElementType; name, local, ns: String);
@@ -1261,7 +1262,7 @@ begin
       rule(s = '>', 'Element "'+e.Name+'" not terminated properly');
     end;
     e.Stop := FLocation;
-    parent.addC(e.Link);
+    parent.addChild(e.Link, false);
     e.fixChildren;
   finally
     e.Free;

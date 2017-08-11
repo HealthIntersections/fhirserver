@@ -33,7 +33,7 @@ Interface
 
 Uses
   SysUtils, {$IFDEF MACOS} OSXUtils, MacApi.Foundation, {$ELSE} Windows, ShellApi, ShlObj, {$ENDIF}
-  DateSupport, StringSupport, ThreadSupport;
+  DateSupport, StringSupport;
 
 Function SystemTemp : String;
 Function ProgData : String;

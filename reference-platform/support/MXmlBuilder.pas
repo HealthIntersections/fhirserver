@@ -91,7 +91,7 @@ begin
   Begin
     FDoc := TMXmlDocument.create;
     if CharEncoding <> '' Then
-      FDoc.addC(TMXmlElement.createProcessingInstruction(CharEncoding));
+      FDoc.addChild(TMXmlElement.createProcessingInstruction(CharEncoding), true);
     FStack.Add(FDoc.Link);
   End
   else
@@ -170,8 +170,8 @@ begin
     end;
     oParent := FStack.Last;
     if IsPretty and (oParent.NodeType = ntElement) Then
-      oParent.addC(TMXmlElement.createText(ReadTextLength(#13#10+pad)));
-    oParent.addC(oElem);
+      oParent.addChild(TMXmlElement.createText(ReadTextLength(#13#10+pad)), true);
+    oParent.addChild(oElem, true);
     inc(FSourceLocation.col, len+2);
     for iLoop := 0 to FAttributes.Count - 1 Do
       oElem.attributes.addAll(FAttributes);
@@ -189,7 +189,7 @@ begin
   if IsPretty Then
   Begin
     If FStack.Last.HasChildren Then
-      FStack.Last.addC(TMXmlElement.createText(readTextLength(#13#10+pad(-1))));
+      FStack.Last.addChild(TMXmlElement.createText(readTextLength(#13#10+pad(-1))), true);
   End;
   FStack.Delete(FStack.Count - 1)
 end;
@@ -203,7 +203,7 @@ end;
 
 function TMXmlBuilder.Text(const sValue: String) : TSourceLocation;
 begin
-  FStack.Last.addC(TMXmlElement.createText(ReadTextLengthWithEscapes('', sValue, '')));
+  FStack.Last.addChild(TMXmlElement.createText(ReadTextLengthWithEscapes('', sValue, '')), true);
   result.line := FSourceLocation.line;
   result.col := FSourceLocation.col;
 end;
@@ -216,7 +216,7 @@ end;
 
 function TMXmlBuilder.Entity(const sValue: String) : TSourceLocation;
 begin
-  FStack.Last.addC(TMXmlElement.createText('&'+sValue+';'));
+  FStack.Last.addChild(TMXmlElement.createText('&'+sValue+';'), true);
   inc(FSourceLocation.col, length(sValue)+2);
   result.line := FSourceLocation.line;
   result.col := FSourceLocation.col;
@@ -283,8 +283,8 @@ end;
 Procedure TMXmlBuilder.Comment(Const sContent : String);
 begin
   if IsPretty and (FStack.Last.nodeType = ntElement) Then
-    FStack.Last.addC(TMXmlElement.createText(ReadTextLength(#13#10+pad)));
-  FStack.Last.addC(TMXmlElement.createComment(sContent));
+    FStack.Last.addChild(TMXmlElement.createText(ReadTextLength(#13#10+pad)), true);
+  FStack.Last.addChild(TMXmlElement.createComment(sContent), true);
   ReadTextLength('<!-- '+sContent+' -->');
 End;
 

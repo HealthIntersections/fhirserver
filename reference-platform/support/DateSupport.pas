@@ -197,7 +197,6 @@ Function DateTimeToXMLDateTimeTimeZoneString(Const aTimestamp, aTimeZone : TDate
 Implementation
 
 uses
-  IdSMTP,
   GuidSupport,
   EncodeSupport;
 
