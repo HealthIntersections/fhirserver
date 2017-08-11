@@ -730,11 +730,10 @@ procedure TFHIRPlugin.FuncAbout;
 var
   a: TAboutForm;
 begin
-  loadValidator;
   nonFHIRFiles.clear;
   a := TAboutForm.Create(self);
   try
-    a.Services := FWorker.link;
+    a.lblDefinitions.Caption := 'Definitions Source: '+getDefPath(Settings.DefinitionsVersion);
     a.ShowModal;
   finally
     a.Free;

@@ -1,18 +1,24 @@
 inherited AboutForm: TAboutForm
   BorderStyle = bsDialog
   Caption = 'FHIR NPP Plugin'
-  ClientHeight = 231
-  ClientWidth = 443
+  ClientHeight = 256
+  ClientWidth = 495
   Scaled = False
-  OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitWidth = 449
-  ExplicitHeight = 260
+  ExplicitWidth = 501
+  ExplicitHeight = 285
   PixelsPerInch = 96
   TextHeight = 13
+  object lblDefinitions: TLabel
+    Left = 8
+    Top = 155
+    Width = 87
+    Height = 13
+    Caption = 'Defintions Source:'
+  end
   object Button1: TButton
-    Left = 358
-    Top = 151
+    Left = 409
+    Top = 183
     Width = 75
     Height = 72
     Caption = 'Ok'
@@ -339,9 +345,9 @@ inherited AboutForm: TAboutForm
     end
   end
   object Panel2: TPanel
-    Left = 154
+    Left = 151
     Top = 8
-    Width = 279
+    Width = 333
     Height = 137
     BevelOuter = bvLowered
     TabOrder = 2
@@ -400,7 +406,7 @@ inherited AboutForm: TAboutForm
     object Label5: TLabel
       Left = 14
       Top = 100
-      Width = 255
+      Width = 299
       Height = 29
       AutoSize = False
       Caption = 
@@ -417,7 +423,7 @@ inherited AboutForm: TAboutForm
   end
   object GroupBox1: TGroupBox
     Left = 8
-    Top = 151
+    Top = 183
     Width = 281
     Height = 70
     Caption = 'Links'

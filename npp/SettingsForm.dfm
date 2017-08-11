@@ -129,19 +129,19 @@ inherited SettingForm: TSettingForm
           object rbR3: TRadioButton
             Left = 18
             Top = 24
-            Width = 113
+            Width = 79
             Height = 17
-            Caption = 'STU3 Candidate'
+            Caption = 'R3'
             Checked = True
             TabOrder = 0
             TabStop = True
           end
           object rbR2: TRadioButton
-            Left = 176
+            Left = 120
             Top = 24
             Width = 265
             Height = 17
-            Caption = 'DSTU2 Final Version'
+            Caption = 'DSTU2'
             TabOrder = 1
           end
         end

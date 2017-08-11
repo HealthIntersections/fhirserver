@@ -52,19 +52,16 @@ type
     lnkIssue: TLabel;
     lnkSpec: TLabel;
     lnkUpdates: TLabel;
+    lblDefinitions: TLabel;
     procedure FormShow(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure lnkDocoClick(Sender: TObject);
     procedure lnkIssueClick(Sender: TObject);
     procedure lnkSpecClick(Sender: TObject);
     procedure lnkUpdatesClick(Sender: TObject);
   private
     { Private declarations }
-    FServices : TFHIRWorkerContext;
-    procedure SetServices(const Value: TFHIRWorkerContext);
   public
     { Public declarations }
-    property Services : TFHIRWorkerContext read FServices write SetServices;
   end;
 
 var
@@ -79,12 +76,6 @@ uses
   FHIRPlugin,
   FHIRPath,
   nppbuildcount;
-
-procedure TAboutForm.FormDestroy(Sender: TObject);
-begin
-  inherited;
-  FServices.free;
-end;
 
 procedure TAboutForm.FormShow(Sender: TObject);
 begin
@@ -112,10 +103,5 @@ begin
   ShellExecute(0, 'OPEN', 'http://www.healthintersections.com.au/FhirServer/fhirnpp.htm', '', '', SW_SHOWNORMAL);
 end;
 
-procedure TAboutForm.SetServices(const Value: TFHIRWorkerContext);
-begin
-  FServices.Free;
-  FServices := Value;
-end;
 
 end.
