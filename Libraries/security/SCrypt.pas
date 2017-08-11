@@ -2354,12 +2354,12 @@ begin
 
 	{Write in LenHi (it needs it's endian order changed)}
 	{LenHi is the high order word of the Length of the message in bits}
-	TLongWordBuffer(FHashBuffer)[14] := ByteSwap(FHashLength.HighPart);
+	TLongWordBuffer(FHashBuffer)[14] := ByteSwap(ULARGE_INTEGER(FHashLength).HighPart);
 
 	{[60] is the last word in HashBuffer}
 	{Write in LenLo (it needs it's endian order changed)}
 	{LenLo is the low order word of the length of the message}
-	TLongWordBuffer(FHashBuffer)[15] := ByteSwap(FHashLength.LowPart);
+	TLongWordBuffer(FHashBuffer)[15] := ByteSwap(ULARGE_INTEGER(FHashLength).LowPart);
 
 	{The hashbuffer should now be filled up}
 	Compress;
@@ -2622,12 +2622,12 @@ begin
 
 	{Write in LenHi (it needs it's endian order changed)}
 	{LenHi is the high order word of the Length of the message in bits}
-	TLongWordBuffer(FHashBuffer)[14] := ByteSwap(FHashLength.HighPart);
+	TLongWordBuffer(FHashBuffer)[14] := ByteSwap(ULARGE_INTEGER(FHashLength).HighPart);
 
 	{[60] is the last word in HashBuffer}
 	{Write in LenLo (it needs it's endian order changed)}
 	{LenLo is the low order word of the length of the message}
-	TLongWordBuffer(FHashBuffer)[15] := ByteSwap(FHashLength.LowPart);
+	TLongWordBuffer(FHashBuffer)[15] := ByteSwap(ULARGE_INTEGER(FHashLength).LowPart);
 
 	{The hashbuffer should now be filled up}
 	Compress;
