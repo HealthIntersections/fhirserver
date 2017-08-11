@@ -10076,7 +10076,7 @@ begin
       ServerContext.TagManager.LastTagKey := conn.CountSQL('Select Max(TagKey) from Tags');
       FLastSearchKey := conn.CountSQL('Select Max(SearchKey) from Searches');
       FLastResourceKey := conn.CountSQL('select Max(ResourceKey) from Ids');
-      FLastEntryKey := conn.CountSQL('select max(EntryKey) from indexEntries');
+      FLastEntryKey := conn.CountSQL('select max(EntryKey) from IndexEntries');
       FLastCompartmentKey := conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
       FLastObservationKey := conn.CountSQL('select max(ObservationKey) from Observations');
       FLastObservationCodeKey := conn.CountSQL('select max(ObservationCodeKey) from ObservationCodes');
@@ -10153,8 +10153,12 @@ begin
         cfg.LastResourceId := conn.ColIntegerByName['LastId'];
       end;
       conn.terminate;
-      conn.SQL :=
-        'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
+      if conn.Owner.Platform = kdbMySQL then
+        conn.SQL :=
+          'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS INT) ELSE 0 END ) as MaxId from Ids group by ResourceTypeKey'
+      else
+        conn.SQL :=
+          'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
       conn.Prepare;
       conn.Execute;
       While conn.FetchNext do

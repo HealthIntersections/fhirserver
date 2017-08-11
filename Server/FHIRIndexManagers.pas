@@ -1072,7 +1072,7 @@ begin
 
   if resource is TFhirDomainResource then
   begin
-    FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
+    FSpaces.FDB.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
     FSpaces.FDB.prepare;
     FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
     FSpaces.FDB.BindInteger('i', FInfo.FNarrativeIndex);
@@ -1083,7 +1083,7 @@ begin
     FSpaces.FDB.terminate;
   end;
 
-  FSpaces.FDB.SQL := 'insert into indexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, SrcTesting, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :ft, :f, :t, :c)';
+  FSpaces.FDB.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, SrcTesting, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :ft, :f, :t, :c)';
   FSpaces.FDB.prepare;
   for i := 0 to FEntries.Count - 1 Do
   begin

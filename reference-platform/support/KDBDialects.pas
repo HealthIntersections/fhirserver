@@ -75,6 +75,7 @@ function DBInt64Type(ADBPlatform: TKDBPlatform): String;
 function RestrictToNRows(ADBPlatform: TKDBPlatform; ASQL: String; AValue: Integer): String; // MSSQL Versions 2000, ? only
 function CreateTableInfo(ADBPlatform: TKDBPlatform):String;
 function DBIntType(ADBPlatform: TKDBPlatform):String;
+function replaceColumnWrappingChars(const sql : String; ADBPlatform: TKDBPlatform): String;
 
 // utilities
 procedure ConvertCharacter(ATableName, AVersion: String; var VSQLValue: String);
@@ -904,6 +905,14 @@ function SQLHasResultSet(AStr: String): Boolean;
 begin
   AStr := StringTrimSet(AStr, [#10, #13, #9, ' ']);
   Result := SameText('SELECT', Copy(AStr, 1, 6)) or SameText('SHOW ', Copy(AStr, 1, 5));
+end;
+
+function replaceColumnWrappingChars(const sql : String; ADBPlatform: TKDBPlatform): String;
+begin
+  if ADBPlatform = kdbMySQL then
+    result := sql.Replace('[', '`').Replace(']', '`')
+  else
+    result := sql;
 end;
 
 end.

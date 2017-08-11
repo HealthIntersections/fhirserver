@@ -1388,8 +1388,8 @@ begin
   ResourcePreviousKey := 0;
   created := false;
 
-  conn.SQL := 'Select Top 1 SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, SubscriptionQueue.ResourcePreviousKey, Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
-    'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey order by SubscriptionQueueKey';
+  conn.SQL := RestrictToNRows(conn.Owner.Platform, 'Select SubscriptionQueueKey, Ids.ResourceKey, SubscriptionQueue.ResourceVersionKey, SubscriptionQueue.ResourcePreviousKey, Operation, Ids.ResourceTypeKey from SubscriptionQueue, Ids where '+
+    'Handled is null and Ids.ResourceKey = SubscriptionQueue.ResourceKey order by SubscriptionQueueKey', 1);
   conn.Prepare;
   try
     conn.Execute;

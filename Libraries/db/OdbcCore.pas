@@ -24,6 +24,7 @@ Uses
   AdvIntegerMatches,
   AdvIntegerLists,
   AdvItems,
+  KDBDialects,
   Classes,
   SysUtils,
   DateSupport,
@@ -284,6 +285,7 @@ Type
     FTracing: Boolean;
     FCore: Boolean;
     FDrivers: TList;
+    FPlatform : TKDBPlatform;
 
     { Published Events }
     FBeforeConnect, FAfterConnect: TNotifyEvent;
@@ -950,7 +952,7 @@ Type
                            FieldIdentifier: SQLUSMALLINT): String;
     Function ColAttrInteger(Col: SQLUSMALLINT;
                             FieldIdentifier: SQLUSMALLINT): SQLINTEGER;
-    Procedure UnPrepareHstmts;                        
+    Procedure UnPrepareHstmts;
 
     Property TableOwner: String Read GetTableOwner;
     Property TableName: String Read GetTableName;
@@ -1385,9 +1387,10 @@ Function TrimString(S: String;
 Implementation
 
 {$IFNDEF VER130}
-Uses
-  Variants;
+ Uses
+   Variants;
 {$ENDIF}
+
 
 Const
   MinBlobSize = 1024;
@@ -2550,6 +2553,7 @@ Begin
 
     If FConnected Then
       DoAfterConnect;
+    FPlatform := RecogniseDriver(Driver);
   End;
 End;
 
@@ -5244,8 +5248,10 @@ Begin
   If Not FColumnsBound Then
   Begin
     { Get Number of Columns in Result Set }
-    //FRetCode:= SQLNumResultCols(FHstmt, @FNumCols);
-    FNumCols:= ColAttrInteger(0, SQL_DESC_COUNT);
+    if FHdbc.FPlatform = kdbMySQL then
+      FNumCols:= ColAttrInteger(1, SQL_DESC_COUNT) // weird requirement?
+    else
+      FNumCols:= ColAttrInteger(0, SQL_DESC_COUNT);
 
     { Create Data Structure and Bind Columns }
     FTail:= Nil;

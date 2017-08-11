@@ -1,25 +1,25 @@
 CREATE TABLE [dbo].[Unii](
-	[UniiKey] [int] NOT NULL,
-	[Code] [nchar](20) NOT NULL,
-	[Display] [nchar](255) NULL,
+	[UniiKey] int NOT NULL,
+	[Code] nchar(20) NOT NULL,
+	[Display] nchar(255) NULL,
  CONSTRAINT [PK_Unii] PRIMARY KEY CLUSTERED 
 (
 	[UniiKey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+)
+) 
 
 GO
 
 CREATE TABLE [dbo].[UniiDesc](
-	[UniiDescKey] [int] NOT NULL,
-	[UniiKey] [int] NOT NULL,
-	[Type] [nchar](20) NOT NULL,
-	[Display] [nchar](255) NULL,
+	[UniiDescKey] int NOT NULL,
+	[UniiKey] int NOT NULL,
+	[Type] nchar(20) NOT NULL,
+	[Display] nchar(255) NULL,
  CONSTRAINT [PK_UniiDesc] PRIMARY KEY CLUSTERED 
 (
 	[UniiDescKey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+)
+) 
 
 GO
 
@@ -31,19 +31,19 @@ ALTER TABLE [dbo].[UniiDesc] CHECK CONSTRAINT [FK_ValueSetMembers_UniiKey]
 GO
 
 CREATE TABLE [dbo].[cvx](
-	[CVX Code] [nvarchar](255) NOT NULL,
-	[CVX Short Description] [nvarchar](255) NOT NULL,
-	[Full Vaccine Name] [nvarchar](255) NULL,
-	[Note] [nvarchar](max) NULL,
-	[VaccineStatus] [nvarchar](255) NULL,
-	[internalID] [float] NULL,
-	[nonvaccine] [bit] NOT NULL,
-	[update_date] [datetime] NULL,
+	[CVX Code] nvarchar(255) NOT NULL,
+	[CVX Short Description] nvarchar(255) NOT NULL,
+	[Full Vaccine Name] nvarchar(255) NULL,
+	[Note] nvarchar(max) NULL,
+	[VaccineStatus] nvarchar(255) NULL,
+	[internalID] float NULL,
+	[nonvaccine] bit NOT NULL,
+	[update_date] datetime NULL,
 CONSTRAINT [PK_CVX] PRIMARY KEY CLUSTERED 
 (
 	[CVX Code] ASC
 )
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+)  TEXTIMAGE_
 
 GO
 

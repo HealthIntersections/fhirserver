@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   StringSupport,
   AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvStringIntegerMatches,  AdvExceptions,
-  KDBManager,
+  KDBManager, KDBDialects,
   FHIRTypes, FHIRResources, TerminologyServices;
 
 type
@@ -171,7 +171,7 @@ var
 begin
   qry := db.GetConnection('Cvx.locate');
   try
-    qry.SQL := 'Select [CVX Code], [CVX Short Description], [Full Vaccine Name] from Cvx';
+    qry.SQL := replaceColumnWrappingChars('Select [CVX Code], [CVX Short Description], [Full Vaccine Name] from Cvx', qry.Owner.Platform);
     qry.prepare;
     qry.execute;
     while qry.FetchNext do
@@ -207,7 +207,7 @@ var
 begin
   qry := db.GetConnection('Cvx.locate');
   try
-    qry.SQL := 'Select [CVX Short Description], [Full Vaccine Name] from Cvx where [CVX Code] = :code';
+    qry.SQL := replaceColumnWrappingChars('Select [CVX Short Description], [Full Vaccine Name] from Cvx where [CVX Code] = :code', qry.Owner.Platform);
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;

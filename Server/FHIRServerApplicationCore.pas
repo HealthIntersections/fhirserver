@@ -339,8 +339,9 @@ begin
   else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mysql' then
   begin
     logt('Database mysql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
-    raise Exception.Create('Not Done Yet');
-    // principally because of text indexing, but also because I don't know how to connect to a mysql server in an open source way
+    FDb := TKDBOdbcDirect.create('fhir', 100, 0, ddr,
+      FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
+      FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
   end
   else
   begin

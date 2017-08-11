@@ -356,7 +356,7 @@ begin
        ' Consent         char(64)                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
        ' AuthToken       char(64)                                 '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
        ' Patient         char(64)                                 '+ColCanBeNull(FConn.owner.platform, True)+ ', '+#13#10+   //
-       ' JWT             image                                    '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
+       ' JWT             '+DBBlobType(FConn.owner.platform)+'                                    '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+   //
        PrimaryKeyType(FConn.owner.Platform, 'PK_Connections', 'ConnectionKey')+') '+CreateTableInfo(FConn.owner.platform));
 end;
 
@@ -884,7 +884,7 @@ var
 begin
   lines := TStringList.create;
   try
-    lines.Text := FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI);
+    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
     sql := '';
     for l in lines do
       if l.Trim = 'GO' then
