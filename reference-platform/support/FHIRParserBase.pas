@@ -1781,7 +1781,7 @@ end;
 //    u := u + '?'
 //  else
 //    u := u + '&';
-//  s.append('<p><a href="'+u+'_format=xml"><img src="/rss.png"> Atom (XML)</a> '+GetFhirMessage('OR', lang)+' <a href="'+u+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
+//  s.append('<p><a href="'+u+'_format=xml"><img src="/rss.png"> XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+u+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
 //
 //    if (ofeed.isSearch) then
 //    begin
@@ -2017,7 +2017,7 @@ Header(Session, FBaseURL, lang, FVersion)+
     ul := ul + '?'
   else
     ul := ul + '&';
-  s.append('<p><a href="'+ul+'_format=xml"><img src="/rss.png"> Atom (XML)</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
+  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
 
     if (bundle.type_ in [BundleTypeSearchset, BundleTypeHistory])  then
     begin
@@ -2378,6 +2378,7 @@ class function TFHIRXhtmlComposer.PageLinks: String;
 begin
   result :=
     '  <meta charset="utf-8"/>'+#13#10+
+    '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
     '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
     '  <meta content="http://hl7.org/fhir" name="author"/>'+#13#10+
     ''+#13#10+

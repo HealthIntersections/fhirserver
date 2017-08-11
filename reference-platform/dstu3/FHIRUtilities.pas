@@ -520,6 +520,7 @@ type
 
   TFhirReferenceHelper = class helper for TFhirReference
   public
+    Constructor Create(ref : String); overload;
     function isRelative : boolean;
     function getType : String;
     function getId : String;
@@ -550,6 +551,7 @@ function gen(obj : TFhirSignature) : String; overload;
 function gen(obj : TFhirAddress) : String; overload;
 function gen(obj : TFhirContactPoint) : String; overload;
 function gen(obj : TFhirTiming) : String; overload;
+function gen(obj : TFhirUsageContext) : String; overload;
 
 function gen(t : TFhirType):String; overload;
 
@@ -1244,7 +1246,12 @@ end;
 
 function gen(obj : TFhirTiming) : String;
 begin
+  result := '';
+end;
 
+function gen(obj : TFhirUsageContext) : String; overload;
+begin
+  result := gen(obj.code)+'='+gen(obj.value);
 end;
 
 function gen(extension : TFHIRExtension):String; overload;
@@ -3117,6 +3124,8 @@ begin
     result := gen(TFhirContactPoint(t))
   else if t is TFhirTiming then
     result := gen(TFhirTiming(t))
+  else if t is TFhirUsageContext then
+    result := gen(TFhirUsageContext(t))
   else if t is TFhirBoolean then
     if TFhirBoolean(t).value then
       result := 'true'
@@ -4625,6 +4634,12 @@ begin
 end;
 
 { TFhirReferenceHelper }
+
+constructor TFhirReferenceHelper.Create(ref: String);
+begin
+  inherited Create;
+  reference := ref;
+end;
 
 function TFhirReferenceHelper.getId: String;
 var

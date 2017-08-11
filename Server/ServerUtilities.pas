@@ -56,7 +56,9 @@ type
     cmdSearch: Boolean;
     cmdCreate: Boolean;
     cmdOperation: Boolean;
+    cmdVRead : boolean;
     versionUpdates: Boolean;
+
     lastResourceId : integer;
 
     constructor Create; override;

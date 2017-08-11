@@ -120,7 +120,8 @@ Type
     Function Link : TFHIRCompartmentList; overload;
     function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
     function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
-    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String);
+    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
+    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
   end;
 
 
@@ -2118,6 +2119,11 @@ end;
 function TFHIRCompartmentList.Link: TFHIRCompartmentList;
 begin
   result := TFHIRCompartmentList(inherited link);
+end;
+
+procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource, list: String);
+begin
+  raise Exception.Create('not done yet');
 end;
 
 procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);

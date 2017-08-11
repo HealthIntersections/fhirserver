@@ -285,6 +285,8 @@ Type
     function GetValueSetList : TFHIRValueSetList;
     function GetConceptMapList : TLoadedConceptMapList;
     Property ProviderClasses : TAdvMap<TCodeSystemProvider> read FProviderClasses;
+    function ValueSetCount : integer;
+    function CodeSystemCount : integer;
 
     // database maintenance
     Property Loading : boolean read FLoading write FLoading;
@@ -837,6 +839,16 @@ begin
     end;
   end;
   {$ENDIF}
+end;
+
+function TTerminologyServerStore.CodeSystemCount: integer;
+begin
+  FLock.Lock('CodeSystemCount');
+  try
+    result := FCodeSystemsById.Count;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 constructor TTerminologyServerStore.Create(db : TKDBManager);
@@ -1504,6 +1516,16 @@ begin
       if (cm.Target = nil) then
         cm.Target := getValueSetById(cmRef(cm.Resource.target));
     end;
+  end;
+end;
+
+function TTerminologyServerStore.ValueSetCount: integer;
+begin
+  FLock.Lock('ValueSetCount');
+  try
+    result := FValueSetsById.Count;
+  finally
+    FLock.Unlock;
   end;
 end;
 

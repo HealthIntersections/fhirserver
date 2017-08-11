@@ -33,17 +33,21 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  KCritSct, StringSupport,
-  AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, ThreadSupport,
+  KCritSct, StringSupport, ThreadSupport, TextUtilities,
+  AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
   KDBDialects, DateSupport,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext,
-  FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities;
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase,
+  CDSHooksUtilities,
+  FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
 
 Type
 
   TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatement) of object;
+
+  TFHIRStorageService = class;
+  TFHIROperationEngine = class;
 
   TOperationContext = class (TAdvObject)
   private
@@ -61,7 +65,23 @@ Type
     procedure progress(i : integer);
   end;
 
-  TFHIRStorageService = class;
+  TFhirOperation = {abstract} class (TAdvObject)
+  protected
+    function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
+    function CreateBaseDefinition(base : String) : TFHIROperationDefinition;
+    function isWrite : boolean; virtual;
+    function owningResource : TFhirResourceType; virtual; // for security purposes
+    function makeParams(request : TFHIRRequest) : TFhirParameters;
+
+    function buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParameters) : TFHIRExpansionProfile;
+  public
+    function Name : String; virtual;
+    function Types : TFhirResourceTypeSet; virtual;
+    function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; virtual;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function formalURL : String; virtual;
+  end;
 
   TMatchingResource = class (TAdvName)
   public
@@ -81,7 +101,12 @@ Type
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
     FLang : String;
+    procedure AddCDSHooks(conf : TFhirCapabilityStatementRest);
+    procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
   protected
+    FServerContext : TAdvObject;
+    FOperations : TAdvList<TFhirOperation>;
+
     procedure StartTransaction; virtual;
     procedure CommitTransaction; virtual;
     procedure RollbackTransaction; virtual;
@@ -100,14 +125,15 @@ Type
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
+  public
+    constructor create(ServerContext : TAdvObject; lang : String);
+    destructor Destroy; override;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
-
-  public
-    constructor create(lang : String);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property lang : String read FLang write FLang;
@@ -119,6 +145,8 @@ Type
     function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
+    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
+    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
   end;
 
   TFHIRInternalClient = class (TFHIRClient)
@@ -133,7 +161,6 @@ Type
 
     property Session : TFHIRSession read FSession write SetSession;
     property Context : TFHIRWorkerContext read FContext write SetContext;
-
 
     function conformance(summary : boolean) : TFhirCapabilityStatement; override;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
@@ -198,6 +225,9 @@ Type
 
 
 implementation
+
+uses
+  FHIRServerContext;
 
 { TFHIRStorageService }
 
@@ -384,10 +414,18 @@ begin
   raise Exception.Create('The function "CommitTransaction" must be overridden in '+className);
 end;
 
-constructor TFHIROperationEngine.create(lang: String);
+constructor TFHIROperationEngine.create(ServerContext : TAdvObject; lang: String);
 begin
   inherited create;
+  FServerContext := ServerContext;
   FLang := lang;
+  FOperations := TAdvList<TFhirOperation>.create;
+end;
+
+destructor TFHIROperationEngine.Destroy;
+begin
+  FOperations.Free;
+  inherited;
 end;
 
 procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
@@ -478,8 +516,374 @@ begin
 end;
 
 procedure TFHIROperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
+var
+  oConf : TFhirCapabilityStatement;
+  res : TFhirCapabilityStatementRestResource;
+  a : String;
+  html : TAdvStringBuilder;
+  c : TFhirContactPoint;
+  i : integer;
+  op : TFhirCapabilityStatementRestOperation;
+  ct : TFhirConformanceContact;
+  ServerContext : TFHIRServerContext;
 begin
-  raise Exception.Create('This server does not implement the "ConformanceStmt" function');
+  ServerContext := TFHIRServerContext(FServerContext);
+
+
+  try
+
+    response.HTTPCode := 200;
+    oConf := TFhirCapabilityStatement.Create;
+    response.Resource := oConf;
+
+    oConf.id := 'FhirServer';
+    ct := oConf.contactList.Append;
+    c := ct.telecomList.Append;
+    c.system := ContactPointSystemOther;
+    c.value := 'http://healthintersections.com.au/';
+    if ServerContext.FormalURLPlain <> '' then
+      oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
+    else
+      oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
+
+    oConf.version := FHIR_GENERATED_VERSION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
+    oConf.name := 'Health Intersections FHIR Server Conformance Statement';
+    oConf.publisher := 'Health Intersections'; //
+    oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+    oConf.status := PublicationStatusActive;
+    oConf.experimental := false;
+    oConf.date := TDateTimeEx.makeUTC;
+    oConf.software := TFhirCapabilityStatementSoftware.Create;
+    oConf.software.name := 'Reference Server';
+    oConf.software.version := SERVER_VERSION;
+    oConf.software.releaseDate := TDateTimeEx.fromXml(SERVER_RELEASE_DATE);
+    if ServerContext.FormalURLPlainOpen <> '' then
+    begin
+      oConf.implementation_ := TFhirCapabilityStatementImplementation.Create;
+      oConf.implementation_.description := 'FHIR Server running at '+ServerContext.FormalURLPlainOpen;
+      oConf.implementation_.url := ServerContext.FormalURLPlainOpen;
+    end;
+    if assigned(OnPopulateConformance) then
+      OnPopulateConformance(self, oConf);
+
+    oConf.acceptUnknown := UnknownContentCodeBoth;
+    {$IFNDEF FHIR2}
+    oConf.formatList.Append.value := 'application/fhir+xml';
+    oConf.formatList.Append.value := 'application/fhir+json';
+    {$ELSE}
+    oConf.formatList.Append.value := 'application/xml+fhir';
+    oConf.formatList.Append.value := 'application/json+fhir';
+    {$ENDIF}
+
+    oConf.fhirVersion := FHIR_GENERATED_VERSION;
+    oConf.restList.add(TFhirCapabilityStatementRest.Create);
+    oConf.restList[0].mode := RestfulCapabilityModeServer;
+    oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', request.baseUrl+'websockets');
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
+    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
+    {$IFDEF FHIR2}
+    oConf.restList[0].transactionMode := TransactionModeBoth;
+    {$ENDIF}
+    oConf.text := TFhirNarrative.create;
+    oConf.text.status := NarrativeStatusGenerated;
+
+    {$IFNDEF FHIR2}
+    oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
+    {$ENDIF}
+    {$IFDEF FHIR2}
+    ServerContext.TerminologyServer.declareSystems(oConf);
+    {$ENDIF}
+    if assigned(OnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
+      OnPopulateConformance(self, oConf);
+    AddCDSHooks(oConf.restList[0]);
+
+    html := TAdvStringBuilder.Create;
+    try
+      html.append('<div><h2>'+ServerContext.OwnerName+' Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+SERVER_RELEASE_DATE+'. '+
+       'Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
+      for a in ServerContext.ValidatorContext.allResourceNames do
+      begin
+        if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
+        begin
+          if a = 'Binary' then
+            html.append('<tr><td>'+a+'</td>'+
+            '<td>--</td>')
+          else
+            html.append('<tr><td>'+a+'</td>'+
+            '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
+          res := TFhirCapabilityStatementRestResource.create;
+          try
+            res.type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', a);
+            if a <> 'Binary' then
+              res.profile := TFHIRReference.Create(request.baseUrl+'StructureDefinition/'+lowercase(a));
+            if (a <> 'MessageHeader') and (a <> 'Parameters') Then
+            begin
+              if request.canRead(a)  then
+              begin
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                res.interactionList.Append.code := TypeRestfulInteractionRead;
+                if ServerContext.ResConfig[a].cmdVRead then
+                begin
+                  html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+                  res.interactionList.Append.code := TypeRestfulInteractionVread;
+                  res.readHistory := true;
+                end
+                else
+                  html.append('<td></td>');
+              end
+              else
+                html.append('<td align="center"></td><td align="center"></td>');
+              if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionSearchType;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionUpdate;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionCreate;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionDelete;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+              if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
+              begin
+                res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
+                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
+              end
+              else
+                html.append('<td></td>');
+//                html.append('<br/>search</td><td><ul>');
+              for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
+                if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
+                  if ServerContext.Indexes.Indexes[i].Name <> '_query' then
+                    addParam(res.searchParamList, html, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
+
+//              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
+              addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
+              addParam(res.searchParamList, html, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', SearchParamTypeReference, []);
+              addParam(res.searchParamList, html, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', SearchParamTypeReference, []);
+              addParam(res.searchParamList, html, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', SearchParamTypeToken, []);
+              addParam(res.searchParamList, html, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', SearchParamTypeNumber, []);
+              addParam(res.searchParamList, html, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', SearchParamTypeNumber, []);
+              addParam(res.searchParamList, html, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
+              addParam(res.searchParamList, html, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
+              addParam(res.searchParamList, html, '_filter', 'http://hl7.org/fhir/search', 'filter parameter as documented in the specification', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
+
+//              html.append('</ul>');                                                                                                                               }
+            end;
+            html.append('</tr>'#13#10);
+
+
+              //<th>Search/Updates Params</th>
+              // html.append('n : offset<br/>');
+              // html.append('count : # resources per request<br/>');
+              // html.append(m.Indexes[i]+' : ?<br/>');
+            oConf.restList[0].resourceList.add(res.Link);
+          finally
+            res.free;
+          end;
+        end;
+      end;
+      html.append('</table>'#13#10);
+
+      html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
+      for i := 0 to FOperations.Count - 1 do
+      begin
+        op := oConf.restList[0].operationList.Append;
+        op.name := TFhirOperation(FOperations[i]).Name;
+        if TFhirOperation(FOperations[i]).formalURL <> '' then
+          op.definition := TFHIRReference.create(TFhirOperation(FOperations[i]).formalURL)
+        else
+          op.definition := TFHIRReference.create('OperationDefinition/fso-'+op.name);
+        html.append(' <li>'+op.name+': see OperationDefinition/fso-'+op.name+'</li>'#13#10);
+      end;
+      html.append('</ul>'#13#10);
+
+
+      html.append('</div>'#13#10);
+      // operations
+      oConf.text.div_ := TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString);
+    finally
+      html.free;
+    end;
+
+    AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+  except
+    on e: exception do
+    begin
+      AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function describeResourceTypes(aTypes : TArray<String>) : String;
+var
+  a : String;
+begin
+  result := '';
+  for a in aTypes do
+    if result = '' then
+      result := a
+    else
+      result := result+' / '+a;
+end;
+
+procedure TFHIROperationEngine.BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
+var
+  i, j : integer;
+  s, pfx, desc, rn : String;
+  ix, ix2 : TFhirIndex;
+  types : TArray<String>;
+  m : TStringList;
+  ok : boolean;
+begin
+  response.HTTPCode := 200;
+  response.ContentType := 'text/html';
+  s :=
+'<?xml version="1.0" encoding="UTF-8"?>'#13#10+
+'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
+'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
+''#13#10+
+'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
+'<head>'#13#10+
+'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
+TFHIRXhtmlComposer.PageLinks+
+FHIR_JS+
+'</head>'#13#10+
+''#13#10+
+'<body>'#13#10+
+''#13#10+
+TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.lang, SERVER_VERSION)+
+'<h2>'+GetFhirMessage('SEARCH_TITLE', lang)+'</h2>'#13#10+
+'</p>'#13#10;
+if Request.DefaultSearch then
+s := s +
+'<form action="'+request.ResourceName+'/_search" method="GET">'#13#10+
+'<table class="lines">'#13#10
+else
+s := s +
+'<form action="_search" method="GET">'#13#10+
+'<table class="lines">'#13#10;
+
+  if request.ResourceName = '' then
+  begin
+    s := s +'<tr><td colspan="4"><b>General search:</b></td></tr>'+#13#10+
+       '<tr><td align="left">_language</td><td><input type="text" name="_language"></td><td></td><td><select title="Missing?" size="1" nam'+'e="_language:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
+       '<tr><td align="left">_lastUpdated </td><td><input type="text" name="_lastUpdated"></td><td>(Date)</td><td><select title="Missing?"'+' size="1" name="_lastUpdated-missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
+       '<tr><td align="right"> (before)</td><td><input type="text" name="_lastUpdated:before"></td><td> (before given date)</td><td></td><'+'/tr>'+#13#10+
+       '<tr><td align="right"> (after)</td><td><input type="text" name="_lastUpdated:after"></td><td> (after given date)</td><td></td></tr'+'>'+#13#10+
+       '<tr><td align="left">_profile</td><td><input type="text" name="_profile"></td><td></td><td><select title="Missing?" size="1" name='+'"_profile:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
+       '<tr><td align="left">_security</td><td><input type="text" name="_security"></td><td></td><td><select title="Missing?" size="1" nam'+'e="_security:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
+       '<tr><td align="left">_tag</td><td><input type="text" name="_tag"></td><td></td><td><select title="Missing?" size="1" name="_tag:mi'+'ssing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10;
+  end
+  else
+  begin
+    s := s +'<tr><td colspan="4"><b>'+request.ResourceName+':</b></td></tr>'+#13#10;
+    for i := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
+    begin
+      ix := TFHIRServerContext(FServerContext).Indexes.Indexes[i];
+      if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) = 0) then
+      begin
+        desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, lang, ix.Description));
+        if ix.SearchType = SearchParamTypeDate then
+        begin
+          s := s + '<tr><td align="left">'+ix.Name+' </td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+' on given date (yyyy-mm-dd)</td>'+
+          '<td><select title="Missing?" size="1" name="'+ix.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
+          s := s + '<tr><td align="right"> (before)</td><td><input type="text" name="'+ix.Name+':before"></td><td> (before given date)</td><td></td></tr>'#13#10;
+          s := s + '<tr><td align="right"> (after)</td><td><input type="text" name="'+ix.Name+':after"></td><td> (after given date)</td><td></td></tr>'#13#10
+        end
+        else
+          s := s + '<tr><td align="left">'+ix.Name+'</td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+'</td>'+
+          '<td><select title="Missing?" size="1" name="'+ix.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10
+      end;
+    end;
+
+    for i := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
+    begin
+      ix := TFHIRServerContext(FServerContext).Indexes.Indexes[i];
+      if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) > 0) then
+      begin
+        pfx := ix.Name;
+        types := ix.TargetTypes;
+        s := s +'<tr><td colspan="4"><b>'+ix.Name+'</b> ('+describeResourceTypes(types)+')<b>:</b></td></tr>'+#13#10;
+        m := TStringList.create;
+        try
+          for j := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
+          begin
+            ix2 := TFHIRServerContext(FServerContext).Indexes.Indexes[j];
+            ok := false;
+            for rn in types do
+              ok := ok or (ix2.ResourceType = rn);
+            if (ok) and (m.IndexOf(ix2.Name) = -1) then
+            begin
+              desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix2.name, lang, ix2.Description));
+              if (ix2.searchType = SearchParamTypeDate) then
+              begin
+                s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+' (exact)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
+          '<td><select title="Missing?" size="1" name="'+pfx+'.'+ix2.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
+                s := s + '<tr>&nbsp;&nbsp;<td align="right">  (before)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+':before"></td><td> (before given date) </td></tr>'#13#10;
+                s := s + '<tr>&nbsp;&nbsp;<td align="right">  (after)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+':after"></td><td> (after given date) </td></tr>'#13#10
+              end
+              else
+                s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+'</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
+          '<td><select title="Missing?" size="1" name="'+pfx+'.'+ix2.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
+              m.add(ix2.Name);
+            end;
+          end;
+        finally
+          m.Free;
+        end;
+      end;
+    end;
+  end;
+
+  s := s +
+'<tr><td colspan="2"><hr/></td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_TEXT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_TEXT+'"></td><td> '+GetFhirMessage('SEARCH_REC_TEXT_COMMENT', lang)+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', lang)+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', lang), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', lang)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10;
+  for i := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
+  begin
+    ix := TFHIRServerContext(FServerContext).Indexes.Indexes[i];
+    if (ix.ResourceType = request.ResourceName) or ((request.ResourceName = '') and (ix.Name.startsWith('_'))) then
+      s := s + '<option value="'+ix.Name+'">'+ix.Name+'</option>';
+  end;
+  s := s + '</select></td><td></td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_SUMMARY', lang)+'</td><td><input type="checkbox" name="'+SEARCH_PARAM_NAME_SUMMARY+'" value="true"></td><td> '+GetFhirMessage('SEARCH_SUMMARY_COMMENT', lang)+'</td></tr>'#13#10+
+'</table>'#13#10+
+'<p><input type="submit"/></p>'#13#10+
+'</form>'#13#10+
+''#13#10+
+'<p>'+
+TFHIRXhtmlComposer.Footer(request.baseUrl, lang);
+  response.Body := s;
 end;
 
 function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
@@ -577,9 +981,57 @@ begin
   raise Exception.Create('The function "StartTransaction" must be overridden in '+className);
 end;
 
-function TFHIRStorageService.createClient(lang: String; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
+procedure TFHIROperationEngine.AddCDSHooks(conf: TFhirCapabilityStatementRest);
 var
-  engine : TFHIROperationEngine;
+  ext : TFhirExtension;
+begin
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Fetch Patient Alerts');
+  ext.addExtension('activity', TCDSHooks.patientView);
+  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
+
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Get Terminology Information');
+  ext.addExtension('activity', TCDSHooks.codeView);
+
+  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
+  ext.addExtension('name', 'Get identifier Information');
+  ext.addExtension('activity', TCDSHooks.identifierView);
+end;
+
+procedure TFHIROperationEngine.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
+var
+  param : TFhirCapabilityStatementRestResourceSearchParam;
+begin
+  param := TFhirCapabilityStatementRestResourceSearchParam.create;
+  try
+    param.name := n;
+    param.definition := url;
+    param.documentation := d;
+    param.type_ := t;
+    srch.add(param.link);
+  finally
+    param.free;
+  end;
+//  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
+end;
+
+procedure TFHIROperationEngine.AuditRest(session: TFhirSession; reqid, ip,
+  resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType;
+  provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+begin
+
+end;
+
+procedure TFHIROperationEngine.AuditRest(session: TFhirSession; reqid, ip,
+  resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType;
+  provenance: TFhirProvenance; opName: String; httpCode: Integer; name,
+  message: String);
+begin
+
+end;
+
+function TFHIRStorageService.createClient(lang: String; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
 begin
   result := TFHIRInternalClient.Create;
   try
@@ -729,6 +1181,141 @@ begin
   raise Exception.Create('Not done yet');
 
 end;
+
+{ TFhirOperation }
+
+function TFhirOperation.Name: String;
+begin
+  result := '';
+end;
+
+function TFhirOperation.owningResource: TFhirResourceType;
+var
+  t : TFhirResourceType;
+  b : boolean;
+begin
+  result := frtNull;
+  b := false;
+  for t in Types do
+    if b then
+      raise Exception.Create('Multiple types for operation')
+    else
+    begin
+      result := t;
+      b := true;
+    end;
+  if (not b) then
+    raise Exception.Create('No types for operation');
+end;
+
+function TFhirOperation.resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref: String): integer;
+var
+  parts : TArray<String>;
+  versionKey : integer;
+begin
+  parts := ref.Split(['/']);
+  if length(parts) <> 2 then
+    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
+  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
+    result := 0;
+end;
+
+function TFhirOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [];
+end;
+
+function TFhirOperation.CreateBaseDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := TFhirOperationDefinition.Create;
+  try
+    result.id := 'fso-'+name;
+    result.meta := TFhirMeta.Create;
+    result.meta.lastUpdated := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
+    result.meta.versionId := SERVER_VERSION;
+    result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
+    result.version := FHIR_GENERATED_VERSION;
+    result.name := 'Operation Definition for "'+name+'"';
+    result.publisher := 'Grahame Grieve';
+    with result.contactList.Append do
+      with telecomList.Append do
+      begin
+        system := ContactPointSystemEmail;
+        value := 'grahame@fhir.org';
+      end;
+    result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
+    result.status := PublicationStatusDraft;
+    result.experimental := false;
+    result.date := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
+    result.kind := OperationKindOperation;
+    result.code := name;
+    result.base := TFhirReference.Create;
+    result.base.reference := 'http://hl7.org/fhir/OperationDefinition/'+name;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  // nothing
+end;
+
+function TFhirOperation.formalURL: String;
+begin
+  result := '';
+end;
+
+function TFhirOperation.HandlesRequest(request: TFHIRRequest): boolean;
+var
+  t : TFhirResourceType;
+begin
+  result := (request.OperationName = Name) and (request.ResourceEnum in Types);
+  if result then
+  begin
+    t := owningResource;
+    if t = frtNull then
+      t := request.ResourceEnum;
+    if t = frtNull then
+      result := ((isWrite and request.canWrite('') or (not isWrite and request.canRead('')))) // todo: what should it be?
+    else
+      result := ((isWrite and request.canWrite(CODES_TFHIRresourceType[t])) or (not isWrite and request.canRead(CODES_TFHIRresourceType[t])));
+  end;
+end;
+
+function TFhirOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirOperation.makeParams(request: TFHIRRequest): TFhirParameters;
+var
+  i : integer;
+begin
+  if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
+    result := request.Resource.Link as TFHIRParameters
+  else
+    result := TFhirParameters.Create;
+  try
+    for i := 0 to request.Parameters.getItemCount - 1 do
+      result.AddParameter(request.Parameters.VarName(i), request.Parameters.getVar(request.Parameters.VarName(i)));
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParameters): TFHIRExpansionProfile;
+begin
+  raise Exception.Create('Must override buildExpansionProfile in '+className);
+end;
+
 
 end.
 

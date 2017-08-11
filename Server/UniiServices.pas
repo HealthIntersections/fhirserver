@@ -124,6 +124,9 @@ function TUniiServices.TotalCount : integer;
 var
   qry : TKDBConnection;
 begin
+  if db = nil then
+    exit(0);
+
   qry := db.GetConnection('Unii.Count');
   try
     qry.SQL := 'Select Count(*) from Unii';

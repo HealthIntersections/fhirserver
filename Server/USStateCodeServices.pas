@@ -109,6 +109,9 @@ function TUSStateCodeServices.TotalCount : integer;
 var
   qry : TKDBConnection;
 begin
+  if db = nil then
+    exit(0);
+
   qry := db.GetConnection('USStateCode.Count');
   try
     qry.SQL := 'Select Count(*) from USStateCodes';

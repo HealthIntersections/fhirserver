@@ -1,6 +1,7 @@
 program AppEndorser;
 
 uses
+  FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   System.StartUpCopy,
   FMX.Forms,
   AppEndorserForm in 'AppEndorserForm.pas' {AppEndorsementForm},

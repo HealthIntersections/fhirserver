@@ -12,6 +12,7 @@ object TxServerForm: TTxServerForm
   OnClose = FormClose
   OnDestroy = FormDestroy
   OnResize = FormResize
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object pnlSettings: TPanel
     Align = Top
@@ -109,10 +110,18 @@ object TxServerForm: TTxServerForm
       Anchors = [akLeft, akTop, akRight]
       Position.X = 96.000000000000000000
       Position.Y = 12.000000000000000000
-      Size.Width = 685.000000000000000000
+      Size.Width = 609.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Status...'
+    end
+    object btnBrowser: TButton
+      Anchors = [akLeft, akRight]
+      Position.X = 708.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Browser'
+      OnClick = btnBrowserClick
     end
   end
   object mLog: TMemo
@@ -120,11 +129,11 @@ object TxServerForm: TTxServerForm
     DataDetectorTypes = []
     Align = Client
     Size.Width = 796.000000000000000000
-    Size.Height = 303.000000000000000000
+    Size.Height = 510.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
     Viewport.Width = 792.000000000000000000
-    Viewport.Height = 299.000000000000000000
+    Viewport.Height = 506.000000000000000000
   end
   object MainMenu1: TMainMenu
     Left = 16
@@ -150,16 +159,6 @@ object TxServerForm: TTxServerForm
         Locked = True
         Text = '&Settings'
         OnClick = mnuViewSettingsClick
-      end
-      object mnuViewLog: TMenuItem
-        Locked = True
-        Text = '&Log'
-        OnClick = mnuViewLogClick
-      end
-      object mnuViewBrowser: TMenuItem
-        Locked = True
-        Text = '&Browser'
-        OnClick = mnuViewBrowserClick
       end
     end
     object mnuHelp: TMenuItem
@@ -201,21 +200,5 @@ object TxServerForm: TTxServerForm
     OnTimer = tmrStatusTimer
     Left = 144
     Top = 160
-  end
-  object web: TWebBrowser
-    Align = MostBottom
-    Size.Width = 796.000000000000000000
-    Size.Height = 199.000000000000000000
-    Size.PlatformDefault = False
-    Position.Y = 456.000000000000000000
-  end
-  object Splitter1: TSplitter
-    Align = Bottom
-    Cursor = crVSplit
-    MinSize = 20.000000000000000000
-    Position.Y = 448.000000000000000000
-    Size.Width = 796.000000000000000000
-    Size.Height = 8.000000000000000000
-    Size.PlatformDefault = False
   end
 end

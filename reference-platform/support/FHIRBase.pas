@@ -44,6 +44,19 @@ Uses
 Const
   ID_LENGTH = 64;
   SYSTEM_NOT_APPLICABLE = '%%null%%';
+  SEARCH_PARAM_NAME_ID = 'search-id';
+  HISTORY_PARAM_NAME_ID = 'history-id';
+  SEARCH_PARAM_NAME_OFFSET = 'search-offset';
+  SEARCH_PARAM_NAME_TEXT = '_text';
+  SEARCH_PARAM_NAME_COUNT = '_count';
+  SEARCH_PARAM_NAME_SORT = '_sort';
+  SEARCH_PARAM_NAME_SUMMARY = '_summary';
+  SEARCH_PARAM_NAME_FILTER = '_filter';
+  SEARCH_PAGE_DEFAULT = 50;
+  SEARCH_PAGE_LIMIT = 1000;
+  SUMMARY_SEARCH_PAGE_LIMIT = 10000;
+  SUMMARY_TEXT_SEARCH_PAGE_LIMIT = 10000;
+
 
 Type
   TFHIRVersion = (fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);

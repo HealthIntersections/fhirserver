@@ -1,6 +1,7 @@
 program VocabTxServer;
 
 uses
+  FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   System.StartUpCopy,
   FMX.Forms,
   TxServerFormUnit in 'TxServerFormUnit.pas' {TxServerForm},
@@ -203,7 +204,9 @@ uses
   ReverseClient in '..\..\Server\ReverseClient.pas',
   CDSHooksServer in '..\..\Server\CDSHooksServer.pas',
   OpenMHealthServer in '..\..\Server\OpenMHealthServer.pas',
-  VocabPocServerCore in 'VocabPocServerCore.pas';
+  VocabPocServerCore in 'VocabPocServerCore.pas',
+  FHIRSearchSyntax in '..\..\Server\FHIRSearchSyntax.pas',
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas';
 
 {$R *.res}
 

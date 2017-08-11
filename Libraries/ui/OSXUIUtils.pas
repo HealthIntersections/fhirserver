@@ -11,6 +11,7 @@ uses
   {$ENDIF MACOS}
 
 function SelectDirectory(Handle : TWindowHandle; const ATitle: string; const Existing : String; var ADir: string): boolean;
+procedure OpenURL(sCommand: string);
 
 implementation
 
@@ -133,4 +134,15 @@ begin
 {$ENDIF MACOS}
 end;
 
+procedure OpenURL(sCommand: string);
+begin
+{$IFDEF MSWINDOWS}
+  ShellExecute(0, 'OPEN', PChar(sCommand), '', '', SW_SHOWNORMAL);
+{$ENDIF MSWINDOWS}
+{$IFDEF POSIX}
+  _system(PAnsiChar('open ' + AnsiString(sCommand)));
+{$ENDIF POSIX}
+end;
+
+end.
 end.

@@ -114,22 +114,11 @@ type
 
   TFHIRNativeOperationEngine = class;
 
-  TFhirOperation = {abstract} class (TAdvObject)
+  TFhirNativeOperation = {abstract} class (TFhirOperation)
+  private
+    function native(engine : TFHIROperationEngine) : TFHIRNativeOperationEngine;
   protected
-    function resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref : String) : integer;
-    function CreateBaseDefinition(base : String) : TFHIROperationDefinition;
-    function isWrite : boolean; virtual;
-    function owningResource : TFhirResourceType; virtual; // for security purposes
-    function makeParams(request : TFHIRRequest) : TFhirParameters;
-
-    function buildExpansionProfile(request: TFHIRRequest; manager: TFHIRNativeOperationEngine; params : TFhirParameters) : TFHIRExpansionProfile;
-  public
-    function Name : String; virtual;
-    function Types : TFhirResourceTypeSet; virtual;
-    function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
-    function CreateDefinition(base : String) : TFHIROperationDefinition; virtual;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); virtual;
-    function formalURL : String; virtual;
+    function buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParameters) : TFHIRExpansionProfile;
   end;
 
   TFHIRNativeStorageService = class;
@@ -140,16 +129,13 @@ type
     FConnection : TKDBConnection;
     FFactory : TFHIRFactory;
     FIndexer : TFHIRIndexManager;
-    FOperations : TAdvObjectList;
     FTestServer : Boolean;
 
     FSpaces: TFHIRIndexSpaces;
-    FServerContext : TFHIRServerContext;
 
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
     procedure unmarkRedacted(meta : TFhirMeta);
-    procedure AddCDSHooks(conf : TFhirCapabilityStatementRest);
 
     function checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean) : boolean;
     function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; c : TFHIRCoding) : boolean;
@@ -163,8 +149,6 @@ type
     function BuildHistoryResultSet(request: TFHIRRequest; response: TFHIRResponse; var searchKey, link, sql, title, base : String; var total : Integer) : boolean;
     procedure ProcessDefaultSearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; op : TFHIROperationOutcome; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
-    procedure BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
-
     function getResourceByReference(source : TFHIRResource; url, compartments : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource;
@@ -188,8 +172,6 @@ type
     procedure checkProposedDeletion(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
 
     function EncodeResource(r : TFhirResource; xml : boolean; summary : TFHIRSummaryOption) : TBytes;
-    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload;
-    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload;
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRProvenance);
 
     procedure CheckCompartments(actual, allowed : String);
@@ -211,6 +193,7 @@ type
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
     function GraphSearch(appInfo : TAdvObject; requestType : String; params : TAdvList<TGraphQLArgument>) : TFHIRBundle;
     procedure GraphListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
+    function GetServerContext: TFHIRServerContext;
 
 
   protected
@@ -225,7 +208,6 @@ type
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); override;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); override;
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
-    procedure ExecuteConformanceStmt(request: TFHIRRequest; response : TFHIRResponse); override;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
     procedure ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
@@ -239,8 +221,6 @@ type
     Property Connection : TKDBConnection read FConnection write SetConnection;
     Property Repository : TFHIRNativeStorageService read FRepository;
 
-    // internal utility functions
-    procedure addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
 
     function AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
     procedure DefineConformanceResources(base : String); // called after database is created
@@ -255,11 +235,14 @@ type
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; override;
 
     Property TestServer : boolean read FTestServer write FTestServer;
-    Property ServerContext : TFHIRServerContext read FServerContext;
+    Property ServerContext : TFHIRServerContext read GetServerContext;
 
     // index maintenance
     procedure clear(a : TFhirResourceTypeSet);
     procedure storeResources(list: TFHIRResourceList; origin : TFHIRRequestOrigin; upload : boolean);
+
+    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; override;
+    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; override;
 
     // custom resources
     function loadCustomResources(response : TFHIRResponse; id : String; startup : boolean; names : TStringList) : boolean; overload;
@@ -267,8 +250,7 @@ type
   end;
 
 
-
-  TFhirGenerateQAOperation = class (TFHIROperation)
+  TFhirGenerateQAOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -276,11 +258,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
-  TFhirGenerateJWTOperation = class (TFHIROperation)
+  TFhirGenerateJWTOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -288,12 +270,12 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
   {$IFDEF FHIR4}
-  TFhirGraphFetchOperation = class (TFHIROperation)
+  TFhirGraphFetchOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -301,12 +283,12 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
   {$ENDIF}
 
-  TFhirGenerateCodeOperation = class (TFHIROperation)
+  TFhirGenerateCodeOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -314,11 +296,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
-  TFhirHandleQAPostOperation = class (TFHIROperation)
+  TFhirHandleQAPostOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -326,10 +308,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirQuestionnaireGenerationOperation = class (TFHIROperation)
+  TFhirQuestionnaireGenerationOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -337,10 +319,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirExpandValueSetOperation = class (TFHIROperation)
+  TFhirExpandValueSetOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -348,11 +330,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirLookupCodeSystemOperation = class (TFHIROperation)
+  TFhirLookupCodeSystemOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -360,12 +342,12 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
 {$IFNDEF FHIR2}
-  TFhirCodeSystemComposeOperation = class (TFHIROperation)
+  TFhirCodeSystemComposeOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -373,11 +355,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirSubsumesOperation = class (TFHIROperation)
+  TFhirSubsumesOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -385,13 +367,13 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirConsentAuthorizeOperation = class (TFHIROperation)
+  TFhirConsentAuthorizeOperation = class (TFhirNativeOperation)
   private
-    function checkConsentOk(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; consent : TFhirConsent; expiry : TDateTime; var patientId : String) : integer;
+    function checkConsentOk(manager: TFHIROperationEngine; request: TFHIRRequest; consent : TFhirConsent; expiry : TDateTime; var patientId : String) : integer;
     function checkDuration(params : TFhirParameters) : TDateTime;
     function loadToken(params : TFhirParameters) : TJWT;
   protected
@@ -401,11 +383,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirConsentConnectOperation = class (TFHIROperation)
+  TFhirConsentConnectOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -413,13 +395,13 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
 {$ENDIF}
 
-  TFhirValueSetValidationOperation = class (TFHIROperation)
+  TFhirValueSetValidationOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -427,11 +409,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirConceptMapTranslationOperation = class (TFHIROperation)
+  TFhirConceptMapTranslationOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -439,11 +421,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirConceptMapClosureOperation = class (TFHIROperation)
+  TFhirConceptMapClosureOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -452,11 +434,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirPatientEverythingOperation = class (TFHIROperation)
+  TFhirPatientEverythingOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -464,25 +446,25 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirGenerateDocumentOperation = class (TFHIROperation)
+  TFhirGenerateDocumentOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
   private
-    procedure addResource(manager: TFHIRNativeOperationEngine; secure : boolean; bundle : TFHIRBundle; source : TFHIRDomainResource; reference : TFhirReference; required : boolean; compartments : String);
-    procedure addSections(manager: TFHIRNativeOperationEngine; secure : boolean; bundle : TFHIRBundle; composition : TFhirComposition; sections : TFhirCompositionSectionList; compartments : String);
+    procedure addResource(manager: TFHIROperationEngine; secure : boolean; bundle : TFHIRBundle; source : TFHIRDomainResource; reference : TFhirReference; required : boolean; compartments : String);
+    procedure addSections(manager: TFHIROperationEngine; secure : boolean; bundle : TFHIRBundle; composition : TFhirComposition; sections : TFhirCompositionSectionList; compartments : String);
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirValidationOperation = class (TFHIROperation)
+  TFhirValidationOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -490,11 +472,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirProcessClaimOperation = class (TFHIROperation)
+  TFhirProcessClaimOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -502,10 +484,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirCurrentTestScriptOperation = class (TFHIROperation)
+  TFhirCurrentTestScriptOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -513,10 +495,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirGenerateSnapshotOperation = class (TFHIROperation)
+  TFhirGenerateSnapshotOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -524,10 +506,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirGenerateTemplateOperation = class (TFHIROperation)
+  TFhirGenerateTemplateOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -535,10 +517,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirGenerateNarrativeOperation = class (TFHIROperation)
+  TFhirGenerateNarrativeOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -546,10 +528,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirSuggestKeyWordsOperation = class (TFHIROperation)
+  TFhirSuggestKeyWordsOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -557,10 +539,10 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
   end;
 
-  TFhirGetMetaDataOperation = class (TFHIROperation)
+  TFhirGetMetaDataOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -568,11 +550,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirAddMetaDataOperation = class (TFHIROperation)
+  TFhirAddMetaDataOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -580,11 +562,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirDeleteMetaDataOperation = class (TFHIROperation)
+  TFhirDeleteMetaDataOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -592,11 +574,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirDiffOperation = class (TFHIROperation)
+  TFhirDiffOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -604,7 +586,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
@@ -624,7 +606,7 @@ type
   {$ENDIF}
 
   {$IFNDEF FHIR2}
-  TFhirTransformOperation = class (TFHIROperation)
+  TFhirTransformOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -632,13 +614,13 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
   {$ENDIF}
 
   {$IFNDEF FHIR2}
-  TFhirActivateOperation = class (TFHIROperation)
+  TFhirActivateOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -646,11 +628,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirObservationStatsOperation = class (TFHIROperation)
+  TFhirObservationStatsOperation = class (TFhirNativeOperation)
   private
     function resolveParameter(code : String): TObservationStatsParameter;
   protected
@@ -660,11 +642,11 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
 
-  TFhirObservationLastNOperation = class (TFHIROperation)
+  TFhirObservationLastNOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -672,7 +654,7 @@ type
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function formalURL : String; override;
   end;
   {$ENDIF}
@@ -816,11 +798,9 @@ end;
 
 constructor TFHIRNativeOperationEngine.Create(lang : String; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService);
 begin
-  inherited Create(lang);
-  FServerContext := ServerContext;
+  inherited Create(ServerContext, lang);
   FRepository := repository;
   FFactory := TFHIRFactory.create(ServerContext.Validator.Context.link, lang);
-  FOperations := TAdvObjectList.create;
 
 
   // order of registration matters - general validation must be after value set validation
@@ -1068,243 +1048,6 @@ begin
     result := copy(b.Bytes, 0, b.size);
   finally
     b.free;
-  end;
-end;
-
-
-procedure TFHIRNativeOperationEngine.addParam(srch : TFhirCapabilityStatementRestResourceSearchParamList; html : TAdvStringBuilder; n, url, d : String; t : TFhirSearchParamTypeEnum; tgts : Array of String);
-var
-  param : TFhirCapabilityStatementRestResourceSearchParam;
-begin
-  param := TFhirCapabilityStatementRestResourceSearchParam.create;
-  try
-    param.name := n;
-    param.definition := url;
-    param.documentation := d;
-    param.type_ := t;
-    srch.add(param.link);
-  finally
-    param.free;
-  end;
-//  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
-end;
-
-
-procedure TFHIRNativeOperationEngine.ExecuteConformanceStmt(request: TFHIRRequest; response: TFHIRResponse);
-var
-  oConf : TFhirCapabilityStatement;
-  res : TFhirCapabilityStatementRestResource;
-  a : String;
-  html : TAdvStringBuilder;
-  c : TFhirContactPoint;
-  i : integer;
-  op : TFhirCapabilityStatementRestOperation;
-  ct : TFhirConformanceContact;
-begin
-  try
-
-    response.HTTPCode := 200;
-    oConf := TFhirCapabilityStatement.Create;
-    response.Resource := oConf;
-
-    oConf.id := 'FhirServer';
-    ct := oConf.contactList.Append;
-    c := ct.telecomList.Append;
-    c.system := ContactPointSystemOther;
-    c.value := 'http://healthintersections.com.au/';
-    if ServerContext.FormalURLPlain <> '' then
-      oConf.url := AppendForwardSlash(ServerContext.FormalURLPlainOpen)+'metadata'
-    else
-      oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
-
-    oConf.version := FHIR_GENERATED_VERSION+'-'+SERVER_VERSION; // this conformance statement is versioned by both
-    oConf.name := 'Health Intersections FHIR Server Conformance Statement';
-    oConf.publisher := 'Health Intersections'; //
-    oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
-    oConf.status := PublicationStatusActive;
-    oConf.experimental := false;
-    oConf.date := TDateTimeEx.makeUTC;
-    oConf.software := TFhirCapabilityStatementSoftware.Create;
-    oConf.software.name := 'Reference Server';
-    oConf.software.version := SERVER_VERSION;
-    oConf.software.releaseDate := TDateTimeEx.fromXml(SERVER_RELEASE_DATE);
-    if ServerContext.FormalURLPlainOpen <> '' then
-    begin
-      oConf.implementation_ := TFhirCapabilityStatementImplementation.Create;
-      oConf.implementation_.description := 'FHIR Server running at '+ServerContext.FormalURLPlainOpen;
-      oConf.implementation_.url := ServerContext.FormalURLPlainOpen;
-    end;
-    if assigned(OnPopulateConformance) then
-      OnPopulateConformance(self, oConf);
-
-    oConf.acceptUnknown := UnknownContentCodeBoth;
-    {$IFNDEF FHIR2}
-    oConf.formatList.Append.value := 'application/fhir+xml';
-    oConf.formatList.Append.value := 'application/fhir+json';
-    {$ELSE}
-    oConf.formatList.Append.value := 'application/xml+fhir';
-    oConf.formatList.Append.value := 'application/json+fhir';
-    {$ENDIF}
-
-    oConf.fhirVersion := FHIR_GENERATED_VERSION;
-    oConf.restList.add(TFhirCapabilityStatementRest.Create);
-    oConf.restList[0].mode := RestfulCapabilityModeServer;
-    oConf.restList[0].addExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket', request.baseUrl+'websockets');
-    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionTransaction;
-    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
-    oConf.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
-    {$IFDEF FHIR2}
-    oConf.restList[0].transactionMode := TransactionModeBoth;
-    {$ENDIF}
-    oConf.text := TFhirNarrative.create;
-    oConf.text.status := NarrativeStatusGenerated;
-
-    {$IFNDEF FHIR2}
-    oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
-    {$ENDIF}
-    {$IFDEF FHIR2}
-    ServerContext.TerminologyServer.declareSystems(oConf);
-    {$ENDIF}
-    if assigned(OnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
-      OnPopulateConformance(self, oConf);
-    AddCDSHooks(oConf.restList[0]);
-
-    html := TAdvStringBuilder.Create;
-    try
-      html.append('<div><h2>FHIR Reference Server Conformance Statement</h2><p>FHIR v'+FHIR_GENERATED_VERSION+' released '+RELEASE_DATE+'. '+
-       'Reference Server version '+SERVER_VERSION+' built '+SERVER_RELEASE_DATE+'</p><table class="grid"><tr><th>Resource Type</th><th>Profile</th><th>Read</th><th>V-Read</th><th>Search</th><th>Update</th><th>Updates</th><th>Create</th><th>Delete</th><th>History</th></tr>'+#13#10);
-      for a in ServerContext.ValidatorContext.allResourceNames do
-      begin
-        if ServerContext.ResConfig[a].Supported and (a <> 'MessageHeader') and (a <> 'Custom') then
-        begin
-          if a = 'Binary' then
-            html.append('<tr><td>'+a+'</td>'+
-            '<td>--</td>')
-          else
-            html.append('<tr><td>'+a+'</td>'+
-            '<td><a href="'+request.baseUrl+'StructureDefinition/'+lowercase(a)+'?format=text/html">'+lowercase(a)+'</a></td>');
-          res := TFhirCapabilityStatementRestResource.create;
-          try
-            res.type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', a);
-            if a <> 'Binary' then
-              res.profile := FFactory.makeReference(request.baseUrl+'StructureDefinition/'+lowercase(a));
-            if (a <> 'MessageHeader') and (a <> 'Parameters') Then
-            begin
-              if request.canRead(a)  then
-              begin
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td><td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-                res.interactionList.Append.code := TypeRestfulInteractionRead;
-                res.interactionList.Append.code := TypeRestfulInteractionVread;
-                res.readHistory := true;
-              end
-              else
-                html.append('<td align="center"></td><td align="center"></td>');
-              if ServerContext.ResConfig[a].cmdSearch and request.canRead(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionSearchType;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdUpdate and request.canWrite(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionUpdate;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdHistoryType and request.canRead(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdCreate and request.canWrite(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionCreate;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdDelete and request.canWrite(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionDelete;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              if ServerContext.ResConfig[a].cmdHistoryInstance and request.canRead(a) then
-              begin
-                res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
-                html.append('<td align="center"><img src="http://www.healthintersections.com.au/tick.png"/></td>');
-              end
-              else
-                html.append('<td></td>');
-              html.append('<td></td>');
-//                html.append('<br/>search</td><td><ul>');
-              for i := 0 to ServerContext.Indexes.Indexes.count - 1 do
-                if (ServerContext.Indexes.Indexes[i].ResourceType = a) then
-                  if ServerContext.Indexes.Indexes[i].Name <> '_query' then
-                    addParam(res.searchParamList, html, ServerContext.Indexes.Indexes[i].Name, ServerContext.Indexes.Indexes[i].uri, ServerContext.Indexes.Indexes[i].Description, ServerContext.Indexes.Indexes[i].SearchType, ServerContext.Indexes.Indexes[i].TargetTypes);
-
-//              addParam(res.searchParamList, html, '_id', 'http://hl7.org/fhir/search', 'Resource Logical ID', SearchParamTypeToken, []);
-              addParam(res.searchParamList, html, '_text', 'http://hl7.org/fhir/search', 'General Text Search of the narrative portion', SearchParamTypeString, []);
-              addParam(res.searchParamList, html, '_profile', 'http://hl7.org/fhir/search', 'Search for resources that conform to a profile', SearchParamTypeReference, []);
-              addParam(res.searchParamList, html, '_security', 'http://hl7.org/fhir/search', 'Search for resources that have a particular security tag', SearchParamTypeReference, []);
-              addParam(res.searchParamList, html, '_sort', 'http://hl7.org/fhir/search', 'Specify one or more other parameters to use as the sort order', SearchParamTypeToken, []);
-              addParam(res.searchParamList, html, '_count', 'http://hl7.org/fhir/search', 'Number of records to return', SearchParamTypeNumber, []);
-              addParam(res.searchParamList, html, '_summary', 'http://hl7.org/fhir/search', 'Return just a summary for resources that define a summary view', SearchParamTypeNumber, []);
-              addParam(res.searchParamList, html, '_include', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that matching resources refer to', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
-              addParam(res.searchParamList, html, '_reverseInclude', 'http://hl7.org/fhir/search', 'Additional resources to return - other resources that refer to matching resources (this is trialing an extension to the specification)', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
-              addParam(res.searchParamList, html, '_filter', 'http://hl7.org/fhir/search', 'filter parameter as documented in the specification', SearchParamTypeToken, ALL_RESOURCE_TYPE_NAMES);
-
-//              html.append('</ul>');                                                                                                                               }
-            end;
-            html.append('</tr>'#13#10);
-
-
-              //<th>Search/Updates Params</th>
-              // html.append('n : offset<br/>');
-              // html.append('count : # resources per request<br/>');
-              // html.append(m.Indexes[i]+' : ?<br/>');
-            oConf.restList[0].resourceList.add(res.Link);
-          finally
-            res.free;
-          end;
-        end;
-      end;
-      html.append('</table>'#13#10);
-
-      html.append('<p>Operations</p>'#13#10'<ul>'+#13#10);
-      for i := 0 to FOperations.Count - 1 do
-      begin
-        op := oConf.restList[0].operationList.Append;
-        op.name := TFhirOperation(FOperations[i]).Name;
-        if TFhirOperation(FOperations[i]).formalURL <> '' then
-          op.definition := FFactory.makeReference(TFhirOperation(FOperations[i]).formalURL)
-        else
-          op.definition := FFactory.makeReference('OperationDefinition/fso-'+op.name);
-        html.append(' <li>'+op.name+': see OperationDefinition/fso-'+op.name+'</li>'#13#10);
-      end;
-      html.append('</ul>'#13#10);
-
-
-      html.append('</div>'#13#10);
-      // operations
-      oConf.text.div_ := TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString);
-    finally
-      html.free;
-    end;
-
-    AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
-  except
-    on e: exception do
-    begin
-      AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
-      recordStack(e);
-      raise;
-    end;
   end;
 end;
 
@@ -3157,24 +2900,6 @@ begin
   FConnection.terminate;
 end;
 
-procedure TFHIRNativeOperationEngine.AddCDSHooks(conf: TFhirCapabilityStatementRest);
-var
-  ext : TFhirExtension;
-begin
-  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Fetch Patient Alerts');
-  ext.addExtension('activity', TCDSHooks.patientView);
-  ext.addExtension('preFetchOptional', 'Patient/{{Patient.id}}');
-
-  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Get Terminology Information');
-  ext.addExtension('activity', TCDSHooks.codeView);
-
-  ext := conf.addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
-  ext.addExtension('name', 'Get identifier Information');
-  ext.addExtension('activity', TCDSHooks.identifierView);
-end;
-
 function TFHIRNativeOperationEngine.AddNewResourceId(aType, id, lang : string; forTesting : boolean; var resourceKey : integer) : Boolean;
 var
   itype : integer;
@@ -3504,151 +3229,6 @@ begin
     // todo: check this....
   end;
 end;
-
-function describeResourceTypes(aTypes : TArray<String>) : String;
-var
-  a : String;
-begin
-  result := '';
-  for a in aTypes do
-    if result = '' then
-      result := a
-    else
-      result := result+' / '+a;
-end;
-
-procedure TFHIRNativeOperationEngine.BuildSearchForm(request: TFHIRRequest; response : TFHIRResponse);
-var
-  i, j : integer;
-  s, pfx, desc, rn : String;
-  ix, ix2 : TFhirIndex;
-  types : TArray<String>;
-  m : TStringList;
-  ok : boolean;
-begin
-  response.HTTPCode := 200;
-  response.ContentType := 'text/html';
-  s :=
-'<?xml version="1.0" encoding="UTF-8"?>'#13#10+
-'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
-'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
-''#13#10+
-'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
-'<head>'#13#10+
-'    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
-TFHIRXhtmlComposer.PageLinks+
-FHIR_JS+
-'</head>'#13#10+
-''#13#10+
-'<body>'#13#10+
-''#13#10+
-TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.lang, SERVER_VERSION)+
-'<h2>'+GetFhirMessage('SEARCH_TITLE', lang)+'</h2>'#13#10+
-'</p>'#13#10;
-if Request.DefaultSearch then
-s := s +
-'<form action="'+request.ResourceName+'/_search" method="GET">'#13#10+
-'<table class="lines">'#13#10
-else
-s := s +
-'<form action="_search" method="GET">'#13#10+
-'<table class="lines">'#13#10;
-
-  if request.ResourceName = '' then
-  begin
-    s := s +'<tr><td colspan="4"><b>General search:</b></td></tr>'+#13#10+
-       '<tr><td align="left">_language</td><td><input type="text" name="_language"></td><td></td><td><select title="Missing?" size="1" nam'+'e="_language:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
-       '<tr><td align="left">_lastUpdated </td><td><input type="text" name="_lastUpdated"></td><td>(Date)</td><td><select title="Missing?"'+' size="1" name="_lastUpdated-missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
-       '<tr><td align="right"> (before)</td><td><input type="text" name="_lastUpdated:before"></td><td> (before given date)</td><td></td><'+'/tr>'+#13#10+
-       '<tr><td align="right"> (after)</td><td><input type="text" name="_lastUpdated:after"></td><td> (after given date)</td><td></td></tr'+'>'+#13#10+
-       '<tr><td align="left">_profile</td><td><input type="text" name="_profile"></td><td></td><td><select title="Missing?" size="1" name='+'"_profile:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
-       '<tr><td align="left">_security</td><td><input type="text" name="_security"></td><td></td><td><select title="Missing?" size="1" nam'+'e="_security:missing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10+
-       '<tr><td align="left">_tag</td><td><input type="text" name="_tag"></td><td></td><td><select title="Missing?" size="1" name="_tag:mi'+'ssing"><option></option><option value="1">absent</option><option name="0">present</option></select></td></tr>'+#13#10;
-  end
-  else
-  begin
-    s := s +'<tr><td colspan="4"><b>'+request.ResourceName+':</b></td></tr>'+#13#10;
-    for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
-    begin
-      ix := ServerContext.Indexes.Indexes[i];
-      if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) = 0) then
-      begin
-        desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, lang, ix.Description));
-        if ix.SearchType = SearchParamTypeDate then
-        begin
-          s := s + '<tr><td align="left">'+ix.Name+' </td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+' on given date (yyyy-mm-dd)</td>'+
-          '<td><select title="Missing?" size="1" name="'+ix.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
-          s := s + '<tr><td align="right"> (before)</td><td><input type="text" name="'+ix.Name+':before"></td><td> (before given date)</td><td></td></tr>'#13#10;
-          s := s + '<tr><td align="right"> (after)</td><td><input type="text" name="'+ix.Name+':after"></td><td> (after given date)</td><td></td></tr>'#13#10
-        end
-        else
-          s := s + '<tr><td align="left">'+ix.Name+'</td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+'</td>'+
-          '<td><select title="Missing?" size="1" name="'+ix.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10
-      end;
-    end;
-
-    for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
-    begin
-      ix := ServerContext.Indexes.Indexes[i];
-      if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) > 0) then
-      begin
-        pfx := ix.Name;
-        types := ix.TargetTypes;
-        s := s +'<tr><td colspan="4"><b>'+ix.Name+'</b> ('+describeResourceTypes(types)+')<b>:</b></td></tr>'+#13#10;
-        m := TStringList.create;
-        try
-          for j := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
-          begin
-            ix2 := ServerContext.Indexes.Indexes[j];
-            ok := false;
-            for rn in types do
-              ok := ok or (ix2.ResourceType = rn);
-            if (ok) and (m.IndexOf(ix2.Name) = -1) then
-            begin
-              desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix2.name, lang, ix2.Description));
-              if (ix2.searchType = SearchParamTypeDate) then
-              begin
-                s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+' (exact)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
-          '<td><select title="Missing?" size="1" name="'+pfx+'.'+ix2.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
-                s := s + '<tr>&nbsp;&nbsp;<td align="right">  (before)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+':before"></td><td> (before given date) </td></tr>'#13#10;
-                s := s + '<tr>&nbsp;&nbsp;<td align="right">  (after)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+':after"></td><td> (after given date) </td></tr>'#13#10
-              end
-              else
-                s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+'</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
-          '<td><select title="Missing?" size="1" name="'+pfx+'.'+ix2.Name+':missing"><option/><option value="1">absent</option><option name="0">present</option></select></td></tr>'#13#10;
-              m.add(ix2.Name);
-            end;
-          end;
-        finally
-          m.Free;
-        end;
-      end;
-    end;
-  end;
-
-  s := s +
-'<tr><td colspan="2"><hr/></td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_TEXT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_TEXT+'"></td><td> '+GetFhirMessage('SEARCH_REC_TEXT_COMMENT', lang)+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', lang)+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', lang), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', lang)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10;
-  for i := 0 to ServerContext.Indexes.Indexes.Count - 1 Do
-  begin
-    ix := ServerContext.Indexes.Indexes[i];
-    if (ix.ResourceType = request.ResourceName) or ((request.ResourceName = '') and (ix.Name.startsWith('_'))) then
-      s := s + '<option value="'+ix.Name+'">'+ix.Name+'</option>';
-  end;
-  s := s + '</select></td><td></td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_SUMMARY', lang)+'</td><td><input type="checkbox" name="'+SEARCH_PARAM_NAME_SUMMARY+'" value="true"></td><td> '+GetFhirMessage('SEARCH_SUMMARY_COMMENT', lang)+'</td></tr>'#13#10+
-'</table>'#13#10+
-'<p><input type="submit"/></p>'#13#10+
-'</form>'#13#10+
-''#13#10+
-'<p>'+
-TFHIRXhtmlComposer.Footer(request.baseUrl, lang);
-  response.Body := s;
-end;
-
 
 procedure TFHIRNativeOperationEngine.CreateIndexer;
 begin
@@ -5076,6 +4656,11 @@ begin
 end;
 
 
+function TFHIRNativeOperationEngine.GetServerContext: TFHIRServerContext;
+begin
+  result := TFHIRServerContext(FServerContext);
+end;
+
 function TFHIRNativeOperationEngine.GraphFollowReference(appInfo : TAdvObject; context: TFHIRResource; reference: TFHIRReference; out targetContext, target: TFHIRResource): boolean;
 var
   req : TFHIRRequest;
@@ -6221,196 +5806,6 @@ end;
 
 
 
-{ TFhirOperation }
-
-function TFhirOperation.Name: String;
-begin
-  result := '';
-end;
-
-function TFhirOperation.owningResource: TFhirResourceType;
-var
-  t : TFhirResourceType;
-  b : boolean;
-begin
-  result := frtNull;
-  b := false;
-  for t in Types do
-    if b then
-      raise Exception.Create('Multiple types for operation')
-    else
-    begin
-      result := t;
-      b := true;
-    end;
-  if (not b) then
-    raise Exception.Create('No types for operation');
-end;
-
-function TFhirOperation.resolvePatient(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; ref: String): integer;
-var
-  parts : TArray<String>;
-  versionKey : integer;
-begin
-  parts := ref.Split(['/']);
-  if length(parts) <> 2 then
-    raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
-  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
-    result := 0;
-end;
-
-function TFhirOperation.Types: TFhirResourceTypeSet;
-begin
-  result := [];
-end;
-
-function TFhirOperation.CreateBaseDefinition(base : String): TFHIROperationDefinition;
-begin
-  result := TFhirOperationDefinition.Create;
-  try
-    result.id := 'fso-'+name;
-    result.meta := TFhirMeta.Create;
-    result.meta.lastUpdated := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
-    result.meta.versionId := SERVER_VERSION;
-    result.url := AppendForwardSlash(base)+'OperationDefinition/fso-'+name;
-    result.version := FHIR_GENERATED_VERSION;
-    result.name := 'Operation Definition for "'+name+'"';
-    result.publisher := 'Grahame Grieve';
-    with result.contactList.Append do
-      with telecomList.Append do
-      begin
-        system := ContactPointSystemEmail;
-        value := 'grahame@fhir.org';
-      end;
-    result.description := 'Reference FHIR Server Operation Definition for "'+name+'"';
-    result.status := PublicationStatusDraft;
-    result.experimental := false;
-    result.date := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
-    result.kind := OperationKindOperation;
-    result.code := name;
-    result.base := TFhirReference.Create;
-    result.base.reference := 'http://hl7.org/fhir/OperationDefinition/'+name;
-    result.Link;
-  finally
-    result.Free;
-  end;
-end;
-
-function TFhirOperation.CreateDefinition(base : String): TFHIROperationDefinition;
-begin
-  result := nil;
-end;
-
-procedure TFhirOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
-begin
-  // nothing
-end;
-
-function TFhirOperation.formalURL: String;
-begin
-  result := '';
-end;
-
-function TFhirOperation.HandlesRequest(request: TFHIRRequest): boolean;
-var
-  t : TFhirResourceType;
-begin
-  result := (request.OperationName = Name) and (request.ResourceEnum in Types);
-  if result then
-  begin
-    t := owningResource;
-    if t = frtNull then
-      t := request.ResourceEnum;
-    if t = frtNull then
-      result := ((isWrite and request.canWrite('') or (not isWrite and request.canRead('')))) // todo: what should it be?
-    else
-      result := ((isWrite and request.canWrite(CODES_TFHIRresourceType[t])) or (not isWrite and request.canRead(CODES_TFHIRresourceType[t])));
-  end;
-end;
-
-function TFhirOperation.isWrite: boolean;
-begin
-  result := false;
-end;
-
-function TFhirOperation.makeParams(request: TFHIRRequest): TFhirParameters;
-var
-  i : integer;
-begin
-  if (request.Resource <> nil) and (request.Resource is TFHIRParameters) then
-    result := request.Resource.Link as TFHIRParameters
-  else
-    result := TFhirParameters.Create;
-  try
-    for i := 0 to request.Parameters.getItemCount - 1 do
-      result.AddParameter(request.Parameters.VarName(i), request.Parameters.getVar(request.Parameters.VarName(i)));
-    result.link;
-  finally
-    result.Free;
-  end;
-end;
-
-function TFhirOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFHIRNativeOperationEngine; params: TFhirParameters): TFHIRExpansionProfile;
-var
-  needSecure : boolean;
-  exp : TFhirExpansionProfile;
-  res : boolean;
-begin
-  res := false;
-  {$IFNDEF FHIR2}
-  exp := params.res['profile'] as TFHIRExpansionProfile;
-  if exp <> nil then
-    res := true
-  else
-    if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
-      exp := manager.getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
-    else if params.str['profile'] <> '' then
-      exp := manager.GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
-    else
-  {$ENDIF}
-     exp := nil;
-
-  try
-   if exp = nil then
-     result := TFhirExpansionProfile.Create
-   else
-     result := exp.Clone;
-   try
-     if (not res) and (params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details') then
-       result.includeDefinition := true;
-     if (params.str['_incomplete'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
-     if (params.str['limitedExpansion'] <> '') then
-       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
-     if (params.str['displayLanguage'] <> '') then
-       result.displayLanguage := params.str['displayLanguage'];
-     if (params.str['includeDesignations'] <> '') then
-       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
-     if (params.str['includeDefinition'] <> '') then
-       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
-     if (params.str['activeOnly'] <> '') then
-       result.activeOnly := StrToBoolDef(params.str['activeOnly'], false);
-     if (params.str['excludeNested'] <> '') then
-       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
-     if (params.str['excludeNotForUI'] <> '') then
-       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
-     if (params.str['excludePostCoordinated'] <> '') then
-       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
-     {$IFNDEF FHIR2}
-     if (result.url = '') and not res then
-       result.url := params.str['profile'];
-     {$ENDIF}
-
-     result.Link;
-   finally
-     result.free;
-   end;
-  finally
-    if not res then
-      exp.free;
-  end;
-end;
-
 { TFhirGenerateQAOperation }
 
 function TFhirGenerateQAOperation.Name: String;
@@ -6443,7 +5838,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
 end;
 
@@ -6479,7 +5874,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateJWTOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateJWTOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   jwt : String;
   pIn, pOut : TFHIRParameters;
@@ -6489,13 +5884,13 @@ begin
     try
       if pIn.hasParameter('for') then
       begin
-        jwt := manager.ServerContext.JWTServices.makeJWT(pIn.str['for']);
+        jwt := native(manager).ServerContext.JWTServices.makeJWT(pIn.str['for']);
       end
       else
       begin
         if not pIn.hasParameter('source') then
           raise Exception.Create('No Source System specified');
-        jwt := manager.ServerContext.JWTServices.makeJWT;
+        jwt := native(manager).ServerContext.JWTServices.makeJWT;
       end;
       response.HTTPCode := 200;
       response.Message := 'OK';
@@ -6557,7 +5952,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateCodeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateCodeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   res : TFHIRResource;
   codegen : TFHIRCodeGenerator;
@@ -6570,14 +5965,14 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if native(manager).check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
         params := makeParams(request);
         try
           if request.Id <> '' then // and it must exist, because of the check above
-            res := manager.GetResourceById(request, request.ResourceName, request.Id, request.baseUrl, needSecure)
+            res := native(manager).GetResourceById(request, request.ResourceName, request.Id, request.baseUrl, needSecure)
           else if (request.Resource <> nil) and (request.Resource is TFHIRValueSet) then
             res := request.Resource.Link
           else if params.hasParameter('resource') then
@@ -6589,7 +5984,7 @@ begin
             codegen := makeCodeGenerator(genlang);
             try
               codegen.Resource := res.Link;
-              codegen.Context := manager.ServerContext.ValidatorContext.Link;
+              codegen.Context := native(manager).ServerContext.ValidatorContext.Link;
               code := codegen.generate;
             finally
               codegen.free;
@@ -6647,7 +6042,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
 end;
 
@@ -6678,7 +6073,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirQuestionnaireGenerationOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirQuestionnaireGenerationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   profile : TFHirStructureDefinition;
   op : TFhirOperationOutcome;
@@ -6691,7 +6086,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, request.Session.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource('StructureDefinition', request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -6700,9 +6095,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -6716,7 +6111,7 @@ begin
           if id <> '' then
           begin
             fid := request.baseUrl+'StructureDefinition/'+id+'/$questionnaire';
-            questionnaire := manager.ServerContext.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
+            questionnaire := native(manager).ServerContext.QuestionnaireCache.getQuestionnaire(frtStructureDefinition, id);
             questionnaire.checkNoImplicitRules('QuestionnaireGeneration', 'questionnaire');
             questionnaire.checkNoModifiers('QuestionnaireGeneration', 'questionnaire');
           end
@@ -6732,16 +6127,16 @@ begin
               builder := TQuestionnaireBuilder.Create(request.Lang);
               try
                 builder.Profile := profile.link;
-                builder.OnExpand := manager.FRepository.ExpandVS;
-                builder.onLookupCode := manager.FRepository.LookupCode;
+                builder.OnExpand := native(manager).FRepository.ExpandVS;
+                builder.onLookupCode := native(manager).FRepository.LookupCode;
                 builder.Context := request.Link;
-                builder.onLookupReference := manager.LookupReference;
+                builder.onLookupReference := native(manager).LookupReference;
                 builder.QuestionnaireId := fid;
-                builder.Profiles := manager.ServerContext.ValidatorContext.Profiles.Link;
+                builder.Profiles := native(manager).ServerContext.ValidatorContext.Profiles.Link;
                 builder.build;
                 questionnaire := builder.questionnaire.Link;
                 if id <> '' then
-                  manager.ServerContext.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
+                  native(manager).ServerContext.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
               finally
                 builder.Free;
               end;
@@ -6762,8 +6157,8 @@ begin
           ctxt.ResourceIdRule := risOptional;
           ctxt.IsAnyExtensionsAllowed := true;
           ctxt.OperationDescription := 'Produce Questionnaire';
-          manager.ServerContext.Validator.validate(ctxt, response.Resource);
-          op := manager.ServerContext.Validator.describe(ctxt);
+          native(manager).ServerContext.Validator.validate(ctxt, response.Resource);
+          op := native(manager).ServerContext.Validator.describe(ctxt);
         finally
           ctxt.Free;
         end;
@@ -6820,7 +6215,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirExpandValueSetOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   vs, dst : TFHIRValueSet;
   resourceKey, versionKey : integer;
@@ -6832,7 +6227,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -6843,18 +6238,18 @@ begin
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
           begin
-            vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
+            vs := native(manager).GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('url') then
           begin
             url := params.str['url'];
             if (url.startsWith('ValueSet/')) then
-              vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
+              vs := native(manager).GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
-              vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
-            else if not manager.ServerContext.TerminologyServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
+              vs := native(manager).GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
+            else if not native(manager).ServerContext.TerminologyServer.isKnownValueSet(url, vs) then
+              vs := native(manager).GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
           end
           else if params.hasParameter('valueSet') then
@@ -6878,7 +6273,7 @@ begin
             if profile.displayLanguage = '' then
               profile.displayLanguage := request.Lang;
 
-            dst := manager.ServerContext.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
+            dst := native(manager).ServerContext.TerminologyServer.expandVS(vs, cacheId, profile, filter, limit, count, offset);
             try
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -6941,7 +6336,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirLookupCodeSystemOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRLookupOpRequest;
   resp : TFHIRLookupOpResponse;
@@ -6949,7 +6344,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id <> '') then
         raise Exception.Create('Lookup does not take an identified resource');
@@ -6980,7 +6375,7 @@ begin
         resp := TFHIRLookupOpResponse.Create;
         try
           try
-            manager.ServerContext.TerminologyServer.lookupCode(req.coding, lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
+            native(manager).ServerContext.TerminologyServer.lookupCode(req.coding, lang, {$IFNDEF FHIR2}req.property_List{$ELSE} nil {$ENDIF}, resp);  // currently, we ignore the date
             response.Resource := resp.asParams;
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -7047,7 +6442,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirCodeSystemComposeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirCodeSystemComposeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRComposeOpRequest;
   resp : TFHIRComposeOpResponse;
@@ -7055,7 +6450,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -7075,7 +6470,7 @@ begin
           resp := TFHIRComposeOpResponse.Create;
           try
             try
-              manager.ServerContext.TerminologyServer.composeCode(req, resp);
+              native(manager).ServerContext.TerminologyServer.composeCode(req, resp);
               response.Body := '';
               response.LastModifiedDate := now;
               response.Resource := resp.asParams;
@@ -7140,7 +6535,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirSubsumesOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRSubsumesOpRequest;
   resp : TFHIRSubsumesOpResponse;
@@ -7151,7 +6546,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -7164,9 +6559,9 @@ begin
 
           // first, we have to identify the Code System
           if request.Id <> '' then // and it must exist, because of the check above
-            cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
+            cs := native(manager).GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
           else if req.system <> '' then
-            cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
+            cs := native(manager).GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
           else
             raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
 
@@ -7185,7 +6580,7 @@ begin
           resp := TFHIRSubsumesOpResponse.Create;
           try
             try
-              resp.outcome := manager.ServerContext.TerminologyServer.subsumes(cs, req.codingA, req.codingB);
+              resp.outcome := native(manager).ServerContext.TerminologyServer.subsumes(cs, req.codingA, req.codingB);
               response.Resource := resp.asParams;
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -7260,7 +6655,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirObservationStatsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   req : TFHIRStatsOpRequest;
   s : string;
@@ -7278,7 +6673,7 @@ begin
       else
         req.load(request.Parameters);
 
-      ose := TObservationStatsEvaluator.create(manager.Connection);
+      ose := TObservationStatsEvaluator.create(native(manager).Connection);
       try
         ose.subject := req.subject;
         ose.subjectKey := resolvePatient(manager, request, req.subject);
@@ -7313,7 +6708,7 @@ begin
         ose.execute;
         if (req.include) then
         begin
-          list := manager.loadResources(ose.Observations);
+          list := native(manager).loadResources(ose.Observations);
           try
             for res in list do
               ose.Resp.sourceList.Add(res.link as TFhirObservation)
@@ -7373,7 +6768,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirObservationLastNOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirObservationLastNOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   sp : TSearchProcessor;
   conn : TKDBConnection;
@@ -7385,19 +6780,19 @@ var
   needsObject : boolean;
   comp : TFHIRParserClass;
 begin
-  conn := manager.FConnection;
+  conn := native(manager).FConnection;
   try
-    sp := TSearchProcessor.create(manager.ServerContext);
+    sp := TSearchProcessor.create(native(manager).ServerContext);
     try
-      sp.typeKey := manager.FConnection.CountSQL('select ResourceTypeKey from Types where ResourceName = ''Observation''');
+      sp.typeKey := native(manager).FConnection.CountSQL('select ResourceTypeKey from Types where ResourceName = ''Observation''');
       sp.type_ := 'Observation';
       sp.compartmentId := request.compartmentId;
       sp.compartments := request.compartments;
       sp.baseURL := request.baseURL;
       sp.lang := request.lang;
       sp.params := request.Parameters;
-      manager.CreateIndexer;
-      sp.indexes := manager.ServerContext.Indexes.Link;
+      native(manager).CreateIndexer;
+      sp.indexes := native(manager).ServerContext.Indexes.Link;
       sp.countAllowed := false;
       sp.Connection := conn.link;
       sp.build;
@@ -7415,7 +6810,7 @@ begin
         if response.Format <> ffUnspecified then
           base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
         bundle.link_List.AddRelRef('self', base+sp.link_);
-        manager.chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
+        native(manager).chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
         if (not needsObject) then
           comp := nil;
 
@@ -7445,13 +6840,13 @@ begin
           conn.Execute;
           while conn.FetchNext do
           Begin
-            manager.AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
+            native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
             keys.Add(TKeyPair.Create(type_, conn.ColStringByName['ResourceKey']));
           end;
         finally
           conn.Terminate;
         end;
-        manager.processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+        native(manager).processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
 
 //          if (op.issueList.Count > 0) then
 //          begin
@@ -7515,7 +6910,7 @@ begin
   result := [frtConsent];
 end;
 
-function TFhirConsentAuthorizeOperation.checkConsentOk(manager: TFHIRNativeOperationEngine; request: TFHIRRequest; consent: TFhirConsent; expiry : TDateTime; var patientId : String): integer;
+function TFhirConsentAuthorizeOperation.checkConsentOk(manager: TFHIROperationEngine; request: TFHIRRequest; consent: TFhirConsent; expiry : TDateTime; var patientId : String): integer;
 var
   ok : boolean;
   c : TFHIRCodING;
@@ -7564,7 +6959,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirConsentAuthorizeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConsentAuthorizeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   rkey, versionKey, patientKey : integer;
   params : TFhirParameters;
@@ -7580,7 +6975,7 @@ begin
     manager.NotFound(request, response);
     if manager.FindResource('Consent', request.Id, false, rkey, versionKey, request, response, '') then
     begin
-      consent := manager.GetResourceById(request, 'Consent', request.Id, request.baseUrl, needSecure) as TFHIRConsent;
+      consent := native(manager).GetResourceById(request, 'Consent', request.Id, request.baseUrl, needSecure) as TFHIRConsent;
       try
         params := makeParams(request);
         try
@@ -7590,10 +6985,10 @@ begin
           try
             p := TFHIRParameters.create;
             try
-              manager.ServerContext.clientApplicationVerifier.check(Jwt, p);
+              native(manager).ServerContext.clientApplicationVerifier.check(Jwt, p);
               pp := p.parameterList.Append;
               pp.name := 'id';
-              pp.value := TFhirId.Create(manager.FRepository.Authorize(manager.Connection, patientId, patientKey, rKey, request.Session.Key, JWT.originalSource, expiry));
+              pp.value := TFhirId.Create(native(manager).FRepository.Authorize(native(manager).Connection, patientId, patientKey, rKey, request.Session.Key, JWT.originalSource, expiry));
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Resource := p.Link;
@@ -7667,7 +7062,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirValidationOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
@@ -7705,13 +7100,13 @@ begin
       raise Exception.Create('Mode parameter is not (yet) supported');
 
     if StringStartsWith(ProfileId, 'http://localhost/StructureDefinition/') then
-      profile := manager.GetResourceById(request, 'StructureDefinition', copy(ProfileId, 27, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
+      profile := native(manager).GetResourceById(request, 'StructureDefinition', copy(ProfileId, 27, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, 'StructureDefinition/') then
-      profile := manager.GetResourceById(request, 'StructureDefinition', copy(ProfileId, 9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
+      profile := native(manager).GetResourceById(request, 'StructureDefinition', copy(ProfileId, 9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if StringStartsWith(ProfileId, request.baseUrl+'StructureDefinition/') then
-      profile := manager.GetResourceById(request, 'StructureDefinition', copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
+      profile := native(manager).GetResourceById(request, 'StructureDefinition', copy(ProfileId, length(request.baseUrl)+9, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
     else if (profileId <> '') then
-      profile := manager.GetResourceByURL(frtStructureDefinition, profileId, '', false, needSecure) as TFhirStructureDefinition;
+      profile := native(manager).GetResourceByURL(frtStructureDefinition, profileId, '', false, needSecure) as TFhirStructureDefinition;
 
     if Profile <> nil then
       opDesc := 'Validate resource '+request.id+' against profile '+profileId
@@ -7729,7 +7124,7 @@ begin
       begin
         profiles := TValidationProfileSet.create(profile);
         try
-          manager.ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
+          native(manager).ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
         finally
           profiles.Free;
         end;
@@ -7737,15 +7132,15 @@ begin
       else
       begin
         if request.resource = nil then
-          request.resource := manager.GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
+          request.resource := native(manager).GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
         profiles := TValidationProfileSet.create(profile);
         try
-          manager.ServerContext.Validator.validate(ctxt, request.Resource, profiles);
+          native(manager).ServerContext.Validator.validate(ctxt, request.Resource, profiles);
         finally
           profiles.Free;
         end;
       end;
-      outcome := manager.ServerContext.Validator.describe(ctxt);
+      outcome := native(manager).ServerContext.Validator.describe(ctxt);
     finally
       ctxt.Free;
     end;
@@ -7809,7 +7204,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGraphFetchOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGraphFetchOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   gd : TFHIRGraphDefinition;
   resourceKey, versionKey : integer;
@@ -7824,28 +7219,28 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if (request.Id <> '') and manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if (request.Id <> '') and manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
         params := makeParams(request);
         try
           if params.hasParameter('graph') then
-            gd := manager.GetResourceById(request, 'GraphDefinition', params.str['graph'], request.baseUrl, needSecure) as TFHIRGraphDefinition
+            gd := native(manager).GetResourceById(request, 'GraphDefinition', params.str['graph'], request.baseUrl, needSecure) as TFHIRGraphDefinition
           else if params.hasParameter('definition') then
             gd := TFHIRGraphDefinitionParser.parse(params.str['definition'])
           else
             raise Exception.Create('No Graph definition found');
           try
 
-            engine := TFHIRGraphDefinitionEngine.Create(manager.ServerContext.ValidatorContext.Link);
+            engine := TFHIRGraphDefinitionEngine.Create(native(manager).ServerContext.ValidatorContext.Link);
             try
-              engine.OnFollowReference := manager.GraphFollowReference;
-              engine.OnListResources := manager.GraphListResources;
+              engine.OnFollowReference := native(manager).GraphFollowReference;
+              engine.OnListResources := native(manager).GraphListResources;
 
               engine.baseURL := request.baseUrl;
               engine.definition := gd.link;
-              engine.start := manager.GetResourceById(request, request.ResourceName, request.Id, request.baseUrl, needSecure);
+              engine.start := native(manager).GetResourceById(request, request.ResourceName, request.Id, request.baseUrl, needSecure);
               engine.bundle := TFhirBundle.Create;
               engine.bundle.id := NewGuidId;
               engine.bundle.type_ := BundleTypeSearchset;
@@ -7919,7 +7314,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirValueSetValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   vs : TFHIRValueSet;
   resourceKey, versionKey : integer;
@@ -7933,7 +7328,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -7945,13 +7340,13 @@ begin
             // first, we have to identify the value set.
             if request.Id <> '' then // and it must exist, because of the check above
             begin
-              vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
+              vs := native(manager).GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('identifier') then
             begin
-              if not manager.ServerContext.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
-                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], false, needSecure) as TFHIRValueSet;
+              if not native(manager).ServerContext.TerminologyServer.isKnownValueSet(params.str['identifier'], vs) then
+                vs := native(manager).GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], false, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then
@@ -8024,7 +7419,7 @@ begin
                 if profile.displayLanguage = '' then
                   profile.displayLanguage := request.Lang;
                 try
-                  response.resource := manager.ServerContext.TerminologyServer.validate(vs, coded, profile, abstractOk);
+                  response.resource := native(manager).ServerContext.TerminologyServer.validate(vs, coded, profile, abstractOk);
                 except
                   on e : Exception do
                   begin
@@ -8111,7 +7506,7 @@ begin
   end;
 end;
 
-procedure TFhirPatientEverythingOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirPatientEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   bundle : TFHIRBundle;
   entry : TFHIRBundleEntry;
@@ -8142,27 +7537,27 @@ begin
         params := TParseMap.Create('');
         try
 //          bundle.base := request.baseUrl;
-          if manager.FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
+          if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
-            id := manager.BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
+            id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
           bundle.total := inttostr(total);
           bundle.Tags['sql'] := sql;
-          manager.chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
+          native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
 
-          manager.FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+          native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
               'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
               'order by SortValue ASC';
-          manager.FConnection.Prepare;
+          native(manager).FConnection.Prepare;
           try
-            manager.FConnection.Execute;
-            while manager.FConnection.FetchNext do
+            native(manager).FConnection.Execute;
+            while native(manager).FConnection.FetchNext do
             Begin
-              entry := manager.AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_);
-              keys.Add(TKeyPair.create(type_, manager.FConnection.ColStringByName['ResourceKey']));
+              entry := native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_);
+              keys.Add(TKeyPair.create(type_, native(manager).FConnection.ColStringByName['ResourceKey']));
 
               if request.Parameters.VarExists('_include') then
-                manager.CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
+                native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
               if (entry.resource.ResourceType = frtPatient) and (entry.resource.id = request.id) then
               begin
                 if (patient = nil) then
@@ -8172,26 +7567,26 @@ begin
               end;
             End;
           finally
-            manager.FConnection.Terminate;
+            native(manager).FConnection.Terminate;
           end;
 
           // process reverse includes
 //          if request.Parameters.VarExists('_reverseInclude') then
-//            manager.CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
+//            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
 
 //          //now, add the includes
 //          if includes.Count > 0 then
 //          begin
-//            manager.FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
+//            native(manager).FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
 //                'where Ids.Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+
 //                'and Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+includes.asSql+') order by ResourceVersionKey DESC';
-//            manager.FConnection.Prepare;
+//            native(manager).FConnection.Prepare;
 //            try
-//              manager.FConnection.Execute;
-//              while manager.FConnection.FetchNext do
-//                manager.AddResourceTobundle(bundle, baseUrlrequest.request.request., field, prsr);
+//              native(manager).FConnection.Execute;
+//              while native(manager).FConnection.FetchNext do
+//                native(manager).AddResourceTobundle(bundle, baseUrlrequest.request.request., field, prsr);
 //            finally
-//              manager.FConnection.Terminate;
+//              native(manager).FConnection.Terminate;
 //            end;
 //          end;
 
@@ -8201,9 +7596,9 @@ begin
           bundle.entryList.Insert(0).resource := patient.Link;
           bundle.entryList[0].fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
           if (request.Parameters.getVar('email') <> '') then
-            manager.ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('email'), false)
+            native(manager).ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('email'), false)
           else if (request.Parameters.getVar('direct') <> '') then
-            manager.ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('direct'), true);
+            native(manager).ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('direct'), true);
 
           bundle.meta := TFhirMeta.Create;
           bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
@@ -8245,7 +7640,7 @@ end;
 
 { TFhirGenerateDocumentOperation }
 
-procedure TFhirGenerateDocumentOperation.addResource(manager: TFHIRNativeOperationEngine; secure : boolean; bundle: TFHIRBundle; source : TFHIRDomainResource; reference: TFhirReference; required: boolean; compartments : String);
+procedure TFhirGenerateDocumentOperation.addResource(manager: TFHIROperationEngine; secure : boolean; bundle: TFHIRBundle; source : TFHIRDomainResource; reference: TFhirReference; required: boolean; compartments : String);
 var
   res : TFHIRResource;
   needSecure : boolean;
@@ -8255,7 +7650,7 @@ var
 begin
   if reference = nil then
     exit;
-  res := manager.getResourceByReference(source, reference.reference, compartments, true, needSecure);
+  res := native(manager).getResourceByReference(source, reference.reference, compartments, true, needSecure);
   try
     if res <> nil then
     begin
@@ -8266,7 +7661,7 @@ begin
       end
       else
       begin
-        url := manager.ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+        url := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
         exists := false;
         for entry in bundle.entryList do
           if entry.fullUrl = url then
@@ -8275,7 +7670,7 @@ begin
         begin
           entry := bundle.entryList.Append;
           entry.resource := res.Link;
-          entry.fullUrl := manager.ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
+          entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/'+res.fhirType+'/'+res.id;
         end;
       end
     end
@@ -8286,7 +7681,7 @@ begin
   end;
 end;
 
-procedure TFhirGenerateDocumentOperation.addSections(manager: TFHIRNativeOperationEngine; secure : boolean; bundle: TFHIRBundle; composition : TFhirComposition; sections: TFhirCompositionSectionList; compartments : String);
+procedure TFhirGenerateDocumentOperation.addSections(manager: TFHIROperationEngine; secure : boolean; bundle: TFHIRBundle; composition : TFhirComposition; sections: TFhirCompositionSectionList; compartments : String);
 var
   i, j : integer;
 begin
@@ -8322,7 +7717,7 @@ begin
   end;
 end;
 
-procedure TFhirGenerateDocumentOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateDocumentOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   composition : TFhirComposition;
   bundle : TFhirBundle;
@@ -8337,11 +7732,11 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments) then
       begin
-        composition := manager.GetResourceByKey(resourceKey, needSecure) as TFhirComposition;
+        composition := native(manager).GetResourceByKey(resourceKey, needSecure) as TFhirComposition;
         try
           composition.checkNoImplicitRules('GenerateDocument', 'composition');
           composition.checkNoModifiers('GenerateDocument', 'composition');
@@ -8353,7 +7748,7 @@ begin
             bundle.id := copy(GUIDToString(CreateGUID), 2, 36).ToLower;
             bundle.meta := TFhirMeta.Create;
             bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
-//            bundle.base := manager.ServerContext.FormalURLPlain;
+//            bundle.base := native(manager).ServerContext.FormalURLPlain;
             {$IFNDEF FHIR2}
             bundle.identifier := TFhirIdentifier.Create;
             bundle.identifier.system := 'urn:ietf:rfc:3986';
@@ -8361,10 +7756,10 @@ begin
             {$ENDIF}
             entry := bundle.entryList.Append;
             entry.resource := composition.Link;
-            entry.fullUrl := manager.ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
+            entry.fullUrl := native(manager).ServerContext.FormalURLPlainOpen+'/Composition/'+composition.id;
             {$IFDEF FHIR4}
             if request.Parameters.getvar('graph') <> '' then
-              gd := manager.GetResourceById(request, 'GraphDefinition', request.Parameters.getvar('graph'), request.baseUrl, needSecure) as TFHIRGraphDefinition
+              gd := native(manager).GetResourceById(request, 'GraphDefinition', request.Parameters.getvar('graph'), request.baseUrl, needSecure) as TFHIRGraphDefinition
             else if request.Parameters.getvar('definition') <> '' then
               gd := TFHIRGraphDefinitionParser.parse(request.Parameters.getvar('definition'))
             else
@@ -8372,10 +7767,10 @@ begin
             if gd <> nil then
             begin
               try
-                engine := TFHIRGraphDefinitionEngine.Create(manager.ServerContext.ValidatorContext.Link);
+                engine := TFHIRGraphDefinitionEngine.Create(native(manager).ServerContext.ValidatorContext.Link);
                 try
-                  engine.OnFollowReference := manager.GraphFollowReference;
-                  engine.OnListResources := manager.GraphListResources;
+                  engine.OnFollowReference := native(manager).GraphFollowReference;
+                  engine.OnListResources := native(manager).GraphListResources;
 
                   engine.baseURL := 'http://hl7.org/fhir/test';
                   engine.definition := gd.link;
@@ -8477,7 +7872,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirProcessClaimOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirProcessClaimOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey, versionKey : integer;
   params : TFhirParameters;
@@ -8487,7 +7882,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -8496,16 +7891,16 @@ begin
         try
           // first, we have to identify the value set.
           if request.Id <> '' then // and it must exist, because of the check above
-            claim := manager.GetResourceById(request, 'Claim', request.Id, request.baseUrl, needSecure) as TFhirClaim
+            claim := native(manager).GetResourceById(request, 'Claim', request.Id, request.baseUrl, needSecure) as TFhirClaim
 //          else if request.Parameters.VarExists('identifier') then
 //          begin
 //            url := request.Parameters.getvar('identifier');
 //            if (url.startsWith('ValueSet/')) then
-//              vs := manager.GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
+//              vs := native(manager).GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
 //            else if (url.startsWith(baseURLrequest.request.request.request.request.request.+'ValueSet/')) then
-//              vs := manager.GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
-//            else if not manager.FRepository.TerminologyServer.isKnownValueSet(url, vs) then
-//              vs := manager.GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
+//              vs := native(manager).GetValueSetById(request, url.substring(9), baseUrlrequest.request.request.request.request.)
+//            else if not native(manager).FRepository.TerminologyServer.isKnownValueSet(url, vs) then
+//              vs := native(manager).GetValueSetByIdentity(request.Parameters.getvar('identifier'), request.Parameters.getvar('version'));
 //            cacheId := vs.url;
 //          end
           else if (request.form <> nil) and request.form.hasParam('claim') then
@@ -8517,7 +7912,7 @@ begin
 
           claim.checkNoImplicitRules('ProcessClaim', 'claim');
           claim.checkNoModifiers('ProcessClaim', 'claim');
-          resp := manager.FRepository.GenerateClaimResponse(claim);
+          resp := native(manager).FRepository.GenerateClaimResponse(claim);
           try
             response.HTTPCode := 200;
             response.Message := 'OK';
@@ -8592,7 +7987,7 @@ begin
   result := frtConceptMap;
 end;
 
-procedure TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   cm : TLoadedConceptMap;
 //  op : TFhirOperationOutcome;
@@ -8604,16 +7999,16 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
         params := makeParams(request);
         try
           // we have to find the right concept map
           // it doesn't matter whether the value sets are actually defined or not
           if request.id <> '' then
-            cm := manager.ServerContext.TerminologyServer.getConceptMapById(request.id)
+            cm := native(manager).ServerContext.TerminologyServer.getConceptMapById(request.id)
           else
-            cm := manager.ServerContext.TerminologyServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
+            cm := native(manager).ServerContext.TerminologyServer.getConceptMapBySrcTgt(params.str['valueset'], params.str['target']);
           if cm = nil then
             raise Exception.Create('Unable to find concept map to use');
           try
@@ -8638,7 +8033,7 @@ begin
             else
               raise Exception.Create('Unable to find code to translate (coding | codeableConcept | code');
             try
-              response.resource := manager.ServerContext.TerminologyServer.translate(request.Lang, cm, coded.codingList[0]);
+              response.resource := native(manager).ServerContext.TerminologyServer.translate(request.Lang, cm, coded.codingList[0]);
               response.HTTPCode := 200;
               response.Message := 'OK';
               response.Body := '';
@@ -8712,7 +8107,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateSnapshotOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateSnapshotOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFhirParameters;
   sdParam, sdBase : TFhirStructureDefinition;
@@ -8721,7 +8116,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       sdParam := nil;
       sdBase := nil;
@@ -8738,22 +8133,22 @@ begin
         sdParam.checkNoModifiers('GenerateSnapshot', 'profile');
         if sdParam.baseDefinition <> '' then
         begin
-          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.baseDefinition, sdBase) then
+          if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.baseDefinition, sdBase) then
             raise Exception.Create('StructureDefinition base profile "'+sdParam.baseDefinition+'" not found');
         end
         else if params.hasParameter('base') then
         begin
-          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, params.str['base'], sdBase) then
+          if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, params.str['base'], sdBase) then
             raise Exception.Create('Nominated base profile "'+params.str['base']+'" not found');
         end
         else
         begin
-          if not manager.ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
+          if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
             raise Exception.Create('Implicit base definition "'+sdBase.baseDefinition+'" not found');
         end;
 
         op := TFhirOperationOutcome.Create;
-        utils := TProfileUtilities.create(manager.ServerContext.ValidatorContext.link, op.issueList.Link);
+        utils := TProfileUtilities.create(native(manager).ServerContext.ValidatorContext.link, op.issueList.Link);
         try
           try
             utils.generateSnapshot(sdBase, sdParam, sdParam.url, sdParam.name);
@@ -8825,7 +8220,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateTemplateOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateTemplateOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   profile : TFHirStructureDefinition;
   resourceKey, versionKey : integer;
@@ -8837,7 +8232,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, request.Session.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource('StructureDefinition', request.Id, false, resourceKey, versionKey, request, response, request.compartments)) then
       begin
@@ -8846,9 +8241,9 @@ begin
           // first, we have to identify the structure definition
           id := request.Id;
           if request.Id <> '' then // and it must exist, because of the check above
-            profile := manager.GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceById(request, 'StructureDefinition', request.Id, request.baseUrl, needSecure) as TFhirStructureDefinition
           else if request.Parameters.VarExists('identifier') then
-            profile := manager.GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
+            profile := native(manager).GetResourceByURL(frtStructureDefinition, request.Parameters.getvar('identifier'), '', false, needSecure) as TFhirStructureDefinition
           else if (request.form <> nil) and request.form.hasParam('profile') then
             profile := LoadFromFormParam(request.Context, request.form.getparam('profile'), request.Lang) as TFHirStructureDefinition
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
@@ -8861,12 +8256,12 @@ begin
 
           template := nil;
           try
-            builder := TProfileUtilities.create(manager.ServerContext.ValidatorContext.Link, nil);
+            builder := TProfileUtilities.create(native(manager).ServerContext.ValidatorContext.Link, nil);
             try
               template := builder.populateByProfile(profile);
               if template is TFhirDomainResource then
               begin
-                narr := TFHIRNarrativeGenerator.create(manager.ServerContext.ValidatorContext.Link);
+                narr := TFHIRNarrativeGenerator.create(native(manager).ServerContext.ValidatorContext.Link);
                 try
                   narr.generate(template as TFhirDomainResource);
                 finally
@@ -8928,7 +8323,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirGenerateNarrativeOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGenerateNarrativeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   narr : TFHIRNarrativeGenerator;
   r : TFHIRResource;
@@ -8942,7 +8337,7 @@ begin
       r.checkNoImplicitRules('GenerateNarrative', 'resource');
       TFhirDomainResource(r).checkNoModifiers('GenerateNarrative', 'resource');
       (r as TFhirDomainResource).text := nil;
-      narr := TFHIRNarrativeGenerator.create(manager.ServerContext.ValidatorContext.Link);
+      narr := TFHIRNarrativeGenerator.create(native(manager).ServerContext.ValidatorContext.Link);
       try
         narr.generate(r as TFhirDomainResource);
       finally
@@ -9011,7 +8406,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConceptMapClosureOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFhirParameters;
   p : TFhirParametersParameter;
@@ -9029,7 +8424,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       params := makeParams(request);
       cm := nil;
@@ -9041,7 +8436,7 @@ begin
           v := params.str['version'];
           if (v = '') and not params.hasParameter('concept') then
           begin
-            v := manager.ServerContext.TerminologyServer.InitClosure(n);
+            v := native(manager).ServerContext.TerminologyServer.InitClosure(n);
             map := TFhirConceptMap.Create;
             response.resource := map.Link;
             map.id := NewGuidId;
@@ -9056,7 +8451,7 @@ begin
           end
           else
           begin
-            if not manager.ServerContext.TerminologyServer.UseClosure(n, cm) then
+            if not native(manager).ServerContext.TerminologyServer.UseClosure(n, cm) then
               errorResp(404, StringFormat('closure name ''%s'' not known', [n]))
             else if (v <> '') and params.hasParameter('concept') then
              errorResp(404, StringFormat('closure ''%s'': cannot combine version and concept', [n]))
@@ -9078,7 +8473,7 @@ begin
               if (v <> '') then
               begin
                 map.name := 'Replay for Closure Table '+n+' from version '+v;
-                cm.rerun(manager.connection, map, StrToInt(v))
+                cm.rerun(native(manager).connection, map, StrToInt(v))
               end
               else
               begin
@@ -9088,7 +8483,7 @@ begin
                   for p in params.parameterList do
                     if p.Name = 'concept' then
                       concepts.Add((p.value as TFHIRCoding).link);
-                  cm.processConcepts(manager.Connection, concepts, map);
+                  cm.processConcepts(native(manager).Connection, concepts, map);
                 finally
                   concepts.Free;
                 end;
@@ -9145,7 +8540,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
   raise Exception.Create('Not done yet');
 end;
@@ -9177,7 +8572,7 @@ begin
   result := nil
 end;
 
-procedure TFhirGetMetaDataOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirGetMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   ok : boolean;
   meta : TFhirMeta;
@@ -9190,63 +8585,63 @@ begin
     if request.ResourceName = '' then
     begin
     // well, this operation is always allowed?
-      manager.Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids)) as usecount from Tags where TagKey in (Select '+'TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids)) order by Kind, Uri, Code'
+      native(manager).Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids)) as usecount from Tags where TagKey in (Select '+'TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids)) order by Kind, Uri, Code'
     end
     else if request.Id = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and manager.ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdRead) and native(manager).ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
         ok := false
       else
-        manager.Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+        native(manager).Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
     else if request.SubId = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
          Ok := false
       else
-        manager.Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where ResourceVersionKey in (select MostRecent from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
+        native(manager).Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where ResourceVersionKey in (select MostRecent from Ids where Id = :id and ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
     else
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
         ok := false
       else
-        manager.FConnection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
-        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and ResourceKey in (select ResourceKey from Ids where Id = :id and ResourceTypeKey = '+inttostr(manager.ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code';
+        native(manager).FConnection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
+        'where Tags.TagKey = VersionTags.TagKey and VersionTags.ResourceVersionKey in (Select ResourceVersionKey from Versions where VersionId = :vid and ResourceKey in (select ResourceKey from Ids where Id = :id and ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code';
     end;
 
     if ok then
     begin
-      manager.Connection.Prepare;
+      native(manager).Connection.Prepare;
       if request.Id <> '' then
       begin
-        manager.Connection.BindString('id', request.Id);
+        native(manager).Connection.BindString('id', request.Id);
         if request.SubId <> '' then
-          manager.Connection.BindString('vid', request.SubId);
+          native(manager).Connection.BindString('vid', request.SubId);
       end;
-      manager.Connection.execute;
+      native(manager).Connection.execute;
       meta := TFhirMeta.Create;
       try
-        while manager.Connection.FetchNext do
+        while native(manager).Connection.FetchNext do
         begin
-          if TFHIRTagCategory(manager.Connection.ColIntegerByName['Kind']) = tcProfile then
+          if TFHIRTagCategory(native(manager).Connection.ColIntegerByName['Kind']) = tcProfile then
           begin
             uri := meta.profileList.Append;
-            uri.value := manager.Connection.ColStringByName['Code'];
+            uri.value := native(manager).Connection.ColStringByName['Code'];
             if request.Id = '' then
-              uri.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(manager.Connection.ColStringByName['UseCount']));
+              uri.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(native(manager).Connection.ColStringByName['UseCount']));
           end
           else
           begin
             coding := TFhirCoding.create;
             try
-              coding.system := manager.Connection.ColStringByName['Uri'];
-              coding.code := manager.Connection.ColStringByName['Code'];
-              coding.display := manager.Connection.ColStringByName['Display'];
+              coding.system := native(manager).Connection.ColStringByName['Uri'];
+              coding.code := native(manager).Connection.ColStringByName['Code'];
+              coding.display := native(manager).Connection.ColStringByName['Display'];
               if request.Id = '' then
-                coding.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(manager.Connection.ColStringByName['UseCount']));
-              if TFHIRTagCategory(manager.Connection.ColIntegerByName['Kind']) = tcTag then
+                coding.AddExtension('http://www.healthintersections.com.au/fhir/ExtensionDefinition/usecount', TFhirInteger.Create(native(manager).Connection.ColStringByName['UseCount']));
+              if TFHIRTagCategory(native(manager).Connection.ColIntegerByName['Kind']) = tcTag then
                 meta.tagList.add(coding.Link)
               else
                 meta.securityList.add(coding.Link)
@@ -9269,7 +8664,7 @@ begin
         meta.Free;
       end;
 
-      manager.Connection.terminate;
+      native(manager).Connection.terminate;
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.Body := '';
@@ -9317,7 +8712,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirAddMetaDataOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirAddMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -9335,7 +8730,7 @@ begin
 
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canWrite(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -9347,9 +8742,9 @@ begin
     begin
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not manager.check(response, native(manager).opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
           ok := false;
-       if ok and Not manager.FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
+       if ok and Not native(manager).FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
       end
       else
@@ -9366,34 +8761,34 @@ begin
     begin
       tags := TFHIRTagList.create;
       try
-        manager.LoadTags(tags, ResourceKey);
+        native(manager).LoadTags(tags, ResourceKey);
         tags.readTags(meta);
         for i := 0 to tags.count - 1 do
-          manager.FRepository.RegisterTag(tags[i], manager.FConnection);
+          native(manager).FRepository.RegisterTag(tags[i], native(manager).FConnection);
 
-        manager.FConnection.ExecSQL('delete from VersionTags where ResourceVersionKey = '+inttostr(resourceVersionKey));
-        manager.CommitTags(tags, resourceVersionKey);
+        native(manager).FConnection.ExecSQL('delete from VersionTags where ResourceVersionKey = '+inttostr(resourceVersionKey));
+        native(manager).CommitTags(tags, resourceVersionKey);
 
-        manager.FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
-        manager.FConnection.prepare;
-        manager.FConnection.Execute;
-        if not manager.FConnection.FetchNext then
+        native(manager).FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+        native(manager).FConnection.prepare;
+        native(manager).FConnection.Execute;
+        if not native(manager).FConnection.FetchNext then
           raise Exception.Create('Internal Error fetching current content');
-        blob := manager.FConnection.ColBlobByName['JsonContent'];
-        deleted := manager.FConnection.ColIntegerByName['Status'] = 2;
-        manager.FConnection.Terminate;
+        blob := native(manager).FConnection.ColBlobByName['JsonContent'];
+        deleted := native(manager).FConnection.ColIntegerByName['Status'] = 2;
+        native(manager).FConnection.Terminate;
         parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
         try
-          manager.FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
-          manager.FConnection.prepare;
-          manager.FConnection.BindBlobFromBytes('tb', tags.json);
+          native(manager).FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
+          native(manager).FConnection.prepare;
+          native(manager).FConnection.BindBlobFromBytes('tb', tags.json);
           response.resource := TFHIRParameters.create;
           if deleted then
           begin
-            manager.FConnection.BindNull('xc');
-            manager.FConnection.BindNull('jc');
-            manager.FConnection.BindNull('xs');
-            manager.FConnection.BindNull('js');
+            native(manager).FConnection.BindNull('xc');
+            native(manager).FConnection.BindNull('jc');
+            native(manager).FConnection.BindNull('xs');
+            native(manager).FConnection.BindNull('js');
             meta := TFHIRMeta.Create;
             TFHIRParameters(response.Resource).AddParameter('return', meta);
             tags.writeTags(meta);
@@ -9403,20 +8798,20 @@ begin
             if parser.resource.meta = nil then
               parser.resource.meta := TFHIRMeta.Create;
             tags.writeTags(parser.resource.meta);
-            manager.FConnection.BindBlobFromBytes('xc', manager.EncodeResource(parser.Resource, true, soFull));
-            manager.FConnection.BindBlobFromBytes('jc', manager.EncodeResource(parser.Resource, false, soFull));
-            manager.markRedacted(parser.resource.meta);
-            manager.FConnection.BindBlobFromBytes('xs', manager.EncodeResource(parser.Resource, true, soSummary));
-            manager.FConnection.BindBlobFromBytes('js', manager.EncodeResource(parser.Resource, false, soSummary));
-            manager.unmarkRedacted(parser.resource.meta);
+            native(manager).FConnection.BindBlobFromBytes('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
+            native(manager).FConnection.BindBlobFromBytes('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
+            native(manager).markRedacted(parser.resource.meta);
+            native(manager).FConnection.BindBlobFromBytes('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
+            native(manager).FConnection.BindBlobFromBytes('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
+            native(manager).unmarkRedacted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
-          manager.FConnection.Execute;
-          manager.FConnection.Terminate;
+          native(manager).FConnection.Execute;
+          native(manager).FConnection.Terminate;
           if not deleted and (resourceVersionKey = versionKey) then
           begin
-            manager.CreateIndexer;
-            manager.FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
+            native(manager).CreateIndexer;
+            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
           end;
         finally
           parser.free;
@@ -9470,7 +8865,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirDeleteMetaDataOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirDeleteMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -9488,7 +8883,7 @@ begin
   meta := nil;
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canWrite(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -9500,9 +8895,9 @@ begin
     begin
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not manager.check(response, native(manager).opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
           ok := false;
-       if ok and Not manager.FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
+       if ok and Not native(manager).FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
       end
       else
@@ -9517,41 +8912,41 @@ begin
 
     if ok then
       for c in meta.securityList do
-        if ok and not manager.isOkToDeleteSecurityLabel(request, response, c) then
+        if ok and not native(manager).isOkToDeleteSecurityLabel(request, response, c) then
           ok := false;
 
     if ok then
     begin
       tags := TFHIRTagList.create;
       try
-        manager.LoadTags(tags, ResourceKey);
+        native(manager).LoadTags(tags, ResourceKey);
         tags.removeTags(meta);
         for i := 0 to tags.count - 1 do
-          manager.FRepository.RegisterTag(tags[i], manager.FConnection);
+          native(manager).FRepository.RegisterTag(tags[i], native(manager).FConnection);
 
-        manager.FConnection.ExecSQL('delete from VersionTags where ResourceVersionKey = '+inttostr(resourceVersionKey));
-        manager.CommitTags(tags, resourceVersionKey);
+        native(manager).FConnection.ExecSQL('delete from VersionTags where ResourceVersionKey = '+inttostr(resourceVersionKey));
+        native(manager).CommitTags(tags, resourceVersionKey);
 
-        manager.FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
-        manager.FConnection.prepare;
-        manager.FConnection.Execute;
-        if not manager.FConnection.FetchNext then
+        native(manager).FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(resourceVersionKey);
+        native(manager).FConnection.prepare;
+        native(manager).FConnection.Execute;
+        if not native(manager).FConnection.FetchNext then
           raise Exception.Create('Internal Error fetching current content');
-        blob := manager.FConnection.ColBlobByName['JsonContent'];
-        deleted := manager.FConnection.ColIntegerByName['Status'] = 2;
-        manager.FConnection.Terminate;
+        blob := native(manager).FConnection.ColBlobByName['JsonContent'];
+        deleted := native(manager).FConnection.ColIntegerByName['Status'] = 2;
+        native(manager).FConnection.Terminate;
         parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
         try
-          manager.FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
-          manager.FConnection.prepare;
-          manager.FConnection.BindBlobFromBytes('tb', tags.json);
+          native(manager).FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
+          native(manager).FConnection.prepare;
+          native(manager).FConnection.BindBlobFromBytes('tb', tags.json);
           response.resource := TFHIRParameters.create;
           if deleted then
           begin
-            manager.FConnection.BindNull('xc');
-            manager.FConnection.BindNull('jc');
-            manager.FConnection.BindNull('xs');
-            manager.FConnection.BindNull('js');
+            native(manager).FConnection.BindNull('xc');
+            native(manager).FConnection.BindNull('jc');
+            native(manager).FConnection.BindNull('xs');
+            native(manager).FConnection.BindNull('js');
             meta := TFHIRMeta.Create;
             TFHIRParameters(response.Resource).AddParameter('return', meta);
             tags.writeTags(meta);
@@ -9561,20 +8956,20 @@ begin
             if parser.resource.meta = nil then
               parser.resource.meta := TFHIRMeta.Create;
             tags.writeTags(parser.resource.meta);
-            manager.FConnection.BindBlobFromBytes('xc', manager.EncodeResource(parser.Resource, true, soFull));
-            manager.FConnection.BindBlobFromBytes('jc', manager.EncodeResource(parser.Resource, false, soFull));
-            manager.markRedacted(parser.resource.meta);
-            manager.FConnection.BindBlobFromBytes('xs', manager.EncodeResource(parser.Resource, true, soSummary));
-            manager.FConnection.BindBlobFromBytes('js', manager.EncodeResource(parser.Resource, false, soSummary));
-            manager.unmarkRedacted(parser.resource.meta);
+            native(manager).FConnection.BindBlobFromBytes('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
+            native(manager).FConnection.BindBlobFromBytes('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
+            native(manager).markRedacted(parser.resource.meta);
+            native(manager).FConnection.BindBlobFromBytes('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
+            native(manager).FConnection.BindBlobFromBytes('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
+            native(manager).unmarkRedacted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
-          manager.FConnection.Execute;
-          manager.FConnection.Terminate;
+          native(manager).FConnection.Execute;
+          native(manager).FConnection.Terminate;
           if not deleted and (resourceVersionKey = versionKey) then
           begin
-            manager.CreateIndexer;
-            manager.FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
+            native(manager).CreateIndexer;
+            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
           end;
         finally
           parser.free;
@@ -9628,7 +9023,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirDiffOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirDiffOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   resourceKey : Integer;
   versionKey : Integer;
@@ -9646,7 +9041,7 @@ var
 begin
   try
     ok := true;
-    if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canRead(request.ResourceName) and native(manager).opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -9658,16 +9053,16 @@ begin
       // nothing
     else
     begin
-      manager.FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(versionKey);
-      manager.FConnection.prepare;
-      manager.FConnection.Execute;
-      if not manager.FConnection.FetchNext then
+      native(manager).FConnection.SQL := 'Select Status, JsonContent from Versions where ResourceVersionKey = '+inttostr(versionKey);
+      native(manager).FConnection.prepare;
+      native(manager).FConnection.Execute;
+      if not native(manager).FConnection.FetchNext then
         raise Exception.Create('Internal Error fetching content');
-      blob := manager.FConnection.ColBlobByName['JsonContent'];
-      manager.FConnection.Terminate;
+      blob := native(manager).FConnection.ColBlobByName['JsonContent'];
+      native(manager).FConnection.Terminate;
       parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
       try
-        diff := TDifferenceEngine.create(manager.ServerContext.ValidatorContext.Link);
+        diff := TDifferenceEngine.create(native(manager).ServerContext.ValidatorContext.Link);
         try
           response.Resource := diff.generateDifference(parser.resource, request.Resource, html);
           response.HTTPCode := 200;
@@ -9722,7 +9117,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirCurrentTestScriptOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirCurrentTestScriptOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
   if request.Session = nil then
   begin
@@ -9736,7 +9131,7 @@ begin
     request.Session.TestScript.id := inttostr(request.Session.Key);
     request.Session.TestScript.name := 'Observed Test Script for Session for '+request.Session.SessionName;
     request.Session.TestScript.status := PublicationStatusActive;
-    request.Session.TestScript.publisher := manager.ServerContext.OwnerName;
+    request.Session.TestScript.publisher := native(manager).ServerContext.OwnerName;
     request.Session.TestScript.date := TDateTimeEx.makeLocal;
     response.HTTPCode := 200;
     response.Resource := request.Session.TestScript.Link;
@@ -9773,7 +9168,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirTransformOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirTransformOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFHIRTransformOpRequest;
   rkey, versionKey : integer;
@@ -9789,7 +9184,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
     begin
       params := TFHIRTransformOpRequest.Create;
       try
@@ -9802,14 +9197,14 @@ begin
             params.content := request.Resource.Link;
         end;
 
-        lib := manager.ServerContext.getMaps;
+        lib := native(manager).ServerContext.getMaps;
         try
           map := nil;
           if request.Id <> '' then
           begin
             if manager.FindResource('StructureMap', request.Id, false, rkey, versionKey, request, response, '') then
             begin
-              map := manager.GetResourceByKey(rkey, needSecure) as TFHIRStructureMap;
+              map := native(manager).GetResourceByKey(rkey, needSecure) as TFHIRStructureMap;
               if needSecure and not request.secure then
                 raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
             end;
@@ -9824,9 +9219,9 @@ begin
           if (map <> nil) then
           begin
             try
-              outcome := manager.FFactory.makeByName(map.targetType);
+              outcome := native(manager).FFactory.makeByName(map.targetType);
               try
-                utils := TFHIRStructureMapUtilities.Create(manager.ServerContext.Validator.Context.link, lib.Link, TServerTransformerServices.create(manager.ServerContext.link));
+                utils := TFHIRStructureMapUtilities.Create(native(manager).ServerContext.Validator.Context.link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link));
                 try
                   try
                     utils.transform(nil, params.content, map, outcome);
@@ -9837,10 +9232,10 @@ begin
                     if outcome is TFHIRResource then
                       response.Resource := (outcome as TFHIRResource).link
                     else
-                      response.Resource := TFHIRCustomResource.createFromBase(manager.ServerContext.ValidatorContext, outcome);
+                      response.Resource := TFHIRCustomResource.createFromBase(native(manager).ServerContext.ValidatorContext, outcome);
                   except
                     on e : exception do
-                      manager.check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
+                      native(manager).check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
                   end;
                 finally
                   utils.Free;
@@ -9937,7 +9332,7 @@ begin
   result := nil;
 end;
 
-procedure TFhirActivateOperation.Execute(context : TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirActivateOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   rKey : integer;
   op : TFHIROperationOutcome;
@@ -9951,21 +9346,21 @@ begin
   try
     try
       manager.NotFound(request, response);
-      if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) and
+      if manager.check(response, native(manager).opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) and
         manager.FindResource('ImplementationGuide', request.Id, false, rkey, versionKey, request, response, '') then
       begin
-        ok := manager.loadCustomResources(response, rkey, false, names);
+        ok := native(manager).loadCustomResources(response, rkey, false, names);
         if ok then
         begin
           for name in names do
           begin
-            key := manager.Connection.CountSQL('Select max(ResourceTypeKey) from Types')+1;
-            manager.Connection.ExecSql('insert into Types (ResourceTypeKey, ResourceName, ImplementationGuide, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, '+'cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
+            key := native(manager).Connection.CountSQL('Select max(ResourceTypeKey) from Types')+1;
+            native(manager).Connection.ExecSql('insert into Types (ResourceTypeKey, ResourceName, ImplementationGuide, Supported, LastId, IdGuids, IdClient, IdServer, cmdRead, cmdUpdate, cmdVersionRead, cmdDelete, cmdValidate, '+'cmdHistoryInstance, cmdHistoryType, cmdSearch, cmdCreate, cmdOperation, versionUpdates) values '+
               '('+inttostr(key)+', '''+name+''', '''+request.Id+''', 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)');
             cfg := TFHIRResourceConfig.Create();
             cfg.name := name;
             cfg.key := key;
-            manager.ServerContext.ResConfig.Add(name, cfg);
+            native(manager).ServerContext.ResConfig.Add(name, cfg);
           end;
         end;
 
@@ -11988,12 +11383,13 @@ begin
   result := nil;
 end;
 
-procedure TFhirConsentConnectOperation.Execute(context: TOperationContext; manager: TFHIRNativeOperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+procedure TFhirConsentConnectOperation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
   params : TFhirParameters;
   source, consent, patient, expires_in, authorization : String;
   expiry : TDateTime;
   jwt : TJWT;
+  conn : TKDBConnection;
 begin
   try
     params := makeParams(request);
@@ -12019,27 +11415,28 @@ begin
             raise Exception.Create('Exception reading JWT: '+e.Message);
         end;
         try
-          if jwt.issuer <> manager.ServerContext.SystemId then
+          if jwt.issuer <> native(manager).ServerContext.SystemId then
             raise Exception.Create('"jwt" must be provided, and must be a JWT returned from $jwt');
           authorization := params.str['authorization'];
           if (authorization = '') or (length(authorization) > 64) then
             raise Exception.Create('"authorization" must be provided, and must be shorter than 64 chars long');
 
           // ok, passed all the checks. Go ahead and create an entry in the Connections table
-          manager.FConnection.SQL := 'Insert into Connections (ConnectionKey, SourceUrl, Expiry, Status, Consent, AuthToken, Patient, JWT) values (:ck, :s, :exp, 1, :c, :a, :p, :j)';
-          manager.FConnection.prepare;
-          manager.FConnection.bindInteger('ck', manager.FRepository.NextConnectionKey);
-          manager.FConnection.bindString('s', source);
-          manager.FConnection.BindTimeStamp('exp', DateTimeToTs(expiry));
-          manager.FConnection.bindString('c', consent);
-          manager.FConnection.bindString('a', authorization);
+          conn := native(manager).FConnection;
+          conn.SQL := 'Insert into Connections (ConnectionKey, SourceUrl, Expiry, Status, Consent, AuthToken, Patient, JWT) values (:ck, :s, :exp, 1, :c, :a, :p, :j)';
+          conn.prepare;
+          conn.bindInteger('ck', native(manager).FRepository.NextConnectionKey);
+          conn.bindString('s', source);
+          conn.BindTimeStamp('exp', DateTimeToTs(expiry));
+          conn.bindString('c', consent);
+          conn.bindString('a', authorization);
           if (patient = '') then
-            manager.FConnection.BindNull('p')
+            conn.BindNull('p')
           else
-            manager.FConnection.bindString('p', patient);
-          manager.FConnection.BindBlobFromString('j', jwt.originalSource);
-          manager.FConnection.execute;
-          manager.FConnection.terminate;
+            conn.bindString('p', patient);
+          conn.BindBlobFromString('j', jwt.originalSource);
+          conn.execute;
+          conn.terminate;
 
           response.HTTPCode := 200;
           response.Message := 'OK';
@@ -12096,5 +11493,73 @@ begin
 end;
 
 {$ENDIF}
+
+{ TFhirNativeOperation }
+
+function TFhirNativeOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParameters): TFHIRExpansionProfile;
+var
+  needSecure : boolean;
+  exp : TFhirExpansionProfile;
+  res : boolean;
+begin
+  res := false;
+  {$IFNDEF FHIR2}
+  exp := params.res['profile'] as TFHIRExpansionProfile;
+  if exp <> nil then
+    res := true
+  else
+    if params.str['profile'].StartsWith('http:') or params.str['profile'].StartsWith('https:') then
+      exp := native(manager).getResourceByUrl(frtExpansionProfile, params.str['profile'], '', true, needSecure) as TFhirExpansionProfile
+    else if params.str['profile'] <> '' then
+      exp := native(manager).GetResourceById(request, 'ExpansionProfile', params.str['profile'], request.baseUrl, needSecure) as TFhirExpansionProfile
+    else
+  {$ENDIF}
+     exp := nil;
+
+  try
+   if exp = nil then
+     result := TFhirExpansionProfile.Create
+   else
+     result := exp.Clone;
+   try
+     if (not res) and (params.str['profile'] = 'http://www.healthintersections.com.au/fhir/expansion/no-details') then
+       result.includeDefinition := true;
+     if (params.str['_incomplete'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['_incomplete'], false);
+     if (params.str['limitedExpansion'] <> '') then
+       result.limitedExpansion := StrToBoolDef(params.str['limitedExpansion'], false);
+     if (params.str['displayLanguage'] <> '') then
+       result.displayLanguage := params.str['displayLanguage'];
+     if (params.str['includeDesignations'] <> '') then
+       result.includeDesignations := StrToBoolDef(params.str['includeDesignations'], false);
+     if (params.str['includeDefinition'] <> '') then
+       result.includeDefinition := StrToBoolDef(params.str['includeDefinition'], false);
+     if (params.str['activeOnly'] <> '') then
+       result.activeOnly := StrToBoolDef(params.str['activeOnly'], false);
+     if (params.str['excludeNested'] <> '') then
+       result.excludeNested := StrToBoolDef(params.str['excludeNested'], false);
+     if (params.str['excludeNotForUI'] <> '') then
+       result.excludeNotForUI := StrToBoolDef(params.str['excludeNotForUI'], false);
+     if (params.str['excludePostCoordinated'] <> '') then
+       result.excludePostCoordinated := StrToBoolDef(params.str['excludePostCoordinated'], false);
+     {$IFNDEF FHIR2}
+     if (result.url = '') and not res then
+       result.url := params.str['profile'];
+     {$ENDIF}
+
+     result.Link;
+   finally
+     result.free;
+   end;
+  finally
+    if not res then
+      exp.free;
+  end;
+end;
+
+function TFhirNativeOperation.native(engine: TFHIROperationEngine): TFHIRNativeOperationEngine;
+begin
+  result := TFHIRNativeOperationEngine(engine);
+end;
 
 end.

@@ -9,7 +9,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
   OSXUIUtils,
   FileSupport, SystemSupport, kCritSct, StringSupport, DateSupport,
-  FHIRResources, FHIRParser,
+  FHIRResources, FHIRParser, FHIRSecurity,
   FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIRLog,
   VocabPocServerCore, TerminologyServer, FMX.WebBrowser;
 
@@ -70,12 +70,9 @@ type
     btnSnomed: TButton;
     odSnomed: TOpenDialog;
     tmrStatus: TTimer;
-    web: TWebBrowser;
-    Splitter1: TSplitter;
     mnuView: TMenuItem;
     mnuViewSettings: TMenuItem;
-    mnuViewLog: TMenuItem;
-    mnuViewBrowser: TMenuItem;
+    btnBrowser: TButton;
     procedure mnuExitClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormResize(Sender: TObject);
@@ -86,8 +83,9 @@ type
     procedure tmrStatusTimer(Sender: TObject);
     procedure btnStatusClick(Sender: TObject);
     procedure mnuViewSettingsClick(Sender: TObject);
-    procedure mnuViewBrowserClick(Sender: TObject);
-    procedure mnuViewLogClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure webDidFinishLoad(ASender: TObject);
+    procedure btnBrowserClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -105,6 +103,11 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TTxServerForm.btnBrowserClick(Sender: TObject);
+begin
+  OpenURL(FServer.FWebServer.ServerContext.FormalURLPlainOpen);
+end;
 
 procedure TTxServerForm.btnPoCFolderClick(Sender: TObject);
 var
@@ -131,7 +134,8 @@ begin
     FServer.FSource := edtFolder.Text;
     FServer.FIni.WriteString('web', 'http', edtPort.Text);
     FServer.FIni.WriteString('web', 'host', 'localhost');
-    FServer.FIni.WriteString('web', 'base', '/');
+    FServer.FIni.WriteString('web', 'base', '/vocab');
+    FServer.FIni.WriteString('fhir', 'web', 'C:\work\fhirserver\web');
     FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
     FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
     if FileExists(path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])) then
@@ -173,11 +177,9 @@ begin
   edtFolder.Text := Fini.ReadString('server', 'folder', '');
   edtPort.Text := Fini.ReadString('server', 'port', '');
   edtSnomed.Text := Fini.ReadString('server', 'snomed', '');
+
   FServer := TServerControl.Create;
   FStatus := Stopping;
-  mnuViewSettings.IsChecked := true;
-  mnuViewLog.IsChecked := true;
-  mnuViewBrowser.IsChecked := true;
   tmrStatusTimer(nil);
 end;
 
@@ -187,6 +189,7 @@ begin
   Fini.WriteString('server', 'folder', edtFolder.Text);
   Fini.WriteString('server', 'port', edtPort.Text);
   Fini.WriteString('snomed', 'snomed', edtSnomed.Text);
+  Fini.WriteBool('view', 'settings', mnuViewSettings.IsChecked);
   FIni.Free;
 end;
 
@@ -203,52 +206,19 @@ begin
   {$ENDIF}
 end;
 
+procedure TTxServerForm.FormShow(Sender: TObject);
+begin
+  mnuViewSettings.IsChecked := Fini.ReadBool('view', 'settings', true);
+
+  if not mnuViewSettings.IsChecked then
+    pnlSettings.size.height := 0;
+end;
+
 procedure TTxServerForm.mnuExitClick(Sender: TObject);
 begin
   Close;
 end;
 
-
-procedure TTxServerForm.mnuViewBrowserClick(Sender: TObject);
-begin
-  if not mnuViewBrowser.IsChecked then
-  begin
-    web.Visible := true;
-    Splitter1.Visible := true;
-    mnuViewBrowser.IsChecked := true;
-  end
-  else if not mnuViewLog.IsChecked then
-    Beep
-  else
-  begin
-    web.Visible := false;
-    Splitter1.Visible := false;
-    mnuViewBrowser.IsChecked := false;
-  end;
-end;
-
-procedure TTxServerForm.mnuViewLogClick(Sender: TObject);
-begin
-  if not mnuViewLog.IsChecked then
-  begin
-    mLog.Visible := true;
-    Splitter1.Visible := true;
-    web.Align := TAlignLayout.MostBottom;
-    if web.Size.Height > ClientHeight - (pnlStatus.Size.Height + 80 + pnlSettings.Size.Height) then
-      web.Size.Height := ClientHeight - (pnlStatus.Size.Height + 80 + pnlSettings.Size.Height);
-    mnuViewLog.IsChecked := true;
-  end
-  else if not mnuViewBrowser.IsChecked then
-    Beep
-  else
-  begin
-    mLog.Visible := false;
-    Splitter1.Visible := false;
-    web.Align := TAlignLayout.Client;
-    mnuViewLog.IsChecked := false;
-  end;
-
-end;
 
 procedure TTxServerForm.mnuViewSettingsClick(Sender: TObject);
 begin
@@ -286,7 +256,7 @@ begin
          btnPoCFolder.enabled := true;
          btnSnomed.enabled := true;
          lblStatus.Text := 'The server is not running';
-         web.Enabled := false;
+         btnBrowser.Enabled := false;
          end;
       Starting:
          begin
@@ -300,7 +270,7 @@ begin
          btnPoCFolder.enabled := false;
          btnSnomed.enabled := false;
          lblStatus.Text := 'The server is starting';
-         web.Enabled := false;
+         btnBrowser.Enabled := false;
          end;
       Running:
          begin
@@ -314,9 +284,7 @@ begin
          btnPoCFolder.enabled := false;
          btnSnomed.enabled := false;
          lblStatus.Text := 'The server is running';
-         web.Enabled := true;
-         if web.Visible then
-           web.Navigate(FServer.FWebServer.ServerContext.FormalURLPlain);
+         btnBrowser.Enabled := true;
          end;
       Stopping:
          begin
@@ -330,7 +298,7 @@ begin
          btnPoCFolder.enabled := false;
          btnSnomed.enabled := false;
          lblStatus.Text := 'The server is stopping';
-         web.Enabled := false;
+         btnBrowser.Enabled := false;
          end;
     end;
   end;
@@ -349,6 +317,10 @@ begin
    mLog.GoToTextEnd;
 end;
 
+procedure TTxServerForm.webDidFinishLoad(ASender: TObject);
+begin
+end;
+
 { TServerControl }
 
 procedure TServerControl.close;
@@ -362,23 +334,41 @@ procedure TServerControl.DoStart;
 var
   ctxt : TFHIRServerContext;
   store : TTerminologyServerStorage;
+  procedure SetAccess(cfg : TFHIRResourceConfig);
+  begin
+    cfg.Supported := true;
+    cfg.cmdUpdate := false;
+    cfg.cmdDelete := false;
+    cfg.cmdValidate := false;
+    cfg.cmdHistoryInstance := false;
+    cfg.cmdHistoryType := true;
+    cfg.cmdSearch := true;
+    cfg.cmdCreate := false;
+    cfg.cmdOperation := true;
+    cfg.cmdVRead := false;
+  end;
 begin
   FStart := now;
   FStatus := Starting;
   Log('Starting Server');
   Try
-    store := TTerminologyServerStorage.create();
+    store := TTerminologyServerStorage.create(TTerminologyServer.create(nil));
     try
       ctxt := TFHIRServerContext.Create(store.Link);
       try
-        ctxt.TerminologyServer := TTerminologyServer.create(nil);
+        ctxt.TerminologyServer := store.Server.Link;
+        store.ServerContext := ctxt;
         ctxt.TerminologyServer.load(FIni);
+        setAccess(ctxt.ResConfig['CodeSystem']);
+        setAccess(ctxt.ResConfig['ValueSet']);
+        setAccess(ctxt.ResConfig['ConceptMap']);
         loadPoC(ctxt.TerminologyServer);
         ctxt.ownername := 'Vocab PoC Server';
-        FWebServer := TFhirWebServer.create(FIni.Link, ctxt.ownername, nil {FTerminologyServer}, ctxt.link);
+        FWebServer := TFhirWebServer.create(FIni.Link, ctxt.ownername, ctxt.TerminologyServer, ctxt.link);
         ctxt.UserProvider := TTerminologyServerUserProvider.Create;
         ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
         FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
+        FWebServer.IsTerminologyServerOnly := true;
         FWebServer.Start(true);
       finally
         ctxt.free;
@@ -387,7 +377,7 @@ begin
       store.free;
     end;
 
-    Log('Server is Started and ready for business at '+FWebServer.ServerContext.FormalURLPlain);
+    Log('Server is Started and ready for business at '+FWebServer.ServerContext.FormalURLPlainOpen);
     FStatus := Running;
   except
     on e : Exception do

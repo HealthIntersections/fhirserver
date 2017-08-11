@@ -375,7 +375,7 @@ end;
 
 constructor TExampleFHIROperationEngine.create(Data: TExampleServerData; lang: String);
 begin
-  inherited Create(lang);
+  inherited Create(nil, lang);
   FData := data;
 end;
 

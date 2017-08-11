@@ -238,6 +238,7 @@ Type
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
     FCDSHooksServer : TCDSHooksServer;
+    FIsTerminologyServerOnly : boolean;
 
     function OAuthPath(secure : boolean):String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -331,6 +332,7 @@ Type
     property JWTAuthorities : TDictionary<String, String> read FJWTAuthorities;
 
     function ClientAddress(secure : boolean) : String;
+    property IsTerminologyServerOnly : boolean read FIsTerminologyServerOnly write FIsTerminologyServerOnly;
   End;
 
 Function ProcessPath(base, path : String): string;
@@ -1659,6 +1661,7 @@ begin
         ''+#13#10+
         '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
         '<head>'+#13#10+
+        '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
         '    <title>Direct Edit for /'+typ+'/'+id+'</title>'+#13#10+
         TFHIRXhtmlComposer.PageLinks+
         FHIR_JS+
@@ -2205,12 +2208,14 @@ Begin
       oResponse.Format := ffXML
     else if StringExistsSensitive(sContentAccept, 'application/fhir+xml') Then
       oResponse.Format := ffXML
+    else if StringExistsSensitive(sContentAccept, '*/*') Then // specially for stupid IE...
+      oResponse.Format := ffXhtml
+    else if StringExistsInsensitive(sContentAccept, 'html') Then
+      oResponse.Format := ffXhtml
     else if StringExistsInsensitive(sContentAccept, 'xml') Then
       oResponse.Format := ffXML
     else if StringExistsInsensitive(sContentAccept, 'text') Then
       oResponse.Format := fftext
-    else if StringExistsInsensitive(sContentAccept, 'html') Then
-      oResponse.Format := ffXhtml
     else if StringExistsInsensitive(sContentAccept, 'rdf') Then
       oResponse.Format := ffTurtle
     else if oRequest.PostFormat <> ffUnspecified then
@@ -2729,6 +2734,7 @@ result :=
 ''#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
 '<head>'#13#10+
+'    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
 '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
 TFHIRXhtmlComposer.PageLinks+#13#10+
 FHIR_JS+
@@ -2751,8 +2757,11 @@ result := result +
 result := result +
 '<p><a href="'+FAuthServer.basePath+'/auth?client_id=web&response_type=code&scope=openid%20profile%20user/*.*%20'+SCIM_ADMINISTRATOR+'&redirect_uri='+authurl+'/internal&aud='+authurl+'&state='+FAuthServer.MakeLoginToken(path, apGoogle)+'">Login using OAuth</a></p>'+#13#10;
 
+if FSecurePath <> '' then
 result := result +
-'<p>Or use the <a href="http://'+FHost+port(FStatedPort, 80)+FBasePath+'">unsecured API</a>.</p>'#13#10+
+'<p>Or use the <a href="http://'+FHost+port(FStatedPort, 80)+FBasePath+'">unsecured API</a>.</p>'#13#10;
+
+result := result +
 '<p>&nbsp;</p>'#13#10+
 '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart on FHIR</a> for OAuth logins</p>'#13#10;
 result := result +
@@ -2800,6 +2809,7 @@ begin
     ''#13#10+
     '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
     '<head>'#13#10+
+    '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
     '    <title>FHIR RESTful Server - FHIR v'+FHIR_GENERATED_VERSION+'</title>'#13#10+
     TFHIRXhtmlComposer.pagelinks+
     FHIR_JS+
@@ -2820,8 +2830,10 @@ begin
             b.Append('<p>You bearer token is '+inttostr(session.UserKey)+'.'+session.User.hash+'. Use this to get access to the secure API without needing OAuth login</p>');
           end;
         end
+        else if FSecurePath = '' then
+          b.Append('<p>Welcome '+FormatTextToXml(session.SessionName)+'</p>'#13#10)
         else
-          b.Append('<p>Welcome '+FormatTextToXml(session.SessionName)+' (or use <a href="https://'+FHost+port(FStatedSSLPort, 443)+FSecurePath+'">Secure API</a>)</p></p>'#13#10);
+          b.Append('<p>Welcome '+FormatTextToXml(session.SessionName)+' (or use <a href="https://'+FHost+port(FStatedSSLPort, 443)+FSecurePath+'">Secure API</a>)</p>'#13#10);
 
     b.Append(
     '<p>'#13#10+
@@ -2831,14 +2843,17 @@ begin
     '<hr/>'#13#10+
     ''#13#10+
     '<p>'+GetFhirMessage('SYSTEM_OPERATIONS', lang)+':</p><ul><li> <a href="'+sBaseUrl+'/metadata">'+GetFhirMessage('CONF_PROFILE', lang)+'</a> '+
-     '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10+
-    '<li><a class="tag" href="'+sBaseUrl+'/$meta">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>'+
-    '<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a></li>'+
-    '<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10+
-    '<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);
+     '('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=text/xml">as xml</a> ('+GetFhirMessage('OR', lang)+' <a href="'+sBaseUrl+'/metadata?_format=application/json">JSON</a>)</li>'+#13#10);
+    if not FIsTerminologyServerOnly then
+      b.Append('<li><a class="tag" href="'+sBaseUrl+'/$meta">'+GetFhirMessage('SYSTEM_TAGS', lang)+'</a></li>');
+    b.Append('<li><a href="'+sBaseUrl+'/_search">'+GetFhirMessage('GENERAL_SEARCH', lang)+'</a></li>');
+    if not FIsTerminologyServerOnly then
+      b.Append('<li><a href="'+sBaseUrl+'/_history">'+StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)])+'</a> (History of all resources)</li>'+#13#10);
+    if not FIsTerminologyServerOnly then
+      b.Append('<li><a href="#upload">'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</a></li>'+#13#10);
 
-    b.Append(
-    '<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
+    if not FIsTerminologyServerOnly then
+      b.Append('<li>Create/Edit a new resource based on the profile: <form action="'+sBaseURL+'/_web/Create" method="GET"><select name="profile">'+pol+'</select> <input type="submit" value="GO"></form></li>'+#13#10);
 
     if (session.canAdministerUsers) then
       b.Append('<li><a href="/scim/web">Manage Users</a></li>'+#13#10);
@@ -2898,7 +2913,9 @@ begin
         names.free;
       end;
       b.Append(
-    '</table>'#13#10+
+    '</table>'#13#10);
+    if not FIsTerminologyServerOnly then
+      b.Append(
     '<hr/><h2>'+GetFhirMessage('NAME_UPLOAD_SERVICES', lang)+'</h2>'#13#10+
     '<a name="upload"> </a><form enctype="multipart/form-data" method="POST">'+#13#10+
     '<p><input type="hidden" name="_format" value="text/html"/><br/>'+#13#10+
@@ -2916,8 +2933,8 @@ begin
     pol+
     '</select> (if validating, use the selected profile)</td></tr></table><br/>'+#13#10+
     '<input type="submit" value="'+GetFhirMessage('NAME_UPLOAD', lang)+'"/>'#13#10+
-    '</p></form>'#13#10+
-    TFHIRXhtmlComposer.footer(sBaseURL, lang));
+    '</p></form>'#13#10);
+    b.Append(TFHIRXhtmlComposer.footer(sBaseURL, lang));
     result := b.ToString;
      finally
        b.Free;
@@ -2943,6 +2960,7 @@ begin
 ''#13#10+
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
 '<head>'#13#10+
+'    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
 '    <title>'+StringFormat(GetFhirMessage('UPLOAD', lang), [aType])+'</title>'#13#10+
 '    <link rel="Stylesheet" href="/css/fhir.css" type="text/css" media="screen" />'#13#10+
 FHIR_JS+
