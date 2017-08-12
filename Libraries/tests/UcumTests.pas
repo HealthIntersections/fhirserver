@@ -85,8 +85,10 @@ Uses
 Procedure TUcumTests.TestValidation;
 var
   iElem : IXMLDOMElement;
+  idocElement: MsXML.IXMLDOMNode;
 Begin
-  iElem := TMsXmlParser.FirstChild(FTestDoc.documentElement);
+  idocElement:=FTestDoc.documentElement;
+  iElem := TMsXmlParser.FirstChild(idocElement);
   while iElem <> nil Do
   Begin
     if iElem.nodeName = 'validation' Then
@@ -98,8 +100,10 @@ End;
 Procedure TUcumTests.TestDisplay;
 var
   iElem : IXMLDOMElement;
+  idocElement: MsXML.IXMLDOMNode;
 Begin
-  iElem := TMsXmlParser.FirstChild(FTestDoc.documentElement);
+  idocElement:=FTestDoc.documentElement;
+  iElem := TMsXmlParser.FirstChild(idocElement);
   while iElem <> nil Do
   Begin
     if iElem.nodeName = 'displayNameGeneration' Then
@@ -117,8 +121,10 @@ end;
 Procedure TUcumTests.TestConversion;
 var
   iElem : IXMLDOMElement;
+  idocElement: MsXML.IXMLDOMNode;
 Begin
-  iElem := TMsXmlParser.FirstChild(FTestDoc.documentElement);
+  idocElement:=FTestDoc.documentElement;
+  iElem := TMsXmlParser.FirstChild(idocElement);
   while iElem <> nil Do
   Begin
     if iElem.nodeName = 'conversion' Then
@@ -130,8 +136,10 @@ End;
 Procedure TUcumTests.TestMultiplication;
 var
   iElem : IXMLDOMElement;
+  idocElement: MsXML.IXMLDOMNode;
 Begin
-  iElem := TMsXmlParser.FirstChild(FTestDoc.documentElement);
+  idocElement:=FTestDoc.documentElement;
+  iElem := TMsXmlParser.FirstChild(idocElement);
   while iElem <> nil Do
   Begin
     if iElem.nodeName = 'multiplication' Then
