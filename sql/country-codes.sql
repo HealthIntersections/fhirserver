@@ -1,7 +1,7 @@
-CREATE TABLE [dbo].[CountryCodes](
-	[Display] [nchar](255) NOT NULL,
-	[Code] [nchar](10) NOT NULL,
-	[Status] [nchar](255) NOT NULL,
+CREATE TABLE CountryCodes(
+	[Display] nchar(255) NOT NULL,
+	[Code] nchar(10) NOT NULL,
+	[Status] nchar(255) NOT NULL,
  CONSTRAINT [PK_CountryCodes] PRIMARY KEY CLUSTERED 
 (
 	[Code] ASC

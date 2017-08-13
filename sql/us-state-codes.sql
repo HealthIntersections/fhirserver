@@ -1,9 +1,9 @@
-CREATE TABLE [dbo].[USStateCodes](
-	[Display] nchar(255) NOT NULL,
-	[Code] nchar(10) NOT NULL,
- CONSTRAINT [PK_USStateCodes] PRIMARY KEY CLUSTERED 
+CREATE TABLE USStateCodes (
+	Display nchar(255) NOT NULL,
+	Code nchar(10) NOT NULL,
+ CONSTRAINT PK_USStateCodes PRIMARY KEY CLUSTERED 
 (
-	[Code] ASC
+	Code ASC
 )
 ) 
 GO
