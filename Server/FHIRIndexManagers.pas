@@ -75,7 +75,10 @@ Type
     FPath : String;
     FUsage : TFhirSearchXpathUsageEnum;
     FMapping : String;
+    FExpression: TFHIRPathExpressionNode;
+    procedure SetExpression(const Value: TFHIRPathExpressionNode);
   public
+    destructor Destroy; override;
     function Link : TFhirIndex; Overload;
     function Clone : TFhirIndex; Overload;
     procedure Assign(source : TAdvObject); Override;
@@ -90,6 +93,7 @@ Type
     Property Path : String read FPath;
     Property Usage : TFhirSearchXpathUsageEnum read FUsage;
     Property Mapping : String read FMapping write FMapping;
+    property expression : TFHIRPathExpressionNode read FExpression write SetExpression;
 
     function specifiedTarget : String;
   end;
@@ -453,9 +457,21 @@ begin
   result := TFhirIndex(Inherited Clone);
 end;
 
+destructor TFhirIndex.Destroy;
+begin
+  FExpression.Free;
+  inherited;
+end;
+
 function TFhirIndex.Link: TFhirIndex;
 begin
   result := TFhirIndex(Inherited Link);
+end;
+
+procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNode);
+begin
+  FExpression.Free;
+  FExpression := Value;
 end;
 
 function TFhirIndex.specifiedTarget: String;
