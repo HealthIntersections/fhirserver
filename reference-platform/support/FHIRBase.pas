@@ -239,6 +239,7 @@ type
     FCommentsEnd: TAdvStringList;
     FFormat : TFHIRFormat;
     FNoCompose: boolean;
+    FTagInt: integer;
     function GetCommentsStart: TAdvStringList;
     function GetCommentsEnd: TAdvStringList;
     procedure SetTag(const Value: TAdvObject);
@@ -284,6 +285,7 @@ type
     function HasTag(name : String): boolean;
     property Tag : TAdvObject read FTag write SetTag;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
+    property TagInt : integer read FTagInt write FTagInt;
 
     // populated by some parsers when parsing
     property LocationStart : TSourceLocation read FLocationStart write FLocationStart;
