@@ -106,6 +106,7 @@ type
     TimezoneMins : Integer;
   private
     procedure check;
+    function checkNoException : boolean;
     procedure RollUp;
     function privToString: String;
   public
@@ -154,9 +155,13 @@ type
     function IncrementDay: TDateTimeEx;
     function add(length : TDateTime) : TDateTimeEx;
     function subtract(length : TDateTime) : TDateTimeEx;
+    function lessPrecision: TDateTimeEx;
 
     function equal(other : TDateTimeEx) : Boolean;  // returns true if the timezone, FPrecision, and actual instant are the same
     function sameTime(other : TDateTimeEx) : Boolean; // returns true if the specified instant is the same allowing for specified FPrecision - corrects for timezone
+    function after(other : TDateTimeEx; inclusive : boolean):boolean;
+    function before(other : TDateTimeEx; inclusive : boolean):boolean;
+    function between(min, max : TDateTimeEx; inclusive : boolean):boolean;
 
     {@
     Valid formatting strings are
@@ -177,6 +182,8 @@ type
     function toString: String;  overload; // as human readable
     function toHL7: String; // as hhhhmmhhnnss.zzz+T
     function toXML : String;
+
+    class function isValidXmlDate(value : String) : Boolean; static;
 
     property Precision : TDateTimeExPrecision read FPrecision;
   end;
@@ -238,6 +245,32 @@ begin
     err := 'Timezone minutes is not valid';
   if err <> '' then
     raise EDateFormatError.Create(err+' ('+privToString+')');
+end;
+
+function TDateTimeEx.checkNoException: boolean;
+var
+  err : String;
+begin
+  err := '';
+  if (year < 1000) or (year > 3000) then
+    err := 'Year is not valid'
+  else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
+    err := 'Month is not valid'
+  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month-1)] < Day)) then
+    err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
+  else if (FPrecision >= dtpHour) and (Hour > 23) then
+    err := 'Hour is not valid'
+  else if (FPrecision >= dtpMin) and (Minute > 59) then
+    err := 'Minute is not valid'
+  else if (FPrecision >= dtpSec) and (Second > 59) then
+    err := 'Second is not valid'
+  else if (FPrecision >= dtpNanoSeconds) and (FractionPrecision > 999999999) then
+    err := 'Fraction is not valid'
+  else if (TimezoneType = dttzSpecified) and ((TimezoneHours < -13) or (TimezoneHours > 14)) then
+    err := 'Timezone hours is not valid'
+  else if (TimezoneType = dttzSpecified) and not ((TimezoneMins = 0) or (TimezoneMins = 15) or (TimezoneMins = 30) or (TimezoneMins = 45)) then
+    err := 'Timezone minutes is not valid';
+  result := err = '';
 end;
 
 function TDateTimeEx.DateTime: TDateTime;
@@ -450,6 +483,100 @@ begin
   inc(result.year);
 end;
 
+function vsv(value : String; start, len, min, max : Integer; name : String):Integer;
+var
+  v : String;
+begin
+  v := copy(value, start, len);
+  if not StringIsInteger16(v) then
+    exit(-1);
+  result := StrToInt(v);
+  if (result < min) or (result > max) then
+    exit(-1);
+end;
+
+class function TDateTimeEx.isValidXmlDate(value: String): Boolean;
+var
+  s : String;
+  neg : boolean;
+  res : TDateTimeEx;
+begin
+  if value = '' then
+    exit(false);
+
+  res.Source := Value;
+  if pos('Z', value) = length(value) then
+  begin
+    res.TimezoneType := dttzUTC;
+    Delete(value, length(value), 1);
+  end
+  else if (pos('T', value) > 0) and StringContainsAny(copy(Value, pos('T', value)+1, $FF), ['-', '+']) then
+  begin
+    neg := Pos('-', copy(Value, pos('T', value)+1, $FF)) > 0;
+    StringSplitRight(value, ['-', '+'], value, s);
+    if length(s) <> 5 then
+      raise Exception.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
+    res.TimezoneHours := vsv(s, 1, 2, 0, 14, 'timezone hours');
+    res.TimezoneMins := vsv(s, 4, 2, 0, 59, 'timezone minutes');
+    res.TimezoneType := dttzSpecified;
+    if neg then
+      res.TimezoneHours := -res.TimezoneHours;
+  end;
+
+  res.FractionPrecision := 0;
+
+  if Length(value) >=4 then
+    res.Year := vsv(Value, 1, 4, 1800, 2100, 'years');
+  if Length(value) < 7 then
+    res.FPrecision := dtpYear
+  else
+  begin
+    res.Month := vsv(Value, 6, 2, 1, 12, 'months');
+    if length(Value) < 10 then
+      res.FPrecision := dtpMonth
+    else
+    begin
+      res.Day := vsv(Value, 9, 2, 1, 31, 'days');
+      if length(Value) < 13 then
+        res.FPrecision := dtpDay
+      else
+      begin
+        res.Hour := vsv(Value, 12, 2, 0, 23, 'hours');
+        if length(Value) < 15 then
+          res.FPrecision := dtpHour
+        else
+        begin
+          res.Minute := vsv(Value, 15, 2, 0, 59, 'minutes');
+          if length(Value) < 18 then
+            res.FPrecision := dtpMin
+          else
+          begin
+            res.Second := vsv(Value, 18, 2, 0, 59, 'seconds');
+            if length(Value) <= 20 then
+              res.FPrecision := dtpSec
+            else
+            begin
+              s := copy(Value, 21, 6);
+              res.FractionPrecision := length(s);
+              res.fraction := trunc(vsv(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - res.FractionPrecision));
+              res.FPrecision := dtpNanoSeconds;
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+  result := res.checkNoException;
+end;
+
+function TDateTimeEx.lessPrecision: TDateTimeEx;
+begin
+  result := self;
+  if result.FPrecision > dtpYear then
+    result.FPrecision := pred(result.FPrecision);
+  result.RollUp;
+end;
+
 function TDateTimeEx.IncrementWeek : TDateTimeEx;
 var
   i: Integer;
@@ -507,7 +634,6 @@ begin
   result := StrToInt(v);
   if (result < min) or (result > max) then
     raise exception.create('Value for '+name+' in date/time "'+value+'" is not allowed');
-
 end;
 
 
@@ -1101,6 +1227,35 @@ begin
   result.minute := minute;
   result.second := second;
   result.Fraction := fraction;
+end;
+
+function TDateTimeEx.after(other : TDateTimeEx; inclusive : boolean) : boolean;
+var
+  uSelf, uOther : TDateTimeEx;
+begin
+  uSelf := UTC;
+  uOther := other.UTC;
+  if uSelf.equal(uOther) then
+    exit(inclusive);
+  result := (uSelf.year >= uOther.year) and (uSelf.month >= uOther.month) and (uSelf.day >= uOther.day) and
+            (uSelf.hour >= uOther.hour) and (uSelf.minute >= uOther.minute) and (uSelf.second >= uOther.second) and (uSelf.fraction >= uOther.fraction);
+end;
+
+function TDateTimeEx.before(other : TDateTimeEx; inclusive : boolean):boolean;
+var
+  uSelf, uOther : TDateTimeEx;
+begin
+  uSelf := UTC;
+  uOther := other.UTC;
+  if uSelf.equal(uOther) then
+    exit(inclusive);
+  result := (uSelf.year <= uOther.year) and (uSelf.month <= uOther.month) and (uSelf.day <= uOther.day) and
+            (uSelf.hour <= uOther.hour) and (uSelf.minute <= uOther.minute) and (uSelf.second <= uOther.second) and (uSelf.fraction <= uOther.fraction);
+end;
+
+function TDateTimeEx.between(min, max : TDateTimeEx; inclusive : boolean):boolean;
+begin
+  result := after(min, inclusive) and before(max, inclusive);
 end;
 
 const
