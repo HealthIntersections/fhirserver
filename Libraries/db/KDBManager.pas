@@ -796,7 +796,7 @@ function KDBManagers : TKDBManagerList;
 implementation
 
 uses
-  Windows,
+//  Windows,
   ThreadSupport,
   ErrorSupport;
 

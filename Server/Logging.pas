@@ -32,7 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,
   FileSupport,
   StringSupport,
   AdvObjects,
@@ -205,7 +204,7 @@ Begin
   x := last(dir, '\');
   If x > 1 Then
     CreateDir(Copy(dir, 1, x - 1));
-  Result := windows.Createdirectory(PChar(dir), Nil);
+  Result := ForceFolder(dir);
   If Not Result Then
     If (GetLastError = 183) Then
       Result := True; // directory existed. ( but thats O.K.)

@@ -23,6 +23,9 @@ type
     [TestCase] procedure TestAdvObject;
     [TestCase] procedure TestCriticalSectionSimple;
     [TestCase] procedure TestCriticalSectionThreaded;
+    [TestCase] procedure TestKCriticalSectionThreaded;
+    [TestCase] procedure TestKCriticalSectionSimple;
+    [TestCase] procedure TestSemaphore;
     [TestCase] procedure TestTemp;
     [TestCase] procedure TestDateTimeEx;
     [TestCase] procedure TestAdvFile;
@@ -34,12 +37,14 @@ implementation
 uses
   SysUtils, Classes,
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
-  SystemSupport, DateSupport, FileSupport,
+  SystemSupport, DateSupport, FileSupport, kCritSct,
   AdvObjects, AdvFiles;
 
 var
   globalInt : cardinal;
   cs : TRTLCriticalSection;
+  kcs : TCriticalSection;
+  sem : TKSemaphore;
 
 Const
   TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
@@ -120,8 +125,33 @@ begin
   end;
 end;
 
+procedure TOSXTests.TestKCriticalSectionSimple;
+begin
+  kcs := TCriticalSection.Create('test');
+  try
+    kcs.Enter;
+    try
+      Assert.IsTrue(true);
+    finally
+      kcs.Leave;
+    end;
+  finally
+    kcs.Free;
+  end;
+end;
+
 type
-  TTestThread = class(TThread)
+  TTestCriticalSectionThread = class(TThread)
+  protected
+    procedure Execute; override;
+  end;
+
+  TTestKCriticalSectionThread = class(TThread)
+  protected
+    procedure Execute; override;
+  end;
+
+  TTestSemaphoreThread = class(TThread)
   protected
     procedure Execute; override;
   end;
@@ -133,7 +163,7 @@ begin
   try
     EnterCriticalSection(cs);
     try
-      TTestThread.create();
+      TTestCriticalSectionThread.create();
       Sleep(10);
       Assert.IsTrue(globalInt = GetCurrentThreadId);
     finally
@@ -148,6 +178,62 @@ begin
     end;
   finally
     DeleteCriticalSection(cs);
+  end;
+end;
+
+procedure TOSXTests.TestKCriticalSectionThreaded;
+begin
+  globalInt := GetCurrentThreadId;
+  kcs := TCriticalSection.Create('none');
+  try
+    kcs.Enter;
+    try
+      TTestKCriticalSectionThread.create();
+      Sleep(10);
+      Assert.IsTrue(globalInt = GetCurrentThreadId);
+    finally
+      kcs.Leave;
+    end;
+    sleep(10);
+    kcs.Enter;
+    try
+      Assert.IsTrue(globalInt <> GetCurrentThreadId);
+    finally
+      kcs.Leave;
+    end;
+  finally
+    kcs.free;
+  end;
+end;
+
+procedure TOSXTests.TestSemaphore;
+var
+  thread : TTestSemaphoreThread;
+begin
+  globalInt := 0;
+  sem := TKSemaphore.Create(0);
+  try
+    thread := TTestSemaphoreThread.Create;
+    try
+      thread.FreeOnTerminate := true;
+      while (globalInt = 0) do
+        sleep(10);
+      Assert.IsTrue(globalInt = 1, '1');
+      sem.Release;
+      sleep(10);
+      Assert.IsTrue(globalInt = 2, '2');
+      sem.Release;
+      sleep(10);
+      Assert.IsTrue(globalInt = 3, '3');
+      sleep(900);
+      Assert.IsTrue(globalInt = 4, '4');
+    finally
+      thread.Terminate;
+    end;
+    sleep(900);
+    Assert.IsTrue(globalInt = 100, '100');
+  finally
+    sem.Free;
   end;
 end;
 
@@ -220,15 +306,40 @@ begin
 //  Assert.IsTrue(d1 = d2 - d3);
 end;
 
-{ TTestThread }
+{ TTestCriticalSectionThread }
 
-procedure TTestThread.execute;
+procedure TTestCriticalSectionThread.execute;
 begin
   EnterCriticalSection(cs);
   try
     globalInt := GetCurrentThreadId;
   finally
     LeaveCriticalSection(cs);
+  end;
+end;
+
+{ TTestSemaphoreThread }
+
+procedure TTestSemaphoreThread.execute;
+begin
+  inc(globalInt);
+  while not Terminated do
+  begin
+    sem.WaitFor(500);
+    inc(globalInt);
+  end;
+  globalInt := 100;
+end;
+
+{ TTestKCriticalSectionThread }
+
+procedure TTestKCriticalSectionThread.Execute;
+begin
+  kcs.Enter;
+  try
+    globalInt := GetCurrentThreadId;
+  finally
+    kcs.Leave;
   end;
 end;
 

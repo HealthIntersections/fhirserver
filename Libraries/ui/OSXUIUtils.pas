@@ -7,7 +7,7 @@ uses
   FMX.Platform.Win, Winapi.Windows, Winapi.ShellAPI, ComObj, ShlObj, ActiveX, FMX.Types;
   {$ENDIF MSWINDOWS}
   {$IFDEF MACOS}
-  Macapi.AppKit, Macapi.Foundation, Macapi.ObjectiveC;
+  FMX.Types, Macapi.AppKit, Macapi.Foundation, Macapi.ObjectiveC, Posix.Stdlib;
   {$ENDIF MACOS}
 
 function SelectDirectory(Handle : TWindowHandle; const ATitle: string; const Existing : String; var ADir: string): boolean;
@@ -112,13 +112,13 @@ begin
   LOpenDir.setAllowsMultipleSelection(False);
   LOpenDir.setCanChooseFiles(False);
   LOpenDir.setCanChooseDirectories(True);
-  if ADir &lt;&gt; '' then
+  if ADir <> '' then
   begin
     LInitialDir := TNSURL.Create;
     LInitialDir.initFileURLWithPath(NSSTR(ADir));
     LOpenDir.setDirectoryURL(LInitialDir);
   end;
-  if ATitle &lt;&gt; '' then
+  if ATitle <> '' then
     LOpenDir.setTitle(NSSTR(ATitle));
   LOpenDir.retain;
   try

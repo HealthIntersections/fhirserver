@@ -115,11 +115,6 @@ uses
   ThreadSupport in '..\..\reference-platform\support\ThreadSupport.pas',
   TerminologyServer in '..\..\Server\TerminologyServer.pas',
   AdvStringObjectMatches in '..\..\reference-platform\support\AdvStringObjectMatches.pas',
-  KDBOdbcExpress in '..\..\Libraries\db\KDBOdbcExpress.pas',
-  OdbcExtras in '..\..\Libraries\db\OdbcExtras.pas',
-  OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas',
-  OdbcImplementation in '..\..\Libraries\db\OdbcImplementation.pas',
-  OdbcCore in '..\..\Libraries\db\OdbcCore.pas',
   AdvDispatchers in '..\..\reference-platform\support\AdvDispatchers.pas',
   AdvEvents in '..\..\reference-platform\support\AdvEvents.pas',
   AdvMethods in '..\..\reference-platform\support\AdvMethods.pas',
@@ -209,7 +204,8 @@ uses
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   FHIRSearch in '..\..\reference-platform\support\FHIRSearch.pas',
   TerminologyOperations in '..\..\Server\TerminologyOperations.pas',
-  WebSourceProvider in '..\..\Server\WebSourceProvider.pas';
+  WebSourceProvider in '..\..\Server\WebSourceProvider.pas',
+  vpocversion in 'vpocversion.pas';
 
 {$R *.res}
 

@@ -40,7 +40,7 @@ uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   StringSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
-  KDBManager, KDBOdbcExpress,
+  KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
   TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices, ACIRServices,
   CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
@@ -48,12 +48,15 @@ uses
   TerminologyServerStore, SnomedExpressions;
 
 Type
+  TDataBaseConnectionEvent = function (name : String; max, timeout : integer; driver, server, database, username, password : String) : TKDBManager of object;
+
   TTerminologyServer = class (TTerminologyServerStore)
   private
     FExpansions : TAdvStringObjectMatch;
     FDependencies : TAdvStringObjectMatch; // object is TAdvStringList of identity
     FClosures : TAdvMap<TClosureManager>;
     FWebBase : String;
+    FOnConnectDB : TDataBaseConnectionEvent;
 
     procedure AddDependency(name, value : String);
     function getCodeDefinition(c : TFhirCodeSystemConcept; code : string) : TFhirCodeSystemConcept; overload;
@@ -114,6 +117,7 @@ Type
     // database maintenance
     procedure BuildIndexes(prog : boolean);
     function Summary : String;
+    property OnConnectDB : TDataBaseConnectionEvent read FOnConnectDB write FOnConnectDB;
   end;
 
 implementation
@@ -171,14 +175,14 @@ begin
   if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
   begin
     logt('Connect to RxNorm');
-    RxNorm := TRxNormServices.Create(TKDBOdbcDirect.create('rxnorm', 100, 0, 'SQL Server Native Client 11.0',
+    RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, 'SQL Server Native Client 11.0',
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
   if ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', '') <> '' then
   begin
     logt('Connect to NciMeta');
-    NciMeta := TNciMetaServices.Create(TKDBOdbcDirect.create('ncimeta', 100, 0, 'SQL Server Native Client 11.0',
+    NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, 'SQL Server Native Client 11.0',
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;

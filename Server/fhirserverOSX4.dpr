@@ -152,3 +152,4 @@ TestInsight not for OSX
       System.Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+

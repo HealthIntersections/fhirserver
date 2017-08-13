@@ -39,6 +39,7 @@ uses
   OSXUtils,
   Macapi.CoreServices,
   Macapi.Mach,
+  RTLConsts,
   {$ELSE}
   Windows,
   {$ENDIF}
@@ -107,18 +108,16 @@ type
     property LockThread: Thread Read FLockThread;
   end;
 
-  {$IFNDEF MACOS}
   TKSemaphore = class(TObject)
   Private
-    FSem: {$IFDEF MAXOS} dispatch_semaphore_t {$ELSE} THandle {$ENDIF};
+    FSem: {$IFDEF MACOS} dispatch_semaphore_t {$ELSE} THandle {$ENDIF};
   Public
     constructor Create(CurrCount: Integer);
     destructor Destroy; Override;
     function WaitFor(timeout: Cardinal): TWaitResult;
     procedure Release;
-    property Handle: THandle Read FSem;
+    property Handle: {$IFDEF MACOS} dispatch_semaphore_t {$ELSE} THandle {$ENDIF} Read FSem;
   end;
-  {$ENDIF}
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
@@ -379,24 +378,27 @@ Begin
   End;
 End;
 
-{$IFNDEF MACOS}
 { TKSemaphore }
 
 constructor TKSemaphore.Create(CurrCount: Integer);
 begin
   inherited Create;
-//  {$IFDEF MACOS}
-//  FSem := dispatch_semaphore_create(CurrCount);
-//  if FSem = nil then
-//    raise ESyncObjectException.CreateRes(@sErrorCreatingSemaphore);
-//  {$ELSE}
+  {$IFDEF MACOS}
+  FSem := dispatch_semaphore_create(CurrCount);
+  if FSem = nil then
+    raise ESyncObjectException.CreateRes(@sErrorCreatingSemaphore);
+  {$ELSE}
   FSem := CreateSemaphore(NIL, CurrCount, $FFFF, NIL); // arbitrarily large number
-//  {$ENDIF}
+  {$ENDIF}
 end;
 
 destructor TKSemaphore.Destroy;
 begin
+  {$IFDEF MACOS}
+  dispatch_release(FSem);
+  {$ELSE}
   closehandle(FSem);
+  {$ENDIF}
   inherited Destroy;
 end;
 
@@ -404,6 +406,13 @@ function TKSemaphore.WaitFor(timeout: Cardinal): TWaitResult;
 var
   r: Cardinal;
 begin
+  {$IFDEF MACOS}
+  r := dispatch_semaphore_wait(FSem, timeout * 1000000);
+  if r = 0 then
+    Result := wrSignaled
+  else
+    Result := wrTimeOut;
+  {$ELSE}
   r := WaitForSingleObject(FSem, timeout);
   case r of
     WAIT_OBJECT_0:
@@ -415,13 +424,18 @@ begin
     else
       Result := wrError;
     end;
+  {$ENDIF}
 end;
 
 procedure TKSemaphore.Release;
 begin
+  {$IFDEF MACOS}
+  dispatch_semaphore_signal(FSem);
+  {$ELSE}
   releaseSemaphore(FSem, 1, NIL);
+  {$ENDIF}
 end;
-{$ENDIF}
+
 
 initialization
   InitUnit;

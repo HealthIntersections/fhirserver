@@ -53,7 +53,7 @@ The content loads and works extremely quickly.
 }
 
 Uses
-  Windows, SysUtils, Classes, Generics.Collections, Character,
+  SysUtils, Classes, Generics.Collections, Character,
   StringSupport, FileSupport, BytesSupport, MathSupport,
   AdvStringLists, AdvObjectLists, AdvObjects, AdvGenerics,
   YuStemmer, DateSupport,

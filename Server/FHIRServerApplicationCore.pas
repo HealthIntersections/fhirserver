@@ -97,6 +97,7 @@ Type
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
 
+    function connectToDB(name : String; max, timeout : integer; driver, server, database, username, password : String) : TKDBManager;
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -385,6 +386,11 @@ end;
 
 
 
+function TFHIRService.connectToDB(name: String; max, timeout: integer; driver, server, database, username, password: String): TKDBManager;
+begin
+  result := TKDBOdbcDirect.create(name, max, timeout, driver, server, database, username, password);
+end;
+
 procedure TFHIRService.cb(i: integer; s: WideString);
 begin
   if FInstaller then
@@ -532,6 +538,7 @@ end;
 procedure TFHIRService.LoadTerminologies;
 begin
   FTerminologyServer := TTerminologyServer.create(FDB.Link);
+  FTerminologyServer.OnConnectDB := connectToDB;
   FTerminologyServer.load(FIni);
 end;
 
