@@ -208,6 +208,10 @@ begin
   Assert.IsTrue(TDateTimeEx.fromHL7('201304051234').Min.toHL7 = '20130405123400.000');
   Assert.IsTrue(TDateTimeEx.fromHL7('201304051234').Max.toHL7 = '20130405123500.000');
 
+  Assert.IsTrue(TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010000'), true));
+  Assert.IsTrue(not TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010000'), false));
+  Assert.IsTrue(TDateTimeEx.fromHL7('201301010000').before(TDateTimeEx.fromHL7('201301010001'), true));
+  Assert.IsTrue(not TDateTimeEx.fromHL7('201301010001').before(TDateTimeEx.fromHL7('201301010000'), true));
   //
 //  d1 := UniversalDateTime;
 //  d2 := LocalDateTime;
