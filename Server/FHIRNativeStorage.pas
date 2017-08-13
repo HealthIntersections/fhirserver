@@ -8593,7 +8593,7 @@ begin
       conn.terminate;
       if conn.Owner.Platform = kdbMySQL then
         conn.SQL :=
-          'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS INT) ELSE 0 END ) as MaxId from Ids group by ResourceTypeKey'
+          'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS SIGNED) ELSE 0 END) as MaxId from Ids group by ResourceTypeKey'
       else
         conn.SQL :=
           'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
