@@ -273,7 +273,9 @@ uses
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   HackingHealthLogic in '..\Server\Modules\HackingHealthLogic.pas',
   SCrypt in '..\Libraries\security\SCrypt.pas',
-  ApplicationCache in '..\Server\ApplicationCache.pas';
+  ApplicationCache in '..\Server\ApplicationCache.pas',
+  TerminologyOperations in '..\Server\TerminologyOperations.pas',
+  WebSourceProvider in '..\Server\WebSourceProvider.pas';
 
 var
   runner : ITestRunner;

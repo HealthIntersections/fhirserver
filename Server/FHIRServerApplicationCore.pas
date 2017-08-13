@@ -73,7 +73,7 @@ Uses
   TerminologyServer,
   FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
-  FHIRServerConstants, FHIRServerContext, ServerUtilities,
+  FHIRServerConstants, FHIRServerContext, ServerUtilities, WebSourceProvider,
   SCIMServer, CDSHooksServices;
 
 Type
@@ -583,8 +583,9 @@ begin
       ctxt.ownername := Fini.readString(voVersioningNotApplicable, 'admin', 'ownername', '');
       store.Initialise(FIni);
       FWebServer := TFhirWebServer.create(FIni.link, DisplayName, FTerminologyServer, ctxt.link);
-      ctxt.userProvider := TSCIMServer.Create(Fdb.link, FWebServer.SourcePath, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
+      ctxt.userProvider := TSCIMServer.Create(Fdb.link, FIni.ReadString(voVersioningNotApplicable, 'scim', 'salt', ''), FWebServer.host, FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), false);
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
+      FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;
       FWebServer.CDSHooksServer.registerService(TCDAHooksCodeViewService.create);
       FWebServer.CDSHooksServer.registerService(TCDAHooksIdentifierViewService.create);
@@ -633,7 +634,7 @@ begin
   if FDb = nil then
     ConnectToDatabase;
   logt('mount database');
-  scim := TSCIMServer.Create(FDB.Link, '', salt, FIni.ReadString(voVersioningNotApplicable, 'web', 'host', ''), FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), true);
+  scim := TSCIMServer.Create(FDB.Link, salt, FIni.ReadString(voVersioningNotApplicable, 'web', 'host', ''), FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), true);
   try
     conn := FDb.GetConnection('setup');
     try
@@ -708,16 +709,8 @@ end;
 { TFHIRServerDataStore }
 
 function TFHIRServerDataStore.createOperationContext(lang: String): TFHIROperationEngine;
-var
-  res : TFHIRNativeOperationEngine;
 begin
-  res := TFHIRNativeOperationEngine.Create(lang, ServerContext, self.Link);
-  try
-    res.Connection := DB.GetConnection('Operation');
-    result := res.Link;
-  finally
-    res.free;
-  end;
+  result := TFHIRNativeOperationEngine.Create(lang, ServerContext, self.Link, DB.GetConnection('Operation'));
 end;
 
 procedure TFHIRServerDataStore.Yield(op: TFHIROperationEngine; e : Exception);

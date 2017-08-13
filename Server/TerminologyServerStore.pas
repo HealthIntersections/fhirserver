@@ -187,6 +187,7 @@ Type
     FCvx : TCvxServices;
     FACIR : TACIRServices;
     FStem : TYuStemmer_8;
+    FTagid : integer;
 
     FLastConceptKey : integer;
     FLastClosureKey : integer;
@@ -1264,6 +1265,8 @@ var
 begin
   FLock.Lock('SeeSpecificationResource');
   try
+    inc(FTagid);
+    resource.TagInt := FTagId;
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
@@ -1330,6 +1333,8 @@ begin
 
   FLock.Lock('SeeTerminologyResource');
   try
+    inc(FTagid);
+    resource.TagInt := FTagId;
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);

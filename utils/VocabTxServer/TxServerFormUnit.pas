@@ -11,7 +11,7 @@ uses
   FileSupport, SystemSupport, kCritSct, StringSupport, DateSupport,
   FHIRResources, FHIRParser, FHIRSecurity,
   FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIRLog,
-  VocabPocServerCore, TerminologyServer, FMX.WebBrowser;
+  VocabPocServerCore, TerminologyServer, WebSourceProvider;
 
 const
   MIN_WIDTH = 400;
@@ -93,6 +93,7 @@ type
     FServer : TServerControl;
     FWantClose : boolean;
 
+    procedure checkPreRequisites;
   public
     { Public declarations }
   end;
@@ -135,22 +136,30 @@ begin
     FServer.FIni.WriteString('web', 'http', edtPort.Text);
     FServer.FIni.WriteString('web', 'host', 'localhost');
     FServer.FIni.WriteString('web', 'base', '/vocab');
-    FServer.FIni.WriteString('fhir', 'web', 'C:\work\fhirserver\web');
     FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
     FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
-    if FileExists(path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])) then
-      FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']))
-    else
-      FServer.FIni.WriteString('ucum', 'source', 'C:\work\fhirserver\Exec\ucum-essence.xml');
-    if FileExists(path([ExtractFilePath(paramstr(0)), 'loinc.cache'])) then
-      FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc.cache']))
-    else
-      FServer.FIni.WriteString('loinc', 'cache', 'C:\ProgramData\fhirserver\loinc_261.cache');
+    FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
+    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_261.cache']));
     FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
     FServer.start;
   end
   else
     FServer.stop;
+end;
+
+procedure TTxServerForm.checkPreRequisites;
+var
+  s : String;
+begin
+  s := '';
+  if not FileExists(path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])) then
+    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])+' not found'+#13#10;
+  if not FileExists(path([ExtractFilePath(paramstr(0)), 'loinc_261.cache'])) then
+    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'loinc_261.cache'])+' not found'+#13#10;
+  if not FileExists(path([ExtractFilePath(paramstr(0)), 'web.zip'])) then
+    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'web.zip'])+' not found'+#13#10;
+  if s <> '' then
+    MessageDlg('Installation Problem: '+#13#10+s, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;
 
 procedure TTxServerForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -212,6 +221,7 @@ begin
 
   if not mnuViewSettings.IsChecked then
     pnlSettings.size.height := 0;
+  checkPreRequisites;
 end;
 
 procedure TTxServerForm.mnuExitClick(Sender: TObject);
@@ -365,6 +375,7 @@ begin
         loadPoC(ctxt.TerminologyServer);
         ctxt.ownername := 'Vocab PoC Server';
         FWebServer := TFhirWebServer.create(FIni.Link, ctxt.ownername, ctxt.TerminologyServer, ctxt.link);
+        FWebServer.SourceProvider := TFHIRWebServerSourceZipProvider.Create(path([ExtractFilePath(paramstr(0)), 'web.zip']));
         ctxt.UserProvider := TTerminologyServerUserProvider.Create;
         ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
         FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;

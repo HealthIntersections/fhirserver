@@ -49,7 +49,6 @@ Type
     FWorker : TFHIRWorkerContext;
     FServer : TTerminologyServer;
     FFHIRPath : String;
-    FWebDir : String;
     FReturnProcessFileEvent : TReturnProcessFileEvent;
     function asJson(r : TFHIRResource) : String;
     function asXml(r : TFHIRResource) : String;
@@ -102,7 +101,7 @@ Type
     procedure ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
     procedure ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession);
   public
-    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath, webdir : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
+    constructor create(server : TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath : String; ReturnProcessFileEvent : TReturnProcessFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequest(path : String) : boolean;
     Procedure Process(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo; secure : boolean);
@@ -148,12 +147,11 @@ begin
   end;
 end;
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath, WebDir : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
+constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContext; BaseURL, FHIRPath : String; ReturnProcessFileEvent : TReturnProcessFileEvent);
 begin
   create;
   FServer := server;
   FFHIRPath := FHIRPath;
-  FWebDir := WebDir;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   FServer.webBase := BaseURl;
   FWorker := worker;
@@ -226,7 +224,7 @@ begin
       else if pm.getVar('op') = 'translate' then
         vars['translate.results'] := processTranslate(pm);
 
-      FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'txhome.html', false, vars);
+      FReturnProcessFileEvent(response, session, request.Document, 'txhome.html', false, vars);
     finally
       pm.Free;
     end;
@@ -252,7 +250,7 @@ begin
     finally
       cm.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-cm-id.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-cm-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -275,7 +273,7 @@ begin
     finally
       vs.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs-id.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -298,7 +296,7 @@ begin
     finally
       cs.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-cs-id.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-cs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -343,7 +341,7 @@ begin
     finally
       html.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -400,7 +398,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -475,7 +473,7 @@ begin
     finally
       mlist.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -606,7 +604,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, IncludeTrailingPathDelimiter(FWebDir) + 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;

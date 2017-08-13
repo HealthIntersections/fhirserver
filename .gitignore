@@ -103,3 +103,9 @@ Exec/certificates/
 utils/AppEndorserUI/OSX32/Debug/AppEndorser.info.plist
 utils/AppEndorserUI/OSX32/Debug/AppEndorser.entitlements
 utils/AppEndorserUI/OSX32/Debug/AppEndorser
+
+utils/VocabTxServer/Win64/Debug/web\.zip
+utils/VocabTxServer/install/vocabpoc.fbpInf
+utils/VocabTxServer/install/vocabpoc.fb8lck
+utils/VocabTxServer/VocabTxServer.rsb
+utils/VocabTxServer/install/vocabpoc.fbpbrk

@@ -1,0 +1,534 @@
+﻿project
+begin
+  projectid = {C883E840-4E9E-4FDF-8A78-42F59F983922}
+  target
+  begin
+    name = Default
+    targetid = {6B5A0694-1E5F-4406-9BAB-B997EBCC200E}
+    rootaction
+    begin
+      action.variables.loadfromini
+      begin
+        createvarininiifnotexists = false
+        failifvariablenotdefined = true
+        failifvariablenotininifile = true
+        id = {AF219536-6BFA-4B06-B4B5-925AA7B158E7}
+        ignorefilenotfound = false
+        inifile = C:\\work\\ftp.ini
+        sectionname = vpoc-settings
+        variables = "BuildCount" +
+                    "certpword" +
+                    "ftppassword" +
+                    "npp-purpose" +
+                    ""
+        variabletypes = "String" +
+                        "String" +
+                        "String" +
+                        "String" +
+                        ""
+      end
+      action.variable.set
+      begin
+        applytoexisting = false
+        doexpandexpression = true
+        forcetype = ftInteger
+        id = {1241A20F-5383-4BD3-8892-EA946CA3B84B}
+        modifier = smIncrement
+        newvalue = %BuildCount%
+        variablename = BuildCount
+      end
+      action.datetime.get
+      begin
+        dateformat = yyyy-mm-dd
+        fbvariable = BuildDate
+        forceseparators = false
+        id = {0F85BD3E-237A-4675-9E67-5D73A445C023}
+        manipulationtype = Add
+        manipulationunit = Seconds
+        thedate = 42335.7506611574
+        usenow = true
+      end
+      action.gui.inputbox
+      begin
+        actiontypeid = {95261620-BBED-49FE-89A2-B623F678C1F0}
+        customactionname = InputBox
+        enabletimeout = false
+        id = {D023B5E6-7C10-46CE-AE95-33E60E342DFB}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        terminateontimeout = true
+        timeoutlength = 1
+        as.caption = "Release Notes"
+        as.text = "What to say to users in release"
+        as.defaultvalue = %npp-purpose%
+        as.xpos = -1
+        as.ypos = -1
+        as.returnvalue = "First actual Release"
+        as.returnvariable = npp-purpose
+      end
+      action.variables.savetoini
+      begin
+        description = "Save Purpose"
+        erasesection = false
+        id = {5E945733-DF55-43B4-88EA-EC690412E720}
+        inifile = C:\\work\\ftp.ini
+        saveall = false
+        sectionname = vpoc-settings
+        variables = "npp-purpose" +
+                    ""
+      end
+      action.variables.loadfromini
+      begin
+        createvarininiifnotexists = false
+        description = "Read FHIR Version"
+        failifvariablenotdefined = true
+        failifvariablenotininifile = true
+        id = {25828604-726F-4115-89FB-03799A67707B}
+        ignorefilenotfound = false
+        inifile = C:\\work\\org.hl7.fhir.old\\org.hl7.fhir.dstu2\\build\\publish\\version.info
+        sectionname = FHIR
+        variables = "FhirVersion" +
+                    ""
+        variabletypes = "String" +
+                        ""
+      end
+      action.variables.logvalues
+      begin
+        failifnotdefined = true
+        id = {090E89B2-F656-41EE-BFAA-DF4B4535A231}
+        logallvariables = false
+        variablestoragestring = "BuildCount" +
+                                "FhirVersion" +
+                                "npp-purpose" +
+                                ""
+      end
+      action.variables.savetoini
+      begin
+        description = "update BuildCount in source"
+        erasesection = false
+        id = {9950814C-E13D-49D7-A8CF-45CDE3D2AECF}
+        inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\vpocversion.pas
+        saveall = false
+        sectionname = vpoc-settings
+        variables = "BuildCount" +
+                    ""
+      end
+      action.files.delete
+      begin
+        deletehidden = false
+        deletereadonly = true
+        failifnofile = false
+        filespec = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\VocabTxServer.exe
+        id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 1
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Berlin
+        description = "Compile the Server"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\VocabTxServer_Icon.ico
+        id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        minorversion = 0
+        platform = Win64
+        projectfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\VocabTxServer.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = true
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
+                             ""
+          conditionals = RELEASE;FHIR4
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = VCL
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+          overflowchecking = false
+          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the Server"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {C2423202-7FF2-4F3B-AFAC-22DCBFEBAF68}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\VocabTxServer.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set AppVerName in Inno Script"
+        id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
+        inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
+        newvalue = "0.0.%BuildCount% (FHIR Version %FhirVersion%)"
+        section = Setup
+        valuename = AppVerName
+        valuetype = vtString
+      end
+      action.ini.write
+      begin
+        allowcreate = false
+        deleteifblank = false
+        description = "Set OutputFilename in Inno Script"
+        id = {ACC022AD-C186-4AA5-A36D-448F59DDDB0D}
+        inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
+        newvalue = vocabpoc-install-0.0.%BuildCount%
+        section = Setup
+        valuename = OutputBaseFilename
+        valuetype = vtString
+      end
+      action.innosetup.execute
+      begin
+        description = "Build the VocabPoC install"
+        id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
+        innoversion = Inno5
+        scriptfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
+        showprogress = true
+        unicode = false
+        usecommandline = true
+        usepreprocessor = false
+      end
+      action.delay
+      begin
+        delay = 5000
+        id = {09771FF6-15E3-45B4-A126-FB1C5E483552}
+      end
+      action.process.execute
+      begin
+        captureoutput = true
+        description = "Sign the plugin install"
+        enablelivecapture = true
+        enablereturncodecheck = true
+        enabletimeout = false
+        expandimpersonationtoken = false
+        hidewindow = true
+        id = {558736BC-993B-4201-95DD-D5280B95116C}
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logoutput = true
+        logprocessparameters = true
+        params = "sign /f C:\\work\\fhirserver\\install\\healthintersections.pfx /p %certpword% /d \"FHIR Server\" /du \"http://www.healthintersections.com.au\" \"C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc-install-0.0.%BuildCount%.exe\""
+        programname = "C:\\Program Files (x86)\\kSign\\kSignCMD.exe"
+        redirectstderr = true
+        returncodecomparator = rcEqualTo
+        returncodetocheck = 0
+        startindir = "C:\\Program Files (x86)\\kSign"
+        terminateontimeout = false
+        timeoutlength = 1
+        useerrordialogmonitor = false
+        waitforcompletion = true
+      end
+      action.ftp.connect
+      begin
+        connecttimeoutinsec = 0
+        cookie = q3B4xMWDXfAo74OHdw\=\=
+        detailedlogging = false
+        enablekeepalives = false
+        ftpconnectionname = HealthIntersections
+        ftphost = 27.123.25.1
+        ftpport = 21
+        id = {61A1D4BB-5099-4A11-B6CC-5F0FAC9D3A62}
+        passive = true
+        proxyport = 0
+        proxytype = fpcmNone
+        transfertype = ftBinary
+        useglobalopt = false
+        usehost = true
+        useproxy = false
+        userid = healthi3
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = vocabpoc-install-0.0.%BuildCount%.exe
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {73EE9861-9B29-4EDF-B7F7-18F44D1B2B95}
+        localdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+        recursive = false
+        remotefile = public_html/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.xml.node.create
+      begin
+        addnewline = true
+        allowdtds = false
+        description = "update RSS"
+        existsbehaviour = neCreate
+        expanddocumentnodenamespace = false
+        failifmultiple = false
+        id = {E807F1E3-4644-4916-B43D-461B8D69B597}
+        insertat = inAfterXPath
+        insertatxpath = /rss/channel/link
+        nodename = item
+        nodetext = "" +
+                   "      <title\>Vocab PoC Terminology Server release 0.0.%BuildCount% %BuildDate%</title\>" +
+                   "      <link\>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe</link\>" +
+                   "      <description\>%BuildDate% (v0.0.%BuildCount%): %npp-purpose%</description\>" +
+                   "" +
+                   ""
+        parentxpath = /rss/channel
+        parserver = HighestMSXML
+        resolveexternal = true
+        treatastext = false
+        usexmldocobject = false
+        validateonparse = true
+        xmlsourcefile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.rss
+      end
+      action.variables.savetoini
+      begin
+        description = "Save BuildCount"
+        erasesection = false
+        id = {0332261A-0FBA-47CB-A1B9-B8ABA26A4AD0}
+        inifile = C:\\work\\ftp.ini
+        saveall = false
+        sectionname = npp-settings
+        variables = "BuildCount" +
+                    ""
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = vocabpoc.rss
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {F0CFCA3D-AD8D-432D-856C-62DD74CDA5BD}
+        localdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+        recursive = false
+        remotefile = public_html/FhirServer/vocabpoc.rss
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.xml.document.transform
+      begin
+        allowdtds = false
+        expanddocumentnodenamespace = false
+        id = {CEAC67E1-1D9D-4AB0-9467-350EB67305ED}
+        outputfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.htm
+        overwriteoutputfile = true
+        parserver = HighestMSXML
+        preservewhitespace = false
+        resolveexternal = true
+        usexmldocobject = false
+        validateonparse = true
+        xmlfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.rss
+        xsltfile = C:\\work\\fhirserver\\install\\rssn.xslt
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = vocabpoc.htm
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {8C56FE7B-F9C7-472D-BF17-D8DE32AF51FA}
+        localdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+        recursive = false
+        remotefile = public_html/FhirServer/vocabpoc.htm
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.disconnect
+      begin
+        autoreconnect = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        id = {58346928-77F3-4C2F-A158-2DF37D0A7337}
+      end
+    end
+  end
+  variable
+  begin
+    defaultvalue = 0
+    name = BuildCount
+    variablescope = vtProject
+    variabletype = btInteger
+  end
+  variable
+  begin
+    defaultvalue = 0
+    formatstring = c
+    name = BuildDate
+    variablescope = vtProject
+    variabletype = btDateTime
+  end
+  variable
+  begin
+    name = certpword
+    variablescope = vtProject
+  end
+  variable
+  begin
+    name = FhirVersion
+    variablescope = vtProject
+  end
+  variable
+  begin
+    name = FTPFileList
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = FTPItem
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = ftppassword
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    name = npp-purpose
+    variablescope = vtProject
+    variabletype = btString
+  end
+end

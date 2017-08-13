@@ -72,7 +72,7 @@ Uses
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVFormatters, AdvCSVExtractors, AdvFiles, AdvJson, HashSupport,
 
   FHIRTypes, FHIRResources, FHIRConstants, FHIRSupport, FHIRUtilities, SCIMObjects,
-  FHIRUserProvider, FHIRServerContext, FHIRStorageService, FHIRRestServer, ServerUtilities;
+  FHIRUserProvider, FHIRServerContext, FHIRStorageService, FHIRRestServer, ServerUtilities, WebSourceProvider;
 
 Const
   SYSTEM_ID = 'http://example.org/mrn-id';
@@ -351,6 +351,7 @@ begin
 //      ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.ownername := FSystemName;
       FWebServer := TFhirWebServer.create(FIni.Link, FSystemname, nil {FTerminologyServer}, ctxt.link);
+      FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
       ctxt.UserProvider := TExampleFHIRUserProvider.Create;
       ctxt.userProvider.OnProcessFile := FWebServer.ReturnProcessedFile;
       FWebServer.AuthServer.UserProvider := ctxt.userProvider.Link;

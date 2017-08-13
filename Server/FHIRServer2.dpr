@@ -261,7 +261,9 @@ uses
   ClientApplicationVerifier in '..\Libraries\security\ClientApplicationVerifier.pas',
   JWTService in 'JWTService.pas',
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
-  SCrypt in '..\Libraries\security\SCrypt.pas';
+  SCrypt in '..\Libraries\security\SCrypt.pas',
+  TerminologyOperations in 'TerminologyOperations.pas',
+  WebSourceProvider in 'WebSourceProvider.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);
