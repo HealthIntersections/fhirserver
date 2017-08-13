@@ -68,7 +68,6 @@ type
     FIni : TFHIRServerIniFile;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
-    FFilePath : String;
     FSSLPort : String;
     FHost : String;
 
@@ -110,14 +109,13 @@ type
     function isAllowedAud(client_id, aud_uri: String): boolean;
     procedure SetServerContext(const Value: TFHIRServerContext);
     function BuildLoginList(id : String) : String;
-    function AltFile(path: String): String;
     Function CheckLoginToken(state : string; var original : String; var provider : TFHIRAuthProvider):Boolean;
     procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
     procedure readScopes(scopes: TStringList; params: TParseMap);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
 
   public
-    Constructor Create(ini : String; filePath, Host, SSLPort : String);
+    Constructor Create(ini : String; Host, SSLPort : String);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -158,11 +156,10 @@ uses
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(ini: String; filePath, Host, SSLPort : String);
+constructor TAuth2Server.Create(ini: String; Host, SSLPort : String);
 begin
   inherited create;
   FIni := TFHIRServerIniFile.Create(ini);
-  FFilePath := filePath;
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TCriticalSection.Create('auth-server');
@@ -297,14 +294,6 @@ begin
 end;
 
 
-function TAuth2Server.AltFile(path : String) : String;
-begin
-  if path.StartsWith('/') then
-    result := FFilePath+path.Substring(1).Replace('/', '\')
-  else
-    result := '';
-end;
-
 
 function TAuth2Server.isAllowedAud(client_id, aud_uri: String): boolean;
 begin
@@ -414,9 +403,9 @@ begin
       variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
       variables.Add('client-notes', message);
       if ok then
-        OnProcessFile(response, session, '/oauth_login.html', AltFile('/oauth_login.html'), true, variables)
+        OnProcessFile(response, session, '/oauth_login.html', true, variables)
       else
-        OnProcessFile(response, session, '/oauth_login_denied.html', AltFile('/oauth_login_denied.html'), true, variables)
+        OnProcessFile(response, session, '/oauth_login_denied.html', true, variables)
     finally
       variables.free;
     end;
@@ -668,7 +657,7 @@ begin
       variables.Add('username', name);
       variables.Add('patient-list', GetPatientListAsOptions);
       loadScopeVariables(variables, scope, session.User);
-      OnProcessFile(response, session, '/oauth_choice.html', AltFile('/oauth_choice.html'), true, variables)
+      OnProcessFile(response, session, '/oauth_choice.html', true, variables)
     finally
       variables.free;
     end;
@@ -932,7 +921,7 @@ begin
     variables := TDictionary<String,String>.create;
     try
       variables.Add('/oauth2', FPath);
-      OnProcessFile(response, session, FPath+'/auth_skype.html', AltFile('/oauth_skype.html'), true, variables);
+      OnProcessFile(response, session, FPath+'/auth_skype.html', true, variables);
     finally
       variables.free;
     end;
@@ -1266,7 +1255,7 @@ begin
       try
         variables.Add('username', session.User.username);
         variables.Add('/oauth2', FPath);
-        OnProcessFile(response, session, '/oauth_userdetails.html', AltFile('/oauth_userdetails.html'), true, variables)
+        OnProcessFile(response, session, '/oauth_userdetails.html', true, variables)
       finally
         variables.free;
       end;

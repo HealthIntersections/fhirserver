@@ -216,7 +216,8 @@ uses
   JWTService in '..\Server\JWTService.pas',
   SCrypt in '..\Libraries\security\SCrypt.pas',
   ApplicationCache in '..\Server\ApplicationCache.pas',
-  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas';
+  CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
+  WebSourceProvider in '..\Server\WebSourceProvider.pas';
 
 var
   gsrv : TExampleFhirServer;

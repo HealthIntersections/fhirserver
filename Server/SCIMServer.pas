@@ -59,7 +59,6 @@ Type
     salt : String;
     host : String;
     FAnonymousRights : TStringList;
-    FFilePath : String;
 
 
     function GetNextUserKey : Integer;
@@ -87,11 +86,10 @@ Type
     Procedure processUserRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 
     Procedure processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function AltFile(path: String): String;
     procedure processWebUserList(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure processWebUserId(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
-    Constructor Create(db : TKDBManager; filePath, salt, host, defaultRights : String; forInstall : boolean);
+    Constructor Create(db : TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
     Destructor Destroy; override;
     Function Link : TSCIMServer; overload;
 
@@ -176,7 +174,7 @@ begin
   end;
 end;
 
-constructor TSCIMServer.Create(db: TKDBManager; filePath, salt, host, defaultRights : String; forInstall : boolean);
+constructor TSCIMServer.Create(db: TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
 var
   conn : TKDBConnection;
   s : String;
@@ -188,7 +186,6 @@ begin
   FAnonymousRights := TStringList.Create;
   for s in defaultRights.split([',']) do
     FAnonymousRights.add(UriForScope(s));
-  FFilePath := filePath;
   lock := TCriticalSection.Create('scim');
 
   if not forInstall and (db <> nil) then
@@ -1125,7 +1122,7 @@ begin
     end;
 
     if not bDone then
-      OnProcessFile(response, session, '/scimuser.html', AltFile('/scimuser.html'), true, variables);
+      OnProcessFile(response, session, '/scimuser.html', true, variables);
   finally
     variables.free;
   end;
@@ -1203,21 +1200,13 @@ begin
     variables := TDictionary<String,String>.create;
     try
       variables.Add('usertable', b.ToString);
-      OnProcessFile(response, session, '/scimusers.html', AltFile('/scimusers.html'), true, variables);
+      OnProcessFile(response, session, '/scimusers.html', true, variables);
     finally
       variables.free;
     end;
   finally
     b.Free;
   end;
-end;
-
-function TSCIMServer.AltFile(path : String) : String;
-begin
-  if path.StartsWith('/') then
-    result := FFilePath+path.Substring(1).Replace('/', '\')
-  else
-    result := '';
 end;
 
 procedure TSCIMServer.IndexUser(conn: TKDBConnection; user: TSCIMUser; userKey: integer);

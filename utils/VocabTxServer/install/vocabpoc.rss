@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>Vocabulary PoC Terminology Server Release history</title>
+		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>Vocab PoC Terminology Server release 0.0.1 13/08/2017 5:46:34 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.1.exe</link>
+			<description>13/08/2017 5:46:34 PM (v0.0.1): First actual Release</description>
+		</item>
+<item><title>Vocab PoC Terminology Server release 0.0.1 13/08/2017 5:42:29 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.1.exe</link>
+			<description>13/08/2017 5:42:29 PM (v0.0.1): Test Install</description>
+		</item>
+	</channel>
+</rss>

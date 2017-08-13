@@ -73,7 +73,6 @@ Type
     function owningResource : TFhirResourceType; virtual; // for security purposes
     function makeParams(request : TFHIRRequest) : TFhirParameters;
 
-    function buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParameters) : TFHIRExpansionProfile;
   public
     function Name : String; virtual;
     function Types : TFhirResourceTypeSet; virtual;
@@ -138,11 +137,14 @@ Type
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property lang : String read FLang write FLang;
 
+    function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
     function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
     function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
+    function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; virtual;
+    function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
     function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
     procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
@@ -442,6 +444,11 @@ begin
   response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id]);
   response.Body := response.Message;
   response.Resource := BuildOperationOutcome(lang, response.Message);
+end;
+
+function TFHIROperationEngine.opAllowed(resource: string; command: TFHIRCommandType): Boolean;
+begin
+  result := true;
 end;
 
 procedure TFHIROperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
@@ -902,8 +909,19 @@ begin
 end;
 
 procedure TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  i : integer;
+  op : TFhirOperation;
 begin
-  raise Exception.Create('This server does not implement the "Operation" function');
+  for i := 0 to FOperations.count - 1 do
+  begin
+    op := TFhirOperation(FOperations[i]);
+    if (op.HandlesRequest(request)) then
+    begin
+      op.Execute(context, self, request, response);
+      exit;
+    end;
+  end;
 end;
 
 function TFHIROperationEngine.ExecutePatch(request: TFHIRRequest; response: TFHIRResponse): Boolean;
@@ -951,9 +969,19 @@ begin
   raise Exception.Create('This server does not implement the "FindResource" function');
 end;
 
+function TFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;
+begin
+  raise Exception.Create('Must override "GetResourceById" function in '+className);
+end;
+
 function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResource;
 begin
   raise Exception.Create('This server does not implement the "GetResourceByKey" function');
+end;
+
+function TFHIROperationEngine.getResourceByUrl(aType: TFhirResourceType; url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResource;
+begin
+  raise Exception.Create('Must override "getResourceByUrl" function in '+className);
 end;
 
 function TFHIROperationEngine.getResourcesByParam(aType: TFhirResourceType; name, value: string; var needSecure: boolean): TAdvList<TFHIRResource>;
@@ -1309,11 +1337,6 @@ begin
   finally
     result.Free;
   end;
-end;
-
-function TFhirOperation.buildExpansionProfile(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParameters): TFHIRExpansionProfile;
-begin
-  raise Exception.Create('Must override buildExpansionProfile in '+className);
 end;
 
 

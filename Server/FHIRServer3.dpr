@@ -322,7 +322,9 @@ uses
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   HackingHealthLogic in 'Modules\HackingHealthLogic.pas',
   ApplicationCache in 'ApplicationCache.pas',
-  SCrypt in '..\Libraries\security\SCrypt.pas';
+  SCrypt in '..\Libraries\security\SCrypt.pas',
+  TerminologyOperations in 'TerminologyOperations.pas',
+  WebSourceProvider in 'WebSourceProvider.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

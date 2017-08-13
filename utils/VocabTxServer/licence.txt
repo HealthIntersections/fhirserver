@@ -1,0 +1,157 @@
+Health Intersections Pty. Ltd.
+ 
+Installation Agreement ("Agreement")
+
+This Value Set Editor installation agreement governs the FHIR Value Set Editor ("Software").  
+By pressing the "Accept" button below you enter into the terms of this binding 
+contract between you ("you" or "User") and Health Intersections Pty. Ltd.  If 
+you do not agree with the terms of this license, choose the "No" button below 
+which will terminate the installation. Installation of the Software constitutes 
+acceptance of the terms of this Agreement.
+
+Grant of License
+--------------------------
+Subject to the terms and conditions of this Agreement, Health Intersections Pty. 
+Ltd. hereby grants you a limited, nonexclusive license to install and use this 
+software according to conditions provided with the Value Set Editor license 
+certificate under which the software is used. Value Set Editor license certificates 
+can be obtained from the Value Set Editor website at http://www.healthintersections.com.au/txeditor
+
+Limitations
+----------------
+The Software is licensed, not sold, to you.  You must retain all copyright and 
+related notices of Health Intersections Pty. Ltd's ownership and other rights in the 
+Software in the product, labeling and documentation provided. Furthermore, 
+you may not modify, translate, de-compile, reverse engineer, disassemble or 
+otherwise decode the Software. 
+
+The Value Set Editor installation package may be freely copied, distributed and 
+installed on multiple computers. An Value Set Editor license certificate is required 
+for each installed instance of the Value Set Editor. 
+
+Trademarks
+------------------
+You acknowledge that Health Intersections Pty. Ltd, the FHIR Value Set Editor and related 
+logos and designs are trademarks of Health Intersections Pty. Ltd. and that no 
+rights in such trademarks are granted to you by this Agreement.  
+
+Modifications
+---------------------
+Health Intersections Pty. Ltd. reserves the right to modify the Software from time to 
+time without obligation to notify you, or any other person or organization of such 
+revision or change. 
+
+Copyright
+---------------
+Australian copyright laws and international copyright treaties, as well as all other 
+intellectual property laws and treaties protect this software.
+
+End User Responsibilities
+---------------------------------------
+Upon installation of the Value Set Editor you are responsible for:
+ 1) The backup of data, directories, folders, files or documents associated with 
+     the use of the Value Set Editor. Health Intersections Pty. Ltd. has no liability for lost 
+     or corrupted data.
+
+Applicable Laws
+--------------------------
+You agree not to intentionally or unintentionally violate any  applicable local, 
+state, federal or international laws. You take full responsibility for any content 
+authored or distributed via your installation of the Value Set Editor.  It is your responsibility to ensure 
+that your implementation of the Value Set Editor complies with any applicable laws 
+including without limitation, Privacy Acts and Laws, and any applicable State or 
+Federal, Regulations, Laws or Acts regarding transfer of private and health 
+information.  Health Intersections Pty. Ltd. accepts no responsibility for any local, 
+state, federal or international laws breached via the use of the Value Set Editor.
+
+Security
+------------
+You are responsible for maintaining the security of the environment in which 
+the Value Set Editor is used and the integrity of any private key files used 
+by the Value Set Editor. 
+
+If you wish to use the cryptographic features of the Value Set Editor, then you may need 
+to obtain and install a signed digital certificate from a certificate authority or a 
+certificate server. The certificate provider may charge additional fees for the 
+certification services. The use of digital certificates is subject to the terms 
+specified by the certificate provider.
+
+There are inherent limitations in the capabilities of digital certificates.  If you are
+sending or receiving digital certificates, you are responsible for familiarizing yourself
+with and evaluating such terms and limitations.
+
+Limitation of Liability
+-------------------------------
+ IN NO EVENT WILL Health Intersections Pty. Ltd. BE LIABLE FOR ANY
+DAMAGES, INCLUDING LOSS OF DATA, LOST OPPORTUNITY OR PROFITS,
+COST OF COVER OR ANY SPECIAL, INCIDENTAL, CONSEQUENTIAL, DIRECT
+OR INDIRECT DAMAGES ARISING FROM OR RELATING TO THE USE OF THE
+SOFTWARE, HOWEVER CAUSED ON ANY THEORY OF LIABILITY.  THIS
+LIMITATION WILL APPLY EVEN IF Health Intersections PTY. LTD. HAS BEEN
+ADVISED OR GIVEN NOTICE OF THE POSSIBILITY OF SUCH DAMAGE.  THE
+USER ASSUMES THE ENTIRE RISK AS TO THE USE OF THE SOFTWARE. 
+BECAUSE SOME STATES DO NOT ALLOW THE EXCLUSION OR LIMITATION OF
+LIABILITY FOR CERTAIN INCIDENTAL, CONSEQUENTIAL OR OTHER DAMAGES,
+THIS LIMITATION MAY NOT APPLY TO YOU.
+
+Disclaimer of Warranty
+-----------------------------------
+TO THE EXTENT PERMITTED BY APPLICABLE LAW ALL Health Intersections 
+PTY. LTD. SOFTWARE, INCLUDING THE IMAGES AND/OR COMPONENTS, IS 
+PROVIDED "AS IS" AND WITHOUT EXPRESS OR IMPLIED WARRANTY OF ANY 
+KIND BY EITHER Health Intersections Pty. Ltd. OR ANYONE ELSE WHO HAS 
+BEEN INVOLVED IN THE CREATION, PRODUCTION OR DELIVERY OF SUCH 
+SOFTWARE, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTY OF 
+MERCHANTABILITY, NONINFRINGEMENT OR FITNESS FOR A PARTICULAR 
+PURPOSE.  NO COVENANTS, WARRANTIES OR INDEMNITIES OF ANY KIND 
+ARE GRANTED BY Health Intersections TO THE USER.
+
+Termination
+------------------
+If you do not accept the terms of this Evaluation Agreement, you agree to destroy all 
+copies of the Software in your possession and control.
+
+Export Control Obligations
+----------------------------------------
+You will not export or re-export any Licensed Software in violation of any law, 
+regulation, order or other governmental requirement (including, without limitation, 
+the Australian Customs Act, of the Department of Commerce and other export 
+controls of the Australia.).   You shall, at your own expense, promptly obtain and 
+arrange for the maintenance of all non-Australian government approvals, if any, and 
+comply with all applicable local laws and regulations as may be necessary for 
+performance under this Agreement.
+
+Miscellaneous:  
+a) This Agreement constitutes the entire agreement between the parties concerning 
+     the subject matter hereof. 
+b) The Agreement maybe amended only by a written copy signed by both parties. 
+c) The controlling language of this Agreement is English.  If you have received a 
+     translation in another language, it is has been provided for your convenience 
+     only. 
+d) If any provision in this Agreement should be held illegal or unenforceable by a 
+    court having jurisdiction, such a provision shall be modified to the extend necessary
+    to render it enforceable without losing its intent, or severed from this Agreement
+    is no such modification is possible, and another provision of this Agreement shall 
+    remain in full force and effect. 
+e) Unless otherwise agreed in writing, all disputes relating to this Agreement shall be 
+    subject to final and binding arbitration in Melbourne, Victoria, Australia, with the 
+    losing party paying all costs of arbitration. 
+f) Neither party shall be in default or be liable for any delay, failure in performance 
+   (excepting the obligation to pay) or interruption of service resulting directly or 
+   indirectly from any cause beyond it reasonable control.
+
+Licensee Outside Australia
+------------------------------------------
+
+If you are located outside Australia or if you are a national or resident of a country 
+other than Australia, then the provisions of this section shall apply. 
+a) Les parties aux resentes confriment leur volonte que cette convention de meme 
+    queu tous les documents y compris tout avis qui siy rattache soient rediges en
+    langue anglaise. (Translation: "The parties confirm that this Agreement and all 
+    related documentation is and will be in the English language.") 
+b) You are responsible for complying with any local laws in your jurisdiction, which
+    might impact on your right to import or use the Value Set Editor and you represent that
+    you have compiled with any regulations or registration procedures required by
+    applicable law to make this license enforceable.
+
+

@@ -144,7 +144,7 @@ end;
 
 function TTestStorageService.createOperationContext(lang: String): TFHIROperationEngine;
 begin
-  result := TTestFHIROperationEngine.create(lang);
+  result := TTestFHIROperationEngine.create(nil, lang);
   TTestFHIROperationEngine(result).FIsReadAllowed := true;
   TTestFHIROperationEngine(result).FStorage := self;
 end;

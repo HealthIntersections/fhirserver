@@ -98,7 +98,7 @@ Uses
   QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager, FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
-  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
+  TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer, WebSourceProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer, ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
@@ -174,6 +174,7 @@ Type
     property cards : TAdvList<TCDSHookCard> read FCards;
   end;
 
+
   TFhirWebServer = Class(TAdvObject)
   Private
     FIni : TFHIRServerIniFile;
@@ -183,11 +184,11 @@ Type
     FActive : boolean; // can start without actually making the web servers available - for internal use e.g. loading...
     FName : String; // name of this server
     FOwnerName : String; // name of the org that adminsiters the service
-    FSourcePath : String; // where to find web content
     FHomePage : String;
     FAdminEmail : String;  // stated administrator
     FFacebookLike : boolean;
     FHostSms : String;  // for status update messages
+    FSourceProvider : TFHIRWebServerSourceProvider;
 
     // web configuration
     FHost : String;
@@ -265,7 +266,6 @@ Type
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 
-    function AltFile(path : String) : String;
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
 //    Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header : String; Request : TFHIRRequest); overload;
@@ -306,6 +306,7 @@ Type
     Procedure RecordExchange(req : TFHIRRequest; resp : TFHIRResponse; e : Exception = nil);
     procedure smsStatus(msg : String);
     procedure loadConfiguration;
+    procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
   Public
     Constructor Create(ini : TFHIRServerIniFile; Name : String; terminologyServer : TTerminologyServer; context : TFHIRServerContext);
     Destructor Destroy; Override;
@@ -313,11 +314,12 @@ Type
     Procedure Start(active : boolean);
     Procedure Stop;
     Procedure Transaction(stream : TStream; init: boolean; name, base : String; ini : TFHIRServerIniFile; callback : TInstallerCallback);
-    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; named, path : String; secure : boolean; variables: TDictionary<String, String> = nil);
+    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil); overload;
+    Procedure ReturnProcessedFile(response : TIdHTTPResponseInfo; session : TFhirSession; claimed, actual : String; secure : boolean; variables: TDictionary<String, String> = nil); overload;
 
     Property ServerContext : TFHIRServerContext read FServerContext;
     property AuthServer : TAuth2Server read FAuthServer;
-    Property SourcePath : String read FSourcePath;
+    Property SourceProvider : TFHIRWebServerSourceProvider read FSourceProvider write SetSourceProvider;
     property Host : String read FHost;
     property CDSHooksServer : TCDSHooksServer read FCDSHooksServer;
 
@@ -448,8 +450,6 @@ begin
   else
     FServerContext.ValidatorContext.setNonSecureTypes([]);
 
-  FSourcePath := ProcessPath(ExtractFilePath(FIni.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', ''));
-
   FUseOAuth := FIni.ReadBool(voMaybeVersioned, 'security', 'oauth', true);
   FOWinSecuritySecure := FIni.ReadBool(voMaybeVersioned, 'security', 'owin', false);
   FOWinSecurityPlain := FIni.ReadBool(voMaybeVersioned, 'security', 'owin-http', false);
@@ -520,11 +520,11 @@ Begin
   else
     txu := 'http://'+FHost+':'+inttostr(FStatedPort);
   if terminologyServer <> nil then
-    FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', FSourcePath, ReturnProcessedFile);
+    FTerminologyWebServer := TTerminologyWebServer.create(terminologyServer.Link, FServerContext.ValidatorContext.Link, txu, FBasePath+'/', ReturnProcessedFile);
 
   if FIni.readString(voVersioningNotApplicable, 'web', 'clients', '') = '' then
     raise Exception.Create('No Authorization file found');
-  FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FSourcePath, FHost, inttostr(FStatedSSLPort));
+  FAuthServer := TAuth2Server.Create(FIni.readString(voVersioningNotApplicable, 'web', 'clients', ''), FHost, inttostr(FStatedSSLPort));
   FAuthServer.ServerContext := FServerContext.Link;
   FAuthServer.OnProcessFile := ReturnProcessedFile;
   FAuthServer.OnDoSearch := DoSearch;
@@ -984,10 +984,10 @@ begin
     end
     else if OWinSecurityPlain and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
       HandleOWinToken(AContext, false, request, response)
-    else if FileExists(AltFile(request.Document)) then
-      ReturnSpecFile(response, request.Document, AltFile(request.Document))
-    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), false)
+    else if FileExists(FSourceProvider.AltFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(request.Document))
+    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
+      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html'), false)
   //  else if FileExists(FSourcePath+ExtractFileName(request.Document.replace('/', '\'))) then
   //    ReturnSpecFile(response, request.Document, FSourcePath+ExtractFileName(request.Document.replace('/', '\')))
   //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
@@ -1009,7 +1009,7 @@ begin
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
-      ReturnProcessedFile(response, session, '/'+FHomepage, AltFile('/'+FHomepage), false)
+      ReturnProcessedFile(response, session, '/'+FHomepage, FSourceProvider.AltFile('/'+FHomepage), false)
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, session, response, false)
     else
@@ -1065,15 +1065,6 @@ var
 begin
   for i := 0 to conf.restList.Count - 1 do
     PopulateConformanceAuth(conf.restList[i]);
-end;
-
-
-function TFhirWebServer.AltFile(path : String) : String;
-begin
-  if path.StartsWith('/') then
-    result := FSourcePath+path.Substring(1).Replace('/', '\')
-  else
-    result := '';
 end;
 
 
@@ -1141,14 +1132,14 @@ begin
       response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
       response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
     end
-    else if FileExists(AltFile(request.Document)) then
-      ReturnSpecFile(response, request.Document, AltFile(request.Document))
-    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(AltFile(request.Document), '.html')) then
-      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(AltFile(request.Document), '.html'), true)
+    else if FileExists(FSourceProvider.AltFile(request.Document)) then
+      ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(request.Document))
+    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
+      ReturnProcessedFile(response, session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html'), true)
   //  else if FileExists(IncludeTrailingPathDelimiter(FSourcePath)+request.Document) then
   //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FSourcePath)+request.Document)
-  //  else if FileExists(AltFile(ExtractFileName(request.Document))) then
-  //    ReturnSpecFile(response, request.Document, AltFile(ExtractFileName(request.Document)))
+  //  else if FileExists(FSourceProvider.AltFile(ExtractFileName(request.Document))) then
+  //    ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(ExtractFileName(request.Document)))
     else if request.Document.StartsWith('/scim') then
       processSCIMRequest(AContext, request, response)
     else if request.document = '/.well-known/openid-configuration' then
@@ -1160,7 +1151,7 @@ begin
     else if request.Document.StartsWith(FSecurePath+'/cds-services') and FCDSHooksServer.active then
       FCDSHooksServer.HandleRequest(true, FSecurePath, session, AContext, request, response)
     else if request.Document = '/' then
-      ReturnProcessedFile(response, session, '/hompage.html', AltFile('/homepage.html'), true)
+      ReturnProcessedFile(response, session, '/hompage.html', FSourceProvider.AltFile('/homepage.html'), true)
     else
     begin
       handled := false;
@@ -1594,7 +1585,7 @@ begin
             FServerContext.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
-          s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
+          s := transform1(questionnaire, request.Lang, 'QuestionnaireToHTML.xslt', true);
           FServerContext.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
@@ -1770,7 +1761,7 @@ begin
             FServerContext.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.Dependencies);
           end;
           // convert to xhtml
-          s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
+          s := transform1(questionnaire, request.Lang, 'QuestionnaireToHTML.xslt', true);
           FServerContext.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
         finally
           questionnaire.Free;
@@ -1821,7 +1812,7 @@ begin
   end;
 
 
-  s := FileToString(FSourcePath+'patient.html', TEncoding.UTF8);
+  s := FSourceProvider.getSource('patient.html');
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%hookid%]', hookid, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
@@ -1908,7 +1899,7 @@ begin
   questionnaire := GetResource(request.Session, 'Questionnaire', request.Lang, id, ver, '') as TFHirQuestionnaire;
   try
     // convert to xhtml
-    s := transform1(questionnaire, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', false);
+    s := transform1(questionnaire, request.Lang, 'QuestionnaireToHTML.xslt', false);
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.Header(request.Session, request.baseUrl, request.Lang, SERVER_VERSION));
@@ -1955,7 +1946,7 @@ begin
         raise Exception.Create('Unable to fetch Questionnaire "'+qa.questionnaire.reference.Substring(1)+'"');
 
       // convert to xhtml
-      s := transform1(q, request.Lang, FSourcePath+'QuestionnaireToHTML.xslt', true);
+      s := transform1(q, request.Lang, 'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
       qa.questionnaire.reference := 'Questionnaire/'+qa.questionnaire.reference.Substring(1);
@@ -2120,6 +2111,12 @@ begin
     end;
   end;
   response.WriteContent;
+end;
+
+procedure TFhirWebServer.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
+begin
+  FSourceProvider.Free;
+  FSourceProvider := Value;
 end;
 
 function extractProp(contentType, name : String) : string;
@@ -3373,23 +3370,24 @@ begin
     vars.Add('status.cds.client', inttostr(FPatientHooks.count));
     vars.Add('status.run-time', DescribePeriod((GetTickCount - FStartTime) * DATETIME_MILLISECOND_ONE));
     vars.Add('status.run-time.ms', inttostr(GetTickCount - FStartTime));
-    ReturnProcessedFile(response, nil, 'Diagnostics', AltFile('/diagnostics.html'), false, vars);
+    ReturnProcessedFile(response, nil, 'Diagnostics', FSourceProvider.AltFile('/diagnostics.html'), false, vars);
   finally
     vars.free;
   end;
 
 end;
 
-procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String> = nil);
+procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; session : TFhirSession; path: String; secure : boolean; variables: TDictionary<String, String> = nil);
+begin
+  ReturnProcessedFile(response, session, path, path, secure, variables);
+end;
+
+procedure TFhirWebServer.ReturnProcessedFile(response: TIdHTTPResponseInfo; session : TFhirSession; claimed, actual: String; secure : boolean; variables: TDictionary<String, String> = nil);
 var
   s, n : String;
 begin
-//  if variables = nil then
-//    logt('rpf 1: '+named+' '+path+' 0')
-//  else
-//    logt('rpf 1: '+named+' '+path+' '+inttostr(variables.Count));
-  logt('script: '+named);
-  s := FileToString(path, TEncoding.UTF8);
+  logt('script: '+claimed);
+  s := FSourceProvider.getSource(actual);
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', FHIR_SPEC_URL, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
@@ -3524,7 +3522,7 @@ begin
   src.resolveExternals := false;
   src.validateOnParse := false;
   src.setProperty('AllowDocumentFunction', True);
-  if not src.loadXML(FileToString(xslt, TEncoding.UTF8)) then
+  if not src.loadXML(FSourceProvider.getSource(xslt)) then
     raise Exception.Create('unable to parse XSLT: '+src.parseError.reason);
 
   v := CreateOLEObject('MSXML2.XSLTemplate.6.0');

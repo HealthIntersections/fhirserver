@@ -344,6 +344,9 @@
         <DCCReference Include="VocabPocServerCore.pas"/>
         <DCCReference Include="..\..\Server\FHIRSearchSyntax.pas"/>
         <DCCReference Include="..\..\Libraries\FMM\FastMM4Messages.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIRSearch.pas"/>
+        <DCCReference Include="..\..\Server\TerminologyOperations.pas"/>
+        <DCCReference Include="..\..\Server\WebSourceProvider.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

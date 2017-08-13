@@ -206,7 +206,10 @@ uses
   OpenMHealthServer in '..\..\Server\OpenMHealthServer.pas',
   VocabPocServerCore in 'VocabPocServerCore.pas',
   FHIRSearchSyntax in '..\..\Server\FHIRSearchSyntax.pas',
-  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas';
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
+  FHIRSearch in '..\..\reference-platform\support\FHIRSearch.pas',
+  TerminologyOperations in '..\..\Server\TerminologyOperations.pas',
+  WebSourceProvider in '..\..\Server\WebSourceProvider.pas';
 
 {$R *.res}
 

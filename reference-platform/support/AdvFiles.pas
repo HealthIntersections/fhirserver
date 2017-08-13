@@ -114,6 +114,7 @@ Type
 
     Public
       Constructor Create; Override;
+      Constructor CreateOpen(name : String);
       Procedure BeforeDestruction; Override;
 
       Function Exists : Boolean;
@@ -258,6 +259,13 @@ Begin
   FDefaultShare := AdvFileShareNone;
 End;
 
+
+constructor TAdvFile.CreateOpen(name: String);
+begin
+  Create;
+  self.Name := Name;
+  OpenRead;
+end;
 
 Procedure TAdvFile.BeforeDestruction;
 Begin
