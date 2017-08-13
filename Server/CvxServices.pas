@@ -172,7 +172,7 @@ var
 begin
   qry := db.GetConnection('Cvx.locate');
   try
-    qry.SQL := replaceColumnWrappingChars('Select [CVX Code], [CVX Short Description], [Full Vaccine Name] from Cvx', qry.Owner.Platform);
+    qry.SQL := replaceColumnWrappingChars('Select [CVX Code], [CVX Short Description], [Full Vaccine Name] from cvx', qry.Owner.Platform);
     qry.prepare;
     qry.execute;
     while qry.FetchNext do
