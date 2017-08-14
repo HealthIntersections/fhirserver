@@ -718,8 +718,16 @@ end;
 procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
   try
-    FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
-    FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+
+    if FConn.owner.platform = kdbMySQL then begin
+      FConn.ExecSQL('ALTER TABLE IndexEntries MODIFY Xhtml LONGTEXT;');
+      FConn.ExecSQL('ALTER TABLE IndexEntries ADD FULLTEXT INDEX `PK_IndexEntries` (Xhtml);');
+      end;
+    if FConn.owner.platform = kdbSQLServer then begin
+      FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
+      FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
+      end;
+
   except
     // well, we ignore this; it fails on SQLServer Expression, in which case _text search parameter won't work
   end;

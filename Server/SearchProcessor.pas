@@ -37,7 +37,7 @@ uses
   StringSupport, EncodeSupport,
   AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
-  KDBManager,
+  KDBManager, KDBDialects,
   FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
   UcumServices;
 
@@ -941,7 +941,11 @@ begin
   end
   else if (name = '_text') then
   begin
+
+    if Connection.owner.platform = kdbSQLServer then
     result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
+    if Connection.owner.platform = kdbMySQL then
+    result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and MATCH (Xhtml) AGAINST ('''+SQLWrapString(value)+'''))';
   end
   else if pos('.', name) > 0 then
   begin
