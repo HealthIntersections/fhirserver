@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
+  Windows,
   FileSupport,
   StringSupport,
   AdvObjects,
