@@ -1,0 +1,2472 @@
+<CodeSystem xmlns="http://hl7.org/fhir">
+  <url value="urn:iso:std:iso:3166"/>
+  <name value="CountryCodes"/>
+  <title value="ISO 3166 Country Codes"/>
+  <status value="active"/>
+  <experimental value="false"/>
+  <date value="2013-12-05"/>
+  <publisher value="Health Intersections"/>
+  <description value="Country Codes as defined in ISO 3166"/>
+  <caseSensitive value="true"/>
+  <content value="complete"/>
+  <property>
+    <code value="status"/>
+    <type value="string"/>
+  </property>
+  <concept>  
+    <code value="SU"/>
+    <display value="USSR"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Exceptionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PU"/>
+    <display value="United States Miscellaneous Pacific Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NH"/>
+    <display value="New Hebrides"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="JT"/>
+    <display value="Johnston Island"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NQ"/>
+    <display value="Dronning Maud Land"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="WK"/>
+    <display value="Wake Island"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PZ"/>
+    <display value="Panama Canal Zone"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MI"/>
+    <display value="Midway Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="YD"/>
+    <display value="Yemen, Democratic"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DY"/>
+    <display value="Dahomey"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RH"/>
+    <display value="RH"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CT"/>
+    <display value="Canton and Enderbury Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VD"/>
+    <display value="VD"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FQ"/>
+    <display value="FQ"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DD"/>
+    <display value="German Democratic Republic"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PC"/>
+    <display value="Pacific Islands (Trust Territory)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="HV"/>
+    <display value="Upper Volta"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Formerly used"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AU"/>
+    <display value="Australia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CI"/>
+    <display value="Côte d'Ivoire"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NP"/>
+    <display value="Nepal"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="JO"/>
+    <display value="Jordan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DZ"/>
+    <display value="Algeria"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LC"/>
+    <display value="Saint Lucia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BM"/>
+    <display value="Bermuda"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SI"/>
+    <display value="Slovenia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MT"/>
+    <display value="MT"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IS"/>
+    <display value="IS"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KG"/>
+    <display value="Kyrgyzstan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TZ"/>
+    <display value="TZ"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ER"/>
+    <display value="Eritrea"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VN"/>
+    <display value="Viet Nam"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GF"/>
+    <display value="French Guiana"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PY"/>
+    <display value="Paraguay"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AQ"/>
+    <display value="Antarctica"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NL"/>
+    <display value="Netherlands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FJ"/>
+    <display value="FJ"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="WF"/>
+    <display value="Wallis and Futuna"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BI"/>
+    <display value="Burundi"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SE"/>
+    <display value="SE"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MP"/>
+    <display value="Northern Mariana Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IO"/>
+    <display value="British Indian Ocean Territory (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CZ"/>
+    <display value="Czech Republic (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TV"/>
+    <display value="Tuvalu"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GB"/>
+    <display value="United Kingdom of Great Britain and Northern Ireland (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AM"/>
+    <display value="Armenia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CA"/>
+    <display value="Canada"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LT"/>
+    <display value="Lithuania"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SZ"/>
+    <display value="SZ"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BE"/>
+    <display value="Belgium"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SA"/>
+    <display value="Saudi Arabia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ML"/>
+    <display value="Mali"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Guinea-Bissau"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CV"/>
+    <display value="Cabo Verde"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TR"/>
+    <display value="Turkey"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AI"/>
+    <display value="Anguilla"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RE"/>
+    <display value="Reunion"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BZ"/>
+    <display value="Belize"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SV"/>
+    <display value="El Salvador"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BA"/>
+    <display value="Bosnia and Herzegovina"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MH"/>
+    <display value="Marshall Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GS"/>
+    <display value="South Georgia and the South Sandwich Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CR"/>
+    <display value="CR"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TN"/>
+    <display value="TN"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Saint Pierre and Miquelon"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AE"/>
+    <display value="United Arab Emirates (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Samoa"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Hong Kong"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BV"/>
+    <display value="Bouvet Island"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SR"/>
+    <display value="SR"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Djibouti"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KP"/>
+    <display value="Korea (the Democratic People's Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MD"/>
+    <display value="Moldova (the Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AZ"/>
+    <display value="Azerbaijan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CN"/>
+    <display value="China"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TJ"/>
+    <display value="Tajikistan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NU"/>
+    <display value="Niue"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BR"/>
+    <display value="Brazil"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SN"/>
+    <display value="Senegal"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MY"/>
+    <display value="Malaysia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="OM"/>
+    <display value="Oman"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="QA"/>
+    <display value="Qatar"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TF"/>
+    <display value="French Southern Territories (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Peru"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="JP"/>
+    <display value="Japan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FO"/>
+    <display value="Faroe Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BN"/>
+    <display value="Brunei Darussalam"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SJ"/>
+    <display value="Svalbard and Jan Mayen"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MU"/>
+    <display value="Mauritius"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IT"/>
+    <display value="Italy"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KH"/>
+    <display value="Cambodia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ES"/>
+    <display value="ES"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GG"/>
+    <display value="Guernsey"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AR"/>
+    <display value="Argentina"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CF"/>
+    <display value="CF"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LY"/>
+    <display value="Libya"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PA"/>
+    <display value="Panama"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="YT"/>
+    <display value="Mayotte"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="US"/>
+    <display value="United States of America (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FK"/>
+    <display value="Falkland Islands (the) [Malvinas]"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BJ"/>
+    <display value="Benin"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MQ"/>
+    <display value="Martinique"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TW"/>
+    <display value="Taiwan (Province of China)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LU"/>
+    <display value="LU"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Nicaragua"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="HT"/>
+    <display value="Haiti"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BF"/>
+    <display value="Burkina Faso"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KY"/>
+    <display value="Cayman Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SB"/>
+    <display value="Solomon Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Myanmar"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IL"/>
+    <display value="IL"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CW"/>
+    <display value="Curacao"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VG"/>
+    <display value="Virgin Islands (British)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="Virgin Islands (British)"/>
+    <display value="Puerto Rico"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NE"/>
+    <display value="Niger (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DO"/>
+    <display value="Dominican Republic (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BB"/>
+    <display value="Draft"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GT"/>
+    <display value="Guatemala"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TO"/>
+    <display value="Tonga"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="EG"/>
+    <display value="EG"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NZ"/>
+    <display value="New Zealand"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VC"/>
+    <display value="VC"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Draft"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AF"/>
+    <display value="Afghanistan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NA"/>
+    <display value="Namibia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="Namibia"/>
+    <display value="Botswana"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SS"/>
+    <display value="South Sudan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DK"/>
+    <display value="Denmark"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="UG"/>
+    <display value="Uganda"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ME"/>
+    <display value="Montenegro"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Guadeloupe"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="Guadeloupe"/>
+    <display value="Indonesia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RW"/>
+    <display value="Rwanda"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CO"/>
+    <display value="Colombia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TK"/>
+    <display value="Tokelau"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="EC"/>
+    <display value="Ecuador"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LI"/>
+    <display value="Liechtenstein"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BS"/>
+    <display value="Bahamas (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SO"/>
+    <display value="Somalia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MZ"/>
+    <display value="Mozambique"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KM"/>
+    <display value="Comoros (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Morocco"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Greenland"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AW"/>
+    <display value="Aruba"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RS"/>
+    <display value="Serbia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Cook Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TG"/>
+    <display value="TG"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NR"/>
+    <display value="Nauru"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PF"/>
+    <display value="French Polynesia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BO"/>
+    <display value="Bolivia (Plurinational State of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SK"/>
+    <display value="Slovakia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MV"/>
+    <display value="Maldives"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KI"/>
+    <display value="Kiribati"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ET"/>
+    <display value="Ethiopia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GH"/>
+    <display value="Ghana"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="American Samoa"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RO"/>
+    <display value="Romania"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CG"/>
+    <display value="Congo (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TC"/>
+    <display value="Turks and Caicos Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="JM"/>
+    <display value="Jamaica"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LA"/>
+    <display value="Lao People's Democratic Republic (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SG"/>
+    <display value="SG"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MR"/>
+    <display value="Mauritania"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IQ"/>
+    <display value="IQ"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ZM"/>
+    <display value="Zambia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KE"/>
+    <display value="Kenya"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="Kenya"/>
+    <display value="Grenada"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PW"/>
+    <display value="Palau"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AO"/>
+    <display value="Angola"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CC"/>
+    <display value="Cocos (Keeling) Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LV"/>
+    <display value="Latvia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="HU"/>
+    <display value="Hungary"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BG"/>
+    <display value="Bulgaria"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KZ"/>
+    <display value="Kazakhstan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SC"/>
+    <display value="Seychelles"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MN"/>
+    <display value="Mongolia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GY"/>
+    <display value="Guyana"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IM"/>
+    <display value="Isle of Man"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CX"/>
+    <display value="Christmas Island"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TT"/>
+    <display value="Trinidad and Tobago"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Palestine, State of"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LR"/>
+    <display value="Liberia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NF"/>
+    <display value="Norfolk Island"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="JE"/>
+    <display value="Jersey"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SX"/>
+    <display value="Sint Maarten (Dutch part)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GU"/>
+    <display value="Guam"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="EH"/>
+    <display value="Western Sahara*"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AG"/>
+    <display value="Antigua and Barbuda"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="HM"/>
+    <display value="Heard Island and McDonald Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ST"/>
+    <display value="Sao Tome and Principe"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KR"/>
+    <display value="Korea (the Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MF"/>
+    <display value="Saint Martin (French part)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GQ"/>
+    <display value="Equatorial Guinea"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IE"/>
+    <display value="Ireland"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ZA"/>
+    <display value="South Africa"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Timor-Leste"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PK"/>
+    <display value="Pakistan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BT"/>
+    <display value="Bhutan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="YE"/>
+    <display value="Yemen"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Saint Kitts and Nevis"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VU"/>
+    <display value="Vanuatu"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GM"/>
+    <display value="Gambia (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AX"/>
+    <display value="Aland Islands"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CL"/>
+    <display value="Chile"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TH"/>
+    <display value="TH"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PG"/>
+    <display value="Papua New Guinea"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="UY"/>
+    <display value="Uruguay"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SL"/>
+    <display value="Sierra Leone"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MW"/>
+    <display value="Malawi"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GI"/>
+    <display value="Gibraltar"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AT"/>
+    <display value="Austria"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Switzerland"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TD"/>
+    <display value="TD"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Norway"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LB"/>
+    <display value="Lebanon"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FM"/>
+    <display value="Micronesia (Federated States of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BL"/>
+    <display value="Saint Barthelemy"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SH"/>
+    <display value="Saint Helena, Ascension and Tristan da Cunha"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MS"/>
+    <display value="Montserrat"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IR"/>
+    <display value="Iran (Islamic Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GE"/>
+    <display value="Georgia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CD"/>
+    <display value="Congo (the Democratic Republic of the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FI"/>
+    <display value="Finland"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BH"/>
+    <display value="Bahrain"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SD"/>
+    <display value="Sudan (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MO"/>
+    <display value="Macao"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="IN"/>
+    <display value="India"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CY"/>
+    <display value="Cyprus"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Virgin Islands (U.S.)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GA"/>
+    <display value="Gabon"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PT"/>
+    <display value="Portugal"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AL"/>
+    <display value="Albania"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="LS"/>
+    <display value="Lesotho"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NG"/>
+    <display value="Nigeria"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="draft"/>
+    <display value="Croatia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SY"/>
+    <display value="Syrian Arab Republic"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="UM"/>
+    <display value="United States Minor Outlying Islands (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BD"/>
+    <display value="Bangladesh"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="KW"/>
+    <display value="Kuwait"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MK"/>
+    <display value="Macedonia (the former Yugoslav Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CU"/>
+    <display value="Cuba"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VE"/>
+    <display value="Venezuela (Bolivarian Republic of)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NC"/>
+    <display value="New Caledonia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="HN"/>
+    <display value="Honduras"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BY"/>
+    <display value="Belarus"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DM"/>
+    <display value="Dominica"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MG"/>
+    <display value="Madagascar"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GR"/>
+    <display value="Greece"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TM"/>
+    <display value="Turkmenistan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="EE"/>
+    <display value="Estonia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="VA"/>
+    <display value="VA"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PL"/>
+    <display value="Poland"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AD"/>
+    <display value="Andorra"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="Andorra"/>
+    <display value="Sri Lanka"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ZW"/>
+    <display value="ZW"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MC"/>
+    <display value="Monaco"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="GN"/>
+    <display value="Guinea"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="RU"/>
+    <display value="Russian Federation (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CM"/>
+    <display value="Cameroon"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="PH"/>
+    <display value="Philippines (the)"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="UZ"/>
+    <display value="Uzbekistan"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="FR"/>
+    <display value="France"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BQ"/>
+    <display value="Draft"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="SM"/>
+    <display value="San Marino"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="DE"/>
+    <display value="Germany"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="MX"/>
+    <display value="Mexico"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="UA"/>
+    <display value="Ukraine"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Officially assigned"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="AN"/>
+    <display value="Netherlands Antilles"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="CS"/>
+    <display value="Serbia and Montenegro"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="YU"/>
+    <display value="Yugoslavia"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="TP"/>
+    <display value="East Timor"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="ZR"/>
+    <display value="Zaire"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="BU"/>
+    <display value="Burma"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="NT"/>
+    <display value="Neutral Zone"/>
+    <property>
+      <code value="status"/>
+      <valueString value="Transitionally reserved"/>
+    </property>
+  </concept>
+</CodeSystem>
