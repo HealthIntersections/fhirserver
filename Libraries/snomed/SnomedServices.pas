@@ -1730,6 +1730,9 @@ var
   iParent : Cardinal;
   iChild : Cardinal;
 begin
+  if not StringIsInteger64(sParent) or not StringIsInteger64(sChild) then
+    exit(false);
+
   Result := Concept.FindConcept(StringToId(sParent), iParent);
   if not result then
   begin

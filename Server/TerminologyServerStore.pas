@@ -37,8 +37,8 @@ uses
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, CvxServices, ACIRServices, UriServices,
-  USStateCodeServices, CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
+  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, ACIRServices, UriServices,
+  AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
   YuStemmer;
 
 const
@@ -182,9 +182,6 @@ Type
     FRxNorm : TRxNormServices;
     FNciMeta : TNciMetaServices;
     FUnii : TUniiServices;
-    FCountryCode : TCountryCodeServices;
-    FAreaCode : TAreaCodeServices;
-    FCvx : TCvxServices;
     FACIR : TACIRServices;
     FStem : TYuStemmer_8;
     FTagid : integer;
@@ -226,9 +223,6 @@ Type
     procedure SetRxNorm(const Value: TRxNormServices);
     procedure SetNciMeta(const Value: TNciMetaServices);
     procedure SetUnii(const Value: TUniiServices);
-    procedure SetCountryCode(const Value: TCountryCodeServices);
-    procedure SetAreaCode(const Value: TAreaCodeServices);
-    procedure SetCvx(const Value: TCvxServices);
     procedure SetACIR(const Value: TACIRServices);
     procedure checkCodeSystem(vs : TFHIRCodeSystem);
 
@@ -258,9 +252,6 @@ Type
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
     Property NciMeta : TNciMetaServices read FNciMeta write SetNciMeta;
     Property Unii : TUniiServices read FUnii write SetUnii;
-    Property CountryCode : TCountryCodeServices read FCountryCode write SetCountryCode;
-    Property AreaCode : TAreaCodeServices read FAreaCode write SetAreaCode;
-    Property Cvx : TCvxServices read FCvx write SetCvx;
     Property ACIR : TACIRServices read FACIR write SetACIR;
     Property DB : TKDBManager read FDB;
 
@@ -933,8 +924,6 @@ begin
     addCodeSystem('RxNorm', 'rxnorm', FRxNorm.system(nil), FRxNorm.version(nil), FRxNorm.TotalCount);
   if FUnii <> nil then
     addCodeSystem('Unii', 'unii', FUnii.system(nil), FUnii.version(nil), FUnii.TotalCount);
-  if FCvx <> nil then
-    addCodeSystem('CVX', 'cvx', FCvx.system(nil), FCvx.version(nil), FCvx.TotalCount);
   if FACIR <> nil then
     addCodeSystem('ACIR', 'acir', FACIR.system(nil), FACIR.version(nil), FACIR.TotalCount);
 end;
@@ -986,14 +975,11 @@ begin
   FDefSnomed.Free;
   FSnomed.free;
   FUnii.Free;
-  FCvx.Free;
   FACIR.Free;
   FUcum.free;
   FLock.Free;
   FRxNorm.Free;
   FNciMeta.Free;
-  FCountryCode.Free;
-  FAreaCode.Free;
   FDB.free;
   inherited;
 end;
@@ -1094,38 +1080,6 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.SetCountryCode(const Value: TCountryCodeServices);
-begin
-  if FCountryCode <> nil then
-  begin
-    FProviderClasses.Remove(FCountryCode.system(nil));
-    FProviderClasses.Remove(FCountryCode.system(nil)+URI_VERSION_BREAK+FCountryCode.version(nil));
-  end;
-  FCountryCode.Free;
-  FCountryCode := Value;
-  if FCountryCode <> nil then
-  begin
-    FProviderClasses.add(FCountryCode.system(nil), FCountryCode.Link);
-    FProviderClasses.add(FCountryCode.system(nil)+URI_VERSION_BREAK+FCountryCode.version(nil), FCountryCode.Link);
-  end;
-end;
-
-procedure TTerminologyServerStore.SetAreaCode(const Value: TAreaCodeServices);
-begin
-  if FAreaCode <> nil then
-  begin
-    FProviderClasses.Remove(FAreaCode.system(nil));
-    FProviderClasses.Remove(FAreaCode.system(nil)+URI_VERSION_BREAK+FAreaCode.version(nil));
-  end;
-  FAreaCode.Free;
-  FAreaCode := Value;
-  if FAreaCode <> nil then
-  begin
-    FProviderClasses.add(FAreaCode.system(nil), FAreaCode.Link);
-    FProviderClasses.add(FAreaCode.system(nil)+URI_VERSION_BREAK+FAreaCode.version(nil), FAreaCode.Link);
-  end;
-end;
-
 procedure TTerminologyServerStore.SetMaintenanceThreadStatus(const Value: String);
 begin
   FLock.Lock;
@@ -1156,22 +1110,6 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.SetCvx(const Value: TCvxServices);
-begin
-  if FCvx <> nil then
-  begin
-    FProviderClasses.Remove(FCvx.system(nil));
-    FProviderClasses.Remove(FCvx.system(nil)+URI_VERSION_BREAK+FCvx.version(nil));
-  end;
-  FCvx.Free;
-  FCvx := Value;
-  if FCvx <> nil then
-  begin
-    FProviderClasses.add(FCvx.system(nil), FCvx.Link);
-    FProviderClasses.add(FCvx.system(nil)+URI_VERSION_BREAK+FCvx.version(nil), FCvx.Link);
-  end;
-end;
-
 procedure TTerminologyServerStore.SetACIR(const Value: TACIRServices);
 begin
   if FACIR <> nil then
@@ -1184,7 +1122,7 @@ begin
   if FACIR <> nil then
   begin
     FProviderClasses.add(FACIR.system(nil), FACIR.Link);
-    FProviderClasses.add(FACIR.system(nil)+URI_VERSION_BREAK+FCvx.version(nil), FACIR.Link);
+    FProviderClasses.add(FACIR.system(nil)+URI_VERSION_BREAK+FACIR.version(nil), FACIR.Link);
   end;
 end;
 
@@ -1780,21 +1718,6 @@ begin
     b.append('<li>Unii: not loaded</li>')
   else
     b.append('<li>Unii: '+FUnii.version(nil)+' ('+inttostr(FUnii.UseCount)+' uses)');
-
-  if FCountryCode = nil then
-    b.append('<li>CountryCode: not loaded</li>')
-  else
-    b.append('<li>CountryCode: '+FCountryCode.version(nil)+' ('+inttostr(FCountryCode.UseCount)+' uses)');
-
-  if FAreaCode = nil then
-    b.append('<li>AreaCode: not loaded</li>')
-  else
-    b.append('<li>AreaCode: '+FAreaCode.version(nil)+' ('+inttostr(FAreaCode.UseCount)+' uses)');
-
-  if FCvx = nil then
-    b.append('<li>Cvx: not loaded</li>')
-  else
-    b.append('<li>Cvx: '+FCvx.version(nil)+' ('+inttostr(FCvx.UseCount)+' uses)');
 
   if FACIR = nil then
     b.append('<li>ACIR: not loaded</li>')

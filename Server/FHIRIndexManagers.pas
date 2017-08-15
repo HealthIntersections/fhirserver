@@ -1046,6 +1046,7 @@ var
   i : integer;
   entry : TFhirIndexEntry;
   dummy : string;
+  keys : string;
 begin
   checkTags(resource, tags);
   FforTesting := tags.hasTestingTag;
@@ -1053,10 +1054,20 @@ begin
   FEntries.FKeyEvent := FKeyEvent;
 
   FMasterKey := key;
-  FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
-  FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
-  FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where Target in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
-  FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in (select ResourceKey from Ids where MasterResourceKey = '+inttostr(key)+')');
+  keys := '';
+  FSpaces.FDB.sql := 'select ResourceKey from Ids where MasterResourceKey = '+inttostr(key);
+  FSpaces.FDB.prepare;
+  FSpaces.FDB.execute;
+  while FSpaces.FDB.fetchnext do
+    CommaAdd(keys, FSpaces.FDB.ColStringByName['ResourceKey']);
+  FSpaces.FDB.terminate;
+
+  if keys <> '' then
+  begin
+    FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in ('+keys+')');
+    FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where ResourceKey in ('+keys+') or Target in ('+keys+')');
+    FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in ('+keys+')');
+  end;
   FSpaces.FDB.ExecSQL('update Ids set deleted = 1 where MasterResourceKey = '+inttostr(key));
   FCompartments.Clear;
 

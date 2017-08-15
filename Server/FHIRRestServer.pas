@@ -587,6 +587,7 @@ Begin
   FServerContext.free;
   FLock.Free;
   FCertificateIdList.Free;
+  FSourceProvider.Free;
   Inherited;
 End;
 
@@ -984,13 +985,13 @@ begin
     end
     else if OWinSecurityPlain and ServerContext.UserProvider.AllowInsecure and (request.Document = FBasePath+OWIN_TOKEN_PATH) then
       HandleOWinToken(AContext, false, request, response)
-    else if FileExists(FSourceProvider.AltFile(request.Document)) then
+    else if FSourceProvider.exists(FSourceProvider.AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(request.Document))
-    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
+    else if request.Document.EndsWith('.hts') and FSourceProvider.exists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
       ReturnProcessedFile(response, session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html'), false)
-  //  else if FileExists(FSourcePath+ExtractFileName(request.Document.replace('/', '\'))) then
+  //  else if FSourceProvider.FileExists(FSourcePath+ExtractFileName(request.Document.replace('/', '\'))) then
   //    ReturnSpecFile(response, request.Document, FSourcePath+ExtractFileName(request.Document.replace('/', '\')))
-  //  else if FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
+  //  else if FSourceProvider.FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
   //    ReturnSpecFile(response, request.Document, FSpecPath+ExtractFileName(request.Document.replace('/', '\')))
     else if request.document = FBasePath+'/.well-known/openid-configuration' then
       HandleDiscoveryRedirect(AContext, request, response)
@@ -1132,13 +1133,13 @@ begin
       response.ContentText := 'Authorization is required (OWin at '+FBasePath+OWIN_TOKEN_PATH+')';
       response.CustomHeaders.AddValue('WWW-Authenticate', 'Bearer');
     end
-    else if FileExists(FSourceProvider.AltFile(request.Document)) then
+    else if FSourceProvider.exists(FSourceProvider.AltFile(request.Document)) then
       ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(request.Document))
-    else if request.Document.EndsWith('.hts') and FileExists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
+    else if request.Document.EndsWith('.hts') and FSourceProvider.exists(ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html')) then
       ReturnProcessedFile(response, session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document), '.html'), true)
-  //  else if FileExists(IncludeTrailingPathDelimiter(FSourcePath)+request.Document) then
+  //  else if FSourceProvider.FileExists(IncludeTrailingPathDelimiter(FSourcePath)+request.Document) then
   //    ReturnSpecFile(response, request.Document, IncludeTrailingPathDelimiter(FSourcePath)+request.Document)
-  //  else if FileExists(FSourceProvider.AltFile(ExtractFileName(request.Document))) then
+  //  else if FSourceProvider.FileExists(FSourceProvider.AltFile(ExtractFileName(request.Document))) then
   //    ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(ExtractFileName(request.Document)))
     else if request.Document.StartsWith('/scim') then
       processSCIMRequest(AContext, request, response)
@@ -3428,7 +3429,7 @@ procedure TFhirWebServer.ReturnSpecFile(response : TIdHTTPResponseInfo; stated, 
 begin
   logt('file: '+stated);
   response.Expires := now + 1;
-  response.ContentStream := TFileStream.Create(path, fmOpenRead);
+  response.ContentStream := FSourceProvider.asStream(path);
   response.FreeContentStream := true;
   response.ContentType := GetMimeTypeForExt(ExtractFileExt(path));
 end;

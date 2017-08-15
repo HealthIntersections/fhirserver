@@ -107,7 +107,7 @@ Type
     procedure DefineResourceSpaces;
     procedure DoPostTransactionInstall;
     procedure DoPostTransactionUnInstall;
-    procedure CreateCodeSystems;
+    procedure CreateUnii;
     procedure CreateObservations;
     procedure CreateObservationCodes;
     procedure CreateObservationQueue;
@@ -328,11 +328,22 @@ begin
   FConn.ExecSQL('Create INDEX SK_Closure_Name ON Closures (Name)');
 end;
 
-procedure TFHIRDatabaseInstaller.CreateCodeSystems;
+procedure TFHIRDatabaseInstaller.CreateUnii;
 begin
-  runScript('tx_db.sql');
-  runScript('us-state-codes.sql');
-  runScript('country-codes.sql');
+  FConn.ExecSQL('CREATE TABLE Unii ('+#13#10+
+  	'UniiKey int NOT NULL,'+#13#10+
+  	'Code nchar(20) NOT NULL,'+#13#10+
+  	'Display nchar(255) NULL,'+#13#10+
+    PrimaryKeyType(FConn.owner.Platform, 'PK_Unii', 'UniiKey')+') '+CreateTableInfo(FConn.owner.platform));
+
+  FConn.ExecSQL('CREATE TABLE UniiDesc ('+#13#10+
+   	'UniiDescKey int NOT NULL, '+#13#10+
+  	'UniiKey int NOT NULL, '+#13#10+
+  	'Type nchar(20) NOT NULL, '+#13#10+
+ 	  'Display nchar(255) NULL, '+#13#10+
+    PrimaryKeyType(FConn.owner.Platform, 'PK_UniiDesc', 'UniiDescKey')+') '+CreateTableInfo(FConn.owner.platform));
+
+  FConn.ExecSQL(ForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey'));
 end;
 
 procedure TFHIRDatabaseInstaller.CreateConcepts;
@@ -488,6 +499,7 @@ Begin
        PrimaryKeyType(FConn.owner.Platform, 'PK_Ids', 'ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Ids', 'ResourceTypeKey', 'Types', 'ResourceTypeKey', 'FK_ResType_TypeKey'));
   FConn.ExecSQL('Create Unique INDEX SK_Ids_Id ON Ids (ResourceTypeKey, Id)');
+  FConn.ExecSQL('Create INDEX SK_Ids_Master ON Ids (MasterResourceKey)');
   FConn.ExecSQL('Create INDEX SK_Ids_TypeMaster ON Ids (ResourceTypeKey, MasterResourceKey)');
   FConn.ExecSQL('Create INDEX SK_Ids_DelTypeMaster ON Ids (ResourceTypeKey, Deleted, MasterResourceKey)');
 End;
@@ -719,24 +731,27 @@ procedure TFHIRDatabaseInstaller.DoPostTransactionInstall;
 begin
   try
 
-    if FConn.owner.platform = kdbMySQL then begin
+    if FConn.owner.platform = kdbMySQL then
+    begin
       FConn.ExecSQL('ALTER TABLE IndexEntries MODIFY Xhtml LONGTEXT;');
       FConn.ExecSQL('ALTER TABLE IndexEntries ADD FULLTEXT INDEX `PK_IndexEntries` (Xhtml);');
-      end;
-    if FConn.owner.platform = kdbSQLServer then begin
+    end;
+    if FConn.owner.platform = kdbSQLServer then
+    begin
       FConn.ExecSQL('CREATE FULLTEXT CATALOG FHIR as DEFAULT');
       FConn.ExecSQL('Create FULLTEXT INDEX on IndexEntries (Xhtml TYPE COLUMN Extension) KEY INDEX PK_IndexEntries');
-      end;
+    end;
 
   except
-    // well, we ignore this; it fails on SQLServer Expression, in which case _text search parameter won't work
+    // well, we ignore this; it fails on SQLServer Express, in which case _text search parameter won't work
   end;
 end;
 
 procedure TFHIRDatabaseInstaller.DoPostTransactionUnInstall;
 begin
   try
-    FConn.ExecSQL('DROP FULLTEXT CATALOG FHIR');
+    if FConn.owner.platform = kdbSQLServer  then
+      FConn.ExecSQL('DROP FULLTEXT CATALOG FHIR');
   except
   end;
 end;
@@ -810,8 +825,8 @@ begin
     if assigned(CallBack) then Callback(43, 'Create OAuthLogins');
     CreateOAuthLogins;
 
-    if assigned(CallBack) then Callback(44, 'Create CodeSystems');
-    CreateCodeSystems;
+    if assigned(CallBack) then Callback(44, 'Create Unii');
+    CreateUnii;
 
     if assigned(CallBack) then Callback(45, 'Create Closures');
     CreateClosures;
@@ -919,10 +934,13 @@ begin
     FConn.StartTransact;
     try
       if meta.hasTable('Ids') then
+      try
         if FConn.owner.platform = kdbMySQL then
           FConn.execsql('ALTER TABLE Ids DROP FOREIGN KEY FK_ResCurrent_VersionKey')
         else
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
+      except
+      end;
 
       if assigned(CallBack) then Callback(5, 'Check Delete Connections');
       if meta.hasTable('Connections') then
@@ -1023,18 +1041,6 @@ begin
       if assigned(CallBack) then Callback(30, 'Check Delete Unii');
       if meta.hasTable('Unii') then
         FConn.DropTable('Unii');
-      if assigned(CallBack) then Callback(31, 'Check Delete cvx');
-      if meta.hasTable('cvx') then
-        FConn.DropTable('cvx');
-      if assigned(CallBack) then Callback(32, 'Check Delete USStateCodes');
-      if meta.hasTable('USStateCodes') then
-        FConn.DropTable('USStateCodes');
-      if assigned(CallBack) then Callback(33, 'Check Delete AreaCodes');
-      if meta.hasTable('AreaCodes') then
-        FConn.DropTable('AreaCodes');
-      if assigned(CallBack) then Callback(34, 'Check Delete CountryCodes');
-      if meta.hasTable('CountryCodes') then
-        FConn.DropTable('CountryCodes');
 
       FConn.Commit;
     except

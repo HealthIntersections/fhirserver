@@ -300,7 +300,6 @@
         <DCCReference Include="..\reference-platform\Support\XMLSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\DigitalSignatures.pas"/>
         <DCCReference Include="UriServices.pas"/>
-        <DCCReference Include="USStateCodeServices.pas"/>
         <DCCReference Include="UniiServices.pas"/>
         <DCCReference Include="RxNormServices.pas"/>
         <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
@@ -357,7 +356,6 @@
         <DCCReference Include="ObservationStatsEvaluator.pas"/>
         <DCCReference Include="OpenMHealthServer.pas"/>
         <DCCReference Include="..\reference-platform\support\DifferenceEngine.pas"/>
-        <DCCReference Include="CvxServices.pas"/>
         <DCCReference Include="ACIRServices.pas"/>
         <DCCReference Include="ReverseClient.pas"/>
         <DCCReference Include="FHIRStorageService.pas"/>

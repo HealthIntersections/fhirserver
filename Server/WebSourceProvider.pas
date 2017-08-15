@@ -3,7 +3,7 @@ unit WebSourceProvider;
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   FileSupport, TextUtilities,
   AdvObjects, AdvZipReaders, AdvZipParts, AdvFiles, AdvGenerics, AdvBuffers;
 
@@ -12,6 +12,8 @@ type
   public
     function AltFile(path: String): String;
     function getSource(filename : String) : String; virtual;
+    function exists(filename : String) : boolean; virtual;
+    function asStream(filename : String) : TStream; virtual;
   end;
 
   TFHIRWebServerSourceFolderProvider = class (TFHIRWebServerSourceProvider)
@@ -21,6 +23,8 @@ type
     Constructor Create(path : String);
 //    Property SourcePath : String read FSourcePath;
     function getSource(filename : String) : String; override;
+    function exists(filename : String) : boolean; override;
+    function asStream(filename : String) : TStream; override;
   end;
 
   TFHIRWebServerSourceZipProvider = class (TFHIRWebServerSourceProvider)
@@ -31,6 +35,8 @@ type
     Destructor Destroy; override;
 //    Property SourcePath : String read FSourcePath;
     function getSource(filename : String) : String; override;
+    function exists(filename : String) : boolean; override;
+    function asStream(filename : String) : TStream; override;
   end;
 
 implementation
@@ -45,17 +51,43 @@ begin
     result := path;
 end;
 
+function TFHIRWebServerSourceProvider.asStream(filename: String): TStream;
+begin
+  raise Exception.Create('Must override "asStream" in '+className);
+end;
+
+function TFHIRWebServerSourceProvider.exists(filename: String): boolean;
+begin
+  raise Exception.Create('Must override "exists" in '+className);
+end;
+
 function TFHIRWebServerSourceProvider.getSource(filename: String): String;
 begin
-  raise Exception.Create('Must override "FileToString" in '+className);
+  raise Exception.Create('Must override "getSource" in '+className);
 end;
 
 { TFHIRWebServerSourceFolderProvider }
+
+function TFHIRWebServerSourceFolderProvider.asStream(filename: String): TStream;
+var
+  fn : String;
+begin
+  fn := path([FSourcePath, filename]);
+  result := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+end;
 
 constructor TFHIRWebServerSourceFolderProvider.Create(path: String);
 begin
   inherited Create;
   FSourcePath := path;
+end;
+
+function TFHIRWebServerSourceFolderProvider.exists(filename: String): boolean;
+var
+  fn : String;
+begin
+  fn := path([FSourcePath, filename]);
+  result := FileExists(fn);
 end;
 
 function TFHIRWebServerSourceFolderProvider.getSource(filename: String): String;
@@ -67,6 +99,17 @@ begin
 end;
 
 { TFHIRWebServerSourceZipProvider }
+
+function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
+var
+  src : TAdvBuffer;
+begin
+  if not FZip.TryGetValue('web/'+filename, src) then
+    raise Exception.Create('Unable to find '+filename);
+  result := TMemoryStream.Create;
+  src.SaveToStream(result);
+  result.Position := 0;
+end;
 
 constructor TFHIRWebServerSourceZipProvider.Create(path: String);
 var
@@ -90,6 +133,15 @@ destructor TFHIRWebServerSourceZipProvider.Destroy;
 begin
 
   inherited;
+end;
+
+function TFHIRWebServerSourceZipProvider.exists(filename: String): boolean;
+var
+  src : TAdvBuffer;
+begin
+  if not FZip.TryGetValue('web/'+filename, src) then
+    raise Exception.Create('Unable to find '+filename);
+  result := src <> nil;
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;

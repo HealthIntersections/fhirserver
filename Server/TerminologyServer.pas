@@ -38,13 +38,12 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  StringSupport,
+  StringSupport, DateSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, CvxServices, ACIRServices,
-  CountryCodeServices, AreaCodeServices, IETFLanguageCodeServices,
-  FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices,
+  IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, SnomedExpressions;
 
 Type
@@ -126,7 +125,6 @@ uses
   SystemService,
   FHIRLog,
   FHIRConstants,
-  USStateCodeServices,
   FHIRValueSetExpander;
 
 
@@ -159,18 +157,11 @@ var
 begin
   logt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
-  Cvx := TCvxServices.Create(Fdb.Link);
   ACIR := TACIRServices.Create;
-  CountryCode := TCountryCodeServices.Create(Fdb);
-  AreaCode := TAreaCodeServices.Create();
-  p := TUSStateCodeServices.Create(Fdb.Link);
-  ProviderClasses.Add(p.system(nil), p);
-  ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   p := TIETFLanguageCodeServices.Create(ini.ReadString(voVersioningNotApplicable, 'lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
   logt(' - done');
-
 
   if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
   begin
@@ -1092,7 +1083,9 @@ procedure TTerminologyServer.BuildIndexes(prog : boolean);
 var
   conn1, conn2, conn3 : TKDBConnection;
   i : integer;
+  finish : TDateTime;
 begin
+  finish := now + DATETIME_SECOND_ONE * 30;
   conn1 := DB.GetConnection('BuildIndexes');
   try
     conn2 := DB.GetConnection('BuildIndexes');
@@ -1116,9 +1109,13 @@ begin
           if (prog and (i mod 10 = 0)) then Write('.');
           MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
           processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
+          if finish < now then
+            break;
         end;
         conn1.Terminate;
         if (prog) then Writeln;
+        if finish < now then
+          exit;
 
         // second, for each concept that needs indexing, check it's value set information
         if (prog) then logtn('Indexing Concepts');
@@ -1133,9 +1130,13 @@ begin
           if (prog and (i mod 10 = 0)) then Write('.');
           MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
           processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
+          if finish < now then
+            break;
         end;
         conn1.Terminate;
         if (prog) then Writeln;
+        if finish < now then
+          exit;
 
         // last, for each entry in the closure entry table that needs closureing, do it
         if (prog) then logtn('Generating Closures');
@@ -1150,9 +1151,13 @@ begin
           if (prog and (i mod 100 = 0)) then Write('.');
           MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
           FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
+          if finish < now then
+            break;
         end;
         conn1.Terminate;
         if (prog) then Writeln;
+        if finish < now then
+          exit;
 
         if (prog) then logt('Done');
         MaintenanceThreadStatus := 'BI: ';

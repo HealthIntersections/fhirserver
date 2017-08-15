@@ -523,7 +523,10 @@ begin
   ClearOrganizations;
   FActive.Free;
   FClient.Free;
-  FIni.WriteString('Server', 'URL', edtServer.Text);
+  try
+    FIni.WriteString('Server', 'URL', edtServer.Text);
+  except
+  end;
   FIni.Free;
 end;
 
