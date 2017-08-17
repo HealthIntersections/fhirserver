@@ -1,15 +1,9 @@
-object AppEndorsementForm: TAppEndorsementForm
+object AppEndorsementFrame: TAppEndorsementFrame
   Left = 0
   Top = 0
-  Caption = 'App Endorser Manager'
-  ClientHeight = 480
-  ClientWidth = 640
   FormFactor.Width = 320
   FormFactor.Height = 480
-  FormFactor.Devices = [Desktop]
-  OnCreate = FormCreate
-  OnCloseQuery = FormCloseQuery
-  OnDestroy = FormDestroy
+  FormFactor.Devices = [Desktop, iPhone, iPad]
   DesignerMasterStyle = 0
   object Panel2: TPanel
     Align = Left
@@ -455,7 +449,7 @@ object AppEndorsementForm: TAppEndorsementForm
     TabOrder = 2
     object btnClose: TButton
       Anchors = [akTop, akRight]
-      Position.X = 552.000000000000000000
+      Position.X = 556.000000000000000000
       Position.Y = 5.000000000000000000
       TabOrder = 0
       Text = 'Close'
@@ -464,7 +458,7 @@ object AppEndorsementForm: TAppEndorsementForm
     object btnSave: TButton
       Anchors = [akTop, akRight]
       Enabled = False
-      Position.X = 464.000000000000000000
+      Position.X = 468.000000000000000000
       Position.Y = 5.000000000000000000
       TabOrder = 1
       Text = 'Save'

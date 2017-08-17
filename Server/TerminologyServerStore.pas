@@ -765,7 +765,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirValueSetCodeSystem);
     begin
       stems(c).parent := parent;
       if map.ContainsKey(c.code) then
-        logt('Duplicate code '+c.code+' in '+cs.url)
+        logt('Duplicate code '+c.code+' in '+{$IFDEF FHIR2}'??'{$ELSE}cs.url{$ENDIF})
       else
         map.Add(c.code, c.Link);
       processConcepts(c, c.conceptList, map);

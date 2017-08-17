@@ -1,14 +1,14 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{53A48BDD-A923-4379-ABEC-2303ED173AB6}</ProjectGuid>
+        <ProjectGuid>{9FCB4960-2332-40E6-B083-4B1CEAF836F8}</ProjectGuid>
         <ProjectVersion>18.2</ProjectVersion>
         <FrameworkType>FMX</FrameworkType>
-        <MainSource>fhirserverOSX4.dpr</MainSource>
+        <MainSource>FHIRToolkit.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
-        <TargetedPlatforms>5</TargetedPlatforms>
-        <AppType>Console</AppType>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <TargetedPlatforms>6</TargetedPlatforms>
+        <AppType>Application</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -45,14 +45,34 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <SanitizedProjectName>fhirserverOSX4</SanitizedProjectName>
+        <SanitizedProjectName>FHIRToolkit</SanitizedProjectName>
+        <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
@@ -62,21 +82,30 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_OSX32)'!=''">
-        <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;IndyIPServer;IndySystem;tethering;fmxFireDAC;FireDAC;bindcompfmx;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;rtl;DbxClientDriver;CustomIPTransport;dbexpress;IndyCore;bindcomp;dsnap;FireDACCommon;IndyIPClient;RESTBackendComponents;soapserver;dbxcds;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-        <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=$(MSBuildProjectName);CFBundleIdentifier=$(MSBuildProjectName);CFBundleVersion=1.0.0;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSLocationAlwaysUsageDescription=The reason for accessing the location information of the user;NSLocationWhenInUseUsageDescription=The reason for accessing the location information of the user;NSContactsUsageDescription=The reason for accessing the contacts</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=$(MSBuildProjectName);CFBundleIdentifier=$(MSBuildProjectName);CFBundleVersion=1.0.0;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities;NSLocationAlwaysUsageDescription=The reason for accessing the location information of the user;NSLocationWhenInUseUsageDescription=The reason for accessing the location information of the user;NSContactsUsageDescription=The reason for accessing the contacts</VerInfo_Keys>
+        <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;IndyIPServer;IndySystem;tethering;fmxFireDAC;FireDAC;bindcompfmx;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;rtl;DbxClientDriver;CustomIPTransport;dbexpress;IndyCore;bindcomp;dsnap;FireDACCommon;IndyIPClient;RESTBackendComponents;soapserver;dbxcds;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;tethering;svnui;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;FireDAC;vcltouch;vcldb;bindcompfmx;svn;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;vclwinx;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;FireDACCommon;IndyIPClient;bindcompvcl;RESTBackendComponents;VCLRESTComponents;soapserver;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;tethering;svnui;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;FireDAC;vcltouch;vcldb;bindcompfmx;svn;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;vclwinx;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;FireDACCommon;IndyIPClient;bindcompvcl;RESTBackendComponents;VCLRESTComponents;soapserver;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;tethering;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;FireDAC;vcltouch;vcldb;bindcompfmx;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;fmxdae;xmlrtl;soapmidas;fmxobj;vclwinx;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;FireDACCommon;IndyIPClient;bindcompvcl;RESTBackendComponents;VCLRESTComponents;soapserver;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -87,12 +116,28 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_OSX32)'!=''">
-        <Manifest_File>(None)</Manifest_File>
+        <Icon_MainIcon>AppEndorser_Icon.ico</Icon_MainIcon>
+        <Manifest_File>..\utils\AppEndorserUI\(None)</Manifest_File>
+        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Debugger_Launcher>/usr/X11/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
-        <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <Icon_MainIcon>AppEndorser_Icon1.ico</Icon_MainIcon>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -100,53 +145,51 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\reference-platform\support\AdvObjects.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvExceptions.pas"/>
+        <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\support\StringSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MathSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\BytesSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\OSXUtils.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvStringBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\support\DecimalSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\DateSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\MimeMessage.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvExceptions.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvGenerics.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStreams.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvObjectLists.pas"/>
         <DCCReference Include="..\reference-platform\support\MemorySupport.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvItems.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvFilers.pas"/>
-        <DCCReference Include="..\reference-platform\support\DateSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\ErrorSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\SystemSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\ThreadSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ColourSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\CurrencySupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\DecimalSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvCollections.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvPersistents.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvIterators.pas"/>
-        <DCCReference Include="..\reference-platform\support\HL7V2DateSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\TextUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvGenerics.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvFiles.pas"/>
-        <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
-        <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\support\GUIDSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\FileSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\kCritSct.pas"/>
-        <DCCReference Include="..\reference-platform\support\MimeMessage.pas"/>
-        <DCCReference Include="..\reference-platform\support\Tests\OSXTests.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvMemories.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvBuffers.pas"/>
-        <DCCReference Include="..\reference-platform\support\MXML.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvJson.pas"/>
+        <DCCReference Include="..\reference-platform\support\BytesSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\support\FileSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvPersistentLists.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvStreamReaders.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvFiles.pas"/>
+        <DCCReference Include="..\reference-platform\support\ErrorSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvJSON.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvVCLStreams.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvTextFormatters.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvFormatters.pas"/>
@@ -157,49 +200,91 @@
         <DCCReference Include="..\reference-platform\support\AdvStringLists.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvCSVFormatters.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvCSVExtractors.pas"/>
-        <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStreamReaders.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringStreams.pas"/>
+        <DCCReference Include="..\reference-platform\support\TextUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParser.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserXml.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXML.pas"/>
         <DCCReference Include="..\reference-platform\support\XMLBuilder.pas"/>
-        <DCCReference Include="..\reference-platform\support\libeay32.pas"/>
-        <DCCReference Include="..\reference-platform\support\HMAC.pas"/>
+        <DCCReference Include="..\reference-platform\support\MXmlBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXmlBuilders.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXMLFormatters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvXMLEntities.pas"/>
         <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvStringMatches.pas"/>
-        <DCCReference Include="..\reference-platform\support\JWT.pas">
-            <Form>,
-  FHIRParser in &apos;..\reference-platform\support\FHIRParser.pas&apos;,
-  FHIRParserXml in &apos;..\reference-platform\r4\FHIRParserXml.pas&apos;,
-  FHIRParserJson in &apos;..\reference-platform\r4\FHIRParserJson.pas&apos;,
-  FHIRParserTurtle in &apos;..\reference-platform\r4\FHIRParserTurtle.pas&apos;,
-  FHIRResources in &apos;..\reference-platform\r4\FHIRResources.pas&apos;,
-  FHIRTypes in &apos;..\reference-platform\r4\FHIRTypes.pas&apos;,
-  FHIRParserBase in &apos;..\reference-platform\support\FHIRParserBase.pas&apos;,
-  AdvXmlBuilders in &apos;..\reference-platform\support\AdvXmlBuilders.pas&apos;,
-  AdvXMLFormatters in &apos;..\reference-platform\support\AdvXMLFormatters.pas&apos;,
-  AdvXMLEntities in &apos;..\reference-platform\support\AdvXMLEntities.pas&apos;,
-  FHIRBase in &apos;..\reference-platform\support\FHIRBase.pas&apos;,
-  AdvNames in &apos;..\reference-platform\support\AdvNames.pas&apos;,
-  FHIRUtilities in &apos;..\reference-platform\r4\FHIRUtilities.pas&apos;,
-  AdvZipWriters in &apos;..\reference-platform\support\AdvZipWriters.pas&apos;,
-  AdvNameBuffers in &apos;..\reference-platform\support\AdvNameBuffers.pas&apos;,
-  AdvObjectMatches in &apos;..\reference-platform\support\AdvObjectMatches.pas&apos;,
-  AdvZipDeclarations in &apos;..\reference-platform\support\AdvZipDeclarations.pas&apos;,
-  AdvZipParts in &apos;..\reference-platform\support\AdvZipParts.pas&apos;,
-  AdvZipUtilities in &apos;..\reference-platform\support\AdvZipUtilities.pas&apos;,
-  AdvZipWorkers in &apos;..\reference-platform\support\AdvZipWorkers.pas&apos;,
-  InternetFetcher in &apos;..\reference-platform\support\InternetFetcher.pas&apos;{,
-  FHIRContext in &apos;..\reference-platform\r4\FHIRContext.pas&apos;,
-  FHIRSupport in &apos;..\reference-platform\r4\FHIRSupport.pas&apos;,
-  SCIMObjects in &apos;..\reference-platform\support\SCIMObjects.pas&apos;,
-  GraphQL in &apos;..\reference-platform\support\GraphQL.pas&apos;,
-  FHIRConstants in &apos;..\reference-platform\r4\FHIRConstants.pas&apos;,
-  FHIRSecurity in &apos;..\reference-platform\support\FHIRSecurity.pas&apos;,
-  FHIRTags in &apos;..\reference-platform\r4\FHIRTags.pas&apos;,
-  FHIRLang in &apos;..\reference-platform\support\FHIRLang.pas&apos;,
-  FHIRXhtml in &apos;..\reference-platform\support\FHIRXhtml.pas&apos;,
-  FHIRMetaModel in &apos;..\reference-platform\r4\FHIRMetaModel.pas&apos;,
-  FHIRProfileUtilities in &apos;..\reference-platform\r4\FHIRProfileUtilities.pas&apos;,
-  AdvZipReaders in &apos;..\reference-platform\support\AdvZipReaders.pas&apos;,
-  FhirPath in &apos;..\reference-platform\r4\FhirPath.pas&apos;</Form>
+        <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipDeclarations.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipParts.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipWorkers.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvNameBuffers.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvObjectMatches.pas"/>
+        <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRContext.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\JWT.pas"/>
+        <DCCReference Include="..\reference-platform\support\HMAC.pas"/>
+        <DCCReference Include="..\reference-platform\support\libeay32.pas"/>
+        <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
+        <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserJson.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserTurtle.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\kCritSct.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvZipReaders.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
+        <DCCReference Include="..\reference-platform\support\SystemSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\ThreadSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
+        <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
+        <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\support\AfsStreamManagers.pas"/>
+        <DCCReference Include="..\reference-platform\support\AfsVolumes.pas"/>
+        <DCCReference Include="..\reference-platform\support\AfsResourceVolumes.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvWinInetClients.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvStringHashes.pas"/>
+        <DCCReference Include="..\reference-platform\support\AdvHashes.pas"/>
+        <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
+        <DCCReference Include="OrganizationChooser.pas">
+            <Form>OrganizationSelectionForm</Form>
+        </DCCReference>
+        <DCCReference Include="FHIRToolkitForm.pas">
+            <Form>MasterToolsForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="ServerForm.pas">
+            <Form>ServerFrameForm</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="AppEndorserFrame.pas">
+            <Form>AppEndorsementFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="BaseFrame.pas"/>
+        <DCCReference Include="CapabilityStatementEditor.pas">
+            <Form>CapabilityStatementEditorFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -219,21 +304,28 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">fhirserverOSX4.dpr</Source>
+                    <Source Name="MainSource">FHIRToolkit.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="OSX32\Debug\AppEndorser.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
+                <DeployFile LocalName="OSX32\Debug\AppEndorser.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>AppEndorser.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -242,21 +334,49 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIRToolkit.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkit.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteName>AppEndorser.icns</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIRToolkit.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkit.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkit" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="OSX32">
+                        <RemoteName>FHIRToolkit</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\FHIRToolkit.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRToolkit.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\fhirserverOSX4.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="OSX32\Debug\AppEndorser.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>fhirserverOSX4.rsm</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\fhirserverOSX4" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>fhirserverOSX4</RemoteName>
+                        <RemoteName>Info.plist</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -678,8 +798,8 @@
             </Deployment>
             <Platforms>
                 <Platform value="OSX32">True</Platform>
-                <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win32">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

@@ -1,19 +1,18 @@
-unit AppEndorserForm;
+unit AppEndorserFrame;
 
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, IniFiles,
-  SystemSupport, DateSupport, GuidSupport, FileSupport, StringSupport,
-  FHIRClient, FHIRTypes, FHIRResources, FHIRUtilities, FHIRParser,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
-  FMX.StdCtrls, FMX.ListView, FMX.Layouts, FMX.TreeView, FMX.Platform,
-  FMX.Controls.Presentation, FMX.Edit, FMX.TabControl, FMX.ListBox,
-  OrganizationChooser;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
+  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
+  FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
+  FMX.Controls.Presentation, FMX.Platform,
+  StringSupport, FileSupport, DateSupport, GuidSupport,
+  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient, FHIRParser,
+  BaseFrame, OrganizationChooser;
 
 type
-  TAppEndorsementForm = class(TForm)
+  TAppEndorsementFrame = class(TBaseFrame)
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -89,6 +88,7 @@ type
     FEndorsements : TFhirObservationList;
     FActive : TFhirResource;
 
+    procedure SetClient(const Value: TFHIRClient);
     procedure SetNotDirty;
     procedure SetIsDirty;
     procedure disableTreeView;
@@ -118,37 +118,26 @@ type
     procedure saveEndorsement;
   public
     { Public declarations }
-    procedure Load(client : TFhirClient);
+    Destructor Destroy; override;
+    property Client : TFHIRClient read FClient write SetClient;
   end;
-
-var
-  AppEndorsementForm: TAppEndorsementForm;
 
 implementation
 
 {$R *.fmx}
-{$R *.Surface.fmx MSWINDOWS}
-{$R *.Windows.fmx MSWINDOWS}
-{$R *.Macintosh.fmx MACOS}
 
 const
   MAGIC_OBS = 'http://healthintersections.com.au/fhir/codes/obs';
   EXT_JWT = 'http://www.healthintersections.com.au/fhir/StructureDefinition/JWT';
 
-procedure TAppEndorsementForm.Load(client : TFhirClient);
+procedure TAppEndorsementFrame.SetClient(const Value: TFHIRClient);
 var
   cs : IFMXCursorService;
 begin
-  FClient := client.link;
-  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-    cs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-  else
-    cs := nil;
-  if Assigned(CS) then
-  begin
-    Cursor := CS.GetCursor;
-    CS.SetCursor(crHourGlass);
-  end;
+  FClient.free;
+  FClient := value;
+
+  cs := markBusy;
   try
     ClearEndorsements;
     ClearApplications;
@@ -161,13 +150,12 @@ begin
     LoadEndorsements;
     EnableTreeView;
   finally
-    if Assigned(CS) then
-      cs.setCursor(Cursor);
+    markNotBusy(cs);
   end;
   tvEntitiesClick(nil);
 end;
 
-procedure TAppEndorsementForm.btnSaveClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnSaveClick(Sender: TObject);
 begin
   if FActive = nil then
     raise Exception.Create('Active is nil?')
@@ -188,7 +176,7 @@ begin
   result := '/'+r;
 end;
 
-procedure TAppEndorsementForm.btnUploadClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnUploadClick(Sender: TObject);
 var
   bnd : TFhirBundle;
   be : TFhirBundleEntry;
@@ -211,7 +199,7 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.Button1Click(Sender: TObject);
+procedure TAppEndorsementFrame.Button1Click(Sender: TObject);
 var
   pIn, pOut : TFhirParameters;
 begin
@@ -234,7 +222,7 @@ begin
 
 end;
 
-procedure TAppEndorsementForm.addApplication;
+procedure TAppEndorsementFrame.addApplication;
 var
   app : TFhirDevice;
   ti : TTreeViewItem;
@@ -264,7 +252,7 @@ begin
   SetIsDirty;
 end;
 
-procedure TAppEndorsementForm.addEndorsementForApp(org: TFhirOrganization);
+procedure TAppEndorsementFrame.addEndorsementForApp(org: TFhirOrganization);
 var
   app : TFhirDevice;
   endorsement : TFhirObservation;
@@ -299,7 +287,7 @@ begin
   SetIsDirty;
 end;
 
-procedure TAppEndorsementForm.addOrganization;
+procedure TAppEndorsementFrame.addOrganization;
 var
   org : TFhirOrganization;
   ti : TTreeViewItem;
@@ -323,7 +311,7 @@ begin
   SetIsDirty;
 end;
 
-procedure TAppEndorsementForm.btnAppNewEndorsementClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnAppNewEndorsementClick(Sender: TObject);
 var
   org : TFhirOrganization;
 begin
@@ -333,15 +321,18 @@ begin
     addEndorsementForApp(org);
 end;
 
-procedure TAppEndorsementForm.btnCloseClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnCloseClick(Sender: TObject);
 begin
   if not btnSave.Enabled then
     Close
   else if MessageDlg('Abandon Changes?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0) = mrYes then
+  begin
+    tvEntities.enabled := true;
     tvEntitiesClick(nil);
+  end;
 end;
 
-procedure TAppEndorsementForm.ClearApplications;
+procedure TAppEndorsementFrame.ClearApplications;
 var
   i : integer;
 begin
@@ -351,13 +342,13 @@ begin
   FApplications := nil;
 end;
 
-procedure TAppEndorsementForm.ClearEndorsements;
+procedure TAppEndorsementFrame.ClearEndorsements;
 begin
   FEndorsements.Free;
   FEndorsements := nil;
 end;
 
-procedure TAppEndorsementForm.ClearOrganizations;
+procedure TAppEndorsementFrame.ClearOrganizations;
 var
   i : integer;
 begin
@@ -367,7 +358,7 @@ begin
   FOrganizations := nil;
 end;
 
-function TAppEndorsementForm.describeApp(ref: TFhirReference): String;
+function TAppEndorsementFrame.describeApp(ref: TFhirReference): String;
 var
   app : TFhirDevice;
 begin
@@ -381,7 +372,7 @@ begin
   end;
 end;
 
-function TAppEndorsementForm.describeOrg(ref: TFhirReference): String;
+function TAppEndorsementFrame.describeOrg(ref: TFhirReference): String;
 var
   org : TFhirOrganization;
 begin
@@ -395,7 +386,16 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.disableChildren(children: TFmxChildrenList);
+destructor TAppEndorsementFrame.Destroy;
+begin
+  ClearApplications;
+  ClearOrganizations;
+  ClearEndorsements;
+  FCLient.Free;
+  inherited;
+end;
+
+procedure TAppEndorsementFrame.disableChildren(children: TFmxChildrenList);
 var
   obj : TFmxObject;
 begin
@@ -408,18 +408,18 @@ begin
       end;
 end;
 
-procedure TAppEndorsementForm.disableTreeView;
+procedure TAppEndorsementFrame.disableTreeView;
 begin
   tvEntities.Enabled := false;
   disableChildren(tvEntities.Children);
 end;
 
-procedure TAppEndorsementForm.editorGeneralChange(Sender: TObject);
+procedure TAppEndorsementFrame.editorGeneralChange(Sender: TObject);
 begin
   SetIsDirty;
 end;
 
-procedure TAppEndorsementForm.enableChildren(children: TFmxChildrenList);
+procedure TAppEndorsementFrame.enableChildren(children: TFmxChildrenList);
 var
   obj : TFmxObject;
 begin
@@ -432,13 +432,13 @@ begin
       end;
 end;
 
-procedure TAppEndorsementForm.enableTreeView;
+procedure TAppEndorsementFrame.enableTreeView;
 begin
   tvEntities.Enabled := true;
   enableChildren(tvEntities.Children);
 end;
 
-function TAppEndorsementForm.findApplication(ref: String): TFhirDevice;
+function TAppEndorsementFrame.findApplication(ref: String): TFhirDevice;
 var
   dev :  TFhirDevice;
 begin
@@ -452,7 +452,7 @@ begin
   end;
 end;
 
-function TAppEndorsementForm.findOrganization(ref: String): TFhirOrganization;
+function TAppEndorsementFrame.findOrganization(ref: String): TFhirOrganization;
 var
   org :  TFhirOrganization;
 begin
@@ -466,7 +466,7 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TAppEndorsementFrame.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   if btnSave.Enabled then
     CanClose := MessageDlg('Abandon Changes?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0) = mrYes
@@ -474,13 +474,13 @@ begin
     CanClose := true;
 end;
 
-procedure TAppEndorsementForm.FormCreate(Sender: TObject);
+procedure TAppEndorsementFrame.FormCreate(Sender: TObject);
 begin
   tabPages.ActiveTab := tabNull;
   disableTreeView;
 end;
 
-procedure TAppEndorsementForm.FormDestroy(Sender: TObject);
+procedure TAppEndorsementFrame.FormDestroy(Sender: TObject);
 begin
   ClearEndorsements;
   ClearApplications;
@@ -489,7 +489,7 @@ begin
   FClient.Free;
 end;
 
-procedure TAppEndorsementForm.LoadApplication(app: TFhirDevice);
+procedure TAppEndorsementFrame.LoadApplication(app: TFhirDevice);
 var
   id : TFhirIdentifier;
 begin
@@ -500,7 +500,7 @@ begin
   SetNotDirty;
 end;
 
-procedure TAppEndorsementForm.LoadApplications;
+procedure TAppEndorsementFrame.LoadApplications;
 var
   bnd : TFHIRBundle;
   be :  TFHIRBundleEntry;
@@ -529,7 +529,7 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.LoadEndorsement(endorsement: TFhirObservation);
+procedure TAppEndorsementFrame.LoadEndorsement(endorsement: TFhirObservation);
 begin
   edtEndAppName.Text := describeApp(endorsement.subject);
   if endorsement.performerList.Count = 0 then
@@ -550,7 +550,7 @@ begin
   SetNotDirty;
 end;
 
-procedure TAppEndorsementForm.LoadEndorsements;
+procedure TAppEndorsementFrame.LoadEndorsements;
 var
   bnd : TFHIRBundle;
   be : TFHIRBundleEntry;
@@ -587,7 +587,7 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.LoadOrganization(org: TFhirOrganization);
+procedure TAppEndorsementFrame.LoadOrganization(org: TFhirOrganization);
 var
   c : TFhirContactPoint;
 begin
@@ -601,7 +601,7 @@ begin
   SetNotDirty;
 end;
 
-procedure TAppEndorsementForm.LoadOrganizations;
+procedure TAppEndorsementFrame.LoadOrganizations;
 var
   bnd : TFHIRBundle;
   be : TFHIRBundleEntry;
@@ -629,12 +629,12 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.Panel7Resize(Sender: TObject);
+procedure TAppEndorsementFrame.Panel7Resize(Sender: TObject);
 begin
   btnLeftNewApplication.Width := Panel7.Width / 2;
 end;
 
-procedure TAppEndorsementForm.saveApplication;
+procedure TAppEndorsementFrame.saveApplication;
 var
   app, upd, res : TFhirDevice;
   id : String;
@@ -671,7 +671,7 @@ begin
   tvEntitiesClick(nil);
 end;
 
-procedure TAppEndorsementForm.saveEndorsement;
+procedure TAppEndorsementFrame.saveEndorsement;
 var
   obs, upd, res : TFhirObservation;
   id : String;
@@ -711,7 +711,7 @@ begin
   tvEntitiesClick(nil);
 end;
 
-procedure TAppEndorsementForm.saveOrganization;
+procedure TAppEndorsementFrame.saveOrganization;
 var
   org, upd, res : TFhirOrganization;
   id : String;
@@ -766,7 +766,7 @@ begin
   tvEntitiesClick(nil);
 end;
 
-procedure TAppEndorsementForm.SetIsDirty;
+procedure TAppEndorsementFrame.SetIsDirty;
 begin
   btnSave.Enabled := true;
   btnClose.Text := 'Cancel';
@@ -778,7 +778,7 @@ begin
   btnAppNewEndorsement.Enabled := false;
 end;
 
-procedure TAppEndorsementForm.SetNotDirty;
+procedure TAppEndorsementFrame.SetNotDirty;
 begin
   btnSave.Enabled := false;
   btnClose.Text := 'Close';
@@ -790,7 +790,7 @@ begin
   btnAppNewEndorsement.Enabled := true;
 end;
 
-procedure TAppEndorsementForm.tvEntitiesClick(Sender: TObject);
+procedure TAppEndorsementFrame.tvEntitiesClick(Sender: TObject);
 var
   item : TTreeViewItem;
 begin
@@ -834,17 +834,17 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.btnNewApplicationClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnNewApplicationClick(Sender: TObject);
 begin
   addApplication;
 end;
 
-procedure TAppEndorsementForm.btnNewOrganizationClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnNewOrganizationClick(Sender: TObject);
 begin
   addOrganization;
 end;
 
-procedure TAppEndorsementForm.btnDownloadClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnDownloadClick(Sender: TObject);
 var
   bnd : TFhirBundle;
   app : TFhirDevice;
@@ -881,16 +881,14 @@ begin
   end;
 end;
 
-procedure TAppEndorsementForm.btnLeftNewApplicationClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnLeftNewApplicationClick(Sender: TObject);
 begin
   addApplication;
 end;
 
-procedure TAppEndorsementForm.btnLeftNewOrganizationClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnLeftNewOrganizationClick(Sender: TObject);
 begin
   addOrganization;
 end;
 
 end.
-
-

@@ -188,8 +188,6 @@ uses
   XMLSupport in '..\reference-platform\Support\XMLSupport.pas',
   DigitalSignatures in '..\reference-platform\Support\DigitalSignatures.pas',
   UriServices in 'UriServices.pas',
-  CvxServices in 'CvxServices.pas',
-  USStateCodeServices in 'USStateCodeServices.pas',
   UniiServices in 'UniiServices.pas',
   RxNormServices in 'RxNormServices.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',

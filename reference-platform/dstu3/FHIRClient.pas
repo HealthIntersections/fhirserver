@@ -71,6 +71,8 @@ Type
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; virtual;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; virtual;
+
+    function address : String; virtual;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -140,6 +142,7 @@ Type
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
 
+    function address : String; override;
     function conformance(summary : boolean) : TFhirCapabilityStatement; override;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
@@ -882,6 +885,11 @@ begin
   {$ENDIF}
 end;
 
+function TFhirHTTPClient.address: String;
+begin
+  result := FUrl;
+end;
+
 procedure TFhirHTTPClient.authoriseByOWin(server, username, password: String);
 var
   token : TJsonObject;
@@ -948,6 +956,11 @@ end;
 function TFhirClient.link: TFhirClient;
 begin
   result := TFhirClient(inherited Link);
+end;
+
+function TFhirClient.address: String;
+begin
+  raise Exception.Create('Must override address in '+className);
 end;
 
 function TFhirClient.conformance(summary: boolean): TFhirCapabilityStatement;

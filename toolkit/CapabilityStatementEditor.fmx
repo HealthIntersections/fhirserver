@@ -1,0 +1,118 @@
+object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
+  Left = 0
+  Top = 0
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop, iPhone, iPad]
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 446.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 34.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btnClose: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 553.000000000000000000
+      Position.Y = 6.000000000000000000
+      TabOrder = 0
+      Text = 'Close'
+    end
+    object btnSave: TButton
+      Anchors = [akTop, akRight]
+      Enabled = False
+      Position.X = 465.000000000000000000
+      Position.Y = 6.000000000000000000
+      TabOrder = 1
+      Text = 'Save'
+    end
+  end
+  object Panel2: TPanel
+    Align = Left
+    Size.Width = 201.000000000000000000
+    Size.Height = 446.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Panel4: TPanel
+      Align = Top
+      Size.Width = 201.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 4.000000000000000000
+        Text = 'Structure'
+        TabOrder = 0
+      end
+    end
+    object TreeView1: TTreeView
+      Align = Client
+      Size.Width = 201.000000000000000000
+      Size.Height = 421.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 417.000000000000000000
+    end
+  end
+  object Splitter1: TSplitter
+    Align = Left
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 201.000000000000000000
+    Size.Width = 8.000000000000000000
+    Size.Height = 446.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Panel3: TPanel
+    Align = Client
+    Size.Width = 431.000000000000000000
+    Size.Height = 446.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    object TabControl1: TTabControl
+      Align = Client
+      Size.Width = 431.000000000000000000
+      Size.Height = 446.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 1
+      TabOrder = 0
+      TabPosition = None
+      Sizes = (
+        431s
+        446s
+        431s
+        446s)
+      object TabItem1: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem1'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+      object TabItem2: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem2'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+      end
+    end
+  end
+end
