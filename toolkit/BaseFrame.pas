@@ -17,6 +17,7 @@ type
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
 
+    procedure load; virtual;
     procedure Close;
 
     function markbusy : IFMXCursorService;
@@ -37,6 +38,11 @@ begin
     tabs.TabIndex := i - 1
   else
     tabs.TabIndex := 0;
+end;
+
+procedure TBaseFrame.load;
+begin
+
 end;
 
 function TBaseFrame.markbusy : IFMXCursorService;

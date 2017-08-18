@@ -22,6 +22,7 @@ type
     property Filename : String read FFilename write FFilename;
     property Resource : TFHIRResource read FResource write SetResource;
   end;
+  TBaseResourceFrameClass = class of TBaseResourceFrame;
 
 implementation
 

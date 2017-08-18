@@ -12,7 +12,9 @@ uses
   BaseFrame, OrganizationChooser;
 
 type
-  TAppEndorsementFrame = class(TBaseFrame)
+  TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
+
+  TAppEndorsementFrame = class(TFrame)
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -120,6 +122,8 @@ type
     { Public declarations }
     Destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
+
+    procedure Load; override;
   end;
 
 implementation
@@ -131,28 +135,9 @@ const
   EXT_JWT = 'http://www.healthintersections.com.au/fhir/StructureDefinition/JWT';
 
 procedure TAppEndorsementFrame.SetClient(const Value: TFHIRClient);
-var
-  cs : IFMXCursorService;
 begin
   FClient.free;
   FClient := value;
-
-  cs := markBusy;
-  try
-    ClearEndorsements;
-    ClearApplications;
-    ClearOrganizations;
-
-    btnDownload.Enabled := true;
-    btnUpload.Enabled := true;
-    LoadApplications;
-    LoadOrganizations;
-    LoadEndorsements;
-    EnableTreeView;
-  finally
-    markNotBusy(cs);
-  end;
-  tvEntitiesClick(nil);
 end;
 
 procedure TAppEndorsementFrame.btnSaveClick(Sender: TObject);
@@ -487,6 +472,28 @@ begin
   ClearOrganizations;
   FActive.Free;
   FClient.Free;
+end;
+
+procedure TAppEndorsementFrame.Load;
+var
+  cs : IFMXCursorService;
+begin
+  cs := markBusy;
+  try
+    ClearEndorsements;
+    ClearApplications;
+    ClearOrganizations;
+
+    btnDownload.Enabled := true;
+    btnUpload.Enabled := true;
+    LoadApplications;
+    LoadOrganizations;
+    LoadEndorsements;
+    EnableTreeView;
+  finally
+    markNotBusy(cs);
+  end;
+  tvEntitiesClick(nil);
 end;
 
 procedure TAppEndorsementFrame.LoadApplication(app: TFhirDevice);

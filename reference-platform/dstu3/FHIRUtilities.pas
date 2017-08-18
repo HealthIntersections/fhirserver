@@ -296,6 +296,9 @@ type
   public
     function rest(type_ : TFhirResourceType) : TFhirCapabilityStatementRestResource;
     procedure checkCompatible;
+
+    function hasFormat(fmt : TFHIRFormat) : boolean;
+    function instantiates(url : String) : boolean;
   end;
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
@@ -601,7 +604,7 @@ end;
 function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
 var
   i : integer;
-  s : String;
+  s : AnsiString;
 begin
   i := oContent.Position;
   setlength(s, ocontent.Size - oContent.Position);
@@ -609,8 +612,12 @@ begin
   oContent.Position := i;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
+  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
+    result := TFHIRJsonParser
+  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
+    result := TFHIRTurtleParser
   else
-    result := TFHIRJsonParser;
+    result := nil;
 end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
@@ -2222,6 +2229,26 @@ begin
   code := FHIR_GENERATED_VERSION.Substring(0, FHIR_GENERATED_VERSION.LastIndexOf('.'));
   if (code <> res) then
     raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
+end;
+
+function TFHIRCapabilityStatementHelper.hasFormat(fmt: TFHIRFormat): boolean;
+var
+  c : TFhirCode;
+begin
+  result := false;
+  for c in formatList do
+    if (c.value = CODES_TFHIRFormat[fmt]) or (c.value = MIMETYPES_TFHIRFormat[fmt]) then
+      exit(true);
+end;
+
+function TFHIRCapabilityStatementHelper.instantiates(url: String): boolean;
+var
+  u : TFhirUri;
+begin
+  result := false;
+  for u in instantiatesList do
+    if u.value = url then
+      exit(true);
 end;
 
 function TFHIRCapabilityStatementHelper.rest(type_: TFhirResourceType): TFhirCapabilityStatementRestResource;
@@ -4691,11 +4718,19 @@ end;
 function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
+  pc : TFHIRParserClass;
 begin
   case format of
     ffXml : p := TFHIRXmlParser.Create(nil, 'en');
     ffJson : p := TFHIRJsonParser.Create(nil, 'en');
     ffTurtle : p := TFHIRTurtleParser.Create(nil, 'en');
+    ffUnspecified :
+    begin
+      pc := DetectFormat(stream);
+      if pc = nil then
+        raise Exception.Create('Format Not identified');
+      p := pc.Create(nil, 'en');
+    end
   else
     raise Exception.Create('Format Not supported');
   end;

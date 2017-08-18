@@ -1,10 +1,10 @@
 object ServerFrame: TServerFrame
-  Size.Width = 1024.000000000000000000
-  Size.Height = 464.000000000000000000
+  Size.Width = 382.000000000000000000
+  Size.Height = 442.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Top
-    Size.Width = 1024.000000000000000000
+    Size.Width = 382.000000000000000000
     Size.Height = 36.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -39,7 +39,7 @@ object ServerFrame: TServerFrame
     end
     object btnClose: TButton
       Anchors = [akTop, akRight]
-      Position.X = 1257.000000000000000000
+      Position.X = 935.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 4
       Text = 'Close'
@@ -49,7 +49,7 @@ object ServerFrame: TServerFrame
   object pnlSearch: TPanel
     Align = Top
     Position.Y = 36.000000000000000000
-    Size.Width = 1024.000000000000000000
+    Size.Width = 382.000000000000000000
     Size.Height = 205.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
@@ -66,18 +66,18 @@ object ServerFrame: TServerFrame
       Anchors = [akLeft, akTop, akRight, akBottom]
       Position.X = 8.000000000000000000
       Position.Y = 32.000000000000000000
-      Size.Width = 1330.000000000000000000
+      Size.Width = 367.000000000000000000
       Size.Height = 172.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 0
       TabOrder = 2
       TabPosition = None
       Sizes = (
-        1330s
+        367s
         172s
-        1330s
+        367s
         172s
-        1330s
+        367s
         172s)
       object TabItem1: TTabItem
         CustomIcon = <
@@ -130,7 +130,7 @@ object ServerFrame: TServerFrame
         'All Resources')
       Position.X = 72.000000000000000000
       Position.Y = 6.000000000000000000
-      Size.Width = 850.000000000000000000
+      Size.Width = 303.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 4
@@ -141,30 +141,30 @@ object ServerFrame: TServerFrame
     Cursor = crVSplit
     MinSize = 20.000000000000000000
     Position.Y = 241.000000000000000000
-    Size.Width = 1024.000000000000000000
+    Size.Width = 382.000000000000000000
     Size.Height = 8.000000000000000000
     Size.PlatformDefault = False
   end
   object Panel2: TPanel
     Align = Client
-    Size.Width = 1024.000000000000000000
-    Size.Height = 215.000000000000000000
+    Size.Width = 382.000000000000000000
+    Size.Height = 193.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
     object ListBox1: TListBox
       Anchors = [akLeft, akTop, akRight, akBottom]
       Position.X = 8.000000000000000000
       Position.Y = 2.000000000000000000
-      Size.Width = 1330.000000000000000000
-      Size.Height = 436.000000000000000000
+      Size.Width = 367.000000000000000000
+      Size.Height = 186.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       DisableFocusEffect = True
       DefaultItemStyles.ItemStyle = ''
       DefaultItemStyles.GroupHeaderStyle = ''
       DefaultItemStyles.GroupFooterStyle = ''
-      Viewport.Width = 1326.000000000000000000
-      Viewport.Height = 432.000000000000000000
+      Viewport.Width = 367.000000000000000000
+      Viewport.Height = 186.000000000000000000
     end
   end
 end
