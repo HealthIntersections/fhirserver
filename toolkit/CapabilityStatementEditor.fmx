@@ -9,21 +9,24 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     Size.Height = 34.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object btnClose: TButton
+    object btnCancel: TButton
       Anchors = [akTop, akRight]
+      Cancel = True
+      Enabled = False
       Position.X = 670.000000000000000000
       Position.Y = 6.000000000000000000
       TabOrder = 0
-      Text = 'Close'
-      OnClick = btnCloseClick
+      Text = 'Cancel'
+      OnClick = btnCancelClick
     end
-    object btnSave: TButton
+    object btnCommit: TButton
       Anchors = [akTop, akRight]
       Enabled = False
       Position.X = 582.000000000000000000
       Position.Y = 6.000000000000000000
       TabOrder = 1
-      Text = 'Save'
+      Text = 'Commit'
+      OnClick = btnCommitClick
     end
   end
   object Panel2: TPanel
@@ -93,7 +96,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         621s
         547s
         621s)
-      object TabItem1: TTabItem
+      object tbMetadata: TTabItem
         CustomIcon = <
           item
           end>
@@ -103,7 +106,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
-        Text = 'TabItem1'
+        Text = 'tbMetadata'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
         object Label2: TLabel
@@ -149,6 +152,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 5
           Text = 'Experimental'
+          OnChange = inputChanged
         end
         object Label7: TLabel
           Position.X = 16.000000000000000000
@@ -212,6 +216,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 14
           Text = 'XML'
+          OnChange = inputChanged
         end
         object cbJson: TCheckBox
           Position.X = 88.000000000000000000
@@ -221,6 +226,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 15
           Text = 'JSON'
+          OnChange = inputChanged
         end
         object cbTurtle: TCheckBox
           Position.X = 152.000000000000000000
@@ -230,6 +236,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 16
           Text = 'Turtle'
+          OnChange = inputChanged
         end
         object cbTerminologyService: TCheckBox
           Position.X = 16.000000000000000000
@@ -239,6 +246,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 17
           Text = 'Terminology Service'
+          OnChange = inputChanged
         end
         object Label15: TLabel
           Position.X = 16.000000000000000000
@@ -258,6 +266,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtName: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -268,6 +278,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 278.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtTitle: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -278,10 +290,13 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbxStatus: TComboBox
           Anchors = [akLeft, akTop, akRight]
           Items.Strings = (
+            ''
             'draft'
             'active'
             'retired'
@@ -292,9 +307,12 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 22
+          OnChange = inputChanged
         end
         object dedDate: TDateEdit
           Date = 42965.000000000000000000
+          OnChange = inputChanged
+          OnCheckChanged = inputChanged
           Anchors = [akLeft, akTop, akRight]
           Position.X = 84.000000000000000000
           Position.Y = 154.000000000000000000
@@ -312,6 +330,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtDescription: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -322,6 +342,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtPurpose: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -332,6 +354,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtCopyright: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -342,19 +366,24 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 451.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbxKind: TComboBox
           Items.Strings = (
+            ''
             'instance'
             'capability'
             'requirements')
           Position.X = 84.000000000000000000
           Position.Y = 328.000000000000000000
           TabOrder = 28
+          OnChange = inputChanged
         end
         object cbxJurisdiction: TComboBox
           Anchors = [akLeft, akTop, akRight]
           Items.Strings = (
+            ''
             'Austria (AT)'
             'Australia (AU)'
             'Brazil (BR)'
@@ -388,6 +417,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 29
+          OnChange = inputChanged
         end
         object edtFHIRVersion: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -398,10 +428,14 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 204.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object mImplementationGuides: TMemo
           Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
           DataDetectorTypes = []
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
           Anchors = [akLeft, akTop, akRight]
           Position.X = 16.000000000000000000
           Position.Y = 456.000000000000000000
@@ -409,8 +443,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 105.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 31
-          Viewport.Width = 515.000000000000000000
-          Viewport.Height = 105.000000000000000000
+          Viewport.Width = 511.000000000000000000
+          Viewport.Height = 101.000000000000000000
         end
         object edtVersion: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -421,9 +455,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 100.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
       end
-      object TabItem2: TTabItem
+      object tbRest: TTabItem
         CustomIcon = <
           item
           end>
@@ -433,7 +469,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
-        Text = 'TabItem2'
+        Text = 'tbRest'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
         object Label16: TLabel
@@ -445,6 +481,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object mSecurity: TMemo
           Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
           DataDetectorTypes = []
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
           Anchors = [akLeft, akTop, akRight]
           Position.X = 16.000000000000000000
           Position.Y = 160.000000000000000000
@@ -452,8 +490,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 73.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
-          Viewport.Width = 515.000000000000000000
-          Viewport.Height = 73.000000000000000000
+          Viewport.Width = 511.000000000000000000
+          Viewport.Height = 69.000000000000000000
         end
         object cbCORS: TCheckBox
           Position.X = 16.000000000000000000
@@ -463,24 +501,28 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 2
           Text = 'CORS'
+          OnChange = inputChanged
         end
         object cbClientCerts: TCheckBox
           Position.X = 152.000000000000000000
           Position.Y = 240.000000000000000000
           TabOrder = 3
           Text = 'Client Certificates'
+          OnChange = inputChanged
         end
         object cbOAuth: TCheckBox
           Position.X = 16.000000000000000000
           Position.Y = 264.000000000000000000
           TabOrder = 4
           Text = 'OAuth'
+          OnChange = inputChanged
         end
         object cbSmart: TCheckBox
           Position.X = 152.000000000000000000
           Position.Y = 264.000000000000000000
           TabOrder = 5
           Text = 'Smart App Launch (OAuth profile)'
+          OnChange = inputChanged
         end
         object Label17: TLabel
           Position.X = 16.000000000000000000
@@ -494,6 +536,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object mDoco: TMemo
           Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
           DataDetectorTypes = []
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
           Anchors = [akLeft, akTop, akRight]
           Position.X = 16.000000000000000000
           Position.Y = 40.000000000000000000
@@ -501,11 +545,11 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 81.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 7
-          Viewport.Width = 515.000000000000000000
-          Viewport.Height = 81.000000000000000000
+          Viewport.Width = 511.000000000000000000
+          Viewport.Height = 77.000000000000000000
         end
       end
-      object TabItem3: TTabItem
+      object tbResource: TTabItem
         CustomIcon = <
           item
           end>
@@ -515,7 +559,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
-        Text = 'TabItem3'
+        Text = 'tbResource'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
         object Label18: TLabel
@@ -530,6 +574,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object mDocoRes: TMemo
           Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
           DataDetectorTypes = []
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
           Anchors = [akLeft, akTop, akRight]
           Position.X = 16.000000000000000000
           Position.Y = 40.000000000000000000
@@ -560,6 +606,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 26
           Text = 'Read'
+          OnChange = inputChanged
         end
         object edtDocoRead: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -570,6 +617,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbVRead: TCheckBox
           Position.X = 24.000000000000000000
@@ -579,6 +628,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 22
           Text = 'VRead'
+          OnChange = inputChanged
         end
         object edtDocoVRead: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -589,6 +639,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtDocoSearch: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -599,6 +651,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbUpdate: TCheckBox
           Position.X = 24.000000000000000000
@@ -608,6 +662,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 20
           Text = 'Update'
+          OnChange = inputChanged
         end
         object edtDocoCreate: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -618,6 +673,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbPatch: TCheckBox
           Position.X = 24.000000000000000000
@@ -627,6 +684,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 18
           Text = 'Patch'
+          OnChange = inputChanged
         end
         object cbDelete: TCheckBox
           Position.X = 24.000000000000000000
@@ -636,6 +694,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 16
           Text = 'Delete'
+          OnChange = inputChanged
         end
         object edtDocoUpdate: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -646,6 +705,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbHistoryInstance: TCheckBox
           Position.X = 24.000000000000000000
@@ -655,6 +716,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 13
           Text = 'History (Instance)'
+          OnChange = inputChanged
         end
         object edtDocoPatch: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -665,6 +727,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbHistoryType: TCheckBox
           Position.X = 24.000000000000000000
@@ -674,6 +738,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 12
           Text = 'History (Type)'
+          OnChange = inputChanged
         end
         object edtDocoDelete: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -684,6 +749,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbCreate: TCheckBox
           Position.X = 24.000000000000000000
@@ -693,6 +760,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 11
           Text = 'Create'
+          OnChange = inputChanged
         end
         object edtDocoHistoryInstance: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -703,6 +771,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 387.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object edtDocoHistoryType: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -713,6 +783,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 387.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object cbSearch: TCheckBox
           Position.X = 24.000000000000000000
@@ -722,6 +794,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 10
           Text = 'Search'
+          OnChange = inputChanged
         end
         object cbUpdateCreate: TCheckBox
           Position.X = 16.000000000000000000
@@ -731,6 +804,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 28
           Text = 'Allow Update to Create'
+          OnChange = inputChanged
         end
         object Label21: TLabel
           Position.X = 16.000000000000000000
@@ -749,6 +823,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 30
           Text = 'Create'
+          OnChange = inputChanged
         end
         object cbCondUpdate: TCheckBox
           Position.X = 176.000000000000000000
@@ -758,12 +833,14 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.PlatformDefault = False
           TabOrder = 31
           Text = 'Update'
+          OnChange = inputChanged
         end
         object cbCondDelete: TCheckBox
           Position.X = 256.000000000000000000
           Position.Y = 444.000000000000000000
           TabOrder = 32
           Text = 'Delete'
+          OnChange = inputChanged
         end
         object Label22: TLabel
           Position.X = 326.000000000000000000
@@ -774,6 +851,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object cbxReadCondition: TComboBox
           Anchors = [akLeft, akTop, akRight]
           Items.Strings = (
+            ''
             'Not Supported'
             'Supports Modified-Since Header'
             'Supports Not-match Header '
@@ -784,6 +862,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 34
+          OnChange = inputChanged
         end
         object Label23: TLabel
           Position.X = 16.000000000000000000
@@ -796,30 +875,35 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Position.Y = 476.000000000000000000
           TabOrder = 36
           Text = 'Literal'
+          OnChange = inputChanged
         end
         object cbRefLogical: TCheckBox
           Position.X = 176.000000000000000000
           Position.Y = 476.000000000000000000
           TabOrder = 37
           Text = 'Logical'
+          OnChange = inputChanged
         end
         object cbRefResolve: TCheckBox
           Position.X = 256.000000000000000000
           Position.Y = 476.000000000000000000
           TabOrder = 38
           Text = 'Resolves Logical'
+          OnChange = inputChanged
         end
         object cbRefEnforced: TCheckBox
           Position.X = 376.000000000000000000
           Position.Y = 476.000000000000000000
           TabOrder = 39
           Text = 'Enforced'
+          OnChange = inputChanged
         end
         object cbRefLocal: TCheckBox
           Position.X = 456.000000000000000000
           Position.Y = 476.000000000000000000
           TabOrder = 40
           Text = 'Local Only'
+          OnChange = inputChanged
         end
         object edtProfile: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -830,6 +914,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 443.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
+          OnChange = inputChanged
+          OnChangeTracking = inputChanged
         end
         object Label24: TLabel
           Position.X = 184.000000000000000000
@@ -840,6 +926,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         object cbxVersioning: TComboBox
           Anchors = [akLeft, akTop, akRight]
           Items.Strings = (
+            ''
             'None'
             'Versions Tracked'
             'Versioned Update Required')
@@ -849,6 +936,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 43
+          OnChange = inputChanged
         end
       end
     end

@@ -31,8 +31,8 @@ object AppEndorsementFrame: TAppEndorsementFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvEntitiesClick
-      Viewport.Width = 149.000000000000000000
-      Viewport.Height = 338.000000000000000000
+      Viewport.Width = 153.000000000000000000
+      Viewport.Height = 342.000000000000000000
       object tiApplications: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -444,13 +444,15 @@ object AppEndorsementFrame: TAppEndorsementFrame
     Size.Height = 32.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    object btnClose: TButton
+    object btnCancel: TButton
       Anchors = [akTop, akRight]
+      Cancel = True
+      Enabled = False
       Position.X = 563.000000000000000000
       Position.Y = 5.000000000000000000
       TabOrder = 0
-      Text = 'Close'
-      OnClick = btnCloseClick
+      Text = 'Cancel'
+      OnClick = btnCancelClick
     end
     object btnSave: TButton
       Anchors = [akTop, akRight]

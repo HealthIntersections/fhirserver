@@ -22,7 +22,7 @@ type
     Panel6: TPanel;
     tvEntities: TTreeView;
     Splitter1: TSplitter;
-    btnClose: TButton;
+    btnCancel: TButton;
     Label2: TLabel;
     Label3: TLabel;
     tiApplications: TTreeViewItem;
@@ -68,7 +68,7 @@ type
     edtOrgURL: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure btnCloseClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure tvEntitiesClick(Sender: TObject);
     procedure editorGeneralChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -124,6 +124,9 @@ type
     property Client : TFHIRClient read FClient write SetClient;
 
     procedure Load; override;
+    function isDirty : Boolean; override;
+    function canSave : boolean; override;
+    function save : boolean; override;
   end;
 
 implementation
@@ -205,6 +208,11 @@ begin
     pIn.Free;
   end;
 
+end;
+
+function TAppEndorsementFrame.canSave: boolean;
+begin
+  result := isDirty;
 end;
 
 procedure TAppEndorsementFrame.addApplication;
@@ -306,7 +314,7 @@ begin
     addEndorsementForApp(org);
 end;
 
-procedure TAppEndorsementFrame.btnCloseClick(Sender: TObject);
+procedure TAppEndorsementFrame.btnCancelClick(Sender: TObject);
 begin
   if not btnSave.Enabled then
     Close
@@ -472,6 +480,11 @@ begin
   ClearOrganizations;
   FActive.Free;
   FClient.Free;
+end;
+
+function TAppEndorsementFrame.isDirty: Boolean;
+begin
+  result := btnCancel.Enabled;
 end;
 
 procedure TAppEndorsementFrame.Load;
@@ -641,6 +654,12 @@ begin
   btnLeftNewApplication.Width := Panel7.Width / 2;
 end;
 
+function TAppEndorsementFrame.save : boolean;
+begin
+  btnSaveClick(nil);
+  result := true;
+end;
+
 procedure TAppEndorsementFrame.saveApplication;
 var
   app, upd, res : TFhirDevice;
@@ -776,7 +795,7 @@ end;
 procedure TAppEndorsementFrame.SetIsDirty;
 begin
   btnSave.Enabled := true;
-  btnClose.Text := 'Cancel';
+  btnCancel.Enabled := true;
   tvEntities.Enabled := false;
   btnNewOrganization.Enabled := false;
   btnLeftNewOrganization.Enabled := false;
@@ -788,7 +807,7 @@ end;
 procedure TAppEndorsementFrame.SetNotDirty;
 begin
   btnSave.Enabled := false;
-  btnClose.Text := 'Close';
+  btnCancel.Enabled := false;
   tvEntities.Enabled := true;
   btnNewOrganization.Enabled := true;
   btnLeftNewOrganization.Enabled := true;

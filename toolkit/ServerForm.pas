@@ -68,6 +68,8 @@ begin
   Tabs.ActiveTab := tab;
   tab.Text := 'AppEndorser for '+FClient.address;
   appForm := TAppEndorsementFrame.create(tab);
+  tab.TagObject := appForm;
+  appForm.TagObject := tab;
   appForm.Parent := tab;
   appForm.Tabs := tabs;
   appForm.tab := tab;
@@ -87,8 +89,10 @@ begin
   begin
     FCSTab := Tabs.Add(TTabItem);
     Tabs.ActiveTab := FCSTab;
-    FCSTab.Text := 'AppEndorser for '+FClient.address;
+    FCSTab.Text := 'Capability Statement for '+FClient.address;
     FcsForm := TCapabilityStatementEditorFrame.create(tab);
+    FCSTab.TagObject := FCsForm;
+    FCsForm.TagObject := FCSTab;
     FcsForm.Parent := FCSTab;
     FcsForm.Tabs := tabs;
     FcsForm.tab := FCSTab;
