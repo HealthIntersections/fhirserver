@@ -325,6 +325,11 @@ type
     function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
   end;
 
+  TFhirConformanceRestHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRest
+  public
+    function interaction(type_ : TFhirSystemRestfulInteractionEnum) : TFhirCapabilityStatementRestInteraction;
+  end;
+
   TFHIRContactPointListHelper = class helper for TFhirContactPointList
   public
     function system(type_ : TFHIRContactPointSystemEnum) : String;
@@ -536,6 +541,11 @@ type
     function isRelative : boolean;
     function getType : String;
     function getId : String;
+  end;
+
+  TFhirCapabilityStatementRestResourceSearchParamHelper = class helper for TFhirCapabilityStatementRestResourceSearchParam
+  public
+    function summary : String;
   end;
 
 function Path(const parts : array of String) : String;
@@ -4899,6 +4909,28 @@ begin
     for i := Count - 1 downto 0 do
       if Item(i).hasCode(system, code) then
         DeleteByIndex(i);
+end;
+
+{ TFhirCapabilityStatementRestResourceSearchParamHelper }
+
+function TFhirCapabilityStatementRestResourceSearchParamHelper.summary: String;
+begin
+  if (definition <> '') then
+    result := name +' : '+CODES_TFhirSearchParamTypeEnum[type_]+' ('+definition+')'
+  else
+    result := name +' : '+CODES_TFhirSearchParamTypeEnum[type_];
+end;
+
+{ TFhirConformanceRestHelper }
+
+function TFhirConformanceRestHelper.interaction(type_: TFhirSystemRestfulInteractionEnum): TFhirCapabilityStatementRestInteraction;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.interactionList.count - 1 do
+    if (self.interactionList[i].code = type_) then
+      result := self.interactionList[i];
 end;
 
 end.

@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
+// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -386,6 +386,12 @@ Type
     function ParseCareTeam(jsn : TJsonObject) : TFhirCareTeam; overload;
     procedure ParseCareTeamProperties(jsn : TJsonObject; result : TFhirCareTeam); overload;
     procedure ParseCareTeam(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCatalogEntryRelatedItem(jsn : TJsonObject) : TFhirCatalogEntryRelatedItem; overload; {b\}
+    procedure ParseCatalogEntryRelatedItemProperties(jsn : TJsonObject; result : TFhirCatalogEntryRelatedItem); overload; {b\}
+    procedure ParseCatalogEntryRelatedItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCatalogEntry(jsn : TJsonObject) : TFhirCatalogEntry; overload;
+    procedure ParseCatalogEntryProperties(jsn : TJsonObject; result : TFhirCatalogEntry); overload;
+    procedure ParseCatalogEntry(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseChargeItemParticipant(jsn : TJsonObject) : TFhirChargeItemParticipant; overload; {b\}
     procedure ParseChargeItemParticipantProperties(jsn : TJsonObject; result : TFhirChargeItemParticipant); overload; {b\}
     procedure ParseChargeItemParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1322,6 +1328,18 @@ Type
     function ParseSpecimen(jsn : TJsonObject) : TFhirSpecimen; overload;
     procedure ParseSpecimenProperties(jsn : TJsonObject; result : TFhirSpecimen); overload;
     procedure ParseSpecimen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSpecimenDefinitionSpecimenToLab(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLab; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLab); overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLab(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSpecimenDefinitionSpecimenToLabContainerAdditive(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive); overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabContainerAdditive(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSpecimenDefinitionSpecimenToLabHandling(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLabHandling; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabHandlingProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLabHandling); overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabHandling(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseSpecimenDefinition(jsn : TJsonObject) : TFhirSpecimenDefinition; overload;
+    procedure ParseSpecimenDefinitionProperties(jsn : TJsonObject; result : TFhirSpecimenDefinition); overload;
+    procedure ParseSpecimenDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseStructureDefinitionMapping(jsn : TJsonObject) : TFhirStructureDefinitionMapping; overload; {b\}
     procedure ParseStructureDefinitionMappingProperties(jsn : TJsonObject; result : TFhirStructureDefinitionMapping); overload; {b\}
     procedure ParseStructureDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1550,6 +1568,36 @@ Type
     function ParseVisionPrescription(jsn : TJsonObject) : TFhirVisionPrescription; overload;
     procedure ParseVisionPrescriptionProperties(jsn : TJsonObject; result : TFhirVisionPrescription); overload;
     procedure ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleActor(jsn : TJsonObject) : TFhirWorkflowExampleActor; overload; {b\}
+    procedure ParseWorkflowExampleActorProperties(jsn : TJsonObject; result : TFhirWorkflowExampleActor); overload; {b\}
+    procedure ParseWorkflowExampleActor(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstance; overload; {b\}
+    procedure ParseWorkflowExampleInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstance); overload; {b\}
+    procedure ParseWorkflowExampleInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleInstanceVersion(jsn : TJsonObject) : TFhirWorkflowExampleInstanceVersion; overload; {b\}
+    procedure ParseWorkflowExampleInstanceVersionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceVersion); overload; {b\}
+    procedure ParseWorkflowExampleInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcess(jsn : TJsonObject) : TFhirWorkflowExampleProcess; overload; {b\}
+    procedure ParseWorkflowExampleProcessProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcess); overload; {b\}
+    procedure ParseWorkflowExampleProcess(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcessStep(jsn : TJsonObject) : TFhirWorkflowExampleProcessStep; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStep); overload; {b\}
+    procedure ParseWorkflowExampleProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperation; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperationProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperation); overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperationInstance; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperationInstance); overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternative; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternative); overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternativeOption; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternativeOption); overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExample(jsn : TJsonObject) : TFhirWorkflowExample; overload;
+    procedure ParseWorkflowExampleProperties(jsn : TJsonObject; result : TFhirWorkflowExample); overload;
+    procedure ParseWorkflowExample(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1703,6 +1751,8 @@ Type
     procedure ComposeCarePlan(json : TJSONWriter; name : string; elem : TFhirCarePlan; noObj : boolean = false);
     procedure ComposeCareTeamParticipant(json : TJSONWriter; name : string; elem : TFhirCareTeamParticipant; noObj : boolean = false);
     procedure ComposeCareTeam(json : TJSONWriter; name : string; elem : TFhirCareTeam; noObj : boolean = false);
+    procedure ComposeCatalogEntryRelatedItem(json : TJSONWriter; name : string; elem : TFhirCatalogEntryRelatedItem; noObj : boolean = false);
+    procedure ComposeCatalogEntry(json : TJSONWriter; name : string; elem : TFhirCatalogEntry; noObj : boolean = false);
     procedure ComposeChargeItemParticipant(json : TJSONWriter; name : string; elem : TFhirChargeItemParticipant; noObj : boolean = false);
     procedure ComposeChargeItem(json : TJSONWriter; name : string; elem : TFhirChargeItem; noObj : boolean = false);
     procedure ComposeClaimRelated(json : TJSONWriter; name : string; elem : TFhirClaimRelated; noObj : boolean = false);
@@ -2015,6 +2065,10 @@ Type
     procedure ComposeSpecimenProcessing(json : TJSONWriter; name : string; elem : TFhirSpecimenProcessing; noObj : boolean = false);
     procedure ComposeSpecimenContainer(json : TJSONWriter; name : string; elem : TFhirSpecimenContainer; noObj : boolean = false);
     procedure ComposeSpecimen(json : TJSONWriter; name : string; elem : TFhirSpecimen; noObj : boolean = false);
+    procedure ComposeSpecimenDefinitionSpecimenToLab(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLab; noObj : boolean = false);
+    procedure ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; noObj : boolean = false);
+    procedure ComposeSpecimenDefinitionSpecimenToLabHandling(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabHandling; noObj : boolean = false);
+    procedure ComposeSpecimenDefinition(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinition; noObj : boolean = false);
     procedure ComposeStructureDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionMapping; noObj : boolean = false);
     procedure ComposeStructureDefinitionSnapshot(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionSnapshot; noObj : boolean = false);
     procedure ComposeStructureDefinitionDifferential(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionDifferential; noObj : boolean = false);
@@ -2091,6 +2145,16 @@ Type
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet; noObj : boolean = false);
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
+    procedure ComposeWorkflowExampleActor(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleActor; noObj : boolean = false);
+    procedure ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
+    procedure ComposeWorkflowExampleInstanceVersion(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceVersion; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcess(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcess; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcessStep(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStep; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcessStepOperationInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperationInstance; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternative; noObj : boolean = false);
+    procedure ComposeWorkflowExampleProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption; noObj : boolean = false);
+    procedure ComposeWorkflowExample(json : TJSONWriter; name : string; elem : TFhirWorkflowExample; noObj : boolean = false);
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
@@ -11718,6 +11782,153 @@ begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
+    json.FinishArray;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCatalogEntryRelatedItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCatalogEntryRelatedItem(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCatalogEntryRelatedItem(jsn : TJsonObject) : TFhirCatalogEntryRelatedItem;
+begin
+  result := TFhirCatalogEntryRelatedItem.create;
+  try
+    ParseCatalogEntryRelatedItemProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCatalogEntryRelatedItemProperties(jsn : TJsonObject; result : TFhirCatalogEntryRelatedItem);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('relationtype') then
+        result.relationtype := ParseCodeableConcept(jsn.vObj['relationtype']);{q3}
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('item') then
+        result.item := ParseReference{Resource}(jsn.vObj['item']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeCatalogEntryRelatedItem(json : TJSONWriter; name : string; elem : TFhirCatalogEntryRelatedItem; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'relationtype', elem.relationtype); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(json, 'item', elem.item); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseCatalogEntry(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCatalogEntry(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCatalogEntry(jsn : TJsonObject) : TFhirCatalogEntry;
+begin
+  result := TFhirCatalogEntry.create;
+  try
+    ParseCatalogEntryProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCatalogEntryProperties(jsn : TJsonObject; result : TFhirCatalogEntry);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('purpose') then
+        result.purpose := ParseCodeableConcept(jsn.vObj['purpose']);{q3}
+    if jsn.has('referencedItem') then
+        result.referencedItem := ParseReference{Resource}(jsn.vObj['referencedItem']);{q3}
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+    if jsn.has('additionalIdentifier') then
+      iterateArray(jsn.vArr['additionalIdentifier'], result.additionalIdentifierList, parseIdentifier);
+    if jsn.has('classification') then
+      iterateArray(jsn.vArr['classification'], result.classificationList, parseIdentifier);
+    if jsn.has('status') then
+        result.status := ParseCodeableConcept(jsn.vObj['status']);{q3}
+    if jsn.has('validityPeriod') then
+        result.validityPeriod := ParsePeriod(jsn.vObj['validityPeriod']);{q3}
+    if jsn.has('lastUpdated') or jsn.has('_lastUpdated') then
+        result.lastUpdatedElement := ParseDateTime(jsn['lastUpdated'], jsn.vObj['_lastUpdated']);{q}
+    if jsn.has('additionalCharacteristic') then
+      iterateArray(jsn.vArr['additionalCharacteristic'], result.additionalCharacteristicList, parseCodeableConcept);
+    if jsn.has('additionalClassification') then
+      iterateArray(jsn.vArr['additionalClassification'], result.additionalClassificationList, parseCodeableConcept);
+    if jsn.has('relatedItem') then
+      iterateArray(jsn.vArr['relatedItem'], result.relatedItemList, parseCatalogEntryRelatedItem);
+end;
+
+procedure TFHIRJsonComposer.ComposeCatalogEntry(json : TJSONWriter; name : string; elem : TFhirCatalogEntry; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'purpose', elem.purpose); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(json, 'referencedItem', elem.referencedItem); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalIdentifierList.Count > 0) then
+  begin
+    json.valueArray('additionalIdentifier');
+    for i := 0 to elem.additionalIdentifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.additionalIdentifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.classificationList.Count > 0) then
+  begin
+    json.valueArray('classification');
+    for i := 0 to elem.classificationList.Count - 1 do
+      ComposeIdentifier(json, '', elem.classificationList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'status', elem.status); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeValue(json, 'lastUpdated', elem.lastUpdatedElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeProps(json, 'lastUpdated', elem.lastUpdatedElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalCharacteristicList.Count > 0) then
+  begin
+    json.valueArray('additionalCharacteristic');
+    for i := 0 to elem.additionalCharacteristicList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.additionalCharacteristicList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalClassificationList.Count > 0) then
+  begin
+    json.valueArray('additionalClassification');
+    for i := 0 to elem.additionalClassificationList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.additionalClassificationList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedItemList.Count > 0) then
+  begin
+    json.valueArray('relatedItem');
+    for i := 0 to elem.relatedItemList.Count - 1 do
+      ComposeCatalogEntryRelatedItem(json, '', elem.relatedItemList[i]); {z - }
     json.FinishArray;
   end;
 end;
@@ -38570,6 +38781,283 @@ begin
   end;
 end;
 
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLab(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSpecimenDefinitionSpecimenToLab(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLab(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLab;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLab.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLab);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('isDerived') or jsn.has('_isDerived') then
+        result.isDerivedElement := ParseBoolean(jsn['isDerived'], jsn.vObj['_isDerived']);{q}
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('preference') or jsn.has('_preference')  then
+      result.preferenceElement := parseEnum(jsn.path+'/preference', jsn['preference'], jsn.vObj['_preference'], CODES_TFhirSpecimenContainedPreferenceEnum, SYSTEMS_TFhirSpecimenContainedPreferenceEnum);
+    if jsn.has('containerMaterial') then
+        result.containerMaterial := ParseCodeableConcept(jsn.vObj['containerMaterial']);{q3}
+    if jsn.has('containerType') then
+        result.containerType := ParseCodeableConcept(jsn.vObj['containerType']);{q3}
+    if jsn.has('containerCap') then
+        result.containerCap := ParseCodeableConcept(jsn.vObj['containerCap']);{q3}
+    if jsn.has('containerDescription') or jsn.has('_containerDescription') then
+        result.containerDescriptionElement := ParseString(jsn['containerDescription'], jsn.vObj['_containerDescription']);{q}
+    if jsn.has('containerCapacity') then
+        result.containerCapacity := ParseQuantity(jsn.vObj['containerCapacity']);{q3}
+    if jsn.has('containerMinimumVolume') then
+        result.containerMinimumVolume := ParseQuantity(jsn.vObj['containerMinimumVolume']);{q3}
+    if jsn.has('containerAdditive') then
+      iterateArray(jsn.vArr['containerAdditive'], result.containerAdditiveList, parseSpecimenDefinitionSpecimenToLabContainerAdditive);
+    if jsn.has('containerPreparation') or jsn.has('_containerPreparation') then
+        result.containerPreparationElement := ParseString(jsn['containerPreparation'], jsn.vObj['_containerPreparation']);{q}
+    if jsn.has('requirement') or jsn.has('_requirement') then
+        result.requirementElement := ParseString(jsn['requirement'], jsn.vObj['_requirement']);{q}
+    if jsn.has('retentionTime') then
+        result.retentionTime := ParseDuration(jsn.vObj['retentionTime']);{q3}
+    if jsn.has('rejectionCriterion') then
+      iterateArray(jsn.vArr['rejectionCriterion'], result.rejectionCriterionList, parseCodeableConcept);
+    if jsn.has('handling') then
+      iterateArray(jsn.vArr['handling'], result.handlingList, parseSpecimenDefinitionSpecimenToLabHandling);
+end;
+
+procedure TFHIRJsonComposer.ComposeSpecimenDefinitionSpecimenToLab(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLab; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanValue(json, 'isDerived', elem.isDerivedElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanProps(json, 'isDerived', elem.isDerivedElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'preference', elem.PreferenceElement, CODES_TFhirSpecimenContainedPreferenceEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'preference', elem.PreferenceElement, CODES_TFhirSpecimenContainedPreferenceEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'containerMaterial', elem.containerMaterial); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'containerType', elem.containerType); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'containerCap', elem.containerCap); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'containerDescription', elem.containerDescriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'containerDescription', elem.containerDescriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'containerCapacity', elem.containerCapacity); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'containerMinimumVolume', elem.containerMinimumVolume); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containerAdditiveList.Count > 0) then
+  begin
+    json.valueArray('containerAdditive');
+    for i := 0 to elem.containerAdditiveList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(json, '', elem.containerAdditiveList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'containerPreparation', elem.containerPreparationElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'containerPreparation', elem.containerPreparationElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'requirement', elem.requirementElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'requirement', elem.requirementElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(json, 'retentionTime', elem.retentionTime); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.rejectionCriterionList.Count > 0) then
+  begin
+    json.valueArray('rejectionCriterion');
+    for i := 0 to elem.rejectionCriterionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.rejectionCriterionList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.handlingList.Count > 0) then
+  begin
+    json.valueArray('handling');
+    for i := 0 to elem.handlingList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabHandling(json, '', elem.handlingList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditive(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSpecimenDefinitionSpecimenToLabContainerAdditive(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditive(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLabContainerAdditive.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('additiveCodeableConcept') {a4} then
+      result.additive := ParseCodeableConcept(jsn.vObj['additiveCodeableConcept']);
+    if jsn.has('additiveReference') {a3} then
+      result.additive := ParseReference(jsn.vObj['additiveReference']);
+end;
+
+procedure TFHIRJsonComposer.ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'additiveCodeableConcept', TFhirCodeableConcept(elem.additive)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirReference) then
+    ComposeReference(json, 'additiveReference', TFhirReference(elem.additive));
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabHandling(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSpecimenDefinitionSpecimenToLabHandling(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabHandling(jsn : TJsonObject) : TFhirSpecimenDefinitionSpecimenToLabHandling;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLabHandling.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabHandlingProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionSpecimenToLabHandlingProperties(jsn : TJsonObject; result : TFhirSpecimenDefinitionSpecimenToLabHandling);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('conditionSet') then
+        result.conditionSet := ParseCodeableConcept(jsn.vObj['conditionSet']);{q3}
+    if jsn.has('tempRange') then
+        result.tempRange := ParseRange(jsn.vObj['tempRange']);{q3}
+    if jsn.has('maxDuration') then
+        result.maxDuration := ParseDuration(jsn.vObj['maxDuration']);{q3}
+    if jsn.has('lightExposure') or jsn.has('_lightExposure') then
+        result.lightExposureElement := ParseString(jsn['lightExposure'], jsn.vObj['_lightExposure']);{q}
+    if jsn.has('instruction') or jsn.has('_instruction') then
+        result.instructionElement := ParseString(jsn['instruction'], jsn.vObj['_instruction']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeSpecimenDefinitionSpecimenToLabHandling(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabHandling; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'conditionSet', elem.conditionSet); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRange(json, 'tempRange', elem.tempRange); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(json, 'maxDuration', elem.maxDuration); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'lightExposure', elem.lightExposureElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'lightExposure', elem.lightExposureElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'instruction', elem.instructionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'instruction', elem.instructionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseSpecimenDefinition(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseSpecimenDefinition(jsn : TJsonObject) : TFhirSpecimenDefinition;
+begin
+  result := TFhirSpecimenDefinition.create;
+  try
+    ParseSpecimenDefinitionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseSpecimenDefinitionProperties(jsn : TJsonObject; result : TFhirSpecimenDefinition);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('identifier') then
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+    if jsn.has('typeCollected') then
+        result.typeCollected := ParseCodeableConcept(jsn.vObj['typeCollected']);{q3}
+    if jsn.has('patientPreparation') or jsn.has('_patientPreparation') then
+        result.patientPreparationElement := ParseString(jsn['patientPreparation'], jsn.vObj['_patientPreparation']);{q}
+    if jsn.has('timeAspect') or jsn.has('_timeAspect') then
+        result.timeAspectElement := ParseString(jsn['timeAspect'], jsn.vObj['_timeAspect']);{q}
+    if jsn.has('collection') then
+      iterateArray(jsn.vArr['collection'], result.collectionList, parseCodeableConcept);
+    if jsn.has('specimenToLab') then
+      iterateArray(jsn.vArr['specimenToLab'], result.specimenToLabList, parseSpecimenDefinitionSpecimenToLab);
+end;
+
+procedure TFHIRJsonComposer.ComposeSpecimenDefinition(json : TJSONWriter; name : string; elem : TFhirSpecimenDefinition; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'typeCollected', elem.typeCollected); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'patientPreparation', elem.patientPreparationElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'patientPreparation', elem.patientPreparationElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'timeAspect', elem.timeAspectElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'timeAspect', elem.timeAspectElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.collectionList.Count > 0) then
+  begin
+    json.valueArray('collection');
+    for i := 0 to elem.collectionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.collectionList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.specimenToLabList.Count > 0) then
+  begin
+    json.valueArray('specimenToLab');
+    for i := 0 to elem.specimenToLabList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLab(json, '', elem.specimenToLabList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
 procedure TFHIRJsonParser.ParseStructureDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseStructureDefinitionMapping(jsn)); {2}
@@ -44362,6 +44850,715 @@ begin
   end;
 end;
 
+procedure TFHIRJsonParser.ParseWorkflowExampleActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleActor(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleActor(jsn : TJsonObject) : TFhirWorkflowExampleActor;
+begin
+  result := TFhirWorkflowExampleActor.create;
+  try
+    ParseWorkflowExampleActorProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleActorProperties(jsn : TJsonObject; result : TFhirWorkflowExampleActor);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('actorId') or jsn.has('_actorId') then
+        result.actorIdElement := ParseString(jsn['actorId'], jsn.vObj['_actorId']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirWorkflowexampleActorTypeEnum, SYSTEMS_TFhirWorkflowexampleActorTypeEnum);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleActor(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleActor; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'actorId', elem.actorIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'actorId', elem.actorIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleInstance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstance;
+begin
+  result := TFhirWorkflowExampleInstance.create;
+  try
+    ParseWorkflowExampleInstanceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('resourceId') or jsn.has('_resourceId') then
+        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
+    if jsn.has('resourceType') or jsn.has('_resourceType')  then
+      result.resourceTypeElement := parseEnum(jsn.path+'/resourceType', jsn['resourceType'], jsn.vObj['_resourceType'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('version') then
+      iterateArray(jsn.vArr['version'], result.versionList, parseWorkflowExampleInstanceVersion);
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.versionList.Count > 0) then
+  begin
+    json.valueArray('version');
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeWorkflowExampleInstanceVersion(json, '', elem.versionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleInstanceVersion(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleInstanceVersion(jsn : TJsonObject) : TFhirWorkflowExampleInstanceVersion;
+begin
+  result := TFhirWorkflowExampleInstanceVersion.create;
+  try
+    ParseWorkflowExampleInstanceVersionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstanceVersionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceVersion);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('versionId') or jsn.has('_versionId') then
+        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleInstanceVersion(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceVersion; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcess(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcess(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcess(jsn : TJsonObject) : TFhirWorkflowExampleProcess;
+begin
+  result := TFhirWorkflowExampleProcess.create;
+  try
+    ParseWorkflowExampleProcessProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcess);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('preConditions') or jsn.has('_preConditions') then
+        result.preConditionsElement := ParseMarkdown(jsn['preConditions'], jsn.vObj['_preConditions']);{q}
+    if jsn.has('postConditions') or jsn.has('_postConditions') then
+        result.postConditionsElement := ParseMarkdown(jsn['postConditions'], jsn.vObj['_postConditions']);{q}
+    if jsn.has('step') then
+      iterateArray(jsn.vArr['step'], result.stepList, parseWorkflowExampleProcessStep);
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcess(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcess; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'preConditions', elem.preConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'preConditions', elem.preConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'postConditions', elem.postConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'postConditions', elem.postConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
+  begin
+    json.valueArray('step');
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeWorkflowExampleProcessStep(json, '', elem.stepList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcessStep(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcessStep(jsn : TJsonObject) : TFhirWorkflowExampleProcessStep;
+begin
+  result := TFhirWorkflowExampleProcessStep.create;
+  try
+    ParseWorkflowExampleProcessStepProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStep);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('process') then
+      iterateArray(jsn.vArr['process'], result.processList, parseWorkflowExampleProcess);
+    if jsn.has('pause') or jsn.has('_pause') then
+        result.pauseElement := ParseBoolean(jsn['pause'], jsn.vObj['_pause']);{q}
+    if jsn.has('operation') then
+        result.operation := ParseWorkflowExampleProcessStepOperation(jsn.vObj['operation']);{q3}
+    if jsn.has('alternative') then
+        result.alternative := ParseWorkflowExampleProcessStepAlternative(jsn.vObj['alternative']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStep(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStep; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processList.Count > 0) then
+  begin
+    json.valueArray('process');
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(json, '', elem.processList[i]); {z - @WorkflowExample.process}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'pause', elem.pauseElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'pause', elem.pauseElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepOperation(json, 'operation', elem.operation); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepAlternative(json, 'alternative', elem.alternative); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcessStepOperation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperation;
+begin
+  result := TFhirWorkflowExampleProcessStepOperation.create;
+  try
+    ParseWorkflowExampleProcessStepOperationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('number') or jsn.has('_number') then
+        result.numberElement := ParseString(jsn['number'], jsn.vObj['_number']);{q}
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('initiator') or jsn.has('_initiator') then
+        result.initiatorElement := ParseString(jsn['initiator'], jsn.vObj['_initiator']);{q}
+    if jsn.has('receiver') or jsn.has('_receiver') then
+        result.receiverElement := ParseString(jsn['receiver'], jsn.vObj['_receiver']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('initiatorActive') or jsn.has('_initiatorActive') then
+        result.initiatorActiveElement := ParseBoolean(jsn['initiatorActive'], jsn.vObj['_initiatorActive']);{q}
+    if jsn.has('receiverActive') or jsn.has('_receiverActive') then
+        result.receiverActiveElement := ParseBoolean(jsn['receiverActive'], jsn.vObj['_receiverActive']);{q}
+    if jsn.has('instance') then
+      iterateArray(jsn.vArr['instance'], result.instanceList, parseWorkflowExampleProcessStepOperationInstance);
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'number', elem.numberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'number', elem.numberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'type', elem.type_Element, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'type', elem.type_Element, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'initiator', elem.initiatorElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'initiator', elem.initiatorElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'receiver', elem.receiverElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'receiver', elem.receiverElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'initiatorActive', elem.initiatorActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'initiatorActive', elem.initiatorActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'receiverActive', elem.receiverActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'receiverActive', elem.receiverActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.instanceList.Count > 0) then
+  begin
+    json.valueArray('instance');
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperationInstance(json, '', elem.instanceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcessStepOperationInstance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperationInstance;
+begin
+  result := TFhirWorkflowExampleProcessStepOperationInstance.create;
+  try
+    ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperationInstance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('instanceId') or jsn.has('_instanceId') then
+        result.instanceIdElement := ParseString(jsn['instanceId'], jsn.vObj['_instanceId']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepOperationInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperationInstance; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'instanceId', elem.instanceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'instanceId', elem.instanceIdElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcessStepAlternative(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternative;
+begin
+  result := TFhirWorkflowExampleProcessStepAlternative.create;
+  try
+    ParseWorkflowExampleProcessStepAlternativeProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternative);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('option') then
+      iterateArray(jsn.vArr['option'], result.optionList, parseWorkflowExampleProcessStepAlternativeOption);
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternative; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.optionList.Count > 0) then
+  begin
+    json.valueArray('option');
+    for i := 0 to elem.optionList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternativeOption(json, '', elem.optionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleProcessStepAlternativeOption(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternativeOption;
+begin
+  result := TFhirWorkflowExampleProcessStepAlternativeOption.create;
+  try
+    ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternativeOption);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('process') then
+      iterateArray(jsn.vArr['process'], result.processList, parseWorkflowExampleProcess);
+    if jsn.has('alternative') then
+      iterateArray(jsn.vArr['alternative'], result.alternativeList, parseWorkflowExampleProcessStepAlternative);
+    if jsn.has('operation') then
+      iterateArray(jsn.vArr['operation'], result.operationList, parseWorkflowExampleProcessStepOperation);
+      if jsn.has('pause') or jsn.has('_pause') then
+      iteratePrimitiveArray(jsn.vArr['pause'], jsn.vArr['_pause'], result.pauseList, parseBoolean);
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processList.Count > 0) then
+  begin
+    json.valueArray('process');
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(json, '', elem.processList[i]); {z - @WorkflowExample.process}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.alternativeList.Count > 0) then
+  begin
+    json.valueArray('alternative');
+    for i := 0 to elem.alternativeList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternative(json, '', elem.alternativeList[i]); {z - @WorkflowExample.process.step.alternative}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.operationList.Count > 0) then
+  begin
+    json.valueArray('operation');
+    for i := 0 to elem.operationList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperation(json, '', elem.operationList[i]); {z - @WorkflowExample.process.step.operation}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pauseList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.pauseList.Count - 1 do
+    begin
+      ext := ext or ((elem.pauseList[i].id <> '') or (elem.pauseList[i].hasExtensionList) {no-comments or (elem.pauseList[i].hasComments)});
+      val := val or (elem.pauseList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('pause');
+      for i := 0 to elem.pauseList.Count - 1 do
+        ComposeBooleanValue(json, '',elem.pauseList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_pause');
+      for i := 0 to elem.pauseList.Count - 1 do
+        ComposeBooleanProps(json, '',elem.pauseList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExample(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExample(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExample(jsn : TJsonObject) : TFhirWorkflowExample;
+begin
+  result := TFhirWorkflowExample.create;
+  try
+    ParseWorkflowExampleProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleProperties(jsn : TJsonObject; result : TFhirWorkflowExample);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('url') or jsn.has('_url') then
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
+    if jsn.has('experimental') or jsn.has('_experimental') then
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('publisher') or jsn.has('_publisher') then
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+    if jsn.has('contact') then
+      iterateArray(jsn.vArr['contact'], result.contactList, parseContactDetail);
+    if jsn.has('useContext') then
+      iterateArray(jsn.vArr['useContext'], result.useContextList, parseUsageContext);
+    if jsn.has('jurisdiction') then
+      iterateArray(jsn.vArr['jurisdiction'], result.jurisdictionList, parseCodeableConcept);
+    if jsn.has('copyright') or jsn.has('_copyright') then
+        result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('purpose') or jsn.has('_purpose') then
+        result.purposeElement := ParseMarkdown(jsn['purpose'], jsn.vObj['_purpose']);{q}
+    if jsn.has('actor') then
+      iterateArray(jsn.vArr['actor'], result.actorList, parseWorkflowExampleActor);
+    if jsn.has('instance') then
+      iterateArray(jsn.vArr['instance'], result.instanceList, parseWorkflowExampleInstance);
+    if jsn.has('process') then
+        result.process := ParseWorkflowExampleProcess(jsn.vObj['process']);{q3}
+    if jsn.has('workflow') then
+      iterateArray(jsn.vArr['workflow'], result.workflowList, parseReference{TFhirWorkflowExample});
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExample(json : TJSONWriter; name : string; elem : TFhirWorkflowExample; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriValue(json, 'url', elem.urlElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriProps(json, 'url', elem.urlElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeProps(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  begin
+    json.valueArray('contact');
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  begin
+    json.valueArray('useContext');
+    for i := 0 to elem.useContextList.Count - 1 do
+      ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  begin
+    json.valueArray('jurisdiction');
+    for i := 0 to elem.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.actorList.Count > 0) then
+  begin
+    json.valueArray('actor');
+    for i := 0 to elem.actorList.Count - 1 do
+      ComposeWorkflowExampleActor(json, '', elem.actorList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.instanceList.Count > 0) then
+  begin
+    json.valueArray('instance');
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleInstance(json, '', elem.instanceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcess(json, 'process', elem.process); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.workflowList.Count > 0) then
+  begin
+    json.valueArray('workflow');
+    for i := 0 to elem.workflowList.Count - 1 do
+      ComposeReference{TFhirWorkflowExample}(json, '', elem.workflowList[i]); {z - Reference(WorkflowExample)}
+    json.FinishArray;
+  end;
+end;
+
 function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;
 var
   s : String;
@@ -44397,6 +45594,8 @@ begin
     result := ParseCarePlan(jsn)
   else if s = 'CareTeam' Then
     result := ParseCareTeam(jsn)
+  else if s = 'CatalogEntry' Then
+    result := ParseCatalogEntry(jsn)
   else if s = 'ChargeItem' Then
     result := ParseChargeItem(jsn)
   else if s = 'Claim' Then
@@ -44577,6 +45776,8 @@ begin
     result := ParseSlot(jsn)
   else if s = 'Specimen' Then
     result := ParseSpecimen(jsn)
+  else if s = 'SpecimenDefinition' Then
+    result := ParseSpecimenDefinition(jsn)
   else if s = 'StructureDefinition' Then
     result := ParseStructureDefinition(jsn)
   else if s = 'StructureMap' Then
@@ -44599,6 +45800,8 @@ begin
     result := ParseValueSet(jsn)
   else if s = 'VisionPrescription' Then
     result := ParseVisionPrescription(jsn)
+  else if s = 'WorkflowExample' Then
+    result := ParseWorkflowExample(jsn)
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;
@@ -44705,6 +45908,8 @@ begin
     result := parseCarePlan(jsn)
   else if (type_ = 'TFhirCareTeam') then
     result := parseCareTeam(jsn)
+  else if (type_ = 'TFhirCatalogEntry') then
+    result := parseCatalogEntry(jsn)
   else if (type_ = 'TFhirChargeItem') then
     result := parseChargeItem(jsn)
   else if (type_ = 'TFhirClaim') then
@@ -44885,6 +46090,8 @@ begin
     result := parseSlot(jsn)
   else if (type_ = 'TFhirSpecimen') then
     result := parseSpecimen(jsn)
+  else if (type_ = 'TFhirSpecimenDefinition') then
+    result := parseSpecimenDefinition(jsn)
   else if (type_ = 'TFhirStructureDefinition') then
     result := parseStructureDefinition(jsn)
   else if (type_ = 'TFhirStructureMap') then
@@ -44907,6 +46114,8 @@ begin
     result := parseValueSet(jsn)
   else if (type_ = 'TFhirVisionPrescription') then
     result := parseVisionPrescription(jsn)
+  else if (type_ = 'TFhirWorkflowExample') then
+    result := parseWorkflowExample(jsn)
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -45215,6 +46424,10 @@ begin
     composeCareTeamParticipant(json, name, TFhirCareTeamParticipant(base), false)
   else if (base is TFhirCareTeam) then
     composeCareTeam(json, name, TFhirCareTeam(base), false)
+  else if (base is TFhirCatalogEntryRelatedItem) then
+    composeCatalogEntryRelatedItem(json, name, TFhirCatalogEntryRelatedItem(base), false)
+  else if (base is TFhirCatalogEntry) then
+    composeCatalogEntry(json, name, TFhirCatalogEntry(base), false)
   else if (base is TFhirChargeItemParticipant) then
     composeChargeItemParticipant(json, name, TFhirChargeItemParticipant(base), false)
   else if (base is TFhirChargeItem) then
@@ -45839,6 +47052,14 @@ begin
     composeSpecimenContainer(json, name, TFhirSpecimenContainer(base), false)
   else if (base is TFhirSpecimen) then
     composeSpecimen(json, name, TFhirSpecimen(base), false)
+  else if (base is TFhirSpecimenDefinitionSpecimenToLab) then
+    composeSpecimenDefinitionSpecimenToLab(json, name, TFhirSpecimenDefinitionSpecimenToLab(base), false)
+  else if (base is TFhirSpecimenDefinitionSpecimenToLabContainerAdditive) then
+    composeSpecimenDefinitionSpecimenToLabContainerAdditive(json, name, TFhirSpecimenDefinitionSpecimenToLabContainerAdditive(base), false)
+  else if (base is TFhirSpecimenDefinitionSpecimenToLabHandling) then
+    composeSpecimenDefinitionSpecimenToLabHandling(json, name, TFhirSpecimenDefinitionSpecimenToLabHandling(base), false)
+  else if (base is TFhirSpecimenDefinition) then
+    composeSpecimenDefinition(json, name, TFhirSpecimenDefinition(base), false)
   else if (base is TFhirStructureDefinitionMapping) then
     composeStructureDefinitionMapping(json, name, TFhirStructureDefinitionMapping(base), false)
   else if (base is TFhirStructureDefinitionSnapshot) then
@@ -45991,6 +47212,26 @@ begin
     composeVisionPrescriptionDispense(json, name, TFhirVisionPrescriptionDispense(base), false)
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
+  else if (base is TFhirWorkflowExampleActor) then
+    composeWorkflowExampleActor(json, name, TFhirWorkflowExampleActor(base), false)
+  else if (base is TFhirWorkflowExampleInstance) then
+    composeWorkflowExampleInstance(json, name, TFhirWorkflowExampleInstance(base), false)
+  else if (base is TFhirWorkflowExampleInstanceVersion) then
+    composeWorkflowExampleInstanceVersion(json, name, TFhirWorkflowExampleInstanceVersion(base), false)
+  else if (base is TFhirWorkflowExampleProcess) then
+    composeWorkflowExampleProcess(json, name, TFhirWorkflowExampleProcess(base), false)
+  else if (base is TFhirWorkflowExampleProcessStep) then
+    composeWorkflowExampleProcessStep(json, name, TFhirWorkflowExampleProcessStep(base), false)
+  else if (base is TFhirWorkflowExampleProcessStepOperation) then
+    composeWorkflowExampleProcessStepOperation(json, name, TFhirWorkflowExampleProcessStepOperation(base), false)
+  else if (base is TFhirWorkflowExampleProcessStepOperationInstance) then
+    composeWorkflowExampleProcessStepOperationInstance(json, name, TFhirWorkflowExampleProcessStepOperationInstance(base), false)
+  else if (base is TFhirWorkflowExampleProcessStepAlternative) then
+    composeWorkflowExampleProcessStepAlternative(json, name, TFhirWorkflowExampleProcessStepAlternative(base), false)
+  else if (base is TFhirWorkflowExampleProcessStepAlternativeOption) then
+    composeWorkflowExampleProcessStepAlternativeOption(json, name, TFhirWorkflowExampleProcessStepAlternativeOption(base), false)
+  else if (base is TFhirWorkflowExample) then
+    composeWorkflowExample(json, name, TFhirWorkflowExample(base), false)
   else
     raise Exception.create('Unknown Type '+base.className);
 end;
@@ -46016,6 +47257,7 @@ begin
     frtCapabilityStatement: ComposeCapabilityStatement(json, 'CapabilityStatement', TFhirCapabilityStatement(resource));
     frtCarePlan: ComposeCarePlan(json, 'CarePlan', TFhirCarePlan(resource));
     frtCareTeam: ComposeCareTeam(json, 'CareTeam', TFhirCareTeam(resource));
+    frtCatalogEntry: ComposeCatalogEntry(json, 'CatalogEntry', TFhirCatalogEntry(resource));
     frtChargeItem: ComposeChargeItem(json, 'ChargeItem', TFhirChargeItem(resource));
     frtClaim: ComposeClaim(json, 'Claim', TFhirClaim(resource));
     frtClaimResponse: ComposeClaimResponse(json, 'ClaimResponse', TFhirClaimResponse(resource));
@@ -46106,6 +47348,7 @@ begin
     frtServiceDefinition: ComposeServiceDefinition(json, 'ServiceDefinition', TFhirServiceDefinition(resource));
     frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
     frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
+    frtSpecimenDefinition: ComposeSpecimenDefinition(json, 'SpecimenDefinition', TFhirSpecimenDefinition(resource));
     frtStructureDefinition: ComposeStructureDefinition(json, 'StructureDefinition', TFhirStructureDefinition(resource));
     frtStructureMap: ComposeStructureMap(json, 'StructureMap', TFhirStructureMap(resource));
     frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
@@ -46117,6 +47360,7 @@ begin
     frtTestScript: ComposeTestScript(json, 'TestScript', TFhirTestScript(resource));
     frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
     frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
+    frtWorkflowExample: ComposeWorkflowExample(json, 'WorkflowExample', TFhirWorkflowExample(resource));
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;

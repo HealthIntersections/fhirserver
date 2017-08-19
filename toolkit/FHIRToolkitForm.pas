@@ -362,12 +362,23 @@ begin
   if lbFiles.Items.count > 0 then
     lbFiles.ItemIndex := 0;
   lbFilesClick(self);
+  Left := FIni.ReadInteger('Window', 'left', left);
+  Top := FIni.ReadInteger('Window', 'top', top);
+  Width := FIni.ReadInteger('Window', 'width', width);
+  Height := FIni.ReadInteger('Window', 'height', height);
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
 begin
   saveServers;
   saveFiles;
+  try
+    FIni.WriteInteger('Window', 'left', left);
+    FIni.WriteInteger('Window', 'top', top);
+    FIni.WriteInteger('Window', 'width', width);
+    FIni.WriteInteger('Window', 'height', height);
+  except
+  end;
   FIni.Free;
 end;
 

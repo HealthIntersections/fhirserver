@@ -384,6 +384,7 @@
         <DCCReference Include="..\Libraries\security\SCrypt.pas"/>
         <DCCReference Include="TerminologyOperations.pas"/>
         <DCCReference Include="WebSourceProvider.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

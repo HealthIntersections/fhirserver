@@ -202,7 +202,8 @@ uses
   FHIRSearch in '..\..\reference-platform\support\FHIRSearch.pas',
   TerminologyOperations in '..\..\Server\TerminologyOperations.pas',
   WebSourceProvider in '..\..\Server\WebSourceProvider.pas',
-  vpocversion in 'vpocversion.pas';
+  vpocversion in 'vpocversion.pas',
+  FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas';
 
 {$R *.res}
 

@@ -261,7 +261,8 @@ uses
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   SCrypt in '..\Libraries\security\SCrypt.pas',
   TerminologyOperations in 'TerminologyOperations.pas',
-  WebSourceProvider in 'WebSourceProvider.pas';
+  WebSourceProvider in 'WebSourceProvider.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

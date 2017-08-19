@@ -36,10 +36,10 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
+// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
 
 uses
-  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
+  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
 
 Type
 
@@ -59,6 +59,7 @@ Type
     procedure buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -149,6 +150,7 @@ Type
     procedure buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForSpecimenDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -160,6 +162,7 @@ Type
     procedure buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     procedure buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    procedure buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
   public
     procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
  end;
@@ -521,6 +524,18 @@ begin
   compartments.register(frtPatient, 'CareTeam', ['patient', 'participant']);
   compartments.register(frtPractitioner, 'CareTeam', ['participant']);
   compartments.register(frtRelatedPerson, 'CareTeam', ['participant']);
+end;
+
+procedure TFHIRIndexBuilder.buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('CatalogEntry', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('CatalogEntry', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
 end;
 
 procedure TFHIRIndexBuilder.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -2914,6 +2929,21 @@ begin
   compartments.register(frtPractitioner, 'Specimen', ['collector']);
 end;
 
+procedure TFHIRIndexBuilder.buildIndexesForSpecimenDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('SpecimenDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', 'container', 'The type of specimen conditioned in container expected by the lab', SearchParamTypeTOKEN, [], 'SpecimenDefinition.specimenToLab.containerType', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', 'identifier', 'The unique identifier associated with the specimen', SearchParamTypeTOKEN, [], 'SpecimenDefinition.identifier', SearchXpathUsageNormal);
+  indexes.add('SpecimenDefinition', 'type', 'The type of collected specimen', SearchParamTypeTOKEN, [], 'SpecimenDefinition.typeCollected', SearchXpathUsageNormal);
+end;
+
 procedure TFHIRIndexBuilder.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3173,6 +3203,28 @@ begin
   compartments.register(frtPractitioner, 'VisionPrescription', ['prescriber']);
 end;
 
+procedure TFHIRIndexBuilder.buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('WorkflowExample', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'date', 'The workflow example publication date', SearchParamTypeDATE, [], 'WorkflowExample.date', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'description', 'The description of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.description', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'identifier', 'External identifier for the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.identifier', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'jurisdiction', 'Intended jurisdiction for the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'name', 'Computationally friendly name of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.name', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'publisher', 'Name of the publisher of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.publisher', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'status', 'The current status of the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.status', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'title', 'The human-friendly name of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.title', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'url', 'The uri that identifies the workflow example', SearchParamTypeURI, [], 'WorkflowExample.url', SearchXpathUsageNormal);
+  indexes.add('WorkflowExample', 'version', 'The business version of the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.version', SearchXpathUsageNormal);
+end;
+
 procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   buildIndexesForAccount(Indexes, compartments);
@@ -3189,6 +3241,7 @@ begin
   buildIndexesForCapabilityStatement(Indexes, compartments);
   buildIndexesForCarePlan(Indexes, compartments);
   buildIndexesForCareTeam(Indexes, compartments);
+  buildIndexesForCatalogEntry(Indexes, compartments);
   buildIndexesForChargeItem(Indexes, compartments);
   buildIndexesForClaim(Indexes, compartments);
   buildIndexesForClaimResponse(Indexes, compartments);
@@ -3279,6 +3332,7 @@ begin
   buildIndexesForServiceDefinition(Indexes, compartments);
   buildIndexesForSlot(Indexes, compartments);
   buildIndexesForSpecimen(Indexes, compartments);
+  buildIndexesForSpecimenDefinition(Indexes, compartments);
   buildIndexesForStructureDefinition(Indexes, compartments);
   buildIndexesForStructureMap(Indexes, compartments);
   buildIndexesForSubscription(Indexes, compartments);
@@ -3290,6 +3344,7 @@ begin
   buildIndexesForTestScript(Indexes, compartments);
   buildIndexesForValueSet(Indexes, compartments);
   buildIndexesForVisionPrescription(Indexes, compartments);
+  buildIndexesForWorkflowExample(Indexes, compartments);
 end;
 
 end.

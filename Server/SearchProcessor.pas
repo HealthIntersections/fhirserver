@@ -38,7 +38,7 @@ uses
   AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   KDBManager, KDBDialects,
-  FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
+  FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
   UcumServices;
 
 type

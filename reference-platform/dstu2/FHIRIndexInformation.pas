@@ -39,7 +39,7 @@ interface
 // FHIR v1.0.2 generated 2015-10-24T07:41:03+11:00
 
 uses
-  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexManagers, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
+  SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
 
 Type
 

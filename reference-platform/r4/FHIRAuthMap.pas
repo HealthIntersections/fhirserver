@@ -45,22 +45,25 @@ const
 
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
-    tcOther, // frtNull
-    tcFinancial , // frtAccount
-    tcOther, // frtActivityDefinition
-    tcClinical , // frtAllergyIntolerance
-    tcSchedule , // frtAppointment
-    tcSchedule , // frtAppointmentResponse
-    tcAudit , // frtAuditEvent
-    tcOther , // frtBasic
-    tcDocuments , // frtBinary
-    tcOther , // frtBodySite
-    tcOther , // frtBundle
+    tcOther, // frtNull frtNull
+    tcFinancial , // frtAccount frtAccount
+    tcOther, // frtActivityDefinition frtActivityDefinition
+    tcClinical , // frtAdverseEvent frtAdverseEvent
+    tcClinical , // frtAllergyIntolerance frtAllergyIntolerance
+    tcSchedule , // frtAppointment frtAppointment
+    tcSchedule , // frtAppointmentResponse frtAppointmentResponse
+    tcAudit , // frtAuditEvent frtAuditEvent
+    tcOther , // frtBasic frtBasic
+    tcDocuments , // frtBinary frtBinary
+    tcOther , // frtBodySite frtBodyStructure
+    tcOther , // frtBundle frtBundle
     tcOther , // frtCapabilityStatement
-    tcClinical , // frtCarePlan
-    tcClinical , // frtCareTeam
-    tcOther , // frtCareTeam
-    tcFinancial , // frtClaim
+    tcClinical , // frtCarePlan frtCarePlan
+    tcClinical , // frtCareTeam frtCareTeam
+    tcOther, // frtCatalogEntry frtCatalogEntry
+    tcOther, // frtCatalogEntry frtCatalogEntry
+    tcOther , // frtCareTeam frtChargeItem
+    tcFinancial , // frtClaim frtClaim
     tcFinancial , // frtClaimResponse
     tcClinical , // frtClinicalImpression
     tcOther , // frtCodeSystem
@@ -80,7 +83,6 @@ const
     tcOther , // frtDeviceUseRequest
     tcClinical, // frtDeviceUseStatement
     tcClinical, // frtDiagnosticReport
-
     tcDocuments , // frtDocumentManifest
     tcDocuments, // frtDocumentReference
     tcFinancial , // frtEligibilityRequest

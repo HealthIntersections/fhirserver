@@ -8,14 +8,15 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit,
   BaseResourceFrame,
-  DateSupport,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities;
+  DateSupport, StringSupport,
+  AdvGenerics,
+  FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
+  SearchParameterEditor, ListSelector, AddRestResourceDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
 
   TCapabilityStatementEditorFrame = class(TFrame)
-    Panel1: TPanel;
     Panel2: TPanel;
     Splitter1: TSplitter;
     Panel3: TPanel;
@@ -25,8 +26,6 @@ type
     tbMetadata: TTabItem;
     tbRest: TTabItem;
     Label1: TLabel;
-    btnCancel: TButton;
-    btnCommit: TButton;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -108,12 +107,40 @@ type
     edtProfile: TEdit;
     Label24: TLabel;
     cbxVersioning: TComboBox;
+    Label25: TLabel;
+    lbSearch: TListBox;
+    btnParamAdd: TButton;
+    btnParamAddStd: TButton;
+    btnParamEdit: TButton;
+    btnParamDelete: TButton;
+    Label26: TLabel;
+    cbTransaction: TCheckBox;
+    edtTransaction: TEdit;
+    cbBatch: TCheckBox;
+    edtBatch: TEdit;
+    cbSystemSearch: TCheckBox;
+    edtSystemSearch: TEdit;
+    cbSystemHistory: TCheckBox;
+    edtSystemHistory: TEdit;
+    btnAddClient: TButton;
+    btnAddServer: TButton;
+    Panel1: TPanel;
+    btnAddResources: TButton;
+    VertScrollBox1: TVertScrollBox;
+    btnDeleteResources: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
-    procedure btnCommitClick(Sender: TObject);
+    procedure btnParamEditClick(Sender: TObject);
+    procedure lbSearchClick(Sender: TObject);
+    procedure btnParamDeleteClick(Sender: TObject);
+    procedure btnParamAddClick(Sender: TObject);
+    procedure btnParamAddStdClick(Sender: TObject);
+    procedure btnAddClientClick(Sender: TObject);
+    procedure btnAddServerClick(Sender: TObject);
+    procedure btnAddResourcesClick(Sender: TObject);
+    procedure btnDeleteResourcesClick(Sender: TObject);
   private
-    FActive : TTreeViewItem;
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
@@ -125,9 +152,6 @@ type
     procedure commitMetadata;
     procedure commitRest(rest : TFhirCapabilityStatementRest);
     procedure commitResource(res : TFhirCapabilityStatementRestResource);
-
-    procedure setInputIsDirty;
-    procedure SetInputIsNotDirty;
 
     procedure commit; override;
     procedure cancel; override;
@@ -144,21 +168,319 @@ implementation
 
 { TCapabilityStatementEditorFrame }
 
+procedure TCapabilityStatementEditorFrame.btnAddClientClick(Sender: TObject);
+var
+  rest : TFhirCapabilityStatementRest;
+  tiRest : TTreeViewItem;
+begin
+  rest := CapabilityStatement.restList.Append;
+  rest.mode := RestfulCapabilityModeClient;
+  tiRest := TTreeViewItem.Create(tvMetadata);
+  tiRest.text := 'Client';
+  tvMetadata.AddObject(tiRest);
+  tiRest.TagObject := rest;
+  rest.TagObject := tiRest;
+  btnAddClient.Enabled := false;
+  tvStructure.Selected := tiRest;
+  tvStructureClick(nil);
+  ResourceIsDirty := true;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnAddResourcesClick(Sender: TObject);
+var
+  form : TAddRestResourceForm;
+  res : TFhirCapabilityStatementRestResource;
+  rs : TFhirResourceTypeSet;
+  r : TFhirResourceType;
+  rest : TFhirCapabilityStatementRest;
+  i : integer;
+  indexes : TFhirIndexList;
+  compartments : TFHIRCompartmentList;
+  builder : TFHIRIndexBuilder;
+  list : TAdvList<TFhirIndex>;
+  index : TFhirIndex;
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+  tiRes : TTreeViewItem;
+begin
+  rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
+  rs := ALL_RESOURCE_TYPES;
+  for res in rest.resourceList do
+  begin
+    r := ResourceTypeByName(CODES_TFhirResourceTypesEnum[res.type_]);
+    rs := rs - [r];
+  end;
+
+  form := TAddRestResourceForm.create(self);
+  try
+    for r in rs do
+      if r <> frtCustom then
+        form.ListBox1.Items.addObject(CODES_TFhirResourceType[r], TObject(r));
+    if form.showmodal = mrOk then
+    begin
+      for i := 0 to form.ListBox1.Items.Count - 1 do
+        if form.ListBox1.ListItems[i].isChecked then
+        begin
+          r := TFhirResourceType(form.ListBox1.Items.Objects[i]);
+          res := rest.resourceList.Append;
+          res.type_ := TFhirResourceTypesEnum(StringArrayIndexOfSensitive(CODES_TFhirResourceTypesEnum, CODES_TFhirResourceType[r]));
+          if form.cbRead.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionRead;
+          if form.cbVRead.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionVRead;
+          if form.cbSearch.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionSearchType;
+          if form.cbCreate.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionCreate;
+          if form.cbUpdate.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionUpdate;
+          if form.cbDelete.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionDelete;
+          if form.cbHistoryInstance.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
+          if form.cbHistoryType.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
+          if form.cbPatch.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionPatch;
+          if form.cbUpdateCreate.IsChecked then res.updateCreate := true;
+          if form.cbCondCreate.IsChecked then res.conditionalCreate := true;
+          if form.cbCondUpdate.IsChecked then res.conditionalUpdate := true;
+          if form.cbCondDelete.IsChecked then res.conditionalDelete := ConditionalDeleteStatusSingle;
+          if form.cbxVersioning.ItemIndex > -1 then
+            res.versioning := TFhirVersioningPolicyEnum(form.cbxVersioning.ItemIndex);
+          if form.cbxReadCondition.ItemIndex > -1 then
+            res.conditionalRead := TFhirConditionalReadStatusEnum(form.cbxReadCondition.ItemIndex);
+          if form.cbRefLocal.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyLocal];
+          if form.cbRefEnforced.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyEnforced];
+          if form.cbRefLogical.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyLogical];
+          if form.cbRefResolve.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyResolves];
+          if form.cbRefLiteral.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyLiteral];
+          if form.cbStandardSearch.isChecked then
+          begin
+            compartments := TFHIRCompartmentList.create;
+            indexes := TFhirIndexList.Create;
+            try
+              builder := TFHIRIndexBuilder.Create;
+              try
+                builder.registerIndexes(indexes, compartments);
+              finally
+                builder.Free;
+              end;
+              list := indexes.listByType(CODES_TFhirResourceTypesEnum[res.type_]);
+              try
+                for index in list do
+                begin
+                  p := TFhirCapabilityStatementRestResourceSearchParam.Create;
+                  try
+                    p.name := index.Name;
+                    p.type_ := index.SearchType;
+                    p.definition := index.URI;
+                    p.documentation := index.Description;
+                    res.searchParamList.Add(p.Link);
+                  finally
+                    p.Free;
+                  end;
+                end;
+              finally
+                list.free;
+              end;
+            finally
+              indexes.Free;
+              compartments.Free;
+            end;
+
+          tiRes := TTreeViewItem.Create(tvStructure.Selected);
+          tiRes.text := CODES_TFhirResourceTypesEnum[res.type_];
+          tvStructure.Selected.AddObject(tiRes);
+          tiRes.TagObject := res;
+          res.TagObject := tiRes;
+          end;
+        end;
+      ResourceIsDirty := true;
+    end;
+  finally
+    form.free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnAddServerClick(Sender: TObject);
+var
+  rest : TFhirCapabilityStatementRest;
+  tiRest : TTreeViewItem;
+begin
+  rest := CapabilityStatement.restList.Append;
+  rest.mode := RestfulCapabilityModeServer;
+  tiRest := TTreeViewItem.Create(tvMetadata);
+  tiRest.text := 'Server';
+  tvMetadata.AddObject(tiRest);
+  tiRest.TagObject := rest;
+  rest.TagObject := tiRest;
+  btnAddServer.Enabled := false;
+  tvStructure.Selected := tiRest;
+  tvStructureClick(nil);
+  ResourceIsDirty := true;
+end;
+
 procedure TCapabilityStatementEditorFrame.btnCancelClick(Sender: TObject);
 begin
   cancel;
 end;
 
-procedure TCapabilityStatementEditorFrame.btnCommitClick(Sender: TObject);
+procedure TCapabilityStatementEditorFrame.btnDeleteResourcesClick(Sender: TObject);
+var
+  form : TListSelectorForm;
+  r : TFhirCapabilityStatementRestResource;
+  rest : TFhirCapabilityStatementRest;
+  i : integer;
 begin
-  commit;
+  rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
+  form := TListSelectorForm.create(self);
+  try
+    form.Caption := 'Choose Resources to Delete';
+    for r in rest.resourceList do
+      form.ListBox1.items.AddObject(CODES_TFHIRResourceTypesEnum[r.type_], r);
+
+    if form.ListBox1.Items.Count = 0 then
+      ShowMessage('No resources to delete')
+    else if form.ShowModal = mrOk then
+    begin
+      for i := 0 to form.ListBox1.Items.Count - 1 do
+        if form.ListBox1.ListItems[i].IsChecked then
+        begin
+          r :=  form.ListBox1.Items.Objects[i] as TFhirCapabilityStatementRestResource;
+          tvStructure.Selected.RemoveObject(r.TagObject as TFmxObject);
+          rest.resourceList.DeleteByReference(r);
+        end;
+    end;
+  finally
+    form.free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnParamAddClick(Sender: TObject);
+var
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+  form : TSearchParameterEditorForm;
+  res : TFhirCapabilityStatementRestResource;
+begin
+  res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
+  p := TFhirCapabilityStatementRestResourceSearchParam.Create;
+  try
+    form := TSearchParameterEditorForm.create(self);
+    try
+      form.param := p.link;
+      if form.showModal = mrOk then
+      begin
+        res.searchParamList.Add(p.link);
+        lbSearch.Items.AddObject(p.summary, p);
+        lbSearch.ItemIndex := lbSearch.Items.Count - 1;
+        ResourceIsDirty := true;
+      end;
+    finally
+      form.free;
+    end;
+    lbSearchClick(nil);
+  finally
+    p.Free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnParamAddStdClick(Sender: TObject);
+var
+  res : TFhirCapabilityStatementRestResource;
+  form : TListSelectorForm;
+  indexes : TFhirIndexList;
+  compartments : TFHIRCompartmentList;
+  builder : TFHIRIndexBuilder;
+  list : TAdvList<TFhirIndex>;
+  index : TFhirIndex;
+  found : boolean;
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+  i : integer;
+begin
+  res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
+  form := TListSelectorForm.create(self);
+  try
+    form.Caption := 'Choose Standard Parameters';
+    compartments := TFHIRCompartmentList.create;
+    indexes := TFhirIndexList.Create;
+    try
+      builder := TFHIRIndexBuilder.Create;
+      try
+        builder.registerIndexes(indexes, compartments);
+      finally
+        builder.Free;
+      end;
+      list := indexes.listByType(CODES_TFhirResourceTypesEnum[res.type_]);
+      try
+        for index in list do
+        begin
+          found := false;
+          for p in res.searchParamList do
+            if p.name = index.Name then
+              found := true;
+          if not found then
+            form.ListBox1.items.AddObject(index.summary, index);
+        end;
+        if form.ListBox1.Items.Count = 0 then
+          ShowMessage('No Standard Search Parameters Left to add')
+        else if form.ShowModal = mrOk then
+        begin
+          for i := 0 to form.ListBox1.Items.Count - 1 do
+            if form.ListBox1.ListItems[i].IsChecked then
+            begin
+              index := form.ListBox1.Items.Objects[i] as TFhirIndex;
+              p := TFhirCapabilityStatementRestResourceSearchParam.Create;
+              try
+                p.name := index.Name;
+                p.type_ := index.SearchType;
+                p.definition := index.URI;
+                p.documentation := index.Description;
+                res.searchParamList.Add(p.Link);
+                lbSearch.Items.AddObject(p.summary, p);
+              finally
+                p.Free;
+              end;
+            end;
+          lbSearch.ItemIndex := lbSearch.Items.Count - 1;
+          lbSearchClick(nil);
+        end;
+      finally
+        list.free;
+      end;
+    finally
+      indexes.Free;
+      compartments.Free;
+    end;
+  finally
+    form.free;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnParamDeleteClick(Sender: TObject);
+var
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+  res : TFhirCapabilityStatementRestResource;
+begin
+  p := lbSearch.Items.Objects[lbSearch.ItemIndex] as TFhirCapabilityStatementRestResourceSearchParam;
+  res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
+  res.searchParamList.DeleteByReference(p);
+  lbSearch.Items.Delete(lbSearch.ItemIndex);
+  lbSearchClick(nil);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnParamEditClick(Sender: TObject);
+var
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+  form : TSearchParameterEditorForm;
+begin
+  p := lbSearch.Items.Objects[lbSearch.ItemIndex] as TFhirCapabilityStatementRestResourceSearchParam;
+  form := TSearchParameterEditorForm.create(self);
+  try
+    form.param := p.link;
+    if form.showModal = mrOk then
+    begin
+      lbSearch.Items[lbSearch.ItemIndex] := p.summary;
+      ResourceIsDirty := true;
+    end;
+  finally
+    form.free;
+  end;
+  lbSearchClick(nil);
 end;
 
 procedure TCapabilityStatementEditorFrame.cancel;
 begin
-  tvStructure.Selected := FActive;
-  tvStructureClick(nil);
-  SetInputIsNotDirty;
 end;
 
 procedure TCapabilityStatementEditorFrame.commit;
@@ -172,7 +494,6 @@ begin
     commitRest(obj as TFhirCapabilityStatementRest)
   else if obj is TFhirCapabilityStatementRestResource then
     commitResource(obj as TFhirCapabilityStatementRestResource);
-  SetInputIsNotDirty;
   ResourceIsDirty := true;
 end;
 
@@ -281,6 +602,23 @@ begin
 end;
 
 procedure TCapabilityStatementEditorFrame.commitRest(rest: TFhirCapabilityStatementRest);
+  procedure interaction(code : TFhirSystemRestfulInteractionEnum; cb : TCheckBox; edt : TEdit);
+  var
+    ri : TFhirCapabilityStatementRestInteraction;
+  begin
+    ri := rest.interaction(code);
+    if cb.IsChecked then
+    begin
+      if (ri = nil) then
+      begin
+        ri := rest.interactionList.Append;
+        ri.code := code;
+      end;
+      ri.documentation := edt.Text;
+    end
+    else if (ri <> nil) then
+      rest.interactionList.DeleteByReference(ri);
+  end;
 begin
   rest.documentation := mDoco.Text;
   if (mSecurity.Text = '') and not (cbCORS.IsChecked or cbOAuth.IsChecked or cbClientCerts.IsChecked or cbSmart.IsChecked) then
@@ -295,6 +633,10 @@ begin
     rest.security.serviceList.hasCode['http://hl7.org/fhir/restful-security-service', 'Certificates'] := cbClientCerts.IsChecked;
     rest.security.serviceList.hasCode['http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR'] := cbSmart.IsChecked;
   end;
+  interaction(SystemRestfulInteractionTransaction, cbTransaction, edtTransaction);
+  interaction(SystemRestfulInteractionBatch, cbBatch, edtBatch);
+  interaction(SystemRestfulInteractionSearchSystem, cbSystemSearch, edtSystemSearch);
+  interaction(SystemRestfulInteractionHistorySystem, cbSystemHistory, edtSystemHistory);
 end;
 
 function TCapabilityStatementEditorFrame.GetCapabilityStatement: TFHIRCapabilityStatement;
@@ -338,8 +680,14 @@ end;
 
 procedure TCapabilityStatementEditorFrame.inputChanged(Sender: TObject);
 begin
-  if not loading then
-    setInputIsDirty;
+  if not Loading then
+    commit;
+end;
+
+procedure TCapabilityStatementEditorFrame.lbSearchClick(Sender: TObject);
+begin
+  btnParamEdit.enabled := lbSearch.ItemIndex > -1;
+  btnParamDelete.enabled := lbSearch.ItemIndex > -1;
 end;
 
 procedure TCapabilityStatementEditorFrame.load;
@@ -347,17 +695,26 @@ var
   rest : TFhirCapabilityStatementRest;
   tiRest, tiRes : TTreeViewItem;
   res : TFhirCapabilityStatementRestResource;
+  bClient, bServer : boolean;
 begin
   inherited;
   tvMetadata.TagObject := CapabilityStatement;
+  bClient := false;
+  bServer := false;
 
   for rest in CapabilityStatement.restList do
   begin
     tiRest := TTreeViewItem.Create(tvMetadata);
     if rest.mode = RestfulCapabilityModeClient then
-      tiRest.text := 'Client'
+    begin
+      tiRest.text := 'Client';
+      bClient := true;
+    end
     else
+    begin
       tiRest.text := 'Server';
+      bServer := true;
+    end;
     tvMetadata.AddObject(tiRest);
     tiRest.TagObject := rest;
     rest.TagObject := tiRest;
@@ -369,10 +726,14 @@ begin
       tiRes.TagObject := res;
       res.TagObject := tiRes;
     end;
+
   end;
+  btnAddClient.Enabled := not bClient;
+  btnAddServer.Enabled := not bServer;
+
   tvStructure.Selected := tvMetadata;
+  tvStructure.ExpandAll;
   tvStructureClick(nil);
-  SetInputIsNotDirty;
 end;
 
 procedure TCapabilityStatementEditorFrame.loadMetadata;
@@ -414,6 +775,8 @@ procedure TCapabilityStatementEditorFrame.loadResource(res: TFhirCapabilityState
     if cb.IsChecked then
       edt.Text := ri.documentation;
   end;
+var
+  search : TFhirCapabilityStatementRestResourceSearchParam;
 begin
   mDocoRes.Text := res.documentation;
   if res.profile <> nil then
@@ -442,10 +805,31 @@ begin
   cbRefResolve.IsChecked := ReferenceHandlingPolicyResolves in res.referencePolicy;
   cbRefEnforced.IsChecked := ReferenceHandlingPolicyEnforced in res.referencePolicy;
   cbRefLocal.IsChecked := ReferenceHandlingPolicyLocal in res.referencePolicy;
+
+  lbSearch.Items.Clear;
+  for search in res.searchParamList do
+    lbSearch.Items.AddObject(search.summary, search);
+  if lbSearch.Items.Count > 0 then
+    lbSearch.ItemIndex := 0;
+  lbSearchClick(nil);
+
 end;
 
 
 procedure TCapabilityStatementEditorFrame.loadRest(rest: TFhirCapabilityStatementRest);
+  procedure interaction(code : TFhirSystemRestfulInteractionEnum; cb : TCheckBox; edt : TEdit);
+  var
+    ri : TFhirCapabilityStatementRestInteraction;
+  begin
+    ri := rest.interaction(code);
+    cb.IsChecked := ri <> nil;
+    if cb.IsChecked then
+      edt.Text := ri.documentation;
+  end;
+var
+  res : TFhirCapabilityStatementRestResource;
+  rs : TFhirResourceTypeSet;
+  r : TFhirResourceType;
 begin
   mDoco.Text := rest.documentation;
   if rest.security <> nil then
@@ -456,6 +840,17 @@ begin
     cbClientCerts.IsChecked := rest.security.serviceList.hasCode['http://hl7.org/fhir/restful-security-service', 'Certificates'];
     cbSmart.IsChecked := rest.security.serviceList.hasCode['http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR'];
   end;
+  interaction(SystemRestfulInteractionTransaction, cbTransaction, edtTransaction);
+  interaction(SystemRestfulInteractionBatch, cbBatch, edtBatch);
+  interaction(SystemRestfulInteractionSearchSystem, cbSystemSearch, edtSystemSearch);
+  interaction(SystemRestfulInteractionHistorySystem, cbSystemHistory, edtSystemHistory);
+  rs := ALL_RESOURCE_TYPES;
+  for res in rest.resourceList do
+  begin
+    r := ResourceTypeByName(CODES_TFhirResourceTypesEnum[res.type_]);
+    rs := rs - [r];
+  end;
+  btnAddResources.Enabled := rs <> [frtCustom];
 end;
 
 function TCapabilityStatementEditorFrame.readJurisdiction: Integer;
@@ -502,25 +897,6 @@ begin
     end;
 end;
 
-procedure TCapabilityStatementEditorFrame.setInputIsDirty;
-begin
-  if not InputIsDirty then
-  begin
-    InputIsDirty := true;
-    btnCommit.Enabled := true;
-    btnCancel.Enabled := true;
-    tvStructure.Enabled := false;
-    FActive := tvStructure.Selected;
-  end;
-end;
-
-procedure TCapabilityStatementEditorFrame.SetInputIsNotDirty;
-begin
-  InputIsDirty := false;
-  btnCommit.Enabled := false;
-  btnCancel.Enabled := false;
-  tvStructure.Enabled := true;
-end;
 
 procedure TCapabilityStatementEditorFrame.tvStructureClick(Sender: TObject);
 var

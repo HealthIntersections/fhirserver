@@ -214,7 +214,8 @@ uses
   SCrypt in '..\Libraries\security\SCrypt.pas',
   ApplicationCache in '..\Server\ApplicationCache.pas',
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
-  WebSourceProvider in '..\Server\WebSourceProvider.pas';
+  WebSourceProvider in '..\Server\WebSourceProvider.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 var
   gsrv : TExampleFhirServer;

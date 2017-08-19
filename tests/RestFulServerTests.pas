@@ -315,6 +315,7 @@ function TTestFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: T
 //  needsObject : boolean;
 var
   filename : String;
+  format : TFHIRFormat;
 begin
   result := false;
   NotFound(request, response);
@@ -332,7 +333,8 @@ begin
     response.Body := '';
     response.versionId := '1';
     response.LastModifiedDate := FileGetModified(filename);
-    response.Resource := FileToResource(filename, ffXml);
+    format := ffXml;
+    response.Resource := FileToResource(filename, format);
   end;
 end;
 

@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
+// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, XmlBuilder, MXml;
@@ -271,6 +271,10 @@ Type
     function ParseCareTeamParticipantChild(element : TFhirCareTeamParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseCareTeam(element : TMXmlElement; path : string) : TFhirCareTeam;
     function ParseCareTeamChild(element : TFhirCareTeam; path : string; child : TMXmlElement) : boolean;
+    function ParseCatalogEntryRelatedItem(element : TMXmlElement; path : string) : TFhirCatalogEntryRelatedItem;
+    function ParseCatalogEntryRelatedItemChild(element : TFhirCatalogEntryRelatedItem; path : string; child : TMXmlElement) : boolean;
+    function ParseCatalogEntry(element : TMXmlElement; path : string) : TFhirCatalogEntry;
+    function ParseCatalogEntryChild(element : TFhirCatalogEntry; path : string; child : TMXmlElement) : boolean;
     function ParseChargeItemParticipant(element : TMXmlElement; path : string) : TFhirChargeItemParticipant;
     function ParseChargeItemParticipantChild(element : TFhirChargeItemParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseChargeItem(element : TMXmlElement; path : string) : TFhirChargeItem;
@@ -895,6 +899,14 @@ Type
     function ParseSpecimenContainerChild(element : TFhirSpecimenContainer; path : string; child : TMXmlElement) : boolean;
     function ParseSpecimen(element : TMXmlElement; path : string) : TFhirSpecimen;
     function ParseSpecimenChild(element : TFhirSpecimen; path : string; child : TMXmlElement) : boolean;
+    function ParseSpecimenDefinitionSpecimenToLab(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLab;
+    function ParseSpecimenDefinitionSpecimenToLabChild(element : TFhirSpecimenDefinitionSpecimenToLab; path : string; child : TMXmlElement) : boolean;
+    function ParseSpecimenDefinitionSpecimenToLabContainerAdditive(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive;
+    function ParseSpecimenDefinitionSpecimenToLabContainerAdditiveChild(element : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; path : string; child : TMXmlElement) : boolean;
+    function ParseSpecimenDefinitionSpecimenToLabHandling(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLabHandling;
+    function ParseSpecimenDefinitionSpecimenToLabHandlingChild(element : TFhirSpecimenDefinitionSpecimenToLabHandling; path : string; child : TMXmlElement) : boolean;
+    function ParseSpecimenDefinition(element : TMXmlElement; path : string) : TFhirSpecimenDefinition;
+    function ParseSpecimenDefinitionChild(element : TFhirSpecimenDefinition; path : string; child : TMXmlElement) : boolean;
     function ParseStructureDefinitionMapping(element : TMXmlElement; path : string) : TFhirStructureDefinitionMapping;
     function ParseStructureDefinitionMappingChild(element : TFhirStructureDefinitionMapping; path : string; child : TMXmlElement) : boolean;
     function ParseStructureDefinitionSnapshot(element : TMXmlElement; path : string) : TFhirStructureDefinitionSnapshot;
@@ -1047,6 +1059,26 @@ Type
     function ParseVisionPrescriptionDispenseChild(element : TFhirVisionPrescriptionDispense; path : string; child : TMXmlElement) : boolean;
     function ParseVisionPrescription(element : TMXmlElement; path : string) : TFhirVisionPrescription;
     function ParseVisionPrescriptionChild(element : TFhirVisionPrescription; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleActor(element : TMXmlElement; path : string) : TFhirWorkflowExampleActor;
+    function ParseWorkflowExampleActorChild(element : TFhirWorkflowExampleActor; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleInstance(element : TMXmlElement; path : string) : TFhirWorkflowExampleInstance;
+    function ParseWorkflowExampleInstanceChild(element : TFhirWorkflowExampleInstance; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleInstanceVersion(element : TMXmlElement; path : string) : TFhirWorkflowExampleInstanceVersion;
+    function ParseWorkflowExampleInstanceVersionChild(element : TFhirWorkflowExampleInstanceVersion; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcess(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcess;
+    function ParseWorkflowExampleProcessChild(element : TFhirWorkflowExampleProcess; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcessStep(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStep;
+    function ParseWorkflowExampleProcessStepChild(element : TFhirWorkflowExampleProcessStep; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcessStepOperation(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepOperation;
+    function ParseWorkflowExampleProcessStepOperationChild(element : TFhirWorkflowExampleProcessStepOperation; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcessStepOperationInstance(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepOperationInstance;
+    function ParseWorkflowExampleProcessStepOperationInstanceChild(element : TFhirWorkflowExampleProcessStepOperationInstance; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcessStepAlternative(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepAlternative;
+    function ParseWorkflowExampleProcessStepAlternativeChild(element : TFhirWorkflowExampleProcessStepAlternative; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExampleProcessStepAlternativeOption(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepAlternativeOption;
+    function ParseWorkflowExampleProcessStepAlternativeOptionChild(element : TFhirWorkflowExampleProcessStepAlternativeOption; path : string; child : TMXmlElement) : boolean;
+    function ParseWorkflowExample(element : TMXmlElement; path : string) : TFhirWorkflowExample;
+    function ParseWorkflowExampleChild(element : TFhirWorkflowExample; path : string; child : TMXmlElement) : boolean;
     function ParseResource(element : TMXmlElement; path : String) : TFhirResource; override;
     function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1281,6 +1313,10 @@ Type
     procedure ComposeCareTeamParticipantChildren(xml : TXmlBuilder; elem : TFhirCareTeamParticipant);
     procedure ComposeCareTeam(xml : TXmlBuilder; name : string; elem : TFhirCareTeam);
     procedure ComposeCareTeamChildren(xml : TXmlBuilder; elem : TFhirCareTeam);
+    procedure ComposeCatalogEntryRelatedItem(xml : TXmlBuilder; name : string; elem : TFhirCatalogEntryRelatedItem);
+    procedure ComposeCatalogEntryRelatedItemChildren(xml : TXmlBuilder; elem : TFhirCatalogEntryRelatedItem);
+    procedure ComposeCatalogEntry(xml : TXmlBuilder; name : string; elem : TFhirCatalogEntry);
+    procedure ComposeCatalogEntryChildren(xml : TXmlBuilder; elem : TFhirCatalogEntry);
     procedure ComposeChargeItemParticipant(xml : TXmlBuilder; name : string; elem : TFhirChargeItemParticipant);
     procedure ComposeChargeItemParticipantChildren(xml : TXmlBuilder; elem : TFhirChargeItemParticipant);
     procedure ComposeChargeItem(xml : TXmlBuilder; name : string; elem : TFhirChargeItem);
@@ -1905,6 +1941,14 @@ Type
     procedure ComposeSpecimenContainerChildren(xml : TXmlBuilder; elem : TFhirSpecimenContainer);
     procedure ComposeSpecimen(xml : TXmlBuilder; name : string; elem : TFhirSpecimen);
     procedure ComposeSpecimenChildren(xml : TXmlBuilder; elem : TFhirSpecimen);
+    procedure ComposeSpecimenDefinitionSpecimenToLab(xml : TXmlBuilder; name : string; elem : TFhirSpecimenDefinitionSpecimenToLab);
+    procedure ComposeSpecimenDefinitionSpecimenToLabChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLab);
+    procedure ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(xml : TXmlBuilder; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+    procedure ComposeSpecimenDefinitionSpecimenToLabContainerAdditiveChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+    procedure ComposeSpecimenDefinitionSpecimenToLabHandling(xml : TXmlBuilder; name : string; elem : TFhirSpecimenDefinitionSpecimenToLabHandling);
+    procedure ComposeSpecimenDefinitionSpecimenToLabHandlingChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLabHandling);
+    procedure ComposeSpecimenDefinition(xml : TXmlBuilder; name : string; elem : TFhirSpecimenDefinition);
+    procedure ComposeSpecimenDefinitionChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinition);
     procedure ComposeStructureDefinitionMapping(xml : TXmlBuilder; name : string; elem : TFhirStructureDefinitionMapping);
     procedure ComposeStructureDefinitionMappingChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionMapping);
     procedure ComposeStructureDefinitionSnapshot(xml : TXmlBuilder; name : string; elem : TFhirStructureDefinitionSnapshot);
@@ -2057,6 +2101,26 @@ Type
     procedure ComposeVisionPrescriptionDispenseChildren(xml : TXmlBuilder; elem : TFhirVisionPrescriptionDispense);
     procedure ComposeVisionPrescription(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescription);
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
+    procedure ComposeWorkflowExampleActor(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleActor);
+    procedure ComposeWorkflowExampleActorChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleActor);
+    procedure ComposeWorkflowExampleInstance(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleInstance);
+    procedure ComposeWorkflowExampleInstanceChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleInstance);
+    procedure ComposeWorkflowExampleInstanceVersion(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleInstanceVersion);
+    procedure ComposeWorkflowExampleInstanceVersionChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleInstanceVersion);
+    procedure ComposeWorkflowExampleProcess(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcess);
+    procedure ComposeWorkflowExampleProcessChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcess);
+    procedure ComposeWorkflowExampleProcessStep(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcessStep);
+    procedure ComposeWorkflowExampleProcessStepChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStep);
+    procedure ComposeWorkflowExampleProcessStepOperation(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcessStepOperation);
+    procedure ComposeWorkflowExampleProcessStepOperationChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepOperation);
+    procedure ComposeWorkflowExampleProcessStepOperationInstance(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcessStepOperationInstance);
+    procedure ComposeWorkflowExampleProcessStepOperationInstanceChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepOperationInstance);
+    procedure ComposeWorkflowExampleProcessStepAlternative(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcessStepAlternative);
+    procedure ComposeWorkflowExampleProcessStepAlternativeChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepAlternative);
+    procedure ComposeWorkflowExampleProcessStepAlternativeOption(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption);
+    procedure ComposeWorkflowExampleProcessStepAlternativeOptionChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepAlternativeOption);
+    procedure ComposeWorkflowExample(xml : TXmlBuilder; name : string; elem : TFhirWorkflowExample);
+    procedure ComposeWorkflowExampleChildren(xml : TXmlBuilder; elem : TFhirWorkflowExample);
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
@@ -10924,6 +10988,163 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
+end;
+
+function TFHIRXmlParser.ParseCatalogEntryRelatedItem(element : TMXmlElement; path : string) : TFhirCatalogEntryRelatedItem;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCatalogEntryRelatedItem.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCatalogEntryRelatedItemChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCatalogEntryRelatedItemChild(element : TFhirCatalogEntryRelatedItem; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'relationtype') then
+        element.relationtype := ParseCodeableConcept(child, path+'/relationtype') {b}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'item') then
+        element.item := ParseReference{Resource}(child, path+'/item') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCatalogEntryRelatedItem(xml : TXmlBuilder; name : String; elem : TFhirCatalogEntryRelatedItem);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeCatalogEntryRelatedItemChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCatalogEntryRelatedItemChildren(xml : TXmlBuilder; elem : TFhirCatalogEntryRelatedItem);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'relationtype', elem.relationtype);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(xml, 'item', elem.item);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseCatalogEntry(element : TMXmlElement; path : string) : TFhirCatalogEntry;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirCatalogEntry.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseCatalogEntryChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseCatalogEntryChild(element : TFhirCatalogEntry; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'purpose') then
+        element.purpose := ParseCodeableConcept(child, path+'/purpose') {b}
+      else if (child.localName = 'referencedItem') then
+        element.referencedItem := ParseReference{Resource}(child, path+'/referencedItem') {b}
+      else if (child.localName = 'identifier') then
+        element.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.localName = 'additionalIdentifier') then
+        element.additionalIdentifierList.Add(ParseIdentifier(child, path+'/additionalIdentifier')){y.2}
+      else if (child.localName = 'classification') then
+        element.classificationList.Add(ParseIdentifier(child, path+'/classification')){y.2}
+      else if (child.localName = 'status') then
+        element.status := ParseCodeableConcept(child, path+'/status') {b}
+      else if (child.localName = 'validityPeriod') then
+        element.validityPeriod := ParsePeriod(child, path+'/validityPeriod') {b}
+      else if (child.localName = 'lastUpdated') then
+        element.lastUpdatedElement := ParseDateTime(child, path+'/lastUpdated') {b}
+      else if (child.localName = 'additionalCharacteristic') then
+        element.additionalCharacteristicList.Add(ParseCodeableConcept(child, path+'/additionalCharacteristic')){y.2}
+      else if (child.localName = 'additionalClassification') then
+        element.additionalClassificationList.Add(ParseCodeableConcept(child, path+'/additionalClassification')){y.2}
+      else if (child.localName = 'relatedItem') then
+        element.relatedItemList.Add(ParseCatalogEntryRelatedItem(child, path+'/relatedItem')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeCatalogEntry(xml : TXmlBuilder; name : String; elem : TFhirCatalogEntry);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeCatalogEntryChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeCatalogEntryChildren(xml : TXmlBuilder; elem : TFhirCatalogEntry);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'purpose', elem.purpose);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(xml, 'referencedItem', elem.referencedItem);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalIdentifierList.Count - 1 do
+      ComposeIdentifier(xml, 'additionalIdentifier', elem.additionalIdentifierList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.classificationList.Count - 1 do
+      ComposeIdentifier(xml, 'classification', elem.classificationList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'status', elem.status);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(xml, 'validityPeriod', elem.validityPeriod);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(xml, 'lastUpdated', elem.lastUpdatedElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalCharacteristicList.Count - 1 do
+      ComposeCodeableConcept(xml, 'additionalCharacteristic', elem.additionalCharacteristicList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalClassificationList.Count - 1 do
+      ComposeCodeableConcept(xml, 'additionalClassification', elem.additionalClassificationList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.relatedItemList.Count - 1 do
+      ComposeCatalogEntryRelatedItem(xml, 'relatedItem', elem.relatedItemList[i]);
 end;
 
 function TFHIRXmlParser.ParseChargeItemParticipant(element : TMXmlElement; path : string) : TFhirChargeItemParticipant;
@@ -36584,6 +36805,307 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLab(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLab;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLab.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseSpecimenDefinitionSpecimenToLabChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLabChild(element : TFhirSpecimenDefinitionSpecimenToLab; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'isDerived') then
+        element.isDerivedElement := ParseBoolean(child, path+'/isDerived') {b}
+      else if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'preference') then
+        element.preferenceElement := ParseEnum(CODES_TFhirSpecimenContainedPreferenceEnum, SYSTEMS_TFhirSpecimenContainedPreferenceEnum, path+'/preference', child){1a}
+      else if (child.localName = 'containerMaterial') then
+        element.containerMaterial := ParseCodeableConcept(child, path+'/containerMaterial') {b}
+      else if (child.localName = 'containerType') then
+        element.containerType := ParseCodeableConcept(child, path+'/containerType') {b}
+      else if (child.localName = 'containerCap') then
+        element.containerCap := ParseCodeableConcept(child, path+'/containerCap') {b}
+      else if (child.localName = 'containerDescription') then
+        element.containerDescriptionElement := ParseString(child, path+'/containerDescription') {b}
+      else if (child.localName = 'containerCapacity') then
+        element.containerCapacity := ParseQuantity(child, path+'/containerCapacity') {b}
+      else if (child.localName = 'containerMinimumVolume') then
+        element.containerMinimumVolume := ParseQuantity(child, path+'/containerMinimumVolume') {b}
+      else if (child.localName = 'containerAdditive') then
+        element.containerAdditiveList.Add(ParseSpecimenDefinitionSpecimenToLabContainerAdditive(child, path+'/containerAdditive')){y.2}
+      else if (child.localName = 'containerPreparation') then
+        element.containerPreparationElement := ParseString(child, path+'/containerPreparation') {b}
+      else if (child.localName = 'requirement') then
+        element.requirementElement := ParseString(child, path+'/requirement') {b}
+      else if (child.localName = 'retentionTime') then
+        element.retentionTime := ParseDuration(child, path+'/retentionTime') {b}
+      else if (child.localName = 'rejectionCriterion') then
+        element.rejectionCriterionList.Add(ParseCodeableConcept(child, path+'/rejectionCriterion')){y.2}
+      else if (child.localName = 'handling') then
+        element.handlingList.Add(ParseSpecimenDefinitionSpecimenToLabHandling(child, path+'/handling')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLab(xml : TXmlBuilder; name : String; elem : TFhirSpecimenDefinitionSpecimenToLab);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeSpecimenDefinitionSpecimenToLabChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLabChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLab);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(xml, 'isDerived', elem.isDerivedElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(xml, 'preference', elem.PreferenceElement, CODES_TFhirSpecimenContainedPreferenceEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'containerMaterial', elem.containerMaterial);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'containerType', elem.containerType);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'containerCap', elem.containerCap);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'containerDescription', elem.containerDescriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'containerCapacity', elem.containerCapacity);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'containerMinimumVolume', elem.containerMinimumVolume);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.containerAdditiveList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(xml, 'containerAdditive', elem.containerAdditiveList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'containerPreparation', elem.containerPreparationElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'requirement', elem.requirementElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(xml, 'retentionTime', elem.retentionTime);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.rejectionCriterionList.Count - 1 do
+      ComposeCodeableConcept(xml, 'rejectionCriterion', elem.rejectionCriterionList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.handlingList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabHandling(xml, 'handling', elem.handlingList[i]);
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditive(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLabContainerAdditive.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseSpecimenDefinitionSpecimenToLabContainerAdditiveChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditiveChild(element : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'additiveCodeableConcept') then
+        element.additive := ParseCodeableConcept(child, path+'/additiveCodeableConcept'){x.3}
+      else if (child.localName = 'additiveReference') then
+        element.additive := ParseReference(child, path+'/additiveReference') {a}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(xml : TXmlBuilder; name : String; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeSpecimenDefinitionSpecimenToLabContainerAdditiveChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLabContainerAdditiveChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'additiveCodeableConcept', TFhirCodeableConcept(elem.additive))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirReference) {2} then
+    ComposeReference(xml, 'additiveReference', TFhirReference(elem.additive));
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLabHandling(element : TMXmlElement; path : string) : TFhirSpecimenDefinitionSpecimenToLabHandling;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirSpecimenDefinitionSpecimenToLabHandling.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseSpecimenDefinitionSpecimenToLabHandlingChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionSpecimenToLabHandlingChild(element : TFhirSpecimenDefinitionSpecimenToLabHandling; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'conditionSet') then
+        element.conditionSet := ParseCodeableConcept(child, path+'/conditionSet') {b}
+      else if (child.localName = 'tempRange') then
+        element.tempRange := ParseRange(child, path+'/tempRange') {b}
+      else if (child.localName = 'maxDuration') then
+        element.maxDuration := ParseDuration(child, path+'/maxDuration') {b}
+      else if (child.localName = 'lightExposure') then
+        element.lightExposureElement := ParseString(child, path+'/lightExposure') {b}
+      else if (child.localName = 'instruction') then
+        element.instructionElement := ParseString(child, path+'/instruction') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLabHandling(xml : TXmlBuilder; name : String; elem : TFhirSpecimenDefinitionSpecimenToLabHandling);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeSpecimenDefinitionSpecimenToLabHandlingChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionSpecimenToLabHandlingChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinitionSpecimenToLabHandling);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'conditionSet', elem.conditionSet);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRange(xml, 'tempRange', elem.tempRange);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(xml, 'maxDuration', elem.maxDuration);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'lightExposure', elem.lightExposureElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'instruction', elem.instructionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinition(element : TMXmlElement; path : string) : TFhirSpecimenDefinition;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirSpecimenDefinition.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseSpecimenDefinitionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseSpecimenDefinitionChild(element : TFhirSpecimenDefinition; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'identifier') then
+        element.identifier := ParseIdentifier(child, path+'/identifier') {b}
+      else if (child.localName = 'typeCollected') then
+        element.typeCollected := ParseCodeableConcept(child, path+'/typeCollected') {b}
+      else if (child.localName = 'patientPreparation') then
+        element.patientPreparationElement := ParseString(child, path+'/patientPreparation') {b}
+      else if (child.localName = 'timeAspect') then
+        element.timeAspectElement := ParseString(child, path+'/timeAspect') {b}
+      else if (child.localName = 'collection') then
+        element.collectionList.Add(ParseCodeableConcept(child, path+'/collection')){y.2}
+      else if (child.localName = 'specimenToLab') then
+        element.specimenToLabList.Add(ParseSpecimenDefinitionSpecimenToLab(child, path+'/specimenToLab')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinition(xml : TXmlBuilder; name : String; elem : TFhirSpecimenDefinition);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeSpecimenDefinitionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeSpecimenDefinitionChildren(xml : TXmlBuilder; elem : TFhirSpecimenDefinition);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(xml, 'identifier', elem.identifier);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'typeCollected', elem.typeCollected);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'patientPreparation', elem.patientPreparationElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'timeAspect', elem.timeAspectElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.collectionList.Count - 1 do
+      ComposeCodeableConcept(xml, 'collection', elem.collectionList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.specimenToLabList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLab(xml, 'specimenToLab', elem.specimenToLabList[i]);
+end;
+
 function TFHIRXmlParser.ParseStructureDefinitionMapping(element : TMXmlElement; path : string) : TFhirStructureDefinitionMapping;
 var
   child : TMXmlElement;
@@ -42349,6 +42871,710 @@ begin
       ComposeVisionPrescriptionDispense(xml, 'dispense', elem.dispenseList[i]);
 end;
 
+function TFHIRXmlParser.ParseWorkflowExampleActor(element : TMXmlElement; path : string) : TFhirWorkflowExampleActor;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleActor.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleActorChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleActorChild(element : TFhirWorkflowExampleActor; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'actorId') then
+        element.actorIdElement := ParseString(child, path+'/actorId') {b}
+      else if (child.localName = 'type') then
+        element.type_Element := ParseEnum(CODES_TFhirWorkflowexampleActorTypeEnum, SYSTEMS_TFhirWorkflowexampleActorTypeEnum, path+'/type', child){1a}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleActor(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleActor);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleActorChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleActorChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleActor);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'actorId', elem.actorIdElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleInstance(element : TMXmlElement; path : string) : TFhirWorkflowExampleInstance;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleInstance.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleInstanceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleInstanceChild(element : TFhirWorkflowExampleInstance; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'resourceId') then
+        element.resourceIdElement := ParseString(child, path+'/resourceId') {b}
+      else if (child.localName = 'resourceType') then
+        element.resourceTypeElement := ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, path+'/resourceType', child){1a}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if (child.localName = 'version') then
+        element.versionList.Add(ParseWorkflowExampleInstanceVersion(child, path+'/version')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleInstance(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleInstance);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleInstanceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleInstanceChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleInstance);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'resourceId', elem.resourceIdElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(xml, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeWorkflowExampleInstanceVersion(xml, 'version', elem.versionList[i]);
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleInstanceVersion(element : TMXmlElement; path : string) : TFhirWorkflowExampleInstanceVersion;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleInstanceVersion.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleInstanceVersionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleInstanceVersionChild(element : TFhirWorkflowExampleInstanceVersion; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'versionId') then
+        element.versionIdElement := ParseString(child, path+'/versionId') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleInstanceVersion(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleInstanceVersion);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleInstanceVersionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleInstanceVersionChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleInstanceVersion);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'versionId', elem.versionIdElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcess(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcess;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcess.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessChild(element : TFhirWorkflowExampleProcess; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if (child.localName = 'preConditions') then
+        element.preConditionsElement := ParseMarkdown(child, path+'/preConditions') {b}
+      else if (child.localName = 'postConditions') then
+        element.postConditionsElement := ParseMarkdown(child, path+'/postConditions') {b}
+      else if (child.localName = 'step') then
+        element.stepList.Add(ParseWorkflowExampleProcessStep(child, path+'/step')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcess(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcess);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcess);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'preConditions', elem.preConditionsElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'postConditions', elem.postConditionsElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeWorkflowExampleProcessStep(xml, 'step', elem.stepList[i]);
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStep(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStep;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcessStep.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessStepChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepChild(element : TFhirWorkflowExampleProcessStep; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'process') then
+        element.processList.Add(ParseWorkflowExampleProcess(child, path+'/process')){y.2}
+      else if (child.localName = 'pause') then
+        element.pauseElement := ParseBoolean(child, path+'/pause') {b}
+      else if (child.localName = 'operation') then
+        element.operation := ParseWorkflowExampleProcessStepOperation(child, path+'/operation') {b}
+      else if (child.localName = 'alternative') then
+        element.alternative := ParseWorkflowExampleProcessStepAlternative(child, path+'/alternative') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStep(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcessStep);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessStepChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStep);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(xml, 'process', elem.processList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'pause', elem.pauseElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepOperation(xml, 'operation', elem.operation);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepAlternative(xml, 'alternative', elem.alternative);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepOperation(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepOperation;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcessStepOperation.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessStepOperationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepOperationChild(element : TFhirWorkflowExampleProcessStepOperation; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'number') then
+        element.numberElement := ParseString(child, path+'/number') {b}
+      else if (child.localName = 'type') then
+        element.type_Element := ParseString(child, path+'/type') {b}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'initiator') then
+        element.initiatorElement := ParseString(child, path+'/initiator') {b}
+      else if (child.localName = 'receiver') then
+        element.receiverElement := ParseString(child, path+'/receiver') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if (child.localName = 'initiatorActive') then
+        element.initiatorActiveElement := ParseBoolean(child, path+'/initiatorActive') {b}
+      else if (child.localName = 'receiverActive') then
+        element.receiverActiveElement := ParseBoolean(child, path+'/receiverActive') {b}
+      else if (child.localName = 'instance') then
+        element.instanceList.Add(ParseWorkflowExampleProcessStepOperationInstance(child, path+'/instance')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepOperation(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcessStepOperation);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessStepOperationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepOperationChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepOperation);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'number', elem.numberElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'type', elem.type_Element);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'initiator', elem.initiatorElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'receiver', elem.receiverElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'initiatorActive', elem.initiatorActiveElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'receiverActive', elem.receiverActiveElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperationInstance(xml, 'instance', elem.instanceList[i]);
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepOperationInstance(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepOperationInstance;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcessStepOperationInstance.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessStepOperationInstanceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepOperationInstanceChild(element : TFhirWorkflowExampleProcessStepOperationInstance; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'instanceId') then
+        element.instanceIdElement := ParseString(child, path+'/instanceId') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepOperationInstance(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcessStepOperationInstance);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessStepOperationInstanceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepOperationInstanceChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepOperationInstance);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'instanceId', elem.instanceIdElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepAlternative(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepAlternative;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcessStepAlternative.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessStepAlternativeChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepAlternativeChild(element : TFhirWorkflowExampleProcessStepAlternative; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'option') then
+        element.optionList.Add(ParseWorkflowExampleProcessStepAlternativeOption(child, path+'/option')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepAlternative(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcessStepAlternative);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessStepAlternativeChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepAlternativeChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepAlternative);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.optionList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternativeOption(xml, 'option', elem.optionList[i]);
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepAlternativeOption(element : TMXmlElement; path : string) : TFhirWorkflowExampleProcessStepAlternativeOption;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExampleProcessStepAlternativeOption.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleProcessStepAlternativeOptionChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleProcessStepAlternativeOptionChild(element : TFhirWorkflowExampleProcessStepAlternativeOption; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if (child.localName = 'process') then
+        element.processList.Add(ParseWorkflowExampleProcess(child, path+'/process')){y.2}
+      else if (child.localName = 'alternative') then
+        element.alternativeList.Add(ParseWorkflowExampleProcessStepAlternative(child, path+'/alternative')){y.2}
+      else if (child.localName = 'operation') then
+        element.operationList.Add(ParseWorkflowExampleProcessStepOperation(child, path+'/operation')){y.2}
+      else if (child.localName = 'pause') then
+        element.pauseList.Add(ParseBoolean(child, path+'/pause')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepAlternativeOption(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExampleProcessStepAlternativeOption);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleProcessStepAlternativeOptionChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleProcessStepAlternativeOptionChildren(xml : TXmlBuilder; elem : TFhirWorkflowExampleProcessStepAlternativeOption);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(xml, 'process', elem.processList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.alternativeList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternative(xml, 'alternative', elem.alternativeList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.operationList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperation(xml, 'operation', elem.operationList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.pauseList.Count - 1 do
+      ComposeBoolean(xml, 'pause', elem.pauseList[i]);
+end;
+
+function TFHIRXmlParser.ParseWorkflowExample(element : TMXmlElement; path : string) : TFhirWorkflowExample;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirWorkflowExample.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseWorkflowExampleChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseWorkflowExampleChild(element : TFhirWorkflowExample; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'url') then
+        element.urlElement := ParseUri(child, path+'/url') {b}
+      else if (child.localName = 'identifier') then
+        element.identifierList.Add(ParseIdentifier(child, path+'/identifier')){y.2}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
+      else if (child.localName = 'status') then
+        element.statusElement := ParseEnum(CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'experimental') then
+        element.experimentalElement := ParseBoolean(child, path+'/experimental') {b}
+      else if (child.localName = 'date') then
+        element.dateElement := ParseDateTime(child, path+'/date') {b}
+      else if (child.localName = 'publisher') then
+        element.publisherElement := ParseString(child, path+'/publisher') {b}
+      else if (child.localName = 'contact') then
+        element.contactList.Add(ParseContactDetail(child, path+'/contact')){y.2}
+      else if (child.localName = 'useContext') then
+        element.useContextList.Add(ParseUsageContext(child, path+'/useContext')){y.2}
+      else if (child.localName = 'jurisdiction') then
+        element.jurisdictionList.Add(ParseCodeableConcept(child, path+'/jurisdiction')){y.2}
+      else if (child.localName = 'copyright') then
+        element.copyrightElement := ParseMarkdown(child, path+'/copyright') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseMarkdown(child, path+'/description') {b}
+      else if (child.localName = 'purpose') then
+        element.purposeElement := ParseMarkdown(child, path+'/purpose') {b}
+      else if (child.localName = 'actor') then
+        element.actorList.Add(ParseWorkflowExampleActor(child, path+'/actor')){y.2}
+      else if (child.localName = 'instance') then
+        element.instanceList.Add(ParseWorkflowExampleInstance(child, path+'/instance')){y.2}
+      else if (child.localName = 'process') then
+        element.process := ParseWorkflowExampleProcess(child, path+'/process') {b}
+      else if (child.localName = 'workflow') then
+        element.workflowList.Add(ParseReference{TFhirWorkflowExample}(child, path+'/workflow')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExample(xml : TXmlBuilder; name : String; elem : TFhirWorkflowExample);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeWorkflowExampleChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeWorkflowExampleChildren(xml : TXmlBuilder; elem : TFhirWorkflowExample);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(xml, 'url', elem.urlElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(xml, 'identifier', elem.identifierList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(xml, 'experimental', elem.experimentalElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(xml, 'date', elem.dateElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'publisher', elem.publisherElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactDetail(xml, 'contact', elem.contactList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.useContextList.Count - 1 do
+      ComposeUsageContext(xml, 'useContext', elem.useContextList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(xml, 'jurisdiction', elem.jurisdictionList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'copyright', elem.copyrightElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(xml, 'purpose', elem.purposeElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.actorList.Count - 1 do
+      ComposeWorkflowExampleActor(xml, 'actor', elem.actorList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleInstance(xml, 'instance', elem.instanceList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcess(xml, 'process', elem.process);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.workflowList.Count - 1 do
+      ComposeReference{TFhirWorkflowExample}(xml, 'workflow', elem.workflowList[i]);
+end;
+
 function TFHIRXmlParser.ParseResource(element : TMXmlElement; path : String) : TFhirResource;
 begin
   if (element = nil) Then
@@ -42383,6 +43609,8 @@ begin
     result := ParseCarePlan(element, path+'/CarePlan')
   else if element.localName = 'CareTeam' Then
     result := ParseCareTeam(element, path+'/CareTeam')
+  else if element.localName = 'CatalogEntry' Then
+    result := ParseCatalogEntry(element, path+'/CatalogEntry')
   else if element.localName = 'ChargeItem' Then
     result := ParseChargeItem(element, path+'/ChargeItem')
   else if element.localName = 'Claim' Then
@@ -42563,6 +43791,8 @@ begin
     result := ParseSlot(element, path+'/Slot')
   else if element.localName = 'Specimen' Then
     result := ParseSpecimen(element, path+'/Specimen')
+  else if element.localName = 'SpecimenDefinition' Then
+    result := ParseSpecimenDefinition(element, path+'/SpecimenDefinition')
   else if element.localName = 'StructureDefinition' Then
     result := ParseStructureDefinition(element, path+'/StructureDefinition')
   else if element.localName = 'StructureMap' Then
@@ -42585,6 +43815,8 @@ begin
     result := ParseValueSet(element, path+'/ValueSet')
   else if element.localName = 'VisionPrescription' Then
     result := ParseVisionPrescription(element, path+'/VisionPrescription')
+  else if element.localName = 'WorkflowExample' Then
+    result := ParseWorkflowExample(element, path+'/WorkflowExample')
   else
     raise Exception.create('Error: the element '+element.localName+' is not recognised as a valid resource name');
 end;
@@ -42609,6 +43841,7 @@ begin
     frtCapabilityStatement: ComposeCapabilityStatement(xml, 'CapabilityStatement', TFhirCapabilityStatement(resource));
     frtCarePlan: ComposeCarePlan(xml, 'CarePlan', TFhirCarePlan(resource));
     frtCareTeam: ComposeCareTeam(xml, 'CareTeam', TFhirCareTeam(resource));
+    frtCatalogEntry: ComposeCatalogEntry(xml, 'CatalogEntry', TFhirCatalogEntry(resource));
     frtChargeItem: ComposeChargeItem(xml, 'ChargeItem', TFhirChargeItem(resource));
     frtClaim: ComposeClaim(xml, 'Claim', TFhirClaim(resource));
     frtClaimResponse: ComposeClaimResponse(xml, 'ClaimResponse', TFhirClaimResponse(resource));
@@ -42699,6 +43932,7 @@ begin
     frtServiceDefinition: ComposeServiceDefinition(xml, 'ServiceDefinition', TFhirServiceDefinition(resource));
     frtSlot: ComposeSlot(xml, 'Slot', TFhirSlot(resource));
     frtSpecimen: ComposeSpecimen(xml, 'Specimen', TFhirSpecimen(resource));
+    frtSpecimenDefinition: ComposeSpecimenDefinition(xml, 'SpecimenDefinition', TFhirSpecimenDefinition(resource));
     frtStructureDefinition: ComposeStructureDefinition(xml, 'StructureDefinition', TFhirStructureDefinition(resource));
     frtStructureMap: ComposeStructureMap(xml, 'StructureMap', TFhirStructureMap(resource));
     frtSubscription: ComposeSubscription(xml, 'Subscription', TFhirSubscription(resource));
@@ -42710,6 +43944,7 @@ begin
     frtTestScript: ComposeTestScript(xml, 'TestScript', TFhirTestScript(resource));
     frtValueSet: ComposeValueSet(xml, 'ValueSet', TFhirValueSet(resource));
     frtVisionPrescription: ComposeVisionPrescription(xml, 'VisionPrescription', TFhirVisionPrescription(resource));
+    frtWorkflowExample: ComposeWorkflowExample(xml, 'WorkflowExample', TFhirWorkflowExample(resource));
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
@@ -42817,6 +44052,8 @@ begin
     result := parseCarePlan(element, element.Name)
   else if SameText(element.Name, 'TFhirCareTeam') then
     result := parseCareTeam(element, element.Name)
+  else if SameText(element.Name, 'TFhirCatalogEntry') then
+    result := parseCatalogEntry(element, element.Name)
   else if SameText(element.Name, 'TFhirChargeItem') then
     result := parseChargeItem(element, element.Name)
   else if SameText(element.Name, 'TFhirClaim') then
@@ -42997,6 +44234,8 @@ begin
     result := parseSlot(element, element.Name)
   else if SameText(element.Name, 'TFhirSpecimen') then
     result := parseSpecimen(element, element.Name)
+  else if SameText(element.Name, 'TFhirSpecimenDefinition') then
+    result := parseSpecimenDefinition(element, element.Name)
   else if SameText(element.Name, 'TFhirStructureDefinition') then
     result := parseStructureDefinition(element, element.Name)
   else if SameText(element.Name, 'TFhirStructureMap') then
@@ -43019,6 +44258,8 @@ begin
     result := parseValueSet(element, element.Name)
   else if SameText(element.Name, 'TFhirVisionPrescription') then
     result := parseVisionPrescription(element, element.Name)
+  else if SameText(element.Name, 'TFhirWorkflowExample') then
+    result := parseWorkflowExample(element, element.Name)
   else
     raise Exception.create('error: the element '+element.Name+' is not a valid fragment name');
 end;
@@ -43329,6 +44570,10 @@ begin
     composeCareTeamParticipant(xml, name,  TFhirCareTeamParticipant(base))
   else if (base is TFhirCareTeam) then
     composeCareTeam(xml, name,  TFhirCareTeam(base))
+  else if (base is TFhirCatalogEntryRelatedItem) then
+    composeCatalogEntryRelatedItem(xml, name,  TFhirCatalogEntryRelatedItem(base))
+  else if (base is TFhirCatalogEntry) then
+    composeCatalogEntry(xml, name,  TFhirCatalogEntry(base))
   else if (base is TFhirChargeItemParticipant) then
     composeChargeItemParticipant(xml, name,  TFhirChargeItemParticipant(base))
   else if (base is TFhirChargeItem) then
@@ -43953,6 +45198,14 @@ begin
     composeSpecimenContainer(xml, name,  TFhirSpecimenContainer(base))
   else if (base is TFhirSpecimen) then
     composeSpecimen(xml, name,  TFhirSpecimen(base))
+  else if (base is TFhirSpecimenDefinitionSpecimenToLab) then
+    composeSpecimenDefinitionSpecimenToLab(xml, name,  TFhirSpecimenDefinitionSpecimenToLab(base))
+  else if (base is TFhirSpecimenDefinitionSpecimenToLabContainerAdditive) then
+    composeSpecimenDefinitionSpecimenToLabContainerAdditive(xml, name,  TFhirSpecimenDefinitionSpecimenToLabContainerAdditive(base))
+  else if (base is TFhirSpecimenDefinitionSpecimenToLabHandling) then
+    composeSpecimenDefinitionSpecimenToLabHandling(xml, name,  TFhirSpecimenDefinitionSpecimenToLabHandling(base))
+  else if (base is TFhirSpecimenDefinition) then
+    composeSpecimenDefinition(xml, name,  TFhirSpecimenDefinition(base))
   else if (base is TFhirStructureDefinitionMapping) then
     composeStructureDefinitionMapping(xml, name,  TFhirStructureDefinitionMapping(base))
   else if (base is TFhirStructureDefinitionSnapshot) then
@@ -44105,6 +45358,26 @@ begin
     composeVisionPrescriptionDispense(xml, name,  TFhirVisionPrescriptionDispense(base))
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(xml, name,  TFhirVisionPrescription(base))
+  else if (base is TFhirWorkflowExampleActor) then
+    composeWorkflowExampleActor(xml, name,  TFhirWorkflowExampleActor(base))
+  else if (base is TFhirWorkflowExampleInstance) then
+    composeWorkflowExampleInstance(xml, name,  TFhirWorkflowExampleInstance(base))
+  else if (base is TFhirWorkflowExampleInstanceVersion) then
+    composeWorkflowExampleInstanceVersion(xml, name,  TFhirWorkflowExampleInstanceVersion(base))
+  else if (base is TFhirWorkflowExampleProcess) then
+    composeWorkflowExampleProcess(xml, name,  TFhirWorkflowExampleProcess(base))
+  else if (base is TFhirWorkflowExampleProcessStep) then
+    composeWorkflowExampleProcessStep(xml, name,  TFhirWorkflowExampleProcessStep(base))
+  else if (base is TFhirWorkflowExampleProcessStepOperation) then
+    composeWorkflowExampleProcessStepOperation(xml, name,  TFhirWorkflowExampleProcessStepOperation(base))
+  else if (base is TFhirWorkflowExampleProcessStepOperationInstance) then
+    composeWorkflowExampleProcessStepOperationInstance(xml, name,  TFhirWorkflowExampleProcessStepOperationInstance(base))
+  else if (base is TFhirWorkflowExampleProcessStepAlternative) then
+    composeWorkflowExampleProcessStepAlternative(xml, name,  TFhirWorkflowExampleProcessStepAlternative(base))
+  else if (base is TFhirWorkflowExampleProcessStepAlternativeOption) then
+    composeWorkflowExampleProcessStepAlternativeOption(xml, name,  TFhirWorkflowExampleProcessStepAlternativeOption(base))
+  else if (base is TFhirWorkflowExample) then
+    composeWorkflowExample(xml, name,  TFhirWorkflowExample(base))
   else
     raise Exception.create('Unknown Type '+base.className);
 end;

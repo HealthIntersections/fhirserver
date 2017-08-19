@@ -2503,7 +2503,7 @@ public class DelphiGenerator {
             getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', true, TFHIREnum, F"+getTitle(s)+".Link)){3};\r\n");
           if (e.getName().endsWith("[x]"))
             throw new Exception("Not done yet");
-          setprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
+          setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+"List.add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
           insprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".insertItem(index, asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
           reorderprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".move(source, destination) {1}\r\n");
         }

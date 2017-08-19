@@ -116,7 +116,12 @@ uses
   ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame},
   AppEndorserFrame in 'AppEndorserFrame.pas' {AppEndorsementFrame: TFrame},
   BaseFrame in 'BaseFrame.pas',
-  CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame};
+  CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
+  SearchParameterEditor in 'SearchParameterEditor.pas' {SearchParameterEditorForm},
+  ListSelector in 'ListSelector.pas' {ListSelectorForm},
+  FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  AddRestResourceDialog in 'AddRestResourceDialog.pas' {AddRestResourceForm};
 
 {$R *.res}
 
@@ -124,5 +129,8 @@ begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.CreateForm(TOrganizationSelectionForm, OrganizationSelectionForm);
+  Application.CreateForm(TSearchParameterEditorForm, SearchParameterEditorForm);
+  Application.CreateForm(TListSelectorForm, ListSelectorForm);
+  Application.CreateForm(TAddRestResourceForm, AddRestResourceForm);
   Application.Run;
 end.

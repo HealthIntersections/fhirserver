@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-04T12:35:50+10:00
+// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, TurtleParser;
@@ -268,6 +268,10 @@ Type
     procedure ParseCareTeamParticipantProperties(obj : TTurtleComplex; result : TFhirCareTeamParticipant); overload; {b\}
     function ParseCareTeam(obj : TTurtleComplex) : TFhirCareTeam; overload;
     procedure ParseCareTeamProperties(obj : TTurtleComplex; result : TFhirCareTeam); overload;
+    function ParseCatalogEntryRelatedItem(obj : TTurtleComplex) : TFhirCatalogEntryRelatedItem; overload; {b\}
+    procedure ParseCatalogEntryRelatedItemProperties(obj : TTurtleComplex; result : TFhirCatalogEntryRelatedItem); overload; {b\}
+    function ParseCatalogEntry(obj : TTurtleComplex) : TFhirCatalogEntry; overload;
+    procedure ParseCatalogEntryProperties(obj : TTurtleComplex; result : TFhirCatalogEntry); overload;
     function ParseChargeItemParticipant(obj : TTurtleComplex) : TFhirChargeItemParticipant; overload; {b\}
     procedure ParseChargeItemParticipantProperties(obj : TTurtleComplex; result : TFhirChargeItemParticipant); overload; {b\}
     function ParseChargeItem(obj : TTurtleComplex) : TFhirChargeItem; overload;
@@ -892,6 +896,14 @@ Type
     procedure ParseSpecimenContainerProperties(obj : TTurtleComplex; result : TFhirSpecimenContainer); overload; {b\}
     function ParseSpecimen(obj : TTurtleComplex) : TFhirSpecimen; overload;
     procedure ParseSpecimenProperties(obj : TTurtleComplex; result : TFhirSpecimen); overload;
+    function ParseSpecimenDefinitionSpecimenToLab(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLab; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLab); overload; {b\}
+    function ParseSpecimenDefinitionSpecimenToLabContainerAdditive(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive); overload; {b\}
+    function ParseSpecimenDefinitionSpecimenToLabHandling(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLabHandling; overload; {b\}
+    procedure ParseSpecimenDefinitionSpecimenToLabHandlingProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLabHandling); overload; {b\}
+    function ParseSpecimenDefinition(obj : TTurtleComplex) : TFhirSpecimenDefinition; overload;
+    procedure ParseSpecimenDefinitionProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinition); overload;
     function ParseStructureDefinitionMapping(obj : TTurtleComplex) : TFhirStructureDefinitionMapping; overload; {b\}
     procedure ParseStructureDefinitionMappingProperties(obj : TTurtleComplex; result : TFhirStructureDefinitionMapping); overload; {b\}
     function ParseStructureDefinitionSnapshot(obj : TTurtleComplex) : TFhirStructureDefinitionSnapshot; overload; {b\}
@@ -1044,6 +1056,26 @@ Type
     procedure ParseVisionPrescriptionDispenseProperties(obj : TTurtleComplex; result : TFhirVisionPrescriptionDispense); overload; {b\}
     function ParseVisionPrescription(obj : TTurtleComplex) : TFhirVisionPrescription; overload;
     procedure ParseVisionPrescriptionProperties(obj : TTurtleComplex; result : TFhirVisionPrescription); overload;
+    function ParseWorkflowExampleActor(obj : TTurtleComplex) : TFhirWorkflowExampleActor; overload; {b\}
+    procedure ParseWorkflowExampleActorProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleActor); overload; {b\}
+    function ParseWorkflowExampleInstance(obj : TTurtleComplex) : TFhirWorkflowExampleInstance; overload; {b\}
+    procedure ParseWorkflowExampleInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstance); overload; {b\}
+    function ParseWorkflowExampleInstanceVersion(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceVersion; overload; {b\}
+    procedure ParseWorkflowExampleInstanceVersionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstanceVersion); overload; {b\}
+    function ParseWorkflowExampleProcess(obj : TTurtleComplex) : TFhirWorkflowExampleProcess; overload; {b\}
+    procedure ParseWorkflowExampleProcessProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcess); overload; {b\}
+    function ParseWorkflowExampleProcessStep(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStep; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStep); overload; {b\}
+    function ParseWorkflowExampleProcessStepOperation(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperation; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperationProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperation); overload; {b\}
+    function ParseWorkflowExampleProcessStepOperationInstance(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperationInstance; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepOperationInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperationInstance); overload; {b\}
+    function ParseWorkflowExampleProcessStepAlternative(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternative; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternativeProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternative); overload; {b\}
+    function ParseWorkflowExampleProcessStepAlternativeOption(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternativeOption; overload; {b\}
+    procedure ParseWorkflowExampleProcessStepAlternativeOptionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternativeOption); overload; {b\}
+    function ParseWorkflowExample(obj : TTurtleComplex) : TFhirWorkflowExample; overload;
+    procedure ParseWorkflowExampleProperties(obj : TTurtleComplex; result : TFhirWorkflowExample); overload;
     function ParseResource(obj : TTurtleComplex) : TFhirResource; override;
     function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1180,6 +1212,8 @@ Type
     procedure ComposeCarePlan(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCarePlan; useType : boolean; index : integer);
     procedure ComposeCareTeamParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCareTeamParticipant; useType : boolean; index : integer);
     procedure ComposeCareTeam(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCareTeam; useType : boolean; index : integer);
+    procedure ComposeCatalogEntryRelatedItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntryRelatedItem; useType : boolean; index : integer);
+    procedure ComposeCatalogEntry(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntry; useType : boolean; index : integer);
     procedure ComposeChargeItemParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirChargeItemParticipant; useType : boolean; index : integer);
     procedure ComposeChargeItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirChargeItem; useType : boolean; index : integer);
     procedure ComposeClaimRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimRelated; useType : boolean; index : integer);
@@ -1492,6 +1526,10 @@ Type
     procedure ComposeSpecimenProcessing(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenProcessing; useType : boolean; index : integer);
     procedure ComposeSpecimenContainer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenContainer; useType : boolean; index : integer);
     procedure ComposeSpecimen(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimen; useType : boolean; index : integer);
+    procedure ComposeSpecimenDefinitionSpecimenToLab(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLab; useType : boolean; index : integer);
+    procedure ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; useType : boolean; index : integer);
+    procedure ComposeSpecimenDefinitionSpecimenToLabHandling(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabHandling; useType : boolean; index : integer);
+    procedure ComposeSpecimenDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinition; useType : boolean; index : integer);
     procedure ComposeStructureDefinitionMapping(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionMapping; useType : boolean; index : integer);
     procedure ComposeStructureDefinitionSnapshot(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionSnapshot; useType : boolean; index : integer);
     procedure ComposeStructureDefinitionDifferential(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionDifferential; useType : boolean; index : integer);
@@ -1568,6 +1606,16 @@ Type
     procedure ComposeValueSet(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSet; useType : boolean; index : integer);
     procedure ComposeVisionPrescriptionDispense(parent :  TTurtleComplex; parentType, name : String; elem : TFhirVisionPrescriptionDispense; useType : boolean; index : integer);
     procedure ComposeVisionPrescription(parent :  TTurtleComplex; parentType, name : String; elem : TFhirVisionPrescription; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleActor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleActor; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstance; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleInstanceVersion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceVersion; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcess(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcess; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcessStep(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStep; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcessStepOperation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperation; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcessStepOperationInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperationInstance; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcessStepAlternative(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternative; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleProcessStepAlternativeOption(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternativeOption; useType : boolean; index : integer);
+    procedure ComposeWorkflowExample(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExample; useType : boolean; index : integer);
   
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; override;
   end;
@@ -8942,6 +8990,134 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'CareTeam', 'note', elem.noteList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseCatalogEntryRelatedItem(obj : TTurtleComplex) : TFhirCatalogEntryRelatedItem;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCatalogEntryRelatedItem.create;
+  try
+    ParseCatalogEntryRelatedItemProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCatalogEntryRelatedItemProperties(obj : TTurtleComplex; result : TFhirCatalogEntryRelatedItem);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.relationtype := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/CatalogEntry.relatedItem.relationtype'));{q3b}
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/CatalogEntry.relatedItem.type'));{q3b}
+    result.item := ParseReference{Resource}(obj.complex('http://hl7.org/fhir/CatalogEntry.relatedItem.item'));{q3b}
+end;
+
+procedure TFHIRTurtleComposer.ComposeCatalogEntryRelatedItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntryRelatedItem; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CatalogEntryRelatedItem'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'CatalogEntry.relatedItem', 'relationtype', elem.relationtypeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'CatalogEntry.relatedItem', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(this, 'CatalogEntry.relatedItem', 'item', elem.itemElement, false, -1);{x.2f}
+end;
+
+function TFHIRTurtleParser.ParseCatalogEntry(obj : TTurtleComplex) : TFhirCatalogEntry;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirCatalogEntry.create;
+  try
+    ParseCatalogEntryProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseCatalogEntryProperties(obj : TTurtleComplex; result : TFhirCatalogEntry);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/CatalogEntry.type'));{q3b}
+    result.purpose := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/CatalogEntry.purpose'));{q3b}
+    result.referencedItem := ParseReference{Resource}(obj.complex('http://hl7.org/fhir/CatalogEntry.referencedItem'));{q3b}
+    result.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/CatalogEntry.identifier'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/CatalogEntry.additionalIdentifier') do
+      result.additionalIdentifierList.Add(parseIdentifier(item));
+    for item in obj.complexes('http://hl7.org/fhir/CatalogEntry.classification') do
+      result.classificationList.Add(parseIdentifier(item));
+    result.status := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/CatalogEntry.status'));{q3b}
+    result.validityPeriod := ParsePeriod(obj.complex('http://hl7.org/fhir/CatalogEntry.validityPeriod'));{q3b}
+    result.lastUpdatedElement := ParseDateTime(obj.complex('http://hl7.org/fhir/CatalogEntry.lastUpdated'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/CatalogEntry.additionalCharacteristic') do
+      result.additionalCharacteristicList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/CatalogEntry.additionalClassification') do
+      result.additionalClassificationList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/CatalogEntry.relatedItem') do
+      result.relatedItemList.Add(parseCatalogEntryRelatedItem(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeCatalogEntry(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntry; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:CatalogEntry'); {z}
+  end;
+  composeDomainResource(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'CatalogEntry', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'CatalogEntry', 'purpose', elem.purposeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(this, 'CatalogEntry', 'referencedItem', elem.referencedItemElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(this, 'CatalogEntry', 'identifier', elem.identifierElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalIdentifierList.Count - 1 do
+      ComposeIdentifier(this, 'CatalogEntry', 'additionalIdentifier', elem.additionalIdentifierList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.classificationList.Count - 1 do
+      ComposeIdentifier(this, 'CatalogEntry', 'classification', elem.classificationList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'CatalogEntry', 'status', elem.statusElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(this, 'CatalogEntry', 'validityPeriod', elem.validityPeriodElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'CatalogEntry', 'lastUpdated', elem.lastUpdatedElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalCharacteristicList.Count - 1 do
+      ComposeCodeableConcept(this, 'CatalogEntry', 'additionalCharacteristic', elem.additionalCharacteristicList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.additionalClassificationList.Count - 1 do
+      ComposeCodeableConcept(this, 'CatalogEntry', 'additionalClassification', elem.additionalClassificationList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.relatedItemList.Count - 1 do
+      ComposeCatalogEntryRelatedItem(this, 'CatalogEntry', 'relatedItem', elem.relatedItemList[i], false, i);{x.d3}
 end;
 
 function TFHIRTurtleParser.ParseChargeItemParticipant(obj : TTurtleComplex) : TFhirChargeItemParticipant;
@@ -30134,6 +30310,250 @@ begin
       ComposeAnnotation(this, 'Specimen', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+function TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLab(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLab;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSpecimenDefinitionSpecimenToLab.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLabProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLab);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.isDerivedElement := ParseBoolean(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.isDerived'));{q1}
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.type'));{q3b}
+    result.preferenceElement := ParseEnum(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.preference'), CODES_TFhirSpecimenContainedPreferenceEnum, SYSTEMS_TFhirSpecimenContainedPreferenceEnum);
+    result.containerMaterial := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerMaterial'));{q3b}
+    result.containerType := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerType'));{q3b}
+    result.containerCap := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerCap'));{q3b}
+    result.containerDescriptionElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerDescription'));{q1}
+    result.containerCapacity := ParseQuantity(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerCapacity'));{q3b}
+    result.containerMinimumVolume := ParseQuantity(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerMinimumVolume'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerAdditive') do
+      result.containerAdditiveList.Add(parseSpecimenDefinitionSpecimenToLabContainerAdditive(item));
+    result.containerPreparationElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerPreparation'));{q1}
+    result.requirementElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.requirement'));{q1}
+    result.retentionTime := ParseDuration(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.retentionTime'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.rejectionCriterion') do
+      result.rejectionCriterionList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling') do
+      result.handlingList.Add(parseSpecimenDefinitionSpecimenToLabHandling(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeSpecimenDefinitionSpecimenToLab(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLab; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SpecimenDefinitionSpecimenToLab'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(this, 'SpecimenDefinition.specimenToLab', 'isDerived', elem.isDerivedElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(this, 'SpecimenDefinition.specimenToLab', 'preference', elem.PreferenceElement, CODES_TFhirSpecimenContainedPreferenceEnum, SYSTEMS_TFhirSpecimenContainedPreferenceEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab', 'containerMaterial', elem.containerMaterialElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab', 'containerType', elem.containerTypeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab', 'containerCap', elem.containerCapElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition.specimenToLab', 'containerDescription', elem.containerDescriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(this, 'SpecimenDefinition.specimenToLab', 'containerCapacity', elem.containerCapacityElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(this, 'SpecimenDefinition.specimenToLab', 'containerMinimumVolume', elem.containerMinimumVolumeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.containerAdditiveList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(this, 'SpecimenDefinition.specimenToLab', 'containerAdditive', elem.containerAdditiveList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition.specimenToLab', 'containerPreparation', elem.containerPreparationElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition.specimenToLab', 'requirement', elem.requirementElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(this, 'SpecimenDefinition.specimenToLab', 'retentionTime', elem.retentionTimeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.rejectionCriterionList.Count - 1 do
+      ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab', 'rejectionCriterion', elem.rejectionCriterionList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.handlingList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLabHandling(this, 'SpecimenDefinition.specimenToLab', 'handling', elem.handlingList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditive(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSpecimenDefinitionSpecimenToLabContainerAdditive.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLabContainerAdditiveProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    if obj.has('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerAdditive.additiveCodeableConcept', item) then
+      result.additive := parseCodeableConcept(item);
+    if obj.has('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.containerAdditive.additiveReference', item) {a3} then
+      result.additive := ParseReference(item);
+end;
+
+procedure TFHIRTurtleComposer.ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SpecimenDefinitionSpecimenToLabContainerAdditive'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab.containerAdditive', 'additiveCodeableConcept', TFhirCodeableConcept(elem.additive), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.additive is TFhirReference) {2} then
+    ComposeReference(this, 'SpecimenDefinition.specimenToLab.containerAdditive', 'additiveReference', TFhirReference(elem.additive), false,-1);{x.d8}
+end;
+
+function TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLabHandling(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLabHandling;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSpecimenDefinitionSpecimenToLabHandling.create;
+  try
+    ParseSpecimenDefinitionSpecimenToLabHandlingProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLabHandlingProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLabHandling);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.conditionSet := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling.conditionSet'));{q3b}
+    result.tempRange := ParseRange(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling.tempRange'));{q3b}
+    result.maxDuration := ParseDuration(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling.maxDuration'));{q3b}
+    result.lightExposureElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling.lightExposure'));{q1}
+    result.instructionElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.specimenToLab.handling.instruction'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeSpecimenDefinitionSpecimenToLabHandling(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabHandling; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SpecimenDefinitionSpecimenToLabHandling'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition.specimenToLab.handling', 'conditionSet', elem.conditionSetElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRange(this, 'SpecimenDefinition.specimenToLab.handling', 'tempRange', elem.tempRangeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(this, 'SpecimenDefinition.specimenToLab.handling', 'maxDuration', elem.maxDurationElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition.specimenToLab.handling', 'lightExposure', elem.lightExposureElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition.specimenToLab.handling', 'instruction', elem.instructionElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseSpecimenDefinition(obj : TTurtleComplex) : TFhirSpecimenDefinition;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirSpecimenDefinition.create;
+  try
+    ParseSpecimenDefinitionProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseSpecimenDefinitionProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinition);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, result);
+    result.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/SpecimenDefinition.identifier'));{q3b}
+    result.typeCollected := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/SpecimenDefinition.typeCollected'));{q3b}
+    result.patientPreparationElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.patientPreparation'));{q1}
+    result.timeAspectElement := ParseString(obj.complex('http://hl7.org/fhir/SpecimenDefinition.timeAspect'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.collection') do
+      result.collectionList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/SpecimenDefinition.specimenToLab') do
+      result.specimenToLabList.Add(parseSpecimenDefinitionSpecimenToLab(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeSpecimenDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinition; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:SpecimenDefinition'); {z}
+  end;
+  composeDomainResource(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeIdentifier(this, 'SpecimenDefinition', 'identifier', elem.identifierElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'SpecimenDefinition', 'typeCollected', elem.typeCollectedElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'SpecimenDefinition', 'patientPreparation', elem.patientPreparationElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'SpecimenDefinition', 'timeAspect', elem.timeAspectElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.collectionList.Count - 1 do
+      ComposeCodeableConcept(this, 'SpecimenDefinition', 'collection', elem.collectionList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.specimenToLabList.Count - 1 do
+      ComposeSpecimenDefinitionSpecimenToLab(this, 'SpecimenDefinition', 'specimenToLab', elem.specimenToLabList[i], false, i);{x.d3}
+end;
+
 function TFHIRTurtleParser.ParseStructureDefinitionMapping(obj : TTurtleComplex) : TFhirStructureDefinitionMapping;
 begin
   if (obj = nil) then
@@ -34891,6 +35311,577 @@ begin
       ComposeVisionPrescriptionDispense(this, 'VisionPrescription', 'dispense', elem.dispenseList[i], false, i);{x.d3}
 end;
 
+function TFHIRTurtleParser.ParseWorkflowExampleActor(obj : TTurtleComplex) : TFhirWorkflowExampleActor;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleActor.create;
+  try
+    ParseWorkflowExampleActorProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleActorProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleActor);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.actorIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.actor.actorId'));{q1}
+    result.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/WorkflowExample.actor.type'), CODES_TFhirWorkflowexampleActorTypeEnum, SYSTEMS_TFhirWorkflowexampleActorTypeEnum);
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.actor.name'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.actor.description'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleActor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleActor; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleActor'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.actor', 'actorId', elem.actorIdElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(this, 'WorkflowExample.actor', 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum, SYSTEMS_TFhirWorkflowexampleActorTypeEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.actor', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.actor', 'description', elem.descriptionElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleInstance(obj : TTurtleComplex) : TFhirWorkflowExampleInstance;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleInstance.create;
+  try
+    ParseWorkflowExampleInstanceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstance);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.resourceIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.resourceId'));{q1}
+    result.resourceTypeElement := ParseEnum(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.resourceType'), CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.name'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.description'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.instance.version') do
+      result.versionList.Add(parseWorkflowExampleInstanceVersion(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstance; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleInstance'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.instance', 'resourceId', elem.resourceIdElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(this, 'WorkflowExample.instance', 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.instance', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.instance', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeWorkflowExampleInstanceVersion(this, 'WorkflowExample.instance', 'version', elem.versionList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleInstanceVersion(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceVersion;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleInstanceVersion.create;
+  try
+    ParseWorkflowExampleInstanceVersionProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleInstanceVersionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstanceVersion);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.versionIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.version.versionId'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.version.description'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleInstanceVersion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceVersion; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleInstanceVersion'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.instance.version', 'versionId', elem.versionIdElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.instance.version', 'description', elem.descriptionElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcess(obj : TTurtleComplex) : TFhirWorkflowExampleProcess;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcess.create;
+  try
+    ParseWorkflowExampleProcessProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcess);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.title'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.description'));{q1}
+    result.preConditionsElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.preConditions'));{q1}
+    result.postConditionsElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.postConditions'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step') do
+      result.stepList.Add(parseWorkflowExampleProcessStep(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcess(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcess; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcess'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process', 'title', elem.titleElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.process', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.process', 'preConditions', elem.preConditionsElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.process', 'postConditions', elem.postConditionsElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeWorkflowExampleProcessStep(this, 'WorkflowExample.process', 'step', elem.stepList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcessStep(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStep;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcessStep.create;
+  try
+    ParseWorkflowExampleProcessStepProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStep);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.process') do
+      result.processList.Add(parseWorkflowExampleProcess(item));
+    result.pauseElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.pause'));{q1}
+    result.operation := ParseWorkflowExampleProcessStepOperation(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation'));{q3b}
+    result.alternative := ParseWorkflowExampleProcessStepAlternative(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.alternative'));{q3b}
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStep(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStep; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcessStep'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(this, 'WorkflowExample.process.step', 'process', elem.processList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'WorkflowExample.process.step', 'pause', elem.pauseElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepOperation(this, 'WorkflowExample.process.step', 'operation', elem.operationElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcessStepAlternative(this, 'WorkflowExample.process.step', 'alternative', elem.alternativeElement, false, -1);{x.2f}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperation(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperation;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcessStepOperation.create;
+  try
+    ParseWorkflowExampleProcessStepOperationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperation);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.numberElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.number'));{q1}
+    result.type_Element := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.type'));{q1}
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.name'));{q1}
+    result.initiatorElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.initiator'));{q1}
+    result.receiverElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.receiver'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.description'));{q1}
+    result.initiatorActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.initiatorActive'));{q1}
+    result.receiverActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.receiverActive'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.operation.instance') do
+      result.instanceList.Add(parseWorkflowExampleProcessStepOperationInstance(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepOperation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperation; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcessStepOperation'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation', 'number', elem.numberElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation', 'type', elem.type_Element, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation', 'initiator', elem.initiatorElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation', 'receiver', elem.receiverElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.process.step.operation', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'WorkflowExample.process.step.operation', 'initiatorActive', elem.initiatorActiveElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'WorkflowExample.process.step.operation', 'receiverActive', elem.receiverActiveElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperationInstance(this, 'WorkflowExample.process.step.operation', 'instance', elem.instanceList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationInstance(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperationInstance;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcessStepOperationInstance.create;
+  try
+    ParseWorkflowExampleProcessStepOperationInstanceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperationInstance);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.instanceIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.instance.instanceId'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepOperationInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperationInstance; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcessStepOperationInstance'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.operation.instance', 'instanceId', elem.instanceIdElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcessStepAlternative(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternative;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcessStepAlternative.create;
+  try
+    ParseWorkflowExampleProcessStepAlternativeProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepAlternativeProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternative);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.alternative.name'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option') do
+      result.optionList.Add(parseWorkflowExampleProcessStepAlternativeOption(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepAlternative(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternative; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcessStepAlternative'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.process.step.alternative', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.optionList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternativeOption(this, 'WorkflowExample.process.step.alternative', 'option', elem.optionList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleProcessStepAlternativeOption(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternativeOption;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleProcessStepAlternativeOption.create;
+  try
+    ParseWorkflowExampleProcessStepAlternativeOptionProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepAlternativeOptionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternativeOption);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.description'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.process') do
+      result.processList.Add(parseWorkflowExampleProcess(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.alternative') do
+      result.alternativeList.Add(parseWorkflowExampleProcessStepAlternative(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.operation') do
+      result.operationList.Add(parseWorkflowExampleProcessStepOperation(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.pause') do
+      result.pauseList.Add(parseBoolean(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepAlternativeOption(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternativeOption; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleProcessStepAlternativeOption'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample.process.step.alternative.option', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeWorkflowExampleProcess(this, 'WorkflowExample.process.step.alternative.option', 'process', elem.processList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.alternativeList.Count - 1 do
+      ComposeWorkflowExampleProcessStepAlternative(this, 'WorkflowExample.process.step.alternative.option', 'alternative', elem.alternativeList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.operationList.Count - 1 do
+      ComposeWorkflowExampleProcessStepOperation(this, 'WorkflowExample.process.step.alternative.option', 'operation', elem.operationList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.pauseList.Count - 1 do
+      ComposeBoolean(this, 'WorkflowExample.process.step.alternative.option', 'pause', elem.pauseList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExample(obj : TTurtleComplex) : TFhirWorkflowExample;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExample.create;
+  try
+    ParseWorkflowExampleProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleProperties(obj : TTurtleComplex; result : TFhirWorkflowExample);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, result);
+    result.urlElement := ParseUri(obj.complex('http://hl7.org/fhir/WorkflowExample.url'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.identifier') do
+      result.identifierList.Add(parseIdentifier(item));
+    result.versionElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.version'));{q1}
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.name'));{q1}
+    result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.title'));{q1}
+    result.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/WorkflowExample.status'), CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
+    result.experimentalElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.experimental'));{q1}
+    result.dateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/WorkflowExample.date'));{q1}
+    result.publisherElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.publisher'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.contact') do
+      result.contactList.Add(parseContactDetail(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.useContext') do
+      result.useContextList.Add(parseUsageContext(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.jurisdiction') do
+      result.jurisdictionList.Add(parseCodeableConcept(item));
+    result.copyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.copyright'));{q1}
+    result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.description'));{q1}
+    result.purposeElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.purpose'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.actor') do
+      result.actorList.Add(parseWorkflowExampleActor(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.instance') do
+      result.instanceList.Add(parseWorkflowExampleInstance(item));
+    result.process := ParseWorkflowExampleProcess(obj.complex('http://hl7.org/fhir/WorkflowExample.process'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.workflow') do
+      result.workflowList.Add(parseReference{TFhirWorkflowExample}(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExample(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExample; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExample'); {z}
+  end;
+  composeDomainResource(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUri(this, 'WorkflowExample', 'url', elem.urlElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'WorkflowExample', 'identifier', elem.identifierList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'WorkflowExample', 'version', elem.versionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'WorkflowExample', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'WorkflowExample', 'title', elem.titleElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'WorkflowExample', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBoolean(this, 'WorkflowExample', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTime(this, 'WorkflowExample', 'date', elem.dateElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'WorkflowExample', 'publisher', elem.publisherElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactDetail(this, 'WorkflowExample', 'contact', elem.contactList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.useContextList.Count - 1 do
+      ComposeUsageContext(this, 'WorkflowExample', 'useContext', elem.useContextList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(this, 'WorkflowExample', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdown(this, 'WorkflowExample', 'purpose', elem.purposeElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.actorList.Count - 1 do
+      ComposeWorkflowExampleActor(this, 'WorkflowExample', 'actor', elem.actorList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeWorkflowExampleInstance(this, 'WorkflowExample', 'instance', elem.instanceList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeWorkflowExampleProcess(this, 'WorkflowExample', 'process', elem.processElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.workflowList.Count - 1 do
+      ComposeReference{TFhirWorkflowExample}(this, 'WorkflowExample', 'workflow', elem.workflowList[i], false, i);{x.d3}
+end;
+
 function TFHIRTurtleParser.ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;
 begin
    if SameText(type_, 'Element') then
@@ -34993,6 +35984,8 @@ begin
     result := parseCarePlan(obj)
   else if SameText(type_, 'CareTeam') then
     result := parseCareTeam(obj)
+  else if SameText(type_, 'CatalogEntry') then
+    result := parseCatalogEntry(obj)
   else if SameText(type_, 'ChargeItem') then
     result := parseChargeItem(obj)
   else if SameText(type_, 'Claim') then
@@ -35173,6 +36166,8 @@ begin
     result := parseSlot(obj)
   else if SameText(type_, 'Specimen') then
     result := parseSpecimen(obj)
+  else if SameText(type_, 'SpecimenDefinition') then
+    result := parseSpecimenDefinition(obj)
   else if SameText(type_, 'StructureDefinition') then
     result := parseStructureDefinition(obj)
   else if SameText(type_, 'StructureMap') then
@@ -35195,6 +36190,8 @@ begin
     result := parseValueSet(obj)
   else if SameText(type_, 'VisionPrescription') then
     result := parseVisionPrescription(obj)
+  else if SameText(type_, 'WorkflowExample') then
+    result := parseWorkflowExample(obj)
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -35294,6 +36291,7 @@ begin
     frtCapabilityStatement: ComposeCapabilityStatement(this, '', 'CapabilityStatement', TFhirCapabilityStatement(resource), true, -1);
     frtCarePlan: ComposeCarePlan(this, '', 'CarePlan', TFhirCarePlan(resource), true, -1);
     frtCareTeam: ComposeCareTeam(this, '', 'CareTeam', TFhirCareTeam(resource), true, -1);
+    frtCatalogEntry: ComposeCatalogEntry(this, '', 'CatalogEntry', TFhirCatalogEntry(resource), true, -1);
     frtChargeItem: ComposeChargeItem(this, '', 'ChargeItem', TFhirChargeItem(resource), true, -1);
     frtClaim: ComposeClaim(this, '', 'Claim', TFhirClaim(resource), true, -1);
     frtClaimResponse: ComposeClaimResponse(this, '', 'ClaimResponse', TFhirClaimResponse(resource), true, -1);
@@ -35384,6 +36382,7 @@ begin
     frtServiceDefinition: ComposeServiceDefinition(this, '', 'ServiceDefinition', TFhirServiceDefinition(resource), true, -1);
     frtSlot: ComposeSlot(this, '', 'Slot', TFhirSlot(resource), true, -1);
     frtSpecimen: ComposeSpecimen(this, '', 'Specimen', TFhirSpecimen(resource), true, -1);
+    frtSpecimenDefinition: ComposeSpecimenDefinition(this, '', 'SpecimenDefinition', TFhirSpecimenDefinition(resource), true, -1);
     frtStructureDefinition: ComposeStructureDefinition(this, '', 'StructureDefinition', TFhirStructureDefinition(resource), true, -1);
     frtStructureMap: ComposeStructureMap(this, '', 'StructureMap', TFhirStructureMap(resource), true, -1);
     frtSubscription: ComposeSubscription(this, '', 'Subscription', TFhirSubscription(resource), true, -1);
@@ -35395,6 +36394,7 @@ begin
     frtTestScript: ComposeTestScript(this, '', 'TestScript', TFhirTestScript(resource), true, -1);
     frtValueSet: ComposeValueSet(this, '', 'ValueSet', TFhirValueSet(resource), true, -1);
     frtVisionPrescription: ComposeVisionPrescription(this, '', 'VisionPrescription', TFhirVisionPrescription(resource), true, -1);
+    frtWorkflowExample: ComposeWorkflowExample(this, '', 'WorkflowExample', TFhirWorkflowExample(resource), true, -1);
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
@@ -35435,6 +36435,8 @@ begin
     result := ParseCarePlan(obj)
   else if s = 'CareTeam' Then
     result := ParseCareTeam(obj)
+  else if s = 'CatalogEntry' Then
+    result := ParseCatalogEntry(obj)
   else if s = 'ChargeItem' Then
     result := ParseChargeItem(obj)
   else if s = 'Claim' Then
@@ -35615,6 +36617,8 @@ begin
     result := ParseSlot(obj)
   else if s = 'Specimen' Then
     result := ParseSpecimen(obj)
+  else if s = 'SpecimenDefinition' Then
+    result := ParseSpecimenDefinition(obj)
   else if s = 'StructureDefinition' Then
     result := ParseStructureDefinition(obj)
   else if s = 'StructureMap' Then
@@ -35637,6 +36641,8 @@ begin
     result := ParseValueSet(obj)
   else if s = 'VisionPrescription' Then
     result := ParseVisionPrescription(obj)
+  else if s = 'WorkflowExample' Then
+    result := ParseWorkflowExample(obj)
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;

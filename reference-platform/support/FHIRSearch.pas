@@ -6,7 +6,7 @@ uses
   SysUtils,
   StringSupport, ParseMap, DateSupport,
   AdvObjects, AdvGenerics,
-  FHIRTypes, FHIRBase, FHIRPath, FHIRIndexManagers, FHIRUtilities;
+  FHIRTypes, FHIRBase, FHIRPath, FHIRIndexBase, FHIRIndexManagers, FHIRUtilities;
 
 Type
   TFHIRSearchParamModifier = (spmNull, spmMissing, spmExact, spmContains, spmText, spmIn, spmBelow, spmAbove, spmNotIn, spmType);

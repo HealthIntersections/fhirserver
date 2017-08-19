@@ -291,6 +291,7 @@
         <DCCReference Include="..\Server\ApplicationCache.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="..\Server\WebSourceProvider.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
