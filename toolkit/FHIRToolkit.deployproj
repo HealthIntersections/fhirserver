@@ -17,15 +17,6 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Win64'">
-        <DeployFile Include="Win64\Debug\FHIRToolkit.rsm" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>FHIRToolkit\</RemoteDir>
-            <RemoteName>FHIRToolkit.rsm</RemoteName>
-            <DeployClass>DebugSymbols</DeployClass>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="Win64\Debug\FHIRToolkit.exe" Condition="'$(Config)'=='Debug'">
             <RemoteDir>FHIRToolkit\</RemoteDir>
             <RemoteName>FHIRToolkit.exe</RemoteName>
@@ -36,21 +27,30 @@
             <Overwrite>True</Overwrite>
             <Required>True</Required>
         </DeployFile>
+        <DeployFile Include="Win64\Debug\FHIRToolkit.rsm" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FHIRToolkit\</RemoteDir>
+            <RemoteName>FHIRToolkit.rsm</RemoteName>
+            <DeployClass>DebugSymbols</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSX32'">
-        <DeployFile Include="OSX32\Debug\FHIRToolkit.entitlements" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>FHIRToolkit.app\..\</RemoteDir>
-            <RemoteName>FHIRToolkit.entitlements</RemoteName>
-            <DeployClass>ProjectOSXEntitlements</DeployClass>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
+            <RemoteDir>FHIRToolkit.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
-            <RemoteDir>FHIRToolkit.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
-            <DeployClass>DependencyModule</DeployClass>
+        <DeployFile Include="OSX32\Debug\FHIRToolkit.entitlements" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FHIRToolkit.app\..\</RemoteDir>
+            <RemoteName>FHIRToolkit.entitlements</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
