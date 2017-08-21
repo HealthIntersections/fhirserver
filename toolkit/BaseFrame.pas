@@ -8,18 +8,22 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   IniFiles,
-  FHIRBase, FHIRResources;
+  FHIRBase, FHIRResources, FHIRClient;
 
 type
+  TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
+
   TBaseFrame = class(TFrame)
   private
     FTabs : TTabControl;
     FTab  : TTabItem;
     FIni: TIniFile;
+    FOnOpenResource : TOnOpenResourceEvent;
   public
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
     property Ini : TIniFile read FIni write FIni;
+    property OnOpenResource : TOnOpenResourceEvent read FOnOpenResource write FOnOpenResource;
 
     procedure load; virtual;
     procedure Close;

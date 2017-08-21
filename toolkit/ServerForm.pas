@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.Generics.Collections,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
-  FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox,
+  FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
+  DateSupport,
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor;
@@ -23,7 +24,7 @@ type
     Splitter1: TSplitter;
     Label2: TLabel;
     cbxSearchType: TComboBox;
-    TabControl1: TTabControl;
+    tabSearch: TTabControl;
     TabItem1: TTabItem;
     TabItem2: TTabItem;
     TabItem3: TTabItem;
@@ -63,11 +64,15 @@ type
     StringColumn6: TStringColumn;
     StringColumn7: TStringColumn;
     StringColumn8: TStringColumn;
+    Panel3: TPanel;
+    lblOutcome: TLabel;
     procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnConfSearchClick(Sender: TObject);
     procedure gridConfMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);
+    procedure cbxSearchTypeChange(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -160,6 +165,11 @@ begin
   end;
 end;
 
+procedure TServerFrame.cbxSearchTypeChange(Sender: TObject);
+begin
+  tabSearch.TabIndex := cbxSearchType.ItemIndex;
+end;
+
 function getJurisdictionSearch(i: integer): string;
 begin
   case i of
@@ -245,47 +255,67 @@ procedure TServerFrame.btnConfSearchClick(Sender: TObject);
 var
   params : TDictionary<String, String>;
   be : TFhirBundleEntry;
+  fcs : IFMXCursorService;
+  start : TDateTime;
 begin
-  FMatches.Clear;
-  gridConfMatches.RowCount := FMatches.Count;
-  FBundle.Free;
-  FBundle := nil;
-
-  params := TDictionary<String, String>.create;
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
   try
-    params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
-    if edtConfUrl.Text <> '' then
-      params.add('url', edtConfUrl.Text);
-    if edtConfId.Text <> '' then
-      params.add('identifier', edtConfId.Text);
-    if edtConfVersion.Text <> '' then
-      params.add('version', edtConfVersion.Text);
-    if edtConfName.Text <> '' then
-      params.add('name', edtConfName.Text);
-    if edtConfTitle.Text <> '' then
-      params.add('title', edtConfTitle.Text);
-    if edtConfText.Text <> '' then
-      params.add('_text', edtConfText.Text);
-    if dedConfDate.Text <> '' then
-      params.add('date', dedConfDate.Text);
-    if edtConfJurisdiction.ItemIndex <> -1 then
-      params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
-    if edtConfPub.Text <> '' then
-      params.add('publisher', edtConfPub.Text);
-    if cbxConfStatus.ItemIndex <> -1 then
-      params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
-    if edtConfUpdated.Text <> '' then
-      params.add('_lastUpdated', edtConfUpdated.Text);
-    if edtConfTag.Text <> '' then
-      params.add('_tag', edtConfTag.Text);
-
-    FBundle := FClient.search(false, params);
-    for be in FBundle.entryList do
-      if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
-        FMatches.Add(be.resource.Link);
+    FMatches.Clear;
     gridConfMatches.RowCount := FMatches.Count;
+    FBundle.Free;
+    FBundle := nil;
+
+    params := TDictionary<String, String>.create;
+    try
+      params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
+      params.Add('_summary', 'true');
+
+      if edtConfUrl.Text <> '' then
+        params.add('url', edtConfUrl.Text);
+      if edtConfId.Text <> '' then
+        params.add('identifier', edtConfId.Text);
+      if edtConfVersion.Text <> '' then
+        params.add('version', edtConfVersion.Text);
+      if edtConfName.Text <> '' then
+        params.add('name', edtConfName.Text);
+      if edtConfTitle.Text <> '' then
+        params.add('title', edtConfTitle.Text);
+      if edtConfText.Text <> '' then
+        params.add('_text', edtConfText.Text);
+      if dedConfDate.Text <> '' then
+        params.add('date', dedConfDate.Text);
+      if edtConfJurisdiction.ItemIndex <> -1 then
+        params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
+      if edtConfPub.Text <> '' then
+        params.add('publisher', edtConfPub.Text);
+      if cbxConfStatus.ItemIndex <> -1 then
+        params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
+      if edtConfUpdated.Text <> '' then
+        params.add('_lastUpdated', edtConfUpdated.Text);
+      if edtConfTag.Text <> '' then
+        params.add('_tag', edtConfTag.Text);
+
+      start := now;
+      FBundle := FClient.search(false, params);
+      for be in FBundle.entryList do
+        if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+          FMatches.Add(be.resource.Link);
+      gridConfMatches.RowCount := FMatches.Count;
+      lblOutcome.Text := inttostr(FMatches.Count)+' resources in '+describePeriod(now - start);
+    finally
+      params.Free;
+    end;
   finally
-    params.Free;
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
   end;
 end;
 
@@ -297,6 +327,18 @@ begin
   FMatches.Free;
 
   inherited;
+end;
+
+procedure TServerFrame.gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);
+var
+  res : TFhirResource;
+begin
+  res := Client.readResource(FMatches[Row].ResourceType, FMatches[Row].id);
+  try
+    OnOpenResource(self, client, client.format, res);
+  finally
+    res.Free;
+  end;
 end;
 
 procedure TServerFrame.gridConfMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -328,8 +370,6 @@ end;
 
 procedure TServerFrame.load;
 begin
-  inherited;
-
   edtConfUrl.Text := Ini.ReadString('Conformance-search', 'url', '');
   edtConfId.Text := Ini.ReadString('Conformance-search', 'id', '');
   edtConfVersion.Text := Ini.ReadString('Conformance-search', 'version', '');
@@ -343,6 +383,7 @@ begin
   edtConfUpdated.Text := Ini.ReadString('Conformance-search', 'updated', '');
   edtConfTag.Text := Ini.ReadString('Conformance-search', 'tag', '');
   FMatches := TAdvList<TFHIRResource>.create;
+  cbxSearchTypeChange(nil);
 end;
 
 procedure TServerFrame.SetCapabilityStatement(const Value: TFhirCapabilityStatement);

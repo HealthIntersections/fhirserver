@@ -81,8 +81,10 @@ type
     procedure saveServers;
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
+    procedure OpenResourcefromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
     procedure newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
     procedure addFileToList(filename : String);
+    function frameForResource(res : TFhirResource) : TBaseResourceFrameClass;
     function doSave : boolean;
     function doSaveAs : boolean;
   public
@@ -155,6 +157,7 @@ begin
         serverForm.Align := TAlignLayout.Client;
         serverForm.Client := client.link;
         serverForm.CapabilityStatement := cs.link;
+        serverForm.OnOpenResource := OpenResourcefromClient;
         serverForm.load;
       finally
         cs.free;
@@ -252,12 +255,7 @@ begin
     format := ffUnspecified;
     res := fileToResource(fn, format);
     try
-      if res is TFhirCapabilityStatement then
-        openResourceFromFile(fn, res, format, TCapabilityStatementEditorFrame)
-      else if res is TFhirValueSet then
-        openResourceFromFile(fn, res, format, TValueSetEditorFrame)
-      else
-        MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+      openResourceFromFile(fn, res, format, frameForResource(res));
     finally
       res.free;
     end;
@@ -462,6 +460,16 @@ begin
   FIni.Free;
 end;
 
+function TMasterToolsForm.frameForResource(res: TFhirResource): TBaseResourceFrameClass;
+begin
+  if res is TFhirCapabilityStatement then
+    result := TCapabilityStatementEditorFrame
+  else if res is TFhirValueSet then
+    result := TValueSetEditorFrame
+  else
+    MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
+end;
+
 procedure TMasterToolsForm.lbFilesClick(Sender: TObject);
 begin
   btnReopen.Enabled := lbFiles.ItemIndex >= 0;
@@ -546,6 +554,46 @@ begin
     frame.format := format;
     frame.load;
     addFileToList(filename);
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TMasterToolsForm.OpenResourceFromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
+var
+  tab : TTabItem;
+  frame : TFrame;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    tab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := tab;
+    tab.Text := resource.fhirType+'/'+resource.id;
+    tab.Hint := client.address+'/'+resource.fhirType+'/'+resource.id;
+    tab.ShowHint := true;
+    frame := frameForResource(resource).create(tab);
+    tab.TagObject := frame;
+    frame.TagObject := tab;
+    frame.Parent := tab;
+    frame.tabs := tbMain;
+    frame.Ini := FIni;
+    frame.Tab := tab;
+    frame.Align := TAlignLayout.Client;
+    frame.Client := client.link;
+    frame.Filename := '$$';
+    frame.resource := resource.clone;
+    frame.format := format;
+    frame.load;
   finally
     if Assigned(fCS) then
       fcs.setCursor(Cursor);

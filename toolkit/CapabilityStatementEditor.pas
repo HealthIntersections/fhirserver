@@ -743,6 +743,7 @@ var
   bClient, bServer : boolean;
 begin
   inherited;
+  tvMetadata.DeleteChildren;
   tvMetadata.TagObject := CapabilityStatement;
   bClient := false;
   bServer := false;

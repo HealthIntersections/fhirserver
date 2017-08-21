@@ -74,6 +74,7 @@ Type
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; virtual;
 
     function address : String; virtual;
+    function format : TFHIRFormat; virtual;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -144,6 +145,8 @@ Type
     procedure cancelOperation;
 
     function address : String; override;
+    function format : TFHIRFormat; override;
+
     function conformance(summary : boolean) : TFhirCapabilityStatement; override;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
@@ -497,6 +500,14 @@ begin
   finally
     ret.free;
   end;
+end;
+
+function TFhirHTTPClient.format: TFHIRFormat;
+begin
+  if Json then
+    result := ffJson
+  else
+    result := ffXml;
 end;
 
 function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TDictionary<String, String>; var mp : TStream) : String;
@@ -983,6 +994,11 @@ end;
 procedure TFhirClient.deleteResource(atype: TFhirResourceType; id: String);
 begin
   raise Exception.Create('Must override deleteResource() in '+className);
+end;
+
+function TFhirClient.format: TFHIRFormat;
+begin
+  result := ffUnspecified;
 end;
 
 function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;

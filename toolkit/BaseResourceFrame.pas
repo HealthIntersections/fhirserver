@@ -106,12 +106,26 @@ begin
 end;
 
 function TBaseResourceFrame.save : boolean;
+var
+  res : TFhirResource;
 begin
   if InputIsDirty then
     commit;
   result := FFilename <> '';
   if result then
-    resourceToFile(resource, FFilename, format);
+    if FFilename = '$$' then
+    begin
+      res := Client.updateResource(FResource);
+      try
+        FResource.Free;
+        FResource := res.Link;
+        load;
+      finally
+        res.free;
+      end;
+    end
+    else
+      resourceToFile(resource, FFilename, format);
   ResourceIsDirty := false;
 end;
 

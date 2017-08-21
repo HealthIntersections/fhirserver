@@ -60,7 +60,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.Width = 674.000000000000000000
       Size.Height = 712.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 4
+      TabIndex = 0
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -78,7 +78,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -397,8 +397,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridIdentifiersSelChanged
           OnGetValue = gridIdentifiersGetValue
           OnSetValue = gridIdentifiersSetValue
-          Viewport.Width = 565.000000000000000000
-          Viewport.Height = 121.000000000000000000
+          Viewport.Width = 545.000000000000000000
+          Viewport.Height = 96.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'System'
             Size.Width = 297.000000000000000000
@@ -1084,7 +1084,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
